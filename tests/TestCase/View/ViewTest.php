@@ -22,7 +22,6 @@ use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ServerRequest;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -235,7 +234,7 @@ class TestViewEventListenerInterface implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'View.beforeRender' => 'beforeRender',
@@ -849,24 +848,6 @@ class ViewTest extends TestCase
     public function testViewVars()
     {
         $this->assertEquals(['testData' => 'Some test data', 'test2' => 'more data', 'test3' => 'even more data'], $this->View->viewVars);
-    }
-
-    /**
-     * Test generation of UUIDs method
-     *
-     * @return void
-     */
-    public function testUUIDGeneration()
-    {
-        Router::connect('/:controller', ['action' => 'index']);
-        $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('form5988016017', $result);
-
-        $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('formc3dc6be854', $result);
-
-        $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('form28f92cc87f', $result);
     }
 
     /**

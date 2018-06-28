@@ -86,7 +86,7 @@ class PaginatorComponent extends Component
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

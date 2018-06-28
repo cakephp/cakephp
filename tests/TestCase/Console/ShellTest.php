@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1042,8 +1043,10 @@ TEXT;
         $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
             ->disableOriginalConstructor()
             ->getMock();
-
         $parser->expects($this->once())->method('help');
+        $parser->method('parse')
+            ->will($this->returnValue([[], []]));
+
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->never())->method('hr');
@@ -1071,8 +1074,10 @@ TEXT;
         $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
             ->disableOriginalConstructor()
             ->getMock();
-
         $parser->expects($this->once())->method('help');
+        $parser->method('parse')
+            ->will($this->returnValue([[], []]));
+
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->_io->expects($this->exactly(2))->method('err');

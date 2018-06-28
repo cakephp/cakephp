@@ -248,6 +248,54 @@ class XmlTest extends TestCase
     }
 
     /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $htmlFile = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($htmlFile);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
+        $xml = Xml::loadHtml($html);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        $this->expectException(XmlException::class);
+        Xml::loadHtml(null);
+    }
+
+    /**
      * testFromArray method
      *
      * @return void
@@ -283,7 +331,7 @@ class XmlTest extends TestCase
                 ]
             ]
         ];
-        $obj = Xml::fromArray($xml, 'attributes');
+        $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
@@ -333,7 +381,7 @@ XML;
                 'array' => []
             ]
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $this->assertEquals(6, count($obj));
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
@@ -356,7 +404,7 @@ XML;
                 ]
             ]
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -386,7 +434,7 @@ XML;
                 '@' => 'All tags'
             ]
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>All tags<tag id="1">Tag 1<name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>
@@ -401,7 +449,7 @@ XML;
                 ]
             ]
         ];
-        $obj = Xml::fromArray($xml, 'attributes');
+        $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
     }
@@ -631,7 +679,7 @@ XML;
                 'author' => ['Malte Lange & Co']
             ]
         ];
-        $xml = Xml::fromArray(['products' => $data], 'tags');
+        $xml = Xml::fromArray(['products' => $data], ['format' => 'tags']);
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
@@ -692,7 +740,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals(Xml::toArray(Xml::fromArray($array, 'tags')), $array);
+        $this->assertEquals(Xml::toArray(Xml::fromArray($array, ['format' => 'tags'])), $array);
 
         $expected = [
             'tags' => [
@@ -708,7 +756,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes'])));
         $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['return' => 'domdocument', 'format' => 'attributes'])));
         $this->assertEquals(Xml::toArray(Xml::fromArray($array)), $array);
         $this->assertEquals(Xml::toArray(Xml::fromArray($array, ['return' => 'domdocument'])), $array);
@@ -745,7 +793,7 @@ XML;
                 ]
             ]
         ];
-        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes'])));
         $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes', 'return' => 'domdocument'])));
 
         $xml = <<<XML
@@ -970,7 +1018,7 @@ XML;
         ];
         $this->assertSame($expected, Xml::toArray($xml));
 
-        $xml = Xml::fromArray($expected, 'tags');
+        $xml = Xml::fromArray($expected, ['format' => 'tags']);
         $this->assertXmlStringEqualsXmlString($xmlText, $xml->asXML());
     }
 

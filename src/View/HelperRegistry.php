@@ -104,7 +104,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct class name or null.
      */
     protected function _resolveClassName($class)
     {
@@ -144,9 +144,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     protected function _create($class, $alias, $settings)
     {
         $instance = new $class($this->_View, $settings);
-
-        $instance->theme = $this->_View->getTheme();
-        $instance->plugin = $this->_View->getRequest()->getParam('Plugin');
 
         $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
         if ($enable) {

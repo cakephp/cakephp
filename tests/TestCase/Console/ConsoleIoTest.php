@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -284,8 +285,6 @@ class ConsoleIoTest extends TestCase
             $newLine = "\r\n";
         }
         $this->assertEquals($this->io->nl(), $newLine);
-        $this->assertEquals($this->io->nl(true), $newLine);
-        $this->assertEquals('', $this->io->nl(false));
         $this->assertEquals($this->io->nl(2), $newLine . $newLine);
         $this->assertEquals($this->io->nl(1), $newLine);
     }
@@ -307,12 +306,7 @@ class ConsoleIoTest extends TestCase
         $this->out->expects($this->at(4))->method('write')->with($bar, 1);
         $this->out->expects($this->at(5))->method('write')->with('', true);
 
-        $this->out->expects($this->at(6))->method('write')->with('', 2);
-        $this->out->expects($this->at(7))->method('write')->with($bar, 1);
-        $this->out->expects($this->at(8))->method('write')->with('', 2);
-
         $this->io->hr();
-        $this->io->hr(true);
         $this->io->hr(2);
     }
 

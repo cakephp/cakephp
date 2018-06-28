@@ -14,7 +14,6 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
 
 /**

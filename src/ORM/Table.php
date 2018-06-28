@@ -1107,7 +1107,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Query for this repository and applies some defaults based on the
+     * type of search that was selected.
      *
      * ### Model.beforeFind event
      *
@@ -1159,6 +1160,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * Would invoke the `findPublished` method.
      *
+     * @param string $type the type of query to perform
+     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query The query builder
      */
     public function find($type = 'all', $options = [])
@@ -1553,7 +1556,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new Query instance for a table.
+     *
+     * @return \Cake\ORM\Query
      */
     public function query()
     {
@@ -2011,25 +2016,33 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function saveMany($entities, $options = [])
     {
         $isNew = [];
-
-        $return = $this->getConnection()->transactional(
-            function () use ($entities, $options, &$isNew) {
-                foreach ($entities as $key => $entity) {
-                    $isNew[$key] = $entity->isNew();
-                    if ($this->save($entity, $options) === false) {
-                        return false;
-                    }
-                }
-            }
-        );
-
-        if ($return === false) {
+        $cleanup = function ($entities) use (&$isNew) {
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
                     $entity->unsetProperty($this->getPrimaryKey());
                     $entity->isNew(true);
                 }
             }
+        };
+
+        try {
+            $return = $this->getConnection()
+                ->transactional(function () use ($entities, $options, &$isNew) {
+                    foreach ($entities as $key => $entity) {
+                        $isNew[$key] = $entity->isNew();
+                        if ($this->save($entity, $options) === false) {
+                            return false;
+                        }
+                    }
+                });
+        } catch (\Exception $e) {
+            $cleanup($entities);
+
+            throw $e;
+        }
+
+        if ($return === false) {
+            $cleanup($entities);
 
             return false;
         }
@@ -2361,17 +2374,17 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * You can limit fields that will be present in the constructed entity by
-     * passing the `fieldList` option, which is also accepted for associations:
+     * passing the `fields` option, which is also accepted for associations:
      *
      * ```
      * $article = $this->Articles->newEntity($this->request->getData(), [
-     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
-     *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *  'fields' => ['title', 'body', 'tags', 'comments'],
+     *  'associated' => ['Tags', 'Comments.Users' => ['fields' => 'username']]
      * ]
      * );
      * ```
      *
-     * The `fieldList` option lets remove or restrict input data from ending up in
+     * The `fields` option lets remove or restrict input data from ending up in
      * the entity. If you'd like to relax the entity's default accessible fields,
      * you can use the `accessibleFields` option:
      *
@@ -2430,12 +2443,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ```
      *
      * You can limit fields that will be present in the constructed entities by
-     * passing the `fieldList` option, which is also accepted for associations:
+     * passing the `fields` option, which is also accepted for associations:
      *
      * ```
      * $articles = $this->Articles->newEntities($this->request->getData(), [
-     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
-     *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *  'fields' => ['title', 'body', 'tags', 'comments'],
+     *  'associated' => ['Tags', 'Comments.Users' => ['fields' => 'username']]
      *  ]
      * );
      * ```
@@ -2461,12 +2474,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the data merged, but those that cannot, will be discarded.
      *
      * You can limit fields that will be present in the merged entity by
-     * passing the `fieldList` option, which is also accepted for associations:
+     * passing the `fields` option, which is also accepted for associations:
      *
      * ```
      * $article = $this->Articles->patchEntity($article, $this->request->getData(), [
-     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
-     *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *  'fields' => ['title', 'body', 'tags', 'comments'],
+     *  'associated' => ['Tags', 'Comments.Users' => ['fields' => 'username']]
      *  ]
      * );
      * ```
@@ -2511,12 +2524,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the data merged, but those that cannot, will be discarded.
      *
      * You can limit fields that will be present in the merged entities by
-     * passing the `fieldList` option, which is also accepted for associations:
+     * passing the `fields` option, which is also accepted for associations:
      *
      * ```
      * $articles = $this->Articles->patchEntities($articles, $this->request->getData(), [
-     *  'fieldList' => ['title', 'body', 'tags', 'comments'],
-     *  'associated' => ['Tags', 'Comments.Users' => ['fieldList' => 'username']]
+     *  'fields' => ['title', 'body', 'tags', 'comments'],
+     *  'associated' => ['Tags', 'Comments.Users' => ['fields' => 'username']]
      *  ]
      * );
      * ```
@@ -2621,7 +2634,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',

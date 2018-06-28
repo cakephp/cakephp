@@ -3457,7 +3457,7 @@ class QueryTest extends TestCase
         $result = $query
             ->select(['d' => $query->func()->now('date')])
             ->execute();
-        $this->assertEquals([['d' => date('Y-m-d')]], $result->fetchAll('assoc'));
+        $this->assertEquals([(object)['d' => date('Y-m-d')]], $result->fetchAll('obj'));
 
         $query = new Query($this->connection);
         $result = $query
@@ -4271,10 +4271,10 @@ class QueryTest extends TestCase
                 'type' => 'INNER',
                 'conditions' => ['articles.author_id = authors.id']
             ]]);
-        $this->assertArrayHasKey('authors', $query->join());
+        $this->assertArrayHasKey('authors', $query->clause('join'));
 
         $this->assertSame($query, $query->removeJoin('authors'));
-        $this->assertArrayNotHasKey('authors', $query->join());
+        $this->assertArrayNotHasKey('authors', $query->clause('join'));
     }
 
     /**

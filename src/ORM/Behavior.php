@@ -258,7 +258,7 @@ class Behavior implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',

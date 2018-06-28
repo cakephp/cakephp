@@ -506,7 +506,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Controller.initialize' => 'beforeFilter',

@@ -561,28 +561,21 @@ class RouteBuilder
      * the current RouteBuilder instance.
      *
      * @param string $name The plugin name
-     * @param string $file The routes file to load. Defaults to `routes.php`
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException When the plugin has not been loaded.
      * @throws \InvalidArgumentException When the plugin does not have a routes file.
      */
-    public function loadPlugin($name, $file = 'routes.php')
+    public function loadPlugin($name)
     {
-        if (!Plugin::loaded($name)) {
+        $plugins = Plugin::getCollection();
+        if (!$plugins->has($name)) {
             throw new MissingPluginException(['plugin' => $name]);
         }
+        $plugin = $plugins->get($name);
+        $plugin->routes($this);
 
-        $path = Plugin::configPath($name) . DIRECTORY_SEPARATOR . $file;
-        if (!file_exists($path)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot load routes for the plugin named %s. The %s file does not exist.',
-                $name,
-                $path
-            ));
-        }
-
-        $routes = $this;
-        include $path;
+        // Disable the routes hook to prevent duplicate route issues.
+        $plugin->disable('routes');
     }
 
     /**
@@ -739,7 +732,7 @@ class RouteBuilder
     {
         if (is_string($route)) {
             $routeClass = App::className($options['routeClass'], 'Routing/Route');
-            if ($routeClass === false) {
+            if ($routeClass === null) {
                 throw new InvalidArgumentException(sprintf(
                     'Cannot find route class %s',
                     $options['routeClass']

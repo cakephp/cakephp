@@ -22,7 +22,6 @@ use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
-use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;

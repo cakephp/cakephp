@@ -14,6 +14,8 @@
  */
 namespace Cake\Http;
 
+use Cake\Core\App;
+use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
@@ -95,6 +97,9 @@ abstract class BaseApplication implements
         } else {
             $plugin = $name;
         }
+        if (!$plugin instanceof PluginInterface) {
+            throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
+        }
         $this->plugins->add($plugin);
 
         return $this;
@@ -117,23 +122,22 @@ abstract class BaseApplication implements
      * @param array $config Configuration options for the plugin
      * @return \Cake\Core\PluginInterface
      */
-    public function makePlugin($name, array $config)
+    protected function makePlugin($name, array $config)
     {
-        if (strpos($name, '\\') === false) {
-            $name = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        $className = $name;
+        if (strpos($className, '\\') === false) {
+            $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
         }
-        if (!class_exists($name)) {
-            throw new InvalidArgumentException(
-                "The plugin class `{$name}` cannot be found. " .
-                'Ensure your autoloader is correct.'
-            );
-        }
-        $plugin = new $name($config);
-        if (!$plugin instanceof PluginInterface) {
-            throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
+        if (class_exists($className)) {
+            return new $className($config);
         }
 
-        return $plugin;
+        if (!isset($config['path'])) {
+            $config['path'] = $this->plugins->findPath($name);
+        }
+        $config['name'] = $name;
+
+        return new BasePlugin($config);
     }
 
     /**

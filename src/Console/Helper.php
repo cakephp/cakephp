@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -59,5 +60,5 @@ abstract class Helper
      * @param array $args The arguments for the helper.
      * @return void
      */
-    abstract public function output($args);
+    abstract public function output(array $args);
 }

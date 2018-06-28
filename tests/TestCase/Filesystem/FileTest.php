@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -160,8 +161,10 @@ class FileTest extends TestCase
         // Check name()
         $splInfo = new SplFileInfo($path);
         $File->name = ltrim($splInfo->getFilename(), '/\\');
+        $File->path = $path;
+
         if ($suffix === null) {
-            $File->info();//to set and unset 'extension' in bellow
+            $File->info(); // to set and unset 'extension' in bellow
             unset($File->info['extension']);
 
             $this->assertEquals(basename($path), $File->name());
@@ -474,7 +477,7 @@ class FileTest extends TestCase
     public function testLastAccess()
     {
         $someFile = new File(TMP . 'some_file.txt', false);
-        $this->assertFalse($someFile->lastAccess());
+        $this->assertNull($someFile->lastAccess());
         $this->assertTrue($someFile->open());
         $this->assertWithinRange(time(), $someFile->lastAccess(), 2);
         $someFile->close();
@@ -489,7 +492,7 @@ class FileTest extends TestCase
     public function testLastChange()
     {
         $someFile = new File(TMP . 'some_file.txt', false);
-        $this->assertFalse($someFile->lastChange());
+        $this->assertNull($someFile->lastChange());
         $this->assertTrue($someFile->open('r+'));
         $this->assertWithinRange(time(), $someFile->lastChange(), 2);
 

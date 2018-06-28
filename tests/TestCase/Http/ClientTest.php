@@ -19,6 +19,7 @@ use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * HTTP client test.
@@ -57,6 +58,19 @@ class ClientTest extends TestCase
         foreach ($expected as $key => $val) {
             $this->assertEquals($val, $result[$key]);
         }
+    }
+
+    /**
+     * testAdapterInstanceCheck
+     *
+     * @return void
+     */
+    public function testAdapterInstanceCheck()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Adapter must be an instance of Cake\Http\Client\AdapterInterface');
+
+        new Client(['adapter' => 'stdClass']);
     }
 
     /**
@@ -168,7 +182,7 @@ class ClientTest extends TestCase
     {
         $http = new Client();
 
-        $result = $http->buildUrl($url, $query, $opts);
+        $result = $http->buildUrl($url, $query, (array)$opts);
         $this->assertEquals($expected, $result);
     }
 

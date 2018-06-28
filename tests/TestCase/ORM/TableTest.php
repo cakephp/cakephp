@@ -3088,6 +3088,37 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test saveMany() with failed save due to an exception
+     *
+     * @return void
+     */
+    public function testSaveManyFailedWithException()
+    {
+        $table = $this->getTableLocator()
+            ->get('authors');
+        $entities = [
+            new Entity(['name' => 'mark']),
+            new Entity(['name' => 'jose'])
+        ];
+
+        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, Entity $entity) {
+            if ($entity->name === 'jose') {
+                throw new \Exception('Oh noes');
+            }
+        });
+
+        $this->expectException(\Exception::class);
+
+        try {
+            $table->saveMany($entities);
+        } finally {
+            foreach ($entities as $entity) {
+                $this->assertTrue($entity->isNew());
+            }
+        }
+    }
+
+    /**
      * Test simple delete.
      *
      * @return void
@@ -3385,6 +3416,8 @@ class TableTest extends TestCase
             ->method('dispatch')
             ->will($this->returnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
+
+                return $event;
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
@@ -3409,6 +3442,8 @@ class TableTest extends TestCase
             ->will($this->returnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
                 $event->setResult('got stopped');
+
+                return $event;
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);

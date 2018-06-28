@@ -458,14 +458,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      *  passed as an array of strings, array of expression objects, or a single string. See
      *  the examples above for the valid call types.
      * @param bool $overwrite whether to reset tables with passed list or not
-     * @return $this|array
+     * @return $this
      */
     public function from($tables = [], $overwrite = false)
     {
-        if (empty($tables)) {
-            return $this->_parts['from'];
-        }
-
         $tables = (array)$tables;
 
         if ($overwrite) {
@@ -563,14 +559,10 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
      * @see \Cake\Database\Type
-     * @return $this|array
+     * @return $this
      */
     public function join($tables = null, $types = [], $overwrite = false)
     {
-        if ($tables === null) {
-            return $this->_parts['join'];
-        }
-
         if (is_string($tables) || isset($tables['table'])) {
             $tables = [$tables];
         }

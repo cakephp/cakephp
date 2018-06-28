@@ -16,7 +16,6 @@ namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
-use Cake\Validation\Validator;
 
 /**
  * Provides a basic array based context provider for FormHelper.
@@ -166,7 +165,7 @@ class ArrayContext implements ContextInterface
      *      context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
-    public function val($field, $options = [])
+    public function val($field, array $options = [])
     {
         $options += [
             'default' => null,

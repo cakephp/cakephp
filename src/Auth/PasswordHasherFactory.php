@@ -46,7 +46,7 @@ class PasswordHasherFactory
         }
 
         $className = App::className($class, 'Auth', 'PasswordHasher');
-        if ($className === false) {
+        if ($className === null) {
             throw new RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
         }
 

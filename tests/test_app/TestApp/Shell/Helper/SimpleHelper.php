@@ -5,7 +5,7 @@ use Cake\Console\Helper;
 
 class SimpleHelper extends Helper
 {
-    public function output($args)
+    public function output(array $args)
     {
         $this->_io->out('It works!' . implode(' ', $args));
     }

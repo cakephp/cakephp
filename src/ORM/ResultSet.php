@@ -342,7 +342,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if ($this->_count !== null) {
             return $this->_count;

@@ -15,7 +15,6 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\Uri;
 
 /**
  * HTTP request test.

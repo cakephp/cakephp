@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * HelpFormatterTest file
  *
@@ -306,20 +307,6 @@ xml;
         $result = $formatter->text();
         $expected = 'foo mycommand [-h]';
         $this->assertContains($expected, $result);
-    }
-
-    /**
-     * Tests that setting a none string help alias triggers an exception
-     *
-     * @return void
-     */
-    public function testWithNoneStringHelpAlias()
-    {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
-        $this->expectExceptionMessage('Alias must be of type string.');
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $formatter = new HelpFormatter($parser);
-        $formatter->setAlias(['foo']);
     }
 
     /**

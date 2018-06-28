@@ -17,8 +17,9 @@ namespace Cake\View;
 use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -33,69 +34,50 @@ use ReflectionMethod;
 /**
  * Cell base.
  */
-abstract class Cell
+abstract class Cell implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;
     use ViewVarsTrait;
 
     /**
-     * Name of the template that will be rendered.
-     * This property is inflected from the action name that was invoked.
+     * Instance of the View created during rendering. Won't be set until after
+     * Cell::__toString()/render() is called.
      *
-     * @var string
+     * @var \Cake\View\View
      */
-    public $template;
-
-    /**
-     * Automatically set to the name of a plugin.
-     *
-     * @var string
-     */
-    public $plugin;
+    protected $View;
 
     /**
      * An instance of a Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
      *
-     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      * @var \Cake\Http\ServerRequest
      */
-    public $request;
+    protected $request;
 
     /**
      * An instance of a Response object that contains information about the impending response
      *
-     * @deprecated 3.7.0 The property will become protected in 4.0.0.
      * @var \Cake\Http\Response
      */
-    public $response;
-
-    /**
-     * The helpers this cell uses.
-     *
-     * This property is copied automatically when using the CellTrait
-     *
-     * @var array
-     */
-    public $helpers = [];
+    protected $response;
 
     /**
      * The cell's action to invoke.
      *
      * @var string
      */
-    public $action;
+    protected $action;
 
     /**
      * Arguments to pass to cell's action.
      *
      * @var array
      */
-    public $args = [];
+    protected $args = [];
 
     /**
      * These properties can be set directly on Cell and passed to the View as options.
@@ -128,13 +110,13 @@ abstract class Cell
      *
      * @param \Cake\Http\ServerRequest|null $request The request to use in the cell.
      * @param \Cake\Http\Response|null $response The response to use in the cell.
-     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
         ServerRequest $request = null,
         Response $response = null,
-        EventManager $eventManager = null,
+        EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
         if ($eventManager !== null) {
@@ -196,7 +178,7 @@ abstract class Cell
                 ));
             }
 
-            $builder = $this->viewBuilder();
+            $builder = $this->viewBuilder()->setLayout(false);
 
             if ($template !== null &&
                 strpos($template, '/') === false &&
@@ -204,11 +186,9 @@ abstract class Cell
             ) {
                 $template = Inflector::underscore($template);
             }
-            if ($template === null) {
-                $template = $builder->getTemplate() ?: $this->template;
+            if ($template !== null) {
+                $builder->setTemplate($template);
             }
-            $builder->setLayout(false)
-                ->setTemplate($template);
 
             $className = get_class($this);
             $namePrefix = '\View\Cell\\';
@@ -293,12 +273,11 @@ abstract class Cell
     public function __debugInfo()
     {
         return [
-            'plugin' => $this->plugin,
             'action' => $this->action,
             'args' => $this->args,
-            'template' => $this->template,
             'request' => $this->request,
             'response' => $this->response,
+            'viewBuilder' => $this->viewBuilder(),
         ];
     }
 }

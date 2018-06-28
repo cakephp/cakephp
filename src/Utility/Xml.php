@@ -170,6 +170,51 @@ class Xml
     }
 
     /**
+     * Parse the input html string and create either a SimpleXmlElement object or a DOMDocument.
+     *
+     * @param string $input The input html string to load.
+     * @param array $options The options to use. See Xml::build()
+     * @return \SimpleXMLElement|\DOMDocument
+     * @throws \Cake\Utility\Exception\XmlException
+     */
+    public static function loadHtml($input, $options = [])
+    {
+        $defaults = [
+            'return' => 'simplexml',
+            'loadEntities' => false,
+        ];
+        $options += $defaults;
+
+        $hasDisable = function_exists('libxml_disable_entity_loader');
+        $internalErrors = libxml_use_internal_errors(true);
+        if ($hasDisable && !$options['loadEntities']) {
+            libxml_disable_entity_loader(true);
+        }
+        $flags = 0;
+        if (!empty($options['parseHuge'])) {
+            $flags |= LIBXML_PARSEHUGE;
+        }
+        try {
+            $xml = new DOMDocument();
+            $xml->loadHTML($input, $flags);
+
+            if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                $flags |= LIBXML_NOCDATA;
+                $xml = simplexml_import_dom($xml);
+            }
+
+            return $xml;
+        } catch (Exception $e) {
+            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } finally {
+            if ($hasDisable && !$options['loadEntities']) {
+                libxml_disable_entity_loader(false);
+            }
+            libxml_use_internal_errors($internalErrors);
+        }
+    }
+
+    /**
      * Transform an array into a SimpleXMLElement
      *
      * ### Options
@@ -203,11 +248,11 @@ class Xml
      * `<root><tag id="1" value="defect">description</tag></root>`
      *
      * @param array|\Cake\Collection\Collection $input Array with data or a collection instance.
-     * @param string|array $options The options to use or a string to use as format.
+     * @param array $options The options to use.
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function fromArray($input, $options = [])
+    public static function fromArray($input, array $options = [])
     {
         if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
             $input = call_user_func([$input, 'toArray']);
@@ -220,9 +265,6 @@ class Xml
             throw new XmlException('The key of input must be alphanumeric');
         }
 
-        if (!is_array($options)) {
-            $options = ['format' => (string)$options];
-        }
         $defaults = [
             'format' => 'tags',
             'version' => '1.0',

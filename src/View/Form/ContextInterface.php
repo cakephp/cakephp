@@ -16,8 +16,6 @@ namespace Cake\View\Form;
 
 /**
  * Interface for FormHelper context implementations.
- *
- * @method string|null getRequiredMessage($field) Gets the default "required" error message for a field
  */
 interface ContextInterface
 {
@@ -71,6 +69,14 @@ interface ContextInterface
      * @return bool
      */
     public function isRequired($field);
+
+    /**
+     * Gets the default "required" error message for a field
+     *
+     * @param string $field A dot separated path to the field name
+     * @return string|null
+     */
+    public function getRequiredMessage($field);
 
     /**
      * Get the fieldnames of the top level object in this context.

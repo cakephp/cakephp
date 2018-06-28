@@ -96,7 +96,6 @@ class Plugin
      *
      * - `bootstrap` - array - Whether or not you want the $plugin/config/bootstrap.php file loaded.
      * - `routes` - boolean - Whether or not you want to load the $plugin/config/routes.php file.
-     * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
      * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
      * - `classBase` - The path relative to `path` which contains the folders with class files.
      *    Defaults to "src".
@@ -120,35 +119,17 @@ class Plugin
             return;
         }
 
-        static::_loadConfig();
-
         $config += [
             'autoload' => false,
             'bootstrap' => false,
             'routes' => false,
             'console' => true,
             'classBase' => 'src',
-            'ignoreMissing' => false,
             'name' => $plugin
         ];
 
         if (!isset($config['path'])) {
-            $config['path'] = Configure::read('plugins.' . $plugin);
-        }
-
-        if (empty($config['path'])) {
-            $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
-            foreach ($paths as $path) {
-                if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
-                    break;
-                }
-            }
-        }
-
-        if (empty($config['path'])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
+            $config['path'] = static::getCollection()->findPath($plugin);
         }
 
         $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
@@ -185,30 +166,6 @@ class Plugin
     }
 
     /**
-     * Load the plugin path configuration file.
-     *
-     * @return void
-     */
-    protected static function _loadConfig()
-    {
-        if (Configure::check('plugins')) {
-            return;
-        }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-        if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (!file_exists($vendorFile)) {
-                Configure::write(['plugins' => []]);
-
-                return;
-            }
-        }
-
-        $config = require $vendorFile;
-        Configure::write($config);
-    }
-
-    /**
      * Will load all the plugins located in the default plugin folder.
      *
      * If passed an options array, it will be used as a common default for all plugins to be loaded
@@ -232,7 +189,6 @@ class Plugin
      */
     public static function loadAll(array $options = [])
     {
-        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {

@@ -16,13 +16,11 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Log\Log;
 use DateTime;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -1125,7 +1123,7 @@ class Response implements ResponseInterface
      * @return static
      * @since 3.6.0
      */
-    public function withAddedLink($url, $options = [])
+    public function withAddedLink($url, array $options = [])
     {
         $params = [];
         foreach ($options as $key => $option) {
@@ -1196,7 +1194,7 @@ class Response implements ResponseInterface
     /**
      * Create a new response with a cookie set.
      *
-     * ### Options
+     * ### Data
      *
      * - `value`: Value of the cookie
      * - `expire`: Time the cookie expires in
@@ -1227,6 +1225,11 @@ class Response implements ResponseInterface
         if ($name instanceof Cookie) {
             $cookie = $name;
         } else {
+            deprecationWarning(
+                get_called_class() . '::withCookie(string $name, array $data) is deprecated. ' .
+                'Pass an instance of \Cake\Http\Cookie\Cookie instead.'
+            );
+
             if (!is_array($data)) {
                 $data = ['value' => $data];
             }
@@ -1283,11 +1286,16 @@ class Response implements ResponseInterface
      * @param array $options An array of cookie options.
      * @return static
      */
-    public function withExpiredCookie($name, $options = [])
+    public function withExpiredCookie($name, array $options = [])
     {
         if ($name instanceof CookieInterface) {
             $cookie = $name->withExpired();
         } else {
+            deprecationWarning(
+                get_called_class() . '::withExpiredCookie(string $name, array $data) is deprecated. ' .
+                'Pass an instance of \Cake\Http\Cookie\Cookie instead.'
+            );
+
             $options += [
                 'path' => '/',
                 'domain' => '',

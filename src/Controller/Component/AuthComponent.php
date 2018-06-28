@@ -19,6 +19,7 @@ use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
@@ -36,7 +37,7 @@ use Cake\Utility\Hash;
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html
  */
-class AuthComponent extends Component
+class AuthComponent extends Component implements EventDispatcherInterface
 {
 
     use EventDispatcherTrait;
@@ -300,7 +301,7 @@ class AuthComponent extends Component
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Controller.initialize' => 'authCheck',
@@ -525,7 +526,7 @@ class AuthComponent extends Component
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authorize');
-            if (!class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authorize')) {
@@ -817,7 +818,7 @@ class AuthComponent extends Component
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authenticate');
-            if (!class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authenticate')) {
@@ -859,7 +860,7 @@ class AuthComponent extends Component
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if (!class_exists($className)) {
+        if ($className === null || !class_exists($className)) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();

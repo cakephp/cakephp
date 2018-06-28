@@ -65,11 +65,11 @@ class NumberHelper extends Helper
         $config = $this->_config;
 
         $engineClass = App::className($config['engine'], 'Utility');
-        if ($engineClass) {
-            $this->_engine = new $engineClass($config);
-        } else {
+        if ($engineClass === null) {
             throw new Exception(sprintf('Class for %s could not be found', $config['engine']));
         }
+
+        $this->_engine = new $engineClass($config);
     }
 
     /**
@@ -229,7 +229,7 @@ class NumberHelper extends Helper
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

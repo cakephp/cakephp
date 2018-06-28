@@ -14,6 +14,7 @@
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
+use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
@@ -24,7 +25,7 @@ use Cake\Http\Exception\HttpException;
  *
  * This approach and implementation is partly inspired by Aura.Http
  */
-class Stream
+class Stream implements AdapterInterface
 {
 
     /**
@@ -63,11 +64,7 @@ class Stream
     protected $_connectionErrors = [];
 
     /**
-     * Send a request and get a response back.
-     *
-     * @param \Cake\Http\Client\Request $request The request object to send.
-     * @param array $options Array of options for the stream.
-     * @return array Array of populated Response objects
+     * {@inheritDoc}
      */
     public function send(Request $request, array $options)
     {

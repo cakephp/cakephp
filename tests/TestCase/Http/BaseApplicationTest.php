@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\BaseApplication;
@@ -22,9 +23,9 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -69,20 +70,40 @@ class BaseApplicationTest extends TestCase
             'pass' => []
         ]);
 
-        $app = $this->getMockForAbstractClass('Cake\Http\BaseApplication', [$this->path]);
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $result = $app($request, $response, $next);
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertEquals('Hello Jane', '' . $result->getBody());
     }
 
+    /**
+     * Ensure that plugins with no plugin class can be loaded.
+     * This makes adopting the new API easier
+     */
     public function testAddPluginUnknownClass()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('cannot be found');
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $app->addPlugin('SomethingBad');
+        $app->addPlugin('PluginJs');
+        $plugin = $app->getPlugins()->get('PluginJs');
+        $this->assertInstanceOf(BasePlugin::class, $plugin);
+
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS,
+            $plugin->getPath()
+        );
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'config' . DS,
+            $plugin->getConfigPath()
+        );
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src' . DS,
+            $plugin->getClassPath()
+        );
     }
 
+    /**
+     * Ensure that plugin interfaces are implemented.
+     */
     public function testAddPluginBadClass()
     {
         $this->expectException(InvalidArgumentException::class);
