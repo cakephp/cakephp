@@ -148,6 +148,28 @@ class PluginCollectionTest extends TestCase
         $this->assertEquals(TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS, $path);
     }
 
+    public function testFindPathLoadsConfigureData()
+    {
+        $configPath = ROOT . DS . 'cakephp-plugins.php';
+        $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
+        $file = <<<PHP
+<?php
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path'
+    ]
+];
+PHP;
+        file_put_contents($configPath, $file);
+
+        Configure::delete('plugins');
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+        unlink($configPath);
+
+        $this->assertEquals('/config/path', $path);
+    }
+
     public function testFindPathConfigureData()
     {
         Configure::write('plugins', ['TestPlugin' => '/some/path']);
