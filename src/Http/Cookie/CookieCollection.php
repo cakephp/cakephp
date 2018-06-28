@@ -371,7 +371,7 @@ class CookieCollection implements IteratorAggregate, Countable
             }
             $expires = null;
             if ($cookie['max-age'] !== null) {
-                $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
+                $expires = new DateTimeImmutable('@' . (time() + (int)$cookie['max-age']));
             } elseif ($cookie['expires']) {
                 $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
             }

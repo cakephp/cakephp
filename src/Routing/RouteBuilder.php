@@ -752,7 +752,7 @@ class RouteBuilder
      * Parse the defaults if they're a string
      *
      * @param string|array $defaults Defaults array from the connect() method.
-     * @return string|array
+     * @return array
      */
     protected static function parseDefaults($defaults)
     {

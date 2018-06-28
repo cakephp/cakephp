@@ -134,6 +134,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $controller = null;
 
         try {
+            /** @var string $class */
             $class = App::className('Error', 'Controller', 'Controller');
             /* @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);

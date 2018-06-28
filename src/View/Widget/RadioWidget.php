@@ -150,7 +150,7 @@ class RadioWidget implements WidgetInterface
     protected function _renderInput($val, $text, $data, $context)
     {
         $escape = $data['escape'];
-        if (is_int($val) && isset($text['text'], $text['value'])) {
+        if (is_int($val) && is_array($text) && isset($text['text'], $text['value'])) {
             $radio = $text;
         } else {
             $radio = ['value' => $val, 'text' => $text];

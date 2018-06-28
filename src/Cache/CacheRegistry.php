@@ -72,12 +72,11 @@ class CacheRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $config)
     {
+        unset($config['className']);
+
         if (is_object($class)) {
             $instance = $class;
-        }
-
-        unset($config['className']);
-        if (!isset($instance)) {
+        } else {
             $instance = new $class($config);
         }
 

@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<psalm
+    totallyTyped="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="vendor/vimeo/psalm/src/config.xsd"
+    autoloader="tests/bootstrap.php"
+>
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="src/TestSuite" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <LessSpecificReturnType errorLevel="info" />
+
+        <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
+
+        <DeprecatedMethod errorLevel="info" />
+        <DeprecatedProperty errorLevel="info" />
+        <DeprecatedClass errorLevel="info" />
+
+        <MissingClosureReturnType errorLevel="info" />
+        <MissingReturnType errorLevel="info" />
+        <MissingPropertyType errorLevel="info" />
+        <InvalidDocblock errorLevel="info" />
+        <MisplacedRequiredParam errorLevel="info" />
+
+        <PropertyNotSetInConstructor errorLevel="info" />
+        <MissingConstructor errorLevel="info" />
+        <MissingClosureParamType errorLevel="info" />
+        <MissingParamType errorLevel="info" />
+
+        <DocblockTypeContradiction errorLevel="info" />
+        <RedundantConditionGivenDocblockType errorLevel="info" />
+
+        <UnresolvableInclude errorLevel="info" />
+
+        <RawObjectIteration errorLevel="info" />
+
+        <!-- level 4 issues - points to possible deficiencies in logic, higher false-positives -->
+
+        <MoreSpecificReturnType errorLevel="info" />
+        <LessSpecificReturnStatement errorLevel="info" />
+        <TypeCoercion errorLevel="info" />
+        <RedundantCondition errorLevel="info" />
+
+        <PossiblyFalseArgument errorLevel="info" />
+        <PossiblyFalseIterator errorLevel="info" />
+        <PossiblyFalseOperand errorLevel="info" />
+        <PossiblyFalsePropertyAssignmentValue errorLevel="info" />
+        <PossiblyFalseReference errorLevel="info" />
+        <PossiblyInvalidArgument errorLevel="info" />
+        <PossiblyInvalidArrayAccess errorLevel="info" />
+        <PossiblyInvalidArrayAssignment errorLevel="info" />
+        <PossiblyInvalidArrayOffset errorLevel="info" />
+        <PossiblyInvalidFunctionCall errorLevel="info" />
+        <PossiblyInvalidIterator errorLevel="info" />
+        <PossiblyInvalidMethodCall errorLevel="info" />
+        <PossiblyInvalidOperand errorLevel="info" />
+        <PossiblyInvalidPropertyAssignment errorLevel="info" />
+        <PossiblyInvalidPropertyAssignmentValue errorLevel="info" />
+        <PossiblyInvalidPropertyFetch errorLevel="info" />
+        <PossiblyNullArgument errorLevel="info" />
+        <PossiblyNullArrayAccess errorLevel="info" />
+        <PossiblyNullArrayAssignment errorLevel="info" />
+        <PossiblyNullArrayOffset errorLevel="info" />
+        <PossiblyNullFunctionCall errorLevel="info" />
+        <PossiblyNullIterator errorLevel="info" />
+        <PossiblyNullOperand errorLevel="info" />
+        <PossiblyNullPropertyAssignment errorLevel="info" />
+        <PossiblyNullPropertyAssignmentValue errorLevel="info" />
+        <PossiblyNullPropertyFetch errorLevel="info" />
+        <PossiblyNullReference errorLevel="info" />
+        <PossiblyUndefinedGlobalVariable errorLevel="info" />
+        <PossiblyUndefinedVariable errorLevel="info" />
+        <PossiblyUndefinedMethod errorLevel="info" />
+
+        <!-- level 5 issues - should be avoided at mosts costs... -->
+
+        <ForbiddenCode errorLevel="info" />
+        <ImplicitToStringCast errorLevel="info" />
+        <InvalidScalarArgument errorLevel="info" />
+        <InvalidToString errorLevel="info" />
+        <MethodSignatureMismatch errorLevel="info" />
+        <NoInterfaceProperties errorLevel="info" />
+        <TooManyArguments errorLevel="info" />
+        <TypeDoesNotContainType errorLevel="info" />
+        <TypeDoesNotContainNull errorLevel="info" />
+
+        <!-- level 6 issues - really bad things -->
+
+        <InvalidNullableReturnType errorLevel="info" />
+        <NullableReturnStatement errorLevel="info" />
+        <InvalidFalsableReturnType errorLevel="info" />
+        <FalsableReturnStatement errorLevel="info" />
+
+        <ImplementedReturnTypeMismatch errorLevel="info" />
+
+        <MoreSpecificImplementedParamType errorLevel="info" />
+        <MoreSpecificImplementedReturnType errorLevel="info" />
+
+        <LoopInvalidation errorLevel="info" />
+
+        <!-- level 7 issues - even worse things -->
+
+        <UndefinedThisPropertyAssignment errorLevel="info" />
+        <UndefinedPropertyAssignment errorLevel="info" />
+        <UndefinedThisPropertyFetch errorLevel="info" />
+        <UndefinedPropertyFetch errorLevel="info" />
+
+        <InvalidReturnStatement errorLevel="info" />
+        <InvalidReturnType errorLevel="info" />
+        <InvalidArgument errorLevel="info" />
+
+        <ReservedWord errorLevel="info" />
+
+        <!-- CakePHP-specific -->
+
+        <EmptyArrayAccess errorLevel="suppress" />
+
+        <UndefinedMethod>
+            <errorLevel type="suppress">
+                <referencedMethod name="Cake\Datasource\EntityInterface::setAccess" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::setDirty" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::isDirty" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::setErrors" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::getErrors" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::getError" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::setSource" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::getHidden" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::setHidden" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::setError" />
+                <referencedMethod name="Cake\Datasource\EntityInterface::extractOriginalChanged" />
+                <referencedMethod name="Cake\Datasource\InvalidPropertyInterface::setInvalidField" />
+                <referencedMethod name="Cake\Database\TypedResultInterface::getReturnType" />
+                <referencedMethod name="Cake\Datasource\QueryInterface::andWhere" />
+                <referencedMethod name="Cake\Datasource\QueryInterface::getRepository" />
+                <referencedMethod name="Cake\Datasource\RepositoryInterface::getAlias" />
+                <referencedMethod name="Cake\Core\PluginApplicationInterface::getEventManager" />
+                <referencedMethod name="Cake\Core\PluginApplicationInterface::setEventManager" />
+                <referencedMethod name="Cake\Event\EventDispatcherInterface::getEventManager" />
+                <referencedMethod name="Cake\Auth\Storage\StorageInterface::getConfig" />
+                <referencedMethod name="Cake\Auth\Storage\StorageInterface::setConfig" />
+                <referencedMethod name="DateTimeInterface::i18nFormat" />
+                <referencedMethod name="Cake\Console\Shell::main" />
+                <referencedMethod name="Cake\Controller\Controller::isAuthorized" />
+                <referencedMethod name="Traversable::getInnerIterator" />
+            </errorLevel>
+        </UndefinedMethod>
+
+        <UndefinedFunction>
+            <errorLevel type="suppress">
+                <file name="src/Cache/Engine/XcacheEngine.php" />
+            </errorLevel>
+        </UndefinedFunction>
+
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Cake\View\Widget\WidgetRegistry" />
+                <referencedClass name="Cake\Database\Schema\Table" />
+                <file name="src/Cache/Engine/RedisEngine.php" />
+            </errorLevel>
+        </UndefinedClass>
+
+        <InvalidOperand>
+            <errorLevel type="suppress">
+                <file name="src/I18n/RelativeTimeFormatter.php" />
+            </errorLevel>
+        </InvalidOperand>
+
+        <UndefinedConstant>
+            <errorLevel type="suppress">
+                <file name="src/Database/Driver/Sqlserver.php" />
+                <file name="src/Database/Statement/SqlserverStatement.php" />
+                <file name="src/Utility/Crypto/Mcrypt.php" />
+                <file name="src/Cache/Engine/XcacheEngine.php" />
+            </errorLevel>
+        </UndefinedConstant>
+
+        <InvalidCast>
+            <errorLevel type="suppress">
+                <file name="src/Core/functions.php" />
+            </errorLevel>
+        </InvalidCast>
+
+        <InvalidPropertyAssignmentValue>
+            <errorLevel type="suppress">
+                <file name="src/Controller/Component/CookieComponent.php" />
+            </errorLevel>
+        </InvalidPropertyAssignmentValue>
+
+        <InvalidArrayOffset>
+            <errorLevel type="suppress">
+                <file name="src/I18n/Parser/MoFileParser.php" />
+            </errorLevel>
+        </InvalidArrayOffset>
+
+    </issueHandlers>
+</psalm>

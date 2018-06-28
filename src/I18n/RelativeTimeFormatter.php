@@ -192,6 +192,7 @@ class RelativeTimeFormatter
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
+            $future = $past = [];
             list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
             list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));

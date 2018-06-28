@@ -68,6 +68,8 @@ class PoFileParser
      * @param string $resource The file name to parse
      *
      * @return array
+     *
+     * @psalm-suppress InvalidArrayOffset
      */
     public function parse($resource)
     {

@@ -78,7 +78,7 @@ class LoggingStatement extends StatementDecorator
      */
     protected function _log($query, $params, $startTime)
     {
-        $query->took = round((microtime(true) - $startTime) * 1000, 0);
+        $query->took = (int)round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
         $query->query = $this->queryString;
         $this->getLogger()->log($query);

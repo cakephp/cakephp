@@ -405,6 +405,8 @@ trait DateFormatTrait
      *
      * @param \Cake\I18n\RelativeTimeFormatter|null $formatter The formatter instance when setting.
      * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
+     *
+     * @psalm-suppress InvalidPropertyAssignmentValue
      */
     public static function diffFormatter($formatter = null)
     {

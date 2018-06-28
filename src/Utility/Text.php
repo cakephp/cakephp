@@ -561,6 +561,7 @@ class Text
      * @param string $text String to truncate.
      * @param int $length Length of returned string, including ellipsis.
      * @param array $options An array of options.
+     * @psalm-param array{ellipsis?: string, exact?: bool} $options
      * @return string Trimmed string.
      */
     public static function tail($text, $length = 100, array $options = [])
@@ -569,8 +570,8 @@ class Text
             'ellipsis' => '...', 'exact' => true
         ];
         $options += $default;
-        $exact = $ellipsis = null;
-        extract($options);
+        $ellipsis = $options['ellipsis'];
+        $exact = $options['exact'];
 
         if (mb_strlen($text) <= $length) {
             return $text;
@@ -1041,7 +1042,7 @@ class Text
             $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P']);
         }
         if ($i !== false) {
-            $size = substr($size, 0, $l);
+            $size = (float)substr($size, 0, $l);
 
             return $size * pow(1024, $i + 1);
         }
