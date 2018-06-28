@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -97,7 +98,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @param string $name The logger name.
      * @return void
      */
-    public function unload($name)
+    public function unload($name): void
     {
         unset($this->_loaded[$name]);
     }
