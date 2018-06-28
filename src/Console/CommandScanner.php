@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -33,7 +34,7 @@ class CommandScanner
      *
      * @return array A list of command metadata.
      */
-    public function scanCore()
+    public function scanCore(): array
     {
         $coreShells = $this->scanDir(
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Shell' . DIRECTORY_SEPARATOR,
@@ -56,7 +57,7 @@ class CommandScanner
      *
      * @return array A list of command metadata.
      */
-    public function scanApp()
+    public function scanApp(): array
     {
         $appNamespace = Configure::read('App.namespace');
         $appShells = $this->scanDir(
@@ -81,7 +82,7 @@ class CommandScanner
      * @param string $plugin The named plugin.
      * @return array A list of command metadata.
      */
-    public function scanPlugin($plugin)
+    public function scanPlugin(string $plugin): array
     {
         if (!Plugin::loaded($plugin)) {
             return [];
@@ -106,7 +107,7 @@ class CommandScanner
      * @param array $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
      */
-    protected function scanDir($path, $namespace, $prefix, array $hide)
+    protected function scanDir(string $path, string $namespace, string $prefix, array $hide): array
     {
         $dir = new Folder($path);
         $contents = $dir->read(true, true);

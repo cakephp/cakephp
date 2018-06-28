@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -54,7 +55,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string|\Cake\Console\Shell|\Cake\Console\Command $command The command to map.
      * @return $this
      */
-    public function add($name, $command)
+    public function add(string $name, $command): self
     {
         // Once we have a new Command class this should check
         // against that interface.
@@ -77,7 +78,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Console\CommandCollection::add()
      */
-    public function addMany(array $commands)
+    public function addMany(array $commands): self
     {
         foreach ($commands as $name => $class) {
             $this->add($name, $class);
@@ -92,7 +93,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $name The named shell.
      * @return $this
      */
-    public function remove($name)
+    public function remove(string $name): self
     {
         unset($this->commands[$name]);
 
@@ -105,7 +106,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $name The named shell.
      * @return bool
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return isset($this->commands[$name]);
     }
@@ -114,10 +115,10 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-     * @return string|\Cake\Console\Shell Either the shell class or an instance.
+     * @return string|\Cake\Console\Command Either the command class or an instance.
      * @throws \InvalidArgumentException when unknown commands are fetched.
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (!$this->has($name)) {
             throw new InvalidArgumentException("The $name is not a known command name.");
@@ -143,7 +144,7 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->commands);
     }
@@ -159,7 +160,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $plugin The plugin to scan.
      * @return array Discovered plugin commands.
      */
-    public function discoverPlugin($plugin)
+    public function discoverPlugin($plugin): array
     {
         $scanner = new CommandScanner();
         $shells = $scanner->scanPlugin($plugin);
@@ -173,7 +174,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param array $input The results of a CommandScanner operation.
      * @return array A flat map of command names => class names.
      */
-    protected function resolveNames(array $input)
+    protected function resolveNames(array $input): array
     {
         $out = [];
         foreach ($input as $info) {
@@ -210,7 +211,7 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @return array An array of command names and their classes.
      */
-    public function autoDiscover()
+    public function autoDiscover(): array
     {
         $scanner = new CommandScanner();
 

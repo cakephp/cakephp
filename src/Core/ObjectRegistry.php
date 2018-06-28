@@ -90,7 +90,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
 
         $className = $this->_resolveClassName($objectName);
-        if ($className === false || (is_string($className) && !class_exists($className))) {
+        if ($className === null || (is_string($className) && !class_exists($className))) {
             list($plugin, $objectName) = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }

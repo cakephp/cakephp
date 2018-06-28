@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -63,7 +64,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * @throws \Exception When renderer class not found
      * @see https://secure.php.net/manual/en/function.set-exception-handler.php
      */
-    public function handleException(Exception $exception)
+    public function handleException(Exception $exception): void
     {
         $this->_displayException($exception);
         $this->_logException($exception);
@@ -78,7 +79,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * @param \Exception $exception The exception to handle
      * @return void
      */
-    protected function _displayException($exception)
+    protected function _displayException($exception): void
     {
         $errorName = 'Exception:';
         if ($exception instanceof FatalErrorException) {
@@ -130,7 +131,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * @param int $code The exit code.
      * @return void
      */
-    protected function _stop($code)
+    protected function _stop($code): void
     {
         exit($code);
     }

@@ -715,10 +715,10 @@ trait EntityTrait
      *
      * @param string $property the field to set or check status for
      * @param bool $isDirty true means the property was changed, false means
-     * it was not changed
+     * it was not changed. Defaults to true.
      * @return $this
      */
-    public function setDirty($property, $isDirty)
+    public function setDirty($property, $isDirty = true)
     {
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
@@ -844,7 +844,7 @@ trait EntityTrait
      *
      * ```
      * // Sets the error messages for multiple fields at once
-     * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']);
+     * $entity->setErrors(['salary' => ['message'], 'name' => ['another message']]);
      * ```
      *
      * @param array $fields The array of errors to set.
@@ -853,11 +853,27 @@ trait EntityTrait
      */
     public function setErrors(array $fields, $overwrite = false)
     {
+        if ($overwrite) {
+            foreach ($fields as $f => $error) {
+                $this->_errors[$f] = (array)$error;
+            }
+
+            return $this;
+        }
+
         foreach ($fields as $f => $error) {
             $this->_errors += [$f => []];
-            $this->_errors[$f] = $overwrite ?
-                (array)$error :
-                array_merge($this->_errors[$f], (array)$error);
+
+            // String messages are appended to the list,
+            // while more complex error structures need their
+            // keys perserved for nested validator.
+            if (is_string($error)) {
+                $this->_errors[$f][] = $error;
+            } else {
+                foreach ($error as $k => $v) {
+                    $this->_errors[$f][$k] = $v;
+                }
+            }
         }
 
         return $this;

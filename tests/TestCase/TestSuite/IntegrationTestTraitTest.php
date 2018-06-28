@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Event\EventManager;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
@@ -61,6 +62,8 @@ class IntegrationTestTraitTest extends IntegrationTestCase
             $routes->options('/options/:controller/:action', []);
             $routes->connect('/:controller/:action/*', []);
         });
+
+        $this->configApplication(Configure::read('App.namespace') . '\Application', null);
     }
 
     /**
@@ -255,6 +258,23 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
         $request = $this->_buildRequest('/tasks/view', 'GET', []);
         $this->assertStringStartsWith('Q2FrZQ==.', $request['cookies']['KeyOfCookie']);
+    }
+
+    /**
+     * Test sending get request and using default `test_app/config/routes.php`.
+     *
+     * @return void
+     */
+    public function testGetUsingApplicationWithPluginRoutes()
+    {
+        // first clean routes to have Router::$initailized === false
+        Router::reload();
+        Plugin::unload();
+
+        $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithPluginRoutes', null);
+
+        $this->get('/test_plugin');
+        $this->assertResponseOk();
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -61,7 +62,7 @@ class Arguments
      *
      * @return string[]
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->args;
     }
@@ -72,7 +73,7 @@ class Arguments
      * @param int $index The argument index to access.
      * @return string|null The argument value or null
      */
-    public function getArgumentAt($index)
+    public function getArgumentAt(int $index)
     {
         if ($this->hasArgumentAt($index)) {
             return $this->args[$index];
@@ -87,7 +88,7 @@ class Arguments
      * @param int $index The argument index to check.
      * @return bool
      */
-    public function hasArgumentAt($index)
+    public function hasArgumentAt(int $index): bool
     {
         return isset($this->args[$index]);
     }
@@ -98,7 +99,7 @@ class Arguments
      * @param string $name The argument name to check.
      * @return bool
      */
-    public function hasArgument($name)
+    public function hasArgument(string $name): bool
     {
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false) {
@@ -114,7 +115,7 @@ class Arguments
      * @param string $name The argument name to check.
      * @return string|null
      */
-    public function getArgument($name)
+    public function getArgument(string $name)
     {
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false) {
@@ -129,7 +130,7 @@ class Arguments
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
@@ -140,7 +141,7 @@ class Arguments
      * @param string $name The name of the option to check.
      * @return string|int|bool|null The option value or null.
      */
-    public function getOption($name)
+    public function getOption(string $name)
     {
         if (isset($this->options[$name])) {
             return $this->options[$name];
@@ -155,7 +156,7 @@ class Arguments
      * @param string $name The name of the option to check.
      * @return bool
      */
-    public function hasOption($name)
+    public function hasOption(string $name): bool
     {
         return isset($this->options[$name]);
     }

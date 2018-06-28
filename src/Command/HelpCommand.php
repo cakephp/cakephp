@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -38,7 +39,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function setCommandCollection(CommandCollection $commands)
+    public function setCommandCollection(CommandCollection $commands): void
     {
         $this->commands = $commands;
     }
@@ -50,7 +51,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int
     {
         if (!$args->getOption('xml')) {
             $io->out('<info>Current Paths:</info>', 2);
@@ -82,10 +83,13 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \ArrayIterator $commands The command collection to output.
      * @return void
      */
-    protected function asText($io, $commands)
+    protected function asText($io, $commands): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
+            if (is_object($class)) {
+                $class = get_class($class);
+            }
             if (!isset($invert[$class])) {
                 $invert[$class] = [];
             }
@@ -93,6 +97,9 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         }
 
         foreach ($commands as $name => $class) {
+            if (is_object($class)) {
+                $class = get_class($class);
+            }
             if (count($invert[$class]) == 1) {
                 $io->out('- ' . $name);
             }
@@ -121,10 +128,13 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \ArrayIterator $commands The command collection to output
      * @return void
      */
-    protected function asXml($io, $commands)
+    protected function asXml($io, $commands): void
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
+            if (is_object($class)) {
+                $class = get_class($class);
+            }
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);
             $shell->addAttribute('call_as', $name);
@@ -141,7 +151,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
      * @return \Cake\Console\ConsoleOptionParser
      */
-    protected function buildOptionParser(ConsoleOptionParser $parser)
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
             'Get the list of available shells for this application.'
