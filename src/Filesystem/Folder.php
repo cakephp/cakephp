@@ -168,7 +168,7 @@ class Folder
      * Change directory to $path.
      *
      * @param string $path Path to the directory to change to
-     * @return string|bool The new path. Returns null on failure
+     * @return string|null The new path. Returns null on failure
      */
     public function cd(string $path): ?string
     {
@@ -435,7 +435,7 @@ class Folder
      * Change the mode on a directory structure recursively. This includes changing the mode on files as well.
      *
      * @param string $path The path to chmod.
-     * @param int|bool $mode Octal value, e.g. 0755.
+     * @param int|null $mode Octal value, e.g. 0755.
      * @param bool $recursive Chmod recursively, set to false to only change the current directory.
      * @param array $exceptions Array of files, directories to skip.
      * @return bool Success.
