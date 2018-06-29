@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -118,7 +119,7 @@ class FileLog extends BaseLog
      * @param array $context Additional information about the logged message
      * @return bool success of write.
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): bool
     {
         $message = $this->_format($message, $context);
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
@@ -130,7 +131,7 @@ class FileLog extends BaseLog
         $pathname = $this->_path . $filename;
         $mask = $this->_config['mask'];
         if (!$mask) {
-            return file_put_contents($pathname, $output, FILE_APPEND);
+            return file_put_contents($pathname, $output, FILE_APPEND) > 0;
         }
 
         $exists = file_exists($pathname);
@@ -146,7 +147,7 @@ class FileLog extends BaseLog
             $selfError = false;
         }
 
-        return $result;
+        return $result > 0;
     }
 
     /**
@@ -155,7 +156,7 @@ class FileLog extends BaseLog
      * @param string $level The level of log.
      * @return string File name
      */
-    protected function _getFilename($level)
+    protected function _getFilename(string $level): string
     {
         $debugTypes = ['notice', 'info', 'debug'];
 
@@ -180,7 +181,7 @@ class FileLog extends BaseLog
      * @return bool|null True if rotated successfully or false in case of error.
      *   Null if file doesn't need to be rotated.
      */
-    protected function _rotateFile($filename)
+    protected function _rotateFile($filename): ?bool
     {
         $filePath = $this->_path . $filename;
         clearstatcache(true, $filePath);
