@@ -329,7 +329,7 @@ class PaginatorComponent extends Component
      */
     public function configShallow($key, $value = null)
     {
-        $this->_paginator->configShallow($key, $value = null);
+        $this->_paginator->configShallow($key, null);
 
         return $this;
     }

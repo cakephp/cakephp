@@ -17,6 +17,7 @@ use ArrayIterator;
 use Countable;
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
@@ -369,11 +370,15 @@ class CookieCollection implements IteratorAggregate, Countable
                     $cookie[$key] = $value;
                 }
             }
-            $expires = null;
-            if ($cookie['max-age'] !== null) {
-                $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
-            } elseif ($cookie['expires']) {
-                $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+            try {
+                $expires = null;
+                if ($cookie['max-age'] !== null) {
+                    $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
+                } elseif ($cookie['expires']) {
+                    $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+                }
+            } catch (Exception $e) {
+                $expires = null;
             }
 
             $cookies[] = new Cookie(
