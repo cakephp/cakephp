@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -89,9 +90,8 @@ class Xml
      * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
      * - `loadEntities` Defaults to false. Set to true to enable loading of `<!ENTITY` definitions. This
      *   is disabled by default for security reasons.
-     * - `readFile` Set to false to disable file reading. This is important to disable when
-     *   putting user data into Xml::build(). If enabled local files will be read if they exist.
-     *   Defaults to true for backwards compatibility reasons.
+     * - `readFile` Set to true to enable file reading. This is disabled by default to prevent
+     *   local filesystem access. Only enable this setting when the input is safe.
      * - `parseHuge` Enable the `LIBXML_PARSEHUGE` flag.
      *
      * If using array as input, you can pass `options` from Xml::fromArray.
@@ -106,7 +106,7 @@ class Xml
         $defaults = [
             'return' => 'simplexml',
             'loadEntities' => false,
-            'readFile' => true,
+            'readFile' => false,
             'parseHuge' => false,
         ];
         $options += $defaults;
@@ -115,16 +115,17 @@ class Xml
             return static::fromArray($input, $options);
         }
 
-        if (strpos($input, '<') !== false) {
-            return static::_loadXml($input, $options);
-        }
-
         if ($options['readFile'] && file_exists($input)) {
             return static::_loadXml(file_get_contents($input), $options);
         }
 
         if (!is_string($input)) {
-            throw new XmlException('Invalid input.');
+            $type = gettype($input);
+            throw new XmlException("Invalid input. {$type} cannot be parsed as XML.");
+        }
+
+        if (strpos($input, '<') !== false) {
+            return static::_loadXml($input, $options);
         }
 
         throw new XmlException('XML cannot be read.');
@@ -328,7 +329,7 @@ class Xml
                             $child = $dom->createElement($key, '');
                             $child->appendChild(new DOMText($value));
                         } else {
-                            $child = $dom->createElement($key, $value);
+                            $child = $dom->createElement($key, (string)$value);
                         }
                         $node->appendChild($child);
                     } else {
@@ -336,7 +337,7 @@ class Xml
                             $key = substr($key, 1);
                         }
                         $attribute = $dom->createAttribute($key);
-                        $attribute->appendChild($dom->createTextNode($value));
+                        $attribute->appendChild($dom->createTextNode((string)$value));
                         $node->appendChild($attribute);
                     }
                 } else {
