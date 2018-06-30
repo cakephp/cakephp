@@ -917,7 +917,7 @@ class Debugger
             $file = str_replace($search, '', $file);
         }
         $html = <<<HTML
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 %s
 <pre class="cake-debug">
 %s

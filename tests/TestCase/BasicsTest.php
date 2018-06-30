@@ -243,7 +243,7 @@ EXPECTED;
         $this->assertSame($value, debug($value, true));
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -257,7 +257,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', true, true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -271,7 +271,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', true, false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -285,7 +285,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', null);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -310,7 +310,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', null, false);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
