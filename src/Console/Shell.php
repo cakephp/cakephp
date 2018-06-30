@@ -483,7 +483,7 @@ class Shell
         }
 
         $subcommands = $this->OptionParser->subcommands();
-        $method = Inflector::camelize($command);
+        $method = Inflector::camelize((string)$command);
         $isMethod = $this->hasMethod($method);
 
         if ($isMethod && $autoMethod && count($subcommands) === 0) {
