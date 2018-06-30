@@ -59,7 +59,7 @@ class Security
      * @return string Hash
      * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
      */
-    public static function hash($string, $algorithm = null, $salt = false)
+    public static function hash(string $string, ?string $algorithm = null, $salt = false): string
     {
         if (empty($algorithm)) {
             $algorithm = static::$hashType;
@@ -93,7 +93,7 @@ class Security
      * @return void
      * @see \Cake\Utility\Security::hash()
      */
-    public static function setHash($hash)
+    public static function setHash(string $hash): void
     {
         static::$hashType = $hash;
     }
@@ -107,30 +107,9 @@ class Security
      * @param int $length The number of bytes you want.
      * @return string Random bytes in binary.
      */
-    public static function randomBytes($length)
+    public static function randomBytes(int $length): string
     {
-        if (function_exists('random_bytes')) {
-            return random_bytes($length);
-        }
-        if (!function_exists('openssl_random_pseudo_bytes')) {
-            throw new RuntimeException(
-                'You do not have a safe source of random data available. ' .
-                'Install either the openssl extension, or paragonie/random_compat. ' .
-                'Or use Security::insecureRandomBytes() alternatively.'
-            );
-        }
-
-        $bytes = openssl_random_pseudo_bytes($length, $strongSource);
-        if (!$strongSource) {
-            trigger_error(
-                'openssl was unable to use a strong source of entropy. ' .
-                'Consider updating your system libraries, or ensuring ' .
-                'you have more available entropy.',
-                E_USER_WARNING
-            );
-        }
-
-        return $bytes;
+        return random_bytes($length);
     }
 
     /**
@@ -138,12 +117,11 @@ class Security
      *
      * @param int $length String length. Default 64.
      * @return string
-     * @since 3.6.0
      */
-    public static function randomString($length = 64)
+    public static function randomString(int $length = 64): string
     {
         return substr(
-            bin2hex(Security::randomBytes(ceil($length / 2))),
+            bin2hex(Security::randomBytes((int)ceil($length / 2))),
             0,
             $length
         );
@@ -156,14 +134,14 @@ class Security
      * @return string Random bytes in binary.
      * @see \Cake\Utility\Security::randomBytes()
      */
-    public static function insecureRandomBytes($length)
+    public static function insecureRandomBytes(int $length): string
     {
         $length *= 2;
 
         $bytes = '';
         $byteLength = 0;
         while ($byteLength < $length) {
-            $bytes .= static::hash(Text::uuid() . uniqid(mt_rand(), true), 'sha512', true);
+            $bytes .= static::hash(Text::uuid() . uniqid((string)mt_rand(), true), 'sha512', true);
             $byteLength = strlen($bytes);
         }
         $bytes = substr($bytes, 0, $length);
@@ -212,7 +190,7 @@ class Security
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function encrypt($plain, $key, $hmacSalt = null)
+    public static function encrypt(string $plain, string $key, ?string $hmacSalt = null): string
     {
         self::_checkKey($key, 'encrypt()');
 
@@ -237,7 +215,7 @@ class Security
      * @return void
      * @throws \InvalidArgumentException When key length is not 256 bit/32 bytes
      */
-    protected static function _checkKey($key, $method)
+    protected static function _checkKey(string $key, string $method): void
     {
         if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
@@ -252,10 +230,10 @@ class Security
      * @param string $cipher The ciphertext to decrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
-     * @return string|bool Decrypted data. Any trailing null bytes will be removed.
+     * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function decrypt($cipher, $key, $hmacSalt = null)
+    public static function decrypt(string $cipher, string $key, ?string $hmacSalt = null): ?string
     {
         self::_checkKey($key, 'decrypt()');
         if (empty($cipher)) {
@@ -275,7 +253,7 @@ class Security
 
         $compareHmac = hash_hmac('sha256', $cipher, $key);
         if (!static::constantEquals($hmac, $compareHmac)) {
-            return false;
+            return null;
         }
 
         $crypto = static::engine();

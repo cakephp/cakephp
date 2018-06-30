@@ -139,7 +139,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _loadXml($input, $options)
+    protected static function _loadXml(string $input, array $options)
     {
         $hasDisable = function_exists('libxml_disable_entity_loader');
         $internalErrors = libxml_use_internal_errors(true);
@@ -178,7 +178,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function loadHtml($input, $options = [])
+    public static function loadHtml(string $input, array $options = [])
     {
         $defaults = [
             'return' => 'simplexml',
@@ -223,8 +223,10 @@ class Xml
      * - `format` If create childs ('tags') or attributes ('attributes').
      * - `pretty` Returns formatted Xml when set to `true`. Defaults to `false`
      * - `version` Version of XML document. Default is 1.0.
-     * - `encoding` Encoding of XML document. If null remove from XML header. Default is the some of application.
-     * - `return` If return object of SimpleXMLElement ('simplexml') or DOMDocument ('domdocument'). Default is SimpleXMLElement.
+     * - `encoding` Encoding of XML document. If null remove from XML header.
+     *    Defaults to the application's encoding
+     * - `return` If return object of SimpleXMLElement ('simplexml')
+     *   or DOMDocument ('domdocument'). Default is SimpleXMLElement.
      *
      * Using the following data:
      *
@@ -368,7 +370,7 @@ class Xml
      * @param array $data Array with information to create childs
      * @return void
      */
-    protected static function _createChild($data)
+    protected static function _createChild(array $data)
     {
         $data += [
             'dom' => null,
@@ -420,7 +422,7 @@ class Xml
      * @return array Array representation of the XML structure.
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function toArray($obj)
+    public static function toArray($obj): array
     {
         if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);

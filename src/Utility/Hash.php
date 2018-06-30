@@ -59,7 +59,7 @@ class Hash
         }
 
         if (is_string($path) || is_numeric($path)) {
-            $parts = explode('.', $path);
+            $parts = explode('.', (string)$path);
         } else {
             if (!is_array($path)) {
                 throw new InvalidArgumentException(sprintf(
@@ -259,7 +259,7 @@ class Hash
                 return false;
             }
 
-            $prop = null;
+            $prop = '';
             if (isset($data[$attr])) {
                 $prop = $data[$attr];
             }
@@ -713,7 +713,7 @@ class Hash
     {
         $result = [];
         foreach ($data as $flat => $value) {
-            $keys = explode($separator, $flat);
+            $keys = explode($separator, (string)$flat);
             $keys = array_reverse($keys);
             $child = [
                 $keys[0] => $value
