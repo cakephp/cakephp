@@ -67,6 +67,6 @@ class OpenSslTest extends TestCase
         $result = $this->crypt->encrypt($txt, $key);
 
         $key = 'Not the same key.';
-        $this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
+        $this->assertNull($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
     }
 }
