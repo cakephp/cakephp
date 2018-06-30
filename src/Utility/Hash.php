@@ -449,7 +449,7 @@ class Hash
      * @param array $data Array from where to extract keys and values
      * @param string|array $keyPath A dot-separated string.
      * @param string|array|null $valuePath A dot-separated string.
-     * @param string|array|null $groupPath A dot-separated string.
+     * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::combine
      * @throws \RuntimeException When keys and values count is unequal.
