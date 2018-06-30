@@ -541,7 +541,7 @@ class Marshaller
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
-        $properties = $marshalledAssocs = [];
+        $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {

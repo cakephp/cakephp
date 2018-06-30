@@ -173,10 +173,8 @@ class Validation
             return false;
         }
 
-        if ($regex !== null) {
-            if (static::_check($check, $regex)) {
-                return !$deep || static::luhn($check);
-            }
+        if ($regex !== null && static::_check($check, $regex)) {
+            return !$deep || static::luhn($check);
         }
         $cards = [
             'all' => [

@@ -687,7 +687,7 @@ trait IntegrationTestTrait
             }
 
             if (is_array($value)) {
-                $looksLikeFile = isset($value['error']) && isset($value['tmp_name']) && isset($value['size']);
+                $looksLikeFile = isset($value['error'], $value['tmp_name'], $value['size']);
                 if ($looksLikeFile) {
                     continue;
                 }

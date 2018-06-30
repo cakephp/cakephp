@@ -200,10 +200,8 @@ if (!function_exists('env')) {
             return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
         }
 
-        if ($key === 'SCRIPT_NAME') {
-            if (env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
-                $key = 'SCRIPT_URL';
-            }
+        if ($key === 'SCRIPT_NAME' && env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
+            $key = 'SCRIPT_URL';
         }
 
         $val = null;

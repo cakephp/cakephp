@@ -79,7 +79,7 @@ class RedirectRoute extends Route
                     }
                 }
             }
-            $redirect = Router::reverse($redirect);
+            $redirect = Router::reverseToArray($redirect);
         }
         $status = 301;
         if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
