@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -66,6 +67,6 @@ class OpenSslTest extends TestCase
         $result = $this->crypt->encrypt($txt, $key);
 
         $key = 'Not the same key.';
-        $this->assertFalse($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
+        $this->assertNull($this->crypt->decrypt($txt, $key), 'Modified key will fail.');
     }
 }

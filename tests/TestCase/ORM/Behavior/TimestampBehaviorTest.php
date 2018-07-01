@@ -55,7 +55,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsDefault()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
 
         $expected = [
@@ -73,7 +73,7 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsCustom()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $table = $this->getTable();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
 
@@ -488,8 +488,10 @@ class TimestampBehaviorTest extends TestCase
             'date_specialed' => ['type' => 'datetime'],
             'timestamp_str' => ['type' => 'string'],
         ];
-        $table = new Table(['schema' => $schema]);
 
-        return $table;
+        return new Table([
+            'alias' => 'Articles',
+            'schema' => $schema
+        ]);
     }
 }

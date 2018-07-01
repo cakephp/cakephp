@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -58,7 +59,7 @@ class Hash
         }
 
         if (is_string($path) || is_numeric($path)) {
-            $parts = explode('.', $path);
+            $parts = explode('.', (string)$path);
         } else {
             if (!is_array($path)) {
                 throw new InvalidArgumentException(sprintf(
@@ -121,7 +122,7 @@ class Hash
      *   if there are no matches.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::extract
      */
-    public static function extract($data, $path)
+    public static function extract($data, string $path)
     {
         if (!(is_array($data) || $data instanceof ArrayAccess)) {
             throw new InvalidArgumentException(
@@ -194,7 +195,7 @@ class Hash
      * @param string $token the token being splitted.
      * @return array [token, conditions] with token splitted
      */
-    protected static function _splitConditions($token)
+    protected static function _splitConditions(string $token): array
     {
         $conditions = false;
         $position = strpos($token, '[');
@@ -213,7 +214,7 @@ class Hash
      * @param string $token The token being matched.
      * @return bool
      */
-    protected static function _matchToken($key, $token)
+    protected static function _matchToken($key, $token): bool
     {
         switch ($token) {
             case '{n}':
@@ -234,7 +235,7 @@ class Hash
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */
-    protected static function _matches($data, $selector)
+    protected static function _matches($data, string $selector): bool
     {
         preg_match_all(
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
@@ -258,7 +259,7 @@ class Hash
                 return false;
             }
 
-            $prop = null;
+            $prop = '';
             if (isset($data[$attr])) {
                 $prop = $data[$attr];
             }
@@ -300,7 +301,7 @@ class Hash
      * @return array The data with $values inserted.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
-    public static function insert(array $data, $path, $values = null)
+    public static function insert(array $data, string $path, $values = null): array
     {
         $noTokens = strpos($path, '[') === false;
         if ($noTokens && strpos($path, '.') === false) {
@@ -392,7 +393,7 @@ class Hash
      * @return array The modified array.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::remove
      */
-    public static function remove(array $data, $path)
+    public static function remove(array $data, string $path): array
     {
         $noTokens = strpos($path, '[') === false;
         $noExpansion = strpos($path, '{') === false;
@@ -446,14 +447,14 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param string $keyPath A dot-separated string.
-     * @param string|null $valuePath A dot-separated string.
+     * @param string|array $keyPath A dot-separated string.
+     * @param string|array|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::combine
      * @throws \RuntimeException When keys and values count is unequal.
      */
-    public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null)
+    public static function combine(array $data, $keyPath, $valuePath = null, ?string $groupPath = null): array
     {
         if (empty($data)) {
             return [];
@@ -531,7 +532,7 @@ class Hash
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
      */
-    public static function format(array $data, array $paths, $format)
+    public static function format(array $data, array $paths, string $format): ?array
     {
         $extracted = [];
         $count = count($paths);
@@ -569,7 +570,7 @@ class Hash
      * @return bool true If $data contains $needle, false otherwise
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::contains
      */
-    public static function contains(array $data, array $needle)
+    public static function contains(array $data, array $needle): bool
     {
         if (empty($data) || empty($needle)) {
             return false;
@@ -613,7 +614,7 @@ class Hash
      * @see \Cake\Utility\Hash::extract()
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::check
      */
-    public static function check(array $data, $path)
+    public static function check(array $data, string $path): bool
     {
         $results = static::extract($data, $path);
         if (!is_array($results)) {
@@ -632,7 +633,7 @@ class Hash
      * @return array Filtered array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::filter
      */
-    public static function filter(array $data, $callback = ['self', '_filter'])
+    public static function filter(array $data, $callback = ['self', '_filter']): array
     {
         foreach ($data as $k => $v) {
             if (is_array($v)) {
@@ -664,7 +665,7 @@ class Hash
      * @return array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::flatten
      */
-    public static function flatten(array $data, $separator = '.')
+    public static function flatten(array $data, string $separator = '.'): array
     {
         $result = [];
         $stack = [];
@@ -708,11 +709,11 @@ class Hash
      * @return array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::expand
      */
-    public static function expand(array $data, $separator = '.')
+    public static function expand(array $data, string $separator = '.'): array
     {
         $result = [];
         foreach ($data as $flat => $value) {
-            $keys = explode($separator, $flat);
+            $keys = explode($separator, (string)$flat);
             $keys = array_reverse($keys);
             $child = [
                 $keys[0] => $value
@@ -745,7 +746,7 @@ class Hash
      * @return array Merged array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::merge
      */
-    public static function merge(array $data, $merge)
+    public static function merge(array $data, $merge): array
     {
         $args = array_slice(func_get_args(), 1);
         $return = $data;
@@ -795,7 +796,7 @@ class Hash
      * @return bool true if values are numeric, false otherwise
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::numeric
      */
-    public static function numeric(array $data)
+    public static function numeric(array $data): bool
     {
         if (empty($data)) {
             return false;
@@ -815,7 +816,7 @@ class Hash
      * @return int The number of dimensions in $data
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::dimensions
      */
-    public static function dimensions(array $data)
+    public static function dimensions(array $data): int
     {
         if (empty($data)) {
             return 0;
@@ -842,7 +843,7 @@ class Hash
      * @return int The maximum number of dimensions in $data
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::maxDimensions
      */
-    public static function maxDimensions(array $data)
+    public static function maxDimensions(array $data): int
     {
         $depth = [];
         if (is_array($data) && !empty($data)) {
@@ -868,7 +869,7 @@ class Hash
      * @return array An array of the modified values.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::map
      */
-    public static function map(array $data, $path, $function)
+    public static function map(array $data, $path, $function): array
     {
         $values = (array)static::extract($data, $path);
 
@@ -884,7 +885,7 @@ class Hash
      * @return mixed The reduced value.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::reduce
      */
-    public static function reduce(array $data, $path, $function)
+    public static function reduce(array $data, string $path, $function)
     {
         $values = (array)static::extract($data, $path);
 
@@ -916,7 +917,7 @@ class Hash
      * @return mixed The results of the applied method.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::apply
      */
-    public static function apply(array $data, $path, $function)
+    public static function apply(array $data, string $path, $function)
     {
         $values = (array)static::extract($data, $path);
 
@@ -956,7 +957,7 @@ class Hash
      * @return array Sorted array of data
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */
-    public static function sort(array $data, $path, $dir = 'asc', $type = 'regular')
+    public static function sort(array $data, string $path, string $dir = 'asc', $type = 'regular')
     {
         if (empty($data)) {
             return [];
@@ -1042,7 +1043,7 @@ class Hash
      * @param string|null $key The key for the data.
      * @return array
      */
-    protected static function _squash(array $data, $key = null)
+    protected static function _squash(array $data, $key = null): array
     {
         $stack = [];
         foreach ($data as $k => $r) {
@@ -1071,7 +1072,7 @@ class Hash
      *    The expression for this function is ($data - $compare) + ($compare - ($data - $compare))
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::diff
      */
-    public static function diff(array $data, array $compare)
+    public static function diff(array $data, array $compare): array
     {
         if (empty($data)) {
             return (array)$compare;
@@ -1098,7 +1099,7 @@ class Hash
      * @return array The merged array.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::mergeDiff
      */
-    public static function mergeDiff(array $data, array $compare)
+    public static function mergeDiff(array $data, array $compare): array
     {
         if (empty($data) && !empty($compare)) {
             return $compare;
@@ -1125,7 +1126,7 @@ class Hash
      * @return array
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::normalize
      */
-    public static function normalize(array $data, $assoc = true)
+    public static function normalize(array $data, bool $assoc = true): array
     {
         $keys = array_keys($data);
         $count = count($keys);
@@ -1173,7 +1174,7 @@ class Hash
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::nest
      */
-    public static function nest(array $data, array $options = [])
+    public static function nest(array $data, array $options = []): array
     {
         if (!$data) {
             return $data;
