@@ -639,7 +639,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->subcommands();
         $this->assertArrayHasKey('build', $result);
-        $this->assertFalse($result['build']->parser(), 'No parser should be created');
+        $this->assertNull($result['build']->parser(), 'No parser should be created');
     }
 
     /**
