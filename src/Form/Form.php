@@ -253,7 +253,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *   all fields.
      * @return mixed
      */
-    public function getData($field = null)
+    public function getData(?string $field = null)
     {
         if ($field === null) {
             return $this->_data;
