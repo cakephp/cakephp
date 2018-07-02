@@ -381,15 +381,19 @@ class CookieCollection implements IteratorAggregate, Countable
                 $expires = null;
             }
 
-            $cookies[] = new Cookie(
-                $name,
-                $cookie['value'],
-                $expires,
-                $cookie['path'],
-                $cookie['domain'],
-                $cookie['secure'],
-                $cookie['httponly']
-            );
+            try {
+                $cookies[] = new Cookie(
+                    $name,
+                    $cookie['value'],
+                    $expires,
+                    $cookie['path'],
+                    $cookie['domain'],
+                    $cookie['secure'],
+                    $cookie['httponly']
+                );
+            } catch (Exception $e) {
+                // Don't blow up on invalid cookies
+            }
         }
 
         return $cookies;

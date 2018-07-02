@@ -264,6 +264,23 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response ignores empty headers
+     *
+     * @return void
+     */
+    public function testAddFromResponseIgnoreEmpty()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', '');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertCount(0, $new, 'no cookies parsed');
+    }
+
+    /**
      * Test adding cookies from a response ignores expired cookies
      *
      * @return void
