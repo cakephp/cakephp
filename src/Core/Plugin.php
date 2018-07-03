@@ -14,7 +14,7 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\Exception\MissingPluginException;
+use ArgumentCountError;
 use DirectoryIterator;
 
 /**
@@ -285,23 +285,22 @@ class Plugin
     }
 
     /**
-     * Check whether or not a plugin is loaded.
+     * Returns true if the plugin $plugin is already loaded.
      *
-     * @param string $plugin The name of the plugin to check.
+     * @param string $plugin Plugin name.
      * @return bool
      */
-    public static function isLoaded($plugin)
+    public static function isLoaded(string $plugin): bool
     {
         return static::getCollection()->has($plugin);
     }
 
     /**
-     * Return a list of loaded plugins.
+     * Returns a list of all loaded plugins.
      *
-     * @return bool|array Boolean true if $plugin is already loaded.
-     *   If $plugin is null, returns a list of plugins that have been loaded
+     * @return array
      */
-    public static function loaded()
+    public static function loaded(): array
     {
         $names = [];
         foreach (static::getCollection() as $plugin) {
