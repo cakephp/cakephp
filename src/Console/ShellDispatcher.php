@@ -95,16 +95,16 @@ class ShellDispatcher
      *
      * @param string $short The new short name for the shell.
      * @param string|null $original The original full name for the shell.
-     * @return string|false The aliased class name, or false if the alias does not exist
+     * @return string|null The aliased class name, or null if the alias does not exist
      */
-    public static function alias(string $short, ?string $original = null)
+    public static function alias(string $short, ?string $original = null): ?string
     {
         $short = Inflector::camelize($short);
         if ($original) {
             static::$_aliases[$short] = $original;
         }
 
-        return isset(static::$_aliases[$short]) ? static::$_aliases[$short] : false;
+        return static::$_aliases[$short] ?? null;
     }
 
     /**
@@ -357,16 +357,16 @@ class ShellDispatcher
      * Check if a shell class exists for the given name.
      *
      * @param string $shell The shell name to look for.
-     * @return string|bool Either the classname or false.
+     * @return string|null Either the classname or null.
      */
-    protected function _shellExists(string $shell)
+    protected function _shellExists(string $shell): ?string
     {
         $class = App::className($shell, 'Shell', 'Shell');
         if ($class && class_exists($class)) {
             return $class;
         }
 
-        return false;
+        return null;
     }
 
     /**
