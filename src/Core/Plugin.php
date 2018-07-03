@@ -108,7 +108,7 @@ class Plugin
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for the plugin to be loaded is not found
      * @return void
      */
-    public static function load($plugin, array $config = [])
+    public static function load($plugin, array $config = []): void
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
@@ -187,7 +187,7 @@ class Plugin
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException
      */
-    public static function loadAll(array $options = [])
+    public static function loadAll(array $options = []): void
     {
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
@@ -226,7 +226,7 @@ class Plugin
      * @return string path to the plugin folder
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
      */
-    public static function path($name)
+    public static function path($name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -240,7 +240,7 @@ class Plugin
      * @return string Path to the plugin folder container class folders.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function classPath($name)
+    public static function classPath($name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -254,7 +254,7 @@ class Plugin
      * @return string Path to the plugin folder container config files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function configPath($name)
+    public static function configPath($name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -265,20 +265,20 @@ class Plugin
      * Loads the bootstrapping files for a plugin, or calls the initialization setup in the configuration
      *
      * @param string $name name of the plugin
-     * @return mixed
+     * @return void
      * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
-    public static function bootstrap($name)
+    public static function bootstrap($name): void
     {
         $plugin = static::getCollection()->get($name);
         if (!$plugin->isEnabled('bootstrap')) {
-            return false;
+            return;
         }
         // Disable bootstrapping for this plugin as it will have
         // been bootstrapped.
         $plugin->disable('bootstrap');
 
-        return static::_includeFile(
+        static::_includeFile(
             $plugin->getConfigPath() . 'bootstrap.php',
             true
         );
@@ -312,7 +312,7 @@ class Plugin
      * @param string|null $plugin name of the plugin to forget
      * @return void
      */
-    public static function unload($plugin = null)
+    public static function unload($plugin = null): void
     {
         if ($plugin === null) {
             static::$plugins = null;
