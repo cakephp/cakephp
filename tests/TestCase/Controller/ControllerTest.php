@@ -551,7 +551,7 @@ class ControllerTest extends TestCase
             ->will($this->returnValue('/posts/index'));
 
         $Controller = new Controller($request);
-        $result = $Controller->referer(null, true);
+        $result = $Controller->referer();
         $this->assertEquals('/posts/index', $result);
 
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
@@ -573,11 +573,11 @@ class ControllerTest extends TestCase
             ->will($this->returnValue('http://localhost/posts/index'));
 
         $Controller = new Controller($request);
-        $result = $Controller->referer();
+        $result = $Controller->referer(null, false);
         $this->assertEquals('http://localhost/posts/index', $result);
 
         $Controller = new Controller(null);
-        $result = $Controller->referer();
+        $result = $Controller->referer(null, false);
         $this->assertEquals('/', $result);
     }
 
