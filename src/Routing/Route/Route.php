@@ -742,7 +742,7 @@ class Route
         // check patterns for routed params
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
+                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', $url[$key])) {
                     return false;
                 }
             }
