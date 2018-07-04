@@ -192,7 +192,7 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * simulate running the Application
-     * @param string|array list of Plugins to load
+     * @param string|array $plugins list of Plugins to load
      * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins($plugins = [])
@@ -215,6 +215,7 @@ abstract class TestCase extends BaseTestCase
         $app->pluginBootstrap();
         $builder = Router::createRouteBuilder('/');
         $app->pluginRoutes($builder);
+
         return $app;
     }
 
