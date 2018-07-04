@@ -30,6 +30,7 @@ use JsonSerializable;
  * @method $this setDirty($property, $isDirty)
  * @method bool isDirty($property = null)
  * @method array getErrors()
+ * @method bool hasErrors()
  * @method array getError($field)
  * @method array setErrors(array $fields, $overwrite = false)
  * @method array setError($field, $errors, $overwrite = false)

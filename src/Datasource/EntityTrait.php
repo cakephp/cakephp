@@ -98,6 +98,13 @@ trait EntityTrait
     protected $_errors = [];
 
     /**
+     * Returns whether this entity contains errors.
+     *
+     * @var bool
+     */
+    protected $_hasErrors = false;
+
+    /**
      * List of invalid fields and their data for errors upon validation/patching
      *
      * @var array
@@ -912,6 +919,16 @@ trait EntityTrait
     }
 
     /**
+     * Returns whether this entity contains errors.
+     *
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return $this->_hasErrors;
+    }
+
+    /**
      * Returns validation errors of a field
      *
      * @param string $field Field name to get the errors from
@@ -943,6 +960,7 @@ trait EntityTrait
      */
     public function setErrors(array $fields, $overwrite = false)
     {
+        $this->_hasErrors = true;
         if ($overwrite) {
             foreach ($fields as $f => $error) {
                 $this->_errors[$f] = (array)$error;
