@@ -676,10 +676,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Returns the referring URL for this request.
      *
      * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
-     * @param bool $local If true, restrict referring URLs to local server
+     * @param bool $local If false, do not restrict referring URLs to local server. Careful with trusting external sources.
      * @return string Referring URL
      */
-    public function referer($default = null, $local = false)
+    public function referer($default = null, $local = true)
     {
         if (!$this->request) {
             return Router::url($default, !$local);
