@@ -1902,7 +1902,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true
         ]);
 
-        if ($entity->hasErrors() === true) {
+        if ($entity->canBePersisted() === false) {
             return false;
         }
 

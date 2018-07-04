@@ -91,18 +91,18 @@ trait EntityTrait
     protected $_new = true;
 
     /**
+     * Returns whether this entity can be persisted.
+     *
+     * @var bool
+     */
+    protected $_canBePersisted = true;
+
+    /**
      * List of errors per field as stored in this object
      *
      * @var array
      */
     protected $_errors = [];
-
-    /**
-     * Returns whether this entity contains errors.
-     *
-     * @var bool
-     */
-    protected $_hasErrors = false;
 
     /**
      * List of invalid fields and their data for errors upon validation/patching
@@ -865,7 +865,7 @@ trait EntityTrait
     {
         $this->_dirty = [];
         $this->_errors = [];
-        $this->_hasErrors = false;
+        $this->_canBePersisted = true;
         $this->_invalid = [];
         $this->_original = [];
     }
@@ -900,6 +900,16 @@ trait EntityTrait
     }
 
     /**
+     * Returns whether this entity can be persisted.
+     *
+     * @return bool
+     */
+    public function canBePersisted()
+    {
+        return $this->_canBePersisted;
+    }
+
+    /**
      * Returns all validation errors.
      *
      * @return array
@@ -917,16 +927,6 @@ trait EntityTrait
             })
             ->filter()
             ->toArray();
-    }
-
-    /**
-     * Returns whether this entity contains errors.
-     *
-     * @return bool
-     */
-    public function hasErrors()
-    {
-        return $this->_hasErrors;
     }
 
     /**
@@ -961,7 +961,7 @@ trait EntityTrait
      */
     public function setErrors(array $fields, $overwrite = false)
     {
-        $this->_hasErrors = true;
+        $this->_canBePersisted = false;
         if ($overwrite) {
             foreach ($fields as $f => $error) {
                 $this->_errors[$f] = (array)$error;
