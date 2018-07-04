@@ -17,6 +17,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -187,6 +188,34 @@ abstract class TestCase extends BaseTestCase
             $this->fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
+    }
+
+    /**
+     * simulate running the Application
+     * @param string|array list of Plugins to load
+     * @return \Cake\Http\BaseApplication
+     */
+    public function loadPlugins($plugins = [])
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+
+        if (is_string($plugins)) {
+            $plugins = (array)$plugins;
+        }
+        foreach ($plugins as $k => $opts) {
+            if (is_array($opts)) {
+                $app->addPlugin($k, $opts);
+            } else {
+                $app->addPlugin($opts);
+            }
+        }
+        $app->pluginBootstrap();
+        $builder = Router::createRouteBuilder('/');
+        $app->pluginRoutes($builder);
+        return $app;
     }
 
     /**
