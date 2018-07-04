@@ -865,6 +865,7 @@ trait EntityTrait
     {
         $this->_dirty = [];
         $this->_errors = [];
+        $this->_hasErrors = false;
         $this->_invalid = [];
         $this->_original = [];
     }
