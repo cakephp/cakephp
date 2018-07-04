@@ -607,7 +607,6 @@ class ViewTest extends TestCase
         $result = $View->getViewFileName('page.home');
         $this->assertPathEquals($expected, $result, 'Should not ruin files with dots.');
 
-        $this->loadPlugins('TestPlugin');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
         $result = $View->getViewFileName('TestPlugin.home');
         $this->assertPathEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
@@ -730,7 +729,6 @@ class ViewTest extends TestCase
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
-        $this->loadPlugins('TestPlugin');
 
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
             'Template' . DS . 'Layout' . DS . 'default.ctp';

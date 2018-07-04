@@ -54,6 +54,7 @@ class ComponentRegistryTest extends TestCase
     {
         parent::tearDown();
         unset($this->Components);
+        Plugin::unload();
     }
 
     /**

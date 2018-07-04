@@ -119,5 +119,6 @@ class TaskRegistryTest extends TestCase
 
         $result = $this->Tasks->loaded();
         $this->assertEquals(['CommandAliased', 'SomeTask'], $result, 'loaded() results are wrong.');
+        Plugin::unload();
     }
 }

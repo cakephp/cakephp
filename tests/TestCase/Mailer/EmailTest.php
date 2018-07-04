@@ -1930,6 +1930,7 @@ class EmailTest extends TestCase
         $result = $this->Email->setTemplate('custom')->setLayout('TestPlugin.plug_default')->send();
         $this->assertContains('Here is your value: 12345', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
+        Plugin::unload();
     }
 
     /**

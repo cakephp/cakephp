@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Error\ErrorHandler;
 use Cake\Error\PHP7ErrorException;
 use Cake\Http\Exception\ForbiddenException;
@@ -111,6 +112,7 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        Plugin::unload();
         if ($this->_restoreError) {
             restore_error_handler();
             restore_exception_handler();

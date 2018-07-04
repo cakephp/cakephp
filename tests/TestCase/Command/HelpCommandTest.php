@@ -46,6 +46,7 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         $this->exec('help');
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertCommandList();
+        Plugin::unload();
     }
 
     /**
