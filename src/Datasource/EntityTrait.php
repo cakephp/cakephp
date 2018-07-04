@@ -1426,6 +1426,7 @@ trait EntityTrait
         return $properties + [
             '[new]' => $this->isNew(),
             '[accessible]' => $this->_accessible,
+            '[persistable]' => $this->_canBePersisted,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
             '[virtual]' => $this->_virtual,
