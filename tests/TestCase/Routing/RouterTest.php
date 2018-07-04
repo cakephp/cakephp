@@ -356,7 +356,7 @@ class RouterTest extends TestCase
     public function testMapResourcesConnectOptions()
     {
         $this->deprecated(function () {
-            Plugin::load('TestPlugin');
+            $this->loadPlugins('TestPlugin');
             Router::mapResources('Posts', [
                 'connectOptions' => [
                     'routeClass' => 'TestPlugin.TestRoute',
@@ -2632,7 +2632,7 @@ class RouterTest extends TestCase
      */
     public function testUsingCustomRouteClass()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
         Router::connect(
             '/:slug',
             ['plugin' => 'TestPlugin', 'action' => 'index'],
@@ -2657,7 +2657,7 @@ class RouterTest extends TestCase
      */
     public function testUsingCustomRouteClassPluginDotSyntax()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
         Router::connect(
             '/:slug',
             ['controller' => 'posts', 'action' => 'view'],

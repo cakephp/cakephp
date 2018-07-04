@@ -33,7 +33,7 @@ class ShellDispatcherTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
         static::setAppNamespace();
         $this->dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['_stop'])

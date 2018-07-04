@@ -256,8 +256,8 @@ class CommandCollectionTest extends TestCase
      */
     public function testDiscoverPlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins('Company/TestPluginThree');
 
         $collection = new CommandCollection();
         // Add a dupe to test de-duping

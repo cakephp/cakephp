@@ -45,7 +45,7 @@ class CellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Plugin::load(['TestPlugin', 'TestTheme']);
+        $this->loadPlugins(['TestPlugin', 'TestTheme']);
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->View = new View($request, $response);

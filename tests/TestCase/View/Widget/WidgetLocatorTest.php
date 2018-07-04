@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\View\Widget;
 
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
@@ -92,7 +91,7 @@ class WidgetLocatorTestCase extends TestCase
      */
     public function testAddPluginWidgetsFromConfigInConstructor()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
         $widgets = [
             'text' => ['Cake\View\Widget\BasicWidget'],
             'TestPlugin.test_widgets',

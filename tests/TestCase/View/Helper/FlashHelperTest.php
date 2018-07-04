@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
@@ -175,7 +174,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPluginElement()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
 
         $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
         $expected = 'this is the plugin element';
@@ -189,7 +188,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithTheme()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins('TestTheme');
 
         $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');

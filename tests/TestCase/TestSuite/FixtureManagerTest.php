@@ -190,7 +190,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizePlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['plugin.test_plugin.articles'];
@@ -211,7 +211,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizePluginSubdirectory()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['plugin.test_plugin.blog/comments'];

@@ -33,7 +33,7 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         parent::setUp();
         $this->setAppNamespace();
         $this->useCommandRunner(true);
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
     }
 
     /**

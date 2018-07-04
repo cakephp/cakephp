@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Error\ErrorHandler;
 use Cake\Error\PHP7ErrorException;
 use Cake\Http\Exception\ForbiddenException;
@@ -380,7 +379,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testLoadPluginHandler()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
         $errorHandler = new TestErrorHandler([
             'exceptionRenderer' => 'TestPlugin.TestPluginExceptionRenderer',
         ]);

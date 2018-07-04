@@ -382,7 +382,7 @@ class ResultSetTest extends TestCase
      */
     public function testSourceOnContainAssociations()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins('TestPlugin');
         $comments = $this->getTableLocator()->get('TestPlugin.Comments');
         $comments->belongsTo('Authors', [
             'className' => 'TestPlugin.Authors',
