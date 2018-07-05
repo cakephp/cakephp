@@ -137,7 +137,7 @@ class RouteCollection
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
-    public function parse($url, $method = '')
+    public function parse(string $url, string $method = ''): array
     {
         $decoded = urldecode($url);
 
@@ -158,7 +158,7 @@ class RouteCollection
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parse($url, $method);
-                if ($r === false) {
+                if ($r === null) {
                     continue;
                 }
                 if ($queryParameters) {
@@ -203,7 +203,7 @@ class RouteCollection
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parseRequest($request);
-                if ($r === false) {
+                if ($r === null) {
                     continue;
                 }
                 if ($uri->getQuery()) {

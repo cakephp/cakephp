@@ -33,7 +33,7 @@ class InflectedRouteTest extends TestCase
     {
         $route = new InflectedRoute('/:controller/:action/:id', ['plugin' => null]);
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', 'plugin' => null]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match([
             'plugin' => null,
@@ -41,7 +41,7 @@ class InflectedRouteTest extends TestCase
             'action' => 'my_view',
             0
         ]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match([
             'plugin' => null,
@@ -56,7 +56,7 @@ class InflectedRouteTest extends TestCase
         $this->assertEquals('/', $result);
 
         $result = $route->match(['controller' => 'Pages', 'action' => 'display', 'about']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new InflectedRoute('/blog/:action', ['controller' => 'Posts']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view']);
@@ -66,7 +66,7 @@ class InflectedRouteTest extends TestCase
         $this->assertEquals('/blog/my_view?id=2', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', 1]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new InflectedRoute('/foo/:controller/:action', ['action' => 'index']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view']);
@@ -96,7 +96,7 @@ class InflectedRouteTest extends TestCase
             'action' => 'my_view',
             'id' => 1
         ]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match([
             'plugin' => 'TestPlugin',
@@ -104,7 +104,7 @@ class InflectedRouteTest extends TestCase
             'action' => 'edit',
             'id' => 1
         ]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new InflectedRoute('/admin/subscriptions/:action/*', [
             'controller' => 'Subscribe', 'prefix' => 'admin'
@@ -171,7 +171,7 @@ class InflectedRouteTest extends TestCase
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->parse('/admin/my_posts', 'GET');
         $this->assertEquals('MyPosts', $result['controller']);
@@ -200,7 +200,7 @@ class InflectedRouteTest extends TestCase
     public function testParseMethodMatch()
     {
         $route = new InflectedRoute('/:controller/:action', ['_method' => 'POST']);
-        $this->assertFalse($route->parse('/blog_posts/add_new', 'GET'));
+        $this->assertNull($route->parse('/blog_posts/add_new', 'GET'));
 
         $result = $route->parse('/blog_posts/add_new', 'POST');
         $this->assertEquals('BlogPosts', $result['controller']);
