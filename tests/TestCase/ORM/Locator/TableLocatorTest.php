@@ -362,8 +362,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetMultiplePlugins()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
@@ -577,8 +576,7 @@ class TableLocatorTest extends TestCase
      */
     public function testRemovePlugin()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $this->_locator->get('TestPlugin.Comments');

@@ -122,8 +122,6 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached()
     {
-        Plugin::loadAll();
-
         $events = $this->getMockBuilder('\Cake\Event\EventManager')->getMock();
         $this->View->setEventManager($events);
 
