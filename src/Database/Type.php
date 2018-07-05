@@ -283,7 +283,10 @@ class Type implements TypeInterface
      */
     protected function _basicTypeCast($value)
     {
-        deprecationWarning('Type::_basicTypeCast() is deprecated.');
+        deprecationWarning(
+            'Using Type::_basicTypeCast() is deprecated. ' .
+            "The '{$this->_name}' type needs to be updated to implement `TypeInterface`."
+        );
         if ($value === null) {
             return null;
         }
