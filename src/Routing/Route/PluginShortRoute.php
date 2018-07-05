@@ -26,7 +26,7 @@ class PluginShortRoute extends InflectedRoute
      *
      * @param string $url The URL to parse
      * @param string $method The HTTP method
-     * @return array|false An array of request parameters, or boolean false on failure.
+     * @return array|null An array of request parameters, or null on failure.
      */
     public function parse(string $url, string $method = ''): ?array
     {
