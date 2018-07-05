@@ -14,9 +14,9 @@
  */
 namespace Cake\Test\TestCase\View;
 
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
-use Cake\Core\Plugin;
 
 class StringTemplateTest extends TestCase
 {

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
+use Cake\Http\BaseApplication;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
@@ -33,7 +34,23 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         parent::setUp();
         $this->setAppNamespace();
         $this->useCommandRunner(true);
-        $this->loadPlugins('TestPlugin');
+        Plugin::unload();
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+        $app->addPlugin('TestPlugin');
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Plugin::unload();
     }
 
     /**
