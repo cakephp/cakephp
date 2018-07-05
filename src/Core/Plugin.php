@@ -226,7 +226,7 @@ class Plugin
      * @return string path to the plugin folder
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
      */
-    public static function path($name): string
+    public static function path(string $name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -240,7 +240,7 @@ class Plugin
      * @return string Path to the plugin folder container class folders.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function classPath($name): string
+    public static function classPath(string $name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -254,7 +254,7 @@ class Plugin
      * @return string Path to the plugin folder container config files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function configPath($name): string
+    public static function configPath(string $name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -268,7 +268,7 @@ class Plugin
      * @return void
      * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
-    public static function bootstrap($name): void
+    public static function bootstrap(string $name): void
     {
         $plugin = static::getCollection()->get($name);
         if (!$plugin->isEnabled('bootstrap')) {
@@ -312,7 +312,7 @@ class Plugin
      * @param string|null $plugin name of the plugin to forget
      * @return void
      */
-    public static function unload($plugin = null): void
+    public static function unload(?string $plugin = null): void
     {
         if ($plugin === null) {
             static::$plugins = null;
@@ -328,7 +328,7 @@ class Plugin
      * @param bool $ignoreMissing Whether to ignore include error for missing files
      * @return mixed
      */
-    protected static function _includeFile($file, $ignoreMissing = false)
+    protected static function _includeFile(string $file, bool $ignoreMissing = false)
     {
         if ($ignoreMissing && !is_file($file)) {
             return false;
