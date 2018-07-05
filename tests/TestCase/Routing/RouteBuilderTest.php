@@ -49,7 +49,7 @@ class RouteBuilderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestPlugin');
+        Plugin::unload();
     }
 
     /**

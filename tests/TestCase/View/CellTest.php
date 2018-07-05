@@ -59,8 +59,7 @@ class CellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestPlugin');
-        Plugin::unload('TestTheme');
+        Plugin::unload();
         unset($this->View);
     }
 

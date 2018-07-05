@@ -356,7 +356,7 @@ class RouterTest extends TestCase
     public function testMapResourcesConnectOptions()
     {
         $this->deprecated(function () {
-            $this->loadPlugins('TestPlugin');
+            Plugin::load('TestPlugin');
             Router::mapResources('Posts', [
                 'connectOptions' => [
                     'routeClass' => 'TestPlugin.TestRoute',

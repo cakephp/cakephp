@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Widget;
 
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\View;
@@ -98,6 +99,7 @@ class WidgetLocatorTestCase extends TestCase
         ];
         $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
+        Plugin::unload();
     }
 
     /**

@@ -67,8 +67,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlink()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->symlink();
 
@@ -157,8 +156,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkingSpecifiedPlugin()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->symlink('TestPlugin');
 
@@ -179,8 +177,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testCopy()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->copy();
 
@@ -245,8 +242,7 @@ class AssetsTaskTest extends TestCase
             );
         }
 
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         mkdir(WWW_ROOT . 'company');
 
@@ -273,8 +269,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testRemoveFolder()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->copy();
 
@@ -298,8 +293,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testOverwrite()
     {
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $path = WWW_ROOT . 'test_plugin';
 

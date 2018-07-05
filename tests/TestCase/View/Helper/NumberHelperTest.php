@@ -74,6 +74,7 @@ class NumberHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+        Plugin::unload();
         static::setAppNamespace($this->_appNamespace);
         unset($this->View);
     }

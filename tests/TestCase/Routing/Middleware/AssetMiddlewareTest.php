@@ -33,8 +33,18 @@ class AssetMiddlewareTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->loadPlugins('TestPlugin');
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        Plugin::unload();
+        parent::tearDown();
     }
 
     /**

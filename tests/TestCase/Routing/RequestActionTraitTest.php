@@ -65,6 +65,7 @@ class RequestActionTraitTest extends TestCase
         parent::tearDown();
         DispatcherFactory::clear();
         Router::reload();
+        Plugin::unload();
 
         error_reporting($this->errorLevel);
     }

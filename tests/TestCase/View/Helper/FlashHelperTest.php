@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Core\Plugin;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
@@ -105,6 +106,7 @@ class FlashHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->View, $this->Flash);
+        Plugin::unload();
     }
 
     /**

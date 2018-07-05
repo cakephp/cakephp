@@ -1763,6 +1763,7 @@ class EmailTest extends TestCase
         $this->assertContains('Message-ID: ', $result['headers']);
         $this->assertContains('To: ', $result['headers']);
         $this->assertContains('/test_theme/img/test.jpg', $result['message']);
+        Plugin::unload();
     }
 
     /**

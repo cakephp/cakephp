@@ -62,6 +62,17 @@ class TableLocatorTest extends TestCase
     }
 
     /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        Plugin::unload();
+        parent::tearDown();
+    }
+
+    /**
      * Test config() method.
      *
      * @group deprecated
