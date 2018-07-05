@@ -805,8 +805,15 @@ class ConsoleOptionParser
         if (isset($this->_subcommands[$subcommand])) {
             $command = $this->_subcommands[$subcommand];
             $subparser = $command->parser();
+
+            // Generate a parser as the subcommand didn't define one.
             if (!($subparser instanceof self)) {
-                $subparser = clone $this;
+                // $subparser = clone $this;
+                $subparser = new self($subcommand);
+                $subparser
+                    ->setDescription($command->getRawHelp())
+                    ->addOptions($this->options())
+                    ->addArguments($this->arguments());
             }
             if (strlen($subparser->getDescription()) === 0) {
                 $subparser->setDescription($command->getRawHelp());
