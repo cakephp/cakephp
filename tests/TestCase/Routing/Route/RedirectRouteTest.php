@@ -47,7 +47,7 @@ class RedirectRouteTest extends TestCase
     public function testMatch()
     {
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
-        $this->assertFalse($route->match(['controller' => 'posts', 'action' => 'index']));
+        $this->assertNull($route->match(['controller' => 'posts', 'action' => 'index']));
     }
 
     /**
@@ -58,8 +58,8 @@ class RedirectRouteTest extends TestCase
     public function testParseMiss()
     {
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
-        $this->assertFalse($route->parse('/nope'));
-        $this->assertFalse($route->parse('/homes'));
+        $this->assertNull($route->parse('/nope'));
+        $this->assertNull($route->parse('/homes'));
     }
 
     /**
@@ -114,7 +114,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(\Cake\Routing\Exception\RedirectException::class);
         $this->expectExceptionMessage('http://google.com');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/google', 'http://google.com');
+        $route = new RedirectRoute('/google', ['redirect' => 'http://google.com']);
         $route->parse('/google');
     }
 
@@ -176,7 +176,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(\Cake\Routing\Exception\RedirectException::class);
         $this->expectExceptionMessage('http://localhost/test');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/posts/*', '/test', ['persist' => true]);
+        $route = new RedirectRoute('/posts/*', ['redirect' => '/test'], ['persist' => true]);
         $route->parse('/posts/2');
     }
 
