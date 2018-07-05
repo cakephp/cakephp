@@ -91,13 +91,6 @@ trait EntityTrait
     protected $_new = true;
 
     /**
-     * Returns whether this entity can be persisted.
-     *
-     * @var bool
-     */
-    protected $_canBePersisted = true;
-
-    /**
      * List of errors per field as stored in this object
      *
      * @var array
@@ -865,7 +858,6 @@ trait EntityTrait
     {
         $this->_dirty = [];
         $this->_errors = [];
-        $this->_canBePersisted = true;
         $this->_invalid = [];
         $this->_original = [];
     }
@@ -900,13 +892,28 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether this entity can be persisted.
+     * Returns whether this entity has errors.
      *
+     * @param bool $includeHasErrorsFromNestedEntities
      * @return bool
      */
-    public function canBePersisted()
+    public function hasErrors($includeHasErrorsFromNestedEntities = true)
     {
-        return $this->_canBePersisted;
+        if (empty($this->_errors) === false) {
+            return true;
+        }
+
+        if ($includeHasErrorsFromNestedEntities === false) {
+            return false;
+        }
+
+        foreach ($this->_properties as $property) {
+            if ($this->_readHasErrors($property) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -961,7 +968,6 @@ trait EntityTrait
      */
     public function setErrors(array $fields, $overwrite = false)
     {
-        $this->_canBePersisted = false;
         if ($overwrite) {
             foreach ($fields as $f => $error) {
                 $this->_errors[$f] = (array)$error;
@@ -1107,6 +1113,29 @@ trait EntityTrait
         }
 
         return [];
+    }
+
+    /**
+     * Reads if there are errors for one or many objects.
+     *
+     * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
+     * @return bool
+     */
+    protected function _readHasErrors($object)
+    {
+        if ($object instanceof EntityInterface && $object->hasErrors() === true) {
+            return true;
+        }
+
+        if (is_array($object) === true) {
+            foreach ($object as $value) {
+                if ($this->_readHasErrors($value) === true) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1426,7 +1455,6 @@ trait EntityTrait
         return $properties + [
             '[new]' => $this->isNew(),
             '[accessible]' => $this->_accessible,
-            '[persistable]' => $this->_canBePersisted,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
             '[virtual]' => $this->_virtual,
