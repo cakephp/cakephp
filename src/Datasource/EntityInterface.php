@@ -29,7 +29,7 @@ use JsonSerializable;
  * @method array getVirtual()
  * @method $this setDirty($property, $isDirty)
  * @method bool isDirty($property = null)
- * @method bool hasErrors($includeHasErrorsFromNestedEntities = true)
+ * @method bool hasErrors($includeNested = true)
  * @method array getErrors()
  * @method array getError($field)
  * @method array setErrors(array $fields, $overwrite = false)
