@@ -1348,7 +1348,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig('storage', 'Memory');
 
         EventManager::instance()->on('Auth.afterIdentify', function (EventInterface $event) {
-            $user = $event->getData(0);
+            $user = $event->getData('0');
             $user['from_callback'] = true;
 
             return $user;
