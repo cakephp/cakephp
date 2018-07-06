@@ -899,7 +899,7 @@ trait EntityTrait
      */
     public function hasErrors($includeNested = true)
     {
-        if (empty($this->_errors) === false) {
+        if (!empty($this->_errors)) {
             return true;
         }
 
@@ -908,7 +908,7 @@ trait EntityTrait
         }
 
         foreach ($this->_properties as $property) {
-            if ($this->_readHasErrors($property) === true) {
+            if ($this->_readHasErrors($property)) {
                 return true;
             }
         }
@@ -1123,13 +1123,13 @@ trait EntityTrait
      */
     protected function _readHasErrors($object)
     {
-        if ($object instanceof EntityInterface && $object->hasErrors() === true) {
+        if ($object instanceof EntityInterface && $object->hasErrors()) {
             return true;
         }
 
-        if (is_array($object) === true) {
+        if (is_array($object)) {
             foreach ($object as $value) {
-                if ($this->_readHasErrors($value) === true) {
+                if ($this->_readHasErrors($value)) {
                     return true;
                 }
             }
