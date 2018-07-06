@@ -1118,7 +1118,7 @@ trait EntityTrait
     /**
      * Reads if there are errors for one or many objects.
      *
-     * @param array|\Cake\Datasource\EntityTrait $object The object to read errors from.
+     * @param mixed $object The object to read errors from.
      * @return bool
      */
     protected function _readHasErrors($object)
