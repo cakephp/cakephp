@@ -894,16 +894,16 @@ trait EntityTrait
     /**
      * Returns whether this entity has errors.
      *
-     * @param bool $includeHasErrorsFromNestedEntities
+     * @param bool $includeNested true will check nested entities for hasErrors()
      * @return bool
      */
-    public function hasErrors($includeHasErrorsFromNestedEntities = true)
+    public function hasErrors($includeNested = true)
     {
         if (empty($this->_errors) === false) {
             return true;
         }
 
-        if ($includeHasErrorsFromNestedEntities === false) {
+        if ($includeNested === false) {
             return false;
         }
 
