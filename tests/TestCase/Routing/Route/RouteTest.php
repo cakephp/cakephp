@@ -505,7 +505,7 @@ class RouteTest extends TestCase
      *
      * @return void
      */
-    public function testRouteCompilingWithUnicodePatterns()
+    public function testCompileWithUnicodePatterns()
     {
         $route = new Route(
             '/test/:slug',
@@ -1050,36 +1050,23 @@ class RouteTest extends TestCase
     }
 
     /**
-     * Test that match() pulls out extra arguments as query string params.
+     * Test that match() with multibyte pattern
      *
      * @return void
      */
-    public function testMatchExtractQueryStringArgs()
+    public function testMatchWithMultibytePattern()
     {
-        $route = new Route('/:controller/:action/*');
+        $route = new Route(
+            '/articles/:action/:id',
+            ['controller' => 'Articles'],
+            ['multibytePattern' => true, 'id' => '\pL+']
+        );
         $result = $route->match([
-            'controller' => 'posts',
-            'action' => 'index',
-            'page' => 1
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => "\xC4\x81"
         ]);
-        $this->assertEquals('/posts/index?page=1', $result);
-
-        $result = $route->match([
-            'controller' => 'posts',
-            'action' => 'index',
-            'page' => 0
-        ]);
-        $this->assertEquals('/posts/index?page=0', $result);
-
-        $result = $route->match([
-            'controller' => 'posts',
-            'action' => 'index',
-            1,
-            'page' => 1,
-            'dir' => 'desc',
-            'order' => 'title'
-        ]);
-        $this->assertEquals('/posts/index/1?page=1&dir=desc&order=title', $result);
+        $this->assertEquals("/articles/view/\xC4\x81", $result);
     }
 
     /**
