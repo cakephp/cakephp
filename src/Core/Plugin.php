@@ -14,7 +14,6 @@
  */
 namespace Cake\Core;
 
-use ArgumentCountError;
 use DirectoryIterator;
 
 /**
