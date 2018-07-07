@@ -135,7 +135,7 @@ trait ConventionsTrait
      */
     protected function _pluginPath($pluginName)
     {
-        if (Plugin::loaded($pluginName)) {
+        if (Plugin::isLoaded($pluginName)) {
             return Plugin::path($pluginName);
         }
 
