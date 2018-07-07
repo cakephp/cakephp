@@ -147,21 +147,6 @@ class PluginTest extends TestCase
     }
 
     /**
-     * Tests deprecated usage of loaded()
-     *
-     * @deprecated
-     * @return void
-     */
-    public function testIsLoaded()
-    {
-        $this->deprecated(function () {
-            Plugin::load('TestPlugin');
-            $this->assertTrue(Plugin::loaded('TestPlugin'));
-            $this->assertFalse(Plugin::loaded('Unknown'));
-        });
-    }
-
-    /**
      * Tests loading a plugin and its bootstrap file
      *
      * @return void

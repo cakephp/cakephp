@@ -493,25 +493,6 @@ class ConfigureTest extends TestCase
     }
 
     /**
-     * test deprecated behavior of configured
-     *
-     * @deprecated
-     * @return void
-     */
-    public function testConfigured()
-    {
-        $this->deprecated(function () {
-            $engine = new PhpConfig();
-            Configure::config('test', $engine);
-
-            $configured = Configure::configured();
-            $this->assertContains('test', $configured);
-            $this->assertTrue(Configure::configured('test'));
-            $this->assertTrue(Configure::configured('default'));
-        });
-    }
-
-    /**
      * Test that clear wipes all values.
      *
      * @return void

@@ -298,24 +298,11 @@ class Plugin
     /**
      * Return a list of loaded plugins.
      *
-     * If a plugin name is provided, the return value will be a bool
-     * indicating whether or not the named plugin is loaded. This usage
-     * is deprecated. Instead you should use Plugin::isLoaded($name)
-     *
-     * @param string|null $plugin Plugin name.
      * @return bool|array Boolean true if $plugin is already loaded.
      *   If $plugin is null, returns a list of plugins that have been loaded
      */
-    public static function loaded($plugin = null)
+    public static function loaded()
     {
-        if ($plugin !== null) {
-            deprecationWarning(
-                'Checking a single plugin with Plugin::loaded() is deprecated. ' .
-                'Use Plugin::isLoaded() instead.'
-            );
-
-            return static::getCollection()->has($plugin);
-        }
         $names = [];
         foreach (static::getCollection() as $plugin) {
             $names[] = $plugin->getName();
