@@ -77,6 +77,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function isDirty($property = null);
 
     /**
+     * Returns whether this entity has errors.
+     *
+     * @param bool $includeNested true will check nested entities for hasErrors()
+     * @return bool
+     */
+    public function hasErrors($includeNested = true);
+
+    /**
      * Returns all validation errors.
      *
      * @return array

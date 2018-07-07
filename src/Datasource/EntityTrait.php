@@ -802,6 +802,31 @@ trait EntityTrait
     }
 
     /**
+     * Returns whether this entity has errors.
+     *
+     * @param bool $includeNested true will check nested entities for hasErrors()
+     * @return bool
+     */
+    public function hasErrors($includeNested = true)
+    {
+        if (!empty($this->_errors)) {
+            return true;
+        }
+
+        if ($includeNested === false) {
+            return false;
+        }
+
+        foreach ($this->_properties as $property) {
+            if ($this->_readHasErrors($property)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns all validation errors.
      *
      * @return array
@@ -945,6 +970,29 @@ trait EntityTrait
         }
 
         return [];
+    }
+
+    /**
+     * Reads if there are errors for one or many objects.
+     *
+     * @param mixed $object The object to read errors from.
+     * @return bool
+     */
+    protected function _readHasErrors($object)
+    {
+        if ($object instanceof EntityInterface && $object->hasErrors()) {
+            return true;
+        }
+
+        if (is_array($object)) {
+            foreach ($object as $value) {
+                if ($this->_readHasErrors($value)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1151,6 +1199,7 @@ trait EntityTrait
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
             '[virtual]' => $this->_virtual,
+            '[hasErrors]' => $this->hasErrors(),
             '[errors]' => $this->_errors,
             '[invalid]' => $this->_invalid,
             '[repository]' => $this->_registryAlias
