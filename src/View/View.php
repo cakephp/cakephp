@@ -1285,7 +1285,7 @@ class View implements EventDispatcherInterface
     {
         $plugin = null;
         list($first, $second) = pluginSplit($name);
-        if (Plugin::loaded($first) === true) {
+        if (Plugin::isLoaded($first) === true) {
             $name = $second;
             $plugin = $first;
         }

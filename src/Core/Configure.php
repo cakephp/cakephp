@@ -260,16 +260,35 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
+     * Checking if a specific engine has been configured with this method is deprecated.
+     * Use Configure::isConfigured() instead.
+     *
      * @param string|null $name Engine name.
      * @return array|bool Array of the configured Engine objects, bool for specific name.
      */
     public static function configured($name = null)
     {
         if ($name !== null) {
+            deprecationWarning(
+                'Checking for a named engine with configured() is deprecated. ' .
+                'Use Configure::isConfigured() instead.'
+            );
+
             return isset(static::$_engines[$name]);
         }
 
         return array_keys(static::$_engines);
+    }
+
+    /**
+     * Returns true if the Engine objects is configured.
+     *
+     * @param string $name Engine name.
+     * @return bool
+     */
+    public static function isConfigured($name)
+    {
+        return isset(static::$_engines[$name]);
     }
 
     /**
