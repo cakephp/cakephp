@@ -23,10 +23,10 @@ if (empty($plugin)) {
     $filePath = APP_DIR . DIRECTORY_SEPARATOR;
     $namespace = str_replace('/', '\\', $plugin);
 }
-if (!empty($plugin) && Plugin::loaded($plugin)) {
+if (!empty($plugin) && Plugin::isLoaded($plugin)) {
     $filePath = Plugin::classPath($plugin);
 }
-if (!empty($plugin) && !Plugin::loaded($plugin)) {
+if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
     $filePath = $pluginPath . h($plugin) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
 }
 
@@ -38,7 +38,7 @@ $this->start('subheading');
 ?>
     <strong>Error: </strong>
     <em><?= h($pluginDot . $class) ?></em> could not be found.
-    <?php if (!empty($plugin) && !Plugin::loaded($plugin)): ?>
+    <?php if (!empty($plugin) && !Plugin::isLoaded($plugin)): ?>
     Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
     <?php endif ?>
     <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
