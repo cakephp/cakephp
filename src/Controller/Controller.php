@@ -682,7 +682,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param bool $local If false, do not restrict referring URLs to local server. Careful with trusting external sources.
      * @return string Referring URL
      */
-    public function referer($default = null, $local = false): string
+    public function referer($default = null, $local = true): string
     {
         if (!$this->request) {
             return Router::url($default, !$local);
