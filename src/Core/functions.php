@@ -228,7 +228,7 @@ if (!function_exists('env')) {
         }
 
         if ($val !== null) {
-            return $val;
+            return filter_var($val, FILTER_SANITIZE_STRING);
         }
 
         switch ($key) {
