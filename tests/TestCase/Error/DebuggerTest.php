@@ -701,7 +701,7 @@ EXPECTED;
         Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -715,7 +715,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -729,7 +729,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', [], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -743,7 +743,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -768,7 +768,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>');
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;

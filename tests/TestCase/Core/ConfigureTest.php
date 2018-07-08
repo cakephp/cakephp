@@ -135,19 +135,16 @@ class ConfigureTest extends TestCase
      */
     public function testWrite()
     {
-        $writeResult = Configure::write('SomeName.someKey', 'myvalue');
-        $this->assertTrue($writeResult);
+        $this->assertTrue(Configure::write('SomeName.someKey', 'myvalue'));
         $result = Configure::read('SomeName.someKey');
         $this->assertEquals('myvalue', $result);
 
-        $writeResult = Configure::write('SomeName.someKey', null);
-        $this->assertTrue($writeResult);
+        $this->assertTrue(Configure::write('SomeName.someKey', null));
         $result = Configure::read('SomeName.someKey');
         $this->assertNull($result);
 
         $expected = ['One' => ['Two' => ['Three' => ['Four' => ['Five' => 'cool']]]]];
-        $writeResult = Configure::write('Key', $expected);
-        $this->assertTrue($writeResult);
+        Configure::write('Key', $expected);
 
         $result = Configure::read('Key');
         $this->assertEquals($expected, $result);
@@ -238,16 +235,16 @@ class ConfigureTest extends TestCase
      */
     public function testCheckingSavedEmpty()
     {
-        $this->assertTrue(Configure::write('ConfigureTestCase', 0));
+        Configure::write('ConfigureTestCase', 0);
         $this->assertTrue(Configure::check('ConfigureTestCase'));
 
-        $this->assertTrue(Configure::write('ConfigureTestCase', '0'));
+        Configure::write('ConfigureTestCase', '0');
         $this->assertTrue(Configure::check('ConfigureTestCase'));
 
-        $this->assertTrue(Configure::write('ConfigureTestCase', false));
+        Configure::write('ConfigureTestCase', false);
         $this->assertTrue(Configure::check('ConfigureTestCase'));
 
-        $this->assertTrue(Configure::write('ConfigureTestCase', null));
+        Configure::write('ConfigureTestCase', null);
         $this->assertFalse(Configure::check('ConfigureTestCase'));
     }
 
@@ -258,11 +255,11 @@ class ConfigureTest extends TestCase
      */
     public function testCheckKeyWithSpaces()
     {
-        $this->assertTrue(Configure::write('Configure Test', 'test'));
+        Configure::write('Configure Test', 'test');
         $this->assertTrue(Configure::check('Configure Test'));
         Configure::delete('Configure Test');
 
-        $this->assertTrue(Configure::write('Configure Test.Test Case', 'test'));
+        Configure::write('Configure Test.Test Case', 'test');
         $this->assertTrue(Configure::check('Configure Test.Test Case'));
     }
 
@@ -274,7 +271,6 @@ class ConfigureTest extends TestCase
     public function testCheckEmpty()
     {
         $this->assertFalse(Configure::check(''));
-        $this->assertFalse(Configure::check(null));
     }
 
     /**
@@ -299,8 +295,8 @@ class ConfigureTest extends TestCase
         try {
             Configure::load('non_existing_configuration_file');
         } catch (\Exception $e) {
-            $result = Configure::configured('default');
-            $this->assertTrue($result);
+            $this->assertTrue(Configure::isConfigured('default'));
+            $this->assertFalse(Configure::isConfigured('non_existing_configuration_file'));
         }
     }
 
@@ -485,8 +481,8 @@ class ConfigureTest extends TestCase
 
         $this->assertContains('test', $configured);
 
-        $this->assertTrue(Configure::configured('test'));
-        $this->assertFalse(Configure::configured('fake_garbage'));
+        $this->assertTrue(Configure::isConfigured('test'));
+        $this->assertFalse(Configure::isConfigured('fake_garbage'));
 
         $this->assertTrue(Configure::drop('test'));
         $this->assertFalse(Configure::drop('test'), 'dropping things that do not exist should return false.');
@@ -500,7 +496,7 @@ class ConfigureTest extends TestCase
     public function testClear()
     {
         Configure::write('test', 'value');
-        $this->assertTrue(Configure::clear());
+        Configure::clear();
         $this->assertNull(Configure::read('debug'));
         $this->assertNull(Configure::read('test'));
     }
@@ -587,9 +583,6 @@ class ConfigureTest extends TestCase
         Configure::write('Test', ['key' => 'value', 'key2' => 'value2']);
 
         $result = Configure::consume('');
-        $this->assertNull($result);
-
-        $result = Configure::consume(null);
         $this->assertNull($result);
     }
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -175,7 +176,7 @@ class TextTest extends TestCase
         $result = Text::insert($string, ['src' => 'foo', 'extra' => 'bar'], ['clean' => 'html']);
         $this->assertEquals($expected, $result);
 
-        $result = Text::insert('this is a ? string', 'test');
+        $result = Text::insert('this is a ? string', ['test']);
         $expected = 'this is a test string';
         $this->assertEquals($expected, $result);
 
@@ -869,11 +870,11 @@ HTML;
         $this->assertEquals($expected, $result);
 
         $expected = 'This is a phras...';
-        $result = $this->Text->excerpt($text, null, 9, '...');
+        $result = $this->Text->excerpt($text, '', 9, '...');
         $this->assertEquals($expected, $result);
 
         $expected = $text;
-        $result = $this->Text->excerpt($text, null, 200, '...');
+        $result = $this->Text->excerpt($text, '', 200, '...');
         $this->assertEquals($expected, $result);
 
         $expected = '...a phrase w...';

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -91,7 +92,7 @@ class SyslogLog extends BaseLog
      * @param array $context Additional information about the logged message
      * @return bool success of write.
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): bool
     {
         if (!$this->_open) {
             $config = $this->_config;
@@ -122,7 +123,7 @@ class SyslogLog extends BaseLog
      * @param int $facility the stream or facility to log to
      * @return void
      */
-    protected function _open($ident, $options, $facility)
+    protected function _open($ident, $options, $facility): void
     {
         openlog($ident, $options, $facility);
     }
@@ -135,7 +136,7 @@ class SyslogLog extends BaseLog
      * @param string $message Message to log.
      * @return bool
      */
-    protected function _write($priority, $message)
+    protected function _write($priority, $message): bool
     {
         return syslog($priority, $message);
     }

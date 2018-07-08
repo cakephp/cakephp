@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -66,7 +67,7 @@ abstract class BaseLog extends AbstractLogger
      *
      * @return array
      */
-    public function levels()
+    public function levels(): array
     {
         return $this->_config['levels'];
     }
@@ -74,7 +75,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return array
+     * @return array|bool
      */
     public function scopes()
     {
@@ -90,7 +91,7 @@ abstract class BaseLog extends AbstractLogger
      * @param array $context Additional logging information for the message.
      * @return string
      */
-    protected function _format($data, array $context = [])
+    protected function _format($data, array $context = []): string
     {
         if (is_string($data)) {
             return $data;

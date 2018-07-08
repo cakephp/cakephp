@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ class OpenSsl
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function encrypt($plain, $key)
+    public static function encrypt(string $plain, string $key): string
     {
         $method = 'AES-256-CBC';
         $ivSize = openssl_cipher_iv_length($method);
@@ -57,15 +58,19 @@ class OpenSsl
      * @return string Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
-    public static function decrypt($cipher, $key)
+    public static function decrypt(string $cipher, string $key): ?string
     {
         $method = 'AES-256-CBC';
         $ivSize = openssl_cipher_iv_length($method);
 
         $iv = mb_substr($cipher, 0, $ivSize, '8bit');
-
         $cipher = mb_substr($cipher, $ivSize, null, '8bit');
 
-        return openssl_decrypt($cipher, $method, $key, OPENSSL_RAW_DATA, $iv);
+        $value = openssl_decrypt($cipher, $method, $key, OPENSSL_RAW_DATA, $iv);
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
     }
 }

@@ -1245,6 +1245,42 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that check if hasErrors() works
+     *
+     * @return void
+     */
+    public function testHasErrors()
+    {
+        $entity = new Entity();
+        $hasErrors = $entity->hasErrors();
+        $this->assertFalse($hasErrors);
+
+        $nestedEntity = new Entity();
+        $entity->set([
+            'nested' => $nestedEntity,
+        ]);
+        $hasErrors = $entity->hasErrors();
+        $this->assertFalse($hasErrors);
+
+        $nestedEntity->setError('description', 'oops');
+        $hasErrors = $entity->hasErrors();
+        $this->assertTrue($hasErrors);
+
+        $hasErrors = $entity->hasErrors(false);
+        $this->assertFalse($hasErrors);
+
+        $entity->clean();
+        $hasErrors = $entity->hasErrors();
+        $this->assertTrue($hasErrors);
+        $hasErrors = $entity->hasErrors(false);
+        $this->assertFalse($hasErrors);
+
+        $nestedEntity->clean();
+        $hasErrors = $entity->hasErrors();
+        $this->assertFalse($hasErrors);
+    }
+
+    /**
      * Test that errors can be read with a path.
      *
      * @return void
@@ -1486,6 +1522,7 @@ class EntityTest extends TestCase
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
             '[original]' => [],
             '[virtual]' => ['baz'],
+            '[hasErrors]' => true,
             '[errors]' => ['foo' => ['An error']],
             '[invalid]' => ['foo' => 'a value'],
             '[repository]' => 'foos'

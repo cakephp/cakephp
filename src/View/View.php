@@ -732,7 +732,7 @@ class View implements EventDispatcherInterface
 
         $title = $this->Blocks->get('title');
         if ($title === '') {
-            $title = Inflector::humanize($this->templatePath);
+            $title = Inflector::humanize((string)$this->templatePath);
             $this->Blocks->set('title', $title);
         }
 
@@ -1202,7 +1202,7 @@ class View implements EventDispatcherInterface
         if (strlen($this->subDir)) {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && substr($templatePath, -(strlen($subDir))) == $subDir) {
+            if ($templatePath != $subDir && substr($templatePath, -strlen($subDir)) == $subDir) {
                 $subDir = '';
             }
         }
@@ -1285,7 +1285,7 @@ class View implements EventDispatcherInterface
     {
         $plugin = null;
         list($first, $second) = pluginSplit($name);
-        if (Plugin::loaded($first) === true) {
+        if ($first && Plugin::isLoaded($first)) {
             $name = $second;
             $plugin = $first;
         }

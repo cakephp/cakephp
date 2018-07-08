@@ -52,7 +52,7 @@ class PluginShortRouteTest extends TestCase
         $this->assertEquals('index', $result['action']);
 
         $result = $route->parse('/wrong', 'GET');
-        $this->assertFalse($result, 'Wrong plugin name matched %s');
+        $this->assertNull($result, 'Wrong plugin name matched %s');
     }
 
     /**
@@ -65,7 +65,7 @@ class PluginShortRouteTest extends TestCase
         $route = new PluginShortRoute('/:plugin', ['action' => 'index'], ['plugin' => 'foo|bar']);
 
         $result = $route->match(['plugin' => 'foo', 'controller' => 'posts', 'action' => 'index']);
-        $this->assertFalse($result, 'plugin controller mismatch was converted. %s');
+        $this->assertNull($result, 'plugin controller mismatch was converted. %s');
 
         $result = $route->match(['plugin' => 'foo', 'controller' => 'foo', 'action' => 'index']);
         $this->assertEquals('/foo', $result);

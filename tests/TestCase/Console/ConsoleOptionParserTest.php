@@ -639,7 +639,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->subcommands();
         $this->assertArrayHasKey('build', $result);
-        $this->assertFalse($result['build']->parser(), 'No parser should be created');
+        $this->assertNull($result['build']->parser(), 'No parser should be created');
     }
 
     /**
@@ -757,6 +757,46 @@ TEXT;
     }
 
     /**
+     * Test addSubcommand inherits options as no
+     * parser is created.
+     *
+     * @return void
+     */
+    public function testHelpSubcommandInheritOptions()
+    {
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('build', [
+            'help' => 'Build things.'
+        ])->addSubcommand('destroy', [
+            'help' => 'Destroy things.'
+        ])->addOption('connection', [
+            'help' => 'Db connection.',
+            'short' => 'c',
+        ])->addArgument('name', ['required' => false]);
+
+        $result = $parser->help('build');
+        $expected = <<<TEXT
+Build things.
+
+<info>Usage:</info>
+cake mycommand build [-c] [-h] [-q] [-v] [<name>]
+
+<info>Options:</info>
+
+--connection, -c  Db connection.
+--help, -h        Display this help.
+--quiet, -q       Enable quiet output.
+--verbose, -v     Enable verbose output.
+
+<info>Arguments:</info>
+
+name   <comment>(optional)</comment>
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
      * test that help() with a command param shows the help for a subcommand
      *
      * @return void
@@ -794,6 +834,41 @@ tool mycommand method [-f] [-h] [-q] [-v]
 --help, -h     Display this help.
 --quiet, -q    Enable quiet output.
 --verbose, -v  Enable verbose output.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a command param shows the help for a subcommand
+     *
+     * @return void
+     */
+    public function testHelpSubcommandInheritParser()
+    {
+        $subParser = new ConsoleOptionParser('method', false);
+        $subParser->addOption('connection', ['help' => 'Db connection.']);
+        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('method', [
+                'help' => 'This is another command',
+                'parser' => $subParser
+            ])
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help('method');
+        $expected = <<<TEXT
+This is another command
+
+<info>Usage:</info>
+cake mycommand method [--connection] [-h] [-0]
+
+<info>Options:</info>
+
+--connection      Db connection.
+--help, -h        Display this help.
+--zero, -0        Zero.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');

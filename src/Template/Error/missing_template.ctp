@@ -30,7 +30,7 @@ $this->start('subheading');
     <strong>Error: </strong>
     <?= sprintf(
         'The view for <em>%sController::%s()</em> was not found.',
-        h(Inflector::camelize($this->request->getParam('controller'))),
+        h(Inflector::camelize($this->request->getParam('controller', ''))),
         h($this->request->getParam('action'))
     ); ?>
 <?php endif ?>

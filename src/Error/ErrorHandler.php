@@ -139,8 +139,6 @@ class ErrorHandler extends BaseErrorHandler
             $this->_sendResponse($response);
         } catch (Throwable $exception) {
             $this->_logInternalError($exception);
-        } catch (Exception $exception) {
-            $this->_logInternalError($exception);
         }
     }
 

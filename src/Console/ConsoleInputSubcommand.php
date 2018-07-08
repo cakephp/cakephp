@@ -112,15 +112,15 @@ class ConsoleInputSubcommand
     /**
      * Get the usage value for this option
      *
-     * @return \Cake\Console\ConsoleOptionParser|bool Either false or a ConsoleOptionParser
+     * @return \Cake\Console\ConsoleOptionParser|null
      */
-    public function parser()
+    public function parser(): ?ConsoleOptionParser
     {
         if ($this->_parser instanceof ConsoleOptionParser) {
             return $this->_parser;
         }
 
-        return false;
+        return null;
     }
 
     /**

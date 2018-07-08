@@ -445,8 +445,8 @@ class ConsoleIoTest extends TestCase
         $this->assertNotEmpty(Log::engine('stderr'));
 
         $this->io->setLoggers(false);
-        $this->assertFalse(Log::engine('stdout'));
-        $this->assertFalse(Log::engine('stderr'));
+        $this->assertNull(Log::engine('stdout'));
+        $this->assertNull(Log::engine('stderr'));
     }
 
     /**

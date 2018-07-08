@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -107,7 +108,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key);
 
         $key = 'Not the same key. This one will fail';
-        $this->assertFalse(Security::decrypt($txt, $key), 'Modified key will fail.');
+        $this->assertNull(Security::decrypt($txt, $key), 'Modified key will fail.');
     }
 
     /**
@@ -124,7 +125,7 @@ class SecurityTest extends TestCase
 
         // Change one of the bytes in the hmac.
         $result[10] = 'x';
-        $this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified hmac causes failure.');
+        $this->assertNull(Security::decrypt($result, $key, $salt), 'Modified hmac causes failure.');
     }
 
     /**
@@ -140,7 +141,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key, $salt);
 
         $salt = 'humpty dumpty had a great fall.';
-        $this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified salt causes failure.');
+        $this->assertNull(Security::decrypt($result, $key, $salt), 'Modified salt causes failure.');
     }
 
     /**
@@ -168,15 +169,6 @@ class SecurityTest extends TestCase
 
         $result = Security::encrypt('', $key);
         $this->assertSame('', Security::decrypt($result, $key));
-
-        $result = Security::encrypt(false, $key);
-        $this->assertSame('', Security::decrypt($result, $key));
-
-        $result = Security::encrypt(null, $key);
-        $this->assertSame('', Security::decrypt($result, $key));
-
-        $result = Security::encrypt(0, $key);
-        $this->assertSame('0', Security::decrypt($result, $key));
 
         $result = Security::encrypt('0', $key);
         $this->assertSame('0', Security::decrypt($result, $key));

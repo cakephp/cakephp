@@ -370,6 +370,77 @@ class MultiCheckboxWidgetTest extends TestCase
     }
 
     /**
+     * Test label = false with checkboxWrapper option.
+     *
+     * @return void
+     */
+    public function testNoLabelWithCheckboxWrapperOption()
+    {
+        $data = [
+            'label' => false,
+            'name' => 'test',
+            'options' => [
+                1 => 'A',
+                2 => 'B',
+            ],
+        ];
+
+        $label = new LabelWidget($this->templates);
+        $input = new MultiCheckboxWidget($this->templates, $label);
+        $result = $input->render($data, $this->context);
+        $expected = [
+            ['div' => ['class' => 'checkbox']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'test[]',
+                'value' => 1,
+                'id' => 'test-1',
+            ]],
+            ['label' => ['for' => 'test-1']],
+            'A',
+            '/label',
+            '/div',
+            ['div' => ['class' => 'checkbox']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'test[]',
+                'value' => '2',
+                'id' => 'test-2',
+            ]],
+            ['label' => ['for' => 'test-2']],
+            'B',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $templates = [
+            'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
+        ];
+        $this->templates->add($templates);
+        $result = $input->render($data, $this->context);
+        $expected = [
+            ['div' => ['class' => 'checkbox']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'test[]',
+                'value' => 1,
+                'id' => 'test-1',
+            ]],
+            '/div',
+            ['div' => ['class' => 'checkbox']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'test[]',
+                'value' => '2',
+                'id' => 'test-2',
+            ]],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test render with groupings.
      *
      * @return void

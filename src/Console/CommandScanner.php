@@ -84,7 +84,7 @@ class CommandScanner
      */
     public function scanPlugin(string $plugin): array
     {
-        if (!Plugin::loaded($plugin)) {
+        if (!Plugin::isLoaded($plugin)) {
             return [];
         }
         $path = Plugin::classPath($plugin);

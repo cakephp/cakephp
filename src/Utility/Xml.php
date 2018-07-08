@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -89,9 +90,8 @@ class Xml
      * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
      * - `loadEntities` Defaults to false. Set to true to enable loading of `<!ENTITY` definitions. This
      *   is disabled by default for security reasons.
-     * - `readFile` Set to false to disable file reading. This is important to disable when
-     *   putting user data into Xml::build(). If enabled local files will be read if they exist.
-     *   Defaults to true for backwards compatibility reasons.
+     * - `readFile` Set to true to enable file reading. This is disabled by default to prevent
+     *   local filesystem access. Only enable this setting when the input is safe.
      * - `parseHuge` Enable the `LIBXML_PARSEHUGE` flag.
      *
      * If using array as input, you can pass `options` from Xml::fromArray.
@@ -106,7 +106,7 @@ class Xml
         $defaults = [
             'return' => 'simplexml',
             'loadEntities' => false,
-            'readFile' => true,
+            'readFile' => false,
             'parseHuge' => false,
         ];
         $options += $defaults;
@@ -115,16 +115,17 @@ class Xml
             return static::fromArray($input, $options);
         }
 
-        if (strpos($input, '<') !== false) {
-            return static::_loadXml($input, $options);
-        }
-
         if ($options['readFile'] && file_exists($input)) {
             return static::_loadXml(file_get_contents($input), $options);
         }
 
         if (!is_string($input)) {
-            throw new XmlException('Invalid input.');
+            $type = gettype($input);
+            throw new XmlException("Invalid input. {$type} cannot be parsed as XML.");
+        }
+
+        if (strpos($input, '<') !== false) {
+            return static::_loadXml($input, $options);
         }
 
         throw new XmlException('XML cannot be read.');
@@ -138,7 +139,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _loadXml($input, $options)
+    protected static function _loadXml(string $input, array $options)
     {
         $hasDisable = function_exists('libxml_disable_entity_loader');
         $internalErrors = libxml_use_internal_errors(true);
@@ -177,7 +178,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function loadHtml($input, $options = [])
+    public static function loadHtml(string $input, array $options = [])
     {
         $defaults = [
             'return' => 'simplexml',
@@ -222,8 +223,10 @@ class Xml
      * - `format` If create childs ('tags') or attributes ('attributes').
      * - `pretty` Returns formatted Xml when set to `true`. Defaults to `false`
      * - `version` Version of XML document. Default is 1.0.
-     * - `encoding` Encoding of XML document. If null remove from XML header. Default is the some of application.
-     * - `return` If return object of SimpleXMLElement ('simplexml') or DOMDocument ('domdocument'). Default is SimpleXMLElement.
+     * - `encoding` Encoding of XML document. If null remove from XML header.
+     *    Defaults to the application's encoding
+     * - `return` If return object of SimpleXMLElement ('simplexml')
+     *   or DOMDocument ('domdocument'). Default is SimpleXMLElement.
      *
      * Using the following data:
      *
@@ -328,7 +331,7 @@ class Xml
                             $child = $dom->createElement($key, '');
                             $child->appendChild(new DOMText($value));
                         } else {
-                            $child = $dom->createElement($key, $value);
+                            $child = $dom->createElement($key, (string)$value);
                         }
                         $node->appendChild($child);
                     } else {
@@ -336,7 +339,7 @@ class Xml
                             $key = substr($key, 1);
                         }
                         $attribute = $dom->createAttribute($key);
-                        $attribute->appendChild($dom->createTextNode($value));
+                        $attribute->appendChild($dom->createTextNode((string)$value));
                         $node->appendChild($attribute);
                     }
                 } else {
@@ -367,7 +370,7 @@ class Xml
      * @param array $data Array with information to create childs
      * @return void
      */
-    protected static function _createChild($data)
+    protected static function _createChild(array $data)
     {
         $data += [
             'dom' => null,
@@ -419,7 +422,7 @@ class Xml
      * @return array Array representation of the XML structure.
      * @throws \Cake\Utility\Exception\XmlException
      */
-    public static function toArray($obj)
+    public static function toArray($obj): array
     {
         if ($obj instanceof DOMNode) {
             $obj = simplexml_import_dom($obj);
