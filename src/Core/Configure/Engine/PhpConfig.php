@@ -30,7 +30,6 @@ use Cake\Core\Exception\Exception;
  *
  * ```
  * <?php
-declare(strict_types=1);
  * return [
  *     'debug' => 0,
  *     'Security' => [
@@ -81,7 +80,7 @@ class PhpConfig implements ConfigEngineInterface
      * @throws \Cake\Core\Exception\Exception when files don't exist or they don't contain `$config`.
      *  Or when files contain '..' as this could lead to abusive reads.
      */
-    public function read($key)
+    public function read(string $key): array
     {
         $file = $this->_getFilePath($key, true);
 
@@ -102,7 +101,7 @@ class PhpConfig implements ConfigEngineInterface
      * @param array $data Data to dump.
      * @return bool Success
      */
-    public function dump($key, array $data)
+    public function dump(string $key, array $data): bool
     {
         $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
 

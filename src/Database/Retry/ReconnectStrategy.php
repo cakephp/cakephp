@@ -77,7 +77,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      * @param int $retryCount The number of times the action has been already called
      * @return bool Whether or not it is OK to retry the action
      */
-    public function shouldRetry(Exception $exception, $retryCount)
+    public function shouldRetry(Exception $exception, int $retryCount): bool
     {
         $message = $exception->getMessage();
 

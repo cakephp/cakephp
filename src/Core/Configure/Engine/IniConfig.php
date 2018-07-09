@@ -97,7 +97,7 @@ class IniConfig implements ConfigEngineInterface
      * @throws \Cake\Core\Exception\Exception when files don't exist.
      *  Or when files contain '..' as this could lead to abusive reads.
      */
-    public function read($key)
+    public function read(string $key): array
     {
         $file = $this->_getFilePath($key, true);
 
@@ -125,7 +125,7 @@ class IniConfig implements ConfigEngineInterface
      * @param array $values Values to be exploded.
      * @return array Array of values exploded
      */
-    protected function _parseNestedValues($values)
+    protected function _parseNestedValues(array $values): array
     {
         foreach ($values as $key => $value) {
             if ($value === '1') {
@@ -153,7 +153,7 @@ class IniConfig implements ConfigEngineInterface
      * @param array $data The data to convert to ini file.
      * @return bool Success.
      */
-    public function dump($key, array $data)
+    public function dump(string $key, array $data): bool
     {
         $result = [];
         foreach ($data as $k => $value) {
@@ -185,7 +185,7 @@ class IniConfig implements ConfigEngineInterface
      * @param mixed $value Value to export.
      * @return string String value for ini file.
      */
-    protected function _value($value)
+    protected function _value($value): string
     {
         if ($value === null) {
             return 'null';
