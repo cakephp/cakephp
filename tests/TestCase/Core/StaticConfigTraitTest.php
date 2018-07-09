@@ -127,7 +127,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testParseBadType()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $className = get_class($this->subject);
         $className::parseDsn(['url' => 'http://:80']);
     }

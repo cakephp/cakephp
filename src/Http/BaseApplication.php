@@ -90,7 +90,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function addPlugin($name, array $config = [])
+    public function addPlugin(string $name, array $config = []): PluginApplicationInterface
     {
         if (is_string($name)) {
             $plugin = $this->makePlugin($name, $config);
@@ -151,7 +151,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginBootstrap()
+    public function pluginBootstrap(): void
     {
         foreach ($this->plugins->with('bootstrap') as $plugin) {
             $plugin->bootstrap($this);
@@ -224,7 +224,7 @@ abstract class BaseApplication implements
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next): ResponseInterface
     {
         return $this->getDispatcher()->dispatch($request, $response);
     }

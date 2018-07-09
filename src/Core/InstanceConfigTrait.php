@@ -262,7 +262,7 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
      */
-    protected function _configDelete($key)
+    protected function _configDelete(string $key): void
     {
         if (strpos($key, '.') === false) {
             unset($this->_config[$key]);

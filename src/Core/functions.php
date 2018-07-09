@@ -36,7 +36,7 @@ if (!function_exists('h')) {
      * @return mixed Wrapped text.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
-    function h($text, $double = true, $charset = null)
+    function h($text, bool $double = true, ?string $charset = null)
     {
         if (is_string($text)) {
             //optimize for strings
@@ -86,7 +86,7 @@ if (!function_exists('pluginSplit')) {
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
      */
-    function pluginSplit($name, $dotAppend = false, $plugin = null)
+    function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
     {
         if (strpos($name, '.') !== false) {
             $parts = explode('.', $name, 2);
@@ -111,7 +111,7 @@ if (!function_exists('namespaceSplit')) {
      * @param string $class The full class name, ie `Cake\Core\App`.
      * @return array Array with 2 indexes. 0 => namespace, 1 => classname.
      */
-    function namespaceSplit($class)
+    function namespaceSplit(string $class): array
     {
         $pos = strrpos($class, '\\');
         if ($pos === false) {
@@ -191,7 +191,7 @@ if (!function_exists('env')) {
      * @return string|bool|null Environment variable setting.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */
-    function env($key, $default = null)
+    function env(string $key, ?string $default = null)
     {
         if ($key === 'HTTPS') {
             if (isset($_SERVER['HTTPS'])) {
@@ -253,7 +253,7 @@ if (!function_exists('triggerWarning')) {
      * @param string $message The warning message.
      * @return void
      */
-    function triggerWarning($message)
+    function triggerWarning(string $message): void
     {
         $stackFrame = 1;
         $trace = debug_backtrace();
@@ -280,7 +280,7 @@ if (!function_exists('deprecationWarning')) {
      *   as that should point to application/plugin code.
      * @return void
      */
-    function deprecationWarning($message, $stackFrame = 1)
+    function deprecationWarning(string $message, int $stackFrame = 1): void
     {
         if (!(error_reporting() & E_USER_DEPRECATED)) {
             return;
@@ -312,7 +312,7 @@ if (!function_exists('getTypeName')) {
      * @param mixed $var Variable to check
      * @return string Returns the class name or variable type
      */
-    function getTypeName($var)
+    function getTypeName($var): string
     {
         return is_object($var) ? get_class($var) : gettype($var);
     }

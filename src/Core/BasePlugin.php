@@ -113,7 +113,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         if ($this->name) {
             return $this->name;
@@ -128,7 +128,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getPath()
+    public function getPath(): string
     {
         if ($this->path) {
             return $this->path;
@@ -148,7 +148,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getConfigPath()
+    public function getConfigPath(): string
     {
         if ($this->configPath) {
             return $this->configPath;
@@ -161,7 +161,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritDoc}
      */
-    public function getClassPath()
+    public function getClassPath(): string
     {
         if ($this->classPath) {
             return $this->classPath;
@@ -174,7 +174,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function enable($hook)
+    public function enable(string $hook): PluginInterface
     {
         $this->checkHook($hook);
         $this->{"{$hook}Enabled}"} = true;
@@ -185,7 +185,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function disable($hook)
+    public function disable(string $hook): PluginInterface
     {
         $this->checkHook($hook);
         $this->{"{$hook}Enabled"} = false;
@@ -196,7 +196,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled($hook)
+    public function isEnabled(string $hook): bool
     {
         $this->checkHook($hook);
 
@@ -210,7 +210,7 @@ class BasePlugin implements PluginInterface
      * @throws \InvalidArgumentException on invalid hooks
      * @return void
      */
-    protected function checkHook($hook)
+    protected function checkHook(string $hook): void
     {
         if (!in_array($hook, static::VALID_HOOKS)) {
             throw new InvalidArgumentException(

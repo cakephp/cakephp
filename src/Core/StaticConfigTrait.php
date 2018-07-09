@@ -73,7 +73,7 @@ trait StaticConfigTrait
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
      */
-    public static function setConfig($key, $config = null)
+    public static function setConfig($key, ?array $config = null): void
     {
         if ($config === null) {
             if (!is_array($key)) {
@@ -113,7 +113,7 @@ trait StaticConfigTrait
      * @param string $key The name of the configuration.
      * @return array|null Array of configuration data.
      */
-    public static function getConfig($key)
+    public static function getConfig(string $key): ?array
     {
         return isset(static::$_config[$key]) ? static::$_config[$key] : null;
     }
@@ -130,7 +130,7 @@ trait StaticConfigTrait
      * @param string $config An existing configuration you wish to remove.
      * @return bool Success of the removal, returns false when the config does not exist.
      */
-    public static function drop($config)
+    public static function drop(string $config): bool
     {
         if (!isset(static::$_config[$config])) {
             return false;
@@ -148,7 +148,7 @@ trait StaticConfigTrait
      *
      * @return array Array of configurations.
      */
-    public static function configured()
+    public static function configured(): array
     {
         return array_keys(static::$_config);
     }
@@ -185,7 +185,7 @@ trait StaticConfigTrait
      * @return array The configuration array to be stored after parsing the DSN
      * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
-    public static function parseDsn($dsn)
+    public static function parseDsn(string $dsn): array
     {
         if (empty($dsn)) {
             return [];
@@ -284,7 +284,7 @@ REGEXP;
      * @param array $map Additions/edits to the class map to apply.
      * @return void
      */
-    public static function setDsnClassMap(array $map)
+    public static function setDsnClassMap(array $map): void
     {
         static::$_dsnClassMap = $map + static::$_dsnClassMap;
     }
@@ -294,7 +294,7 @@ REGEXP;
      *
      * @return array
      */
-    public static function getDsnClassMap()
+    public static function getDsnClassMap(): array
     {
         return static::$_dsnClassMap;
     }
