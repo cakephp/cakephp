@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -134,7 +135,7 @@ class IniConfig implements ConfigEngineInterface
                 $value = false;
             }
             unset($values[$key]);
-            if (strpos($key, '.') !== false) {
+            if (strpos((string)$key, '.') !== false) {
                 $values = Hash::insert($values, $key, $value);
             } else {
                 $values[$key] = $value;
