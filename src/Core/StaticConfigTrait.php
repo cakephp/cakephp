@@ -68,12 +68,12 @@ trait StaticConfigTrait
      * ```
      *
      * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array $config An array of name => configuration data for adapter.
+     * @param array|object $config An array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
      */
-    public static function setConfig($key, ?array $config = null): void
+    public static function setConfig($key, $config = null): void
     {
         if ($config === null) {
             if (!is_array($key)) {

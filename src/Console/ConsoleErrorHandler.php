@@ -19,6 +19,7 @@ use Cake\Error\BaseErrorHandler;
 use Cake\Error\FatalErrorException;
 use Cake\Error\PHP7ErrorException;
 use Exception;
+use Throwable;
 
 /**
  * Error Handler for Cake console. Does simple printing of the
@@ -59,12 +60,12 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * Handle errors in the console environment. Writes errors to stderr,
      * and logs messages if Configure::read('debug') is false.
      *
-     * @param \Exception $exception Exception instance.
+     * @param \Throwable $exception Exception instance.
      * @return void
      * @throws \Exception When renderer class not found
      * @see https://secure.php.net/manual/en/function.set-exception-handler.php
      */
-    public function handleException(Exception $exception): void
+    public function handleException(Throwable $exception): void
     {
         $this->_displayException($exception);
         $this->_logException($exception);
@@ -76,18 +77,14 @@ class ConsoleErrorHandler extends BaseErrorHandler
     /**
      * Prints an exception to stderr.
      *
-     * @param \Exception $exception The exception to handle
+     * @param \Throwable $exception The exception to handle
      * @return void
      */
-    protected function _displayException($exception): void
+    protected function _displayException(Throwable $exception): void
     {
         $errorName = 'Exception:';
         if ($exception instanceof FatalErrorException) {
             $errorName = 'Fatal Error:';
-        }
-
-        if ($exception instanceof PHP7ErrorException) {
-            $exception = $exception->getError();
         }
 
         $message = sprintf(
@@ -109,7 +106,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * @param bool $debug Whether or not the app is in debug mode.
      * @return void
      */
-    protected function _displayError($error, $debug)
+    protected function _displayError(array $error, bool $debug): void
     {
         $message = sprintf(
             '%s in [%s, line %s]',

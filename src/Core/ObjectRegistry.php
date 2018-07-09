@@ -117,7 +117,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return void
      * @throws \RuntimeException When a duplicate is found.
      */
-    protected function _checkDuplicate(string $name, config $config): void
+    protected function _checkDuplicate(string $name, array $config): void
     {
         /** @var \Cake\Core\InstanceConfigTrait $existing */
         $existing = $this->_loaded[$name];
