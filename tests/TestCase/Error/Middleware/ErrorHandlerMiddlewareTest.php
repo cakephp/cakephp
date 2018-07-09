@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error\Middleware;
 
+use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
@@ -111,7 +112,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
             $response = new Response;
-            $mock = $this->getMockBuilder('StdClass')
+            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->setMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())
@@ -285,7 +286,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
 
         $factory = function ($exception) {
-            $mock = $this->getMockBuilder('StdClass')
+            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->setMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())
