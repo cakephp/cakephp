@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Error;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error\ErrorHandler;
-use Cake\Error\PHP7ErrorException;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
@@ -46,7 +45,7 @@ class TestErrorHandler extends ErrorHandler
      *
      * @return void
      */
-    protected function _clearOutput()
+    protected function _clearOutput(): void
     {
         // noop
     }
@@ -56,7 +55,7 @@ class TestErrorHandler extends ErrorHandler
      *
      * @return void
      */
-    protected function _sendResponse($response)
+    protected function _sendResponse($response): void
     {
         $this->response = $response;
     }
@@ -440,21 +439,6 @@ class ErrorHandlerTest extends TestCase
 
         $errorHandler = new TestErrorHandler(['log' => true]);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
-    }
-
-    /**
-     * Tests Handling a PHP7 error
-     *
-     * @return void
-     */
-    public function testHandlePHP7Error()
-    {
-        $this->skipIf(!class_exists('Error'), 'Requires PHP7');
-        $error = new PHP7ErrorException(new ParseError('Unexpected variable foo'));
-        $errorHandler = new TestErrorHandler();
-
-        $errorHandler->handleException($error);
-        $this->assertContains('Unexpected variable foo', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**

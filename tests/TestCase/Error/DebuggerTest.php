@@ -119,7 +119,7 @@ class DebuggerTest extends TestCase
         $result = Debugger::excerpt(__FILE__, 11, 2);
         $this->assertCount(5, $result);
 
-        $pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';
+        $pattern = '/<span style\="color\: \#\d{6}">.*?<\/span>/';
         $this->assertRegExp($pattern, $result[0]);
 
         $return = Debugger::excerpt('[internal]', 2, 2);

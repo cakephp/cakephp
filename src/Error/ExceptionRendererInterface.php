@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Error;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Interface ExceptionRendererInterface
  */
@@ -25,5 +27,5 @@ interface ExceptionRendererInterface
      *
      * @return \Cake\Http\Response The response to be sent.
      */
-    public function render();
+    public function render(): ResponseInterface;
 }
