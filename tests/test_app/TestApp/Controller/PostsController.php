@@ -16,13 +16,14 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
+use Cake\Http\Response;
 
 /**
  * PostsController class
  */
 class PostsController extends AppController
 {
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('Flash');
         $this->loadComponent('RequestHandler');
@@ -32,13 +33,15 @@ class PostsController extends AppController
     /**
      * beforeFilter
      *
-     * @return void
+     * @return \Cake\Http\Response|null
      */
-    public function beforeFilter(EventInterface $event)
+    public function beforeFilter(EventInterface $event): ?Response
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
         }
+
+        return null;
     }
 
     /**

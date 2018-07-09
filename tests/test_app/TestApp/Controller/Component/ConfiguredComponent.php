@@ -50,7 +50,7 @@ class ConfiguredComponent extends Component
     /**
      * @param array $config
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->configCopy = $config;
 

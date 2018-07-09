@@ -14,6 +14,7 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 
 /**
@@ -41,7 +42,7 @@ class AuthTestController extends Controller
         parent::__construct($request, $response);
     }
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('Auth');
     }
@@ -101,7 +102,7 @@ class AuthTestController extends Controller
      * @param int $status
      * @return \Cake\Http\Response|null
      */
-    public function redirect($url, $status = null)
+    public function redirect($url, int $status = 302): ?Response
     {
         $this->testUrl = Router::url($url);
 

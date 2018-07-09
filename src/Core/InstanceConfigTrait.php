@@ -113,7 +113,7 @@ trait InstanceConfigTrait
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Config value being read.
      */
-    public function getConfig($key = null, $default = null)
+    public function getConfig(?string $key = null, $default = null)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
