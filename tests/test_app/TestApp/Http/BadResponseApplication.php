@@ -26,7 +26,7 @@ class BadResponseApplication extends BaseApplication
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next): ResponseInterface
     {
         return $res;
     }

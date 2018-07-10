@@ -107,7 +107,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return void
      */
-    public function unload($name)
+    public function unload(string $name)
     {
         unset($this->_loaded[$name]);
     }

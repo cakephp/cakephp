@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,14 +36,14 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param array $config The configuration data for the plugin if using a string for $name
      * @return $this
      */
-    public function addPlugin($name, array $config = []);
+    public function addPlugin($name, array $config = []): self;
 
     /**
      * Run bootstrap logic for loaded plugins.
      *
      * @return void
      */
-    public function pluginBootstrap();
+    public function pluginBootstrap(): void;
 
     /**
      * Run routes hooks for loaded plugins

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,9 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use PDOException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 
 /**
  * Exception Renderer.
@@ -53,7 +56,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
     /**
      * The exception being handled.
      *
-     * @var \Exception
+     * @var \Throwable
      */
     public $error;
 
@@ -91,26 +94,14 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * If the error is a Cake\Core\Exception\Exception it will be converted to either a 400 or a 500
      * code error depending on the code used to construct the error.
      *
-     * @param \Exception $exception Exception.
+     * @param \Throwable $exception Exception.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Exception $exception, ServerRequestInterface $request = null)
+    public function __construct(Throwable $exception, ServerRequestInterface $request = null)
     {
         $this->error = $exception;
         $this->request = $request;
         $this->controller = $this->_getController();
-    }
-
-    /**
-     * Returns the unwrapped exception object in case we are dealing with
-     * a PHP 7 Error object
-     *
-     * @param \Exception $exception The object to unwrap
-     * @return \Exception|\Error
-     */
-    protected function _unwrap($exception)
-    {
-        return $exception instanceof PHP7ErrorException ? $exception->getError() : $exception;
     }
 
     /**
@@ -138,7 +129,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $startup = false;
         }
 
@@ -149,7 +140,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             try {
                 $event = new Event('Controller.startup', $controller);
                 $controller->RequestHandler->startup($event);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
             }
         }
         if (empty($controller)) {
@@ -164,19 +155,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @return \Cake\Http\Response The response to be sent.
      */
-    public function render()
+    public function render(): ResponseInterface
     {
         $exception = $this->error;
         $code = $this->_code($exception);
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
-        $unwrapped = $this->_unwrap($exception);
 
         $isDebug = Configure::read('debug');
         if (($isDebug || $exception instanceof HttpException) &&
             method_exists($this, $method)
         ) {
-            return $this->_customMethod($method, $unwrapped);
+            return $this->_customMethod($method, $exception);
         }
 
         $message = $this->_message($exception, $code);
@@ -193,12 +183,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $viewVars = [
             'message' => $message,
             'url' => h($url),
-            'error' => $unwrapped,
+            'error' => $exception,
             'code' => $code,
             '_serialize' => ['message', 'url', 'code']
         ];
         if ($isDebug) {
-            $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
+            $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
                 'args' => false
             ]);
@@ -209,8 +199,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
         }
         $this->controller->set($viewVars);
 
-        if ($unwrapped instanceof CakeException && $isDebug) {
-            $this->controller->set($unwrapped->getAttributes());
+        if ($exception instanceof CakeException && $isDebug) {
+            $this->controller->set($exception->getAttributes());
         }
         $this->controller->setResponse($response);
 
@@ -221,10 +211,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * Render a custom error method/template.
      *
      * @param string $method The method name to invoke.
-     * @param \Exception $exception The exception to render.
+     * @param \Throwable $exception The exception to render.
      * @return \Cake\Http\Response The response to send.
      */
-    protected function _customMethod($method, $exception)
+    protected function _customMethod(string $method, Throwable $exception)
     {
         $result = call_user_func([$this, $method], $exception);
         $this->_shutdown();
@@ -238,12 +228,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
     /**
      * Get method name
      *
-     * @param \Exception $exception Exception instance.
+     * @param \Throwable $exception Exception instance.
      * @return string
      */
-    protected function _method(Exception $exception)
+    protected function _method(Throwable $exception)
     {
-        $exception = $this->_unwrap($exception);
         list(, $baseClass) = namespaceSplit(get_class($exception));
 
         if (substr($baseClass, -9) === 'Exception') {
@@ -258,13 +247,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
     /**
      * Get error message.
      *
-     * @param \Exception $exception Exception.
+     * @param \Throwable $exception Exception.
      * @param int $code Error code.
      * @return string Error message
      */
-    protected function _message(Exception $exception, $code)
+    protected function _message(Throwable $exception, int $code): string
     {
-        $exception = $this->_unwrap($exception);
         $message = $exception->getMessage();
 
         if (!Configure::read('debug') &&
@@ -283,14 +271,13 @@ class ExceptionRenderer implements ExceptionRendererInterface
     /**
      * Get template for rendering exception info.
      *
-     * @param \Exception $exception Exception instance.
+     * @param \Throwable $exception Exception instance.
      * @param string $method Method name.
      * @param int $code Error code.
      * @return string Template name
      */
-    protected function _template(Exception $exception, $method, $code)
+    protected function _template(Throwable $exception, string $method, int $code): string
     {
-        $exception = $this->_unwrap($exception);
         $isHttpException = $exception instanceof HttpException;
 
         if (!Configure::read('debug') && !$isHttpException || $isHttpException) {
@@ -314,13 +301,12 @@ class ExceptionRenderer implements ExceptionRendererInterface
     /**
      * Get an error code value within range 400 to 506
      *
-     * @param \Exception $exception Exception.
+     * @param \Throwable $exception Exception.
      * @return int Error code value within range 400 to 506
      */
-    protected function _code(Exception $exception)
+    protected function _code(Throwable $exception): int
     {
         $code = 500;
-        $exception = $this->_unwrap($exception);
         $errorCode = $exception->getCode();
         if ($errorCode >= 400 && $errorCode < 506) {
             $code = $errorCode;
@@ -335,7 +321,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param string $template The template to render.
      * @return \Cake\Http\Response A response object that can be sent.
      */
-    protected function _outputMessage($template)
+    protected function _outputMessage(string $template)
     {
         try {
             $this->controller->render($template);
@@ -367,7 +353,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * @param string $template The template to render.
      * @return \Cake\Http\Response A response object that can be sent.
      */
-    protected function _outputMessageSafe($template)
+    protected function _outputMessageSafe(string $template)
     {
         $helpers = ['Form', 'Html'];
         $builder = $this->controller->viewBuilder();

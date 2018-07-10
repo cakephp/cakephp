@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,5 +30,5 @@ interface RetryStrategyInterface
      * @param int $retryCount The number of times the action has been already called
      * @return bool Whether or not it is OK to retry the action
      */
-    public function shouldRetry(Exception $exception, $retryCount);
+    public function shouldRetry(Exception $exception, int $retryCount): bool;
 }

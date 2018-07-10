@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -154,6 +155,7 @@ class PluginCollectionTest extends TestCase
         $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
         $file = <<<PHP
 <?php
+declare(strict_types=1);
 return [
     'plugins' => [
         'TestPlugin' => '/config/path'

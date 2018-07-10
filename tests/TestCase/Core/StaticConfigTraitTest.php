@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -126,7 +127,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testParseBadType()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $className = get_class($this->subject);
         $className::parseDsn(['url' => 'http://:80']);
     }

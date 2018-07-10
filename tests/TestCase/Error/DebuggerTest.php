@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -118,7 +119,7 @@ class DebuggerTest extends TestCase
         $result = Debugger::excerpt(__FILE__, 11, 2);
         $this->assertCount(5, $result);
 
-        $pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';
+        $pattern = '/<span style\="color\: \#\d{6}">.*?<\/span>/';
         $this->assertRegExp($pattern, $result[0]);
 
         $return = Debugger::excerpt('[internal]', 2, 2);

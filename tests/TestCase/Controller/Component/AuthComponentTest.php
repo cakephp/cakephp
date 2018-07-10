@@ -757,6 +757,7 @@ class AuthComponentTest extends TestCase
         $appConfig = Configure::read('App');
 
         Configure::write('App', [
+            'namespace' => 'TestApp',
             'dir' => APP_DIR,
             'webroot' => 'webroot',
             'base' => false,
