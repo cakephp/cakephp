@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception as CoreException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Error;
@@ -313,7 +314,7 @@ abstract class BaseErrorHandler
 
         if (!empty($config['skipLog'])) {
             foreach ((array)$config['skipLog'] as $class) {
-                if ($error instanceof $class) {
+                if ($exception instanceof $class) {
                     return false;
                 }
             }
@@ -362,7 +363,7 @@ abstract class BaseErrorHandler
         );
         $debug = Configure::read('debug');
 
-        if ($debug && method_exists($exception, 'getAttributes')) {
+        if ($debug && $exception instanceof CoreException) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
