@@ -17,7 +17,6 @@ namespace Cake\Console;
 
 use Cake\Error\BaseErrorHandler;
 use Cake\Error\FatalErrorException;
-use Cake\Error\PHP7ErrorException;
 use Exception;
 use Throwable;
 

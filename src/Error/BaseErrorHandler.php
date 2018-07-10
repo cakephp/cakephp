@@ -307,17 +307,13 @@ abstract class BaseErrorHandler
     protected function _logException(Throwable $exception): bool
     {
         $config = $this->_options;
-        $unwrapped = $exception instanceof PHP7ErrorException ?
-            $exception->getError() :
-            $exception;
-
         if (empty($config['log'])) {
             return false;
         }
 
         if (!empty($config['skipLog'])) {
             foreach ((array)$config['skipLog'] as $class) {
-                if ($unwrapped instanceof $class) {
+                if ($error instanceof $class) {
                     return false;
                 }
             }
@@ -356,9 +352,6 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(Throwable $exception): string
     {
-        $exception = $exception instanceof PHP7ErrorException ?
-            $exception->getError() :
-            $exception;
         $config = $this->_options;
         $message = sprintf(
             '[%s] %s in %s on line %s',
