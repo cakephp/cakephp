@@ -653,7 +653,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->_options = array_merge($this->_options, $options);
 

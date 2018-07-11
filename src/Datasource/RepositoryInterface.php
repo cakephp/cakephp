@@ -164,7 +164,7 @@ interface RepositoryInterface
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function newEntity(array $data = null, array $options = []);
+    public function newEntity(?array $data = null, array $options = []);
 
     /**
      * Create a list of entities + associated entities from an array.

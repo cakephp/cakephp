@@ -2413,7 +2413,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
      */
-    public function newEntity($data = null, array $options = [])
+    public function newEntity(?array $data = null, array $options = [])
     {
         if ($data === null) {
             $class = $this->getEntityClass();
