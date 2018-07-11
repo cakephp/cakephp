@@ -68,4 +68,14 @@ class ConsoleOutput extends ConsoleOutputBase
     {
         return $this->_out;
     }
+
+    /**
+     * Get the output as a string
+     *
+     * @return string
+     */
+    public function output(): string
+    {
+        return implode("\n", $this->_out);
+    }
 }
