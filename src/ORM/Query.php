@@ -865,7 +865,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * modified, and the count has already been performed the cached
      * value is returned
      */
-    public function count()
+    public function count(): int
     {
         if ($this->_resultsCount === null) {
             $this->_resultsCount = $this->_performCount();

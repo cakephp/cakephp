@@ -367,7 +367,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $alias Table alias
      * @return $this
      */
-    public function setAlias($alias)
+    public function setAlias(string $alias)
     {
         $this->_alias = $alias;
 
@@ -379,7 +379,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return string
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         if ($this->_alias === null) {
             $alias = namespaceSplit(get_class($this));
@@ -539,7 +539,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $field The field to check for.
      * @return bool True if the field exists, false if it does not.
      */
-    public function hasField($field)
+    public function hasField(string $field): bool
     {
         $schema = $this->getSchema();
 
@@ -1568,7 +1568,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * {@inheritDoc}
      */
-    public function updateAll($fields, $conditions)
+    public function updateAll($fields, $conditions): int
     {
         $query = $this->query();
         $query->update()
@@ -1583,7 +1583,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * {@inheritDoc}
      */
-    public function deleteAll($conditions)
+    public function deleteAll($conditions): int
     {
         $query = $this->query()
             ->delete()
@@ -1597,7 +1597,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * {@inheritDoc}
      */
-    public function exists($conditions)
+    public function exists($conditions): bool
     {
         return (bool)count(
             $this->find('all')
@@ -1709,7 +1709,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true
         ]);
 
-        if ($entity->hasErrors($options['associated'])) {
+        if ($entity->hasErrors((bool)$options['associated'])) {
             return false;
         }
 
@@ -2077,7 +2077,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the options used in the delete operation.
      *
      */
-    public function delete(EntityInterface $entity, $options = [])
+    public function delete(EntityInterface $entity, $options = []): bool
     {
         $options = new ArrayObject($options + [
             'atomic' => true,
@@ -2153,7 +2153,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ]);
 
         if ($event->isStopped()) {
-            return $event->getResult();
+            return (bool)$event->getResult();
         }
 
         $this->_associations->cascadeDelete(

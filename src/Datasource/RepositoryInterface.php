@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,14 +27,14 @@ interface RepositoryInterface
      * @param string $alias Table alias
      * @return $this
      */
-    public function setAlias($alias);
+    public function setAlias(string $alias);
 
     /**
      * Returns the repository alias.
      *
      * @return string
      */
-    public function getAlias();
+    public function getAlias(): string;
 
     /**
      * Test to see if a Repository has a specific field/column.
@@ -41,7 +42,7 @@ interface RepositoryInterface
      * @param string $field The field to check for.
      * @return bool True if the field exists, false if it does not.
      */
-    public function hasField($field);
+    public function hasField(string $field): bool;
 
     /**
      * Creates a new Query for this repository and applies some defaults based on the
@@ -94,7 +95,7 @@ interface RepositoryInterface
      * can take.
      * @return int Count Returns the affected rows.
      */
-    public function updateAll($fields, $conditions);
+    public function updateAll($fields, $conditions): int;
 
     /**
      * Deletes all records matching the provided conditions.
@@ -111,7 +112,7 @@ interface RepositoryInterface
      * @return int Returns the number of affected rows.
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
-    public function deleteAll($conditions);
+    public function deleteAll($conditions): int;
 
     /**
      * Returns true if there is any record in this repository matching the specified
@@ -120,7 +121,7 @@ interface RepositoryInterface
      * @param array|\ArrayAccess $conditions list of conditions to pass to the query
      * @return bool
      */
-    public function exists($conditions);
+    public function exists($conditions): bool;
 
     /**
      * Persists an entity based on the fields that are marked as dirty and
@@ -143,7 +144,7 @@ interface RepositoryInterface
      * @param array|\ArrayAccess $options The options for the delete.
      * @return bool success
      */
-    public function delete(EntityInterface $entity, $options = []);
+    public function delete(EntityInterface $entity, $options = []): bool;
 
     /**
      * Create a new entity + associated entities from an array.
@@ -163,7 +164,7 @@ interface RepositoryInterface
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function newEntity($data = null, array $options = []);
+    public function newEntity(array $data = null, array $options = []);
 
     /**
      * Create a list of entities + associated entities from an array.

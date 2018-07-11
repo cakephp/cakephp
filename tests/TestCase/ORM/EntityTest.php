@@ -1536,7 +1536,7 @@ class EntityTest extends TestCase
     public function testGetAndSetSource()
     {
         $entity = new Entity();
-        $this->assertNull($entity->getSource());
+        $this->assertSame('', $entity->getSource());
         $entity->setSource('foos');
         $this->assertEquals('foos', $entity->getSource());
     }

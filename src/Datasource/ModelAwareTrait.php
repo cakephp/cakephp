@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -61,7 +62,7 @@ trait ModelAwareTrait
      * @param string $name Class name.
      * @return void
      */
-    protected function _setModelClass($name)
+    protected function _setModelClass(string $name): void
     {
         if (empty($this->modelClass)) {
             $this->modelClass = $name;
@@ -124,7 +125,7 @@ trait ModelAwareTrait
      * @param callable $factory The factory function used to create instances.
      * @return void
      */
-    public function modelFactory($type, callable $factory)
+    public function modelFactory(string $type, callable $factory): void
     {
         $this->_modelFactories[$type] = $factory;
     }
@@ -134,7 +135,7 @@ trait ModelAwareTrait
      *
      * @return string
      */
-    public function getModelType()
+    public function getModelType(): string
     {
         return $this->_modelType;
     }
@@ -146,7 +147,7 @@ trait ModelAwareTrait
      *
      * @return $this
      */
-    public function setModelType($modelType)
+    public function setModelType(string $modelType)
     {
         $this->_modelType = $modelType;
 

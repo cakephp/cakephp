@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -103,7 +104,7 @@ trait QueryTrait
      *
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): RepositoryInterface
     {
         return $this->_repository;
     }
@@ -193,7 +194,7 @@ trait QueryTrait
      *
      * @return bool
      */
-    public function isEagerLoaded()
+    public function isEagerLoaded(): bool
     {
         return $this->_eagerLoaded;
     }
@@ -224,7 +225,7 @@ trait QueryTrait
      * @param string|null $alias the alias used to prefix the field
      * @return array
      */
-    public function aliasField($field, $alias = null)
+    public function aliasField(string $field, ?string $alias = null): array
     {
         $namespaced = strpos($field, '.') !== false;
         $aliasedField = $field;
@@ -253,7 +254,7 @@ trait QueryTrait
      * @param string|null $defaultAlias The default alias
      * @return array
      */
-    public function aliasFields($fields, $defaultAlias = null)
+    public function aliasFields(array $fields, $defaultAlias = null): array
     {
         $aliased = [];
         foreach ($fields as $alias => $field) {
@@ -303,7 +304,7 @@ trait QueryTrait
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->all()->toArray();
     }
@@ -324,7 +325,7 @@ trait QueryTrait
      * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
-    public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false)
+    public function mapReduce(callable $mapper = null, callable $reducer = null, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_mapReduce = [];
@@ -346,7 +347,7 @@ trait QueryTrait
      *
      * @return array
      */
-    public function getMapReducers()
+    public function getMapReducers(): array
     {
         return $this->_mapReduce;
     }
@@ -475,7 +476,7 @@ trait QueryTrait
      * be processed by this class and not returned by this function
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->_options;
     }

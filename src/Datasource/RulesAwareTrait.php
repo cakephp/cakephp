@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -46,7 +47,7 @@ trait RulesAwareTrait
      * @param \ArrayObject|array|null $options The options To be passed to the rules.
      * @return bool
      */
-    public function checkRules(EntityInterface $entity, $operation = RulesChecker::CREATE, $options = null)
+    public function checkRules(EntityInterface $entity, string $operation = RulesChecker::CREATE, $options = null): bool
     {
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject();
@@ -89,7 +90,7 @@ trait RulesAwareTrait
      * @see \Cake\Datasource\RulesChecker
      * @return \Cake\Datasource\RulesChecker
      */
-    public function rulesChecker()
+    public function rulesChecker(): RulesChecker
     {
         if ($this->_rulesChecker !== null) {
             return $this->_rulesChecker;
@@ -110,7 +111,7 @@ trait RulesAwareTrait
      * @param \Cake\Datasource\RulesChecker $rules The rules object to be modified.
      * @return \Cake\Datasource\RulesChecker
      */
-    public function buildRules(RulesChecker $rules)
+    public function buildRules(RulesChecker $rules): RulesChecker
     {
         return $rules;
     }

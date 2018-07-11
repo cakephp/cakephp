@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -71,7 +72,7 @@ class ConnectionManager
      * @throws \Cake\Core\Exception\Exception When trying to modify an existing config.
      * @see \Cake\Core\StaticConfigTrait::config()
      */
-    public static function setConfig($key, $config = null)
+    public static function setConfig($key, $config = null): void
     {
         if (is_array($config)) {
             $config['name'] = $key;
@@ -105,7 +106,7 @@ class ConnectionManager
      * @param string|null $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
      */
-    public static function parseDsn($config = null)
+    public static function parseDsn($config = null): array
     {
         $config = static::_parseDsn($config);
 
@@ -149,7 +150,7 @@ class ConnectionManager
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When aliasing a
      * connection that does not exist.
      */
-    public static function alias($alias, $source)
+    public static function alias(string $alias, string $source): void
     {
         if (empty(static::$_config[$source]) && empty(static::$_config[$alias])) {
             throw new MissingDatasourceConfigException(
@@ -168,7 +169,7 @@ class ConnectionManager
      * @param string $name The connection name to remove aliases for.
      * @return void
      */
-    public static function dropAlias($name)
+    public static function dropAlias(string $name): void
     {
         unset(static::$_aliasMap[$name]);
     }
@@ -187,7 +188,7 @@ class ConnectionManager
      * @throws \Cake\Datasource\Exception\MissingDatasourceConfigException When config
      * data is missing.
      */
-    public static function get($name, $useAliases = true)
+    public static function get(string $name, bool $useAliases = true)
     {
         if ($useAliases && isset(static::$_aliasMap[$name])) {
             $name = static::$_aliasMap[$name];
