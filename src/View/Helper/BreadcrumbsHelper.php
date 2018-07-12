@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -144,7 +145,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the index is out of bound
      */
-    public function insertAt($index, $title, $url = null, array $options = [])
+    public function insertAt(int $index, string $title, $url = null, array $options = [])
     {
         if (!isset($this->crumbs[$index])) {
             throw new LogicException(sprintf("No crumb could be found at index '%s'", $index));
@@ -173,7 +174,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the matching crumb can not be found
      */
-    public function insertBefore($matchingTitle, $title, $url = null, array $options = [])
+    public function insertBefore(string $matchingTitle, string $title, $url = null, array $options = [])
     {
         $key = $this->findCrumb($matchingTitle);
 
@@ -202,7 +203,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the matching crumb can not be found.
      */
-    public function insertAfter($matchingTitle, $title, $url = null, array $options = [])
+    public function insertAfter(string $matchingTitle, string $title, $url = null, array $options = [])
     {
         $key = $this->findCrumb($matchingTitle);
 
@@ -218,7 +219,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @return array
      */
-    public function getCrumbs()
+    public function getCrumbs(): array
     {
         return $this->crumbs;
     }
@@ -249,7 +250,7 @@ class BreadcrumbsHelper extends Helper
      * If you use the default for this option (empty), it will not render a separator.
      * @return string The breadcrumbs trail
      */
-    public function render(array $attributes = [], array $separator = [])
+    public function render(array $attributes = [], array $separator = []): string
     {
         if (!$this->crumbs) {
             return '';

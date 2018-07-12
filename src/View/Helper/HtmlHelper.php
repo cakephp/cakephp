@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -156,7 +157,7 @@ class HtmlHelper extends Helper
      * @return string|null Doctype string
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-doctype-tags
      */
-    public function docType($type = 'html5')
+    public function docType(string $type = 'html5'): ?string
     {
         if (isset($this->_docTypes[$type])) {
             return $this->_docTypes[$type];
@@ -205,7 +206,7 @@ class HtmlHelper extends Helper
      * @return string|null A completed `<link />` element, or null if the element was sent to a block.
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-meta-tags
      */
-    public function meta($type, $content = null, array $options = [])
+    public function meta($type, $content = null, array $options = []): ?string
     {
         if (!is_array($type)) {
             $types = [
@@ -272,6 +273,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -282,10 +285,10 @@ class HtmlHelper extends Helper
      * @return string A meta tag containing the specified character set.
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-charset-tags
      */
-    public function charset($charset = null)
+    public function charset(?string $charset = null): string
     {
         if (empty($charset)) {
-            $charset = strtolower(Configure::read('App.encoding'));
+            $charset = strtolower((string)Configure::read('App.encoding'));
         }
 
         return $this->formatTemplate('charset', [
@@ -317,7 +320,7 @@ class HtmlHelper extends Helper
      * @return string An `<a />` element.
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-links
      */
-    public function link($title, $url = null, array $options = [])
+    public function link($title, $url = null, array $options = []): string
     {
         $escapeTitle = true;
         if ($url !== null) {
@@ -411,7 +414,7 @@ class HtmlHelper extends Helper
      * @return string|null CSS `<link />` or `<style />` tag, depending on the type of link.
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-css-files
      */
-    public function css($path, array $options = [])
+    public function css($path, array $options = []): ?string
     {
         $options += ['once' => true, 'block' => null, 'rel' => 'stylesheet'];
 
@@ -461,6 +464,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -504,7 +509,7 @@ class HtmlHelper extends Helper
      *   or if $once is true and the file has been included before.
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-javascript-files
      */
-    public function script($url, array $options = [])
+    public function script($url, array $options = []): ?string
     {
         $defaults = ['block' => null, 'once' => true];
         $options += $defaults;
@@ -542,6 +547,8 @@ class HtmlHelper extends Helper
             $options['block'] = __FUNCTION__;
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -560,7 +567,7 @@ class HtmlHelper extends Helper
      * @return string|null String or null depending on the value of `$options['block']`
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
-    public function scriptBlock($script, array $options = [])
+    public function scriptBlock(string $script, array $options = []): ?string
     {
         $options += ['safe' => false, 'block' => null];
         if ($options['safe']) {
@@ -580,6 +587,8 @@ class HtmlHelper extends Helper
             $options['block'] = 'script';
         }
         $this->_View->append($options['block'], $out);
+
+        return null;
     }
 
     /**
@@ -598,7 +607,7 @@ class HtmlHelper extends Helper
      * @return void
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
-    public function scriptStart(array $options = [])
+    public function scriptStart(array $options = []): void
     {
         $this->_scriptBlockOptions = $options;
         ob_start();
@@ -612,7 +621,7 @@ class HtmlHelper extends Helper
      * @return string|null Depending on the settings of scriptStart() either a script tag or null
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-inline-javascript-blocks
      */
-    public function scriptEnd()
+    public function scriptEnd(): ?string
     {
         $buffer = ob_get_clean();
         $options = $this->_scriptBlockOptions;
@@ -638,7 +647,7 @@ class HtmlHelper extends Helper
      * @return string CSS styling data
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-css-programatically
      */
-    public function style(array $data, $oneLine = true)
+    public function style(array $data, bool $oneLine = true): string
     {
         $out = [];
         foreach ($data as $key => $value) {
@@ -682,7 +691,7 @@ class HtmlHelper extends Helper
      * @return string completed img tag
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#linking-to-images
      */
-    public function image($path, array $options = [])
+    public function image($path, array $options = []): string
     {
         $path = $this->Url->image($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
@@ -724,7 +733,7 @@ class HtmlHelper extends Helper
      * @return string Completed table headers
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-table-headings
      */
-    public function tableHeaders(array $names, array $trOptions = null, array $thOptions = null)
+    public function tableHeaders(array $names, array $trOptions = null, array $thOptions = null): string
     {
         $out = [];
         foreach ($names as $arg) {
@@ -756,7 +765,7 @@ class HtmlHelper extends Helper
      * @return string Formatted HTML
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-table-cells
      */
-    public function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true)
+    public function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, bool $useCount = false, bool $continueOddEven = true): string
     {
         if (empty($data[0]) || !is_array($data[0])) {
             $data = [$data];
@@ -797,7 +806,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return string[]
+     * @return array
      */
     protected function _renderCells($line, $useCount = false)
     {
@@ -833,7 +842,7 @@ class HtmlHelper extends Helper
      * @param array $options HTML attributes.
      * @return string
      */
-    public function tableRow($content, array $options = [])
+    public function tableRow(string $content, array $options = []): string
     {
         return $this->formatTemplate('tablerow', [
             'attrs' => $this->templater()->formatAttributes($options),
@@ -848,7 +857,7 @@ class HtmlHelper extends Helper
      * @param array $options HTML attributes.
      * @return string
      */
-    public function tableCell($content, array $options = [])
+    public function tableCell(string $content, array $options = []): string
     {
         return $this->formatTemplate('tablecell', [
             'attrs' => $this->templater()->formatAttributes($options),
@@ -869,7 +878,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the DIV tag, see above.
      * @return string The formatted tag element
      */
-    public function tag($name, $text = null, array $options = [])
+    public function tag($name, ?string $text = null, array $options = []): string
     {
         if (empty($name)) {
             return $text;
@@ -904,7 +913,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the DIV tag
      * @return string The formatted DIV element
      */
-    public function div($class = null, $text = null, array $options = [])
+    public function div(?string $class = null, ?string $text = null, array $options = []): string
     {
         if (!empty($class)) {
             $options['class'] = $class;
@@ -925,7 +934,7 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the P tag
      * @return string The formatted P element
      */
-    public function para($class, $text, array $options = [])
+    public function para(string $class, ?string $text, array $options = []): string
     {
         if (!empty($options['escape'])) {
             $text = h($text);
@@ -1004,7 +1013,7 @@ class HtmlHelper extends Helper
      * @param array $options Array of HTML attributes, and special options above.
      * @return string Generated media element
      */
-    public function media($path, array $options = [])
+    public function media($path, array $options = []): string
     {
         $options += [
             'tag' => null,
@@ -1092,7 +1101,7 @@ class HtmlHelper extends Helper
      * @return string The nested list
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-nested-lists
      */
-    public function nestedList(array $list, array $options = [], array $itemOptions = [])
+    public function nestedList(array $list, array $options = [], array $itemOptions = []): string
     {
         $options += ['tag' => 'ul'];
         $items = $this->_nestedListItem($list, $options, $itemOptions);

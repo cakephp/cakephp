@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -67,7 +68,7 @@ class Helper implements EventListenerInterface
     /**
      * The View instance this helper is attached to
      *
-     * @var \Cake\View\View
+     * @var \Cake\View\View|null
      */
     protected $_View;
 
@@ -122,7 +123,7 @@ class Helper implements EventListenerInterface
      *
      * @return \Cake\View\View The bound view instance.
      */
-    public function getView()
+    public function getView(): ?View
     {
         return $this->_View;
     }
@@ -153,11 +154,15 @@ class Helper implements EventListenerInterface
     /**
      * Returns a string read to be used in confirm()
      *
-     * @param string $message The message to clean
-     * @return mixed
+     * @param string|null $message The message to clean
+     * @return string
      */
     protected function _cleanConfirmMessage($message)
     {
+        if ($message === null) {
+            return '';
+        }
+
         return str_replace('\\\n', '\n', json_encode($message));
     }
 
@@ -169,7 +174,7 @@ class Helper implements EventListenerInterface
      * @param string $key the key to use for class.
      * @return array Array of options with $key set.
      */
-    public function addClass(array $options = [], $class = null, $key = 'class')
+    public function addClass(array $options = [], ?string $class = null, string $key = 'class'): array
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
@@ -221,7 +226,7 @@ class Helper implements EventListenerInterface
      * @param array $config The configuration settings provided to this helper.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
     }
 
