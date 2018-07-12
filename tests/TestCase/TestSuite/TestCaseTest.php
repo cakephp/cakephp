@@ -440,7 +440,7 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelWithPlugin()
     {
         static::setAppNamespace();
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
         $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');

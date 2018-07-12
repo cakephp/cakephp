@@ -92,7 +92,7 @@ class WidgetLocatorTestCase extends TestCase
      */
     public function testAddPluginWidgetsFromConfigInConstructor()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $widgets = [
             'text' => ['Cake\View\Widget\BasicWidget'],
             'TestPlugin.test_widgets',

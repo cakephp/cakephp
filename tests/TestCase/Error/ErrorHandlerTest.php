@@ -381,7 +381,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testLoadPluginHandler()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $errorHandler = new TestErrorHandler([
             'exceptionRenderer' => 'TestPlugin.TestPluginExceptionRenderer',
         ]);

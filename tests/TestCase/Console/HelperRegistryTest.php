@@ -112,7 +112,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->helpers->load('SimpleAliased', ['className' => 'Simple']);
         $this->assertInstanceOf(SimpleHelper::class, $result);

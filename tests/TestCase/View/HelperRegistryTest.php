@@ -154,7 +154,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadWithAliasAndPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->load('SomeOther', ['className' => 'TestPlugin.OtherHelper']);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);

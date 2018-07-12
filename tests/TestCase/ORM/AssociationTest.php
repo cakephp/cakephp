@@ -436,7 +436,7 @@ class AssociationTest extends TestCase
      */
     public function testTargetPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $config = [
             'className' => 'TestPlugin.Comments',
             'foreignKey' => 'a_key',

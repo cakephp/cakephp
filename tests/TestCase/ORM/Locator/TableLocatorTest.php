@@ -124,7 +124,7 @@ class TableLocatorTest extends TestCase
      */
     public function testConfigPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $data = [
             'connection' => 'testing',
@@ -336,7 +336,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('TestPlugin.TestPluginComments');
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
@@ -388,7 +388,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithClassNameOption()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
         ]);
@@ -409,7 +409,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithFullNamespaceName()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $table = $this->_locator->get('Comments', [
             'className' => $class,
@@ -522,7 +522,7 @@ class TableLocatorTest extends TestCase
      */
     public function testSetPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $mock = $this->getMockBuilder('TestPlugin\Model\Table\CommentsTable')->getMock();
 

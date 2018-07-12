@@ -176,7 +176,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPluginElement()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
         $expected = 'this is the plugin element';
@@ -190,7 +190,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithTheme()
     {
-        $this->loadPlugins('TestTheme');
+        $this->loadPlugins(['TestTheme']);
 
         $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');

@@ -139,7 +139,7 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
         $this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Text->engine());
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $Text = new TextHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
         $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Text->engine());
         Plugin::unload();

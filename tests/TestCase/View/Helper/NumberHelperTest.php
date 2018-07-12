@@ -128,7 +128,7 @@ class NumberHelperTest extends TestCase
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
         $this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
         $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());
         Plugin::unload('TestPlugin');

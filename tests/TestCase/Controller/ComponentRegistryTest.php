@@ -93,7 +93,7 @@ class ComponentRegistryTest extends TestCase
         $result = $this->Components->load('Cookie');
         $this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Components->load('SomeOther', ['className' => 'TestPlugin.Other']);
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
@@ -138,7 +138,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadPluginComponent()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Components->load('TestPlugin.Other');
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->Other, 'Class is wrong');
@@ -151,7 +151,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithAliasAndPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
         $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);

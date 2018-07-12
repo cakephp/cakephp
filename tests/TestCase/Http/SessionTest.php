@@ -496,7 +496,7 @@ class SessionTest extends TestCase
     public function testUsingPluginHandler()
     {
         static::setAppNamespace();
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $config = [
             'defaults' => 'cake',

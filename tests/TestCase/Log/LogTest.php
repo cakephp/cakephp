@@ -44,7 +44,7 @@ class LogTest extends TestCase
     public function testImportingLoggers()
     {
         static::setAppNamespace();
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         Log::setConfig('libtest', [
             'engine' => 'TestApp'

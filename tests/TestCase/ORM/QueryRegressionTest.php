@@ -527,7 +527,7 @@ class QueryRegressionTest extends TestCase
     public function testPluginAssociationQueryGeneration()
     {
         $this->loadFixtures('Articles', 'Comments', 'Authors');
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('TestPlugin.Comments');
         $articles->belongsTo('TestPlugin.Authors');

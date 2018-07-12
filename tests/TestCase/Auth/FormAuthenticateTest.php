@@ -272,7 +272,7 @@ class FormAuthenticateTest extends TestCase
      */
     public function testPluginModel()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $PluginModel = $this->getTableLocator()->get('TestPlugin.AuthUsers');
         $user['id'] = 1;

@@ -129,7 +129,7 @@ class ShellTest extends TestCase
     {
         static::setAppNamespace();
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->Shell->tasks = ['Extract' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
@@ -160,7 +160,7 @@ class ShellTest extends TestCase
         );
         $this->assertEquals('Articles', $Shell->modelClass);
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
             'TestPlugin\Model\Table\TestPluginCommentsTable',

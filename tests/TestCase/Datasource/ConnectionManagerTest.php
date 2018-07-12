@@ -202,7 +202,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testGetPluginDataSource()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $name = 'test_variant';
         $config = ['className' => 'TestPlugin.TestSource', 'foo' => 'bar'];
         ConnectionManager::setConfig($name, $config);

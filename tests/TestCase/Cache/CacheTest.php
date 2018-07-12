@@ -298,7 +298,7 @@ class CacheTest extends TestCase
     public function testConfigWithLibAndPluginEngines()
     {
         static::setAppNamespace();
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $config = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
         Cache::setConfig('libEngine', $config);

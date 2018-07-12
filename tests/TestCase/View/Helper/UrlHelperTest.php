@@ -279,7 +279,7 @@ class UrlHelperTest extends TestCase
     public function testAssetUrlPlugin()
     {
         $this->Helper->webroot = '';
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
         $this->assertEquals('test_plugin/style.css', $result);

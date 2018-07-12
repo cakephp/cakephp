@@ -394,7 +394,7 @@ class ConfigureTest extends TestCase
     public function testLoadPlugin()
     {
         Configure::config('test', new PhpConfig());
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = Configure::load('TestPlugin.load', 'test');
         $this->assertTrue($result);
         $expected = '/test_app/Plugin/TestPlugin/Config/load.php';

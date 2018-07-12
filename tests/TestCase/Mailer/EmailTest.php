@@ -1746,7 +1746,7 @@ class EmailTest extends TestCase
      */
     public function testSendRenderThemed()
     {
-        $this->loadPlugins('TestTheme');
+        $this->loadPlugins(['TestTheme']);
         $this->Email->reset();
         $this->Email->setTransport('debug');
 

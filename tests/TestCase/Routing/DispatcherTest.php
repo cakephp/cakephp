@@ -209,7 +209,7 @@ class DispatcherTest extends TestCase
     {
         $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
         $this->expectExceptionMessage('Controller class TestPlugin.Tests could not be found.');
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $request = new ServerRequest([
             'url' => 'TestPlugin.Tests/index',

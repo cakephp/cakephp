@@ -88,7 +88,7 @@ class TaskRegistryTest extends TestCase
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->Tasks = new TaskRegistry($shell, $dispatcher);
 
         $result = $this->Tasks->load('TestPlugin.OtherTask');
@@ -104,7 +104,7 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Tasks->load('CommandAliased', ['className' => 'Command']);
         $this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);

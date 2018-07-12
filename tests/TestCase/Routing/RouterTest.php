@@ -2632,7 +2632,7 @@ class RouterTest extends TestCase
      */
     public function testUsingCustomRouteClass()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::connect(
             '/:slug',
             ['plugin' => 'TestPlugin', 'action' => 'index'],
@@ -2657,7 +2657,7 @@ class RouterTest extends TestCase
      */
     public function testUsingCustomRouteClassPluginDotSyntax()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::connect(
             '/:slug',
             ['controller' => 'posts', 'action' => 'view'],

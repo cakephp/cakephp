@@ -891,7 +891,7 @@ class TableTest extends TestCase
     public function testHasManyPluginOverlap()
     {
         $this->getTableLocator()->get('Comments');
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $table = new Table(['table' => 'authors']);
 
@@ -909,7 +909,7 @@ class TableTest extends TestCase
     public function testHasManyPluginOverlapConfig()
     {
         $this->getTableLocator()->get('Comments');
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $table = new Table(['table' => 'authors']);
 
@@ -3714,7 +3714,7 @@ class TableTest extends TestCase
      */
     public function testEntitySourceExistingAndNew()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Authors');
 
         $existingAuthor = $table->find()->first();
@@ -6495,7 +6495,7 @@ class TableTest extends TestCase
             $table = $this->getTableLocator()->get('Articles');
             $this->assertEquals('Articles', $table->newEntity()->source());
 
-            $this->loadPlugins('TestPlugin');
+            $this->loadPlugins(['TestPlugin']);
             $table = $this->getTableLocator()->get('TestPlugin.Comments');
             $this->assertEquals('TestPlugin.Comments', $table->newEntity()->source());
         });
@@ -6511,7 +6511,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $this->assertEquals('Articles', $table->newEntity()->getSource());
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Comments');
         $this->assertEquals('TestPlugin.Comments', $table->newEntity()->getSource());
     }

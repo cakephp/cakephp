@@ -196,19 +196,16 @@ abstract class TestCase extends BaseTestCase
      * Useful to test how plugins being loaded/not loaded interact with other
      * elements in CakePHP or applications.
      *
-     * @param string|array $plugins list of Plugins to load
+     * @param array $plugins list of Plugins to load
      * @return \Cake\Http\BaseApplication
      */
-    public function loadPlugins($plugins = [])
+    public function loadPlugins(array $plugins = [])
     {
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
             ['']
         );
 
-        if (is_string($plugins)) {
-            $plugins = (array)$plugins;
-        }
         foreach ($plugins as $k => $opts) {
             if (is_array($opts)) {
                 $app->addPlugin($k, $opts);

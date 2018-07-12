@@ -803,7 +803,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingPluginRenderSafeWithPlugin()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 

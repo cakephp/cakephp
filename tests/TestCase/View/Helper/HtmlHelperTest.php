@@ -595,7 +595,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('screen.css', ['once' => false]);
         $this->assertHtml($expected, $result);
 
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Html->css('TestPlugin.style', ['plugin' => false]);
         $expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
         $this->assertHtml($expected, $result);
@@ -708,7 +708,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssLink()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Html->css('TestPlugin.test_plugin_asset');
         $expected = [
@@ -788,7 +788,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssTimestamping()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         Configure::write('debug', true);
         Configure::write('Asset.timestamp', true);
@@ -875,7 +875,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginScriptTimestamping()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $pluginPath = Plugin::path('TestPlugin');
         $pluginJsPath = $pluginPath . 'webroot/js';
@@ -1010,7 +1010,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginScript()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Html->script('TestPlugin.foo');
         $expected = [

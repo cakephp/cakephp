@@ -99,7 +99,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkWhenVendorDirectoryExits()
     {
-        $this->loadPlugins('Company/TestPluginThree');
+        $this->loadPlugins(['Company/TestPluginThree']);
 
         mkdir(WWW_ROOT . 'company');
 
@@ -122,7 +122,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkWhenTargetAlreadyExits()
     {
-        $this->loadPlugins('TestTheme');
+        $this->loadPlugins(['TestTheme']);
 
         $shell = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
             ->setMethods(['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'])
@@ -143,7 +143,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testForPluginWithoutWebroot()
     {
-        $this->loadPlugins('TestPluginTwo');
+        $this->loadPlugins(['TestPluginTwo']);
 
         $this->Task->symlink();
         $this->assertFileNotExists(WWW_ROOT . 'test_plugin_two');
@@ -203,7 +203,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testCopyOverwrite()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $this->Task->copy();
 

@@ -126,7 +126,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionPlugins()
     {
-        $this->loadPlugins('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::reload();
         Router::connect('/test_plugin/tests/:action/*', ['controller' => 'Tests', 'plugin' => 'TestPlugin']);
 
