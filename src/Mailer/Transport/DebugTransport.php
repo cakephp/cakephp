@@ -32,7 +32,7 @@ class DebugTransport extends AbstractTransport
      * @param \Cake\Mailer\Email $email Cake Email
      * @return array
      */
-    public function send(Email $email)
+    public function send(Email $email): array
     {
         $headers = $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']);
         $headers = $this->_headersToString($headers);

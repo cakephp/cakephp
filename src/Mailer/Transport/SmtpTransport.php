@@ -25,7 +25,6 @@ use Exception;
  */
 class SmtpTransport extends AbstractTransport
 {
-
     /**
      * Default config for this class
      *
@@ -86,7 +85,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return void
      */
-    public function connect()
+    public function connect(): void
     {
         if (!$this->connected()) {
             $this->_connect();
@@ -99,7 +98,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return bool
      */
-    public function connected()
+    public function connected(): bool
     {
         return $this->_socket !== null && $this->_socket->connected;
     }
@@ -112,7 +111,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return void
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         if ($this->connected()) {
             $this->_disconnect();
@@ -144,7 +143,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return array
      */
-    public function getLastResponse()
+    public function getLastResponse(): array
     {
         return $this->_lastResponse;
     }
@@ -156,7 +155,7 @@ class SmtpTransport extends AbstractTransport
      * @return array
      * @throws \Cake\Network\Exception\SocketException
      */
-    public function send(Email $email)
+    public function send(Email $email): array
     {
         if (!$this->connected()) {
             $this->_connect();
@@ -181,7 +180,7 @@ class SmtpTransport extends AbstractTransport
      * @param array $responseLines Response lines to parse.
      * @return void
      */
-    protected function _bufferResponseLines(array $responseLines)
+    protected function _bufferResponseLines(array $responseLines): void
     {
         $response = [];
         foreach ($responseLines as $responseLine) {
@@ -201,7 +200,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _connect()
+    protected function _connect(): void
     {
         $this->_generateSocket();
         if (!$this->_socket->connect()) {
@@ -244,7 +243,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _auth()
+    protected function _auth(): void
     {
         if (isset($this->_config['username'], $this->_config['password'])) {
             $replyCode = (string)$this->_smtpSend('AUTH LOGIN', '334|500|502|504');
@@ -273,7 +272,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $email The email address to send with the command.
      * @return string
      */
-    protected function _prepareFromCmd($email)
+    protected function _prepareFromCmd(string $email): string
     {
         return 'MAIL FROM:<' . $email . '>';
     }
@@ -284,7 +283,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $email The email address to send with the command.
      * @return string
      */
-    protected function _prepareRcptCmd($email)
+    protected function _prepareRcptCmd(string $email): string
     {
         return 'RCPT TO:<' . $email . '>';
     }
@@ -295,7 +294,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Email $email Email instance
      * @return array
      */
-    protected function _prepareFromAddress($email)
+    protected function _prepareFromAddress(Email $email): array
     {
         $from = $email->getReturnPath();
         if (empty($from)) {
@@ -311,7 +310,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Email $email Email instance
      * @return array
      */
-    protected function _prepareRecipientAddresses($email)
+    protected function _prepareRecipientAddresses(Email $email): array
     {
         $to = $email->getTo();
         $cc = $email->getCc();
@@ -326,7 +325,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Email $email Email instance
      * @return array
      */
-    protected function _prepareMessageHeaders($email)
+    protected function _prepareMessageHeaders(Email $email): array
     {
         return $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject', 'returnPath']);
     }
@@ -337,7 +336,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Email $email Email instance
      * @return string
      */
-    protected function _prepareMessage($email)
+    protected function _prepareMessage(Email $email): string
     {
         $lines = $email->message();
         $messages = [];
@@ -355,11 +354,11 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send emails
      *
-     * @return void
      * @param \Cake\Mailer\Email $email Cake Email
      * @throws \Cake\Network\Exception\SocketException
+     * @return void
      */
-    protected function _sendRcpt($email)
+    protected function _sendRcpt(Email $email): void
     {
         $from = $this->_prepareFromAddress($email);
         $this->_smtpSend($this->_prepareFromCmd(key($from)));
@@ -377,7 +376,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _sendData($email)
+    protected function _sendData(Email $email): void
     {
         $this->_smtpSend('DATA', '354');
 
@@ -394,7 +393,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _disconnect()
+    protected function _disconnect(): void
     {
         $this->_smtpSend('QUIT', false);
         $this->_socket->disconnect();
@@ -406,7 +405,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _generateSocket()
+    protected function _generateSocket(): void
     {
         $this->_socket = new Socket($this->_config);
     }
@@ -419,7 +418,7 @@ class SmtpTransport extends AbstractTransport
      * @return string|null The matched code, or null if nothing matched
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _smtpSend($data, $checkCode = '250')
+    protected function _smtpSend(?string $data, ?string $checkCode = '250'): ?string
     {
         $this->_lastResponse = [];
 
@@ -456,5 +455,7 @@ class SmtpTransport extends AbstractTransport
             }
             throw new SocketException(sprintf('SMTP Error: %s', $response));
         }
+
+        return null;
     }
 }

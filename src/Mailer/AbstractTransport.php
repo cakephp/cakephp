@@ -23,7 +23,6 @@ use Cake\Core\InstanceConfigTrait;
  */
 abstract class AbstractTransport
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -39,14 +38,14 @@ abstract class AbstractTransport
      * @param \Cake\Mailer\Email $email Email instance.
      * @return array
      */
-    abstract public function send(Email $email);
+    abstract public function send(Email $email): array;
 
     /**
      * Constructor
      *
      * @param array $config Configuration options.
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         $this->setConfig($config);
     }
@@ -58,7 +57,7 @@ abstract class AbstractTransport
      * @param string $eol End of line string.
      * @return string
      */
-    protected function _headersToString($headers, $eol = "\r\n")
+    protected function _headersToString(array $headers, string $eol = "\r\n"): string
     {
         $out = '';
         foreach ($headers as $key => $value) {

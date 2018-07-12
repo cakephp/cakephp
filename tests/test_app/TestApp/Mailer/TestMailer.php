@@ -27,7 +27,7 @@ class TestMailer extends Mailer
         return $this->_email;
     }
 
-    public function reset()
+    protected function reset(): Mailer
     {
         $this->template = $this->viewBuilder()->getTemplate();
 
