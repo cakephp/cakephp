@@ -168,7 +168,7 @@ class ExtractTask extends Shell
             $this->_paths = explode(',', $this->params['paths']);
         } elseif (isset($this->params['plugin'])) {
             $plugin = Inflector::camelize($this->params['plugin']);
-            if (!Plugin::loaded($plugin)) {
+            if (!Plugin::isLoaded($plugin)) {
                 Plugin::load($plugin);
             }
             $this->_paths = [Plugin::classPath($plugin)];

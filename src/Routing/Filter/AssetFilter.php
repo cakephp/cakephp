@@ -109,7 +109,7 @@ class AssetFilter extends DispatcherFilter
             }
             $pluginPart[] = Inflector::camelize($parts[$i]);
             $plugin = implode('/', $pluginPart);
-            if ($plugin && Plugin::loaded($plugin)) {
+            if ($plugin && Plugin::isLoaded($plugin)) {
                 $parts = array_slice($parts, $i + 1);
                 $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;

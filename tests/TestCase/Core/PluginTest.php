@@ -98,9 +98,11 @@ class PluginTest extends TestCase
         $this->loadPlugins(['TestPlugin' => ['bootstrap' => false, 'routes' => false]]);
         $expected = ['TestPlugin'];
         $this->assertEquals($expected, Plugin::loaded());
+        $this->assertTrue(Plugin::isLoaded('TestPlugin'));
 
         Plugin::unload('TestPlugin');
         $this->assertEquals([], Plugin::loaded());
+        $this->assertFalse(Plugin::isLoaded('TestPlugin'));
 
         $this->loadPlugins(['TestPlugin' => ['bootstrap' => false, 'routes' => false]]);
         $expected = ['TestPlugin'];
@@ -108,6 +110,7 @@ class PluginTest extends TestCase
 
         Plugin::unload('TestFakePlugin');
         $this->assertEquals($expected, Plugin::loaded());
+        $this->assertFalse(Plugin::isLoaded('TestFakePlugin'));
     }
 
     /**
@@ -154,19 +157,35 @@ class PluginTest extends TestCase
     }
 
     /**
+     * Tests deprecated usage of loaded()
+     *
+     * @deprecated
+     * @return void
+     */
+    public function testIsLoaded()
+    {
+        $this->deprecated(function () {
+            Plugin::load('TestPlugin');
+            $this->assertTrue(Plugin::loaded('TestPlugin'));
+            $this->assertFalse(Plugin::loaded('Unknown'));
+        });
+    }
+
+    /**
      * Tests loading a plugin and its bootstrap file
      *
+     * @deprecated
      * @return void
      */
     public function testLoadWithBootstrap()
     {
         $this->deprecated(function () {
             Plugin::load('TestPlugin', ['bootstrap' => true]);
-            $this->assertTrue(Plugin::loaded('TestPlugin'));
+            $this->assertTrue(Plugin::isLoaded('TestPlugin'));
             $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
 
             Plugin::load('Company/TestPluginThree', ['bootstrap' => true]);
-            $this->assertTrue(Plugin::loaded('Company/TestPluginThree'));
+            $this->assertTrue(Plugin::isLoaded('Company/TestPluginThree'));
             $this->assertEquals('loaded plugin three bootstrap', Configure::read('PluginTest.test_plugin_three.bootstrap'));
         });
     }
@@ -174,13 +193,14 @@ class PluginTest extends TestCase
     /**
      * Tests loading a plugin and its bootstrap file
      *
+     * @deprecated
      * @return void
      */
     public function testLoadWithBootstrapDisableBootstrapHook()
     {
         $this->deprecated(function () {
             Plugin::load('TestPlugin', ['bootstrap' => true]);
-            $this->assertTrue(Plugin::loaded('TestPlugin'));
+            $this->assertTrue(Plugin::isLoaded('TestPlugin'));
             $this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
 
             $plugin = Plugin::getCollection()->get('TestPlugin');

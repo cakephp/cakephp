@@ -931,14 +931,14 @@ class BelongsToMany extends Association
      *
      * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
      *
-     * @param \Cake\Datasource\EntityInterface $sourceEntity an entity persisted in the source table for
-     *   this association
-     * @param array $targetEntities list of entities persisted in the target table for
-     *   this association
-     * @param array|bool $options list of options to be passed to the internal `delete` call,
-     *   or a `boolean`
-     * @throws \InvalidArgumentException if non persisted entities are passed or if
-     *   any of them is lacking a primary key value
+     * @param \Cake\Datasource\EntityInterface $sourceEntity An entity persisted in the source table for
+     *   this association.
+     * @param array $targetEntities List of entities persisted in the target table for
+     *   this association.
+     * @param array|bool $options List of options to be passed to the internal `delete` call,
+     *   or a `boolean` as `cleanProperty` key shortcut.
+     * @throws \InvalidArgumentException If non persisted entities are passed or if
+     *   any of them is lacking a primary key value.
      * @return bool Success
      */
     public function unlink(EntityInterface $sourceEntity, array $targetEntities, $options = [])
