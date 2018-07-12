@@ -191,7 +191,11 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * simulate running the Application
+     * Load plugins into a simulated application.
+     *
+     * Useful to test how plugins being loaded/not loaded interact with other
+     * elements in CakePHP or applications.
+     *
      * @param string|array $plugins list of Plugins to load
      * @return \Cake\Http\BaseApplication
      */
