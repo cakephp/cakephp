@@ -68,7 +68,7 @@ class Helper implements EventListenerInterface
     /**
      * The View instance this helper is attached to
      *
-     * @var \Cake\View\View|null
+     * @var \Cake\View\View
      */
     protected $_View;
 
@@ -123,7 +123,7 @@ class Helper implements EventListenerInterface
      *
      * @return \Cake\View\View The bound view instance.
      */
-    public function getView(): ?View
+    public function getView(): View
     {
         return $this->_View;
     }

@@ -224,7 +224,7 @@ class FormHelper extends Helper
     /**
      * Locator for input widgets.
      *
-     * @var \Cake\View\Widget\WidgetLocator|null
+     * @var \Cake\View\Widget\WidgetLocator
      */
     protected $_locator;
 
@@ -306,7 +306,7 @@ class FormHelper extends Helper
      * @return \Cake\View\Widget\WidgetLocator Current locator instance
      * @since 3.6.0
      */
-    public function getWidgetLocator(): ?WidgetLocator
+    public function getWidgetLocator(): WidgetLocator
     {
         return $this->_locator;
     }
