@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -68,7 +69,7 @@ class FlashHelper extends Helper
      *   in session.
      * @throws \UnexpectedValueException If value for flash settings key is not an array.
      */
-    public function render($key = 'flash', array $options = [])
+    public function render(string $key = 'flash', array $options = []): ?string
     {
         $session = $this->_View->getRequest()->getSession();
 
