@@ -429,7 +429,7 @@ class Configure
      * @param array|null $data Either an array of data to store, or leave empty to store all values.
      * @return bool Success
      */
-    public static function store(string $name, string $cacheConfig = 'default', array $data = null): bool
+    public static function store(string $name, string $cacheConfig = 'default', ?array $data = null): bool
     {
         if ($data === null) {
             $data = static::$_values;

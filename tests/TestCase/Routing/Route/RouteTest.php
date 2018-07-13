@@ -1046,7 +1046,7 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Articles',
             'action' => 'view',
-            'id' => "\xC4\x81"
+            'id' => "\xC4\x81",
         ]);
         $this->assertEquals("/articles/view/\xC4\x81", $result);
     }

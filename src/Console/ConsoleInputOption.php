@@ -242,7 +242,7 @@ class ConsoleInputOption
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this option appended.
      */
-    public function xml(SimpleXMLElement $parent): SimpleXmlElement
+    public function xml(SimpleXMLElement $parent): SimpleXMLElement
     {
         $option = $parent->addChild('option');
         $option->addAttribute('name', '--' . $this->_name);

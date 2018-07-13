@@ -180,7 +180,7 @@ class ConsoleInputArgument
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this argument appended.
      */
-    public function xml(SimpleXMLElement $parent): SimpleXmlElement
+    public function xml(SimpleXMLElement $parent): SimpleXMLElement
     {
         $option = $parent->addChild('argument');
         $option->addAttribute('name', $this->_name);

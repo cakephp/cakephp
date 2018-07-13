@@ -752,7 +752,7 @@ class EntityContextTest extends TestCase
             ->junction();
         $joinTable->getSchema()->addColumn('column', [
             'default' => 'default join table column value',
-            'type' => 'text'
+            'type' => 'text',
         ]);
         $row = $table->newEntity();
 

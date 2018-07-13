@@ -19,8 +19,6 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CoreException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Error;
-use Exception;
 use Throwable;
 
 /**

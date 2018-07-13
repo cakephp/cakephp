@@ -490,7 +490,7 @@ class TimestampBehaviorTest extends TestCase
 
         return new Table([
             'alias' => 'Articles',
-            'schema' => $schema
+            'schema' => $schema,
         ]);
     }
 }

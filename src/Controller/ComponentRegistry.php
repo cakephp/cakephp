@@ -15,7 +15,6 @@ declare(strict_types = 1);
  */
 namespace Cake\Controller;
 
-use Cake\Controller\Component;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;

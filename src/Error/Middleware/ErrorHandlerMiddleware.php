@@ -22,7 +22,6 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Log\Log;
-use Error;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;

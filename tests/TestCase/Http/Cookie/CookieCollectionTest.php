@@ -271,7 +271,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', '');
@@ -330,7 +330,7 @@ class CookieCollectionTest extends TestCase
     {
         $collection = new CookieCollection();
         $request = new ServerRequest([
-            'url' => '/app'
+            'url' => '/app',
         ]);
         $response = (new Response())
             ->withAddedHeader('Set-Cookie', 'test=value')

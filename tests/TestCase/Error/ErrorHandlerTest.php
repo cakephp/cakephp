@@ -25,7 +25,6 @@ use Cake\Log\Log;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use ParseError;
 
 /**
  * Testing stub.

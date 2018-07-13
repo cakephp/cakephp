@@ -20,7 +20,6 @@ use Cake\Error\FatalErrorException;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\TestSuite\TestCase;
-use Error;
 use Exception;
 
 class ExceptionsTest extends TestCase

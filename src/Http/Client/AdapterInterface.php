@@ -13,8 +13,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Http\Client\Request;
-
 interface AdapterInterface
 {
     /**

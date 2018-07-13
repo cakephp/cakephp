@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use Cake\Console\Exception\ConsoleException;
 use Cake\Utility\Text;
 use SimpleXMLElement;
 

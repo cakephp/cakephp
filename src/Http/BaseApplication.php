@@ -14,7 +14,6 @@
  */
 namespace Cake\Http;
 
-use Cake\Core\App;
 use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;

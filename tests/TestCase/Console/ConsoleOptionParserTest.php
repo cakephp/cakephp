@@ -765,9 +765,9 @@ TEXT;
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('build', [
-            'help' => 'Build things.'
+            'help' => 'Build things.',
         ])->addSubcommand('destroy', [
-            'help' => 'Destroy things.'
+            'help' => 'Destroy things.',
         ])->addOption('connection', [
             'help' => 'Db connection.',
             'short' => 'c',
@@ -852,7 +852,7 @@ TEXT;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
                 'help' => 'This is another command',
-                'parser' => $subParser
+                'parser' => $subParser,
             ])
             ->addOption('test', ['help' => 'A test option.']);
 

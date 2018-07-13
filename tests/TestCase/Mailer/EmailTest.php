@@ -903,7 +903,7 @@ class EmailTest extends TestCase
         $expected = [
             'cake.icon.gif' => [
                 'data' => base64_encode('test') . "\r\n",
-                'mimetype' => 'application/octet-stream'
+                'mimetype' => 'application/octet-stream',
             ],
         ];
         $this->assertSame($expected, $this->Email->getAttachments());
