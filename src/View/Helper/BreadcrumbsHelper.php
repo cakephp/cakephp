@@ -75,7 +75,7 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function add($title, $url = null, array $options = [])
+    public function add($title, $url = null, array $options = []): self
     {
         if (is_array($title)) {
             foreach ($title as $crumb) {
@@ -108,7 +108,7 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function prepend($title, $url = null, array $options = [])
+    public function prepend($title, $url = null, array $options = []): self
     {
         if (is_array($title)) {
             $crumbs = [];
@@ -145,7 +145,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the index is out of bound
      */
-    public function insertAt(int $index, string $title, $url = null, array $options = [])
+    public function insertAt(int $index, string $title, $url = null, array $options = []): self
     {
         if (!isset($this->crumbs[$index])) {
             throw new LogicException(sprintf("No crumb could be found at index '%s'", $index));
@@ -174,7 +174,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the matching crumb can not be found
      */
-    public function insertBefore(string $matchingTitle, string $title, $url = null, array $options = [])
+    public function insertBefore(string $matchingTitle, string $title, $url = null, array $options = []): self
     {
         $key = $this->findCrumb($matchingTitle);
 
@@ -203,7 +203,7 @@ class BreadcrumbsHelper extends Helper
      * @return $this
      * @throws \LogicException In case the matching crumb can not be found.
      */
-    public function insertAfter(string $matchingTitle, string $title, $url = null, array $options = [])
+    public function insertAfter(string $matchingTitle, string $title, $url = null, array $options = []): self
     {
         $key = $this->findCrumb($matchingTitle);
 
@@ -229,7 +229,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @return $this
      */
-    public function reset()
+    public function reset(): self
     {
         $this->crumbs = [];
 
