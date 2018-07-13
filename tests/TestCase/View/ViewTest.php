@@ -92,7 +92,7 @@ class ThemePostsController extends Controller
 class TestView extends AppView
 {
 
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadHelper('Html', ['mykey' => 'myval']);
     }

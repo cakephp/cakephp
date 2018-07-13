@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -102,7 +103,7 @@ class JsonView extends SerializedView
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
      */
-    public function render($view = null, $layout = null)
+    public function render($view = null, $layout = null): ?string
     {
         $return = parent::render($view, $layout);
 
