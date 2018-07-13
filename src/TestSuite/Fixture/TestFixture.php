@@ -114,7 +114,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function connection()
+    public function connection(): string
     {
         return $this->connection;
     }
@@ -122,7 +122,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function sourceName()
+    public function sourceName(): string
     {
         return $this->table;
     }
@@ -264,7 +264,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function create(ConnectionInterface $db)
+    public function create(ConnectionInterface $db): bool
     {
         if (empty($this->_schema)) {
             return false;
@@ -299,7 +299,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function drop(ConnectionInterface $db)
+    public function drop(ConnectionInterface $db): bool
     {
         if (empty($this->_schema)) {
             return false;
@@ -347,7 +347,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function createConstraints(ConnectionInterface $db)
+    public function createConstraints(ConnectionInterface $db): bool
     {
         if (empty($this->_constraints)) {
             return true;
@@ -373,7 +373,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function dropConstraints(ConnectionInterface $db)
+    public function dropConstraints(ConnectionInterface $db): bool
     {
         if (empty($this->_constraints)) {
             return true;
@@ -423,7 +423,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function truncate(ConnectionInterface $db)
+    public function truncate(ConnectionInterface $db): bool
     {
         $sql = $this->_schema->truncateSql($db);
         foreach ($sql as $stmt) {

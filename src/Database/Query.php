@@ -847,7 +847,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @see \Cake\Database\Expression\QueryExpression
      * @return $this
      */
-    public function where($conditions = null, $types = [], $overwrite = false)
+    public function where($conditions = null, array $types = [], bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['where'] = $this->newExpr();

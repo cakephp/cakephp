@@ -41,7 +41,7 @@ class SmtpTestTransport extends SmtpTransport
      *
      * @return void
      */
-    protected function _generateSocket()
+    protected function _generateSocket(): void
     {
     }
 
@@ -49,7 +49,7 @@ class SmtpTestTransport extends SmtpTransport
      * Magic function to call protected methods
      *
      * @param string $method
-     * @param string $args
+     * @param array $args
      * @return mixed
      */
     public function __call($method, $args)
@@ -65,6 +65,16 @@ class SmtpTestTransport extends SmtpTransport
  */
 class SmtpTransportTest extends TestCase
 {
+    /**
+     * @var \Cake\Test\TestCase\Mailer\Transport\SmtpTestTransport
+     */
+    protected $SmtpTransport;
+
+    /**
+     * @var \Cake\Network\Socket|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $socket;
+
     /**
      * Setup
      *
@@ -382,6 +392,7 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
+        /** @var \Cake\Mailer\Email $email */
         $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $email->setTo('cake@cakephp.org', 'CakePHP');

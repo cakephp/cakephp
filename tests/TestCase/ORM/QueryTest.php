@@ -1837,7 +1837,7 @@ class QueryTest extends TestCase
             ['sample', 10, $collection],
             ['take', 1, $collection],
             ['append', new \ArrayIterator, $collection],
-            ['compile', 1, $collection],
+            ['compile', true, $collection],
         ];
     }
 

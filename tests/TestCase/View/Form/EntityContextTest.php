@@ -193,7 +193,7 @@ class EntityContextTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unable to find table class for current entity');
         $context = new EntityContext($this->request, [
-            'entity' => new Entity,
+            'entity' => new Entity(),
         ]);
     }
 

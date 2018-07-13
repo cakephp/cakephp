@@ -41,6 +41,8 @@ class TestEmail extends Email
     /**
      * Wrap to protected method
      *
+     * @param string $text
+     * @param int $length
      * @return array
      */
     public function wrap($text, $length = Email::LINE_LENGTH_MUST)
@@ -857,7 +859,7 @@ class EmailTest extends TestCase
      */
     public function testSetAttachments()
     {
-        $this->Email->setAttachments(CAKE . 'basics.php');
+        $this->Email->setAttachments([CAKE . 'basics.php']);
         $expected = [
             'basics.php' => [
                 'file' => CAKE . 'basics.php',
@@ -872,7 +874,7 @@ class EmailTest extends TestCase
         $this->Email->setAttachments([
             ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
         ]);
-        $this->Email->addAttachments(CORE_PATH . 'config' . DS . 'bootstrap.php');
+        $this->Email->addAttachments([CORE_PATH . 'config' . DS . 'bootstrap.php']);
         $this->Email->addAttachments([CORE_PATH . 'config' . DS . 'bootstrap.php']);
         $this->Email->addAttachments([
             'other.txt' => CORE_PATH . 'config' . DS . 'bootstrap.php',
@@ -985,8 +987,7 @@ class EmailTest extends TestCase
             'className' => 'Debug',
             'log' => true,
         ];
-        $result = Email::setConfigTransport('debug', $settings);
-        $this->assertNull($result, 'No return.');
+        Email::setConfigTransport('debug', $settings);
 
         $result = Email::getConfigTransport('debug');
         $this->assertEquals($settings, $result);
@@ -1585,6 +1586,8 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['log' => 'debug']);
         $result = $this->Email->send($message);
+
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -2130,7 +2133,7 @@ class EmailTest extends TestCase
 
         $this->Email->reset();
         $this->assertSame([], $this->Email->getTo());
-        $this->assertFalse($this->Email->getTheme());
+        $this->assertSame('', $this->Email->getTheme());
         $this->assertSame(Email::EMAIL_PATTERN, $this->Email->getEmailPattern());
     }
 
@@ -2357,7 +2360,7 @@ class EmailTest extends TestCase
         $this->assertEquals('html', $result);
 
         $this->expectException(\InvalidArgumentException::class);
-        $result = $this->Email->setEmailFormat('invalid');
+        $this->Email->setEmailFormat('invalid');
     }
 
     /**

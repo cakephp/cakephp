@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,7 @@ interface FixtureInterface
      * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection the fixture should be created on.
      * @return bool True on success, false on failure.
      */
-    public function create(ConnectionInterface $db);
+    public function create(ConnectionInterface $db): bool;
 
     /**
      * Run after all tests executed, should remove the table/collection from the connection.
@@ -33,7 +34,7 @@ interface FixtureInterface
      * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection the fixture should be removed from.
      * @return bool True on success, false on failure.
      */
-    public function drop(ConnectionInterface $db);
+    public function drop(ConnectionInterface $db): bool;
 
     /**
      * Run before each test is executed.
@@ -52,7 +53,7 @@ interface FixtureInterface
      * @param \Cake\Datasource\ConnectionInterface $db An instance of the database into which the constraints will be created
      * @return bool on success or if there are no constraints to create, or false on failure
      */
-    public function createConstraints(ConnectionInterface $db);
+    public function createConstraints(ConnectionInterface $db): bool;
 
     /**
      * Build and execute SQL queries necessary to drop the constraints for the
@@ -61,7 +62,7 @@ interface FixtureInterface
      * @param \Cake\Datasource\ConnectionInterface $db An instance of the database into which the constraints will be dropped
      * @return bool on success or if there are no constraints to drop, or false on failure
      */
-    public function dropConstraints(ConnectionInterface $db);
+    public function dropConstraints(ConnectionInterface $db): bool;
 
     /**
      * Truncates the current fixture.
@@ -69,19 +70,19 @@ interface FixtureInterface
      * @param \Cake\Datasource\ConnectionInterface $db A reference to a db instance
      * @return bool
      */
-    public function truncate(ConnectionInterface $db);
+    public function truncate(ConnectionInterface $db): bool;
 
     /**
      * Get the connection name this fixture should be inserted into.
      *
      * @return string
      */
-    public function connection();
+    public function connection(): string;
 
     /**
      * Get the table/collection name for this fixture.
      *
      * @return string
      */
-    public function sourceName();
+    public function sourceName(): string;
 }

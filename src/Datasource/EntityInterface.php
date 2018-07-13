@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,14 +33,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
-    public function setHidden(array $properties, $merge = false);
+    public function setHidden(array $properties, bool $merge = false);
 
     /**
      * Gets the hidden properties.
      *
      * @return array
      */
-    public function getHidden();
+    public function getHidden(): array;
 
     /**
      * Sets the virtual properties on this entity.
@@ -48,14 +49,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
-    public function setVirtual(array $properties, $merge = false);
+    public function setVirtual(array $properties, bool $merge = false);
 
     /**
      * Gets the virtual properties on this entity.
      *
      * @return array
      */
-    public function getVirtual();
+    public function getVirtual(): array;
 
     /**
      * Sets the dirty status of a single property.
@@ -65,7 +66,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * it was not changed
      * @return $this
      */
-    public function setDirty($property, $isDirty);
+    public function setDirty(string $property, bool $isDirty);
 
     /**
      * Checks if the entity is dirty or if a single property of it is dirty.
@@ -73,7 +74,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string|null $property The field to check the status for. Null for the whole entity.
      * @return bool Whether the property was changed or not
      */
-    public function isDirty($property = null);
+    public function isDirty(?string $property = null): bool;
+
+    /**
+     * Gets the dirty properties.
+     *
+     * @return array
+     */
+    public function getDirty(): array;
 
     /**
      * Returns whether this entity has errors.
@@ -81,14 +89,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $includeNested true will check nested entities for hasErrors()
      * @return bool
      */
-    public function hasErrors($includeNested = true);
+    public function hasErrors(bool $includeNested = true): bool;
 
     /**
      * Returns all validation errors.
      *
      * @return array
      */
-    public function getErrors();
+    public function getErrors(): array;
 
     /**
      * Returns validation errors of a field
@@ -96,7 +104,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field Field name to get the errors from
      * @return array
      */
-    public function getError($field);
+    public function getError(string $field): array;
 
     /**
      * Sets error messages to the entity
@@ -105,7 +113,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, $overwrite = false);
+    public function setErrors(array $fields, bool $overwrite = false);
 
     /**
      * Sets errors for a single field
@@ -115,7 +123,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError($field, $errors, $overwrite = false);
+    public function setError($field, $errors, bool $overwrite = false);
 
     /**
      * Stores whether or not a property value can be changed or set in this entity.
@@ -125,7 +133,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($property, $set);
+    public function setAccess($property, bool $set);
 
     /**
      * Checks if a property is accessible
@@ -133,7 +141,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $property Property name to check
      * @return bool
      */
-    public function isAccessible($property);
+    public function isAccessible(string $property): bool;
 
     /**
      * Sets the source alias
@@ -141,14 +149,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $alias the alias of the repository
      * @return $this
      */
-    public function setSource($alias);
+    public function setSource(string $alias);
 
     /**
      * Returns the alias of the repository from which this entity came from.
      *
      * @return string
      */
-    public function getSource();
+    public function getSource(): string;
 
     /**
      * Returns an array with the requested original properties
@@ -255,5 +263,5 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @return bool If it is known whether the entity was already persisted
      * null otherwise
      */
-    public function isNew($new = null);
+    public function isNew(?bool $new = null): bool;
 }

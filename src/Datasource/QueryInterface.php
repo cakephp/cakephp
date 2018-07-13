@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -38,9 +39,9 @@ interface QueryInterface
      *
      * @param string $field The field to alias
      * @param string|null $alias the alias used to prefix the field
-     * @return string
+     * @return array
      */
-    public function aliasField($field, $alias = null);
+    public function aliasField(string $field, ?string $alias = null): array;
 
     /**
      * Runs `aliasField()` for each field in the provided list and returns
@@ -50,7 +51,7 @@ interface QueryInterface
      * @param string|null $defaultAlias The default alias
      * @return string[]
      */
-    public function aliasFields($fields, $defaultAlias = null);
+    public function aliasFields(array $fields, $defaultAlias = null): array;
 
     /**
      * Fetch the results for this query.
@@ -143,7 +144,7 @@ interface QueryInterface
      *
      * @return int
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Sets the number of records that should be retrieved from database,
@@ -254,7 +255,7 @@ interface QueryInterface
      *
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 
     /**
      * Returns the default repository object that will be used by this query,
@@ -377,5 +378,5 @@ interface QueryInterface
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this
      */
-    public function where($conditions = null, $types = [], $overwrite = false);
+    public function where($conditions = null, array $types = [], bool $overwrite = false);
 }

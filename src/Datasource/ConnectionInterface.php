@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,14 +35,14 @@ interface ConnectionInterface
      *
      * @return string
      */
-    public function configName();
+    public function configName(): string;
 
     /**
      * Get the configuration data used to create the connection.
      *
      * @return array
      */
-    public function config();
+    public function config(): array;
 
     /**
      * Executes a callable function inside a transaction, if any exception occurs
@@ -78,5 +79,5 @@ interface ConnectionInterface
      *   Use null to read current value.
      * @return bool
      */
-    public function logQueries($enable = null);
+    public function logQueries($enable = null): bool;
 }
