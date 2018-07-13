@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -114,9 +115,9 @@ abstract class Cell implements EventDispatcherInterface
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManagerInterface $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
         if ($eventManager !== null) {
@@ -147,7 +148,7 @@ abstract class Cell implements EventDispatcherInterface
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
     }
 
@@ -159,7 +160,7 @@ abstract class Cell implements EventDispatcherInterface
      * @return string The rendered cell.
      * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
      */
-    public function render($template = null)
+    public function render(?string $template = null): string
     {
         $cache = [];
         if ($this->_cache) {
