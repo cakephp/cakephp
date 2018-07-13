@@ -3423,7 +3423,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->isNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
-        $this->assertNull($result);
+        $this->assertFalse($result);
     }
 
     /**
@@ -3449,7 +3449,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->isNew(false);
         $result = $table->delete($entity, ['checkRules' => false]);
-        $this->assertEquals('got stopped', $result);
+        $this->assertTrue($result);
     }
 
     /**

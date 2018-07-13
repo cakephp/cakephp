@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -113,7 +114,7 @@ trait EntityTrait
      *
      * @var string
      */
-    protected $_registryAlias;
+    protected $_registryAlias = '';
 
     /**
      * Magic getter to access properties that have been set in this entity
@@ -443,7 +444,7 @@ trait EntityTrait
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
-    public function setHidden(array $properties, $merge = false)
+    public function setHidden(array $properties, bool $merge = false)
     {
         if ($merge === false) {
             $this->_hidden = $properties;
@@ -462,7 +463,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getHidden()
+    public function getHidden(): array
     {
         return $this->_hidden;
     }
@@ -474,7 +475,7 @@ trait EntityTrait
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
-    public function setVirtual(array $properties, $merge = false)
+    public function setVirtual(array $properties, bool $merge = false)
     {
         if ($merge === false) {
             $this->_virtual = $properties;
@@ -493,7 +494,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getVirtual()
+    public function getVirtual(): array
     {
         return $this->_virtual;
     }
@@ -718,7 +719,7 @@ trait EntityTrait
      * it was not changed. Defaults to true.
      * @return $this
      */
-    public function setDirty($property, $isDirty = true)
+    public function setDirty(string $property, bool $isDirty = true)
     {
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
@@ -738,7 +739,7 @@ trait EntityTrait
      * @param string|null $property The field to check the status for. Null for the whole entity.
      * @return bool Whether the property was changed or not
      */
-    public function isDirty($property = null)
+    public function isDirty(?string $property = null): bool
     {
         if ($property === null) {
             return !empty($this->_dirty);
@@ -752,7 +753,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getDirty()
+    public function getDirty(): array
     {
         return array_keys($this->_dirty);
     }
@@ -764,7 +765,7 @@ trait EntityTrait
      *
      * @return void
      */
-    public function clean()
+    public function clean(): void
     {
         $this->_dirty = [];
         $this->_errors = [];
@@ -784,7 +785,7 @@ trait EntityTrait
      * @param bool|null $new true if it is known this instance was not yet persisted
      * @return bool Whether or not the entity has been persisted.
      */
-    public function isNew($new = null)
+    public function isNew(?bool $new = null): bool
     {
         if ($new === null) {
             return $this->_new;
@@ -807,7 +808,7 @@ trait EntityTrait
      * @param bool $includeNested true will check nested entities for hasErrors()
      * @return bool
      */
-    public function hasErrors($includeNested = true)
+    public function hasErrors(bool $includeNested = true): bool
     {
         if (!empty($this->_errors)) {
             return true;
@@ -831,7 +832,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         $diff = array_diff_key($this->_properties, $this->_errors);
 
@@ -852,7 +853,7 @@ trait EntityTrait
      * @param string $field Field name to get the errors from
      * @return array
      */
-    public function getError($field)
+    public function getError(string $field): array
     {
         $errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
         if ($errors) {
@@ -876,7 +877,7 @@ trait EntityTrait
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $fields
      * @return $this
      */
-    public function setErrors(array $fields, $overwrite = false)
+    public function setErrors(array $fields, bool $overwrite = false)
     {
         if ($overwrite) {
             foreach ($fields as $f => $error) {
@@ -919,7 +920,7 @@ trait EntityTrait
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError($field, $errors, $overwrite = false)
+    public function setError($field, $errors, bool $overwrite = false)
     {
         if (is_string($errors)) {
             $errors = [$errors];
@@ -1028,7 +1029,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getInvalid()
+    public function getInvalid(): array
     {
         return $this->_invalid;
     }
@@ -1039,7 +1040,7 @@ trait EntityTrait
      * @param string $field The name of the field.
      * @return mixed
      */
-    public function getInvalidField($field)
+    public function getInvalidField(string $field)
     {
         $value = isset($this->_invalid[$field]) ? $this->_invalid[$field] : null;
 
@@ -1057,7 +1058,7 @@ trait EntityTrait
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
      * @return $this
      */
-    public function setInvalid(array $fields, $overwrite = false)
+    public function setInvalid(array $fields, bool $overwrite = false)
     {
         foreach ($fields as $field => $value) {
             if ($overwrite === true) {
@@ -1077,7 +1078,7 @@ trait EntityTrait
      * @param mixed $value The invalid value to be set for $field.
      * @return $this
      */
-    public function setInvalidField($field, $value)
+    public function setInvalidField(string $field, $value)
     {
         $this->_invalid[$field] = $value;
 
@@ -1108,7 +1109,7 @@ trait EntityTrait
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($property, $set)
+    public function setAccess($property, bool $set)
     {
         if ($property === '*') {
             $this->_accessible = array_map(function ($p) use ($set) {
@@ -1138,7 +1139,7 @@ trait EntityTrait
      * @param string $property Property name to check
      * @return bool
      */
-    public function isAccessible($property)
+    public function isAccessible(string $property): bool
     {
         $value = isset($this->_accessible[$property]) ?
             $this->_accessible[$property] :
@@ -1152,7 +1153,7 @@ trait EntityTrait
      *
      * @return string
      */
-    public function getSource()
+    public function getSource(): string
     {
         return $this->_registryAlias;
     }
@@ -1163,7 +1164,7 @@ trait EntityTrait
      * @param string $alias the alias of the repository
      * @return $this
      */
-    public function setSource($alias)
+    public function setSource(string $alias)
     {
         $this->_registryAlias = $alias;
 
@@ -1175,7 +1176,7 @@ trait EntityTrait
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode($this, JSON_PRETTY_PRINT);
     }
@@ -1186,7 +1187,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $properties = $this->_properties;
         foreach ($this->_virtual as $field) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -25,7 +26,7 @@ interface SchemaInterface
      *
      * @return string
      */
-    public function name();
+    public function name(): string;
 
     /**
      * Add a column to the table.
@@ -52,10 +53,10 @@ interface SchemaInterface
      * - `comment` The comment for the column.
      *
      * @param string $name The name of the column
-     * @param array $attrs The attributes for the column.
+     * @param string|array $attrs The attributes for the column or the type name.
      * @return $this
      */
-    public function addColumn($name, $attrs);
+    public function addColumn(string $name, $attrs);
 
     /**
      * Get column data in the table.
@@ -63,7 +64,7 @@ interface SchemaInterface
      * @param string $name The column name.
      * @return array|null Column data or null.
      */
-    public function getColumn($name);
+    public function getColumn(string $name): ?array;
 
     /**
      * Returns true if a column exists in the schema.
@@ -71,7 +72,7 @@ interface SchemaInterface
      * @param string $name Column name.
      * @return bool
      */
-    public function hasColumn($name);
+    public function hasColumn(string $name): bool;
 
     /**
      * Remove a column from the table schema.
@@ -81,14 +82,14 @@ interface SchemaInterface
      * @param string $name The name of the column
      * @return $this
      */
-    public function removeColumn($name);
+    public function removeColumn(string $name);
 
     /**
      * Get the column names in the table.
      *
      * @return array
      */
-    public function columns();
+    public function columns(): array;
 
     /**
      * Returns column type or null if a column does not exist.
@@ -96,7 +97,7 @@ interface SchemaInterface
      * @param string $name The column to get the type of.
      * @return string|null
      */
-    public function getColumnType($name);
+    public function getColumnType(string $name): ?string;
 
     /**
      * Sets the type of a column.
@@ -105,7 +106,7 @@ interface SchemaInterface
      * @param string $type The type to set the column to.
      * @return $this
      */
-    public function setColumnType($name, $type);
+    public function setColumnType(string $name, string $type);
 
     /**
      * Returns the base type name for the provided column.
@@ -115,7 +116,7 @@ interface SchemaInterface
      * @param string $column The column name to get the base type from
      * @return string|null The base type name
      */
-    public function baseColumnType($column);
+    public function baseColumnType(string $column): ?string;
 
     /**
      * Check whether or not a field is nullable
@@ -125,7 +126,7 @@ interface SchemaInterface
      * @param string $name The column to get the type of.
      * @return bool Whether or not the field is nullable.
      */
-    public function isNullable($name);
+    public function isNullable(string $name): bool;
 
     /**
      * Returns an array where the keys are the column names in the schema
@@ -133,14 +134,14 @@ interface SchemaInterface
      *
      * @return array
      */
-    public function typeMap();
+    public function typeMap(): array;
 
     /**
      * Get a hash of columns and their default values.
      *
      * @return array
      */
-    public function defaultValues();
+    public function defaultValues(): array;
 
     /**
      * Sets the options for a table.
@@ -151,7 +152,7 @@ interface SchemaInterface
      * @param array $options The options to set, or null to read options.
      * @return $this
      */
-    public function setOptions($options);
+    public function setOptions(array $options);
 
     /**
      * Gets the options for a table.
@@ -161,5 +162,5 @@ interface SchemaInterface
      *
      * @return array An array of options.
      */
-    public function getOptions();
+    public function getOptions(): array;
 }

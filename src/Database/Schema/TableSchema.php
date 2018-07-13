@@ -300,7 +300,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function name()
+    public function name(): string
     {
         return $this->_table;
     }
@@ -308,7 +308,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function addColumn($name, $attrs)
+    public function addColumn(string $name, $attrs)
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -327,7 +327,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function removeColumn($name)
+    public function removeColumn(string $name)
     {
         unset($this->_columns[$name], $this->_typeMap[$name]);
 
@@ -337,7 +337,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function columns()
+    public function columns(): array
     {
         return array_keys($this->_columns);
     }
@@ -345,7 +345,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getColumn($name)
+    public function getColumn(string $name): ?array
     {
         if (!isset($this->_columns[$name])) {
             return null;
@@ -359,7 +359,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getColumnType($name)
+    public function getColumnType(string $name): ?string
     {
         if (!isset($this->_columns[$name])) {
             return null;
@@ -371,7 +371,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function setColumnType($name, $type)
+    public function setColumnType(string $name, string $type)
     {
         if (!isset($this->_columns[$name])) {
             return $this;
@@ -386,7 +386,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function hasColumn($name)
+    public function hasColumn(string $name): bool
     {
         return isset($this->_columns[$name]);
     }
@@ -394,7 +394,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function baseColumnType($column)
+    public function baseColumnType(string $column): ?string
     {
         if (isset($this->_columns[$column]['baseType'])) {
             return $this->_columns[$column]['baseType'];
@@ -416,7 +416,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function typeMap()
+    public function typeMap(): array
     {
         return $this->_typeMap;
     }
@@ -424,7 +424,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function isNullable($name)
+    public function isNullable(string $name): bool
     {
         if (!isset($this->_columns[$name])) {
             return true;
@@ -436,7 +436,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function defaultValues()
+    public function defaultValues(): array
     {
         $defaults = [];
         foreach ($this->_columns as $name => $data) {
@@ -653,7 +653,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->_options = array_merge($this->_options, $options);
 
@@ -663,7 +663,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->_options;
     }

@@ -139,7 +139,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritDoc}
      */
-    public function config()
+    public function config(): array
     {
         return $this->_config;
     }
@@ -147,7 +147,7 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritDoc}
      */
-    public function configName()
+    public function configName(): string
     {
         if (empty($this->_config['name'])) {
             return '';
@@ -774,12 +774,14 @@ class Connection implements ConnectionInterface
     /**
      * {@inheritDoc}
      */
-    public function logQueries($enable = null)
+    public function logQueries($enable = null): bool
     {
         if ($enable === null) {
             return $this->_logQueries;
         }
         $this->_logQueries = $enable;
+
+        return $enable;
     }
 
     /**

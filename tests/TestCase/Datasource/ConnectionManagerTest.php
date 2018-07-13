@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
