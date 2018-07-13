@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -377,10 +378,8 @@ class InflectorTest extends TestCase
         $this->assertSame('test_thing_extra', Inflector::underscore('testThingExtra'));
         $this->assertSame('test_thing_extrå', Inflector::underscore('testThingExtrå'));
 
-        // Test stupid values
-        $this->assertSame('', Inflector::underscore(''));
-        $this->assertSame('0', Inflector::underscore(0));
-        $this->assertSame('', Inflector::underscore(false));
+        // Test other values
+        $this->assertSame('0', Inflector::underscore('0'));
     }
 
     /**
@@ -397,10 +396,8 @@ class InflectorTest extends TestCase
         $this->assertSame('test-this-thing', Inflector::dasherize('test_this_thing'));
 
         // Test stupid values
-        $this->assertSame('', Inflector::dasherize(null));
         $this->assertSame('', Inflector::dasherize(''));
-        $this->assertSame('0', Inflector::dasherize(0));
-        $this->assertSame('', Inflector::dasherize(false));
+        $this->assertSame('0', Inflector::dasherize('0'));
     }
 
     /**
@@ -474,8 +471,6 @@ class InflectorTest extends TestCase
         $this->assertEquals('Posts', Inflector::humanize('posts'));
         $this->assertEquals('Posts Tags', Inflector::humanize('posts_tags'));
         $this->assertEquals('File Systems', Inflector::humanize('file_systems'));
-        $this->assertSame('', Inflector::humanize(null));
-        $this->assertSame('', Inflector::humanize(false));
         $this->assertSame('Hello Wörld', Inflector::humanize('hello_wörld'));
         $this->assertSame('福岡 City', Inflector::humanize('福岡_city'));
     }

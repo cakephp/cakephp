@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -42,7 +43,7 @@ trait EventDispatcherTrait
      *
      * @return \Cake\Event\EventManagerInterface
      */
-    public function getEventManager()
+    public function getEventManager(): EventManagerInterface
     {
         if ($this->_eventManager === null) {
             $this->_eventManager = new EventManager();
@@ -60,7 +61,7 @@ trait EventDispatcherTrait
      * @param \Cake\Event\EventManagerInterface $eventManager the eventManager to set
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $eventManager): EventDispatcherInterface
     {
         $this->_eventManager = $eventManager;
 
@@ -80,7 +81,7 @@ trait EventDispatcherTrait
      *
      * @return \Cake\Event\EventInterface
      */
-    public function dispatchEvent($name, $data = null, $subject = null)
+    public function dispatchEvent(string $name, $data = null, $subject = null): EventInterface
     {
         if ($subject === null) {
             $subject = $this;

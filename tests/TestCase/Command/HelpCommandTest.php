@@ -76,6 +76,7 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         $this->assertOutputContains('- test_plugin.sample', 'Long plugin name');
         $this->assertOutputContains('- routes', 'core shell');
         $this->assertOutputContains('- example', 'short plugin name');
+        $this->assertOutputContains('- abort', 'command object');
         $this->assertOutputContains('To run a command', 'more info present');
         $this->assertOutputContains('To get help', 'more info present');
     }

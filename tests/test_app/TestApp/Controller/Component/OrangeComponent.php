@@ -43,7 +43,7 @@ class OrangeComponent extends Component
      * @param array $config
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->Controller = $this->_registry->getController();
         $this->Banana->testField = 'OrangeField';
@@ -55,7 +55,7 @@ class OrangeComponent extends Component
      * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function startup(EventInterface $event)
+    public function startup(EventInterface $event): void
     {
         $this->Controller->foo = 'pass';
     }

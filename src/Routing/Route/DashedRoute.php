@@ -39,7 +39,7 @@ class DashedRoute extends Route
      * @param string $plugin Plugin name
      * @return string
      */
-    protected function _camelizePlugin($plugin)
+    protected function _camelizePlugin(string $plugin): string
     {
         $plugin = str_replace('-', '_', $plugin);
         if (strpos($plugin, '/') === false) {
@@ -57,13 +57,13 @@ class DashedRoute extends Route
      *
      * @param string $url The URL to parse
      * @param string $method The HTTP method.
-     * @return array|false An array of request parameters, or false on failure.
+     * @return array|null An array of request parameters, or null on failure.
      */
-    public function parse($url, $method = '')
+    public function parse(string $url, string $method = ''): ?array
     {
         $params = parent::parse($url, $method);
         if (!$params) {
-            return false;
+            return null;
         }
         if (!empty($params['controller'])) {
             $params['controller'] = Inflector::camelize($params['controller'], '-');
@@ -90,9 +90,9 @@ class DashedRoute extends Route
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, and base
      *   directory.
-     * @return bool|string Either false or a string URL.
+     * @return string|null Either a string URL or null.
      */
-    public function match(array $url, array $context = [])
+    public function match(array $url, array $context = []): ?string
     {
         $url = $this->_dasherize($url);
         if (!$this->_inflectedDefaults) {
@@ -109,7 +109,7 @@ class DashedRoute extends Route
      * @param array $url An array of URL keys.
      * @return array
      */
-    protected function _dasherize($url)
+    protected function _dasherize(array $url): array
     {
         foreach (['controller', 'plugin', 'action'] as $element) {
             if (!empty($url[$element])) {

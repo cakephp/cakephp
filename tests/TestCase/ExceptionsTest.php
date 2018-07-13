@@ -17,7 +17,6 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Error\FatalErrorException;
-use Cake\Error\PHP7ErrorException;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\TestSuite\TestCase;
@@ -70,26 +69,6 @@ class ExceptionsTest extends TestCase
         $this->assertSame(500, $exception->getCode());
         $this->assertSame(__FILE__, $exception->getFile());
         $this->assertSame(1, $exception->getLine());
-        $this->assertSame($previous, $exception->getPrevious());
-    }
-
-    /**
-     * Tests PHP7ErrorException works.
-     *
-     * @return void
-     */
-    public function testPHP7ErrorException()
-    {
-        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'));
-
-        $previous = new Exception();
-        $error = new Error('message', 100, $previous);
-        $line = __LINE__ - 1;
-
-        $exception = new PHP7ErrorException($error);
-        $this->assertSame(100, $exception->getCode());
-        $this->assertSame(__FILE__, $exception->getFile());
-        $this->assertSame($line, $exception->getLine());
         $this->assertSame($previous, $exception->getPrevious());
     }
 

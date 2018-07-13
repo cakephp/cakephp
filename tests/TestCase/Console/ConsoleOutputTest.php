@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ConsoleOutputTest file
  *
@@ -59,7 +60,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with('Some output');
 
-        $this->output->write('Some output', false);
+        $this->output->write('Some output', 0);
     }
 
     /**
@@ -145,7 +146,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with("\033[31mError:\033[0m Something bad");
 
-        $this->output->write('<error>Error:</error> Something bad', false);
+        $this->output->write('<error>Error:</error> Something bad', 0);
     }
 
     /**
@@ -158,7 +159,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with('<red> Something bad');
 
-        $this->output->write('<red> Something bad', false);
+        $this->output->write('<red> Something bad', 0);
     }
 
     /**
@@ -178,7 +179,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with("\033[35;46;5;4mAnnoy:\033[0m Something bad");
 
-        $this->output->write('<annoying>Annoy:</annoying> Something bad', false);
+        $this->output->write('<annoying>Annoy:</annoying> Something bad', 0);
     }
 
     /**
@@ -191,7 +192,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with('<not_there>Error:</not_there> Something bad');
 
-        $this->output->write('<not_there>Error:</not_there> Something bad', false);
+        $this->output->write('<not_there>Error:</not_there> Something bad', 0);
     }
 
     /**
@@ -204,7 +205,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with("\033[31mBad\033[0m \033[33mWarning\033[0m Regular");
 
-        $this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', false);
+        $this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', 0);
     }
 
     /**
@@ -217,7 +218,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with("\033[31mBad\033[0m \033[31mWarning\033[0m Regular");
 
-        $this->output->write('<error>Bad</error> <error>Warning</error> Regular', false);
+        $this->output->write('<error>Bad</error> <error>Warning</error> Regular', 0);
     }
 
     /**
@@ -231,7 +232,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with('<error>Bad</error> Regular');
 
-        $this->output->write('<error>Bad</error> Regular', false);
+        $this->output->write('<error>Bad</error> Regular', 0);
     }
 
     /**
@@ -246,18 +247,7 @@ class ConsoleOutputTest extends TestCase
         $this->output->expects($this->once())->method('_write')
             ->with('Bad Regular');
 
-        $this->output->write('<error>Bad</error> Regular', false);
-    }
-
-    /**
-     * test set wrong type.
-     *
-     */
-    public function testSetOutputWrongType()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid output type "Foo".');
-        $this->output->setOutputAs('Foo');
+        $this->output->write('<error>Bad</error> Regular', 0);
     }
 
     /**
@@ -268,9 +258,10 @@ class ConsoleOutputTest extends TestCase
     public function testSetOutputAsPlainSelectiveTagRemoval()
     {
         $this->output->setOutputAs(ConsoleOutput::PLAIN);
-        $this->output->expects($this->once())->method('_write')
+        $this->output->expects($this->once())
+            ->method('_write')
             ->with('Bad Regular <b>Left</b> <i>behind</i> <name>');
 
-        $this->output->write('<error>Bad</error> Regular <b>Left</b> <i>behind</i> <name>', false);
+        $this->output->write('<error>Bad</error> Regular <b>Left</b> <i>behind</i> <name>', 0);
     }
 }

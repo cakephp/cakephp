@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
@@ -136,5 +138,55 @@ class PluginCollectionTest extends TestCase
         $plugins = new PluginCollection();
         foreach ($plugins->with('bad') as $p) {
         }
+    }
+
+    public function testFindPathNoConfigureData()
+    {
+        Configure::write('plugins', []);
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+
+        $this->assertEquals(TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS, $path);
+    }
+
+    public function testFindPathLoadsConfigureData()
+    {
+        $configPath = ROOT . DS . 'cakephp-plugins.php';
+        $this->skipIf(file_exists($configPath), 'cakephp-plugins.php exists, skipping overwrite');
+        $file = <<<PHP
+<?php
+declare(strict_types=1);
+return [
+    'plugins' => [
+        'TestPlugin' => '/config/path'
+    ]
+];
+PHP;
+        file_put_contents($configPath, $file);
+
+        Configure::delete('plugins');
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+        unlink($configPath);
+
+        $this->assertEquals('/config/path', $path);
+    }
+
+    public function testFindPathConfigureData()
+    {
+        Configure::write('plugins', ['TestPlugin' => '/some/path']);
+        $plugins = new PluginCollection();
+        $path = $plugins->findPath('TestPlugin');
+
+        $this->assertEquals('/some/path', $path);
+    }
+
+    public function testFindPathMissingPlugin()
+    {
+        Configure::write('plugins', []);
+        $plugins = new PluginCollection();
+
+        $this->expectException(MissingPluginException::class);
+        $plugins->findPath('InvalidPlugin');
     }
 }

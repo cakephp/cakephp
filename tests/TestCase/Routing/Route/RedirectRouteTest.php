@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Routing\Route;
 
+use Cake\Http\ServerRequest;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -45,7 +46,7 @@ class RedirectRouteTest extends TestCase
     public function testMatch()
     {
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
-        $this->assertFalse($route->match(['controller' => 'posts', 'action' => 'index']));
+        $this->assertNull($route->match(['controller' => 'posts', 'action' => 'index']));
     }
 
     /**
@@ -56,8 +57,8 @@ class RedirectRouteTest extends TestCase
     public function testParseMiss()
     {
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
-        $this->assertFalse($route->parse('/nope'));
-        $this->assertFalse($route->parse('/homes'));
+        $this->assertNull($route->parse('/nope'));
+        $this->assertNull($route->parse('/homes'));
     }
 
     /**
@@ -112,7 +113,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(\Cake\Routing\Exception\RedirectException::class);
         $this->expectExceptionMessage('http://google.com');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/google', 'http://google.com');
+        $route = new RedirectRoute('/google', ['redirect' => 'http://google.com']);
         $route->parse('/google');
     }
 
@@ -145,6 +146,26 @@ class RedirectRouteTest extends TestCase
     }
 
     /**
+     * test redirecting with persist and a base directory
+     *
+     * @return void
+     */
+    public function testParsePersistBaseDirectory()
+    {
+        $request = new ServerRequest([
+            'base' => '/basedir',
+            'url' => '/posts/2',
+        ]);
+        Router::pushRequest($request);
+
+        $this->expectException(\Cake\Routing\Exception\RedirectException::class);
+        $this->expectExceptionMessage('http://localhost/basedir/posts/view/2');
+        $this->expectExceptionCode(301);
+        $route = new RedirectRoute('/posts/*', ['controller' => 'posts', 'action' => 'view'], ['persist' => true]);
+        $route->parse('/posts/2');
+    }
+
+    /**
      * test redirecting with persist and string target URLs
      *
      * @return void
@@ -154,7 +175,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(\Cake\Routing\Exception\RedirectException::class);
         $this->expectExceptionMessage('http://localhost/test');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/posts/*', '/test', ['persist' => true]);
+        $route = new RedirectRoute('/posts/*', ['redirect' => '/test'], ['persist' => true]);
         $route->parse('/posts/2');
     }
 

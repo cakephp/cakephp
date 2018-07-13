@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -47,7 +48,7 @@ class SubjectFilterDecorator extends AbstractDecorator
      * @param \Cake\Event\EventInterface $event Event object.
      * @return bool
      */
-    public function canTrigger(EventInterface $event)
+    public function canTrigger(EventInterface $event): bool
     {
         $class = get_class($event->getSubject());
         if (!isset($this->_options['allowedSubject'])) {

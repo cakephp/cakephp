@@ -32,7 +32,7 @@ class CacheRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct classname or null.
      */
     protected function _resolveClassName($class)
     {
@@ -106,7 +106,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return void
      */
-    public function unload($name)
+    public function unload(string $name)
     {
         unset($this->_loaded[$name]);
     }

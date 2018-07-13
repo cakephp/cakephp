@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -63,7 +64,7 @@ class AppTest extends TestCase
             return false;
         };
         $return = TestApp::classname($class, $type, $suffix);
-        $this->assertSame($expected, $return);
+        $this->assertSame($expected === false ? null : $expected, $return);
     }
 
     /**

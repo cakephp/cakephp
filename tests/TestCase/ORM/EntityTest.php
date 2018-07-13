@@ -811,7 +811,7 @@ class EntityTest extends TestCase
         ], ['markClean' => true]);
 
         $this->assertFalse($entity->isDirty());
-        $this->assertSame($entity, $entity->setDirty('title', true));
+        $this->assertSame($entity, $entity->setDirty('title'));
         $this->assertSame($entity, $entity->setDirty('id', false));
 
         $entity->setErrors(['title' => ['badness']]);
@@ -1190,6 +1190,16 @@ class EntityTest extends TestCase
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expected, $result);
+
+        $indexedErrors = [2 => ['foo' => 'bar']];
+        $entity = new Entity();
+        $entity->setError('indexes', $indexedErrors);
+
+        $expectedIndexed = [
+            'indexes' => ['2' => ['foo' => 'bar']]
+        ];
+        $result = $entity->getErrors();
+        $this->assertEquals($expectedIndexed, $result);
     }
 
     /**
@@ -1231,6 +1241,42 @@ class EntityTest extends TestCase
             'multiple' => $author->getError('multiple'),
         ];
         $this->assertEquals($expected, $author->getErrors());
+    }
+
+    /**
+     * Tests that check if hasErrors() works
+     *
+     * @return void
+     */
+    public function testHasErrors()
+    {
+        $entity = new Entity();
+        $hasErrors = $entity->hasErrors();
+        $this->assertFalse($hasErrors);
+
+        $nestedEntity = new Entity();
+        $entity->set([
+            'nested' => $nestedEntity,
+        ]);
+        $hasErrors = $entity->hasErrors();
+        $this->assertFalse($hasErrors);
+
+        $nestedEntity->setError('description', 'oops');
+        $hasErrors = $entity->hasErrors();
+        $this->assertTrue($hasErrors);
+
+        $hasErrors = $entity->hasErrors(false);
+        $this->assertFalse($hasErrors);
+
+        $entity->clean();
+        $hasErrors = $entity->hasErrors();
+        $this->assertTrue($hasErrors);
+        $hasErrors = $entity->hasErrors(false);
+        $this->assertFalse($hasErrors);
+
+        $nestedEntity->clean();
+        $hasErrors = $entity->hasErrors();
+        $this->assertFalse($hasErrors);
     }
 
     /**
@@ -1475,6 +1521,7 @@ class EntityTest extends TestCase
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
             '[original]' => [],
             '[virtual]' => ['baz'],
+            '[hasErrors]' => true,
             '[errors]' => ['foo' => ['An error']],
             '[invalid]' => ['foo' => 'a value'],
             '[repository]' => 'foos',

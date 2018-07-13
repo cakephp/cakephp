@@ -28,7 +28,7 @@ init:
 
 install:
   - cd c:\
-  - curl -fsS https://windows.php.net/downloads/releases/php-7.2.6-nts-Win32-VC15-x86.zip -o php.zip
+  - curl -fsS https://windows.php.net/downloads/releases/php-7.2.7-nts-Win32-VC15-x86.zip -o php.zip
   - 7z x php.zip -oc:\php > nul
   - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x86.zip -o pdosqlsrv.zip
   - 7z x pdosqlsrv.zip -oc:\php\ext php_pdo_sqlsrv.dll > nul

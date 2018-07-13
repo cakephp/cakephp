@@ -33,7 +33,6 @@ class TimeTest extends TestCase
     {
         parent::setUp();
         $this->now = Time::getTestNow();
-        $this->frozenNow = FrozenTime::getTestNow();
         $this->locale = Time::getDefaultLocale();
         Time::setDefaultLocale('en_US');
         FrozenTime::setDefaultLocale('en_US');
@@ -52,7 +51,6 @@ class TimeTest extends TestCase
         Time::resetToStringFormat();
         Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
 
-        FrozenTime::setTestNow($this->frozenNow);
         FrozenTime::setDefaultLocale($this->locale);
         FrozenTime::resetToStringFormat();
         FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
@@ -74,7 +72,7 @@ class TimeTest extends TestCase
     /**
      * Provider for ensuring that Time and FrozenTime work the same way.
      *
-     * @return void
+     * @return array
      */
     public static function classNameProvider()
     {
@@ -682,7 +680,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansAbsolute($class)
     {
-        $class::setTestNow(new $class('2015-12-12 10:10:10'));
+        Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
 
@@ -701,7 +699,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansNow($class)
     {
-        $class::setTestNow(new $class('2015-12-12 10:10:10'));
+        Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year ago', $time->diffForHumans());
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,6 +21,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
+use TypeError;
 
 /**
  * XmlTest class
@@ -99,17 +101,20 @@ class XmlTest extends TestCase
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
         $xml = CORE_TESTS . 'Fixture/sample.xml';
-        $obj = Xml::build($xml);
+        $obj = Xml::build($xml, ['readFile' => true]);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
 
-        $this->assertEquals(Xml::build($xml), Xml::build(file_get_contents($xml)));
+        $this->assertEquals(
+            Xml::build($xml, ['readFile' => true]),
+            Xml::build(file_get_contents($xml))
+        );
 
-        $obj = Xml::build($xml, ['return' => 'domdocument']);
+        $obj = Xml::build($xml, ['return' => 'domdocument', 'readFile' => true]);
         $this->assertEquals('tags', $obj->firstChild->nodeName);
 
         $this->assertEquals(
-            Xml::build($xml, ['return' => 'domdocument']),
+            Xml::build($xml, ['return' => 'domdocument', 'readFile' => true]),
             Xml::build(file_get_contents($xml), ['return' => 'domdocument'])
         );
 
@@ -122,7 +127,7 @@ class XmlTest extends TestCase
         $this->assertEquals('tag', $obj->firstChild->nodeName);
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
-        $obj = Xml::build($xml, ['return' => 'domdocument', 'encoding' => null]);
+        $obj = Xml::build($xml, ['return' => 'domdocument', 'encoding' => '']);
         $this->assertNotRegExp('/encoding/', $obj->saveXML());
     }
 
@@ -244,6 +249,54 @@ class XmlTest extends TestCase
         } catch (\Exception $e) {
             $this->assertTrue(true, 'An exception was raised');
         }
+    }
+
+    /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $htmlFile = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($htmlFile);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
+        $xml = Xml::loadHtml($html);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        $this->expectException(TypeError::class);
+        Xml::loadHtml(null);
     }
 
     /**
@@ -660,7 +713,7 @@ XML;
         $this->assertEquals(['tag' => 'name'], Xml::toArray($obj));
 
         $xml = CORE_TESTS . 'Fixture/sample.xml';
-        $obj = Xml::build($xml);
+        $obj = Xml::build($xml, ['readFile' => true]);
         $expected = [
             'tags' => [
                 'tag' => [
@@ -980,7 +1033,7 @@ XML;
      */
     public function testSoap()
     {
-        $xmlRequest = Xml::build(CORE_TESTS . 'Fixture/soap_request.xml');
+        $xmlRequest = Xml::build(CORE_TESTS . 'Fixture/soap_request.xml', ['readFile' => true]);
         $expected = [
             'Envelope' => [
                 '@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
@@ -993,7 +1046,7 @@ XML;
         ];
         $this->assertEquals($expected, Xml::toArray($xmlRequest));
 
-        $xmlResponse = Xml::build(CORE_TESTS . DS . 'Fixture/soap_response.xml');
+        $xmlResponse = Xml::build(CORE_TESTS . DS . 'Fixture/soap_response.xml', ['readFile' => true]);
         $expected = [
             'Envelope' => [
                 '@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
@@ -1018,7 +1071,7 @@ XML;
                 ],
             ],
         ];
-        $xmlRequest = Xml::fromArray($xml, ['encoding' => null]);
+        $xmlRequest = Xml::fromArray($xml, ['encoding' => '']);
         $xmlText = <<<XML
 <?xml version="1.0"?>
 <soap:Envelope xmlns:soap="http://www.w3.org/2001/12/soap-envelope" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">

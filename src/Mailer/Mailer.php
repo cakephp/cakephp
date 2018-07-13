@@ -60,7 +60,7 @@ use Cake\Mailer\Exception\MissingActionException;
  * registration event:
  *
  * ```
- * public function implementedEvents()
+ * public function implementedEvents(): array
  * {
  *     return [
  *         'Model.afterSave' => 'onRegistration',
@@ -287,7 +287,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

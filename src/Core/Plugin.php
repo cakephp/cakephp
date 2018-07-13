@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,6 @@
  */
 namespace Cake\Core;
 
-use Cake\Core\Exception\MissingPluginException;
 use DirectoryIterator;
 
 /**
@@ -107,7 +107,7 @@ class Plugin
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for the plugin to be loaded is not found
      * @return void
      */
-    public static function load($plugin, array $config = [])
+    public static function load($plugin, array $config = []): void
     {
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
@@ -117,8 +117,6 @@ class Plugin
 
             return;
         }
-
-        static::_loadConfig();
 
         $config += [
             'autoload' => false,
@@ -130,22 +128,7 @@ class Plugin
         ];
 
         if (!isset($config['path'])) {
-            $config['path'] = Configure::read('plugins.' . $plugin);
-        }
-
-        if (empty($config['path'])) {
-            $paths = App::path('Plugin');
-            $pluginPath = str_replace('/', DIRECTORY_SEPARATOR, $plugin);
-            foreach ($paths as $path) {
-                if (is_dir($path . $pluginPath)) {
-                    $config['path'] = $path . $pluginPath . DIRECTORY_SEPARATOR;
-                    break;
-                }
-            }
-        }
-
-        if (empty($config['path'])) {
-            throw new MissingPluginException(['plugin' => $plugin]);
+            $config['path'] = static::getCollection()->findPath($plugin);
         }
 
         $config['classPath'] = $config['path'] . $config['classBase'] . DIRECTORY_SEPARATOR;
@@ -182,30 +165,6 @@ class Plugin
     }
 
     /**
-     * Load the plugin path configuration file.
-     *
-     * @return void
-     */
-    protected static function _loadConfig()
-    {
-        if (Configure::check('plugins')) {
-            return;
-        }
-        $vendorFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-        if (!file_exists($vendorFile)) {
-            $vendorFile = dirname(dirname(dirname(dirname(__DIR__)))) . DIRECTORY_SEPARATOR . 'cakephp-plugins.php';
-            if (!file_exists($vendorFile)) {
-                Configure::write(['plugins' => []]);
-
-                return;
-            }
-        }
-
-        $config = require $vendorFile;
-        Configure::write($config);
-    }
-
-    /**
      * Will load all the plugins located in the default plugin folder.
      *
      * If passed an options array, it will be used as a common default for all plugins to be loaded
@@ -227,9 +186,8 @@ class Plugin
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException
      */
-    public static function loadAll(array $options = [])
+    public static function loadAll(array $options = []): void
     {
-        static::_loadConfig();
         $plugins = [];
         foreach (App::path('Plugin') as $path) {
             if (!is_dir($path)) {
@@ -267,7 +225,7 @@ class Plugin
      * @return string path to the plugin folder
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
      */
-    public static function path($name)
+    public static function path(string $name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -281,7 +239,7 @@ class Plugin
      * @return string Path to the plugin folder container class folders.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function classPath($name)
+    public static function classPath(string $name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -295,7 +253,7 @@ class Plugin
      * @return string Path to the plugin folder container config files.
      * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
      */
-    public static function configPath($name)
+    public static function configPath(string $name): string
     {
         $plugin = static::getCollection()->get($name);
 
@@ -306,38 +264,43 @@ class Plugin
      * Loads the bootstrapping files for a plugin, or calls the initialization setup in the configuration
      *
      * @param string $name name of the plugin
-     * @return mixed
+     * @return void
      * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
      */
-    public static function bootstrap($name)
+    public static function bootstrap(string $name): void
     {
         $plugin = static::getCollection()->get($name);
         if (!$plugin->isEnabled('bootstrap')) {
-            return false;
+            return;
         }
         // Disable bootstrapping for this plugin as it will have
         // been bootstrapped.
         $plugin->disable('bootstrap');
 
-        return static::_includeFile(
+        static::_includeFile(
             $plugin->getConfigPath() . 'bootstrap.php',
             true
         );
     }
 
     /**
-     * Returns true if the plugin $plugin is already loaded
-     * If plugin is null, it will return a list of all loaded plugins
+     * Returns true if the plugin $plugin is already loaded.
      *
-     * @param string|null $plugin Plugin name.
-     * @return bool|array Boolean true if $plugin is already loaded.
-     *   If $plugin is null, returns a list of plugins that have been loaded
+     * @param string $plugin Plugin name.
+     * @return bool
      */
-    public static function loaded($plugin = null)
+    public static function isLoaded(string $plugin): bool
     {
-        if ($plugin !== null) {
-            return static::getCollection()->has($plugin);
-        }
+        return static::getCollection()->has($plugin);
+    }
+
+    /**
+     * Returns a list of all loaded plugins.
+     *
+     * @return array
+     */
+    public static function loaded(): array
+    {
         $names = [];
         foreach (static::getCollection() as $plugin) {
             $names[] = $plugin->getName();
@@ -353,7 +316,7 @@ class Plugin
      * @param string|null $plugin name of the plugin to forget
      * @return void
      */
-    public static function unload($plugin = null)
+    public static function unload(?string $plugin = null): void
     {
         if ($plugin === null) {
             static::$plugins = null;
@@ -369,7 +332,7 @@ class Plugin
      * @param bool $ignoreMissing Whether to ignore include error for missing files
      * @return mixed
      */
-    protected static function _includeFile($file, $ignoreMissing = false)
+    protected static function _includeFile(string $file, bool $ignoreMissing = false)
     {
         if ($ignoreMissing && !is_file($file)) {
             return false;

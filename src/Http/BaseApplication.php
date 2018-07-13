@@ -14,6 +14,7 @@
  */
 namespace Cake\Http;
 
+use Cake\Core\App;
 use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
@@ -88,12 +89,15 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function addPlugin($name, array $config = [])
+    public function addPlugin($name, array $config = []): PluginApplicationInterface
     {
         if (is_string($name)) {
             $plugin = $this->makePlugin($name, $config);
         } else {
             $plugin = $name;
+        }
+        if (!$plugin instanceof PluginInterface) {
+            throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
         }
         $this->plugins->add($plugin);
 
@@ -117,22 +121,22 @@ abstract class BaseApplication implements
      * @param array $config Configuration options for the plugin
      * @return \Cake\Core\PluginInterface
      */
-    public function makePlugin($name, array $config)
+    protected function makePlugin($name, array $config)
     {
         $className = $name;
         if (strpos($className, '\\') === false) {
             $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
         }
-        if (!class_exists($className)) {
-            $config['name'] = $name;
-            $className = BasePlugin::class;
-        }
-        $plugin = new $className($config);
-        if (!$plugin instanceof PluginInterface) {
-            throw new InvalidArgumentException("The `{$name}` plugin does not implement Cake\Core\PluginInterface.");
+        if (class_exists($className)) {
+            return new $className($config);
         }
 
-        return $plugin;
+        if (!isset($config['path'])) {
+            $config['path'] = $this->plugins->findPath($name);
+        }
+        $config['name'] = $name;
+
+        return new BasePlugin($config);
     }
 
     /**
@@ -146,7 +150,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginBootstrap()
+    public function pluginBootstrap(): void
     {
         foreach ($this->plugins->with('bootstrap') as $plugin) {
             $plugin->bootstrap($this);
@@ -219,7 +223,7 @@ abstract class BaseApplication implements
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next): ResponseInterface
     {
         return $this->getDispatcher()->dispatch($request, $response);
     }

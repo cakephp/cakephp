@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class HelperRegistry extends ObjectRegistry
      * @param \Cake\Console\ConsoleIo $io An io instance.
      * @return void
      */
-    public function setIo(ConsoleIo $io)
+    public function setIo(ConsoleIo $io): void
     {
         $this->_io = $io;
     }
@@ -51,7 +52,7 @@ class HelperRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct class name or null.
      */
     protected function _resolveClassName($class)
     {

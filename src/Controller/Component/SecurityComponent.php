@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -128,7 +129,7 @@ class SecurityComponent extends Component
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Controller.startup' => 'startup',
@@ -141,7 +142,7 @@ class SecurityComponent extends Component
      * @param string|array|null $actions Actions list
      * @return void
      */
-    public function requireSecure($actions = null)
+    public function requireSecure($actions = null): void
     {
         $this->_requireMethod('Secure', (array)$actions);
     }
@@ -158,7 +159,7 @@ class SecurityComponent extends Component
      * @link https://book.cakephp.org/3.0/en/controllers/components/security.html#handling-blackhole-callbacks
      * @throws \Cake\Http\Exception\BadRequestException
      */
-    public function blackHole(Controller $controller, $error = '', ?SecurityException $exception = null)
+    public function blackHole(Controller $controller, string $error = '', ?SecurityException $exception = null)
     {
         if (!$this->_config['blackHoleCallback']) {
             $this->_throwException($exception);
@@ -174,7 +175,7 @@ class SecurityComponent extends Component
      * @throws \Cake\Http\Exception\BadRequestException
      * @return void
      */
-    protected function _throwException($exception = null)
+    protected function _throwException(?SecurityException $exception = null): void
     {
         if ($exception !== null) {
             if (!Configure::read('debug') && $exception instanceof SecurityException) {
@@ -193,7 +194,7 @@ class SecurityComponent extends Component
      * @param array $actions Controller actions to set the required HTTP method to.
      * @return void
      */
-    protected function _requireMethod($method, $actions = [])
+    protected function _requireMethod(string $method, array $actions = []): void
     {
         if (isset($actions[0]) && is_array($actions[0])) {
             $actions = $actions[0];
@@ -207,7 +208,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return bool true if secure connection required
      */
-    protected function _secureRequired(Controller $controller)
+    protected function _secureRequired(Controller $controller): bool
     {
         if (is_array($this->_config['requireSecure']) &&
             !empty($this->_config['requireSecure'])
@@ -233,7 +234,7 @@ class SecurityComponent extends Component
      * @throws \Cake\Controller\Exception\AuthSecurityException
      * @return bool true if submitted form is valid
      */
-    protected function _validatePost(Controller $controller)
+    protected function _validatePost(Controller $controller): bool
     {
         $token = $this->_validToken($controller);
         $hashParts = $this->_hashParts($controller);
@@ -258,7 +259,7 @@ class SecurityComponent extends Component
      * @throws \Cake\Controller\Exception\SecurityException
      * @return string fields token
      */
-    protected function _validToken(Controller $controller)
+    protected function _validToken(Controller $controller): string
     {
         $check = $controller->getRequest()->getData();
 
@@ -293,7 +294,7 @@ class SecurityComponent extends Component
      * @param \Cake\Controller\Controller $controller Instantiating controller
      * @return array
      */
-    protected function _hashParts(Controller $controller)
+    protected function _hashParts(Controller $controller): array
     {
         $request = $controller->getRequest();
 
@@ -319,7 +320,7 @@ class SecurityComponent extends Component
      * @param array $check Data array
      * @return array
      */
-    protected function _fieldsList(array $check)
+    protected function _fieldsList(array $check): array
     {
         $locked = '';
         $token = urldecode($check['_Token']['fields']);
@@ -339,7 +340,7 @@ class SecurityComponent extends Component
         $isUnlocked = false;
 
         foreach ($fieldList as $i => $key) {
-            if (preg_match('/(\.\d+){1,10}$/', $key)) {
+            if (is_string($key) && preg_match('/(\.\d+){1,10}$/', $key)) {
                 $multi[$i] = preg_replace('/(\.\d+){1,10}$/', '', $key);
                 unset($fieldList[$i]);
             } else {
@@ -388,7 +389,7 @@ class SecurityComponent extends Component
      * @param array $data Data array
      * @return string
      */
-    protected function _unlocked(array $data)
+    protected function _unlocked(array $data): string
     {
         return urldecode($data['_Token']['unlocked']);
     }
@@ -399,7 +400,7 @@ class SecurityComponent extends Component
      * @param array $data Data array
      * @return string
      */
-    protected function _sortedUnlocked($data)
+    protected function _sortedUnlocked(array $data): string
     {
         $unlocked = $this->_unlocked($data);
         $unlocked = explode('|', $unlocked);
@@ -415,7 +416,7 @@ class SecurityComponent extends Component
      * @param array $hashParts Elements used to generate the Token hash
      * @return string Message explaining why the tokens are not matching
      */
-    protected function _debugPostTokenNotMatching(Controller $controller, $hashParts)
+    protected function _debugPostTokenNotMatching(Controller $controller, array $hashParts): string
     {
         $messages = [];
         $expectedParts = json_decode(urldecode($controller->getRequest()->getData('_Token.debug')), true);
@@ -463,11 +464,11 @@ class SecurityComponent extends Component
      * @param array $dataFields Fields array, containing the POST data fields
      * @param array $expectedFields Fields array, containing the expected fields we should have in POST
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
-     * @param string $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @param string|null $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
      * @param string $missingMessage Message string if missing field
      * @return array Messages
      */
-    protected function _debugCheckFields($dataFields, $expectedFields = [], $intKeyMessage = '', $stringKeyMessage = '', $missingMessage = '')
+    protected function _debugCheckFields(array $dataFields, array $expectedFields = [], string $intKeyMessage = '', ?string $stringKeyMessage = '', string $missingMessage = ''): array
     {
         $messages = $this->_matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
         $expectedFieldsMessage = $this->_debugExpectedFields($expectedFields, $missingMessage);
@@ -485,7 +486,7 @@ class SecurityComponent extends Component
      * @param \Cake\Http\ServerRequest $request The request object to add into.
      * @return \Cake\Http\ServerRequest The modified request.
      */
-    public function generateToken(ServerRequest $request)
+    public function generateToken(ServerRequest $request): ServerRequest
     {
         if ($request->is('requested')) {
             if ($request->getSession()->check('_Token')) {
@@ -516,7 +517,7 @@ class SecurityComponent extends Component
      * @return mixed Controller callback method's response
      * @throws \Cake\Http\Exception\BadRequestException When a the blackholeCallback is not callable.
      */
-    protected function _callback(Controller $controller, $method, $params = [])
+    protected function _callback(Controller $controller, string $method, array $params = [])
     {
         if (!is_callable([$controller, $method])) {
             throw new BadRequestException('The request has been black-holed');
@@ -532,10 +533,10 @@ class SecurityComponent extends Component
      * @param array $dataFields Fields array, containing the POST data fields
      * @param array $expectedFields Fields array, containing the expected fields we should have in POST
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
-     * @param string $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @param string|null $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
      * @return array Error messages
      */
-    protected function _matchExistingFields($dataFields, &$expectedFields, $intKeyMessage, $stringKeyMessage)
+    protected function _matchExistingFields(array $dataFields, array &$expectedFields, string $intKeyMessage, ?string $stringKeyMessage): array
     {
         $messages = [];
         foreach ((array)$dataFields as $key => $value) {
@@ -564,7 +565,7 @@ class SecurityComponent extends Component
      * @param string $missingMessage Message template
      * @return string|null Error message about expected fields
      */
-    protected function _debugExpectedFields($expectedFields = [], $missingMessage = '')
+    protected function _debugExpectedFields(array $expectedFields = [], string $missingMessage = ''): ?string
     {
         if (count($expectedFields) === 0) {
             return null;

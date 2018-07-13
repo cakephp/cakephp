@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,10 +20,11 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ExceptionRenderer;
-use Cake\Error\PHP7ErrorException;
+use Cake\Error\ExceptionRendererInterface;
 use Cake\Log\Log;
 use Error;
 use Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -104,7 +106,7 @@ class ErrorHandlerMiddleware
     /**
      * Handle an exception and generate an error response
      *
-     * @param \Exception $exception The exception to handle.
+     * @param \Throwable $exception The exception to handle.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface A response
@@ -126,8 +128,9 @@ class ErrorHandlerMiddleware
     }
 
     /**
-     * @param \Psr\Http\Message\ResponseInterface $response The response
+     * Handle internal errors.
      *
+     * @param \Psr\Http\Message\ResponseInterface $response The response
      * @return \Psr\Http\Message\ResponseInterface A response
      */
     protected function handleInternalError($response)
@@ -142,20 +145,15 @@ class ErrorHandlerMiddleware
     /**
      * Get a renderer instance
      *
-     * @param \Exception $exception The exception being rendered.
+     * @param \Throwable $exception The exception being rendered.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
      * @throws \Exception When the renderer class cannot be found.
      */
-    protected function getRenderer($exception, $request)
+    protected function getRenderer(Throwable $exception, ServerRequestInterface $request): ExceptionRendererInterface
     {
         if (!$this->exceptionRenderer) {
             $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
-        }
-
-        // For PHP5 backwards compatibility
-        if ($exception instanceof Error) {
-            $exception = new PHP7ErrorException($exception);
         }
 
         if (is_string($this->exceptionRenderer)) {
@@ -178,10 +176,10 @@ class ErrorHandlerMiddleware
      * Log an error for the exception if applicable.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
-     * @param \Exception $exception The exception to log a message for.
+     * @param \Throwable $exception The exception to log a message for.
      * @return void
      */
-    protected function logException($request, $exception)
+    protected function logException(ServerRequestInterface $request, Throwable $exception): void
     {
         if (!$this->getConfig('log')) {
             return;
@@ -200,10 +198,10 @@ class ErrorHandlerMiddleware
      * Generate the error log message.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
-     * @param \Exception $exception The exception to log a message for.
+     * @param \Throwable $exception The exception to log a message for.
      * @return string Error message
      */
-    protected function getMessage($request, $exception)
+    protected function getMessage(ServerRequestInterface $request, Throwable $exception): string
     {
         $message = sprintf(
             '[%s] %s',

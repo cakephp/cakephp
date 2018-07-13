@@ -190,7 +190,7 @@ class MultiCheckboxWidget implements WidgetInterface
             ),
         ]);
 
-        if ($checkbox['label'] === false && strpos($this->_templates->get('radioWrapper'), '{{input}}') === false) {
+        if ($checkbox['label'] === false && strpos($this->_templates->get('checkboxWrapper'), '{{input}}') === false) {
             $label = $input;
         } else {
             $labelAttrs = [

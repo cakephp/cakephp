@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -44,7 +45,7 @@ class ConditionDecorator extends AbstractDecorator
      * @param \Cake\Event\EventInterface $event Event object.
      * @return bool
      */
-    public function canTrigger(EventInterface $event)
+    public function canTrigger(EventInterface $event): bool
     {
         $if = $this->_evaluateCondition('if', $event);
         $unless = $this->_evaluateCondition('unless', $event);
@@ -59,7 +60,7 @@ class ConditionDecorator extends AbstractDecorator
      * @param \Cake\Event\EventInterface $event Event object
      * @return bool
      */
-    protected function _evaluateCondition($condition, EventInterface $event)
+    protected function _evaluateCondition(string $condition, EventInterface $event): bool
     {
         if (!isset($this->_options[$condition])) {
             return $condition !== 'unless';
@@ -68,6 +69,6 @@ class ConditionDecorator extends AbstractDecorator
             throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
 
-        return $this->_options[$condition]($event);
+        return (bool)$this->_options[$condition]($event);
     }
 }

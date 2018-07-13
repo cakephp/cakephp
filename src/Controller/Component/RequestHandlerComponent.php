@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,6 +21,8 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Inflector;
@@ -98,7 +101,7 @@ class RequestHandlerComponent extends Component
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Controller.startup' => 'startup',
@@ -121,7 +124,7 @@ class RequestHandlerComponent extends Component
      * @param \Cake\Http\Response $response The response instance.
      * @return void
      */
-    protected function _setExtension($request, $response)
+    protected function _setExtension(ServerRequest $request, Response $response): void
     {
         $accept = $request->parseAccept();
         if (empty($accept) || current($accept)[0] === 'text/html') {
@@ -156,7 +159,7 @@ class RequestHandlerComponent extends Component
      * @param \Cake\Event\EventInterface $event The startup event that was fired.
      * @return void
      */
-    public function startup(EventInterface $event)
+    public function startup(EventInterface $event): void
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -202,7 +205,7 @@ class RequestHandlerComponent extends Component
      * @param string $xml XML string.
      * @return array Xml array data
      */
-    public function convertXml($xml)
+    public function convertXml(string $xml): array
     {
         try {
             $xml = Xml::build($xml, ['return' => 'domdocument', 'readFile' => false]);
@@ -238,9 +241,9 @@ class RequestHandlerComponent extends Component
      *   set that Content-type in the response header.
      *
      * @param \Cake\Event\EventInterface $event The Controller.beforeRender event.
-     * @return bool false if the render process should be aborted
+     * @return void
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -263,8 +266,9 @@ class RequestHandlerComponent extends Component
             $response->checkNotModified($request)
         ) {
             $controller->setResponse($response);
+            $event->stopPropagation();
 
-            return false;
+            return;
         }
         $controller->setResponse($response);
     }
@@ -274,7 +278,7 @@ class RequestHandlerComponent extends Component
      *
      * @return bool True if client accepts an XML response
      */
-    public function isXml()
+    public function isXml(): bool
     {
         return $this->prefers('xml');
     }
@@ -284,7 +288,7 @@ class RequestHandlerComponent extends Component
      *
      * @return bool True if client accepts an RSS response
      */
-    public function isRss()
+    public function isRss(): bool
     {
         return $this->prefers('rss');
     }
@@ -294,7 +298,7 @@ class RequestHandlerComponent extends Component
      *
      * @return bool True if client accepts an RSS response
      */
-    public function isAtom()
+    public function isAtom(): bool
     {
         return $this->prefers('atom');
     }
@@ -305,7 +309,7 @@ class RequestHandlerComponent extends Component
      *
      * @return bool True if user agent is a mobile web browser
      */
-    public function isMobile()
+    public function isMobile(): bool
     {
         $request = $this->getController()->getRequest();
 
@@ -317,7 +321,7 @@ class RequestHandlerComponent extends Component
      *
      * @return bool
      */
-    public function isWap()
+    public function isWap(): bool
     {
         return $this->prefers('wap');
     }
@@ -406,7 +410,7 @@ class RequestHandlerComponent extends Component
             return false;
         }
 
-        list($contentType) = explode(';', $request->contentType());
+        list($contentType) = explode(';', $request->contentType() ?? '');
         if ($type === null) {
             return $response->mapType($contentType);
         }
@@ -493,7 +497,7 @@ class RequestHandlerComponent extends Component
      * @return void
      * @see \Cake\Controller\Component\RequestHandlerComponent::respondAs()
      */
-    public function renderAs(Controller $controller, $type, array $options = [])
+    public function renderAs(Controller $controller, string $type, array $options = []): void
     {
         $defaults = ['charset' => 'UTF-8'];
         $viewClassMap = $this->getConfig('viewClassMap');
@@ -549,7 +553,7 @@ class RequestHandlerComponent extends Component
      *    not exist in the type map, or if the Content-type header has
      *    already been set by this method.
      */
-    public function respondAs($type, array $options = [])
+    public function respondAs($type, array $options = []): bool
     {
         $defaults = ['index' => null, 'charset' => null, 'attachment' => false];
         $options += $defaults;

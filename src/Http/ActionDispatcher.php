@@ -15,6 +15,7 @@
 namespace Cake\Http;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Routing\Router;
 use LogicException;
@@ -26,7 +27,7 @@ use LogicException;
  * Long term this should just be the controller dispatcher, but
  * for now it will do a bit more than that.
  */
-class ActionDispatcher
+class ActionDispatcher implements EventDispatcherInterface
 {
     use EventDispatcherTrait;
 

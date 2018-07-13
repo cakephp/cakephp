@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ interface ConfigEngineInterface
      * @param string $key Key to read.
      * @return array An array of data to merge into the runtime configuration
      */
-    public function read($key);
+    public function read(string $key): array;
 
     /**
      * Dumps the configure data into the storage key/file of the given `$key`.
@@ -38,5 +39,5 @@ interface ConfigEngineInterface
      * @param array $data The data to dump.
      * @return bool True on success or false on failure.
      */
-    public function dump($key, array $data);
+    public function dump(string $key, array $data): bool;
 }

@@ -16,6 +16,9 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Adapter\Curl;
+use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Request;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
@@ -103,7 +106,7 @@ class Client
      * @var array
      */
     protected $_defaultConfig = [
-        'adapter' => 'Cake\Http\Client\Adapter\Stream',
+        'adapter' => null,
         'host' => null,
         'port' => null,
         'scheme' => 'http',
@@ -126,10 +129,9 @@ class Client
     protected $_cookies;
 
     /**
-     * Adapter for sending requests. Defaults to
-     * Cake\Http\Client\Adapter\Stream
+     * Adapter for sending requests.
      *
-     * @var \Cake\Http\Client\Adapter\Stream
+     * @var \Cake\Http\Client\AdapterInterface
      */
     protected $_adapter;
 
@@ -153,6 +155,9 @@ class Client
      * - ssl_verify_host - Verify that the certificate and hostname match.
      *   Defaults to true.
      * - redirect - Number of redirects to follow. Defaults to false.
+     * - adapter - The adapter class name or instance. Defaults to
+     *   \Cake\Http\Client\Adapter\Curl if `curl` extension is loaded else
+     *   \Cake\Http\Client\Adapter\Stream.
      *
      * @param array $config Config options for scoped clients.
      */
@@ -161,9 +166,22 @@ class Client
         $this->setConfig($config);
 
         $adapter = $this->_config['adapter'];
-        $this->setConfig('adapter', null);
+        if ($adapter === null) {
+            $adapter = Curl::class;
+
+            if (!extension_loaded('curl')) {
+                $adapter = Stream::class;
+            }
+        } else {
+            $this->setConfig('adapter', null);
+        }
+
         if (is_string($adapter)) {
             $adapter = new $adapter();
+        }
+
+        if (!$adapter instanceof AdapterInterface) {
+            throw new InvalidArgumentException('Adapter must be an instance of Cake\Http\Client\AdapterInterface');
         }
         $this->_adapter = $adapter;
 

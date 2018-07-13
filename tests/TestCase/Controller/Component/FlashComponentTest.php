@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class FlashComponentTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -47,7 +48,7 @@ class FlashComponentTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->Session->destroy();
@@ -59,7 +60,7 @@ class FlashComponentTest extends TestCase
      * @return void
      * @covers \Cake\Controller\Component\FlashComponent::set
      */
-    public function testSet()
+    public function testSet(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -108,7 +109,7 @@ class FlashComponentTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testDuplicateIgnored()
+    public function testDuplicateIgnored(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -119,10 +120,7 @@ class FlashComponentTest extends TestCase
         $this->assertCount(1, $result);
     }
 
-    /**
-     * @return void
-     */
-    public function testSetEscape()
+    public function testSetEscape(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -157,7 +155,7 @@ class FlashComponentTest extends TestCase
      * @return void
      * @covers \Cake\Controller\Component\FlashComponent::set
      */
-    public function testSetWithClear()
+    public function testSetWithClear(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -192,7 +190,7 @@ class FlashComponentTest extends TestCase
      * @return void
      * @covers \Cake\Controller\Component\FlashComponent::set
      */
-    public function testSetWithException()
+    public function testSetWithException(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -214,7 +212,7 @@ class FlashComponentTest extends TestCase
      *
      * @return void
      */
-    public function testSetWithComponentConfiguration()
+    public function testSetWithComponentConfiguration(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -238,7 +236,7 @@ class FlashComponentTest extends TestCase
      * @covers \Cake\Controller\Component\FlashComponent::__call
      * @return void
      */
-    public function testCall()
+    public function testCall(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
@@ -283,7 +281,7 @@ class FlashComponentTest extends TestCase
      * @return void
      * @covers \Cake\Controller\Component\FlashComponent::set
      */
-    public function testCallWithClear()
+    public function testCallWithClear(): void
     {
         $this->assertNull($this->Session->read('Flash.flash'));
         $this->Flash->success('It worked');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -27,28 +28,28 @@ interface PluginInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get the filesystem path to this plugin
      *
      * @return string
      */
-    public function getPath();
+    public function getPath(): string;
 
     /**
      * Get the filesystem path to configuration for this plugin
      *
      * @return string
      */
-    public function getConfigPath();
+    public function getConfigPath(): string;
 
     /**
      * Get the filesystem path to configuration for this plugin
      *
      * @return string
      */
-    public function getClassPath();
+    public function getClassPath(): string;
 
     /**
      * Load all the application configuration and bootstrap logic.
@@ -97,7 +98,7 @@ interface PluginInterface
      * @param string $hook The hook to disable
      * @return $this
      */
-    public function disable($hook);
+    public function disable(string $hook): self;
 
     /**
      * Enables the named hook
@@ -105,7 +106,7 @@ interface PluginInterface
      * @param string $hook The hook to disable
      * @return $this
      */
-    public function enable($hook);
+    public function enable(string $hook): self;
 
     /**
      * Check if the named hook is enabled
@@ -113,5 +114,5 @@ interface PluginInterface
      * @param string $hook The hook to check
      * @return bool
      */
-    public function isEnabled($hook);
+    public function isEnabled(string $hook): bool;
 }

@@ -200,7 +200,7 @@ class TableLocator implements LocatorInterface
      *
      * @param string $alias The alias name you want to get.
      * @param array $options Table options array.
-     * @return string|false
+     * @return string|null
      */
     protected function _getClassName($alias, array $options = [])
     {

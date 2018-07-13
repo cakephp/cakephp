@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $controller = new Controller(new ServerRequest(), new Response());
@@ -49,7 +50,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->Components);
@@ -60,7 +61,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testLoad()
+    public function testLoad(): void
     {
         $result = $this->Components->load('Flash');
         $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
@@ -78,7 +79,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testLoadWithAlias()
+    public function testLoadWithAlias(): void
     {
         $result = $this->Components->load('Flash', ['className' => __NAMESPACE__ . '\FlashAliasComponent', 'somesetting' => true]);
         $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $result);
@@ -105,7 +106,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testLoadWithEnableFalse()
+    public function testLoadWithEnableFalse(): void
     {
         $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $mock->expects($this->never())
@@ -123,7 +124,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testLoadMissingComponent()
+    public function testLoadMissingComponent(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
         $this->Components->load('ThisComponentShouldAlwaysBeMissing');
@@ -134,7 +135,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testLoadPluginComponent()
+    public function testLoadPluginComponent(): void
     {
         Plugin::load('TestPlugin');
         $result = $this->Components->load('TestPlugin.Other');
@@ -147,7 +148,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testLoadWithAliasAndPlugin()
+    public function testLoadWithAliasAndPlugin(): void
     {
         Plugin::load('TestPlugin');
         $result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
@@ -163,7 +164,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testGetController()
+    public function testGetController(): void
     {
         $result = $this->Components->getController();
         $this->assertInstanceOf('Cake\Controller\Controller', $result);
@@ -174,7 +175,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testReset()
+    public function testReset(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
         $instance = $this->Components->load('Auth');
@@ -196,7 +197,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testUnload()
+    public function testUnload(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
@@ -213,7 +214,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testUnset()
+    public function testUnset(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
 
@@ -229,7 +230,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testUnloadUnknown()
+    public function testUnloadUnknown(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
         $this->expectExceptionMessage('Component class FooComponent could not be found.');
@@ -241,7 +242,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testSet()
+    public function testSet(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
@@ -259,7 +260,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testMagicSet()
+    public function testMagicSet(): void
     {
         $eventManager = $this->Components->getController()->getEventManager();
         $this->assertCount(0, $eventManager->listeners('Controller.startup'));
@@ -276,7 +277,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testCountable()
+    public function testCountable(): void
     {
         $this->Components->load('Auth');
         $this->assertInstanceOf('\Countable', $this->Components);
@@ -289,7 +290,7 @@ class ComponentRegistryTest extends TestCase
      *
      * @return void
      */
-    public function testTraversable()
+    public function testTraversable(): void
     {
         $this->Components->load('Auth');
         $this->assertInstanceOf('\Traversable', $this->Components);

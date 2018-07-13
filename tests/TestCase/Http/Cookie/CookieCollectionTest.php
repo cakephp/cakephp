@@ -263,6 +263,23 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response ignores empty headers
+     *
+     * @return void
+     */
+    public function testAddFromResponseIgnoreEmpty()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', '');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertCount(0, $new, 'no cookies parsed');
+    }
+
+    /**
      * Test adding cookies from a response ignores expired cookies
      *
      * @return void
@@ -302,6 +319,27 @@ class CookieCollectionTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from a response with bad expires values
+     *
+     * @return void
+     */
+    public function testAddFromResponseInvalidExpires()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=no; Expires=1w; Path=/; HttpOnly; Secure;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('test'));
+        $this->assertTrue($new->has('expired'));
+        $expired = $new->get('expired');
+        $this->assertNull($expired->getExpiry());
     }
 
     /**

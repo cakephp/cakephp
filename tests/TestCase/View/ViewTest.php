@@ -228,7 +228,7 @@ class TestViewEventListenerInterface implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'View.beforeRender' => 'beforeRender',
@@ -1957,7 +1957,6 @@ TEXT;
     public function testMemoryLeakInPaths()
     {
         $this->skipIf((bool)env('CODECOVERAGE'), 'Running coverage this causes this tests to fail sometimes.');
-        $this->ThemeController->setPlugin(null);
         $this->ThemeController->setName('Posts');
 
         $View = $this->ThemeController->createView();

@@ -142,7 +142,7 @@ class Test3Behavior extends Behavior
      *
      * @return void
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return ['Model.beforeFind' => 'beforeFind'];
     }

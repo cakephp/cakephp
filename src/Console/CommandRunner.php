@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -99,7 +100,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param array $aliases The map of aliases to replace.
      * @return $this
      */
-    public function setAliases(array $aliases)
+    public function setAliases(array $aliases): self
     {
         $this->aliases = $aliases;
 
@@ -117,11 +118,11 @@ class CommandRunner implements EventDispatcherInterface
      * - Run the requested command.
      *
      * @param array $argv The arguments from the CLI environment.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance. Used primarily for testing.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
      * @throws \RuntimeException
      */
-    public function run(array $argv, ?ConsoleIo $io = null)
+    public function run(array $argv, ?ConsoleIo $io = null): int
     {
         $this->bootstrap();
 
@@ -176,7 +177,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @return void
      */
-    protected function bootstrap()
+    protected function bootstrap(): void
     {
         $this->app->bootstrap();
         if ($this->app instanceof PluginApplicationInterface) {
@@ -209,7 +210,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @return \Cake\Event\EventManagerInterface
      */
-    public function getEventManager()
+    public function getEventManager(): EventManagerInterface
     {
         if ($this->app instanceof PluginApplicationInterface) {
             return $this->app->getEventManager();
@@ -227,7 +228,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Event\EventManagerInterface $events The event manager to set.
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventManager(EventManagerInterface $events): EventDispatcherInterface
     {
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->setEventManager($events);
@@ -272,10 +273,10 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to check.
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
-     * @param string $name The name from the CLI args.
+     * @param string|null $name The name from the CLI args.
      * @return string The resolved name.
      */
-    protected function resolveName($commands, $io, $name)
+    protected function resolveName(CommandCollection $commands, ConsoleIo $io, ?string $name): string
     {
         if (!$name) {
             $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
@@ -302,7 +303,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param \Cake\Console\Shell $shell The shell to run.
      * @param array $argv The CLI arguments to invoke.
-     * @return int Exit code
+     * @return int|bool|null Exit code
      */
     protected function runShell(Shell $shell, array $argv)
     {
@@ -339,7 +340,7 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @return void
      */
-    protected function loadRoutes()
+    protected function loadRoutes(): void
     {
         $builder = Router::createRouteBuilder('/');
 

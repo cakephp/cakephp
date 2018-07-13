@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -63,7 +64,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -76,7 +77,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    protected function _init()
+    protected function _init(): void
     {
         $request = new ServerRequest(['url' => 'controller_posts/index']);
         $response = $this->getMockBuilder('Cake\Http\Response')
@@ -86,7 +87,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler = $this->Controller->components()->load('RequestHandler');
         $this->request = $request;
 
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function ($routes): void {
             $routes->setExtensions('json');
             $routes->fallbacks('InflectedRoute');
         });
@@ -97,7 +98,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Router::reload();
@@ -110,7 +111,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testConstructorConfig()
+    public function testConstructorConfig(): void
     {
         $config = [
             'viewClassMap' => ['json' => 'MyPlugin.MyJson'],
@@ -128,7 +129,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeCallback()
+    public function testInitializeCallback(): void
     {
         $this->assertNull($this->RequestHandler->ext);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'rss'));
@@ -141,7 +142,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeContentTypeSettingExt()
+    public function testInitializeContentTypeSettingExt(): void
     {
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json'));
@@ -156,7 +157,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeContentTypeWithjQueryAccept()
+    public function testInitializeContentTypeWithjQueryAccept(): void
     {
         Router::reload();
         $this->Controller->setRequest($this->request
@@ -174,7 +175,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeContentTypeWithjQueryTextPlainAccept()
+    public function testInitializeContentTypeWithjQueryTextPlainAccept(): void
     {
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader('Accept', 'text/plain, */*; q=0.01'));
@@ -189,7 +190,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions()
+    public function testInitializeContentTypeWithjQueryAcceptAndMultiplesExtensions(): void
     {
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01'));
@@ -205,7 +206,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeNoContentTypeWithSingleAccept()
+    public function testInitializeNoContentTypeWithSingleAccept(): void
     {
         Router::reload();
         $_SERVER['HTTP_ACCEPT'] = 'application/json, text/html, */*; q=0.01';
@@ -223,7 +224,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeNoContentTypeWithMultipleAcceptedTypes()
+    public function testInitializeNoContentTypeWithMultipleAcceptedTypes(): void
     {
         $this->Controller->setRequest($this->request->withHeader(
             'Accept',
@@ -247,7 +248,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeContentTypeWithMultipleAcceptedTypes()
+    public function testInitializeContentTypeWithMultipleAcceptedTypes(): void
     {
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader(
@@ -265,7 +266,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeAmbiguousAndroidAccepts()
+    public function testInitializeAmbiguousAndroidAccepts(): void
     {
         Router::reload();
         $this->request = $this->request->withEnv(
@@ -283,7 +284,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInititalizeFirefoxHeaderNotXml()
+    public function testInititalizeFirefoxHeaderNotXml(): void
     {
         $_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
         Router::extensions(['xml', 'json'], false);
@@ -297,7 +298,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInitializeContentTypeAndExtensionMismatch()
+    public function testInitializeContentTypeAndExtensionMismatch(): void
     {
         $this->assertNull($this->RequestHandler->ext);
         $extensions = Router::extensions();
@@ -321,7 +322,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testViewClassMap()
+    public function testViewClassMap(): void
     {
         $this->RequestHandler->setConfig(['viewClassMap' => ['json' => 'CustomJson']]);
         $result = $this->RequestHandler->getConfig('viewClassMap');
@@ -351,7 +352,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testIsAjaxParams()
+    public function testIsAjaxParams(): void
     {
         $this->Controller->setRequest($this->request->withHeader('X-Requested-With', 'XMLHttpRequest'));
         $event = new Event('Controller.startup', $this->Controller);
@@ -367,7 +368,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testAutoAjaxLayout()
+    public function testAutoAjaxLayout(): void
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->setRequest($this->request->withHeader('X-Requested-With', 'XMLHttpRequest'));
@@ -393,7 +394,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testJsonViewLoaded()
+    public function testJsonViewLoaded(): void
     {
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'json'));
@@ -414,7 +415,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testXmlViewLoaded()
+    public function testXmlViewLoaded(): void
     {
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'xml'));
@@ -435,7 +436,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testAjaxViewLoaded()
+    public function testAjaxViewLoaded(): void
     {
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'ajax'));
@@ -455,7 +456,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
-    public function testNoViewClassExtension()
+    public function testNoViewClassExtension(): void
     {
         Router::extensions(['json', 'xml', 'ajax', 'csv'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'csv'));
@@ -476,7 +477,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
-    public function testStartupCallback()
+    public function testStartupCallback(): void
     {
         $event = new Event('Controller.beforeRender', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
@@ -493,7 +494,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStartupCallbackCharset()
+    public function testStartupCallbackCharset(): void
     {
         $event = new Event('Controller.startup', $this->Controller);
         $_SERVER['REQUEST_METHOD'] = 'PUT';
@@ -510,7 +511,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStartupProcessDataInvalid()
+    public function testStartupProcessDataInvalid(): void
     {
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
@@ -536,7 +537,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStartupProcessData()
+    public function testStartupProcessData(): void
     {
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
@@ -560,7 +561,7 @@ class RequestHandlerComponentTest extends TestCase
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStartupIgnoreFileAsXml()
+    public function testStartupIgnoreFileAsXml(): void
     {
         $this->Controller->setRequest(new ServerRequest([
             'input' => '/dev/random',
@@ -580,7 +581,7 @@ class RequestHandlerComponentTest extends TestCase
      *
      * @return void
      */
-    public function testStartupConvertXmlDataWrapper()
+    public function testStartupConvertXmlDataWrapper(): void
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -610,7 +611,7 @@ XML;
      *
      * @return void
      */
-    public function testStartupConvertXmlElements()
+    public function testStartupConvertXmlElements(): void
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -639,7 +640,7 @@ XML;
      *
      * @return void
      */
-    public function testStartupConvertXmlIgnoreEntities()
+    public function testStartupConvertXmlIgnoreEntities(): void
     {
         $xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -673,7 +674,7 @@ XML;
      * @return void
      * @triggers Controller.startup $this->Controller
      */
-    public function testStartupSkipDataProcess()
+    public function testStartupSkipDataProcess(): void
     {
         $this->Controller->setRequest(new ServerRequest([
             'environment' => [
@@ -700,7 +701,7 @@ XML;
      *
      * @return void
      */
-    public function testRenderAs()
+    public function testRenderAs(): void
     {
         $this->RequestHandler->renderAs($this->Controller, 'rss');
 
@@ -714,7 +715,7 @@ XML;
      *
      * @return void
      */
-    public function testRenderAsWithAttachment()
+    public function testRenderAsWithAttachment(): void
     {
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/xml;q=1.0'));
 
@@ -730,7 +731,7 @@ XML;
      *
      * @return void
      */
-    public function testRespondAs()
+    public function testRespondAs(): void
     {
         $result = $this->RequestHandler->respondAs('json');
         $this->assertTrue($result);
@@ -746,7 +747,7 @@ XML;
      *
      * @return void
      */
-    public function testRespondAsWithAttachment()
+    public function testRespondAsWithAttachment(): void
     {
         $result = $this->RequestHandler->respondAs('xml', ['attachment' => 'myfile.xml']);
         $this->assertTrue($result);
@@ -761,7 +762,7 @@ XML;
      * @link #6466
      * @return void
      */
-    public function testRenderAsCalledTwice()
+    public function testRenderAsCalledTwice(): void
     {
         $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\EventInterface $e) {
             return $e->getSubject()->response;
@@ -782,7 +783,7 @@ XML;
      *
      * @return void
      */
-    public function testRequestContentTypes()
+    public function testRequestContentTypes(): void
     {
         $this->Controller->setRequest($this->request->withEnv('REQUEST_METHOD', 'GET'));
         $this->assertNull($this->RequestHandler->requestedWith());
@@ -851,7 +852,7 @@ XML;
      *
      * @return void
      */
-    public function testResponseContentType()
+    public function testResponseContentType(): void
     {
         $this->assertEquals('html', $this->RequestHandler->responseType());
         $this->assertTrue($this->RequestHandler->respondAs('atom'));
@@ -863,7 +864,7 @@ XML;
      *
      * @return void
      */
-    public function testMobileDeviceDetection()
+    public function testMobileDeviceDetection(): void
     {
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['is'])
@@ -881,7 +882,7 @@ XML;
      *
      * @return void
      */
-    public function testMapAlias()
+    public function testMapAlias(): void
     {
         $result = $this->RequestHandler->mapAlias('xml');
         $this->assertEquals('application/xml', $result);
@@ -902,7 +903,7 @@ XML;
      *
      * @return void
      */
-    public function testAccepts()
+    public function testAccepts(): void
     {
         $this->Controller->setRequest($this->request->withHeader(
             'Accept',
@@ -920,7 +921,7 @@ XML;
      *
      * @return void
      */
-    public function testPrefers()
+    public function testPrefers(): void
     {
         $this->Controller->setRequest($this->request->withHeader(
             'Accept',
@@ -959,7 +960,7 @@ XML;
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
-    public function testCheckNotModifiedByEtagStar()
+    public function testCheckNotModifiedByEtagStar(): void
     {
         $response = new Response();
         $response = $response->withEtag('something')
@@ -970,7 +971,8 @@ XML;
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertFalse($requestHandler->beforeRender($event));
+        $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'), 'header should not be removed.');
@@ -982,7 +984,7 @@ XML;
      * @return void
      * @triggers Controller.beforeRender
      */
-    public function testCheckNotModifiedByEtagExact()
+    public function testCheckNotModifiedByEtagExact(): void
     {
         $response = new Response();
         $response = $response->withEtag('something', true)
@@ -994,7 +996,8 @@ XML;
         $event = new Event('Controller.beforeRender', $this->Controller);
 
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertFalse($requestHandler->beforeRender($event));
+        $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'));
@@ -1006,7 +1009,7 @@ XML;
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
-    public function testCheckNotModifiedByEtagAndTime()
+    public function testCheckNotModifiedByEtagAndTime(): void
     {
         $this->Controller->setRequest($this->request
             ->withHeader('If-None-Match', 'W/"something", "other"')
@@ -1021,7 +1024,8 @@ XML;
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
-        $this->assertFalse($requestHandler->beforeRender($event));
+        $this->assertNull($requestHandler->beforeRender($event));
+        $this->assertTrue($event->isStopped());
 
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
         $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
@@ -1034,7 +1038,7 @@ XML;
      * @return void
      * @triggers Controller.beforeRender $this->Controller
      */
-    public function testCheckNotModifiedNoInfo()
+    public function testCheckNotModifiedNoInfo(): void
     {
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['notModified', 'stop'])
@@ -1052,7 +1056,7 @@ XML;
      *
      * @return void
      */
-    public function testConstructDefaultOptions()
+    public function testConstructDefaultOptions(): void
     {
         $requestHandler = new RequestHandlerComponent($this->Controller->components());
         $viewClass = $requestHandler->getConfig('viewClassMap');
@@ -1073,7 +1077,7 @@ XML;
      *
      * @return void
      */
-    public function testConstructReplaceOptions()
+    public function testConstructReplaceOptions(): void
     {
         $requestHandler = new RequestHandlerComponent(
             $this->Controller->components(),
@@ -1098,7 +1102,7 @@ XML;
      *
      * @return void
      */
-    public function testBeforeRender()
+    public function testBeforeRender(): void
     {
         $this->Controller->set_response_type();
         $event = new Event('Controller.beforeRender', $this->Controller);
@@ -1111,7 +1115,7 @@ XML;
      *
      * @return void
      */
-    public function testBeforeRenderAutoRenderAs()
+    public function testBeforeRenderAutoRenderAs(): void
     {
         $this->Controller->setRequest($this->request->withParam('_ext', 'csv'));
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));

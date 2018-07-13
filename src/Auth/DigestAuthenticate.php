@@ -131,9 +131,9 @@ class DigestAuthenticate extends BasicAuthenticate
      * Gets the digest headers from the request/environment.
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return array|bool Array of digest information.
+     * @return array|null Array of digest information.
      */
-    protected function _getDigest(ServerRequest $request)
+    protected function _getDigest(ServerRequest $request): ?array
     {
         $digest = $request->getEnv('PHP_AUTH_DIGEST');
         if (empty($digest) && function_exists('apache_request_headers')) {
@@ -143,7 +143,7 @@ class DigestAuthenticate extends BasicAuthenticate
             }
         }
         if (empty($digest)) {
-            return false;
+            return null;
         }
 
         return $this->parseAuthData($digest);

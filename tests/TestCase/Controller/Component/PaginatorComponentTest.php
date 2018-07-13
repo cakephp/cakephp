@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,6 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
@@ -71,7 +73,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -90,7 +92,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -101,7 +103,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginatorSetting()
+    public function testPaginatorSetting(): void
     {
         $paginator = new CustomPaginator();
         $component = new PaginatorComponent($this->registry, [
@@ -122,7 +124,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidPaginatorOption()
+    public function testInvalidPaginatorOption(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Paginator must be an instance of Cake\Datasource\Paginator');
@@ -136,7 +138,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPageParamCasting()
+    public function testPageParamCasting(): void
     {
         $this->Post->expects($this->any())
             ->method('getAlias')
@@ -159,7 +161,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateExtraParams()
+    public function testPaginateExtraParams(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams(['page' => '-1']));
         $settings = [
@@ -197,7 +199,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateCustomFinderOptions()
+    public function testPaginateCustomFinderOptions(): void
     {
         $this->loadFixtures('Posts');
         $settings = [
@@ -225,7 +227,7 @@ class PaginatorComponentTest extends TestCase
      * @return void
      * @see https://github.com/cakephp/cakephp/issues/11655
      */
-    public function testRequestParamsSetting()
+    public function testRequestParamsSetting(): void
     {
         $this->loadFixtures('Posts');
 
@@ -247,7 +249,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateCustomFinder()
+    public function testPaginateCustomFinder(): void
     {
         $settings = [
             'PaginatorPosts' => [
@@ -273,7 +275,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateNestedEagerLoader()
+    public function testPaginateNestedEagerLoader(): void
     {
         $this->loadFixtures('Articles', 'Tags', 'Authors', 'ArticlesTags', 'AuthorsTags');
         $articles = $this->getTableLocator()->get('Articles');
@@ -281,7 +283,7 @@ class PaginatorComponentTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
 
-        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query) {
+        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
             $query ->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
@@ -301,7 +303,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultPaginateParams()
+    public function testDefaultPaginateParams(): void
     {
         $settings = [
             'order' => ['PaginatorPosts.id' => 'DESC'],
@@ -334,7 +336,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultPaginateParamsIntoRequest()
+    public function testDefaultPaginateParamsIntoRequest(): void
     {
         $settings = [
             'order' => ['PaginatorPosts.id' => 'DESC'],
@@ -369,7 +371,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsModelSpecific()
+    public function testMergeOptionsModelSpecific(): void
     {
         $settings = [
             'page' => 1,
@@ -395,7 +397,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsCustomScope()
+    public function testMergeOptionsCustomScope(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 10,
@@ -464,7 +466,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsCustomFindKey()
+    public function testMergeOptionsCustomFindKey(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 10,
@@ -492,7 +494,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsQueryString()
+    public function testMergeOptionsQueryString(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 99,
@@ -513,7 +515,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsDefaultWhiteList()
+    public function testMergeOptionsDefaultWhiteList(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 10,
@@ -538,7 +540,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsExtraWhitelist()
+    public function testMergeOptionsExtraWhitelist(): void
     {
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
             'page' => 10,
@@ -566,7 +568,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMergeOptionsMaxLimit()
+    public function testMergeOptionsMaxLimit(): void
     {
         $settings = [
             'limit' => 200,
@@ -602,7 +604,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testGetDefaultMaxLimit()
+    public function testGetDefaultMaxLimit(): void
     {
         $settings = [
             'page' => 1,
@@ -650,7 +652,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortInvalid()
+    public function testValidateSortInvalid(): void
     {
         $table = $this->_getMockPosts(['query']);
         $query = $this->_getMockFindQuery();
@@ -684,7 +686,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortInvalidDirection()
+    public function testValidateSortInvalidDirection(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -705,7 +707,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testEmptyPaginationResult()
+    public function testEmptyPaginationResult(): void
     {
         $this->loadFixtures('Posts');
 
@@ -736,7 +738,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testOutOfRangePageNumberGetsClamped()
+    public function testOutOfRangePageNumberGetsClamped(): void
     {
         $this->loadFixtures('Posts');
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams(['page' => 3000]));
@@ -764,7 +766,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testOutOfRangePageNumberStillProvidesPageCount()
+    public function testOutOfRangePageNumberStillProvidesPageCount(): void
     {
         $this->loadFixtures('Posts');
         $this->controller->setRequest($this->controller->getRequest()->withQueryParams([
@@ -795,7 +797,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testOutOfVeryBigPageNumberGetsClamped()
+    public function testOutOfVeryBigPageNumberGetsClamped(): void
     {
         $this->expectException(\Cake\Http\Exception\NotFoundException::class);
         $this->loadFixtures('Posts');
@@ -812,7 +814,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortWhitelistFailure()
+    public function testValidateSortWhitelistFailure(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -835,7 +837,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortWhitelistTrusted()
+    public function testValidateSortWhitelistTrusted(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -865,7 +867,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortWhitelistEmpty()
+    public function testValidateSortWhitelistEmpty(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -893,7 +895,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortWhitelistNotInSchema()
+    public function testValidateSortWhitelistNotInSchema(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -922,7 +924,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortWhitelistMultiple()
+    public function testValidateSortWhitelistMultiple(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -953,7 +955,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortMultiple()
+    public function testValidateSortMultiple(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -982,7 +984,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortWithString()
+    public function testValidateSortWithString(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -1004,7 +1006,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortNoSort()
+    public function testValidateSortNoSort(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -1026,7 +1028,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testValidateSortInvalidAlias()
+    public function testValidateSortInvalidAlias(): void
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
@@ -1042,7 +1044,7 @@ class PaginatorComponentTest extends TestCase
     /**
      * @return array
      */
-    public function checkLimitProvider()
+    public function checkLimitProvider(): array
     {
         return [
             'out of bounds' => [
@@ -1090,7 +1092,7 @@ class PaginatorComponentTest extends TestCase
      * @dataProvider checkLimitProvider
      * @return void
      */
-    public function testCheckLimit($input, $expected)
+    public function testCheckLimit($input, $expected): void
     {
         $result = $this->Paginator->checkLimit($input);
         $this->assertSame($expected, $result['limit']);
@@ -1101,7 +1103,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateMaxLimit()
+    public function testPaginateMaxLimit(): void
     {
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -1129,7 +1131,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateCustomFind()
+    public function testPaginateCustomFind(): void
     {
         $this->loadFixtures('Posts');
         $titleExtractor = function ($result) {
@@ -1193,7 +1195,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateCustomFindFieldsArray()
+    public function testPaginateCustomFindFieldsArray(): void
     {
         $this->loadFixtures('Posts');
         $table = $this->getTableLocator()->get('PaginatorPosts');
@@ -1228,7 +1230,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateCustomFindCount()
+    public function testPaginateCustomFindCount(): void
     {
         $settings = [
             'finder' => 'published',
@@ -1259,7 +1261,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateQuery()
+    public function testPaginateQuery(): void
     {
         $this->controller->setRequest(
             $this->controller->getRequest()->withQueryParams(['page' => '-1'])
@@ -1295,7 +1297,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateQueryWithBindValue()
+    public function testPaginateQueryWithBindValue(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') !== false, 'Test temporarily broken in SQLServer');
@@ -1320,7 +1322,7 @@ class PaginatorComponentTest extends TestCase
      *
      * @return void
      */
-    public function testPaginateQueryWithLimit()
+    public function testPaginateQueryWithLimit(): void
     {
         $this->controller->setRequest(
             $this->controller->getRequest()->withQueryParams(['page' => '-1'])
@@ -1359,7 +1361,7 @@ class PaginatorComponentTest extends TestCase
      * @param array $methods
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function _getMockPosts($methods = [])
+    protected function _getMockPosts(array $methods = [])
     {
         return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
             ->setMethods($methods)
@@ -1381,11 +1383,11 @@ class PaginatorComponentTest extends TestCase
     /**
      * Helper method for mocking queries.
      *
-     * @param string|null $table
+     * @param RepositoryInterface|null $table
      *
      * @return \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function _getMockFindQuery($table = null)
+    protected function _getMockFindQuery(?RepositoryInterface $table = null)
     {
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['total', 'all', 'count', 'applyOptions'])

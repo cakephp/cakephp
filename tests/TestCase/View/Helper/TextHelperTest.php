@@ -88,7 +88,7 @@ class TextHelperTest extends TestCase
     public function testTextHelperProxyMethodCalls()
     {
         $methods = [
-            'stripLinks', 'excerpt', 'toList',
+            'stripLinks', 'toList',
         ];
         $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
             ->setMethods($methods)
@@ -98,6 +98,19 @@ class TextHelperTest extends TestCase
         foreach ($methods as $method) {
             $String->expects($this->at(0))->method($method);
             $Text->{$method}('who', 'what', 'when', 'where', 'how');
+        }
+
+        $methods = [
+            'excerpt',
+        ];
+        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+            ->setMethods($methods)
+            ->getMock();
+        $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
+        $Text->attach($String);
+        foreach ($methods as $method) {
+            $String->expects($this->at(0))->method($method);
+            $Text->{$method}('who', 'what');
         }
 
         $methods = [

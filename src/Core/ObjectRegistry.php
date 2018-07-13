@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -71,7 +72,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return mixed
      * @throws \Exception If the class cannot be found.
      */
-    public function load($objectName, $config = [])
+    public function load($objectName, array $config = [])
     {
         if (is_array($config) && isset($config['className'])) {
             $name = $objectName;
@@ -89,7 +90,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
 
         $className = $this->_resolveClassName($objectName);
-        if ($className === false || (is_string($className) && !class_exists($className))) {
+        if ($className === null || (is_string($className) && !class_exists($className))) {
             list($plugin, $objectName) = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
@@ -115,7 +116,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return void
      * @throws \RuntimeException When a duplicate is found.
      */
-    protected function _checkDuplicate($name, $config)
+    protected function _checkDuplicate(string $name, array $config): void
     {
         /** @var \Cake\Core\InstanceConfigTrait $existing */
         $existing = $this->_loaded[$name];
@@ -185,7 +186,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @return array List of object names.
      */
-    public function loaded()
+    public function loaded(): array
     {
         return array_keys($this->_loaded);
     }
@@ -196,7 +197,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name The object name to check for.
      * @return bool True is object is loaded else false.
      */
-    public function has($name)
+    public function has(string $name): bool
     {
         return isset($this->_loaded[$name]);
     }
@@ -207,7 +208,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object.
      * @return object|null Object instance if loaded else null.
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (isset($this->_loaded[$name])) {
             return $this->_loaded[$name];
@@ -222,7 +223,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of property to read
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->get($name);
     }
@@ -233,7 +234,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object being checked.
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         return isset($this->_loaded[$name]);
     }
@@ -245,7 +246,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param mixed $object Object to set.
      * @return void
      */
-    public function __set($name, $object)
+    public function __set(string $name, $object)
     {
         $this->set($name, $object);
     }
@@ -256,7 +257,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of a property to unset.
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         $this->unload($name);
     }
@@ -268,7 +269,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param array $objects Array of child objects to normalize.
      * @return array Array of normalized objects.
      */
-    public function normalizeArray($objects)
+    public function normalizeArray(array $objects): array
     {
         $normal = [];
         foreach ($objects as $i => $objectName) {
@@ -314,7 +315,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param object $object instance to store in the registry
      * @return $this
      */
-    public function set($objectName, $object)
+    public function set(string $objectName, $object)
     {
         list(, $name) = pluginSplit($objectName);
 
@@ -338,7 +339,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $objectName The name of the object to remove from the registry.
      * @return $this
      */
-    public function unload($objectName)
+    public function unload(string $objectName)
     {
         if (empty($this->_loaded[$objectName])) {
             list($plugin, $objectName) = pluginSplit($objectName);
@@ -369,7 +370,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_loaded);
     }
@@ -379,7 +380,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $properties = get_object_vars($this);
         if (isset($properties['_loaded'])) {
