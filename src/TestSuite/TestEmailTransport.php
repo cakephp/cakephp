@@ -42,7 +42,7 @@ class TestEmailTransport extends AbstractTransport
         static::$emails[] = $email;
 
         return [
-             'result' => 'Success'
+            'result' => 'Success',
         ];
     }
 

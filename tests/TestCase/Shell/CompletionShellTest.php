@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOutput;
 use Cake\Core\Plugin;
 use Cake\TestSuite\Stub\ConsoleOutput as StubOutput;
 use Cake\TestSuite\TestCase;
