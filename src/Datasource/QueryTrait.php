@@ -104,7 +104,7 @@ trait QueryTrait
      *
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getRepository(): RepositoryInterface
+    public function getRepository()
     {
         return $this->_repository;
     }
