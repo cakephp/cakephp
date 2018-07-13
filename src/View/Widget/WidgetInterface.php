@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ interface WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string Generated HTML for the widget element.
      */
-    public function render(array $data, ContextInterface $context);
+    public function render(array $data, ContextInterface $context): string;
 
     /**
      * Returns a list of fields that need to be secured for
@@ -38,5 +39,5 @@ interface WidgetInterface
      * @param array $data The data to render.
      * @return array Array of fields to secure.
      */
-    public function secureFields(array $data);
+    public function secureFields(array $data): array;
 }

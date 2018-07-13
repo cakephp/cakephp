@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -85,7 +86,7 @@ class WidgetLocator
      * @param string $file The file to load
      * @return void
      */
-    public function load($file)
+    public function load(string $file): void
     {
         $loader = new PhpConfig();
         $widgets = $loader->read($file);
@@ -112,7 +113,7 @@ class WidgetLocator
      * @return void
      * @throws \RuntimeException When class does not implement WidgetInterface.
      */
-    public function add(array $widgets)
+    public function add(array $widgets): void
     {
         foreach ($widgets as $object) {
             if (is_object($object) &&
@@ -135,11 +136,12 @@ class WidgetLocator
      * the `_default` widget is undefined.
      *
      * @param string $name The widget name to get.
-     * @return \Cake\View\Widget\WidgetInterface widget interface class.
+     * @return \Cake\View\Widget\WidgetInterface|\Cake\View\View WidgetInterface instance.
+     *  or \Cake\View\View instance in case of special name "_view".
      * @throws \RuntimeException when widget is undefined.
      * @throws \ReflectionException
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (!isset($this->_widgets[$name]) && empty($this->_widgets['_default'])) {
             throw new RuntimeException(sprintf('Unknown widget "%s"', $name));
@@ -157,7 +159,7 @@ class WidgetLocator
      *
      * @return void
      */
-    public function clear()
+    public function clear(): void
     {
         $this->_widgets = [];
     }

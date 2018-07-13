@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -121,7 +122,7 @@ class DateTimeWidget implements WidgetInterface
      * @return string A generated select box.
      * @throws \RuntimeException When option data is invalid.
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $data = $this->_normalizeData($data);
 
@@ -238,7 +239,7 @@ class DateTimeWidget implements WidgetInterface
                         $validDate = true;
                     }
                     if ($exists && $value[$key] !== '') {
-                        $dateArray[$key] = str_pad($value[$key], 2, '0', STR_PAD_LEFT);
+                        $dateArray[$key] = str_pad((string)$value[$key], 2, '0', STR_PAD_LEFT);
                     }
                 }
                 if ($validDate) {
@@ -611,7 +612,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $data The data to render.
      * @return array Array of fields to secure.
      */
-    public function secureFields(array $data)
+    public function secureFields(array $data): array
     {
         $data = $this->_normalizeData($data);
 

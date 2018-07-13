@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -101,7 +102,7 @@ class SelectBoxWidget extends BasicWidget
      * @return string A generated select box.
      * @throws \RuntimeException when the name attribute is empty.
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $data += [
             'name' => '',

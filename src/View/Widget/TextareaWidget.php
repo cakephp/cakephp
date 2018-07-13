@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ class TextareaWidget extends BasicWidget
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $data += [
             'val' => '',
