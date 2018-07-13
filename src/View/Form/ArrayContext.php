@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -103,7 +104,7 @@ class ArrayContext implements ContextInterface
      *
      * @return array
      */
-    public function primaryKey()
+    public function primaryKey(): array
     {
         if (empty($this->_context['schema']['_constraints']) ||
             !is_array($this->_context['schema']['_constraints'])
@@ -122,7 +123,7 @@ class ArrayContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isPrimaryKey($field)
+    public function isPrimaryKey(string $field): bool
     {
         $primaryKey = $this->primaryKey();
 
@@ -138,7 +139,7 @@ class ArrayContext implements ContextInterface
      *
      * @return bool
      */
-    public function isCreate()
+    public function isCreate(): bool
     {
         $primary = $this->primaryKey();
         foreach ($primary as $column) {
@@ -165,7 +166,7 @@ class ArrayContext implements ContextInterface
      *      context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
-    public function val($field, array $options = [])
+    public function val(string $field, array $options = [])
     {
         $options += [
             'default' => null,
@@ -199,7 +200,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check required-ness for.
      * @return bool
      */
-    public function isRequired($field)
+    public function isRequired(string $field): bool
     {
         return (bool)$this->getRequiredMessage($field);
     }
@@ -207,7 +208,7 @@ class ArrayContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function getRequiredMessage($field)
+    public function getRequiredMessage(string $field): ?string
     {
         if (!is_array($this->_context['required'])) {
             return null;
@@ -231,7 +232,7 @@ class ArrayContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function fieldNames()
+    public function fieldNames(): array
     {
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
@@ -246,7 +247,7 @@ class ArrayContext implements ContextInterface
      * @return null|string An abstract data type or null.
      * @see \Cake\Database\Type
      */
-    public function type($field)
+    public function type(string $field): ?string
     {
         if (!is_array($this->_context['schema'])) {
             return null;
@@ -266,7 +267,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to get additional data on.
      * @return array An array of data describing the additional attributes on a field.
      */
-    public function attributes($field)
+    public function attributes(string $field): array
     {
         if (!is_array($this->_context['schema'])) {
             return [];
@@ -286,7 +287,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
      */
-    public function hasError($field)
+    public function hasError(string $field): bool
     {
         if (empty($this->_context['errors'])) {
             return false;
@@ -302,7 +303,7 @@ class ArrayContext implements ContextInterface
      * @return array An array of errors, an empty array will be returned when the
      *    context has no errors.
      */
-    public function error($field)
+    public function error(string $field): array
     {
         if (empty($this->_context['errors'])) {
             return [];
