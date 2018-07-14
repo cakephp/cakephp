@@ -72,8 +72,8 @@ class FixtureManagerTest extends TestCase
     public function testLogSchemaWithDebug()
     {
         $db = ConnectionManager::get('test');
-        $restore = $db->logQueries();
-        $db->logQueries(true);
+        $restore = $db->isQueryLoggingEnabled();
+        $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
@@ -91,7 +91,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
         $this->manager->shutdown();
 
-        $db->logQueries($restore);
+        $db->enableQueryLogging($restore);
         $this->assertContains('CREATE TABLE', implode('', $buffer->messages()));
     }
 
@@ -104,8 +104,8 @@ class FixtureManagerTest extends TestCase
     public function testResetDbIfTableExists()
     {
         $db = ConnectionManager::get('test');
-        $restore = $db->logQueries();
-        $db->logQueries(true);
+        $restore = $db->isQueryLoggingEnabled();
+        $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
@@ -129,7 +129,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
-        $db->logQueries($restore);
+        $db->enableQueryLogging($restore);
         $this->assertContains('DROP TABLE', implode('', $buffer->messages()));
     }
 
