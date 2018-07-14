@@ -14,6 +14,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
@@ -91,7 +92,7 @@ class SchemaCacheShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->addSubcommand('clear', [

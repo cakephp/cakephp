@@ -15,6 +15,7 @@
 
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 
@@ -75,7 +76,7 @@ class ServerShell extends Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#hook-methods
      */
-    public function startup()
+    public function startup(): void
     {
         if ($this->param('host')) {
             $this->_host = $this->param('host');
@@ -154,7 +155,7 @@ class ServerShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 

@@ -1,7 +1,5 @@
 <?php
 /**
- * IntegrationShell file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -30,7 +28,7 @@ class IntegrationShell extends Shell
      *
      * @return ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = new ConsoleOptionParser();
         $argAndOptionParser = (new ConsoleOptionParser())
