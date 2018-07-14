@@ -244,7 +244,7 @@ class Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::initialize
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadTasks();
     }
@@ -259,7 +259,7 @@ class Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Cake\Console\ConsoleOptionParser::startup
      */
-    public function startup()
+    public function startup(): void
     {
         if (!$this->param('requested')) {
             $this->_welcome();
@@ -569,7 +569,7 @@ class Shell
      * @return \Cake\Console\ConsoleOptionParser
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#configuring-options-and-generating-help
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
         $parser = new ConsoleOptionParser($name);
@@ -762,7 +762,7 @@ class Shell
      * @return string
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::nl
      */
-    public function nl(int $multiplier = 1)
+    public function nl(int $multiplier = 1): string
     {
         return $this->_io->nl($multiplier);
     }
@@ -775,7 +775,7 @@ class Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::hr
      */
-    public function hr(int $newlines = 0, int $width = 63)
+    public function hr(int $newlines = 0, int $width = 63): void
     {
         $this->_io->hr($newlines, $width);
     }
@@ -901,7 +901,7 @@ class Shell
      * @param array $settings Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
      */
-    public function helper(string $name, array $settings = [])
+    public function helper(string $name, array $settings = []): Helper
     {
         return $this->_io->helper($name, $settings);
     }

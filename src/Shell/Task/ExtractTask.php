@@ -14,6 +14,7 @@
  */
 namespace Cake\Shell\Task;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -307,7 +308,7 @@ class ExtractTask extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->setDescription(

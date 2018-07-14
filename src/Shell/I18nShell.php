@@ -14,6 +14,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
@@ -129,7 +130,7 @@ class I18nShell extends Shell
      * @return \Cake\Console\ConsoleOptionParser
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $initParser = [

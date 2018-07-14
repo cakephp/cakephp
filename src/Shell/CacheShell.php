@@ -17,6 +17,7 @@ namespace Cake\Shell;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
 use Cake\Cache\Engine\WincacheEngine;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use InvalidArgumentException;
 
@@ -34,7 +35,7 @@ class CacheShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->addSubcommand('list_prefixes', [
@@ -70,7 +71,7 @@ class CacheShell extends Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    public function clear($prefix = null)
+    public function clear($prefix = null): void
     {
         try {
             $engine = Cache::engine($prefix);

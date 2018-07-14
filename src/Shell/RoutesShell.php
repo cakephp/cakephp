@@ -14,6 +14,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
@@ -110,7 +111,7 @@ class RoutesShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->setDescription(

@@ -14,6 +14,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 
 /**
@@ -35,7 +36,7 @@ class CompletionShell extends Shell
      *
      * @return void
      */
-    public function startup()
+    public function startup(): void
     {
     }
 
@@ -112,7 +113,7 @@ class CompletionShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 

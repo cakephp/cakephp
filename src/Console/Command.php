@@ -131,7 +131,7 @@ class Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
-    protected function buildOptionParser(ConsoleOptionParser $parser)
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         return $parser;
     }
