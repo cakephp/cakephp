@@ -100,7 +100,7 @@ class Time extends MutableDateTime implements JsonSerializable
      *
      * @var string
      */
-    const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
+    public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
      * {@inheritDoc}
@@ -141,7 +141,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function isThisWeek()
     {
-        return static::now($this->getTimezone())->format('W o') == $this->format('W o');
+        return static::now($this->getTimezone())->format('W o') === $this->format('W o');
     }
 
     /**
@@ -151,7 +151,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function isThisMonth()
     {
-        return static::now($this->getTimezone())->format('m Y') == $this->format('m Y');
+        return static::now($this->getTimezone())->format('m Y') === $this->format('m Y');
     }
 
     /**
@@ -161,7 +161,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function isThisYear()
     {
-        return static::now($this->getTimezone())->format('Y') == $this->format('Y');
+        return static::now($this->getTimezone())->format('Y') === $this->format('Y');
     }
 
     /**

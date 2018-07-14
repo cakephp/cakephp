@@ -18,7 +18,6 @@ use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Exception\MethodNotAllowedException;
-use Cake\Http\Session;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,7 +34,6 @@ use Zend\Diactoros\UploadedFile;
  */
 class ServerRequest implements ServerRequestInterface
 {
-
     /**
      * Array of parameters parsed from the URL.
      *
@@ -46,7 +44,7 @@ class ServerRequest implements ServerRequestInterface
         'controller' => null,
         'action' => null,
         '_ext' => null,
-        'pass' => []
+        'pass' => [],
     ];
 
     /**
@@ -275,7 +273,7 @@ class ServerRequest implements ServerRequestInterface
 
         if (empty($config['session'])) {
             $config['session'] = new Session([
-                'cookiePath' => $config['base']
+                'cookiePath' => $config['base'],
             ]);
         }
 
@@ -724,7 +722,7 @@ class ServerRequest implements ServerRequestInterface
                     return call_user_func($value, $header);
                 }
 
-                return ($header === $value);
+                return $header === $value;
             }
         }
 
@@ -1773,7 +1771,7 @@ class ServerRequest implements ServerRequestInterface
             'params' => $this->params,
             'webroot' => $this->webroot,
             'base' => $this->base,
-            'here' => $this->here
+            'here' => $this->here,
         ];
 
         return $this->attributes + $emulated;

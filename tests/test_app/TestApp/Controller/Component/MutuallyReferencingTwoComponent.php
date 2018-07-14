@@ -22,7 +22,6 @@ use Cake\Controller\Component;
  */
 class MutuallyReferencingTwoComponent extends Component
 {
-
     /**
      * components property
      *

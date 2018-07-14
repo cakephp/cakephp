@@ -85,8 +85,8 @@ trait ViewVarsTrait
 
         return $builder->build(
             $this->viewVars,
-            isset($this->request) ? $this->request : null,
-            isset($this->response) ? $this->response : null,
+            $this->request ?? null,
+            $this->response ?? null,
             $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
         );
     }

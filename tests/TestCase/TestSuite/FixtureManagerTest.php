@@ -29,7 +29,6 @@ use PDOException;
  */
 class FixtureManagerTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -78,7 +77,7 @@ class FixtureManagerTest extends TestCase
         $buffer = new ConsoleOutput();
         Log::setConfig('testQueryLogger', [
             'className' => 'Console',
-            'stream' => $buffer
+            'stream' => $buffer,
         ]);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
@@ -110,7 +109,7 @@ class FixtureManagerTest extends TestCase
         $buffer = new ConsoleOutput();
         Log::setConfig('testQueryLogger', [
             'className' => 'Console',
-            'stream' => $buffer
+            'stream' => $buffer,
         ]);
 
         $table = new TableSchema('articles', [
@@ -149,15 +148,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->manager->unload($test);
@@ -168,15 +167,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
 
@@ -306,7 +305,7 @@ class FixtureManagerTest extends TestCase
             ->setMethods(['execute'])
             ->setConstructorArgs([[
                 'database' => $connection->config()['database'],
-                'driver' => $connection->getDriver()
+                'driver' => $connection->getDriver(),
             ]])
             ->getMock();
         $testOther->expects($this->atLeastOnce())
@@ -349,15 +348,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
@@ -374,15 +373,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);

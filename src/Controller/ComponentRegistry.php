@@ -15,7 +15,6 @@ declare(strict_types = 1);
  */
 namespace Cake\Controller;
 
-use Cake\Controller\Component;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
@@ -29,7 +28,6 @@ use Cake\Event\EventDispatcherTrait;
  */
 class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -44,7 +42,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      *
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      */
-    public function __construct(Controller $controller = null)
+    public function __construct(?Controller $controller = null)
     {
         if ($controller) {
             $this->setController($controller);
@@ -101,7 +99,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     {
         throw new MissingComponentException([
             'class' => $class . 'Component',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 
@@ -119,7 +117,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     protected function _create($class, $alias, $config): Component
     {
         $instance = new $class($this, $config);
-        $enable = isset($config['enabled']) ? $config['enabled'] : true;
+        $enable = $config['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);
         }

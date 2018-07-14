@@ -22,7 +22,6 @@ use Cake\Database\Driver;
  */
 interface BatchCastingInterface
 {
-
     /**
      * Returns an array of the values converted to the PHP representation of
      * this type.

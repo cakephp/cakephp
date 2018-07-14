@@ -30,7 +30,6 @@ use LogicException;
  */
 class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -126,7 +125,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         throw new MissingBehaviorException([
             'class' => $class . 'Behavior',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 
@@ -144,7 +143,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     protected function _create($class, $alias, $config)
     {
         $instance = new $class($this->_table, $config);
-        $enable = isset($config['enabled']) ? $config['enabled'] : true;
+        $enable = $config['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);
         }

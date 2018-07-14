@@ -23,7 +23,6 @@ use Exception;
  */
 class CommandRetryTest extends TestCase
 {
-
     /**
      * Simple retry test
      *

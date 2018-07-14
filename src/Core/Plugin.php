@@ -26,7 +26,6 @@ use DirectoryIterator;
  */
 class Plugin
 {
-
     /**
      * Holds a list of all loaded plugins and their configuration
      *
@@ -125,7 +124,7 @@ class Plugin
             'routes' => false,
             'console' => true,
             'classBase' => 'src',
-            'name' => $plugin
+            'name' => $plugin,
         ];
 
         if (!isset($config['path'])) {
@@ -208,7 +207,7 @@ class Plugin
 
         $collection = static::getCollection();
         foreach ($plugins as $p) {
-            $opts = isset($options[$p]) ? $options[$p] : null;
+            $opts = $options[$p] ?? null;
             if ($opts === null && isset($options[0])) {
                 $opts = $options[0];
             }

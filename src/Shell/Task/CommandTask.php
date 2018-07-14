@@ -28,7 +28,6 @@ use ReflectionMethod;
  */
 class CommandTask extends Shell
 {
-
     /**
      * Gets the shell command listing.
      *

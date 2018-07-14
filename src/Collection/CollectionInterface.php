@@ -26,7 +26,6 @@ use Traversable;
  */
 interface CollectionInterface extends Iterator, JsonSerializable
 {
-
     /**
      * Executes the passed callable for each of the elements in this collection
      * and passes both the value and key for them on each step.
@@ -71,7 +70,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *   If left null, a callback that filters out falsey values will be used.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function filter(callable $c = null): CollectionInterface;
+    public function filter(?callable $c = null): CollectionInterface;
 
     /**
      * Looks through each value in the collection, and returns another collection with
@@ -931,7 +930,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * the items in the collection and should return an array or Traversable object
      * @return \Cake\Collection\CollectionInterface
      */
-    public function unfold(callable $transformer = null): CollectionInterface;
+    public function unfold(?callable $transformer = null): CollectionInterface;
 
     /**
      * Passes this collection through a callable as its first argument.
@@ -1156,5 +1155,5 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *   of the final results.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function cartesianProduct(callable $operation = null, callable $filter = null): CollectionInterface;
+    public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface;
 }

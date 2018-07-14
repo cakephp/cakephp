@@ -280,7 +280,7 @@ class TableHelperTest extends TestCase
         $data = [
             ['Header 1', 'Header', 'Long Header'],
             ['short', 'Longish thing', 'short'],
-            ['Longer thing', 'short', 'Longest Value']
+            ['Longer thing', 'short', 'Longest Value'],
         ];
         $this->helper->setConfig(['rowSeparator' => true]);
         $this->helper->output($data);
@@ -337,7 +337,7 @@ class TableHelperTest extends TestCase
     public function testOutputWithHeaderAndNoData()
     {
         $data = [
-            ['Header 1', 'Header', 'Long Header']
+            ['Header 1', 'Header', 'Long Header'],
         ];
         $this->helper->output($data);
         $expected = [

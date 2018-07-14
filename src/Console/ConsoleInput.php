@@ -19,7 +19,6 @@ namespace Cake\Console;
  */
 class ConsoleInput
 {
-
     /**
      * Input value.
      *
@@ -79,6 +78,6 @@ class ConsoleInput
         $readFds = [$this->_input];
         $readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
 
-        return ($readyFds > 0);
+        return $readyFds > 0;
     }
 }

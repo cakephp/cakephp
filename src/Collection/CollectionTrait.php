@@ -17,7 +17,6 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
-use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -41,7 +40,6 @@ use Traversable;
  */
 trait CollectionTrait
 {
-
     use ExtractTrait;
 
     /**
@@ -61,7 +59,7 @@ trait CollectionTrait
      *
      * @return \Cake\Collection\CollectionInterface
      */
-    public function filter(callable $c = null): CollectionInterface
+    public function filter(?callable $c = null): CollectionInterface
     {
         if ($c === null) {
             $c = function ($v) {
@@ -198,7 +196,7 @@ trait CollectionTrait
     public function avg($matcher = null)
     {
         $result = $this;
-        if ($matcher != null) {
+        if ($matcher !== null) {
             $result = $result->extract($matcher);
         }
         $result = $result
@@ -221,7 +219,7 @@ trait CollectionTrait
     public function median($matcher = null)
     {
         $elements = $this;
-        if ($matcher != null) {
+        if ($matcher !== null) {
             $elements = $elements->extract($matcher);
         }
         $values = $elements->toList();
@@ -457,7 +455,7 @@ trait CollectionTrait
         $options = [
             'keyPath' => $this->_propertyExtractor($keyPath),
             'valuePath' => $this->_propertyExtractor($valuePath),
-            'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null
+            'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null,
         ];
 
         $mapper = function ($value, $key, $mapReduce) use ($options) {
@@ -609,12 +607,12 @@ trait CollectionTrait
         $modes = [
             'desc' => TreeIterator::SELF_FIRST,
             'asc' => TreeIterator::CHILD_FIRST,
-            'leaves' => TreeIterator::LEAVES_ONLY
+            'leaves' => TreeIterator::LEAVES_ONLY,
         ];
 
         return new TreeIterator(
             new NestIterator($this, $nestingKey),
-            isset($modes[$dir]) ? $modes[$dir] : $dir
+            $modes[$dir] ?? $dir
         );
     }
 
@@ -635,7 +633,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function unfold(callable $transformer = null): CollectionInterface
+    public function unfold(?callable $transformer = null): CollectionInterface
     {
         if ($transformer === null) {
             $transformer = function ($item) {
@@ -764,7 +762,7 @@ trait CollectionTrait
      *
      * @return \Cake\Collection\CollectionInterface
      */
-    public function cartesianProduct(callable $operation = null, callable $filter = null): CollectionInterface
+    public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface
     {
         if ($this->isEmpty()) {
             return new Collection([]);
@@ -823,7 +821,7 @@ trait CollectionTrait
         $length = count(current($arrayValue));
         $result = [];
         foreach ($arrayValue as $column => $row) {
-            if (count($row) != $length) {
+            if (count($row) !== $length) {
                 throw new LogicException('Child arrays do not have even length');
             }
         }

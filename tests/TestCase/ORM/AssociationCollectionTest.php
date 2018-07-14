@@ -14,9 +14,9 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\AssociationCollection;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
@@ -107,7 +107,7 @@ class AssociationCollectionTest extends TestCase
     {
         $locator = $this->createMock(LocatorInterface::class);
         $this->associations->load(BelongsTo::class, 'Users', [
-            'tableLocator' => $locator
+            'tableLocator' => $locator,
         ]);
         $this->assertTrue($this->associations->has('Users'));
         $this->assertInstanceOf(BelongsTo::class, $this->associations->get('Users'));
@@ -156,7 +156,7 @@ class AssociationCollectionTest extends TestCase
             ->getMock();
         $table->setSchema([]);
         $belongsTo = new BelongsTo('Users', [
-            'sourceTable' => $table
+            'sourceTable' => $table,
         ]);
         $this->assertEquals('user', $belongsTo->getProperty());
         $this->associations->add('Users', $belongsTo);
@@ -205,7 +205,7 @@ class AssociationCollectionTest extends TestCase
         return [
             ['BelongsTo', 'BelongsToMany'],
             ['belongsTo', 'belongsToMany'],
-            ['belongsto', 'belongstomany']
+            ['belongsto', 'belongstomany'],
         ];
     }
 
@@ -291,7 +291,7 @@ class AssociationCollectionTest extends TestCase
         $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasMany')
             ->setMethods(['saveAssociated'])
             ->setConstructorArgs(['Child', [
-                'sourceTable' => $table
+                'sourceTable' => $table,
             ]])
             ->getMock();
 
@@ -341,7 +341,7 @@ class AssociationCollectionTest extends TestCase
         $mockTwo = $this->getMockBuilder('Cake\ORM\Association\BelongsTo')
             ->setMethods(['saveAssociated'])
             ->setConstructorArgs(['Categories', [
-                'sourceTable' => $table
+                'sourceTable' => $table,
             ]])
             ->getMock();
 
@@ -391,7 +391,7 @@ class AssociationCollectionTest extends TestCase
         $mockTwo = $this->getMockBuilder('Cake\ORM\Association\HasOne')
             ->setMethods(['saveAssociated'])
             ->setConstructorArgs(['Profiles', [
-                'sourceTable' => $table
+                'sourceTable' => $table,
             ]])
             ->getMock();
 

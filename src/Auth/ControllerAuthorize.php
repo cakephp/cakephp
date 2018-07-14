@@ -42,7 +42,6 @@ use Cake\Http\ServerRequest;
  */
 class ControllerAuthorize extends BaseAuthorize
 {
-
     /**
      * Controller for the request.
      *
@@ -67,7 +66,7 @@ class ControllerAuthorize extends BaseAuthorize
      * @return \Cake\Controller\Controller
      * @throws \Cake\Core\Exception\Exception If controller does not have method `isAuthorized()`.
      */
-    public function controller(Controller $controller = null): Controller
+    public function controller(?Controller $controller = null): Controller
     {
         if ($controller) {
             if (!method_exists($controller, 'isAuthorized')) {

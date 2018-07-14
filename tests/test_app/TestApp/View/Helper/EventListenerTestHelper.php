@@ -19,7 +19,6 @@ use Cake\View\Helper;
 
 class EventListenerTestHelper extends Helper
 {
-
     /**
      * Before render callback. Stub.
      *

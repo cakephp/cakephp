@@ -65,7 +65,6 @@ use Cake\Utility\Hash;
  */
 class ArrayContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -169,7 +168,7 @@ class ArrayContext implements ContextInterface
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);
@@ -257,7 +256,7 @@ class ArrayContext implements ContextInterface
             $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
         }
 
-        return isset($schema['type']) ? $schema['type'] : null;
+        return $schema['type'] ?? null;
     }
 
     /**

@@ -68,10 +68,10 @@ class MailerTest extends TestCase
         $email->expects($this->once())
             ->method('setAttachments')
             ->with([
-                ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
+                ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
             ]);
         $result = (new TestMailer($email))->setAttachments([
-            ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
+            ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
         ]);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
     }

@@ -23,7 +23,6 @@ use PDO;
  */
 class MysqlTest extends TestCase
 {
-
     /**
      * setup
      *
@@ -98,7 +97,7 @@ class MysqlTest extends TestCase
             'init' => [
                 'Execute this',
                 'this too',
-            ]
+            ],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'getConnection'])

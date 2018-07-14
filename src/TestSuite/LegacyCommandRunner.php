@@ -33,7 +33,7 @@ class LegacyCommandRunner
      * @param ConsoleIo $io ConsoleIo
      * @return int
      */
-    public function run(array $argv, ConsoleIo $io = null)
+    public function run(array $argv, ?ConsoleIo $io = null)
     {
         $dispatcher = new LegacyShellDispatcher($argv, true, $io);
 

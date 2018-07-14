@@ -24,7 +24,6 @@ use Cake\Utility\Text;
  */
 class FileLog extends BaseLog
 {
-
     /**
      * Default config for this class
      *

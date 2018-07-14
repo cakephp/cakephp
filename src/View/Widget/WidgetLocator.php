@@ -38,7 +38,6 @@ use RuntimeException;
  */
 class WidgetLocator
 {
-
     /**
      * Array of widgets + widget configuration.
      *

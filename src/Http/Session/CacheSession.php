@@ -27,7 +27,6 @@ use SessionHandlerInterface;
  */
 class CacheSession implements SessionHandlerInterface
 {
-
     /**
      * Options for this session engine
      *

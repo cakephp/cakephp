@@ -26,7 +26,6 @@ use Cake\Core\Plugin;
  */
 class PluginShell extends Shell
 {
-
     /**
      * Tasks to load
      *
@@ -61,7 +60,7 @@ class PluginShell extends Shell
         $parser->setDescription('Plugin Shell perform various tasks related to plugin.')
             ->addSubcommand('assets', [
                 'help' => 'Symlink / copy plugin assets to app\'s webroot',
-                'parser' => $this->Assets->getOptionParser()
+                'parser' => $this->Assets->getOptionParser(),
             ])
             ->addSubcommand('loaded', [
                 'help' => 'Lists all loaded plugins',

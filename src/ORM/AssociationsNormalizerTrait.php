@@ -20,7 +20,6 @@ namespace Cake\ORM;
  */
 trait AssociationsNormalizerTrait
 {
-
     /**
      * Returns an array out of the original passed associations list where dot notation
      * is transformed into nested arrays so that they can be parsed by other routines
@@ -62,6 +61,6 @@ trait AssociationsNormalizerTrait
             $pointer['associated'][$table] = $options + $pointer['associated'][$table];
         }
 
-        return isset($result['associated']) ? $result['associated'] : $result;
+        return $result['associated'] ?? $result;
     }
 }

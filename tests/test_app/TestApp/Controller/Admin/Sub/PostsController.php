@@ -22,7 +22,6 @@ use Cake\Controller\Controller;
  */
 class PostsController extends Controller
 {
-
     /**
      * index action
      *

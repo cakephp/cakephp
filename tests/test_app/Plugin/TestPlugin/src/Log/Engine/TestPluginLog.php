@@ -21,7 +21,6 @@ use Psr\Log\AbstractLogger;
  */
 class TestPluginLog extends AbstractLogger
 {
-
     public function log($level, $message, array $context = [])
     {
     }

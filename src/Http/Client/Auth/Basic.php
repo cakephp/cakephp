@@ -23,7 +23,6 @@ use Cake\Http\Client\Request;
  */
 class Basic
 {
-
     /**
      * Add Authorization header to the request.
      *

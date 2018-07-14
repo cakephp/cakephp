@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class IdentifierExpressionTest extends TestCase
 {
-
     /**
      * Tests getting and setting the field
      *

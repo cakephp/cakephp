@@ -26,7 +26,6 @@ use Zend\Diactoros\ServerRequestFactory;
  */
 class LocaleSelectorMiddlewareTest extends TestCase
 {
-
     /**
      * setup
      *

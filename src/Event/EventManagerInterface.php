@@ -19,7 +19,6 @@ namespace Cake\Event;
  */
 interface EventManagerInterface
 {
-
     /**
      * Adds a new listener to an event.
      *

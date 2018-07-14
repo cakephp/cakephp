@@ -34,7 +34,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Router
 {
-
     /**
      * Default route class.
      *
@@ -55,42 +54,42 @@ class Router
      *
      * @var string
      */
-    const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
+    public const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
 
     /**
      * Regular expression for years
      *
      * @var string
      */
-    const YEAR = '[12][0-9]{3}';
+    public const YEAR = '[12][0-9]{3}';
 
     /**
      * Regular expression for months
      *
      * @var string
      */
-    const MONTH = '0[1-9]|1[012]';
+    public const MONTH = '0[1-9]|1[012]';
 
     /**
      * Regular expression for days
      *
      * @var string
      */
-    const DAY = '0[1-9]|[12][0-9]|3[01]';
+    public const DAY = '0[1-9]|[12][0-9]|3[01]';
 
     /**
      * Regular expression for auto increment IDs
      *
      * @var string
      */
-    const ID = '[0-9]+';
+    public const ID = '[0-9]+';
 
     /**
      * Regular expression for UUIDs
      *
      * @var string
      */
-    const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
+    public const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
     /**
      * The route collection routes would be added to.
@@ -117,7 +116,7 @@ class Router
         'Month' => Router::MONTH,
         'Day' => Router::DAY,
         'ID' => Router::ID,
-        'UUID' => Router::UUID
+        'UUID' => Router::UUID,
     ];
 
     /**
@@ -295,7 +294,7 @@ class Router
             return $request ?: null;
         }
 
-        return isset(static::$_requests[0]) ? static::$_requests[0] : null;
+        return static::$_requests[0] ?? null;
     }
 
     /**
@@ -434,7 +433,7 @@ class Router
         }
 
         if (empty($url)) {
-            $output = $base . (isset($here) ? $here : '/');
+            $output = $base . ($here ?? '/');
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
@@ -473,7 +472,7 @@ class Router
                     'plugin' => $params['plugin'],
                     'controller' => $params['controller'],
                     'action' => 'index',
-                    '_ext' => null
+                    '_ext' => null,
                 ];
             }
 
@@ -591,7 +590,7 @@ class Router
         } elseif (isset($params['url'])) {
             $url = $params['url'];
         }
-        $pass = isset($params['pass']) ? $params['pass'] : [];
+        $pass = $params['pass'] ?? [];
 
         unset(
             $params['pass'],

@@ -19,7 +19,6 @@ use Cake\Console\Shell;
 
 class SampleTask extends Shell
 {
-
     public function getOptionParser()
     {
         $parser = parent::getOptionParser();

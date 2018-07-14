@@ -19,8 +19,7 @@ namespace Cake\Database\Schema;
  */
 class SqlserverSchema extends BaseSchema
 {
-
-    const DEFAULT_SCHEMA_NAME = 'dbo';
+    public const DEFAULT_SCHEMA_NAME = 'dbo';
 
     /**
      * {@inheritDoc}
@@ -253,14 +252,14 @@ class SqlserverSchema extends BaseSchema
         if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
             $schema->addConstraint($name, [
                 'type' => $type,
-                'columns' => $columns
+                'columns' => $columns,
             ]);
 
             return;
         }
         $schema->addIndex($name, [
             'type' => $type,
-            'columns' => $columns
+            'columns' => $columns,
         ]);
     }
 
@@ -360,7 +359,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
-            if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
+            if ($schema->primaryKey() === [$name] || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
             }
@@ -556,7 +555,7 @@ class SqlserverSchema extends BaseSchema
     {
         $name = $this->_driver->quoteIdentifier($schema->name());
         $queries = [
-            sprintf('DELETE FROM %s', $name)
+            sprintf('DELETE FROM %s', $name),
         ];
 
         // Restart identity sequences

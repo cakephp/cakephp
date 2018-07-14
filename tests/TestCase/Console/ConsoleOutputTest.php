@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleOutputTest extends TestCase
 {
-
     /**
      * setup
      *
@@ -174,7 +173,7 @@ class ConsoleOutputTest extends TestCase
             'text' => 'magenta',
             'background' => 'cyan',
             'blink' => true,
-            'underline' => true
+            'underline' => true,
         ]);
 
         $this->output->expects($this->once())->method('_write')

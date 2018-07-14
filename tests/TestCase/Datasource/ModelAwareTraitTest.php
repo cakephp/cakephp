@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class Stub
 {
-
     use ModelAwareTrait;
 
     public function setProps($name)
@@ -37,7 +36,6 @@ class Stub
  */
 class ModelAwareTraitTest extends TestCase
 {
-
     /**
      * Test set modelClass
      *

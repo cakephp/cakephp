@@ -21,7 +21,6 @@ namespace Cake\Database;
  */
 class ValueBinder
 {
-
     /**
      * Array containing a list of bound values to the conditions on this
      * object. Each array entry is another array structure containing the actual
@@ -51,7 +50,7 @@ class ValueBinder
     public function bind($param, $value, $type = 'string')
     {
         $this->_bindings[$param] = compact('value', 'type') + [
-            'placeholder' => is_int($param) ? $param : substr($param, 1)
+            'placeholder' => is_int($param) ? $param : substr($param, 1),
         ];
     }
 

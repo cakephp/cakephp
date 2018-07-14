@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class AuthSecurityExceptionTest extends TestCase
 {
-
     /**
      * setUp method
      *

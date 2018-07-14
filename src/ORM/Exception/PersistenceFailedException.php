@@ -20,7 +20,6 @@ use Cake\Datasource\EntityInterface;
  */
 class PersistenceFailedException extends Exception
 {
-
     /**
      * The entity on which the persistence operation failed
      *

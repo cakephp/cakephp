@@ -23,7 +23,6 @@ use Countable;
  */
 class EventList implements ArrayAccess, Countable
 {
-
     /**
      * Events list
      *

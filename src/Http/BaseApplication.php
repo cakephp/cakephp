@@ -14,7 +14,6 @@
  */
 namespace Cake\Http;
 
-use Cake\Core\App;
 use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
@@ -41,7 +40,6 @@ abstract class BaseApplication implements
     HttpApplicationInterface,
     PluginApplicationInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -62,7 +60,7 @@ abstract class BaseApplication implements
      * @param string $configDir The directory the bootstrap configuration is held in.
      * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
      */
-    public function __construct($configDir, EventManagerInterface $eventManager = null)
+    public function __construct($configDir, ?EventManagerInterface $eventManager = null)
     {
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();

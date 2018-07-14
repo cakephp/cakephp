@@ -15,8 +15,8 @@
 namespace Cake\ORM\Association;
 
 use Cake\Core\App;
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
@@ -36,20 +36,19 @@ use Traversable;
  */
 class BelongsToMany extends Association
 {
-
     /**
      * Saving strategy that will only append to the links set
      *
      * @var string
      */
-    const SAVE_APPEND = 'append';
+    public const SAVE_APPEND = 'append';
 
     /**
      * Saving strategy that will replace the links with the provided set
      *
      * @var string
      */
-    const SAVE_REPLACE = 'replace';
+    public const SAVE_REPLACE = 'replace';
 
     /**
      * The type of join to be used when adding the association to a query
@@ -123,7 +122,7 @@ class BelongsToMany extends Association
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -382,13 +381,13 @@ class BelongsToMany extends Association
         if (!$junction->hasAssociation($tAlias)) {
             $junction->belongsTo($tAlias, [
                 'foreignKey' => $this->getTargetForeignKey(),
-                'targetTable' => $target
+                'targetTable' => $target,
             ]);
         }
         if (!$junction->hasAssociation($sAlias)) {
             $junction->belongsTo($sAlias, [
                 'foreignKey' => $this->getForeignKey(),
-                'targetTable' => $source
+                'targetTable' => $source,
             ]);
         }
     }
@@ -472,7 +471,7 @@ class BelongsToMany extends Association
 
         $assoc = $junction->getAssociation($this->getTarget()->getAlias());
         $conditions = $assoc->_joinCondition([
-            'foreignKey' => $this->getTargetForeignKey()
+            'foreignKey' => $this->getTargetForeignKey(),
         ]);
         $subquery = $this->_appendJunctionJoin($subquery, $conditions);
 
@@ -537,7 +536,7 @@ class BelongsToMany extends Association
             'junctionConditions' => $this->junctionConditions(),
             'finder' => function () {
                 return $this->_appendJunctionJoin($this->find(), []);
-            }
+            },
         ]);
 
         return $loader->buildEagerLoader($options);
@@ -881,7 +880,7 @@ class BelongsToMany extends Association
     {
         if (is_bool($options)) {
             $options = [
-                'cleanProperty' => $options
+                'cleanProperty' => $options,
             ];
         } else {
             $options += ['cleanProperty' => true];
@@ -1048,7 +1047,7 @@ class BelongsToMany extends Association
 
         $belongsTo = $this->junction()->getAssociation($this->getTarget()->getAlias());
         $conditions = $belongsTo->_joinCondition([
-            'foreignKey' => $this->getTargetForeignKey()
+            'foreignKey' => $this->getTargetForeignKey(),
         ]);
         $conditions += $this->junctionConditions();
 
@@ -1070,8 +1069,8 @@ class BelongsToMany extends Association
             $name => [
                 'table' => $this->junction()->getTable(),
                 'conditions' => $conditions,
-                'type' => QueryInterface::JOIN_TYPE_INNER
-            ]
+                'type' => QueryInterface::JOIN_TYPE_INNER,
+            ],
         ];
 
         $assoc = $this->getTarget()->getAssociation($name);
@@ -1368,7 +1367,7 @@ class BelongsToMany extends Association
             if (empty($this->_junctionTableName)) {
                 $tablesNames = array_map('Cake\Utility\Inflector::underscore', [
                     $this->getSource()->getTable(),
-                    $this->getTarget()->getTable()
+                    $this->getTarget()->getTable(),
                 ]);
                 sort($tablesNames);
                 $this->_junctionTableName = implode('_', $tablesNames);

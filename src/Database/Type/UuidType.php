@@ -22,7 +22,6 @@ use Cake\Utility\Text;
  */
 class UuidType extends StringType
 {
-
     /**
      * Casts given value from a PHP type to one acceptable by database
      *

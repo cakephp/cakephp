@@ -40,7 +40,6 @@ class ProtectedUser extends Entity
  */
 class DigestAuthenticateTest extends TestCase
 {
-
     /**
      * Fixtures
      *
@@ -62,7 +61,7 @@ class DigestAuthenticateTest extends TestCase
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc',
-            'secret' => 'foo.bar'
+            'secret' => 'foo.bar',
         ]);
         Configure::write('Security.salt', 'foo.bar');
 
@@ -83,7 +82,7 @@ class DigestAuthenticateTest extends TestCase
         $object = new DigestAuthenticate($this->Collection, [
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'pass'],
-            'nonce' => 123456
+            'nonce' => 123456,
         ]);
         $this->assertEquals('AuthUser', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->getConfig('fields'));
@@ -124,7 +123,7 @@ class DigestAuthenticateTest extends TestCase
             'uri' => '/dir/index.html',
             'qop' => 'auth',
             'nc' => 0000001,
-            'cnonce' => '0a4f113b'
+            'cnonce' => '0a4f113b',
         ];
         $data['response'] = $this->auth->generateResponseHash($data, '09faa9931501bf30f0d4253fa7763022', 'GET');
         $request = $request->withEnv('PHP_AUTH_DIGEST', $this->digestHeader($data));
@@ -141,7 +140,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
         try {
@@ -167,7 +166,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
         $data = [
             'uri' => '/dir/index.html',
@@ -198,7 +197,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
         $data = [
@@ -223,7 +222,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
         $data = [
@@ -250,7 +249,7 @@ class DigestAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
         $data = [
@@ -268,7 +267,7 @@ class DigestAuthenticateTest extends TestCase
             'id' => 1,
             'username' => 'mariano',
             'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31')
+            'updated' => new Time('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -285,7 +284,7 @@ class DigestAuthenticateTest extends TestCase
 
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
         $data = [
@@ -303,7 +302,7 @@ class DigestAuthenticateTest extends TestCase
             'id' => 1,
             'username' => 'mariano',
             'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31')
+            'updated' => new Time('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -318,7 +317,7 @@ class DigestAuthenticateTest extends TestCase
         $request = new ServerRequest([
             'url' => 'posts/index',
             'post' => ['_method' => 'PUT'],
-            'environment' => ['REQUEST_METHOD' => 'GET']
+            'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
 
         $data = [
@@ -337,7 +336,7 @@ class DigestAuthenticateTest extends TestCase
             'id' => 1,
             'username' => 'mariano',
             'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31')
+            'updated' => new Time('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }
@@ -350,7 +349,7 @@ class DigestAuthenticateTest extends TestCase
     public function testLoginHeaders(): void
     {
         $request = new ServerRequest([
-            'environment' => ['SERVER_NAME' => 'localhost']
+            'environment' => ['SERVER_NAME' => 'localhost'],
         ]);
         $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
@@ -390,7 +389,7 @@ DIGEST;
             'nc' => '00000001',
             'cnonce' => '0a4f113b',
             'response' => '6629fae49393a05397450978507c4ef1',
-            'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
+            'opaque' => '5ccc069c403ebaf9f0171e9517f40e41',
         ];
         $result = $this->auth->parseAuthData($digest);
         $this->assertSame($expected, $result);
@@ -450,7 +449,7 @@ DIGEST;
             'nc' => '00000001',
             'cnonce' => '0a4f113b',
             'response' => '6629fae49393a05397450978507c4ef1',
-            'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
+            'opaque' => '5ccc069c403ebaf9f0171e9517f40e41',
         ];
         $result = $this->auth->parseAuthData($digest);
         $this->assertSame($expected, $result);
@@ -498,7 +497,7 @@ DIGEST;
         $data += [
             'username' => 'mariano',
             'realm' => 'localhost',
-            'opaque' => '123abc'
+            'opaque' => '123abc',
         ];
         $digest = <<<DIGEST
 Digest username="mariano",

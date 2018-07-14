@@ -38,7 +38,7 @@ class SmtpTransport extends AbstractTransport
         'password' => null,
         'client' => null,
         'tls' => false,
-        'keepAlive' => false
+        'keepAlive' => false,
     ];
 
     /**
@@ -187,7 +187,7 @@ class SmtpTransport extends AbstractTransport
             if (preg_match('/^(\d{3})(?:[ -]+(.*))?$/', $responseLine, $match)) {
                 $response[] = [
                     'code' => $match[1],
-                    'message' => isset($match[2]) ? $match[2] : null
+                    'message' => $match[2] ?? null,
                 ];
             }
         }
@@ -210,12 +210,14 @@ class SmtpTransport extends AbstractTransport
 
         $config = $this->_config;
 
+        $host = 'localhost';
         if (isset($config['client'])) {
             $host = $config['client'];
-        } elseif ($httpHost = env('HTTP_HOST')) {
-            list($host) = explode(':', $httpHost);
         } else {
-            $host = 'localhost';
+            $httpHost = env('HTTP_HOST');
+            if ($httpHost) {
+                list($host) = explode(':', $httpHost);
+            }
         }
 
         try {

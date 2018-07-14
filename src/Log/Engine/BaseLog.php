@@ -27,7 +27,6 @@ use Psr\Log\AbstractLogger;
  */
 abstract class BaseLog extends AbstractLogger
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -37,7 +36,7 @@ abstract class BaseLog extends AbstractLogger
      */
     protected $_defaultConfig = [
         'levels' => [],
-        'scopes' => []
+        'scopes' => [],
     ];
 
     /**

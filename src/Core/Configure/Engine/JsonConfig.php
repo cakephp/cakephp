@@ -39,7 +39,6 @@ use Cake\Core\Exception\Exception;
  */
 class JsonConfig implements ConfigEngineInterface
 {
-
     use FileConfigTrait;
 
     /**

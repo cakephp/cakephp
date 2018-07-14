@@ -25,7 +25,6 @@ use SplFileInfo;
  */
 class FileTest extends TestCase
 {
-
     /**
      * File property
      *
@@ -81,7 +80,7 @@ class FileTest extends TestCase
             'basename' => basename($file),
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
-            'mime' => 'text/plain'
+            'mime' => 'text/plain',
         ];
         if (!function_exists('finfo_open') &&
             (!function_exists('mime_content_type') ||
@@ -510,7 +509,8 @@ class FileTest extends TestCase
      */
     public function testWrite()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (file_exists($tmpFile)) {
@@ -540,7 +540,8 @@ class FileTest extends TestCase
      */
     public function testAppend()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (file_exists($tmpFile)) {
@@ -577,7 +578,8 @@ class FileTest extends TestCase
      */
     public function testDelete()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
 
@@ -603,7 +605,8 @@ class FileTest extends TestCase
      */
     public function testDeleteAfterRead()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (!file_exists($tmpFile)) {

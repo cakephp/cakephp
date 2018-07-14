@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
  */
 class XmlException extends Exception
 {
-
     /**
      * {@inheritDoc}
      */

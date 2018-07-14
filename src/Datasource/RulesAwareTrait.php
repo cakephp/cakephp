@@ -30,7 +30,6 @@ use Cake\Event\EventDispatcherInterface;
  */
 trait RulesAwareTrait
 {
-
     /**
      * The domain rules to be applied to entities saved by this table
      *

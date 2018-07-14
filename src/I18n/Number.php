@@ -25,20 +25,19 @@ use NumberFormatter;
  */
 class Number
 {
-
     /**
      * Default locale
      *
      * @var string
      */
-    const DEFAULT_LOCALE = 'en_US';
+    public const DEFAULT_LOCALE = 'en_US';
 
     /**
      * Format type to format as currency
      *
      * @var string
      */
-    const FORMAT_CURRENCY = 'currency';
+    public const FORMAT_CURRENCY = 'currency';
 
     /**
      * A list of number formatters indexed by locale and type
@@ -226,13 +225,13 @@ class Number
         $abs = abs($value);
         if (!empty($options['fractionSymbol']) && $abs > 0 && $abs < 1) {
             $value *= 100;
-            $pos = isset($options['fractionPosition']) ? $options['fractionPosition'] : 'after';
+            $pos = $options['fractionPosition'] ?? 'after';
 
             return static::format($value, ['precision' => 0, $pos => $options['fractionSymbol']]);
         }
 
-        $before = isset($options['before']) ? $options['before'] : null;
-        $after = isset($options['after']) ? $options['after'] : null;
+        $before = $options['before'] ?? null;
+        $after = $options['after'] ?? null;
 
         return $before . $formatter->formatCurrency($value, $currency) . $after;
     }
@@ -286,7 +285,7 @@ class Number
      */
     public static function formatter($options = [])
     {
-        $locale = isset($options['locale']) ? $options['locale'] : ini_get('intl.default_locale');
+        $locale = $options['locale'] ?? ini_get('intl.default_locale');
 
         if (!$locale) {
             $locale = static::DEFAULT_LOCALE;
@@ -310,7 +309,7 @@ class Number
             'places' => null,
             'precision' => null,
             'pattern' => null,
-            'useIntlCode' => null
+            'useIntlCode' => null,
         ]);
         if (empty($options)) {
             return $formatter;

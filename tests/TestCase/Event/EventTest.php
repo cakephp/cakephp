@@ -28,7 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class EventTest extends TestCase
 {
-
     /**
      * Tests the name() method
      *

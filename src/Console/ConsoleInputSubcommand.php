@@ -26,7 +26,6 @@ use SimpleXMLElement;
  */
 class ConsoleInputSubcommand
 {
-
     /**
      * Name of the subcommand
      *
@@ -129,7 +128,7 @@ class ConsoleInputSubcommand
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this subcommand appended.
      */
-    public function xml(SimpleXMLElement $parent): SimpleXmlElement
+    public function xml(SimpleXMLElement $parent): SimpleXMLElement
     {
         $command = $parent->addChild('command');
         $command->addAttribute('name', $this->_name);

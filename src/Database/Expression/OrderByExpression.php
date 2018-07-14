@@ -22,7 +22,6 @@ use Cake\Database\ValueBinder;
  */
 class OrderByExpression extends QueryExpression
 {
-
     /**
      * Constructor
      *

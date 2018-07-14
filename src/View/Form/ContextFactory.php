@@ -71,7 +71,7 @@ class ContextFactory
                     if (is_array($data['entity']) && empty($data['entity']['schema'])) {
                         return new EntityContext($request, $data);
                     }
-                }
+                },
             ],
             [
                 'type' => 'array',
@@ -79,7 +79,7 @@ class ContextFactory
                     if (is_array($data['entity']) && isset($data['entity']['schema'])) {
                         return new ArrayContext($request, $data['entity']);
                     }
-                }
+                },
             ],
             [
                 'type' => 'form',
@@ -87,7 +87,7 @@ class ContextFactory
                     if ($data['entity'] instanceof Form) {
                         return new FormContext($request, $data);
                     }
-                }
+                },
             ],
         ] + $providers;
 

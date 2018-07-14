@@ -27,7 +27,6 @@ use Cake\Http\ServerRequest;
  */
 abstract class BaseAuthorize
 {
-
     use InstanceConfigTrait;
 
     /**

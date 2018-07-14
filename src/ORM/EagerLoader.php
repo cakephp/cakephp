@@ -28,7 +28,6 @@ use InvalidArgumentException;
  */
 class EagerLoader
 {
-
     /**
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
@@ -62,7 +61,7 @@ class EagerLoader
         'finder' => 1,
         'joinType' => 1,
         'strategy' => 1,
-        'negateMatch' => 1
+        'negateMatch' => 1,
     ];
 
     /**
@@ -131,7 +130,7 @@ class EagerLoader
      * @return array Containments.
      * @throws \InvalidArgumentException When using $queryBuilder with an array of $associations
      */
-    public function contain($associations, callable $queryBuilder = null)
+    public function contain($associations, ?callable $queryBuilder = null)
     {
         if ($queryBuilder) {
             if (!is_string($associations)) {
@@ -142,8 +141,8 @@ class EagerLoader
 
             $associations = [
                 $associations => [
-                    'queryBuilder' => $queryBuilder
-                ]
+                    'queryBuilder' => $queryBuilder,
+                ],
             ];
         }
 
@@ -225,7 +224,7 @@ class EagerLoader
      * @param array $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching($assoc, callable $builder = null, $options = [])
+    public function setMatching($assoc, ?callable $builder = null, $options = [])
     {
         if ($this->_matching === null) {
             $this->_matching = new static();
@@ -354,7 +353,7 @@ class EagerLoader
                     $options;
                 $options = $this->_reformatContain(
                     $options,
-                    isset($pointer[$table]) ? $pointer[$table] : []
+                    $pointer[$table] ?? []
                 );
             }
 
@@ -494,7 +493,7 @@ class EagerLoader
             'config' => array_diff_key($options, $extra),
             'aliasPath' => trim($paths['aliasPath'], '.'),
             'propertyPath' => trim($paths['propertyPath'], '.'),
-            'targetProperty' => $instance->getProperty()
+            'targetProperty' => $instance->getProperty(),
         ];
         $config['canBeJoined'] = $instance->canBeJoined($config['config']);
         $eagerLoadable = new EagerLoadable($alias, $config);
@@ -551,8 +550,7 @@ class EagerLoader
     protected function _correctStrategy($loadable)
     {
         $config = $loadable->getConfig();
-        $currentStrategy = isset($config['strategy']) ?
-            $config['strategy'] :
+        $currentStrategy = $config['strategy'] ??
             'join';
 
         if (!$loadable->canBeJoined() || $currentStrategy !== 'join') {
@@ -629,13 +627,13 @@ class EagerLoader
                 continue;
             }
 
-            $keys = isset($collected[$path][$alias]) ? $collected[$path][$alias] : null;
+            $keys = $collected[$path][$alias] ?? null;
             $f = $instance->eagerLoader(
                 $config + [
                     'query' => $query,
                     'contain' => $contain,
                     'keys' => $keys,
-                    'nestKey' => $meta->aliasPath()
+                    'nestKey' => $meta->aliasPath(),
                 ]
             );
             $statement = new CallbackStatement($statement, $driver, $f);
@@ -698,7 +696,7 @@ class EagerLoader
                 'entityClass' => $instance->getTarget()->getEntityClass(),
                 'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
                 'matching' => $forMatching !== null ? $forMatching : $matching,
-                'targetProperty' => $meta->targetProperty()
+                'targetProperty' => $meta->targetProperty(),
             ];
             if ($canBeJoined && $associations) {
                 $map = $this->_buildAssociationsMap($map, $associations, $matching);
@@ -729,7 +727,7 @@ class EagerLoader
             'instance' => $assoc,
             'canBeJoined' => true,
             'forMatching' => $asMatching,
-            'targetProperty' => $targetProperty ?: $assoc->getProperty()
+            'targetProperty' => $targetProperty ?: $assoc->getProperty(),
         ]);
     }
 

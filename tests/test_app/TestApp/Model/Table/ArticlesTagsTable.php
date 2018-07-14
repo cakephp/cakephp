@@ -19,7 +19,6 @@ use Cake\ORM\Table;
  */
 class ArticlesTagsTable extends Table
 {
-
     public function initialize(array $config)
     {
         $this->belongsTo('Articles');

@@ -14,7 +14,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
 use PDO;
@@ -385,7 +384,7 @@ abstract class Driver implements DriverInterface
     public function __debugInfo()
     {
         return [
-            'connected' => $this->_connection !== null
+            'connected' => $this->_connection !== null,
         ];
     }
 }

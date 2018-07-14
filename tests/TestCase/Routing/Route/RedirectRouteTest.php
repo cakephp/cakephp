@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Http\ServerRequest;
-use Cake\Routing\Router;
 use Cake\Routing\Route\RedirectRoute;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class RedirectRouteTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -155,7 +154,7 @@ class RedirectRouteTest extends TestCase
     {
         $request = new ServerRequest([
             'base' => '/basedir',
-            'url' => '/posts/2'
+            'url' => '/posts/2',
         ]);
         Router::pushRequest($request);
 

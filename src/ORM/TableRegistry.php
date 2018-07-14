@@ -49,7 +49,6 @@ use Cake\ORM\Locator\LocatorInterface;
  */
 class TableRegistry
 {
-
     /**
      * LocatorInterface implementation instance.
      *
@@ -71,7 +70,7 @@ class TableRegistry
      * @return \Cake\ORM\Locator\LocatorInterface
      * @deprecated 3.5.0 Use getTableLocator()/setTableLocator() instead.
      */
-    public static function locator(LocatorInterface $locator = null)
+    public static function locator(?LocatorInterface $locator = null)
     {
         deprecationWarning(
             'TableRegistry::locator() is deprecated. ' .

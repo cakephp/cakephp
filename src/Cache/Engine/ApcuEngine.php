@@ -22,7 +22,6 @@ use Cake\Cache\CacheEngine;
  */
 class ApcuEngine extends CacheEngine
 {
-
     /**
      * Contains the compiled group names
      * (prefixed with the global configuration prefix)

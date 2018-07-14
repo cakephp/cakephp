@@ -6,9 +6,8 @@ use Cake\ORM\Entity;
 
 class VirtualUser extends Entity
 {
-
     protected $_virtual = [
-        'bonus'
+        'bonus',
     ];
 
     protected function _getBonus()

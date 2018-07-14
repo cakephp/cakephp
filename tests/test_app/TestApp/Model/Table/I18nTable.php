@@ -18,7 +18,6 @@ use Cake\ORM\Table;
  */
 class I18nTable extends Table
 {
-
     public function initialize(array $config)
     {
         $this->setTable('custom_i18n_table');

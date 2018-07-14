@@ -20,7 +20,6 @@ namespace Cake\Form;
  */
 class Schema
 {
-
     /**
      * The fields in this schema.
      *
@@ -137,7 +136,7 @@ class Schema
     public function __debugInfo(): array
     {
         return [
-            '_fields' => $this->_fields
+            '_fields' => $this->_fields,
         ];
     }
 }

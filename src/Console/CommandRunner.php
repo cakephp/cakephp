@@ -17,11 +17,7 @@ namespace Cake\Console;
 
 use Cake\Command\HelpCommand;
 use Cake\Command\VersionCommand;
-use Cake\Console\CommandCollection;
-use Cake\Console\CommandCollectionAwareInterface;
-use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
-use Cake\Console\Shell;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
@@ -76,7 +72,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param string $root The root command name to be removed from argv.
      * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
-    public function __construct(ConsoleApplicationInterface $app, $root = 'cake', CommandFactoryInterface $factory = null)
+    public function __construct(ConsoleApplicationInterface $app, $root = 'cake', ?CommandFactoryInterface $factory = null)
     {
         $this->app = $app;
         $this->root = $root;
@@ -122,11 +118,11 @@ class CommandRunner implements EventDispatcherInterface
      * - Run the requested command.
      *
      * @param array $argv The arguments from the CLI environment.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance. Used primarily for testing.
+     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
      * @throws \RuntimeException
      */
-    public function run(array $argv, ConsoleIo $io = null): int
+    public function run(array $argv, ?ConsoleIo $io = null): int
     {
         $this->bootstrap();
 

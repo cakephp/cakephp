@@ -50,7 +50,6 @@ use SimpleXMLElement;
  */
 class Email implements JsonSerializable, Serializable
 {
-
     use StaticConfigTrait;
     use ViewVarsTrait;
 
@@ -59,35 +58,35 @@ class Email implements JsonSerializable, Serializable
      *
      * @var int
      */
-    const LINE_LENGTH_SHOULD = 78;
+    public const LINE_LENGTH_SHOULD = 78;
 
     /**
      * Line length - no must more - RFC 2822 - 2.1.1
      *
      * @var int
      */
-    const LINE_LENGTH_MUST = 998;
+    public const LINE_LENGTH_MUST = 998;
 
     /**
      * Type of message - HTML
      *
      * @var string
      */
-    const MESSAGE_HTML = 'html';
+    public const MESSAGE_HTML = 'html';
 
     /**
      * Type of message - TEXT
      *
      * @var string
      */
-    const MESSAGE_TEXT = 'text';
+    public const MESSAGE_TEXT = 'text';
 
     /**
      * Holds the regex pattern for email validation
      *
      * @var string
      */
-    const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
+    public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
     /**
      * Recipient of the email
@@ -259,7 +258,7 @@ class Email implements JsonSerializable, Serializable
         '8bit',
         'base64',
         'binary',
-        'quoted-printable'
+        'quoted-printable',
     ];
 
     /**
@@ -331,7 +330,7 @@ class Email implements JsonSerializable, Serializable
      * @var array
      */
     protected $_contentTypeCharset = [
-        'ISO-2022-JP-MS' => 'ISO-2022-JP'
+        'ISO-2022-JP-MS' => 'ISO-2022-JP',
     ];
 
     /**
@@ -774,7 +773,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         $context = ltrim($context, '_');
-        if ($email == '') {
+        if ($email === '') {
             throw new InvalidArgumentException(sprintf('The email set for "%s" is empty.', $context));
         }
         throw new InvalidArgumentException(sprintf('Invalid email set for "%s". You passed "%s".', $context, $email));
@@ -921,7 +920,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getHeaders(array $include = []): array
     {
-        if ($include == array_values($include)) {
+        if ($include === array_values($include)) {
             $include = array_fill_keys($include, true);
         }
         $defaults = array_fill_keys(
@@ -937,7 +936,7 @@ class Email implements JsonSerializable, Serializable
             'from' => 'From',
             'replyTo' => 'Reply-To',
             'readReceipt' => 'Disposition-Notification-To',
-            'returnPath' => 'Return-Path'
+            'returnPath' => 'Return-Path',
         ];
         foreach ($relation as $var => $header) {
             if ($include[$var]) {
@@ -1539,7 +1538,7 @@ class Email implements JsonSerializable, Serializable
      */
     public static function getConfigTransport(string $key): ?array
     {
-        return isset(static::$_transportConfig[$key]) ? static::$_transportConfig[$key] : null;
+        return static::$_transportConfig[$key] ?? null;
     }
 
     /**
@@ -1634,7 +1633,7 @@ class Email implements JsonSerializable, Serializable
         }
         $config = [
             'level' => 'debug',
-            'scope' => 'email'
+            'scope' => 'email',
         ];
         if ($this->_profile['log'] !== true) {
             if (!is_array($this->_profile['log'])) {
@@ -1689,8 +1688,11 @@ class Email implements JsonSerializable, Serializable
         if (is_array($message)) {
             $instance->setViewVars($message);
             $message = null;
-        } elseif ($message === null && array_key_exists('message', $config = $instance->getProfile())) {
-            $message = $config['message'];
+        } elseif ($message === null) {
+            $config = $instance->getProfile();
+            if (array_key_exists('message', $config)) {
+                $message = $config['message'];
+            }
         }
 
         if ($send === true) {
@@ -1723,7 +1725,7 @@ class Email implements JsonSerializable, Serializable
         $simpleMethods = [
             'from', 'sender', 'to', 'replyTo', 'readReceipt', 'returnPath',
             'cc', 'bcc', 'messageId', 'domain', 'subject', 'attachments',
-            'transport', 'emailFormat', 'emailPattern', 'charset', 'headerCharset'
+            'transport', 'emailFormat', 'emailPattern', 'charset', 'headerCharset',
         ];
         foreach ($simpleMethods as $method) {
             if (isset($config[$method])) {
@@ -1739,7 +1741,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         $viewBuilderMethods = [
-            'template', 'layout', 'theme'
+            'template', 'layout', 'theme',
         ];
         foreach ($viewBuilderMethods as $method) {
             if (array_key_exists($method, $config)) {
@@ -1866,7 +1868,7 @@ class Email implements JsonSerializable, Serializable
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         $lines = explode("\n", $message);
         $formatted = [];
-        $cut = ($wrapLength == Email::LINE_LENGTH_MUST);
+        $cut = ($wrapLength === Email::LINE_LENGTH_MUST);
 
         foreach ($lines as $line) {
             if (empty($line) && $line !== '0') {
@@ -1989,7 +1991,7 @@ class Email implements JsonSerializable, Serializable
             if (!empty($fileInfo['contentId'])) {
                 continue;
             }
-            $data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
+            $data = $fileInfo['data'] ?? $this->_readFile($fileInfo['file']);
             $hasDisposition = (
                 !isset($fileInfo['contentDisposition']) ||
                 $fileInfo['contentDisposition']
@@ -2041,7 +2043,7 @@ class Email implements JsonSerializable, Serializable
             if (empty($fileInfo['contentId'])) {
                 continue;
             }
-            $data = isset($fileInfo['data']) ? $fileInfo['data'] : $this->_readFile($fileInfo['file']);
+            $data = $fileInfo['data'] ?? $this->_readFile($fileInfo['file']);
 
             $msg[] = '--' . $boundary;
             $part = new FormDataPart('', $data, 'inline');
@@ -2271,7 +2273,7 @@ class Email implements JsonSerializable, Serializable
         $properties = [
             '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject',
             '_returnPath', '_readReceipt', '_emailFormat', '_emailPattern', '_domain',
-            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset'
+            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset',
         ];
 
         $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];

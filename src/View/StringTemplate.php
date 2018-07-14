@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class StringTemplate
 {
-
     use InstanceConfigTrait {
         getConfig as get;
     }
@@ -122,7 +121,7 @@ class StringTemplate
     {
         $this->_configStack[] = [
             $this->_config,
-            $this->_compiled
+            $this->_compiled,
         ];
     }
 
@@ -183,7 +182,7 @@ class StringTemplate
             preg_match_all('#\{\{([\w\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
-                $matches[1]
+                $matches[1],
             ];
         }
     }
@@ -237,7 +236,7 @@ class StringTemplate
         }
         $replace = [];
         foreach ($placeholders as $placeholder) {
-            $replacement = isset($data[$placeholder]) ? $data[$placeholder] : null;
+            $replacement = $data[$placeholder] ?? null;
             if (is_array($replacement)) {
                 $replacement = implode('', $replacement);
             }

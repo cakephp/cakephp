@@ -23,7 +23,6 @@ use Cake\View\Widget\BasicWidget;
  */
 class BasicWidgetTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -44,7 +43,7 @@ class BasicWidgetTest extends TestCase
         $text = new BasicWidget($this->templates);
         $result = $text->render(['name' => 'my_input'], $this->context);
         $expected = [
-            'input' => ['type' => 'text', 'name' => 'my_input']
+            'input' => ['type' => 'text', 'name' => 'my_input'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -63,7 +62,7 @@ class BasicWidgetTest extends TestCase
         ];
         $result = $text->render($data, $this->context);
         $expected = [
-            'input' => ['type' => 'email', 'name' => 'my_input']
+            'input' => ['type' => 'email', 'name' => 'my_input'],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -79,15 +78,15 @@ class BasicWidgetTest extends TestCase
         $data = [
             'name' => 'my_input',
             'type' => 'email',
-            'val' => 'Some <value>'
+            'val' => 'Some <value>',
         ];
         $result = $text->render($data, $this->context);
         $expected = [
             'input' => [
                 'type' => 'email',
                 'name' => 'my_input',
-                'value' => 'Some &lt;value&gt;'
-            ]
+                'value' => 'Some &lt;value&gt;',
+            ],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -104,7 +103,7 @@ class BasicWidgetTest extends TestCase
             'name' => 'my_input',
             'type' => 'email',
             'class' => 'form-control',
-            'required' => true
+            'required' => true,
         ];
         $result = $text->render($data, $this->context);
         $expected = [
@@ -113,7 +112,7 @@ class BasicWidgetTest extends TestCase
                 'name' => 'my_input',
                 'class' => 'form-control',
                 'required' => 'required',
-            ]
+            ],
         ];
         $this->assertHtml($expected, $result);
     }
@@ -133,7 +132,7 @@ class BasicWidgetTest extends TestCase
             'type' => 'email',
             'class' => 'form-control',
             'required' => true,
-            'templateVars' => ['help' => 'SOS']
+            'templateVars' => ['help' => 'SOS'],
         ];
         $result = $text->render($data, $this->context);
         $expected = [
@@ -143,7 +142,7 @@ class BasicWidgetTest extends TestCase
                 'class' => 'form-control',
                 'required' => 'required',
             ],
-            '<span', 'SOS', '/span'
+            '<span', 'SOS', '/span',
         ];
         $this->assertHtml($expected, $result);
     }

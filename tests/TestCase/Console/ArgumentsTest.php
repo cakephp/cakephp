@@ -107,7 +107,7 @@ class ArgumentsTest extends TestCase
         $options = [
             'verbose' => true,
             'off' => false,
-            'empty' => ''
+            'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertSame($options, $args->getOptions());
@@ -124,7 +124,7 @@ class ArgumentsTest extends TestCase
             'verbose' => true,
             'off' => false,
             'zero' => 0,
-            'empty' => ''
+            'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertTrue($args->hasOption('verbose'));
@@ -145,7 +145,7 @@ class ArgumentsTest extends TestCase
             'verbose' => true,
             'off' => false,
             'zero' => 0,
-            'empty' => ''
+            'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertTrue($args->getOption('verbose'));

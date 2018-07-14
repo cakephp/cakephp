@@ -24,27 +24,26 @@ use Cake\Core\Exception\Exception;
  */
 class ViewBlock
 {
-
     /**
      * Override content
      *
      * @var string
      */
-    const OVERRIDE = 'override';
+    public const OVERRIDE = 'override';
 
     /**
      * Append content
      *
      * @var string
      */
-    const APPEND = 'append';
+    public const APPEND = 'append';
 
     /**
      * Prepend content
      *
      * @var string
      */
-    const PREPEND = 'prepend';
+    public const PREPEND = 'prepend';
 
     /**
      * Block content. An array of blocks indexed by name.

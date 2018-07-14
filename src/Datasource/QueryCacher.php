@@ -30,7 +30,6 @@ use Traversable;
  */
 class QueryCacher
 {
-
     /**
      * The key or function to generate a key.
      *

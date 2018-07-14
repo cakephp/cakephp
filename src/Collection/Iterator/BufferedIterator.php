@@ -26,7 +26,6 @@ use SplDoublyLinkedList;
  */
 class BufferedIterator extends Collection implements Countable, Serializable
 {
-
     /**
      * The in-memory cache containing results from previous iterators
      *
@@ -141,7 +140,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
             $this->_key = parent::key();
             $this->_buffer->push([
                 'key' => $this->_key,
-                'value' => $this->_current
+                'value' => $this->_current,
             ]);
         }
 

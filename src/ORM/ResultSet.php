@@ -29,7 +29,6 @@ use SplFixedArray;
  */
 class ResultSet implements ResultSetInterface
 {
-
     use CollectionTrait;
 
     /**
@@ -230,7 +229,7 @@ class ResultSet implements ResultSetInterface
      */
     public function rewind()
     {
-        if ($this->_index == 0) {
+        if ($this->_index === 0) {
             return;
         }
 
@@ -448,7 +447,7 @@ class ResultSet implements ResultSetInterface
             'useSetters' => false,
             'markClean' => true,
             'markNew' => false,
-            'guard' => false
+            'guard' => false,
         ];
 
         foreach ($this->_matchingMapColumns as $alias => $keys) {

@@ -55,7 +55,6 @@ use Cake\Core\Configure;
  */
 class JsonView extends SerializedView
 {
-
     /**
      * JSON layouts are located in the json sub directory of `Layouts/`
      *
@@ -189,6 +188,6 @@ class JsonView extends SerializedView
             return !empty($data) ? $data : null;
         }
 
-        return isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+        return $this->viewVars[$serialize] ?? null;
     }
 }

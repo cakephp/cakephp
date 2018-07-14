@@ -34,7 +34,7 @@ class RoutingMiddleware
     /**
      * Key used to store the route collection in the cache engine
      */
-    const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
+    public const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
 
     /**
      * The application that will have its routing hook invoked.
@@ -57,7 +57,7 @@ class RoutingMiddleware
      * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(BaseApplication $app = null, $cacheConfig = null)
+    public function __construct(?BaseApplication $app = null, $cacheConfig = null)
     {
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;

@@ -34,7 +34,6 @@ use Cake\Utility\Inflector;
  */
 class ShellDispatcher
 {
-
     /**
      * Contains arguments parsed from the command line.
      *

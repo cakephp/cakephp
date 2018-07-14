@@ -60,7 +60,6 @@ use Cake\Log\LogTrait;
  */
 class Component implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
     use LogTrait;
 

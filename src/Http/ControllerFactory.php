@@ -102,7 +102,7 @@ class ControllerFactory
             'class' => $request->getParam('controller'),
             'plugin' => $request->getParam('plugin'),
             'prefix' => $request->getParam('prefix'),
-            '_ext' => $request->getParam('_ext')
+            '_ext' => $request->getParam('_ext'),
         ]);
     }
 }

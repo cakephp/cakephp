@@ -100,7 +100,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = get_class($class);
             }
-            if (count($invert[$class]) == 1) {
+            if (count($invert[$class]) === 1) {
                 $io->out('- ' . $name);
             }
 
@@ -157,7 +157,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             'Get the list of available shells for this application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         return $parser;

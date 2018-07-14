@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class ExtractTaskTest extends TestCase
 {
-
     /**
      * setUp method
      *

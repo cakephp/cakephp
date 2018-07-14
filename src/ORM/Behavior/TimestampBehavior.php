@@ -14,8 +14,8 @@
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\Database\TypeFactory;
 use Cake\Database\Type\DateTimeType;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\Time;
@@ -29,7 +29,6 @@ use UnexpectedValueException;
  */
 class TimestampBehavior extends Behavior
 {
-
     /**
      * Default config
      *
@@ -49,15 +48,15 @@ class TimestampBehavior extends Behavior
         'implementedFinders' => [],
         'implementedMethods' => [
             'timestamp' => 'timestamp',
-            'touch' => 'touch'
+            'touch' => 'touch',
         ],
         'events' => [
             'Model.beforeSave' => [
                 'created' => 'new',
-                'modified' => 'always'
-            ]
+                'modified' => 'always',
+            ],
         ],
-        'refreshTimestamp' => true
+        'refreshTimestamp' => true,
     ];
 
     /**
@@ -140,7 +139,7 @@ class TimestampBehavior extends Behavior
      * @param bool $refreshTimestamp If true timestamp is refreshed.
      * @return \DateTime
      */
-    public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
+    public function timestamp(?DateTime $ts = null, $refreshTimestamp = false)
     {
         if ($ts) {
             if ($this->_config['refreshTimestamp']) {

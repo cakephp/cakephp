@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ProgressHelperTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -48,7 +47,7 @@ class ProgressHelperTest extends TestCase
     {
         $helper = $this->helper->init([
             'total' => 200,
-            'width' => 50
+            'width' => 50,
         ]);
         $this->assertSame($helper, $this->helper, 'init should be chainable');
     }
@@ -102,7 +101,7 @@ class ProgressHelperTest extends TestCase
             'width' => 20,
             'callback' => function ($progress) {
                 $progress->increment(2);
-            }
+            },
         ]);
         $expected = [
             '',
@@ -243,7 +242,7 @@ class ProgressHelperTest extends TestCase
     public function testIncrementFloatPad()
     {
         $this->helper->init([
-            'total' => 50
+            'total' => 50,
         ]);
         $expected = [
             '',

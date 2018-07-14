@@ -86,7 +86,7 @@ abstract class Cell implements EventDispatcherInterface
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewPath'
+        'viewPath',
     ];
 
     /**
@@ -114,9 +114,9 @@ abstract class Cell implements EventDispatcherInterface
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManagerInterface $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
         if ($eventManager !== null) {
@@ -232,7 +232,7 @@ abstract class Cell implements EventDispatcherInterface
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
-            'key' => $key
+            'key' => $key,
         ];
         if ($this->_cache === true) {
             return $default;

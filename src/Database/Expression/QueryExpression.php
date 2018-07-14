@@ -28,7 +28,6 @@ use Countable;
  */
 class QueryExpression implements ExpressionInterface, Countable
 {
-
     use TypeMapTrait;
 
     /**

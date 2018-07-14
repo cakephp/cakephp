@@ -25,7 +25,6 @@ use PDO;
  */
 class BinaryType extends BaseType
 {
-
     /**
      * Convert binary data into the database format.
      *

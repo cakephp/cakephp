@@ -23,7 +23,6 @@ use InvalidArgumentException;
  */
 class ConsoleLog extends BaseLog
 {
-
     /**
      * Default config for this class
      *
@@ -33,7 +32,7 @@ class ConsoleLog extends BaseLog
         'stream' => 'php://stderr',
         'levels' => null,
         'scopes' => [],
-        'outputAs' => 'see constructor'
+        'outputAs' => 'see constructor',
     ];
 
     /**

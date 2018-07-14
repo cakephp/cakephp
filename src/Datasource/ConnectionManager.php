@@ -29,7 +29,6 @@ use Cake\Datasource\Exception\MissingDatasourceConfigException;
  */
 class ConnectionManager
 {
-
     use StaticConfigTrait {
         setConfig as protected _setConfig;
         parseDsn as protected _parseDsn;

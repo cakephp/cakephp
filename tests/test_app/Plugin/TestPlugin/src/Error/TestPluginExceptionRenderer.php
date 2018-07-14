@@ -27,7 +27,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class TestPluginExceptionRenderer extends ExceptionRenderer
 {
-
     /**
      * Renders the response for the exception.
      *

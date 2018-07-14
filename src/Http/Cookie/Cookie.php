@@ -47,7 +47,6 @@ use InvalidArgumentException;
  */
 class Cookie implements CookieInterface
 {
-
     /**
      * Cookie name
      *

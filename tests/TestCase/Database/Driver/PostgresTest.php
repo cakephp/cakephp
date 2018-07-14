@@ -23,7 +23,6 @@ use PDO;
  */
 class PostgresTest extends TestCase
 {
-
     /**
      * Test connecting to Postgres with default configuration
      *
@@ -52,7 +51,7 @@ class PostgresTest extends TestCase
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         $connection = $this->getMockBuilder('stdClass')
@@ -96,7 +95,7 @@ class PostgresTest extends TestCase
             'encoding' => 'a-language',
             'timezone' => 'Antarctica',
             'schema' => 'fooblic',
-            'init' => ['Execute this', 'this too']
+            'init' => ['Execute this', 'this too'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
             ->setMethods(['_connect', 'getConnection', 'setConnection'])
@@ -108,7 +107,7 @@ class PostgresTest extends TestCase
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => false,
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         $connection = $this->getMockBuilder('stdClass')

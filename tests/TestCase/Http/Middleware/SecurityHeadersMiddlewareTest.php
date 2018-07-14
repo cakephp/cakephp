@@ -24,7 +24,6 @@ use Zend\Diactoros\Response;
  */
 class SecurityHeadersMiddlewareTest extends TestCase
 {
-
     /**
      * Test adding the security headers
      *
@@ -55,7 +54,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
             'referrer-policy' => ['same-origin'],
             'x-frame-options' => ['sameorigin'],
             'x-download-options' => ['noopen'],
-            'x-content-type-options' => ['nosniff']
+            'x-content-type-options' => ['nosniff'],
         ];
 
         $result = $middleware($request, $response, $next);

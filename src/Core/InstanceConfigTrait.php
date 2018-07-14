@@ -25,7 +25,6 @@ use Cake\Utility\Hash;
  */
 trait InstanceConfigTrait
 {
-
     /**
      * Runtime config
      *
@@ -177,7 +176,7 @@ trait InstanceConfigTrait
         }
 
         if (strpos($key, '.') === false) {
-            return isset($this->_config[$key]) ? $this->_config[$key] : null;
+            return $this->_config[$key] ?? null;
         }
 
         $return = $this->_config;

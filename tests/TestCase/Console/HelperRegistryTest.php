@@ -26,7 +26,6 @@ use TestPlugin\Shell\Helper\ExampleHelper;
  */
 class HelperRegistryTest extends TestCase
 {
-
     /**
      * setUp
      *

@@ -37,7 +37,6 @@ use RuntimeException;
  */
 class TreeBehavior extends Behavior
 {
-
     /**
      * Cached copy of the first column in a table's primary key.
      *
@@ -103,7 +102,7 @@ class TreeBehavior extends Behavior
         $dirty = $entity->isDirty($config['parent']);
         $level = $config['level'];
 
-        if ($parent && $entity->get($primaryKey) == $parent) {
+        if ($parent && $entity->get($primaryKey) === $parent) {
             throw new RuntimeException("Cannot set a node's parent as itself");
         }
 
@@ -570,7 +569,7 @@ class TreeBehavior extends Behavior
 
         $node->set($config['parent'], null);
 
-        if ($right - $left == 1) {
+        if ($right - $left === 1) {
             return $this->_table->save($node);
         }
 

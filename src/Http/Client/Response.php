@@ -258,10 +258,8 @@ class Response extends Message implements ResponseInterface
             static::STATUS_TEMPORARY_REDIRECT,
         ];
 
-        return (
-            in_array($this->code, $codes) &&
-            $this->getHeaderLine('Location')
-        );
+        return in_array($this->code, $codes) &&
+            $this->getHeaderLine('Location');
     }
 
     /**
@@ -397,7 +395,7 @@ class Response extends Message implements ResponseInterface
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
             'httponly' => $cookie->isHttpOnly(),
-            'expires' => $cookie->getFormattedExpires()
+            'expires' => $cookie->getFormattedExpires(),
         ];
     }
 

@@ -22,7 +22,6 @@ use Cake\Controller\Component;
  */
 class SomethingWithFlashComponent extends Component
 {
-
     /**
      * components property
      *

@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class PluginShellTest extends TestCase
 {
-
     /**
      * setup method
      *

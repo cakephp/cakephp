@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class PhpConfigTest extends TestCase
 {
-
     /**
      * Test data to serialize and unserialize.
      *
@@ -34,14 +33,14 @@ class PhpConfigTest extends TestCase
         'One' => [
             'two' => 'value',
             'three' => [
-                'four' => 'value four'
+                'four' => 'value four',
             ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
         ],
         'Asset' => [
-            'timestamp' => 'force'
+            'timestamp' => 'force',
         ],
     ];
 

@@ -26,7 +26,6 @@ use DirectoryIterator;
  */
 class I18nShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *
@@ -137,30 +136,30 @@ class I18nShell extends Shell
             'options' => [
                 'plugin' => [
                     'help' => 'Plugin name.',
-                    'short' => 'p'
+                    'short' => 'p',
                 ],
                 'force' => [
                     'help' => 'Force overwriting.',
                     'short' => 'f',
-                    'boolean' => true
-                ]
+                    'boolean' => true,
+                ],
             ],
             'arguments' => [
                 'language' => [
-                    'help' => 'Two-letter language code.'
-                ]
-            ]
+                    'help' => 'Two-letter language code.',
+                ],
+            ],
         ];
 
         $parser->setDescription(
             'I18n Shell generates .pot files(s) with translations.'
         )->addSubcommand('extract', [
             'help' => 'Extract the po translations from your application',
-            'parser' => $this->Extract->getOptionParser()
+            'parser' => $this->Extract->getOptionParser(),
         ])
         ->addSubcommand('init', [
             'help' => 'Init PO language file from POT file',
-            'parser' => $initParser
+            'parser' => $initParser,
         ]);
 
         return $parser;

@@ -25,7 +25,6 @@ use Cake\Http\Response;
  */
 class ErrorController extends Controller
 {
-
     /**
      * Initialization hook method.
      *
