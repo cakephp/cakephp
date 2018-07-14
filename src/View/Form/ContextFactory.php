@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -53,7 +54,7 @@ class ContextFactory
      *   be of form `['type' => 'a-string', 'callable' => ..]`
      * @return \Cake\View\Form\ContextFactory
      */
-    public static function createWithDefaults(array $providers = [])
+    public static function createWithDefaults(array $providers = []): self
     {
         $providers = [
             [
@@ -109,7 +110,7 @@ class ContextFactory
      *   when the form context is the correct type.
      * @return $this
      */
-    public function addProvider($type, callable $check)
+    public function addProvider(string $type, callable $check): self
     {
         $this->providers = [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;
@@ -128,7 +129,7 @@ class ContextFactory
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    public function get(ServerRequest $request, array $data = [])
+    public function get(ServerRequest $request, array $data = []): ContextInterface
     {
         $data += ['entity' => null];
 

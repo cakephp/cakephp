@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -859,7 +860,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
 
         touch(WWW_ROOT . 'js/__cake_js_test.js');
-        $timestamp = substr(strtotime('now'), 0, 8);
+        $timestamp = substr((string)strtotime('now'), 0, 8);
 
         $result = $this->Html->script('__cake_js_test', ['once' => false]);
         $this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
@@ -889,7 +890,7 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
 
         touch($pluginJsPath . DS . '__cake_js_test.js');
-        $timestamp = substr(strtotime('now'), 0, 8);
+        $timestamp = substr((string)strtotime('now'), 0, 8);
 
         $result = $this->Html->script('TestPlugin.__cake_js_test', ['once' => false]);
         $this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');

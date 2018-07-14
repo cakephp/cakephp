@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -68,7 +69,7 @@ class LabelWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $data += [
             'text' => '',
@@ -90,7 +91,7 @@ class LabelWidget implements WidgetInterface
     /**
      * {@inheritDoc}
      */
-    public function secureFields(array $data)
+    public function secureFields(array $data): array
     {
         return [];
     }
