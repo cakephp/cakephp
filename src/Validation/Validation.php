@@ -900,8 +900,8 @@ class Validation
      * legal finite on this platform.
      *
      * @param mixed $check Value to check
-     * @param int|float|null $lower Lower limit
-     * @param int|float|null $upper Upper limit
+     * @param float|null $lower Lower limit
+     * @param float|null $upper Upper limit
      * @return bool Success
      */
     public static function range($check, ?float $lower = null, ?float $upper = null): bool
