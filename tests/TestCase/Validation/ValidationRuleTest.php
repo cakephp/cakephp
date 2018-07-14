@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)

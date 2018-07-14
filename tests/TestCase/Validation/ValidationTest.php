@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -839,7 +840,6 @@ class ValidationTest extends TestCase
      */
     public function testComparison()
     {
-        $this->assertFalse(Validation::comparison(7, null, 6));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER, 6));
         $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS, 7));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 7));

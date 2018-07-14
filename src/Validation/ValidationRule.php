@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ValidationRule.
  *
@@ -85,7 +86,7 @@ class ValidationRule
      *
      * @return bool
      */
-    public function isLast()
+    public function isLast(): bool
     {
         return (bool)$this->_last;
     }
@@ -158,7 +159,7 @@ class ValidationRule
      *   be passed as the last argument for the validation method
      * @return bool True if the ValidationRule should be skipped
      */
-    protected function _skip($context)
+    protected function _skip(array $context): bool
     {
         if (!is_string($this->_on) && is_callable($this->_on)) {
             $function = $this->_on;
@@ -182,7 +183,7 @@ class ValidationRule
      * @param array $validator [optional]
      * @return void
      */
-    protected function _addValidatorProps($validator = [])
+    protected function _addValidatorProps(array $validator = []): void
     {
         foreach ($validator as $key => $value) {
             if (!isset($value) || empty($value)) {
@@ -204,7 +205,7 @@ class ValidationRule
      * @param string $property The name of the property to retrieve.
      * @return mixed
      */
-    public function get($property)
+    public function get(string $property)
     {
         $property = '_' . $property;
         if (isset($this->{$property})) {
