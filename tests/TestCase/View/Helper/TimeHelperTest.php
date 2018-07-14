@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -349,11 +350,11 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isThisMonth('+0 day');
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y')));
+        $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
         $this->assertFalse($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
         $this->assertFalse($result);
     }
 
@@ -366,7 +367,7 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isThisYear('+0 day');
         $this->assertTrue($result);
-        $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
+        $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
     }
 

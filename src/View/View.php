@@ -521,10 +521,10 @@ class View implements EventDispatcherInterface
      * Set the name of the template file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name Template file name to set.
+     * @param string|false $name Template file name to set.
      * @return $this
      */
-    public function setTemplate(string $name): self
+    public function setTemplate($name): self
     {
         $this->template = $name;
 
@@ -548,10 +548,10 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @param string $name Layout file name to set.
+     * @param string|bool $name Layout file name to set.
      * @return $this
      */
-    public function setLayout(string $name): self
+    public function setLayout($name): self
     {
         $this->layout = $name;
 
