@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class LocatorAwareTraitTest extends TestCase
 {
-
     /**
      * setup
      *

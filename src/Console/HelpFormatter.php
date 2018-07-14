@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use Cake\Console\Exception\ConsoleException;
 use Cake\Utility\Text;
 use SimpleXMLElement;
 
@@ -30,7 +29,6 @@ use SimpleXMLElement;
  */
 class HelpFormatter
 {
-
     /**
      * The maximum number of arguments shown when generating usage.
      *
@@ -107,7 +105,7 @@ class HelpFormatter
                 $out[] = Text::wrapBlock($command->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1
+                    'indentAt' => 1,
                 ]);
             }
             $out[] = '';
@@ -124,7 +122,7 @@ class HelpFormatter
                 $out[] = Text::wrapBlock($option->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1
+                    'indentAt' => 1,
                 ]);
             }
             $out[] = '';
@@ -139,7 +137,7 @@ class HelpFormatter
                 $out[] = Text::wrapBlock($argument->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1
+                    'indentAt' => 1,
                 ]);
             }
             $out[] = '';

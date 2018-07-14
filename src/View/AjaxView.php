@@ -26,7 +26,6 @@ use Cake\Http\ServerRequest;
  */
 class AjaxView extends View
 {
-
     /**
      * {@inheritDoc}
      */

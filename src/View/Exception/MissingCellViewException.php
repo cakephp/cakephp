@@ -19,6 +19,5 @@ use Cake\Core\Exception\Exception;
  */
 class MissingCellViewException extends Exception
 {
-
     protected $_messageTemplate = 'Cell view file "%s" is missing.';
 }

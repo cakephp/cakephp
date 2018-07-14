@@ -26,7 +26,6 @@ use RuntimeException;
  */
 trait DateFormatTrait
 {
-
     /**
      * The default locale to be used for displaying formatted date strings.
      *
@@ -439,7 +438,7 @@ trait DateFormatTrait
         return [
             'time' => $this->toIso8601String(),
             'timezone' => $this->getTimezone()->getName(),
-            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->toIso8601String() : false
+            'fixedNowTime' => static::hasTestNow() ? static::getTestNow()->toIso8601String() : false,
         ];
     }
 }

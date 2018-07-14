@@ -30,7 +30,6 @@ use Traversable;
  */
 class StoppableIterator extends Collection
 {
-
     /**
      * The condition to evaluate for each item of the collection
      *

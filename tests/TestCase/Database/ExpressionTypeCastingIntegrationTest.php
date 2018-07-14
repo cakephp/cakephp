@@ -16,9 +16,9 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\FunctionExpression;
-use Cake\Database\TypeFactory;
 use Cake\Database\Type\BaseType;
 use Cake\Database\Type\ExpressionTypeInterface;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -40,7 +40,6 @@ class UuidValue
  */
 class OrderedUuidType extends BaseType implements ExpressionTypeInterface
 {
-
     public function toPHP($value, Driver $d)
     {
         return new UuidValue($value);
@@ -83,7 +82,6 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
  */
 class ExpressionTypeCastingIntegrationTest extends TestCase
 {
-
     public $fixtures = ['core.ordered_uuid_items'];
 
     public function setUp()

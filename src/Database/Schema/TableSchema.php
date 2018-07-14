@@ -31,7 +31,6 @@ use Cake\Database\TypeFactory;
  */
 class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 {
-
     /**
      * The name of the table
      *
@@ -86,21 +85,21 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @var int
      */
-    const LENGTH_TINY = 255;
+    public const LENGTH_TINY = 255;
 
     /**
      * Column length when using a `medium` column type
      *
      * @var int
      */
-    const LENGTH_MEDIUM = 16777215;
+    public const LENGTH_MEDIUM = 16777215;
 
     /**
      * Column length when using a `long` column type
      *
      * @var int
      */
-    const LENGTH_LONG = 4294967295;
+    public const LENGTH_LONG = 4294967295;
 
     /**
      * Valid column length that can be used with text type columns
@@ -110,7 +109,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public static $columnLengths = [
         'tiny' => self::LENGTH_TINY,
         'medium' => self::LENGTH_MEDIUM,
-        'long' => self::LENGTH_LONG
+        'long' => self::LENGTH_LONG,
     ];
 
     /**
@@ -218,70 +217,70 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @var string
      */
-    const CONSTRAINT_PRIMARY = 'primary';
+    public const CONSTRAINT_PRIMARY = 'primary';
 
     /**
      * Unique constraint type
      *
      * @var string
      */
-    const CONSTRAINT_UNIQUE = 'unique';
+    public const CONSTRAINT_UNIQUE = 'unique';
 
     /**
      * Foreign constraint type
      *
      * @var string
      */
-    const CONSTRAINT_FOREIGN = 'foreign';
+    public const CONSTRAINT_FOREIGN = 'foreign';
 
     /**
      * Index - index type
      *
      * @var string
      */
-    const INDEX_INDEX = 'index';
+    public const INDEX_INDEX = 'index';
 
     /**
      * Fulltext index type
      *
      * @var string
      */
-    const INDEX_FULLTEXT = 'fulltext';
+    public const INDEX_FULLTEXT = 'fulltext';
 
     /**
      * Foreign key cascade action
      *
      * @var string
      */
-    const ACTION_CASCADE = 'cascade';
+    public const ACTION_CASCADE = 'cascade';
 
     /**
      * Foreign key set null action
      *
      * @var string
      */
-    const ACTION_SET_NULL = 'setNull';
+    public const ACTION_SET_NULL = 'setNull';
 
     /**
      * Foreign key no action
      *
      * @var string
      */
-    const ACTION_NO_ACTION = 'noAction';
+    public const ACTION_NO_ACTION = 'noAction';
 
     /**
      * Foreign key restrict action
      *
      * @var string
      */
-    const ACTION_RESTRICT = 'restrict';
+    public const ACTION_RESTRICT = 'restrict';
 
     /**
      * Foreign key restrict default
      *
      * @var string
      */
-    const ACTION_SET_DEFAULT = 'setDefault';
+    public const ACTION_SET_DEFAULT = 'setDefault';
 
     /**
      * Constructor.
@@ -430,7 +429,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return true;
         }
 
-        return ($this->_columns[$name]['null'] === true);
+        return $this->_columns[$name]['null'] === true;
     }
 
     /**

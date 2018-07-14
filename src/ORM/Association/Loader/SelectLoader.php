@@ -28,7 +28,6 @@ use RuntimeException;
  */
 class SelectLoader
 {
-
     /**
      * The alias of the association loading the results
      *
@@ -108,7 +107,7 @@ class SelectLoader
         $this->bindingKey = $options['bindingKey'];
         $this->finder = $options['finder'];
         $this->associationType = $options['associationType'];
-        $this->sort = isset($options['sort']) ? $options['sort'] : null;
+        $this->sort = $options['sort'] ?? null;
     }
 
     /**
@@ -139,7 +138,7 @@ class SelectLoader
             'conditions' => [],
             'strategy' => $this->strategy,
             'nestKey' => $this->alias,
-            'sort' => $this->sort
+            'sort' => $this->sort,
         ];
     }
 
@@ -324,7 +323,7 @@ class SelectLoader
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
         }
 
-        $conditions = isset($conditions) ? $conditions : [$key . ' IN' => $filter];
+        $conditions = $conditions ?? [$key . ' IN' => $filter];
 
         return $query->andWhere($conditions);
     }

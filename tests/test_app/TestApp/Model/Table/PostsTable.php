@@ -19,6 +19,5 @@ use Cake\ORM\Table;
 
 class PostsTable extends Table
 {
-
     protected $_table = 'posts';
 }

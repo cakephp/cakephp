@@ -19,7 +19,6 @@ use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
-use Cake\Form\Schema;
 use Cake\Utility\Hash;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -55,14 +54,14 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @var string
      */
-    const VALIDATOR_PROVIDER_NAME = 'form';
+    public const VALIDATOR_PROVIDER_NAME = 'form';
 
     /**
      * The name of the event dispatched when a validator has been built.
      *
      * @var string
      */
-    const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
+    public const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
 
     /**
      * The schema used by this form.
@@ -98,7 +97,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Event\EventManager|null $eventManager The event manager.
      *  Defaults to a new instance.
      */
-    public function __construct(EventManager $eventManager = null)
+    public function __construct(?EventManager $eventManager = null)
     {
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -137,7 +136,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Form\Schema|null $schema The schema to set, or null.
      * @return \Cake\Form\Schema the schema instance.
      */
-    public function schema(Schema $schema = null): Schema
+    public function schema(?Schema $schema = null): Schema
     {
         if ($schema === null && empty($this->_schema)) {
             $schema = $this->_buildSchema(new $this->_schemaClass);
@@ -285,7 +284,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
             '_errors' => $this->errors(),
-            '_validator' => $this->getValidator()->__debugInfo()
+            '_validator' => $this->getValidator()->__debugInfo(),
         ];
 
         return $special + get_object_vars($this);

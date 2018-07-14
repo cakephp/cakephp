@@ -27,7 +27,6 @@ use Cake\View\View;
  */
 class NumberHelperTestObject extends NumberHelper
 {
-
     public function attach(NumberMock $cakeNumber)
     {
         $this->_engine = $cakeNumber;
@@ -51,7 +50,6 @@ class NumberMock
  */
 class NumberHelperTest extends TestCase
 {
-
     /**
      * setUp method
      *

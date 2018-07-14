@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class CsrfProtectionMiddlewareTest extends TestCase
 {
-
     /**
      * Data provider for HTTP method tests.
      *
@@ -49,7 +48,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     public static function httpMethodProvider()
     {
         return [
-            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD']
+            ['OPTIONS'], ['PATCH'], ['PUT'], ['POST'], ['DELETE'], ['PURGE'], ['INVALIDMETHOD'],
         ];
     }
 
@@ -104,7 +103,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'HTTP_X_CSRF_TOKEN' => 'nope',
             ],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => 'testing123'],
         ]);
         $response = new Response();
 
@@ -128,7 +127,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'HTTP_X_CSRF_TOKEN' => 'testing123',
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => 'testing123'],
         ]);
         $response = new Response();
 
@@ -153,7 +152,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'HTTP_X_CSRF_TOKEN' => 'nope',
             ],
             'post' => ['a' => 'b'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => 'testing123'],
         ]);
         $response = new Response();
 
@@ -174,7 +173,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
             ],
             'post' => ['_csrfToken' => 'testing123'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => 'testing123'],
         ]);
         $response = new Response();
 
@@ -201,7 +200,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
             ],
             'post' => ['_csrfToken' => 'nope'],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => 'testing123'],
         ]);
         $response = new Response();
 
@@ -222,7 +221,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
             ],
             'post' => [],
-            'cookies' => ['csrfToken' => 'testing123']
+            'cookies' => ['csrfToken' => 'testing123'],
         ]);
         $response = new Response();
 
@@ -241,10 +240,10 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->expectException(\Cake\Http\Exception\InvalidCsrfTokenException::class);
         $request = new ServerRequest([
             'environment' => [
-                'REQUEST_METHOD' => $method
+                'REQUEST_METHOD' => $method,
             ],
             'post' => ['_csrfToken' => 'could-be-valid'],
-            'cookies' => []
+            'cookies' => [],
         ]);
         $response = new Response();
 
@@ -261,7 +260,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     {
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
-            'webroot' => '/dir/'
+            'webroot' => '/dir/',
         ]);
         $response = new Response();
 
@@ -280,7 +279,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookieName' => 'token',
             'expiry' => '+1 hour',
             'secure' => true,
-            'httpOnly' => true
+            'httpOnly' => true,
         ]);
         $middleware($request, $response, $closure);
     }

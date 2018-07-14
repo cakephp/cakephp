@@ -17,8 +17,8 @@ namespace Cake\Database\Expression;
 use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
-use Cake\Database\TypeMapTrait;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
+use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 
 /**
@@ -29,7 +29,6 @@ use Cake\Database\ValueBinder;
  */
 class ValuesExpression implements ExpressionInterface
 {
-
     use ExpressionTypeCasterTrait;
     use TypeMapTrait;
 

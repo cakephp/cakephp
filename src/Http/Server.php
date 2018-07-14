@@ -70,7 +70,7 @@ class Server implements EventDispatcherInterface
      * @return \Psr\Http\Message\ResponseInterface
      * @throws \RuntimeException When the application does not make a response.
      */
-    public function run(ServerRequestInterface $request = null, ResponseInterface $response = null)
+    public function run(?ServerRequestInterface $request = null, ?ResponseInterface $response = null)
     {
         $this->bootstrap();
 
@@ -126,7 +126,7 @@ class Server implements EventDispatcherInterface
      *   When null, a SAPI Stream Emitter will be used.
      * @return void
      */
-    public function emit(ResponseInterface $response, EmitterInterface $emitter = null)
+    public function emit(ResponseInterface $response, ?EmitterInterface $emitter = null)
     {
         if (!$emitter) {
             $emitter = new ResponseEmitter();

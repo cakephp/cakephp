@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class Stub
 {
-
     use MailerAwareTrait {
         getMailer as public;
     }
@@ -33,7 +32,6 @@ class Stub
  */
 class MailerAwareTraitTest extends TestCase
 {
-
     /**
      * Test getMailer
      *

@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
@@ -27,7 +26,6 @@ use RuntimeException;
  */
 class DecimalType extends BaseType implements BatchCastingInterface
 {
-
     /**
      * The class to use for representing number objects
      *

@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class MailTransportTest extends TestCase
 {
-
     /**
      * Setup
      *

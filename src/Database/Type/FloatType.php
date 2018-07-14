@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\BatchCastingInterface;
 use PDO;
 use RuntimeException;
 
@@ -26,7 +25,6 @@ use RuntimeException;
  */
 class FloatType extends BaseType implements BatchCastingInterface
 {
-
     /**
      * The class to use for representing number objects
      *

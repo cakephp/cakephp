@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class ReplaceIteratorTest extends TestCase
 {
-
     /**
      * Tests that the iterator works correctly
      *

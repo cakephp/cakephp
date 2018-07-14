@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestCacheStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -46,7 +45,6 @@ class TestCacheStaticConfig
  */
 class TestEmailStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -66,7 +64,6 @@ class TestEmailStaticConfig
  */
 class TestLogStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -86,7 +83,6 @@ class TestLogStaticConfig
  */
 class StaticConfigTraitTest extends TestCase
 {
-
     /**
      * setup method
      *

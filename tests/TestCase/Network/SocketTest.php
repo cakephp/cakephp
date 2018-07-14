@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class SocketTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -60,7 +59,7 @@ class SocketTest extends TestCase
             'host' => 'localhost',
             'protocol' => 'tcp',
             'port' => 80,
-            'timeout' => 30
+            'timeout' => 30,
         ]);
 
         $this->Socket->reset();
@@ -113,7 +112,7 @@ class SocketTest extends TestCase
     {
         return [
             [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]],
-            [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]]
+            [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]],
         ];
     }
 
@@ -238,7 +237,7 @@ class SocketTest extends TestCase
             'host' => '127.0.0.1',
             'protocol' => 'udp',
             'port' => 80,
-            'timeout' => 20
+            'timeout' => 20,
         ];
         $anotherSocket = new Socket($config);
         $anotherSocket->reset();
@@ -248,7 +247,7 @@ class SocketTest extends TestCase
             'host' => 'localhost',
             'protocol' => 'tcp',
             'port' => 80,
-            'timeout' => 30
+            'timeout' => 30,
         ];
         $this->assertEquals(
             $expected,
@@ -441,8 +440,8 @@ class SocketTest extends TestCase
             'port' => 465,
             'timeout' => 5,
             'context' => [
-                'ssl' => ['capture_peer' => true]
-            ]
+                'ssl' => ['capture_peer' => true],
+            ],
         ];
         try {
             $this->Socket = new Socket($config);

@@ -67,7 +67,7 @@ class BaseApplicationTest extends TestCase
             'controller' => 'Cakes',
             'action' => 'index',
             'plugin' => null,
-            'pass' => []
+            'pass' => [],
         ]);
 
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
@@ -164,7 +164,7 @@ class BaseApplicationTest extends TestCase
             'plugin' => 'TestPlugin',
             'controller' => 'TestPlugin',
             'action' => 'index',
-            '_method' => 'GET'
+            '_method' => 'GET',
         ];
         $this->assertNotEmpty($collection->match($url, []));
     }

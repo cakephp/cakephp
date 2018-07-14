@@ -18,13 +18,12 @@ namespace Cake\Http\Cookie;
  */
 interface CookieInterface
 {
-
     /**
      * Expires attribute format.
      *
      * @var string
      */
-    const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
+    public const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
 
     /**
      * Sets the cookie name

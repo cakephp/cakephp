@@ -26,7 +26,6 @@ use JsonSerializable;
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
-
     /**
      * Sets hidden properties.
      *

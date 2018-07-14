@@ -21,7 +21,6 @@ use Cake\ORM\Table;
  */
 class TestPluginCommentsTable extends Table
 {
-
     public function initialize(array $config)
     {
         $this->setTable('test_plugin_comments');

@@ -23,7 +23,6 @@ use Cake\View\Helper\IdGeneratorTrait;
  */
 class MultiCheckboxWidget implements WidgetInterface
 {
-
     use IdGeneratorTrait;
 
     /**
@@ -114,7 +113,7 @@ class MultiCheckboxWidget implements WidgetInterface
             'val' => null,
             'idPrefix' => null,
             'templateVars' => [],
-            'label' => true
+            'label' => true,
         ];
         $this->_idPrefix = $data['idPrefix'];
         $this->_clearIds();
@@ -138,7 +137,7 @@ class MultiCheckboxWidget implements WidgetInterface
                 $inputs = $this->_renderInputs(['options' => $val] + $data, $context);
                 $title = $this->_templates->format('multicheckboxTitle', ['text' => $key]);
                 $out[] = $this->_templates->format('multicheckboxWrapper', [
-                    'content' => $title . implode('', $inputs)
+                    'content' => $title . implode('', $inputs),
                 ]);
                 continue;
             }
@@ -189,7 +188,7 @@ class MultiCheckboxWidget implements WidgetInterface
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
                 ['name', 'value', 'text', 'options', 'label', 'val', 'type']
-            )
+            ),
         ]);
 
         if ($checkbox['label'] === false && strpos($this->_templates->get('checkboxWrapper'), '{{input}}') === false) {
@@ -200,7 +199,7 @@ class MultiCheckboxWidget implements WidgetInterface
                 'escape' => $checkbox['escape'],
                 'text' => $checkbox['text'],
                 'templateVars' => $checkbox['templateVars'],
-                'input' => $input
+                'input' => $input,
             ];
 
             if (is_array($checkbox['label'])) {
@@ -217,7 +216,7 @@ class MultiCheckboxWidget implements WidgetInterface
         return $this->_templates->format('checkboxWrapper', [
             'templateVars' => $checkbox['templateVars'],
             'label' => $label,
-            'input' => $input
+            'input' => $input,
         ]);
     }
 

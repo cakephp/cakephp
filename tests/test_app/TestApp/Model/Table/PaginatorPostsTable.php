@@ -21,7 +21,6 @@ use Cake\ORM\Table;
  */
 class PaginatorPostsTable extends Table
 {
-
     /**
      * initialize method
      *
@@ -31,7 +30,7 @@ class PaginatorPostsTable extends Table
     {
         $this->setTable('posts');
         $this->belongsTo('PaginatorAuthor', [
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
     }
 

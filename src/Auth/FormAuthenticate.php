@@ -38,7 +38,6 @@ use Cake\Http\ServerRequest;
  */
 class FormAuthenticate extends BaseAuthenticate
 {
-
     /**
      * Checks the fields to ensure they are supplied.
      *

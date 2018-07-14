@@ -16,8 +16,8 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
-use Cake\Database\SchemaCache;
 use Cake\Database\Schema\CachedCollection;
+use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class SchemaCacheTest extends TestCase
 {
-
     /**
      * Fixtures.
      *

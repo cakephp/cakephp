@@ -15,9 +15,9 @@ declare(strict_types = 1);
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
@@ -33,7 +33,6 @@ class FlashAliasComponent extends FlashComponent
 
 class ComponentRegistryTest extends TestCase
 {
-
     /**
      * setUp
      *

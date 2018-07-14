@@ -21,7 +21,6 @@ use Cake\Datasource\EntityInterface;
  */
 class IsUnique
 {
-
     /**
      * The list of fields to check
      *

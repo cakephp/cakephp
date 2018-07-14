@@ -89,7 +89,7 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'pass' => [],
             ],
-            'session' => new Session
+            'session' => new Session,
         ]);
         $res = new Response();
         $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (EventInterface $event) {
@@ -184,7 +184,7 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'Posts',
                 'action' => 'index',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
@@ -205,7 +205,7 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'Cakes',
                 'action' => 'noRender',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
@@ -227,7 +227,7 @@ class ActionDispatcherTest extends TestCase
             'params' => [
                 'controller' => 'SomeController',
                 'action' => 'home',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -247,7 +247,7 @@ class ActionDispatcherTest extends TestCase
             'params' => [
                 'controller' => 'Interface',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -267,7 +267,7 @@ class ActionDispatcherTest extends TestCase
             'params' => [
                 'controller' => 'Abstract',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -292,7 +292,7 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'somepages',
                 'action' => 'display',
                 'pass' => ['home'],
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -313,7 +313,7 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'stop' => 'startup',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
@@ -335,7 +335,7 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'stop' => 'shutdown',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);

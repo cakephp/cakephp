@@ -26,7 +26,6 @@ use Cake\Http\ServerRequest;
  */
 class SessionStorage implements StorageInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -58,7 +57,7 @@ class SessionStorage implements StorageInterface
      */
     protected $_defaultConfig = [
         'key' => 'Auth.User',
-        'redirect' => 'Auth.redirect'
+        'redirect' => 'Auth.redirect',
     ];
 
     /**

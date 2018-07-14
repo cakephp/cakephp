@@ -3,5 +3,4 @@ namespace TestPlugin\Utility;
 
 class TestPluginEngine
 {
-
 }

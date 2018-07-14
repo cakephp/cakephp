@@ -23,7 +23,6 @@ use Cake\Event\EventInterface;
  */
 class AppleComponent extends Component
 {
-
     /**
      * components property
      *

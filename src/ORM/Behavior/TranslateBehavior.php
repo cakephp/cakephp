@@ -42,7 +42,6 @@ use Cake\Utility\Inflector;
  */
 class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 {
-
     use LocatorAwareTrait;
 
     /**
@@ -79,7 +78,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         'implementedMethods' => [
             'setLocale' => 'setLocale',
             'getLocale' => 'getLocale',
-            'translationField' => 'translationField'
+            'translationField' => 'translationField',
         ],
         'fields' => [],
         'translationTable' => 'I18n',
@@ -89,7 +88,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         'onlyTranslated' => false,
         'strategy' => 'subquery',
         'tableLocator' => null,
-        'validator' => false
+        'validator' => false,
     ];
 
     /**
@@ -102,7 +101,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $config += [
             'defaultLocale' => I18n::getDefaultLocale(),
-            'referenceName' => $this->_referenceName($table)
+            'referenceName' => $this->_referenceName($table),
         ];
 
         if (isset($config['tableLocator'])) {
@@ -160,7 +159,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 $fieldTable = $tableLocator->get($name, [
                     'className' => $table,
                     'alias' => $name,
-                    'table' => $this->_translationTable->getTable()
+                    'table' => $this->_translationTable->getTable(),
                 ]);
             } else {
                 $fieldTable = $tableLocator->get($name);
@@ -179,7 +178,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'foreignKey' => 'foreign_key',
                 'joinType' => $filter ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
-                'propertyName' => $field . '_translation'
+                'propertyName' => $field . '_translation',
             ]);
         }
 
@@ -194,7 +193,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'strategy' => $strategy,
             'conditions' => $conditions,
             'propertyName' => '_i18n',
-            'dependent' => true
+            'dependent' => true,
         ]);
     }
 
@@ -331,7 +330,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'field IN' => $fields,
                 'locale' => $locale,
                 'foreign_key' => $key,
-                'model' => $model
+                'model' => $model,
             ])
             ->enableBufferedResults(false)
             ->all()
@@ -347,7 +346,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         foreach ($new as $field => $content) {
             $new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
                 'useSetters' => false,
-                'markNew' => true
+                'markNew' => true,
             ]);
         }
 
@@ -410,7 +409,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 }
 
                 return $translations;
-            }
+            },
         ];
     }
 
@@ -505,7 +504,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function findTranslations(Query $query, array $options)
     {
-        $locales = isset($options['locales']) ? $options['locales'] : [];
+        $locales = $options['locales'] ?? [];
         $targetAlias = $this->_translationTable->getAlias();
 
         return $query
@@ -561,14 +560,14 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
             foreach ($this->_config['fields'] as $field) {
                 $name = $field . '_translation';
-                $translation = isset($row[$name]) ? $row[$name] : null;
+                $translation = $row[$name] ?? null;
 
                 if ($translation === null || $translation === false) {
                     unset($row[$name]);
                     continue;
                 }
 
-                $content = isset($translation['content']) ? $translation['content'] : null;
+                $content = $translation['content'] ?? null;
                 if ($content !== null) {
                     $row[$field] = $content;
                 }
@@ -611,7 +610,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 $translation = new $entityClass($keys + ['locale' => $locale], [
                     'markNew' => false,
                     'useSetters' => false,
-                    'markClean' => true
+                    'markClean' => true,
                 ]);
                 $result[$locale] = $translation;
             }
@@ -654,7 +653,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 }
                 $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
                 $contents[] = new Entity(['content' => $translation->get($field)], [
-                    'useSetters' => false
+                    'useSetters' => false,
                 ]);
             }
         }

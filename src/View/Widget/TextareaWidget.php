@@ -47,7 +47,7 @@ class TextareaWidget extends BasicWidget
             'name' => '',
             'escape' => true,
             'rows' => 5,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         return $this->_templates->format('textarea', [
@@ -57,7 +57,7 @@ class TextareaWidget extends BasicWidget
             'attrs' => $this->_templates->formatAttributes(
                 $data,
                 ['name', 'val']
-            )
+            ),
         ]);
     }
 }

@@ -48,7 +48,7 @@ class TranslatorFactory extends BaseTranslatorFactory
         $locale,
         Package $package,
         FormatterInterface $formatter,
-        TranslatorInterface $fallback = null
+        ?TranslatorInterface $fallback = null
     ) {
         $class = $this->class;
         if ($fallback !== null && get_class($fallback) !== $class) {

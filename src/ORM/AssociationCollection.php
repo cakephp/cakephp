@@ -29,7 +29,6 @@ use IteratorAggregate;
  */
 class AssociationCollection implements IteratorAggregate
 {
-
     use AssociationsNormalizerTrait;
     use LocatorAwareTrait;
 
@@ -48,7 +47,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator Table locator instance.
      */
-    public function __construct(LocatorInterface $tableLocator = null)
+    public function __construct(?LocatorInterface $tableLocator = null)
     {
         if ($tableLocator !== null) {
             $this->_tableLocator = $tableLocator;
@@ -84,7 +83,7 @@ class AssociationCollection implements IteratorAggregate
     public function load($className, $associated, array $options = [])
     {
         $options += [
-            'tableLocator' => $this->getTableLocator()
+            'tableLocator' => $this->getTableLocator(),
         ];
 
         $association = new $className($associated, $options);

@@ -23,14 +23,13 @@ use PDOStatement as Statement;
  */
 class PDOStatement extends StatementDecorator
 {
-
     /**
      * Constructor
      *
      * @param \PDOStatement|null $statement Original statement to be decorated.
      * @param \Cake\Database\Driver|null $driver Driver instance.
      */
-    public function __construct(Statement $statement = null, $driver = null)
+    public function __construct(?Statement $statement = null, $driver = null)
     {
         parent::__construct($statement, $driver);
     }

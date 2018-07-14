@@ -21,7 +21,6 @@ use InvalidArgumentException;
  */
 class TypeFactory
 {
-
     /**
      * List of supported database types. A human readable
      * identifier is used as key and a complete namespaced class name as value
@@ -84,9 +83,7 @@ class TypeFactory
     {
         $result = [];
         foreach (static::$_types as $name => $type) {
-            $result[$name] = isset(static::$_builtTypes[$name])
-                ? static::$_builtTypes[$name]
-                : static::build($name);
+            $result[$name] = static::$_builtTypes[$name] ?? static::build($name);
         }
 
         return $result;
@@ -135,13 +132,13 @@ class TypeFactory
      * @param string|null $type Type name to get mapped class for or null to get map array.
      * @return array|string|null Configured class name for given $type or map array.
      */
-    public static function getMap(string $type = null)
+    public static function getMap(?string $type = null)
     {
         if ($type === null) {
             return static::$_types;
         }
 
-        return isset(static::$_types[$type]) ? static::$_types[$type] : null;
+        return static::$_types[$type] ?? null;
     }
 
     /**

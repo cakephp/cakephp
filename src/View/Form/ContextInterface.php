@@ -20,7 +20,6 @@ namespace Cake\View\Form;
  */
 interface ContextInterface
 {
-
     /**
      * Get the fields used in the context as a primary key.
      *

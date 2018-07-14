@@ -26,7 +26,6 @@ use Cake\Validation\Validator;
  */
 class MyUsersTable extends Table
 {
-
     /**
      * Overrides default table name
      *
@@ -40,7 +39,6 @@ class MyUsersTable extends Table
  */
 class TableLocatorTest extends TestCase
 {
-
     /**
      * TableLocator instance.
      *
@@ -229,7 +227,7 @@ class TableLocatorTest extends TestCase
     {
         ConnectionManager::alias('test', 'testing');
         $result = $this->_locator->get('Articles', [
-            'connectionName' => 'testing'
+            'connectionName' => 'testing',
         ]);
         $this->assertEquals('articles', $result->getTable());
         $this->assertEquals('test', $result->getConnection()->configName());
@@ -460,7 +458,7 @@ class TableLocatorTest extends TestCase
                 'default' => $validator1,
                 'secondary' => $validator2,
                 'tertiary' => $validator3,
-            ]
+            ],
         ]);
         $table = $this->_locator->get('users');
 

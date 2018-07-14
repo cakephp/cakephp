@@ -22,7 +22,6 @@ use InvalidArgumentException;
  */
 class TableRegressionTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *

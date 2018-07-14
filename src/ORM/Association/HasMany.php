@@ -21,7 +21,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
-use Cake\ORM\Association\DependentDeleteHelper;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use InvalidArgumentException;
@@ -35,7 +34,6 @@ use Traversable;
  */
 class HasMany extends Association
 {
-
     /**
      * Order in which target records should be returned
      *
@@ -64,7 +62,7 @@ class HasMany extends Association
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -72,14 +70,14 @@ class HasMany extends Association
      *
      * @var string
      */
-    const SAVE_APPEND = 'append';
+    public const SAVE_APPEND = 'append';
 
     /**
      * Saving strategy that will replace the links with the provided set
      *
      * @var string
      */
-    const SAVE_REPLACE = 'replace';
+    public const SAVE_REPLACE = 'replace';
 
     /**
      * Saving strategy to be used by this association
@@ -335,7 +333,7 @@ class HasMany extends Association
     {
         if (is_bool($options)) {
             $options = [
-                'cleanProperty' => $options
+                'cleanProperty' => $options,
             ];
         } else {
             $options += ['cleanProperty' => true];
@@ -354,7 +352,7 @@ class HasMany extends Association
                 ->map(function ($entity) use ($targetPrimaryKey) {
                     return $entity->extract($targetPrimaryKey);
                 })
-                ->toList()
+                ->toList(),
         ];
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
@@ -469,9 +467,9 @@ class HasMany extends Association
         if (count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
-                    'OR' => $exclusions
+                    'OR' => $exclusions,
                 ],
-                $foreignKeyReference
+                $foreignKeyReference,
             ];
         }
 
@@ -646,7 +644,7 @@ class HasMany extends Association
             'strategy' => $this->getStrategy(),
             'associationType' => $this->type(),
             'sort' => $this->getSort(),
-            'finder' => [$this, 'find']
+            'finder' => [$this, 'find'],
         ]);
 
         return $loader->buildEagerLoader($options);

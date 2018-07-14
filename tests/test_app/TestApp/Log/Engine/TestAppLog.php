@@ -23,7 +23,6 @@ use Cake\Log\Engine\BaseLog;
  */
 class TestAppLog extends BaseLog
 {
-
     public $passedScope = null;
 
     public function log($level, $message, array $context = [])

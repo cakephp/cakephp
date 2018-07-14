@@ -43,7 +43,6 @@ class BaseLogImpl extends BaseLog
 
 class BaseLogTest extends TestCase
 {
-
     private $testData = ['ä', 'ö', 'ü'];
 
     private $logger;

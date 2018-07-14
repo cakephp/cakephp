@@ -46,17 +46,17 @@ abstract class ServerRequestFactory extends BaseFactory
      * @throws \InvalidArgumentException for invalid file values
      */
     public static function fromGlobals(
-        array $server = null,
-        array $query = null,
-        array $body = null,
-        array $cookies = null,
-        array $files = null
+        ?array $server = null,
+        ?array $query = null,
+        ?array $body = null,
+        ?array $cookies = null,
+        ?array $files = null
     ) {
         $server = static::normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
-            'cookiePath' => $uri->webroot
+            'cookiePath' => $uri->webroot,
         ];
         $session = Session::create($sessionConfig);
         $request = new ServerRequest([
@@ -168,7 +168,7 @@ abstract class ServerRequestFactory extends BaseFactory
         $config = (array)Configure::read('App') + [
             'base' => null,
             'webroot' => null,
-            'baseUrl' => null
+            'baseUrl' => null,
         ];
         $base = $config['base'];
         $baseUrl = $config['baseUrl'];

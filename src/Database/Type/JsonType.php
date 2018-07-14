@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -26,7 +25,6 @@ use PDO;
  */
 class JsonType extends BaseType implements BatchCastingInterface
 {
-
     /**
      * Convert a value data into a JSON string
      *

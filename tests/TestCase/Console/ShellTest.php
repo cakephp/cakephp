@@ -47,7 +47,6 @@ class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Shell\Task\TestBananaTask')
  */
 class ShellTest extends TestCase
 {
-
     /**
      * Fixtures used in this test case
      *
@@ -60,7 +59,7 @@ class ShellTest extends TestCase
         'core.comments',
         'core.posts',
         'core.tags',
-        'core.users'
+        'core.users',
     ];
 
     /** @var \Cake\Console\Shell */
@@ -621,7 +620,7 @@ class ShellTest extends TestCase
         $files = [
             $path . DS . 'file1.php' => 'My first content',
             $path . DS . 'file2.php' => 'My second content',
-            $path . DS . 'file3.php' => 'My third content'
+            $path . DS . 'file3.php' => 'My third content',
         ];
 
         new Folder($path, true);
@@ -806,13 +805,13 @@ class ShellTest extends TestCase
 
         // Shell::dispatchShell(['command' => 'schema create DbAcl']);
         $result = $Shell->parseDispatchArguments([[
-            'command' => 'schema create DbAcl'
+            'command' => 'schema create DbAcl',
         ]]);
         $this->assertEquals($expected, $result);
 
         // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl']]);
         $result = $Shell->parseDispatchArguments([[
-            'command' => ['schema', 'create', 'DbAcl']
+            'command' => ['schema', 'create', 'DbAcl'],
         ]]);
         $this->assertEquals($expected, $result);
 
@@ -820,14 +819,14 @@ class ShellTest extends TestCase
         // Shell::dispatchShell(['command' => 'schema create DbAcl', 'extra' => ['param' => 'value']]);
         $result = $Shell->parseDispatchArguments([[
             'command' => 'schema create DbAcl',
-            'extra' => ['param' => 'value']
+            'extra' => ['param' => 'value'],
         ]]);
         $this->assertEquals($expected, $result);
 
         // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl'], 'extra' => ['param' => 'value']]);
         $result = $Shell->parseDispatchArguments([[
             'command' => ['schema', 'create', 'DbAcl'],
-            'extra' => ['param' => 'value']
+            'extra' => ['param' => 'value'],
         ]]);
         $this->assertEquals($expected, $result);
     }
@@ -1300,7 +1299,7 @@ TEXT;
             'key' => 'value',
             'help' => false,
             'emptykey' => '',
-            'truthy' => true
+            'truthy' => true,
         ];
         $this->assertSame($expected, $this->Shell->param($toRead));
     }
@@ -1332,7 +1331,7 @@ TEXT;
             [
                 'does_not_exist',
                 null,
-            ]
+            ],
         ];
     }
 
@@ -1413,7 +1412,7 @@ TEXT;
             'tasks' => [],
             'params' => [],
             'args' => [],
-            'interactive' => true
+            'interactive' => true,
         ];
         $result = $this->Shell->__debugInfo();
         $this->assertEquals($expected, $result);

@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class CurlTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -42,7 +41,7 @@ class CurlTest extends TestCase
     {
         $request = new Request('http://localhost', 'GET', [
             'User-Agent' => 'CakePHP TestSuite',
-            'Cookie' => 'testing=value'
+            'Cookie' => 'testing=value',
         ]);
         try {
             $responses = $this->curl->send($request, []);
@@ -89,7 +88,7 @@ class CurlTest extends TestCase
     public function testBuildOptionsGet()
     {
         $options = [
-            'timeout' => 5
+            'timeout' => 5,
         ];
         $request = new Request(
             'http://localhost/things',
@@ -254,8 +253,8 @@ class CurlTest extends TestCase
     {
         $options = [
             'proxy' => [
-                'proxy' => '127.0.0.1:8080'
-            ]
+                'proxy' => '127.0.0.1:8080',
+            ],
         ];
         $request = new Request('http://localhost/things', 'GET');
         $result = $this->curl->buildOptions($request, $options);
@@ -284,8 +283,8 @@ class CurlTest extends TestCase
     {
         $options = [
             'curl' => [
-                CURLOPT_USERAGENT => 'Super-secret'
-            ]
+                CURLOPT_USERAGENT => 'Super-secret',
+            ],
         ];
         $request = new Request('http://localhost/things', 'GET');
         $result = $this->curl->buildOptions($request, $options);
@@ -300,7 +299,7 @@ class CurlTest extends TestCase
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_CAINFO => $this->caFile,
-            CURLOPT_USERAGENT => 'Super-secret'
+            CURLOPT_USERAGENT => 'Super-secret',
         ];
         $this->assertSame($expected, $result);
     }

@@ -26,7 +26,6 @@ use Cake\View\Form\ContextInterface;
  */
 class ButtonWidget extends BasicWidget
 {
-
     /**
      * Render a button.
      *
@@ -49,7 +48,7 @@ class ButtonWidget extends BasicWidget
             'text' => '',
             'type' => 'submit',
             'escape' => false,
-            'templateVars' => []
+            'templateVars' => [],
         ];
 
         return $this->_templates->format('button', [

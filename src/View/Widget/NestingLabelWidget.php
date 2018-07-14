@@ -23,7 +23,6 @@ namespace Cake\View\Widget;
  */
 class NestingLabelWidget extends LabelWidget
 {
-
     /**
      * The template to use.
      *

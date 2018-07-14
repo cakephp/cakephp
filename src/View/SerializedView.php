@@ -25,7 +25,6 @@ use RuntimeException;
  */
 abstract class SerializedView extends View
 {
-
     /**
      * Response type.
      *

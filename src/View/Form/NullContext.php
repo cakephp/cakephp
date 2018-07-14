@@ -25,7 +25,6 @@ use Cake\Http\ServerRequest;
  */
 class NullContext implements ContextInterface
 {
-
     /**
      * The request object.
      *

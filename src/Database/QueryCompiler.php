@@ -23,7 +23,6 @@ use Cake\Database\Expression\QueryExpression;
  */
 class QueryCompiler
 {
-
     /**
      * List of sprintf templates that will be used for compiling the SQL for
      * this query. There are some clauses that can be built as just as the
@@ -39,7 +38,7 @@ class QueryCompiler
         'order' => ' %s',
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
-        'epilog' => ' %s'
+        'epilog' => ' %s',
     ];
 
     /**
@@ -49,7 +48,7 @@ class QueryCompiler
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-        'offset', 'union', 'epilog'
+        'offset', 'union', 'epilog',
     ];
 
     /**

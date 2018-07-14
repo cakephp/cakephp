@@ -24,7 +24,6 @@ use InvalidArgumentException;
  */
 abstract class CacheEngine
 {
-
     use InstanceConfigTrait;
 
     /**

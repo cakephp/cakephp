@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
  */
 class RequestTest extends TestCase
 {
-
     /**
      * test string ata, header and constructor
      *
@@ -141,7 +140,7 @@ class RequestTest extends TestCase
         $data = [
             'a' => 'b',
             'c' => 'd',
-            'e' => ['f', 'g']
+            'e' => ['f', 'g'],
         ];
         $request->body($data);
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));

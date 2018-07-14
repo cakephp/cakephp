@@ -19,8 +19,6 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CoreException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Error;
-use Exception;
 use Throwable;
 
 /**
@@ -32,7 +30,6 @@ use Throwable;
  */
 abstract class BaseErrorHandler
 {
-
     /**
      * Options to use for the Error handling.
      *
@@ -155,7 +152,7 @@ abstract class BaseErrorHandler
             $data += [
                 'context' => $context,
                 'start' => 3,
-                'path' => Debugger::trimPath($file)
+                'path' => Debugger::trimPath($file),
             ];
         }
         $this->_displayError($data, $debug);
@@ -285,7 +282,7 @@ abstract class BaseErrorHandler
         if (!empty($this->_options['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
-                'format' => 'log'
+                'format' => 'log',
             ]);
 
             $request = Router::getRequest();

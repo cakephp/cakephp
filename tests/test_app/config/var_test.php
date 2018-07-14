@@ -3,10 +3,10 @@ return [
     'Read' => 'value',
     'Deep' => [
         'Deeper' => [
-            'Deepest' => 'buried'
-        ]
+            'Deepest' => 'buried',
+        ],
     ],
     'TestAcl' => [
-        'classname' => 'Original'
-    ]
+        'classname' => 'Original',
+    ],
 ];

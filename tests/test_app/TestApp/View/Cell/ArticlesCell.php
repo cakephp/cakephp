@@ -18,7 +18,6 @@ namespace TestApp\View\Cell;
  */
 class ArticlesCell extends \Cake\View\Cell
 {
-
     /**
      * valid cell options.
      *

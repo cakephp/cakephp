@@ -23,7 +23,6 @@ use Cake\Event\EventInterface;
  */
 class OrangeComponent extends Component
 {
-
     /**
      * components property
      *

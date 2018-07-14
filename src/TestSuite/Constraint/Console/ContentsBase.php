@@ -22,7 +22,6 @@ use PHPUnit\Framework\Constraint\Constraint;
  */
 abstract class ContentsBase extends Constraint
 {
-
     /**
      * @var string
      */

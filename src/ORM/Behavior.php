@@ -113,7 +113,6 @@ use ReflectionMethod;
  */
 class Behavior implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -275,7 +274,7 @@ class Behavior implements EventListenerInterface
             'Model.afterRules' => 'afterRules',
         ];
         $config = $this->getConfig();
-        $priority = isset($config['priority']) ? $config['priority'] : null;
+        $priority = $config['priority'] ?? null;
         $events = [];
 
         foreach ($eventMap as $event => $method) {
@@ -287,7 +286,7 @@ class Behavior implements EventListenerInterface
             } else {
                 $events[$event] = [
                     'callable' => $method,
-                    'priority' => $priority
+                    'priority' => $priority,
                 ];
             }
         }
@@ -397,7 +396,7 @@ class Behavior implements EventListenerInterface
 
         $return = [
             'finders' => [],
-            'methods' => []
+            'methods' => [],
         ];
 
         $reflection = new ReflectionClass($class);

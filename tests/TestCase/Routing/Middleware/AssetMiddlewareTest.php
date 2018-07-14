@@ -47,7 +47,7 @@ class AssetMiddlewareTest extends TestCase
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/test_plugin/root.js',
-            'HTTP_IF_MODIFIED_SINCE' => date('D, j M Y G:i:s \G\M\T', $modified)
+            'HTTP_IF_MODIFIED_SINCE' => date('D, j M Y G:i:s \G\M\T', $modified),
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -93,22 +93,22 @@ class AssetMiddlewareTest extends TestCase
             // In plugin root.
             [
                 '/test_plugin/root.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/root.js'
+                TEST_APP . 'Plugin/TestPlugin/webroot/root.js',
             ],
             // Subdirectory
             [
                 '/test_plugin/js/alert.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/js/alert.js'
+                TEST_APP . 'Plugin/TestPlugin/webroot/js/alert.js',
             ],
             // In path that matches the plugin name
             [
                 '/test_plugin/js/test_plugin/test.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+                TEST_APP . 'Plugin/TestPlugin/webroot/js/test_plugin/test.js',
             ],
             // In vendored plugin
             [
                 '/company/test_plugin_three/css/company.css',
-                TEST_APP . 'Plugin/Company/TestPluginThree/webroot/css/company.css'
+                TEST_APP . 'Plugin/Company/TestPluginThree/webroot/css/company.css',
             ],
         ];
     }

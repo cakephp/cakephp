@@ -105,7 +105,6 @@ use Psr\Log\LoggerInterface;
  */
 class Log
 {
-
     use StaticConfigTrait {
         setConfig as protected _setConfig;
     }
@@ -148,7 +147,7 @@ class Log
         'warning',
         'notice',
         'info',
-        'debug'
+        'debug',
     ];
 
     /**

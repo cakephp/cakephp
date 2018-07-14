@@ -35,7 +35,6 @@ use SessionHandlerInterface;
  */
 class Session
 {
-
     /**
      * The Session handler instance used as an engine for persisting the session data.
      *
@@ -120,6 +119,10 @@ class Session
             unset($sessionConfig['ini']['session.save_handler']);
         }
 
+        if (!isset($sessionConfig['ini']['session.use_strict_mode']) && ini_get('session.use_strict_mode') != 1) {
+            $sessionConfig['ini']['session.use_strict_mode'] = 1;
+        }
+
         if (!isset($sessionConfig['ini']['session.cookie_httponly']) && ini_get('session.cookie_httponly') != 1) {
             $sessionConfig['ini']['session.cookie_httponly'] = 1;
         }
@@ -139,7 +142,7 @@ class Session
             'php' => [
                 'ini' => [
                     'session.use_trans_sid' => 0,
-                ]
+                ],
             ],
             'cake' => [
                 'ini' => [
@@ -147,8 +150,8 @@ class Session
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
                     'session.save_path' => TMP . 'sessions',
-                    'session.save_handler' => 'files'
-                ]
+                    'session.save_handler' => 'files',
+                ],
             ],
             'cache' => [
                 'ini' => [
@@ -158,8 +161,8 @@ class Session
                 ],
                 'handler' => [
                     'engine' => 'CacheSession',
-                    'config' => 'default'
-                ]
+                    'config' => 'default',
+                ],
             ],
             'database' => [
                 'ini' => [
@@ -169,9 +172,9 @@ class Session
                     'session.serialize_handler' => 'php',
                 ],
                 'handler' => [
-                    'engine' => 'DatabaseSession'
-                ]
-            ]
+                    'engine' => 'DatabaseSession',
+                ],
+            ],
         ];
 
         if (isset($defaults[$name])) {
@@ -403,7 +406,7 @@ class Session
         }
 
         if ($name === null) {
-            return isset($_SESSION) ? $_SESSION : [];
+            return $_SESSION ?? [];
         }
 
         return Hash::get($_SESSION, $name);
@@ -447,7 +450,7 @@ class Session
             $write = [$name => $value];
         }
 
-        $data = isset($_SESSION) ? $_SESSION : [];
+        $data = $_SESSION ?? [];
         foreach ($write as $key => $val) {
             $data = Hash::insert($data, $key, $val);
         }

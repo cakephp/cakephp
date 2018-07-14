@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class BehaviorRegistryTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -179,7 +178,7 @@ class BehaviorRegistryTest extends TestCase
             ],
             'implementedMethods' => [
                 'renamed' => 'slugify',
-            ]
+            ],
         ]);
         $this->assertTrue($this->Behaviors->hasMethod('renamed'));
     }
@@ -208,7 +207,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->load('Duplicate', [
             'implementedFinders' => [
                 'renamed' => 'findChildren',
-            ]
+            ],
         ]);
         $this->assertTrue($this->Behaviors->hasFinder('renamed'));
     }

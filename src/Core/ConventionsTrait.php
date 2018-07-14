@@ -22,7 +22,6 @@ use Cake\Utility\Inflector;
  */
 trait ConventionsTrait
 {
-
     /**
      * Creates a fixture name
      *

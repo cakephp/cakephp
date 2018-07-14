@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class ResultSetTest extends TestCase
 {
-
     public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
 
     /**
@@ -47,7 +46,7 @@ class ResultSetTest extends TestCase
         $this->fixtureData = [
             ['id' => 1, 'author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
             ['id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            ['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y']
+            ['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y'],
         ];
     }
 
@@ -234,16 +233,16 @@ class ResultSetTest extends TestCase
         $options = [
             'markNew' => false,
             'markClean' => true,
-            'source' => $this->table->getAlias()
+            'source' => $this->table->getAlias(),
         ];
         $expected = [
             1 => [
                 new Entity($this->fixtureData[0], $options),
-                new Entity($this->fixtureData[2], $options)
+                new Entity($this->fixtureData[2], $options),
             ],
             3 => [
                 new Entity($this->fixtureData[1], $options),
-            ]
+            ],
         ];
         $this->assertEquals($expected, $results);
     }
@@ -258,7 +257,7 @@ class ResultSetTest extends TestCase
         $query = $this->table->find('all');
         $results = $query->all();
         $expected = [
-            'items' => $results->toArray()
+            'items' => $results->toArray(),
         ];
         $this->assertSame($expected, $results->__debugInfo());
     }
@@ -308,7 +307,7 @@ class ResultSetTest extends TestCase
 
         $article = $articles->newEntity([
             'author_id' => $author->id,
-            'title' => 'article with author with null name'
+            'title' => 'article with author with null name',
         ]);
         $articles->save($article);
 
@@ -386,7 +385,7 @@ class ResultSetTest extends TestCase
         $comments = $this->getTableLocator()->get('TestPlugin.Comments');
         $comments->belongsTo('Authors', [
             'className' => 'TestPlugin.Authors',
-            'foreignKey' => 'user_id'
+            'foreignKey' => 'user_id',
         ]);
         $result = $comments->find()->contain(['Authors'])->first();
         $this->assertEquals('TestPlugin.Comments', $result->getSource());

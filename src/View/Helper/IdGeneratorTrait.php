@@ -23,7 +23,6 @@ use Cake\Utility\Text;
  */
 trait IdGeneratorTrait
 {
-
     /**
      * Prefix for id attribute.
      *

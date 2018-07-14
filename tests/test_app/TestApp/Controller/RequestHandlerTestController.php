@@ -23,7 +23,6 @@ use Cake\Controller\Controller;
  */
 class RequestHandlerTestController extends Controller
 {
-
     /**
      * test method for ajax redirection
      *

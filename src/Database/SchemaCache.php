@@ -15,7 +15,6 @@
 namespace Cake\Database;
 
 use Cake\Cache\Cache;
-use Cake\Database\Connection;
 
 /**
  * Schema Cache.
@@ -27,7 +26,6 @@ use Cake\Database\Connection;
  */
 class SchemaCache
 {
-
     /**
      * Schema
      *

@@ -41,7 +41,6 @@ use Cake\Event\EventListenerInterface;
  */
 class Helper implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -206,7 +205,7 @@ class Helper implements EventListenerInterface
             'View.beforeRender' => 'beforeRender',
             'View.afterRender' => 'afterRender',
             'View.beforeLayout' => 'beforeLayout',
-            'View.afterLayout' => 'afterLayout'
+            'View.afterLayout' => 'afterLayout',
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {

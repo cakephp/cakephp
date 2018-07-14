@@ -15,7 +15,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -26,7 +25,6 @@ use PDO;
  */
 class BoolType extends BaseType implements BatchCastingInterface
 {
-
     /**
      * Convert bool data into the database format.
      *

@@ -20,7 +20,6 @@ use Cake\View\StringTemplate;
 
 class StringTemplateTest extends TestCase
 {
-
     /**
      * setUp
      *
@@ -40,7 +39,7 @@ class StringTemplateTest extends TestCase
     public function testConstructorAdd()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
         ];
         $template = new StringTemplate($templates);
         $this->assertEquals($templates['link'], $template->get('link'));
@@ -54,7 +53,7 @@ class StringTemplateTest extends TestCase
     public function testAdd()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
         ];
         $result = $this->template->add($templates);
         $this->assertSame(
@@ -74,7 +73,7 @@ class StringTemplateTest extends TestCase
     public function testRemove()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
         ];
         $this->template->add($templates);
         $this->assertNull($this->template->remove('link'), 'No return');
@@ -91,7 +90,7 @@ class StringTemplateTest extends TestCase
         $templates = [
             'link' => '<a href="{{url}}">{{text}}</a>',
             'text' => '{{text}}',
-            'custom' => '<custom {{standard}} v1="{{var1}}" v2="{{var2}}" />'
+            'custom' => '<custom {{standard}} v1="{{var1}}" v2="{{var2}}" />',
         ];
         $this->template->add($templates);
 
@@ -103,13 +102,13 @@ class StringTemplateTest extends TestCase
 
         $result = $this->template->format('link', [
             'url' => '/',
-            'text' => 'example'
+            'text' => 'example',
         ]);
         $this->assertEquals('<a href="/">example</a>', $result);
 
         $result = $this->template->format('custom', [
             'standard' => 'default',
-            'templateVars' => ['var1' => 'foo']
+            'templateVars' => ['var1' => 'foo'],
         ]);
         $this->assertEquals('<custom default v1="foo" v2="" />', $result);
     }
@@ -138,19 +137,19 @@ class StringTemplateTest extends TestCase
     public function testFormatArrayData()
     {
         $templates = [
-            'link' => '<a href="{{url}}">{{text}}</a>'
+            'link' => '<a href="{{url}}">{{text}}</a>',
         ];
         $this->template->add($templates);
 
         $result = $this->template->format('link', [
             'url' => '/',
-            'text' => ['example', 'text']
+            'text' => ['example', 'text'],
         ]);
         $this->assertEquals('<a href="/">exampletext</a>', $result);
 
         $result = $this->template->format('link', [
             'url' => '/',
-            'text' => ['key' => 'example', 'text']
+            'text' => ['key' => 'example', 'text'],
         ]);
         $this->assertEquals('<a href="/">exampletext</a>', $result);
     }
@@ -395,7 +394,7 @@ class StringTemplateTest extends TestCase
             [
                 'class' => 'current_class',
                 'other_index1' => false,
-                'type' => 'text'
+                'type' => 'text',
             ],
             'new_class',
             'class'
@@ -403,14 +402,14 @@ class StringTemplateTest extends TestCase
         $this->assertEquals($result, [
             'class' => ['current_class', 'new_class'],
             'other_index1' => false,
-            'type' => 'text'
+            'type' => 'text',
         ]);
 
         $result = $this->template->addClass(
             [
                 'my_class' => 'current_class',
                 'other_index1' => false,
-                'type' => 'text'
+                'type' => 'text',
             ],
             'new_class',
             'my_class'
@@ -418,15 +417,15 @@ class StringTemplateTest extends TestCase
         $this->assertEquals($result, [
             'other_index1' => false,
             'type' => 'text',
-            'my_class' => ['current_class', 'new_class']
+            'my_class' => ['current_class', 'new_class'],
         ]);
 
         $result = $this->template->addClass(
             [
                 'class' => [
                     'current_class',
-                    'text'
-                ]
+                    'text',
+                ],
             ],
             'new_class',
             'non-existent'
@@ -434,9 +433,9 @@ class StringTemplateTest extends TestCase
         $this->assertEquals($result, [
             'class' => [
                 'current_class',
-                'text'
+                'text',
             ],
-            'non-existent' => ['new_class']
+            'non-existent' => ['new_class'],
         ]);
     }
 }

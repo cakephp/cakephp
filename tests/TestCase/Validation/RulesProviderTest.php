@@ -22,7 +22,6 @@ use Cake\Validation\RulesProvider;
  */
 class RulesProviderTest extends TestCase
 {
-
     /**
      * Tests that RulesProvider proxies the method correctly and removes the
      * extra arguments that are passed according to the signature of validation

@@ -20,7 +20,6 @@ use Cake\Controller\Controller;
  */
 class SomePagesController extends Controller
 {
-
     /**
      * display method
      *

@@ -26,7 +26,6 @@ use TestApp\Database\Type\FooType;
  */
 class TypeFactoryTest extends TestCase
 {
-
     /**
      * Original type map
      *

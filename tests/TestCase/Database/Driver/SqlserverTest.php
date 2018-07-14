@@ -24,7 +24,6 @@ use PDO;
  */
 class SqlserverTest extends TestCase
 {
-
     /**
      * Set up
      *
@@ -135,7 +134,7 @@ class SqlserverTest extends TestCase
         $expected['flags'] += [
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::SQLSRV_ATTR_ENCODING => 'a-language'
+            PDO::SQLSRV_ATTR_ENCODING => 'a-language',
         ];
         $expected['attributes'] = [];
         $expected['app'] = null;
@@ -197,7 +196,7 @@ class SqlserverTest extends TestCase
         $expected['flags'] = [
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::SQLSRV_ATTR_ENCODING => 'a-language'
+            PDO::SQLSRV_ATTR_ENCODING => 'a-language',
         ];
         $expected['attributes'] = [];
         $expected['settings'] = [];

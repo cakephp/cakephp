@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestSuiteTest extends TestCase
 {
-
     /**
      * testAddTestDirectory
      *

@@ -32,7 +32,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleDeleteMode()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -61,7 +61,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleUpdateMode()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -90,7 +90,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleCreateMode()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -119,7 +119,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleWithName()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -143,7 +143,7 @@ class RulesCheckerTest extends TestCase
     public function testAddWithErrorMessage()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -166,7 +166,7 @@ class RulesCheckerTest extends TestCase
     public function testAddWithMessageOption()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -189,7 +189,7 @@ class RulesCheckerTest extends TestCase
     public function testAddWithoutFields()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();

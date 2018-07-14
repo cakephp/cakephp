@@ -17,7 +17,6 @@ namespace Cake\Console;
 
 use Cake\Error\BaseErrorHandler;
 use Cake\Error\FatalErrorException;
-use Exception;
 use Throwable;
 
 /**
@@ -26,7 +25,6 @@ use Throwable;
  */
 class ConsoleErrorHandler extends BaseErrorHandler
 {
-
     /**
      * Standard error stream.
      *

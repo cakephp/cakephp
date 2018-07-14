@@ -22,18 +22,17 @@ use Cake\Database\ValueBinder;
  */
 class UnaryExpression implements ExpressionInterface
 {
-
     /**
      * Indicates that the operation is in pre-order
      *
      */
-    const PREFIX = 0;
+    public const PREFIX = 0;
 
     /**
      * Indicates that the operation is in post-order
      *
      */
-    const POSTFIX = 1;
+    public const POSTFIX = 1;
 
     /**
      * The operator this unary expression represents

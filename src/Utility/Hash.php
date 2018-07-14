@@ -31,7 +31,6 @@ use RuntimeException;
  */
 class Hash
 {
-
     /**
      * Get a single value specified by $path out of $data.
      * Does not support the full dot notation feature set,
@@ -73,11 +72,11 @@ class Hash
 
         switch (count($parts)) {
             case 1:
-                return isset($data[$parts[0]]) ? $data[$parts[0]] : $default;
+                return $data[$parts[0]] ?? $default;
             case 2:
-                return isset($data[$parts[0]][$parts[1]]) ? $data[$parts[0]][$parts[1]] : $default;
+                return $data[$parts[0]][$parts[1]] ?? $default;
             case 3:
-                return isset($data[$parts[0]][$parts[1]][$parts[2]]) ? $data[$parts[0]][$parts[1]][$parts[2]] : $default;
+                return $data[$parts[0]][$parts[1]][$parts[2]] ?? $default;
             default:
                 foreach ($parts as $key) {
                     if ((is_array($data) || $data instanceof ArrayAccess) && isset($data[$key])) {
@@ -246,8 +245,8 @@ class Hash
 
         foreach ($conditions as $cond) {
             $attr = $cond['attr'];
-            $op = isset($cond['op']) ? $cond['op'] : null;
-            $val = isset($cond['val']) ? $cond['val'] : null;
+            $op = $cond['op'] ?? null;
+            $val = $cond['val'] ?? null;
 
             // Presence test.
             if (empty($op) && empty($val) && !isset($data[$attr])) {
@@ -716,12 +715,12 @@ class Hash
             $keys = explode($separator, (string)$flat);
             $keys = array_reverse($keys);
             $child = [
-                $keys[0] => $value
+                $keys[0] => $value,
             ];
             array_shift($keys);
             foreach ($keys as $k) {
                 $child = [
-                    $k => $child
+                    $k => $child,
                 ];
             }
 
@@ -1185,7 +1184,7 @@ class Hash
             'idPath' => "{n}.$alias.id",
             'parentPath' => "{n}.$alias.parent_id",
             'children' => 'children',
-            'root' => null
+            'root' => null,
         ];
 
         $return = $idMap = [];

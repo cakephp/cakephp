@@ -24,7 +24,6 @@ use RuntimeException;
  */
 class ExistsIn
 {
-
     /**
      * The list of fields to check
      *

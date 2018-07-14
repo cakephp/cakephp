@@ -26,7 +26,6 @@ use InvalidArgumentException;
  */
 trait QueryTrait
 {
-
     /**
      * Instance of a table object this query is bound to
      *
@@ -325,7 +324,7 @@ trait QueryTrait
      * @return $this
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
-    public function mapReduce(callable $mapper = null, callable $reducer = null, bool $overwrite = false)
+    public function mapReduce(?callable $mapper = null, ?callable $reducer = null, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_mapReduce = [];
@@ -387,7 +386,7 @@ trait QueryTrait
      * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
      * @return $this
      */
-    public function formatResults(callable $formatter = null, $mode = 0)
+    public function formatResults(?callable $formatter = null, $mode = 0)
     {
         if ($mode === self::OVERWRITE) {
             $this->_formatters = [];

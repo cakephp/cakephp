@@ -27,7 +27,6 @@ use Cake\View\Exception\MissingHelperException;
  */
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -127,7 +126,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     {
         throw new MissingHelperException([
             'class' => $class . 'Helper',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 
@@ -146,7 +145,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     {
         $instance = new $class($this->_View, $settings);
 
-        $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
+        $enable = $settings['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);
         }

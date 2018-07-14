@@ -25,7 +25,6 @@ namespace Cake\View;
  */
 trait StringTemplateTrait
 {
-
     /**
      * StringTemplate instance.
      *
