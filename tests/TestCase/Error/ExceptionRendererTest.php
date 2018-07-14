@@ -178,6 +178,7 @@ class ExceptionRendererTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+        Plugin::unload();
         if ($this->_restoreError) {
             restore_error_handler();
         }
@@ -802,7 +803,7 @@ class ExceptionRendererTest extends TestCase
      */
     public function testMissingPluginRenderSafeWithPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $exception = new NotFoundException();
         $ExceptionRenderer = new ExceptionRenderer($exception);
 

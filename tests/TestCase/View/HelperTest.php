@@ -108,7 +108,7 @@ class HelperTest extends TestCase
      */
     public function testLazyLoadingHelpers()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $Helper = new TestHelper($this->View);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);
@@ -122,8 +122,6 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached()
     {
-        Plugin::loadAll();
-
         $events = $this->getMockBuilder('\Cake\Event\EventManager')->getMock();
         $this->View->setEventManager($events);
 

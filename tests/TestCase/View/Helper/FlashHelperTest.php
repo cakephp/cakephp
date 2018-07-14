@@ -106,6 +106,7 @@ class FlashHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->View, $this->Flash);
+        Plugin::unload();
     }
 
     /**
@@ -175,7 +176,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPluginElement()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
         $expected = 'this is the plugin element';
@@ -189,7 +190,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithTheme()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
 
         $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');

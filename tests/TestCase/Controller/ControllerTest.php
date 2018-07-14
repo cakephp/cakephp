@@ -318,7 +318,7 @@ class ControllerTest extends TestCase
      */
     public function testLoadModelInPlugins()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $Controller = new TestPluginController();
         $Controller->setPlugin('TestPlugin');
@@ -343,7 +343,7 @@ class ControllerTest extends TestCase
      */
     public function testConstructSetModelClass()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $request = new ServerRequest();
         $response = new Response();
@@ -368,7 +368,7 @@ class ControllerTest extends TestCase
      */
     public function testConstructClassesWithComponents()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $Controller = new TestPluginController(new ServerRequest(), new Response());
         $Controller->loadComponent('TestPlugin.Other');
@@ -383,7 +383,7 @@ class ControllerTest extends TestCase
      */
     public function testRender()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $request = new ServerRequest([
             'url' => 'controller_posts/index',

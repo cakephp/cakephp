@@ -312,7 +312,7 @@ class ViewTest extends TestCase
         $this->ThemeView = $this->ThemePostsController->createView();
         $this->ThemeView->setTemplatePath('Posts');
 
-        Plugin::load(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
         Configure::write('debug', true);
     }
 
@@ -607,7 +607,6 @@ class ViewTest extends TestCase
         $result = $View->getViewFileName('page.home');
         $this->assertPathEquals($expected, $result, 'Should not ruin files with dots.');
 
-        Plugin::load('TestPlugin');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
         $result = $View->getViewFileName('TestPlugin.home');
         $this->assertPathEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
@@ -730,7 +729,6 @@ class ViewTest extends TestCase
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
-        Plugin::load('TestPlugin');
 
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
             'Template' . DS . 'Layout' . DS . 'default.ctp';
