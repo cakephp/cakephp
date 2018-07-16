@@ -744,7 +744,9 @@ class AuthComponent extends Component implements EventDispatcherInterface
         if ($url !== null) {
             $redirectUrl = $url;
         } elseif ($redirectUrl) {
-            if (Router::normalize($redirectUrl) === Router::normalize($this->_config['loginAction'])) {
+            if ($this->_config['loginAction']
+                && Router::normalize($redirectUrl) === Router::normalize($this->_config['loginAction'])
+            ) {
                 $redirectUrl = $this->_config['loginRedirect'];
             }
         } elseif ($this->_config['loginRedirect']) {

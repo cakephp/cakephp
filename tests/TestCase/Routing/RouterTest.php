@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1947,19 +1948,19 @@ class RouterTest extends TestCase
     {
         Router::connect('/cache/*', ['prefix' => false, 'plugin' => true, 'controller' => 0, 'action' => 1]);
 
-        $url = Router::url(['prefix' => 0, 'plugin' => 1, 'controller' => 0, 'action' => 1, 'test']);
+        $url = Router::url(['prefix' => '0', 'plugin' => '1', 'controller' => '0', 'action' => '1', 'test']);
         $expected = '/cache/test';
         $this->assertEquals($expected, $url);
 
         try {
-            Router::url(['controller' => 0, 'action' => 1, 'test']);
+            Router::url(['controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
         } catch (\Exception $e) {
             $this->assertTrue(true, 'Exception was raised');
         }
 
         try {
-            Router::url(['prefix' => 1, 'controller' => 0, 'action' => 1, 'test']);
+            Router::url(['prefix' => '1', 'controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
         } catch (\Exception $e) {
             $this->assertTrue(true, 'Exception was raised');

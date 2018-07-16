@@ -5,7 +5,7 @@ use Cake\Routing\Route\InflectedRoute;
 
 class DashedRoute extends InflectedRoute
 {
-    protected function _underscore($url)
+    protected function _underscore(array $url): array
     {
         $url = parent::_underscore($url);
 

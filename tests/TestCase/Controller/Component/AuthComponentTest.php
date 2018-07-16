@@ -761,6 +761,7 @@ class AuthComponentTest extends TestCase
             'webroot' => 'webroot',
             'base' => false,
             'baseUrl' => '/cake/index.php',
+            'fullBaseUrl' => '',
         ]);
 
         $this->Auth->getController()->getRequest()->getSession()->delete('Auth');
