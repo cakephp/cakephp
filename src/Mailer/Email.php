@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -768,7 +769,7 @@ class Email implements JsonSerializable, Serializable
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return;
             }
-        } elseif (preg_match($this->_emailPattern, $email)) {
+        } elseif (preg_match($this->_emailPattern, (string)$email)) {
             return;
         }
 
@@ -1795,7 +1796,7 @@ class Email implements JsonSerializable, Serializable
         $this->viewBuilder()->setTemplate('');
         $this->viewBuilder()->setClassName('Cake\View\View');
         $this->viewVars = [];
-        $this->viewBuilder()->setTheme(false);
+        $this->viewBuilder()->setTheme(null);
         $this->viewBuilder()->setHelpers(['Html'], false);
 
         return $this;
@@ -1862,7 +1863,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _wrap($message, $wrapLength = Email::LINE_LENGTH_MUST)
     {
-        if (strlen($message) === 0) {
+        if ($message === null || strlen($message) === 0) {
             return [''];
         }
         $message = str_replace(["\r\n", "\r"], "\n", $message);
@@ -2187,7 +2188,7 @@ class Email implements JsonSerializable, Serializable
         $View = $this->createView();
 
         list($templatePlugin) = pluginSplit($View->getTemplate());
-        list($layoutPlugin) = pluginSplit($View->getLayout());
+        list($layoutPlugin) = pluginSplit((string)$View->getLayout());
         if ($templatePlugin) {
             $View->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {

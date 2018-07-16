@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -689,7 +690,7 @@ class EmailTest extends TestCase
 
         $this->Email->setSubject('You have a new message, I think.');
         $this->assertSame($this->Email->getSubject(), 'You have a new message, I think.');
-        $this->Email->setSubject(1);
+        $this->Email->setSubject('1');
         $this->assertSame('1', $this->Email->getSubject());
 
         $input = 'هذه رسالة بعنوان طويل مرسل للمستلم';
@@ -2133,7 +2134,7 @@ class EmailTest extends TestCase
 
         $this->Email->reset();
         $this->assertSame([], $this->Email->getTo());
-        $this->assertSame('', $this->Email->getTheme());
+        $this->assertNull($this->Email->getTheme());
         $this->assertSame(Email::EMAIL_PATTERN, $this->Email->getEmailPattern());
     }
 

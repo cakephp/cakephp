@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Emulates the email sending process for testing purposes
  *
