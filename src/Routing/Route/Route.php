@@ -505,7 +505,7 @@ class Route
      * @param string $url The url to parse.
      * @return array containing url, extension
      */
-    protected function _parseExtension($url)
+    protected function _parseExtension(string $url): array
     {
         if (count($this->_extensions) && strpos($url, '.') !== false) {
             foreach ($this->_extensions as $ext) {
@@ -526,10 +526,10 @@ class Route
      * Currently implemented rule types are controller, action and match that can be combined with each other.
      *
      * @param string $args A string with the passed params. eg. /1/foo
-     * @param string $context The current route context, which should contain controller/action keys.
+     * @param array $context The current route context, which should contain controller/action keys.
      * @return array Array of passed args.
      */
-    protected function _parseArgs($args, $context)
+    protected function _parseArgs(string $args, array $context): array
     {
         $pass = [];
         $args = explode('/', $args);
@@ -553,7 +553,7 @@ class Route
      * @param array $params An array of persistent values to replace persistent ones.
      * @return array An array with persistent parameters applied.
      */
-    protected function _persistParams(array $url, array $params)
+    protected function _persistParams(array $url, array $params): array
     {
         foreach ($this->options['persist'] as $persistKey) {
             if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
@@ -721,7 +721,7 @@ class Route
      * @param array $url The array for the URL being generated.
      * @return bool
      */
-    protected function _matchMethod($url)
+    protected function _matchMethod(array $url): bool
     {
         if (empty($this->defaults['_method'])) {
             return true;
@@ -750,7 +750,7 @@ class Route
      * @param array $query An array of parameters
      * @return string Composed route string.
      */
-    protected function _writeUrl($params, $pass = [], $query = [])
+    protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
         $pass = implode('/', array_map('rawurlencode', $pass));
         $out = $this->template;
@@ -857,7 +857,7 @@ class Route
      *
      * @return array
      */
-    public function getMiddleware()
+    public function getMiddleware(): array
     {
         return $this->middleware;
     }

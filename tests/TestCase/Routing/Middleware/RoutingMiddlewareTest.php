@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -108,6 +109,8 @@ class RoutingMiddlewareTest extends TestCase
                 '_matchedRoute' => '/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -133,6 +136,8 @@ class RoutingMiddlewareTest extends TestCase
                 '_csrfToken' => 'i-am-groot',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -160,6 +165,8 @@ class RoutingMiddlewareTest extends TestCase
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertNotEmpty(Router::routes());
             $this->assertEquals('/app/articles', Router::routes()[0]->template);
+
+            return $res;
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
@@ -203,6 +210,8 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals(['controller' => 'Articles'], $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -218,6 +227,7 @@ class RoutingMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
         $response = new Response();
         $next = function ($req, $res) {
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -255,6 +265,8 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertEquals('PATCH', $req->getMethod());
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);

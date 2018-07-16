@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,6 +21,7 @@ use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
+use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -54,10 +56,10 @@ class RoutingMiddleware
     /**
      * Constructor
      *
-     * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
+     * @param \Cake\Http\BaseApplication|null $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(?BaseApplication $app = null, $cacheConfig = null)
+    public function __construct(?BaseApplication $app = null, ?string $cacheConfig = null)
     {
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;
@@ -72,7 +74,7 @@ class RoutingMiddleware
      *
      * @return void
      */
-    protected function loadRoutes()
+    protected function loadRoutes(): void
     {
         if (!$this->app) {
             return;
@@ -87,7 +89,7 @@ class RoutingMiddleware
      *
      * @return \Cake\Routing\RouteCollection
      */
-    protected function buildRouteCollection()
+    protected function buildRouteCollection(): RouteCollection
     {
         if (Cache::enabled() && $this->cacheConfig !== null) {
             return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
@@ -103,7 +105,7 @@ class RoutingMiddleware
      *
      * @return \Cake\Routing\RouteCollection
      */
-    protected function prepareRouteCollection()
+    protected function prepareRouteCollection(): RouteCollection
     {
         $builder = Router::createRouteBuilder('/');
         $this->app->routes($builder);
@@ -126,7 +128,7 @@ class RoutingMiddleware
      * @return \Psr\Http\Message\ResponseInterface A response.
      * @throws \Cake\Routing\InvalidArgumentException
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $this->loadRoutes();
         try {

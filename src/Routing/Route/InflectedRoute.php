@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -88,7 +89,7 @@ class InflectedRoute extends Route
      * @param array $url An array of URL keys.
      * @return array
      */
-    protected function _underscore($url)
+    protected function _underscore(array $url): array
     {
         if (!empty($url['controller'])) {
             $url['controller'] = Inflector::underscore($url['controller']);
