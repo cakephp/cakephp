@@ -18,8 +18,8 @@ namespace Cake\Database\Type;
 use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use DateTime;
-use DateTimeInterface;
 use DateTimeImmutable;
+use DateTimeInterface;
 
 /**
  * Class DateType
