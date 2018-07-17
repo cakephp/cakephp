@@ -84,7 +84,7 @@ class DateType extends DateTimeType
     /**
      * {@inheritDoc}
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value)
     {
         /* @var \Cake\I18n\Time $class */
         $class = $this->_className;
