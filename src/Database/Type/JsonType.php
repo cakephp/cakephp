@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?string
     {
         if (is_resource($value)) {
             throw new InvalidArgumentException('Cannot convert a resource value to JSON');
@@ -50,6 +51,10 @@ class JsonType extends BaseType implements BatchCastingInterface
      */
     public function toPHP($value, Driver $driver)
     {
+        if (!is_string($value)) {
+            return null;
+        }
+
         return json_decode($value, true);
     }
 
@@ -58,7 +63,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -78,7 +83,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }

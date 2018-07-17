@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,7 +36,7 @@ abstract class BaseType implements TypeInterface
      *
      * @param string|null $name The name identifying this type
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         $this->_name = $name;
     }

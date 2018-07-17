@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -49,7 +50,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @return string|null
      * @throws \InvalidArgumentException
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?string
     {
         if ($value === null || $value === '') {
             return null;
@@ -75,7 +76,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @return float|null
      * @throws \Cake\Core\Exception\Exception
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, Driver $driver): ?float
     {
         if ($value === null) {
             return $value;
@@ -89,7 +90,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -109,7 +110,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }
@@ -145,7 +146,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param bool $enable Whether or not to enable
      * @return $this
      */
-    public function useLocaleParser($enable = true)
+    public function useLocaleParser(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
@@ -171,7 +172,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an float.
      * @return float
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value): float
     {
         /* @var \Cake\I18n\Number $class */
         $class = static::$numberClass;

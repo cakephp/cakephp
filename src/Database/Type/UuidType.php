@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ class UuidType extends StringType
      * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?string
     {
         if ($value === null || $value === '') {
             return null;
@@ -43,7 +44,7 @@ class UuidType extends StringType
      *
      * @return string A new primary key value.
      */
-    public function newId()
+    public function newId(): string
     {
         return Text::uuid();
     }
@@ -54,7 +55,7 @@ class UuidType extends StringType
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?string
     {
         if ($value === null || $value === '' || is_array($value)) {
             return null;

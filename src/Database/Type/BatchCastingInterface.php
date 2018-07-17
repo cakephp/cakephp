@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,5 +32,5 @@ interface BatchCastingInterface
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted.
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver);
+    public function manyToPHP(array $values, array $fields, Driver $driver): array;
 }

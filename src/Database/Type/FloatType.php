@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -47,7 +48,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?float
     {
         if ($value === null || $value === '') {
             return null;
@@ -64,7 +65,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @return float|null
      * @throws \Cake\Core\Exception\Exception
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, Driver $driver): ?float
     {
         if ($value === null) {
             return null;
@@ -78,7 +79,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -98,7 +99,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }
@@ -109,7 +110,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return float|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?float
     {
         if ($value === null || $value === '') {
             return null;
@@ -124,7 +125,7 @@ class FloatType extends BaseType implements BatchCastingInterface
             return 1.0;
         }
 
-        return $value;
+        return null;
     }
 
     /**
@@ -134,7 +135,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param bool $enable Whether or not to enable
      * @return $this
      */
-    public function useLocaleParser($enable = true)
+    public function useLocaleParser(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
@@ -160,7 +161,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an float.
      * @return float
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value): float
     {
         $class = static::$numberClass;
 
