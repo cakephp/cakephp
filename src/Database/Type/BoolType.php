@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return bool|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?bool
     {
         if ($value === true || $value === false || $value === null) {
             return $value;
@@ -55,7 +56,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return bool|null
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, Driver $driver): ?bool
     {
         if ($value === null || $value === true || $value === false) {
             return $value;
@@ -73,7 +74,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field]) || $values[$field] === true || $values[$field] === false) {
@@ -109,7 +110,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         if ($value === null) {
             return PDO::PARAM_NULL;
@@ -124,7 +125,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return bool|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?bool
     {
         if ($value === null) {
             return null;

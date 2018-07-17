@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -50,7 +51,7 @@ class BinaryUuidType extends BaseType
      *
      * @return string A new primary key value.
      */
-    public function newId()
+    public function newId(): string
     {
         return Text::uuid();
     }
@@ -85,7 +86,7 @@ class BinaryUuidType extends BaseType
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_LOB;
     }
@@ -113,7 +114,7 @@ class BinaryUuidType extends BaseType
      *
      * @return string Converted value.
      */
-    protected function convertBinaryUuidToString($binary)
+    protected function convertBinaryUuidToString($binary): string
     {
         $string = unpack("H*", $binary);
 

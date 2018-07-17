@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\BaseType;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Database\TypeFactory;
@@ -45,7 +46,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
         return new UuidValue($value);
     }
 
-    public function toExpression($value)
+    public function toExpression($value): ExpressionInterface
     {
         if ($value instanceof UuidValue) {
             $value = $value->value;

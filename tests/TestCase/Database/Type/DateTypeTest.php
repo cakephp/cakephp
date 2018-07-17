@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -122,10 +123,10 @@ class DateTypeTest extends TestCase
             [false, null],
             [true, null],
             ['', null],
-            ['derpy', 'derpy'],
-            ['2013-nope!', '2013-nope!'],
-            ['14-02-14', '14-02-14'],
-            ['2014-02-14 13:14:15', '2014-02-14 13:14:15'],
+            ['derpy', null],
+            ['2013-nope!', null],
+            ['14-02-14', null],
+            ['2014-02-14 13:14:15', null],
 
             // valid string types
             ['1392387900', $date],
