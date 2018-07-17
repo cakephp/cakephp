@@ -167,16 +167,16 @@ class Folder
      * Change directory to $path.
      *
      * @param string $path Path to the directory to change to
-     * @return string|null The new path. Returns null on failure
+     * @return string|bool The new path. Returns false on failure
      */
-    public function cd(string $path): ?string
+    public function cd(string $path)
     {
         $path = $this->realpath($path);
         if ($path !== false && is_dir($path)) {
             return $this->path = $path;
         }
 
-        return null;
+        return false;
     }
 
     /**

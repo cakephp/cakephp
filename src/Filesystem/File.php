@@ -143,18 +143,18 @@ class File
      * @param string|bool $bytes where to start
      * @param string $mode A `fread` compatible mode.
      * @param bool $force If true then the file will be re-opened even if its already opened, otherwise it won't
-     * @return string|null string on success, false on failure
+     * @return string|bool string on success, false on failure
      */
-    public function read($bytes = false, string $mode = 'rb', bool $force = false): ?string
+    public function read($bytes = false, string $mode = 'rb', bool $force = false)
     {
         if ($bytes === false && $this->lock === null) {
             return file_get_contents($this->path);
         }
         if ($this->open($mode, $force) === false) {
-            return null;
+            return false;
         }
         if ($this->lock !== null && flock($this->handle, LOCK_SH) === false) {
-            return null;
+            return false;
         }
         if (is_int($bytes)) {
             return fread($this->handle, $bytes);
@@ -318,9 +318,9 @@ class File
     /**
      * Returns the file extension.
      *
-     * @return string|null The file extension, false if extension cannot be extracted.
+     * @return string|bool The file extension, false if extension cannot be extracted.
      */
-    public function ext(): ?string
+    public function ext()
     {
         if (!$this->info) {
             $this->info();
@@ -329,15 +329,15 @@ class File
             return $this->info['extension'];
         }
 
-        return null;
+        return false;
     }
 
     /**
      * Returns the file name without extension.
      *
-     * @return string|null The file name without extension, false if name cannot be extracted.
+     * @return string|bool The file name without extension, false if name cannot be extracted.
      */
-    public function name(): ?string
+    public function name()
     {
         if (!$this->info) {
             $this->info();
@@ -349,7 +349,7 @@ class File
             return $this->name;
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -389,10 +389,10 @@ class File
     public function safe(?string $name = null, ?string $ext = null): string
     {
         if (!$name) {
-            $name = $this->name;
+            $name = (string)$this->name;
         }
         if (!$ext) {
-            $ext = $this->ext();
+            $ext = (string)$this->ext();
         }
 
         return preg_replace("/(?:[^\w\.-]+)/", '_', static::_basename($name, $ext));
@@ -402,9 +402,9 @@ class File
      * Get md5 Checksum of file with previous check of Filesize
      *
      * @param int|bool $maxsize in MB or true to force
-     * @return string|null md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or null in case of an error
+     * @return string|bool md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or false in case of an error
      */
-    public function md5($maxsize = 5): ?string
+    public function md5($maxsize = 5)
     {
         if ($maxsize === true) {
             return md5_file($this->path);
@@ -415,15 +415,15 @@ class File
             return md5_file($this->path);
         }
 
-        return null;
+        return false;
     }
 
     /**
      * Returns the full path of the file.
      *
-     * @return string|null Full path to the file, or null on failure
+     * @return string|bool Full path to the file, or false on failure
      */
-    public function pwd(): ?string
+    public function pwd()
     {
         if ($this->path === null) {
             $dir = $this->Folder->pwd();
@@ -450,29 +450,29 @@ class File
     /**
      * Returns the "chmod" (permissions) of the file.
      *
-     * @return string|null Permissions for the file, or null in case of an error
+     * @return string|bool Permissions for the file, or false in case of an error
      */
-    public function perms(): ?string
+    public function perms()
     {
         if ($this->exists()) {
             return substr(sprintf('%o', fileperms($this->path)), -4);
         }
 
-        return null;
+        return false;
     }
 
     /**
      * Returns the file size
      *
-     * @return int|null Size of the file in bytes, or null in case of an error
+     * @return int|bool Size of the file in bytes, or false in case of an error
      */
-    public function size(): ?int
+    public function size()
     {
         if ($this->exists()) {
             return filesize($this->path);
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -508,57 +508,57 @@ class File
     /**
      * Returns the file's owner.
      *
-     * @return int|null The file owner, or null in case of an error
+     * @return int|bool The file owner, or bool in case of an error
      */
-    public function owner(): ?int
+    public function owner()
     {
         if ($this->exists()) {
             return fileowner($this->path);
         }
 
-        return null;
+        return false;
     }
 
     /**
      * Returns the file's group.
      *
-     * @return int|null The file group, or null in case of an error
+     * @return int|bool The file group, or false in case of an error
      */
-    public function group(): ?int
+    public function group()
     {
         if ($this->exists()) {
             return filegroup($this->path);
         }
 
-        return null;
+        return false;
     }
 
     /**
      * Returns last access time.
      *
-     * @return int|null Timestamp of last access time, or null in case of an error
+     * @return int|bool Timestamp of last access time, or false in case of an error
      */
-    public function lastAccess(): ?int
+    public function lastAccess()
     {
         if ($this->exists()) {
             return fileatime($this->path);
         }
 
-        return null;
+        return false;
     }
 
     /**
      * Returns last modified time.
      *
-     * @return int|null Timestamp of last modification, or null in case of an error
+     * @return int|bool Timestamp of last modification, or false in case of an error
      */
-    public function lastChange(): ?int
+    public function lastChange()
     {
         if ($this->exists()) {
             return filemtime($this->path);
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -591,12 +591,12 @@ class File
      * Gets the mime type of the file. Uses the finfo extension if
      * it's available, otherwise falls back to mime_content_type().
      *
-     * @return null|string The mimetype of the file, or false if reading fails.
+     * @return bool|string The mimetype of the file, or false if reading fails.
      */
-    public function mime(): ?string
+    public function mime()
     {
         if (!$this->exists()) {
-            return null;
+            return false;
         }
         if (class_exists('finfo')) {
             $finfo = new finfo(FILEINFO_MIME);
@@ -612,7 +612,7 @@ class File
             return mime_content_type($this->pwd());
         }
 
-        return null;
+        return false;
     }
 
     /**
