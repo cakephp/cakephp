@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -99,11 +100,13 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $name The name under which the rule is set.
      * @return \Cake\Validation\ValidationRule|null
      */
-    public function rule($name)
+    public function rule(string $name): ?ValidationRule
     {
         if (!empty($this->_rules[$name])) {
             return $this->_rules[$name];
         }
+
+        return null;
     }
 
     /**
@@ -111,7 +114,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return \Cake\Validation\ValidationRule[]
      */
-    public function rules()
+    public function rules(): array
     {
         return $this->_rules;
     }
@@ -131,7 +134,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationRule|array $rule The validation rule to be set
      * @return $this
      */
-    public function add($name, $rule)
+    public function add(string $name, $rule)
     {
         if (!($rule instanceof ValidationRule)) {
             $rule = new ValidationRule($rule);
@@ -155,7 +158,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $name The name under which the rule should be unset
      * @return $this
      */
-    public function remove($name)
+    public function remove(string $name)
     {
         unset($this->_rules[$name]);
 
@@ -212,7 +215,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->_rules);
     }
@@ -222,7 +225,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_rules);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -85,7 +86,7 @@ trait ValidatorAwareTrait
      * @param string|null $name The name of the validation set to return.
      * @return \Cake\Validation\Validator
      */
-    public function getValidator($name = null)
+    public function getValidator(?string $name = null): Validator
     {
         $name = $name ?: self::DEFAULT_VALIDATOR;
         if (!isset($this->_validators[$name])) {
@@ -107,7 +108,7 @@ trait ValidatorAwareTrait
      * @return \Cake\Validation\Validator
      * @throws \RuntimeException
      */
-    protected function createValidator($name)
+    protected function createValidator(string $name): Validator
     {
         $method = 'validation' . ucfirst($name);
         if (!$this->validationMethodExists($method)) {
@@ -147,7 +148,7 @@ trait ValidatorAwareTrait
      * @param \Cake\Validation\Validator $validator Validator object to be set.
      * @return $this
      */
-    public function setValidator($name, Validator $validator)
+    public function setValidator(string $name, Validator $validator)
     {
         $validator->setProvider(self::VALIDATOR_PROVIDER_NAME, $this);
         $this->_validators[$name] = $validator;
@@ -161,7 +162,7 @@ trait ValidatorAwareTrait
      * @param string $name The name of a validator.
      * @return bool
      */
-    public function hasValidator($name)
+    public function hasValidator(string $name): bool
     {
         $method = 'validation' . ucfirst($name);
         if ($this->validationMethodExists($method)) {
@@ -177,7 +178,7 @@ trait ValidatorAwareTrait
      * @param string $name Validation method name.
      * @return bool
      */
-    protected function validationMethodExists($name)
+    protected function validationMethodExists(string $name): bool
     {
         return method_exists($this, $name);
     }
@@ -190,7 +191,7 @@ trait ValidatorAwareTrait
      * add some rules to it.
      * @return \Cake\Validation\Validator
      */
-    public function validationDefault(Validator $validator)
+    public function validationDefault(Validator $validator): Validator
     {
         return $validator;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,5 +27,5 @@ interface ValidatableInterface
      * @param \Cake\Validation\Validator $validator The validator to use when validating the entity.
      * @return array
      */
-    public function validate(Validator $validator);
+    public function validate(Validator $validator): array;
 }

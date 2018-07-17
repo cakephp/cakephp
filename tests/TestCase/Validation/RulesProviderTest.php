@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\RulesProvider;
+use Cake\Validation\ValidationSet;
 
 /**
  * Tests RulesProvider class
@@ -50,7 +52,7 @@ class RulesProviderTest extends TestCase
         $mock->expects($this->once())
             ->method('field')
             ->with('first', null)
-            ->will($this->returnValue(true));
+            ->will($this->returnValue(new ValidationSet()));
 
         $provider = new RulesProvider($mock);
         $provider->field('first', compact('provider'));
