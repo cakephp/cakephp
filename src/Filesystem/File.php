@@ -318,7 +318,7 @@ class File
     /**
      * Returns the file extension.
      *
-     * @return string|bool The file extension, false if extension cannot be extracted.
+     * @return string|false The file extension, false if extension cannot be extracted.
      */
     public function ext()
     {
@@ -335,7 +335,7 @@ class File
     /**
      * Returns the file name without extension.
      *
-     * @return string|bool The file name without extension, false if name cannot be extracted.
+     * @return string|false The file name without extension, false if name cannot be extracted.
      */
     public function name()
     {
@@ -402,7 +402,7 @@ class File
      * Get md5 Checksum of file with previous check of Filesize
      *
      * @param int|bool $maxsize in MB or true to force
-     * @return string|bool md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or false in case of an error
+     * @return string|false md5 Checksum {@link https://secure.php.net/md5_file See md5_file()}, or false in case of an error
      */
     public function md5($maxsize = 5)
     {
@@ -421,7 +421,7 @@ class File
     /**
      * Returns the full path of the file.
      *
-     * @return string|bool Full path to the file, or false on failure
+     * @return string|false Full path to the file, or false on failure
      */
     public function pwd()
     {
@@ -450,7 +450,7 @@ class File
     /**
      * Returns the "chmod" (permissions) of the file.
      *
-     * @return string|bool Permissions for the file, or false in case of an error
+     * @return string|false Permissions for the file, or false in case of an error
      */
     public function perms()
     {
@@ -464,7 +464,7 @@ class File
     /**
      * Returns the file size
      *
-     * @return int|bool Size of the file in bytes, or false in case of an error
+     * @return int|false Size of the file in bytes, or false in case of an error
      */
     public function size()
     {
@@ -508,7 +508,7 @@ class File
     /**
      * Returns the file's owner.
      *
-     * @return int|bool The file owner, or bool in case of an error
+     * @return int|false The file owner, or bool in case of an error
      */
     public function owner()
     {
@@ -522,7 +522,7 @@ class File
     /**
      * Returns the file's group.
      *
-     * @return int|bool The file group, or false in case of an error
+     * @return int|false The file group, or false in case of an error
      */
     public function group()
     {
@@ -536,7 +536,7 @@ class File
     /**
      * Returns last access time.
      *
-     * @return int|bool Timestamp of last access time, or false in case of an error
+     * @return int|false Timestamp of last access time, or false in case of an error
      */
     public function lastAccess()
     {
@@ -550,7 +550,7 @@ class File
     /**
      * Returns last modified time.
      *
-     * @return int|bool Timestamp of last modification, or false in case of an error
+     * @return int|false Timestamp of last modification, or false in case of an error
      */
     public function lastChange()
     {
@@ -591,7 +591,7 @@ class File
      * Gets the mime type of the file. Uses the finfo extension if
      * it's available, otherwise falls back to mime_content_type().
      *
-     * @return bool|string The mimetype of the file, or false if reading fails.
+     * @return string|false The mimetype of the file, or false if reading fails.
      */
     public function mime()
     {
