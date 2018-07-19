@@ -616,23 +616,21 @@ class Router
             'action' => 'index',
             '_ext' => null,
         ];
-        $here = $base = $output = $frag = null;
+        $here = $output = $frag = null;
 
+        $context = static::$_requestContext;
         // In 4.x this should be replaced with state injected via setRequestContext
         $request = static::getRequest(true);
         if ($request) {
             $params = $request->getAttribute('params');
             $here = $request->getRequestTarget();
-            $base = $request->getAttribute('base');
-        } else {
-            $base = Configure::read('App.base');
-            if (isset(static::$_requestContext['_base'])) {
-                $base = static::$_requestContext['_base'];
-            }
+            $context['_base'] = $request->getAttribute('base');
+        } elseif (!isset($context['_base'])) {
+            $context['_base'] = Configure::read('App.base');
         }
 
         if (empty($url)) {
-            $output = $base . (isset($here) ? $here : '/');
+            $output = $context['_base'] . (isset($here) ? $here : '/');
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
@@ -680,8 +678,9 @@ class Router
             if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
                 $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
             }
+            $context['params'] = $params;
 
-            $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
+            $output = static::$_collection->match($url, $context);
         } else {
             $plainString = (
                 strpos($url, 'javascript:') === 0 ||
@@ -697,7 +696,7 @@ class Router
             if ($plainString) {
                 return $url;
             }
-            $output = $base . $url;
+            $output = $context['_base'] . $url;
         }
         $protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
         if ($protocol === 0) {
