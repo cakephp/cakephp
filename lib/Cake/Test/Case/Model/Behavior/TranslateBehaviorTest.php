@@ -1144,6 +1144,16 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$TestModel->bindTranslation($translations);
 
 		$result = $TestModel->find('first');
+		$TestModel->find('first', array(
+			'fields' => array(
+				'TranslatedItem.title',
+			),
+		));
+		$TestModel->find('first', array(
+			'fields' => array(
+				'TranslatedItem.title',
+			),
+		));
 		$this->assertArrayHasKey('Title', $result);
 		$this->assertArrayHasKey('content', $result['Title'][0]);
 		$this->assertArrayNotHasKey('title', $result);
