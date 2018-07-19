@@ -330,5 +330,5 @@ class Stream
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Adapter\Stream', 'Cake\Network\Http\Adapter\Stream');

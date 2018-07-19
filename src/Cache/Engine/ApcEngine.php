@@ -14,7 +14,7 @@
  */
 namespace Cake\Cache\Engine;
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.6.0 Add backwards compat alias.
 class_alias('Cake\Cache\Engine\ApcuEngine', 'Cake\Cache\Engine\ApcEngine');
 
 deprecationWarning('Use Cake\Cache\Engine\ApcuEngine instead of Cake\Cache\Engine\ApcEngine.');

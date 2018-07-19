@@ -868,5 +868,5 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Database\Schema\TableSchema', 'Cake\Database\Schema\Table');

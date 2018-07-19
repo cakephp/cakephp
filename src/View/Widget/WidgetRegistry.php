@@ -12,7 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-// @deprecated Add backwards compat alias.
+// @deprecated 3.6.0 Add backwards compat alias.
 class_alias('Cake\View\Widget\WidgetLocator', 'Cake\View\Widget\WidgetRegistry');
 
 deprecationWarning('Use Cake\View\Widget\WidgetLocator instead of Cake\View\Widget\WidgetRegistry.');

@@ -283,5 +283,5 @@ class Request extends Message implements RequestInterface
     }
 }
 
-// @deprecated Add backwards compact alias.
+// @deprecated 3.4.0 Add backwards compact alias.
 class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');
