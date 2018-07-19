@@ -344,7 +344,7 @@ class TranslateBehavior extends ModelBehavior {
 	public function afterFind(Model $Model, $results, $primary = false) {
 		$Model->virtualFields = $this->runtime[$Model->alias]['virtualFields'];
 
-		$this->runtime[$Model->alias]['virtualFields'] = $this->runtime[$Model->alias]['fields'] = array();
+		$this->runtime[$Model->alias]['virtualFields'] = array();
 		if (!empty($this->runtime[$Model->alias]['restoreFields'])) {
 			$this->runtime[$Model->alias]['fields'] = $this->runtime[$Model->alias]['restoreFields'];
 			unset($this->runtime[$Model->alias]['restoreFields']);
