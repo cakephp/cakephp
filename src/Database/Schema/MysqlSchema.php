@@ -32,7 +32,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config)
+    public function listTablesSql(array $config): array
     {
         return ['SHOW TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
     }
@@ -40,7 +40,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeColumnSql($tableName, $config)
+    public function describeColumnSql(string $tableName, array $config): array
     {
         return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($tableName), []];
     }
@@ -48,7 +48,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeIndexSql($tableName, $config)
+    public function describeIndexSql(string $tableName, array $config): array
     {
         return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($tableName), []];
     }
@@ -56,7 +56,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeOptionsSql($tableName, $config)
+    public function describeOptionsSql(string $tableName, array $config): array
     {
         return ['SHOW TABLE STATUS WHERE Name = ?', [$tableName]];
     }
@@ -64,7 +64,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertOptionsDescription(TableSchema $schema, $row)
+    public function convertOptionsDescription(TableSchema $schema, array $row): void
     {
         $schema->setOptions([
             'engine' => $row['Engine'],
@@ -81,7 +81,7 @@ class MysqlSchema extends BaseSchema
      * @return array Array of column information.
      * @throws \Cake\Database\Exception When column type cannot be parsed.
      */
-    protected function _convertColumn($column)
+    protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
         if (empty($matches)) {
@@ -170,7 +170,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(TableSchema $schema, $row)
+    public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn($row['Type']);
         $field += [
@@ -188,7 +188,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertIndexDescription(TableSchema $schema, $row)
+    public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $type = null;
         $columns = $length = [];
@@ -244,7 +244,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeForeignKeySql($tableName, $config)
+    public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
             INNER JOIN information_schema.referential_constraints AS rc
@@ -260,7 +260,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(TableSchema $schema, $row)
+    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $data = [
             'type' => TableSchema::CONSTRAINT_FOREIGN,
@@ -276,7 +276,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function truncateTableSql(TableSchema $schema)
+    public function truncateTableSql(TableSchema $schema): array
     {
         return [sprintf('TRUNCATE TABLE `%s`', $schema->name())];
     }
@@ -284,7 +284,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
+    public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
         $content = implode(",\n", array_merge($columns, $constraints, $indexes));
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
@@ -306,7 +306,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(TableSchema $schema, $name)
+    public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
@@ -449,7 +449,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(TableSchema $schema, $name)
+    public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
@@ -476,7 +476,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(TableSchema $schema)
+    public function addConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
@@ -495,7 +495,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(TableSchema $schema)
+    public function dropConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s DROP FOREIGN KEY %s;';
         $sql = [];
@@ -515,7 +515,7 @@ class MysqlSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(TableSchema $schema, $name)
+    public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
         $out = '';
@@ -537,7 +537,7 @@ class MysqlSchema extends BaseSchema
      * @param array $data Key data.
      * @return string
      */
-    protected function _keySql($prefix, $data)
+    protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],

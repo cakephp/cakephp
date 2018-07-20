@@ -32,7 +32,7 @@ interface SqlGeneratorInterface
      * @return array List of SQL statements to create the table and the
      *    required indexes.
      */
-    public function createSql(Connection $connection);
+    public function createSql(Connection $connection): array;
 
     /**
      * Generate the SQL to drop a table.
@@ -43,7 +43,7 @@ interface SqlGeneratorInterface
      * @param \Cake\Database\Connection $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
-    public function dropSql(Connection $connection);
+    public function dropSql(Connection $connection): array;
 
     /**
      * Generate the SQL statements to truncate a table
@@ -51,7 +51,7 @@ interface SqlGeneratorInterface
      * @param \Cake\Database\Connection $connection The connection to generate SQL for.
      * @return array SQL to truncate a table.
      */
-    public function truncateSql(Connection $connection);
+    public function truncateSql(Connection $connection): array;
 
     /**
      * Generate the SQL statements to add the constraints to the table
@@ -59,7 +59,7 @@ interface SqlGeneratorInterface
      * @param \Cake\Database\Connection $connection The connection to generate SQL for.
      * @return array SQL to add the constraints.
      */
-    public function addConstraintSql(Connection $connection);
+    public function addConstraintSql(Connection $connection): array;
 
     /**
      * Generate the SQL statements to drop the constraints to the table
@@ -67,5 +67,5 @@ interface SqlGeneratorInterface
      * @param \Cake\Database\Connection $connection The connection to generate SQL for.
      * @return array SQL to drop a table.
      */
-    public function dropConstraintSql(Connection $connection);
+    public function dropConstraintSql(Connection $connection): array;
 }
