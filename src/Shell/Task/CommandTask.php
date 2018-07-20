@@ -70,7 +70,7 @@ class CommandTask extends Shell
      * @param array $skip A list of commands to exclude.
      * @return array The updated list of shells.
      */
-    protected function _findShells($shellList, $path, $key, $skip)
+    protected function _findShells(array $shellList, string $path, string $key, array $skip): array
     {
         $shells = $this->_scanDir($path);
 
@@ -86,7 +86,7 @@ class CommandTask extends Shell
      * @param array $skip List of command names to skip.
      * @return array The updated $shellList
      */
-    protected function _appendShells($type, $shells, $shellList, $skip)
+    protected function _appendShells(string $type, array $shells, array $shellList, array $skip): array
     {
         if (!isset($shellList[$type])) {
             $shellList[$type] = [];
@@ -110,7 +110,7 @@ class CommandTask extends Shell
      * @param string $dir The directory to read.
      * @return array The list of shell classnames based on conventions.
      */
-    protected function _scanDir($dir)
+    protected function _scanDir(string $dir): array
     {
         $dir = new Folder($dir);
         $contents = $dir->read(true, true);
@@ -133,7 +133,7 @@ class CommandTask extends Shell
      *
      * @return array
      */
-    public function commands()
+    public function commands(): array
     {
         $shellList = $this->getShellList();
         $flatten = Hash::flatten($shellList);
@@ -165,7 +165,7 @@ class CommandTask extends Shell
      * @return array
      * @throws \ReflectionException
      */
-    public function subCommands($commandName)
+    public function subCommands(string $commandName): array
     {
         $Shell = $this->getShell($commandName);
 
@@ -203,7 +203,7 @@ class CommandTask extends Shell
      * @param string $commandName The command you want.
      * @return \Cake\Console\Shell|bool Shell instance if the command can be found, false otherwise.
      */
-    public function getShell($commandName)
+    public function getShell(string $commandName)
     {
         list($pluginDot, $name) = pluginSplit($commandName, true);
 
@@ -253,7 +253,7 @@ class CommandTask extends Shell
      * If this parameter is used, the subcommand must be a valid subcommand of the command passed
      * @return array Options list for the given command or subcommand
      */
-    public function options($commandName, $subCommandName = '')
+    public function options(string $commandName, string $subCommandName = ''): array
     {
         $Shell = $this->getShell($commandName);
 

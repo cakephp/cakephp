@@ -37,7 +37,7 @@ class SchemaCacheShell extends Shell
      * @param string|null $name The name of the table to build cache data for.
      * @return bool
      */
-    public function build($name = null)
+    public function build(?string $name = null): bool
     {
         $cache = $this->_getSchemaCache();
         $tables = $cache->build($name);
@@ -57,7 +57,7 @@ class SchemaCacheShell extends Shell
      * @param string|null $name The name of the table to clear cache data for.
      * @return bool
      */
-    public function clear($name = null)
+    public function clear(?string $name = null): bool
     {
         $cache = $this->_getSchemaCache();
         $tables = $cache->clear($name);
@@ -76,7 +76,7 @@ class SchemaCacheShell extends Shell
      *
      * @return \Cake\Database\SchemaCache
      */
-    protected function _getSchemaCache()
+    protected function _getSchemaCache(): SchemaCache
     {
         try {
             $connection = ConnectionManager::get($this->params['connection']);

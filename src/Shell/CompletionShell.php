@@ -165,7 +165,7 @@ class CompletionShell extends Shell
      * @param array $options The options to output
      * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
-    protected function _output($options = [])
+    protected function _output(array $options = [])
     {
         if ($options) {
             return $this->out(implode($options, ' '));

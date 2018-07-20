@@ -118,7 +118,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _getPaths()
+    protected function _getPaths(): void
     {
         $defaultPath = APP;
         while (true) {
@@ -156,7 +156,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    public function main()
+    public function main(): void
     {
         if (!empty($this->params['exclude'])) {
             $this->_exclude = explode(',', $this->params['exclude']);
@@ -257,7 +257,7 @@ class ExtractTask extends Shell
      * @param array $details Context and plural form if any, file and line references
      * @return void
      */
-    protected function _addTranslation($domain, $msgid, $details = [])
+    protected function _addTranslation(string $domain, string $msgid, array $details = []): void
     {
         $context = $details['msgctxt'] ?? '';
 
@@ -282,7 +282,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _extract()
+    protected function _extract(): void
     {
         $this->out();
         $this->out();
@@ -362,7 +362,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _extractTokens()
+    protected function _extractTokens(): void
     {
         /** @var \Cake\Shell\Helper\ProgressHelper $progress */
         $progress = $this->helper('progress');
@@ -408,7 +408,7 @@ class ExtractTask extends Shell
      * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
      * @return void
      */
-    protected function _parse($functionName, $map)
+    protected function _parse(string $functionName, array $map): void
     {
         $count = 0;
         $tokenCount = count($this->_tokens);
@@ -466,7 +466,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _buildFiles()
+    protected function _buildFiles(): void
     {
         $paths = $this->_paths;
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
@@ -523,7 +523,7 @@ class ExtractTask extends Shell
      * @param string $sentence The sentence to store.
      * @return void
      */
-    protected function _store($domain, $header, $sentence)
+    protected function _store(string $domain, string $header, string $sentence): void
     {
         if (!isset($this->_storage[$domain])) {
             $this->_storage[$domain] = [];
@@ -540,7 +540,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _writeFiles()
+    protected function _writeFiles(): void
     {
         $overwriteAll = false;
         if (!empty($this->params['overwrite'])) {
@@ -589,7 +589,7 @@ class ExtractTask extends Shell
      *
      * @return string Translation template header
      */
-    protected function _writeHeader()
+    protected function _writeHeader(): string
     {
         $output = "# LANGUAGE translation of CakePHP Application\n";
         $output .= "# Copyright YEAR NAME <EMAIL@ADDRESS>\n";
@@ -617,7 +617,7 @@ class ExtractTask extends Shell
      * @param int $target Number of strings to extract
      * @return array Strings extracted
      */
-    protected function _getStrings(&$position, $target)
+    protected function _getStrings(int &$position, int $target): array
     {
         $strings = [];
         $count = count($strings);
@@ -649,7 +649,7 @@ class ExtractTask extends Shell
      * @param string $string String to format
      * @return string Formatted string
      */
-    protected function _formatString($string)
+    protected function _formatString(string $string): string
     {
         $quote = substr($string, 0, 1);
         $string = substr($string, 1, -1);
@@ -672,7 +672,7 @@ class ExtractTask extends Shell
      * @param int $count Count
      * @return void
      */
-    protected function _markerError($file, $line, $marker, $count)
+    protected function _markerError(string $file, int $line, string $marker, int $count): void
     {
         $this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
@@ -702,7 +702,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _searchFiles()
+    protected function _searchFiles(): void
     {
         $pattern = false;
         if (!empty($this->_exclude)) {
@@ -734,7 +734,7 @@ class ExtractTask extends Shell
      *
      * @return bool
      */
-    protected function _isExtractingApp()
+    protected function _isExtractingApp(): bool
     {
         return $this->_paths === [APP];
     }
@@ -745,7 +745,7 @@ class ExtractTask extends Shell
      * @param string $path Path to folder
      * @return bool true if it exists and is writable, false otherwise
      */
-    protected function _isPathUsable($path)
+    protected function _isPathUsable($path): bool
     {
         if (!is_dir($path)) {
             mkdir($path, 0770, true);
