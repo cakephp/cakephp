@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -180,12 +181,12 @@ class SqliteSchema extends BaseSchema
      */
     protected function _defaultValue($default)
     {
-        if ($default === 'NULL') {
+        if ($default === 'NULL' || $default === null) {
             return null;
         }
 
         // Remove quotes
-        if (preg_match("/^'(.*)'$/", $default, $matches)) {
+        if (preg_match("/^'(.*)'$/", (string)$default, $matches)) {
             return str_replace("''", "'", $matches[1]);
         }
 
