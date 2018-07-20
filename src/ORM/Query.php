@@ -33,6 +33,7 @@ use RuntimeException;
  *
  * @see \Cake\Collection\CollectionInterface For a full description of the collection methods supported by this class
  * @method \Cake\Collection\CollectionInterface each(callable $c) Passes each of the query results to the callable
+ * @method \Cake\Collection\CollectionInterface sortBy($callback, $dir = SORT_DESC, $type = \SORT_NUMERIC) Sorts the query with the callback
  * @method \Cake\Collection\CollectionInterface filter(callable $c = null) Keeps the results using passing the callable test
  * @method \Cake\Collection\CollectionInterface reject(callable $c) Removes the results passing the callable test
  * @method bool every(callable $c) Returns true if all the results pass the callable test
