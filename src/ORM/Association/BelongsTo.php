@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,6 +21,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Closure;
 use RuntimeException;
 
 /**
@@ -43,7 +45,7 @@ class BelongsTo extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string
+     * @return string|array
      */
     public function getForeignKey()
     {
@@ -63,7 +65,7 @@ class BelongsTo extends Association
      * @param array $options The options for the original delete.
      * @return bool Success.
      */
-    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {
         return true;
     }
@@ -73,7 +75,7 @@ class BelongsTo extends Association
      *
      * @return string
      */
-    protected function _propertyName()
+    protected function _propertyName(): string
     {
         list(, $name) = pluginSplit($this->_name);
 
@@ -88,7 +90,7 @@ class BelongsTo extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
-    public function isOwningSide(Table $side)
+    public function isOwningSide(Table $side): bool
     {
         return $side === $this->getTarget();
     }
@@ -98,7 +100,7 @@ class BelongsTo extends Association
      *
      * @return string
      */
-    public function type()
+    public function type(): string
     {
         return self::MANY_TO_ONE;
     }
@@ -146,7 +148,7 @@ class BelongsTo extends Association
      * @throws \RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the target table primaryKey
      */
-    protected function _joinCondition($options)
+    protected function _joinCondition(array $options): array
     {
         $conditions = [];
         $tAlias = $this->_name;
@@ -183,7 +185,7 @@ class BelongsTo extends Association
      *
      * @return \Closure
      */
-    public function eagerLoader(array $options)
+    public function eagerLoader(array $options): Closure
     {
         $loader = new SelectLoader([
             'alias' => $this->getAlias(),

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,6 +20,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Closure;
 
 /**
  * Represents an 1 - 1 relationship where the source side of the relation is
@@ -41,7 +43,7 @@ class HasOne extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string
+     * @return string|array
      */
     public function getForeignKey()
     {
@@ -57,7 +59,7 @@ class HasOne extends Association
      *
      * @return string
      */
-    protected function _propertyName()
+    protected function _propertyName(): string
     {
         list(, $name) = pluginSplit($this->_name);
 
@@ -72,7 +74,7 @@ class HasOne extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
-    public function isOwningSide(Table $side)
+    public function isOwningSide(Table $side): bool
     {
         return $side === $this->getSource();
     }
@@ -82,7 +84,7 @@ class HasOne extends Association
      *
      * @return string
      */
-    public function type()
+    public function type(): string
     {
         return self::ONE_TO_ONE;
     }
@@ -126,7 +128,7 @@ class HasOne extends Association
      *
      * @return \Closure
      */
-    public function eagerLoader(array $options)
+    public function eagerLoader(array $options): Closure
     {
         $loader = new SelectLoader([
             'alias' => $this->getAlias(),
@@ -145,7 +147,7 @@ class HasOne extends Association
     /**
      * {@inheritDoc}
      */
-    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {
         $helper = new DependentDeleteHelper();
 
