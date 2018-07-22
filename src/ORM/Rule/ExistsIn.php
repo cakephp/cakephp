@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ namespace Cake\ORM\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Table;
 use RuntimeException;
 
 /**
@@ -76,7 +78,7 @@ class ExistsIn
      * @throws \RuntimeException When the rule refers to an undefined association.
      * @return bool
      */
-    public function __invoke(EntityInterface $entity, array $options)
+    public function __invoke(EntityInterface $entity, array $options) : bool
     {
         if (is_string($this->_repository)) {
             if (!$options['repository']->hasAssociation($this->_repository)) {
@@ -144,7 +146,7 @@ class ExistsIn
      * @param \Cake\ORM\Table $source The table to use schema from.
      * @return bool
      */
-    protected function _fieldsAreNull($entity, $source)
+    protected function _fieldsAreNull(EntityInterface $entity, Table $source) : bool
     {
         $nulls = 0;
         $schema = $source->getSchema();

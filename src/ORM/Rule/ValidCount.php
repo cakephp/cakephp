@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,7 +36,7 @@ class ValidCount
      *
      * @param string $field The field to check the count on.
      */
-    public function __construct($field)
+    public function __construct(string $field)
     {
         $this->_field = $field;
     }
@@ -47,7 +48,7 @@ class ValidCount
      * @param array $options Options passed to the check.
      * @return bool True if successful, else false.
      */
-    public function __invoke(EntityInterface $entity, array $options)
+    public function __invoke(EntityInterface $entity, array $options) : bool
     {
         $value = $entity->{$this->_field};
         if (!is_array($value) && !$value instanceof Countable) {
