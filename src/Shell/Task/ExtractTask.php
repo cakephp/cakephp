@@ -179,10 +179,10 @@ class ExtractTask extends Shell
         }
 
         if (isset($this->params['extract-core'])) {
-            $this->_extractCore = !(strtolower($this->params['extract-core']) === 'no');
+            $this->_extractCore = !(strtolower((string)$this->params['extract-core']) === 'no');
         } else {
             $response = $this->in('Would you like to extract the messages from the CakePHP core?', ['y', 'n'], 'n');
-            $this->_extractCore = strtolower($response) === 'y';
+            $this->_extractCore = strtolower((string)$response) === 'y';
         }
 
         if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
@@ -226,11 +226,11 @@ class ExtractTask extends Shell
         }
 
         if (isset($this->params['merge'])) {
-            $this->_merge = !(strtolower($this->params['merge']) === 'no');
+            $this->_merge = !(strtolower((string)$this->params['merge']) === 'no');
         } else {
             $this->out();
             $response = $this->in('Would you like to merge all domain strings into the default.pot file?', ['y', 'n'], 'n');
-            $this->_merge = strtolower($response) === 'y';
+            $this->_merge = strtolower((string)$response) === 'y';
         }
 
         if (empty($this->_files)) {

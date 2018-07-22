@@ -208,7 +208,7 @@ class CommandTask extends Shell
     {
         list($pluginDot, $name) = pluginSplit($commandName, true);
 
-        if (in_array(strtolower($pluginDot), ['app.', 'core.'])) {
+        if (in_array(strtolower((string)$pluginDot), ['app.', 'core.'])) {
             $commandName = $name;
             $pluginDot = '';
         }
