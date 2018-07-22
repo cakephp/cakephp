@@ -500,7 +500,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getIndex($name): array
+    public function getIndex($name): ?array
     {
         if (!isset($this->_indexes[$name])) {
             return null;
