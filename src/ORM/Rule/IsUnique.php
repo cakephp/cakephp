@@ -62,7 +62,7 @@ class IsUnique
      * @param array $options Options passed to the check,
      * @return bool
      */
-    public function __invoke(EntityInterface $entity, array $options) : bool
+    public function __invoke(EntityInterface $entity, array $options): bool
     {
         if (!$entity->extract($this->_fields, true)) {
             return true;
@@ -93,7 +93,7 @@ class IsUnique
      * @param bool $multipleNulls Whether or not to allow multiple nulls.
      * @return array
      */
-    protected function _alias(string $alias, array $conditions, bool $multipleNulls) : array
+    protected function _alias(string $alias, array $conditions, bool $multipleNulls): array
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
