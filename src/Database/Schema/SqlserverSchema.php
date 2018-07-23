@@ -184,10 +184,10 @@ class SqlserverSchema extends BaseSchema
      * Sqlite includes quotes and bared NULLs in default values.
      * We need to remove those.
      *
-     * @param string|null $default The default value.
-     * @return string|null
+     * @param string|int|null $default The default value.
+     * @return string|int|null
      */
-    protected function _defaultValue(?string $default): ?string
+    protected function _defaultValue($default)
     {
         if ($default === 'NULL') {
             return null;

@@ -114,7 +114,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config): array
+    public function listTablesSql(array $config): array
     {
         return [
             'SELECT name FROM sqlite_master WHERE type="table" ' .
@@ -126,7 +126,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeColumnSql($tableName, $config): array
+    public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = sprintf(
             'PRAGMA table_info(%s)',
@@ -139,7 +139,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(TableSchema $schema, $row): void
+    public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn($row['type']);
         $field += [
@@ -196,7 +196,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeIndexSql($tableName, $config): array
+    public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = sprintf(
             'PRAGMA index_list(%s)',
@@ -215,7 +215,7 @@ class SqliteSchema extends BaseSchema
      * the table. This is a limitation in Sqlite's metadata features.
      *
      */
-    public function convertIndexDescription(TableSchema $schema, $row): void
+    public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $sql = sprintf(
             'PRAGMA index_info(%s)',
@@ -244,7 +244,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeForeignKeySql($tableName, $config): array
+    public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
 
@@ -254,7 +254,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(TableSchema $schema, $row): void
+    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $name = $row['from'] . '_fk';
 
@@ -282,7 +282,7 @@ class SqliteSchema extends BaseSchema
      *
      * @throws \Cake\Database\Exception when the column type is unknown
      */
-    public function columnSql(TableSchema $schema, $name): string
+    public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
         $typeMap = [
@@ -382,7 +382,7 @@ class SqliteSchema extends BaseSchema
      * that integer primary keys be defined in the column definition.
      *
      */
-    public function constraintSql(TableSchema $schema, $name): string
+    public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
@@ -449,7 +449,7 @@ class SqliteSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(TableSchema $schema, $name): string
+    public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
         $columns = array_map(
