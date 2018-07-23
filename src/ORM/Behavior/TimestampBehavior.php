@@ -210,7 +210,7 @@ class TimestampBehavior extends Behavior
 
         if (!$type instanceof Type\DateTimeType) {
             deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
-            $entity->set($field, $ts instanceof \DateTimeInterface ? $ts->format('Y-m-d H:i:s') : (string) $ts);
+            $entity->set($field, $ts instanceof \DateTimeInterface ? $ts->format('Y-m-d H:i:s') : (string)$ts);
 
             return;
         }
