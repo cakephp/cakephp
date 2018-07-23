@@ -1506,6 +1506,23 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that entity class inflection works for compound nouns
+     *
+     * @return void
+     */
+    public function testEntityClassInflection()
+    {
+        $class = $this->getMockClass('\Cake\ORM\Entity');
+
+        if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
+            class_alias($class, 'TestApp\Model\Entity\CustomCookie');
+        }
+
+        $table = $this->getTableLocator()->get('CustomCookies');
+        $this->assertEquals('TestApp\Model\Entity\CustomCookie', $table->getEntityClass());
+    }
+
+    /**
      * Tests that using a simple string for entityClass will try to
      * load the class from the Plugin namespace when using plugin notation
      *

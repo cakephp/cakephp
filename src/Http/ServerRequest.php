@@ -2491,5 +2491,5 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\ServerRequest', 'Cake\Network\Request');
