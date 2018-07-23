@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -130,9 +131,9 @@ class Test3Behavior extends Behavior
     /**
      * Test method to ensure it is ignored as a callable method.
      */
-    public function verifyConfig()
+    public function verifyConfig(): void
     {
-        return parent::verifyConfig();
+        parent::verifyConfig();
     }
 
     /**
@@ -140,7 +141,7 @@ class Test3Behavior extends Behavior
      *
      * This class does pretend to implement beforeFind
      *
-     * @return void
+     * @return array
      */
     public function implementedEvents(): array
     {
@@ -150,14 +151,14 @@ class Test3Behavior extends Behavior
     /**
      * implementedFinders
      */
-    public function implementedFinders()
+    public function implementedFinders(): array
     {
     }
 
     /**
      * implementedMethods
      */
-    public function implementedMethods()
+    public function implementedMethods(): array
     {
     }
 
