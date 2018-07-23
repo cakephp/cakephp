@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -34,7 +35,7 @@ class DependentDeleteHelper
      * @param array $options The options for the original delete.
      * @return bool Success.
      */
-    public function cascadeDelete(Association $association, EntityInterface $entity, array $options = [])
+    public function cascadeDelete(Association $association, EntityInterface $entity, array $options = []): bool
     {
         if (!$association->getDependent()) {
             return true;
