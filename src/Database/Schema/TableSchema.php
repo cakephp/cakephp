@@ -500,7 +500,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getIndex($name): ?array
+    public function getIndex(string $name): ?array
     {
         if (!isset($this->_indexes[$name])) {
             return null;
@@ -527,7 +527,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
-    public function addConstraint($name, $attrs): TableSchemaInterface
+    public function addConstraint(string $name, array $attrs): TableSchemaInterface
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -583,7 +583,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function dropConstraint($name)
+    public function dropConstraint(string $name)
     {
         if (isset($this->_constraints[$name])) {
             unset($this->_constraints[$name]);
@@ -641,7 +641,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getConstraint($name): ?array
+    public function getConstraint(string $name): ?array
     {
         if (!isset($this->_constraints[$name])) {
             return null;
