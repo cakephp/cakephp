@@ -83,34 +83,6 @@ class Plugin
     }
 
     /**
-     * Loads the bootstrapping files for a plugin, or calls the initialization setup in the configuration
-     *
-     * @param string $name name of the plugin
-     * @return void
-     * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
-     * @deprecated 3.7 This method will be removed in 4.0.0.
-     */
-    public static function bootstrap(string $name): void
-    {
-        deprecationWarning(
-            'Plugin::bootstrap() is deprecated. ' .
-            'This method will be removed in 4.0.0.'
-        );
-        $plugin = static::getCollection()->get($name);
-        if (!$plugin->isEnabled('bootstrap')) {
-            return;
-        }
-        // Disable bootstrapping for this plugin as it will have
-        // been bootstrapped.
-        $plugin->disable('bootstrap');
-
-        static::_includeFile(
-            $plugin->getConfigPath() . 'bootstrap.php',
-            true
-        );
-    }
-
-    /**
      * Returns true if the plugin $plugin is already loaded.
      *
      * @param string $plugin Plugin name.
