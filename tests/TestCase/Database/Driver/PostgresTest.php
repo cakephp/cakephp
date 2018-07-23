@@ -150,7 +150,7 @@ class PostgresTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this
-            ->getMockBuilder('\Cake\Database\Connection')
+            ->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect'])
             ->disableOriginalConstructor()
             ->getMock();

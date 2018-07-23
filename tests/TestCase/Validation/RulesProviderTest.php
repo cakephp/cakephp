@@ -46,7 +46,7 @@ class RulesProviderTest extends TestCase
      */
     public function testCustomObject()
     {
-        $mock = $this->getMockBuilder('\Cake\Validation\Validator')
+        $mock = $this->getMockBuilder('Cake\Validation\Validator')
             ->setMethods(['field'])
             ->getMock();
         $mock->expects($this->once())

@@ -437,7 +437,7 @@ class TestCaseTest extends TestCase
         $Mock = $this->getMockForModel(
             'Table',
             ['save'],
-            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+            ['alias' => 'Comments', 'className' => 'Cake\ORM\Table']
         );
 
         $result = $this->getTableLocator()->get('Comments');

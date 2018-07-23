@@ -588,7 +588,7 @@ class CompositeKeyTest extends TestCase
     public function testFindThreadedCompositeKeys()
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['_addDefaultFields', 'execute'])
             ->setConstructorArgs([null, $table])
             ->getMock();

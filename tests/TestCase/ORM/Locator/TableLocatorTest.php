@@ -240,10 +240,10 @@ class TableLocatorTest extends TestCase
     public function testGetWithConfigClassName()
     {
         $this->_locator->setConfig('MyUsersTableAlias', [
-            'className' => '\Cake\Test\TestCase\ORM\Locator\MyUsersTable',
+            'className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable',
         ]);
         $result = $this->_locator->get('MyUsersTableAlias');
-        $this->assertInstanceOf('\Cake\Test\TestCase\ORM\Locator\MyUsersTable', $result, 'Should use getConfig() data className option.');
+        $this->assertInstanceOf('Cake\Test\TestCase\ORM\Locator\MyUsersTable', $result, 'Should use getConfig() data className option.');
     }
 
     /**

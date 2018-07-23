@@ -500,7 +500,7 @@ class BelongsToManyTest extends TestCase
     public function testLinkSuccessWithMocks()
     {
         $connection = ConnectionManager::get('test');
-        $joint = $this->getMockBuilder('\Cake\ORM\Table')
+        $joint = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['save', 'getPrimaryKey'])
             ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
             ->getMock();
@@ -857,7 +857,7 @@ class BelongsToManyTest extends TestCase
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association\BelongsToMany')
+        $assoc = $this->getMockBuilder('Cake\ORM\Association\BelongsToMany')
             ->setMethods(['_saveTarget', 'replaceLinks'])
             ->setConstructorArgs(['tags', ['sourceTable' => $table]])
             ->getMock();
@@ -886,7 +886,7 @@ class BelongsToManyTest extends TestCase
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association\BelongsToMany')
+        $assoc = $this->getMockBuilder('Cake\ORM\Association\BelongsToMany')
             ->setMethods(['_saveTarget', 'replaceLinks'])
             ->setConstructorArgs(['tags', ['sourceTable' => $table]])
             ->getMock();
@@ -918,7 +918,7 @@ class BelongsToManyTest extends TestCase
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association\BelongsToMany')
+        $assoc = $this->getMockBuilder('Cake\ORM\Association\BelongsToMany')
             ->setMethods(['replaceLinks'])
             ->setConstructorArgs(['tags', ['sourceTable' => $table]])
             ->getMock();
@@ -948,7 +948,7 @@ class BelongsToManyTest extends TestCase
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association\BelongsToMany')
+        $assoc = $this->getMockBuilder('Cake\ORM\Association\BelongsToMany')
             ->setMethods(['replaceLinks'])
             ->setConstructorArgs(['tags', ['sourceTable' => $table]])
             ->getMock();

@@ -53,7 +53,7 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolation()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
         $query = new LoggedQuery;
@@ -73,7 +73,7 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationNotNamed()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
         $query = new LoggedQuery;
@@ -93,7 +93,7 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationDuplicate()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
         $query = new LoggedQuery;
@@ -113,7 +113,7 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationNamed()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
         $query = new LoggedQuery;
@@ -133,7 +133,7 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationSpecialChars()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
         $query = new LoggedQuery;
@@ -159,13 +159,13 @@ class QueryLoggerTest extends TestCase
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
         $query->params = ['string', '3', null];
 
-        $engine = $this->getMockBuilder('\Cake\Log\Engine\BaseLog')
+        $engine = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->setConstructorArgs(['scopes' => ['queriesLog']])
             ->getMock();
         Log::engine('queryLoggerTest');
 
-        $engine2 = $this->getMockBuilder('\Cake\Log\Engine\BaseLog')
+        $engine2 = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->setConstructorArgs(['scopes' => ['foo']])
             ->getMock();

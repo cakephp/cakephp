@@ -665,7 +665,7 @@ class EventManagerTest extends TestCase
         $manager->dispatch($event2);
 
         $result = $manager->getEventList();
-        $this->assertInstanceOf('\Cake\Event\EventList', $result);
+        $this->assertInstanceOf('Cake\Event\EventList', $result);
         $this->assertCount(2, $result);
         $this->assertEquals($result[0], $event);
         $this->assertEquals($result[1], $event2);

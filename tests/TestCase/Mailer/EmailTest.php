@@ -2842,7 +2842,7 @@ HTML;
     {
         Email::dropTransport('default');
 
-        $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
+        $mock = $this->getMockBuilder('Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::setConfig('default', $config);
