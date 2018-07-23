@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -61,7 +62,7 @@ class IsUnique
      * @param array $options Options passed to the check,
      * @return bool
      */
-    public function __invoke(EntityInterface $entity, array $options)
+    public function __invoke(EntityInterface $entity, array $options): bool
     {
         if (!$entity->extract($this->_fields, true)) {
             return true;
@@ -92,7 +93,7 @@ class IsUnique
      * @param bool $multipleNulls Whether or not to allow multiple nulls.
      * @return array
      */
-    protected function _alias($alias, $conditions, $multipleNulls)
+    protected function _alias(string $alias, array $conditions, bool $multipleNulls): array
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {
