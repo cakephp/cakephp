@@ -627,7 +627,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 return $this->_entityClass = $default;
             }
 
-            $alias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+            $alias = Inflector::classify(Inflector::singularize(Inflector::underscore(substr(array_pop($parts), 0, -5))));
             $name = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $alias;
             if (!class_exists($name)) {
                 return $this->_entityClass = $default;

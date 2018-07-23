@@ -381,7 +381,7 @@ class ResultSetTest extends TestCase
      */
     public function testSourceOnContainAssociations()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $comments = $this->getTableLocator()->get('TestPlugin.Comments');
         $comments->belongsTo('Authors', [
             'className' => 'TestPlugin.Authors',
@@ -396,6 +396,7 @@ class ResultSetTest extends TestCase
         })->first();
         $this->assertEquals('TestPlugin.Comments', $result->getSource());
         $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
+        Plugin::unload();
     }
 
     /**

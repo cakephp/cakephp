@@ -87,7 +87,7 @@ class TableLocatorTest extends TestCase
      */
     public function testConfigPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $data = [
             'connection' => 'testing',
@@ -299,7 +299,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('TestPlugin.TestPluginComments');
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
@@ -325,8 +325,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetMultiplePlugins()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
@@ -352,7 +351,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithClassNameOption()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
         ]);
@@ -373,7 +372,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithFullNamespaceName()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $table = $this->_locator->get('Comments', [
             'className' => $class,
@@ -486,7 +485,7 @@ class TableLocatorTest extends TestCase
      */
     public function testSetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $mock = $this->getMockBuilder('TestPlugin\Model\Table\CommentsTable')->getMock();
 
@@ -540,8 +539,7 @@ class TableLocatorTest extends TestCase
      */
     public function testRemovePlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $this->_locator->get('TestPlugin.Comments');

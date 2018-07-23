@@ -399,7 +399,7 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelWithPlugin()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
         $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
@@ -424,6 +424,7 @@ class TestCaseTest extends TestCase
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
+        Plugin::unload();
     }
 
     /**

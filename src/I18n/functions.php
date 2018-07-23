@@ -21,7 +21,6 @@ if (!function_exists('__')) {
      * @param string $singular Text to translate.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null The translated text, or null if invalid.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__
      */
     function __($singular, ...$args)
@@ -48,7 +47,6 @@ if (!function_exists('__n')) {
      * @param int $count Count.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Plural form of translated string, or null if invalid.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__n
      */
     function __n($singular, $plural, $count, ...$args)
@@ -76,7 +74,6 @@ if (!function_exists('__d')) {
      * @param string $msg String to translate.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Translated string.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__d
      */
     function __d($domain, $msg, ...$args)
@@ -105,7 +102,6 @@ if (!function_exists('__dn')) {
      * @param int $count Count.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Plural form of translated string.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dn
      */
     function __dn($domain, $singular, $plural, $count, ...$args)
@@ -135,7 +131,6 @@ if (!function_exists('__x')) {
      * @param string $singular Text to translate.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Translated string.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__x
      */
     function __x($context, $singular, ...$args)
@@ -165,7 +160,6 @@ if (!function_exists('__xn')) {
      * @param int $count Count.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Plural form of translated string.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__xn
      */
     function __xn($context, $singular, $plural, $count, ...$args)
@@ -196,7 +190,6 @@ if (!function_exists('__dx')) {
      * @param string $msg String to translate.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Translated string.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dx
      */
     function __dx($domain, $context, $msg, ...$args)
@@ -230,7 +223,6 @@ if (!function_exists('__dxn')) {
      * @param int $count Count.
      * @param array ...$args Array with arguments or multiple arguments in function.
      * @return string|null Plural form of translated string.
-     * @throws \Aura\Intl\Exception
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#__dxn
      */
     function __dxn($domain, $context, $singular, $plural, $count, ...$args)

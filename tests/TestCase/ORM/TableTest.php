@@ -126,6 +126,7 @@ class TableTest extends TestCase
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
+        Plugin::unload();
     }
 
     /**
@@ -788,7 +789,7 @@ class TableTest extends TestCase
     public function testHasManyPluginOverlap()
     {
         $this->getTableLocator()->get('Comments');
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $table = new Table(['table' => 'authors']);
 
@@ -806,7 +807,7 @@ class TableTest extends TestCase
     public function testHasManyPluginOverlapConfig()
     {
         $this->getTableLocator()->get('Comments');
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $table = new Table(['table' => 'authors']);
 
@@ -1400,6 +1401,23 @@ class TableTest extends TestCase
         $table = new Table();
         $this->assertSame($table, $table->setEntityClass('TestUser'));
         $this->assertEquals('TestApp\Model\Entity\TestUser', $table->getEntityClass());
+    }
+
+    /**
+     * Test that entity class inflection works for compound nouns
+     *
+     * @return void
+     */
+    public function testEntityClassInflection()
+    {
+        $class = $this->getMockClass('\Cake\ORM\Entity');
+
+        if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
+            class_alias($class, 'TestApp\Model\Entity\CustomCookie');
+        }
+
+        $table = $this->getTableLocator()->get('CustomCookies');
+        $this->assertEquals('TestApp\Model\Entity\CustomCookie', $table->getEntityClass());
     }
 
     /**
@@ -3599,7 +3617,7 @@ class TableTest extends TestCase
      */
     public function testEntitySourceExistingAndNew()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Authors');
 
         $existingAuthor = $table->find()->first();
@@ -6378,7 +6396,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $this->assertEquals('Articles', $table->newEntity()->getSource());
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Comments');
         $this->assertEquals('TestPlugin.Comments', $table->newEntity()->getSource());
     }

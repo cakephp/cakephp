@@ -119,7 +119,7 @@ class Connection implements ConnectionInterface
         $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
-            $this->logQueries($config['log']);
+            $this->enableQueryLogging($config['log']);
         }
     }
 
@@ -771,16 +771,42 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Enable/disable query logging
+     *
+     * @param bool|null $value The value to set or read by using null.
+     * @return bool
      */
-    public function logQueries($enable = null): bool
+    public function logQueries($value = null): bool
     {
-        if ($enable === null) {
+        if ($value === null) {
             return $this->_logQueries;
         }
-        $this->_logQueries = $enable;
+        $this->enableQueryLogging($value);
 
-        return $enable;
+        return $this->_logQueries;
+    }
+
+    /**
+     * Enable/disable query logging
+     *
+     * @param bool $value Enable/disable query logging
+     * @return $this
+     */
+    public function enableQueryLogging($value)
+    {
+        $this->_logQueries = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Check if query logging is enabled.
+     *
+     * @return bool
+     */
+    public function isQueryLoggingEnabled()
+    {
+        return $this->_logQueries;
     }
 
     /**

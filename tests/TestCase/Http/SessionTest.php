@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Network;
 
+use Cake\Core\Plugin;
 use Cake\Http\Session;
 use Cake\Http\Session\CacheSession;
 use Cake\Http\Session\DatabaseSession;
@@ -82,6 +83,7 @@ class SessionTest extends TestCase
     {
         unset($_SESSION);
         parent::tearDown();
+        Plugin::unload();
     }
 
     /**
@@ -490,7 +492,7 @@ class SessionTest extends TestCase
     public function testUsingPluginHandler()
     {
         static::setAppNamespace();
-        \Cake\Core\Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $config = [
             'defaults' => 'cake',

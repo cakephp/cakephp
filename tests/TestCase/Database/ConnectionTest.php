@@ -889,13 +889,13 @@ class ConnectionTest extends TestCase
     public function testLoggerDecorator()
     {
         $logger = new QueryLogger;
-        $this->connection->logQueries(true);
+        $this->connection->enableQueryLogging(true);
         $this->connection->setLogger($logger);
         $st = $this->connection->prepare('SELECT 1');
         $this->assertInstanceOf(LoggingStatement::class, $st);
         $this->assertSame($logger, $st->getLogger());
 
-        $this->connection->logQueries(false);
+        $this->connection->enableQueryLogging(false);
         $st = $this->connection->prepare('SELECT 1');
         $this->assertNotInstanceOf('\Cake\Database\Log\LoggingStatement', $st);
     }
@@ -903,15 +903,32 @@ class ConnectionTest extends TestCase
     /**
      * test logQueries method
      *
+     * @deprecated
      * @return void
      */
     public function testLogQueries()
     {
-        $this->connection->logQueries(true);
-        $this->assertTrue($this->connection->logQueries());
+        $this->deprecated(function () {
+            $this->connection->logQueries(true);
+            $this->assertTrue($this->connection->logQueries());
 
-        $this->connection->logQueries(false);
-        $this->assertFalse($this->connection->logQueries());
+            $this->connection->logQueries(false);
+            $this->assertFalse($this->connection->logQueries());
+        });
+    }
+
+    /**
+     * test enableQueryLogging method
+     *
+     * @return void
+     */
+    public function testEnableQueryLogging()
+    {
+        $this->connection->enableQueryLogging(true);
+        $this->assertTrue($this->connection->isQueryLoggingEnabled());
+
+        $this->connection->enableQueryLogging(false);
+        $this->assertFalse($this->connection->isQueryLoggingEnabled());
     }
 
     /**
@@ -943,7 +960,7 @@ class ConnectionTest extends TestCase
             ->setMethods(['connect'])
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->logQueries(true);
+        $connection->enableQueryLogging(true);
 
         $driver = $this->getMockFormDriver();
         $connection->setDriver($driver);
@@ -987,7 +1004,7 @@ class ConnectionTest extends TestCase
                 $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'COMMIT')
             ));
-        $connection->logQueries(true);
+        $connection->enableQueryLogging(true);
         $connection->begin();
         $connection->commit();
     }

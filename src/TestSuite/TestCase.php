@@ -17,6 +17,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -186,6 +187,36 @@ abstract class TestCase extends BaseTestCase
             $this->fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
+    }
+
+    /**
+     * Load plugins into a simulated application.
+     *
+     * Useful to test how plugins being loaded/not loaded interact with other
+     * elements in CakePHP or applications.
+     *
+     * @param array $plugins list of Plugins to load
+     * @return \Cake\Http\BaseApplication
+     */
+    public function loadPlugins(array $plugins = [])
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+
+        foreach ($plugins as $k => $opts) {
+            if (is_array($opts)) {
+                $app->addPlugin($k, $opts);
+            } else {
+                $app->addPlugin($opts);
+            }
+        }
+        $app->pluginBootstrap();
+        $builder = Router::createRouteBuilder('/');
+        $app->pluginRoutes($builder);
+
+        return $app;
     }
 
     /**

@@ -257,8 +257,7 @@ class CommandCollectionTest extends TestCase
      */
     public function testDiscoverPlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $collection = new CommandCollection();
         // Add a dupe to test de-duping
@@ -298,5 +297,6 @@ class CommandCollectionTest extends TestCase
             'Long names are stored as well'
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
+        Plugin::unload();
     }
 }

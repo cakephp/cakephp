@@ -190,19 +190,21 @@ class BaseApplicationTest extends TestCase
      */
     public function testPluginBootstrapInteractWithPluginLoad()
     {
-        Plugin::load('TestPlugin', ['bootstrap' => true]);
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
-        $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
-        Configure::delete('PluginTest.test_plugin.bootstrap');
+        $this->deprecated(function () {
+            Plugin::load('TestPlugin', ['bootstrap' => true]);
+            $app = $this->getMockForAbstractClass(
+                BaseApplication::class,
+                [$this->path]
+            );
+            $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
+            Configure::delete('PluginTest.test_plugin.bootstrap');
 
-        $this->assertNull($app->pluginBootstrap());
-        $this->assertFalse(
-            Configure::check('PluginTest.test_plugin.bootstrap'),
-            'Key should not be set, as plugin has already had bootstrap run'
-        );
+            $this->assertNull($app->pluginBootstrap());
+            $this->assertFalse(
+                Configure::check('PluginTest.test_plugin.bootstrap'),
+                'Key should not be set, as plugin has already had bootstrap run'
+            );
+        });
     }
 
     /**
@@ -218,8 +220,9 @@ class BaseApplicationTest extends TestCase
             [$this->path]
         );
         $app->addPlugin('ParentPlugin');
-        $app->pluginBootstrap();
-
+        $this->deprecated(function () use ($app) {
+            $app->pluginBootstrap();
+        });
         $this->assertTrue(
             Configure::check('ParentPlugin.bootstrap'),
             'Plugin bootstrap should be run'

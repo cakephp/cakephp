@@ -47,7 +47,7 @@ class UrlHelperTest extends TestCase
         $this->Helper = new UrlHelper($this->View);
 
         static::setAppNamespace();
-        Plugin::load(['TestTheme']);
+        $this->loadPlugins(['TestTheme']);
         Router::scope('/', function ($routes) {
             $routes->fallbacks();
         });
@@ -61,10 +61,8 @@ class UrlHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Configure::delete('Asset');
 
         Plugin::unload();
-        Router::reload();
         unset($this->Helper, $this->View);
     }
 
@@ -283,7 +281,7 @@ class UrlHelperTest extends TestCase
     public function testAssetUrlPlugin()
     {
         $this->Helper->webroot = '';
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
         $this->assertEquals('test_plugin/style.css', $result);
@@ -331,7 +329,7 @@ class UrlHelperTest extends TestCase
     public function testAssetTimestampPluginsAndThemes()
     {
         Configure::write('Asset.timestamp', 'force');
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');

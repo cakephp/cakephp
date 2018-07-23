@@ -100,7 +100,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
         $this->View->setPlugin('TestPlugin');
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->OtherHelper;
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
     }
@@ -153,7 +153,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadWithAliasAndPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->load('SomeOther', ['className' => 'TestPlugin.OtherHelper']);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);
@@ -194,7 +194,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadPluginHelper()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helpers->load('TestPlugin.OtherHelper');
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
@@ -208,7 +208,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadPluginHelperDottedAlias()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helpers->load('thing.helper', [
             'className' => 'TestPlugin.OtherHelper',

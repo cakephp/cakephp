@@ -49,7 +49,7 @@ class RouteBuilderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestPlugin');
+        Plugin::unload();
     }
 
     /**
@@ -1180,7 +1180,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());

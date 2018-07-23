@@ -106,9 +106,16 @@ class Plugin
      * @param array $config configuration options for the plugin
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for the plugin to be loaded is not found
      * @return void
+     * @deprecated 3.7 This method will be removed in 4.0.0. Use Application::addPlugin() instead.
      */
     public static function load($plugin, array $config = []): void
     {
+        deprecationWarning(
+            'Plugin::load() is deprecated. ' .
+            'Use Application::addPlugin() instead. ' .
+            'This method will be removed in 4.0.0.'
+        );
+
         if (is_array($plugin)) {
             foreach ($plugin as $name => $conf) {
                 list($name, $conf) = is_numeric($name) ? [$conf, $config] : [$name, $conf];
@@ -185,6 +192,7 @@ class Plugin
      * @param array $options Options.
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException
+     * @deprecated 3.7 This method will be removed in 4.0.0.
      */
     public static function loadAll(array $options = []): void
     {
@@ -266,9 +274,14 @@ class Plugin
      * @param string $name name of the plugin
      * @return void
      * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
+     * @deprecated 3.7 This method will be removed in 4.0.0.
      */
     public static function bootstrap(string $name): void
     {
+        deprecationWarning(
+            'Plugin::bootstrap() is deprecated. ' .
+            'This method will be removed in 4.0.0.'
+        );
         $plugin = static::getCollection()->get($name);
         if (!$plugin->isEnabled('bootstrap')) {
             return;

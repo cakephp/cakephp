@@ -74,7 +74,7 @@ class HtmlHelperTest extends TestCase
             ->getMock();
         $this->Html = new HtmlHelper($this->View);
 
-        Plugin::load(['TestTheme']);
+        $this->loadPlugins(['TestTheme']);
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
 
@@ -91,8 +91,8 @@ class HtmlHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestTheme');
         Router::reload();
+        Plugin::unload();
         unset($this->Html, $this->View);
     }
 
@@ -600,7 +600,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('screen.css', ['once' => false]);
         $this->assertHtml($expected, $result);
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Html->css('TestPlugin.style', ['plugin' => false]);
         $expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
         $this->assertHtml($expected, $result);
@@ -713,7 +713,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssLink()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Html->css('TestPlugin.test_plugin_asset');
         $expected = [
@@ -793,7 +793,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssTimestamping()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         Configure::write('debug', true);
         Configure::write('Asset.timestamp', true);
@@ -880,7 +880,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginScriptTimestamping()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $pluginPath = Plugin::path('TestPlugin');
         $pluginJsPath = $pluginPath . 'webroot/js';
@@ -1015,7 +1015,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginScript()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Html->script('TestPlugin.foo');
         $expected = [

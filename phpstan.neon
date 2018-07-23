@@ -1,3 +1,6 @@
+includes:
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+
 parameters:
     autoload_files:
         - tests/bootstrap.php

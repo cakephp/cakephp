@@ -109,6 +109,7 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        Plugin::unload();
         if ($this->_restoreError) {
             restore_error_handler();
             restore_exception_handler();
@@ -377,7 +378,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testLoadPluginHandler()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $errorHandler = new TestErrorHandler([
             'exceptionRenderer' => 'TestPlugin.TestPluginExceptionRenderer',
         ]);

@@ -176,7 +176,7 @@ class I18nTest extends TestCase
      */
     public function testPluginMesagesLoad()
     {
-        Plugin::load([
+        $this->loadPlugins([
             'TestPlugin',
             'Company/TestPluginThree',
         ]);
@@ -202,7 +202,7 @@ class I18nTest extends TestCase
      */
     public function testPluginOverride()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
         $translator = I18n::getTranslator('test_theme');
         $this->assertEquals(
             'translated',
