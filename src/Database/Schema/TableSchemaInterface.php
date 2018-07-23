@@ -154,7 +154,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @param bool $temporary Whether or not the table is to be temporary.
      * @return $this
      */
-    public function setTemporary(bool $temporary);
+    public function setTemporary(bool $temporary): self;
 
     /**
      * Gets whether the table is temporary in the database.
