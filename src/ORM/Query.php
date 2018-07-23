@@ -1084,6 +1084,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function triggerBeforeFind()
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
+            /** @var Table $table */
             $table = $this->getRepository();
             $this->_beforeFindFired = true;
             /* @var \Cake\Event\EventDispatcherInterface $table */
@@ -1146,11 +1147,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
+        /** @var Table $repository */
+        $repository = $this->_repository;
+
         if (empty($this->_parts['from'])) {
-            $this->from([$this->_repository->getAlias() => $this->_repository->getTable()]);
+            $this->from([$repository->getAlias() => $repository->getTable()]);
         }
         $this->_addDefaultFields();
-        $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
+        $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
         $this->_addDefaultSelectTypes();
     }
 
@@ -1167,7 +1171,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!count($select) || $this->_autoFields === true) {
             $this->_hasFields = false;
-            $this->select($this->getRepository()->getSchema()->columns());
+            /** @var Table $table */
+            $table = $this->getRepository();
+            $this->select($table->getSchema()->columns());
             $select = $this->clause('select');
         }
 
@@ -1208,7 +1214,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find($finder, array $options = [])
     {
-        return $this->getRepository()->callFinder($finder, $this, $options);
+        /** @var Table $repository */
+        $repository = $this->getRepository();
+
+        return $repository->callFinder($finder, $this, $options);
     }
 
     /**
@@ -1235,7 +1244,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        $table = $table ?: $this->getRepository()->getTable();
+        /** @var Table $repository */
+        $repository = $this->getRepository();
+
+        $table = $table ?: $repository->getTable();
 
         return parent::update($table);
     }
@@ -1251,8 +1263,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete($table = null)
     {
-        $repo = $this->getRepository();
-        $this->from([$repo->getAlias() => $repo->getTable()]);
+        /** @var Table $repository */
+        $repository = $this->getRepository();
+
+        $this->from([$repository->getAlias() => $repository->getTable()]);
 
         return parent::delete();
     }
@@ -1272,7 +1286,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        $table = $this->getRepository()->getTable();
+        /** @var Table $repository */
+        $repository = $this->getRepository();
+
+        $table = $repository->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);

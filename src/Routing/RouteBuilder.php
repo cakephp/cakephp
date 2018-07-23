@@ -388,7 +388,7 @@ class RouteBuilder
      */
     public function resources($name, $options = [], $callback = null)
     {
-        if (is_callable($options) && $callback === null) {
+        if (is_callable($options)) {
             $callback = $options;
             $options = [];
         }
@@ -987,8 +987,10 @@ class RouteBuilder
             $params = [];
         }
         if (!is_callable($callback)) {
-            $msg = 'Need a callable function/object to connect routes.';
-            throw new InvalidArgumentException($msg);
+            throw new InvalidArgumentException('Need a callable function/object to connect routes.');
+        }
+        if (!is_array($params)) {
+            throw new InvalidArgumentException('Invalid params passed.');
         }
 
         if ($this->_path !== '/') {

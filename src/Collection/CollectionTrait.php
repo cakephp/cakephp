@@ -746,7 +746,7 @@ trait CollectionTrait
     public function unwrap()
     {
         $iterator = $this;
-        while (get_class($iterator) === 'Cake\Collection\Collection') {
+        while ($iterator instanceof Collection) {
             $iterator = $iterator->getInnerIterator();
         }
 

@@ -390,10 +390,6 @@ class Session
             $this->start();
         }
 
-        if (!isset($_SESSION)) {
-            return false;
-        }
-
         return Hash::get($_SESSION, $name) !== null;
     }
 
@@ -410,12 +406,8 @@ class Session
             $this->start();
         }
 
-        if (!isset($_SESSION)) {
-            return null;
-        }
-
         if ($name === null) {
-            return isset($_SESSION) ? $_SESSION : [];
+            return $_SESSION;
         }
 
         return Hash::get($_SESSION, $name);
@@ -459,7 +451,7 @@ class Session
             $write = [$name => $value];
         }
 
-        $data = isset($_SESSION) ? $_SESSION : [];
+        $data = $_SESSION;
         foreach ($write as $key => $val) {
             $data = Hash::insert($data, $key, $val);
         }
@@ -608,7 +600,7 @@ class Session
      */
     protected function _timedOut()
     {
-        $time = $this->read('Config.time');
+        $time = (int) $this->read('Config.time');
         $result = false;
 
         $checkTime = $time !== null && $this->_lifetime > 0;

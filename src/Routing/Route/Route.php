@@ -651,7 +651,7 @@ class Route
             isset($hostOptions['_port']) ||
             isset($hostOptions['_host'])
         ) {
-            $hostOptions += $context;
+            $hostOptions = (array) $hostOptions + $context;
 
             if (getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']) {
                 unset($hostOptions['_port']);
