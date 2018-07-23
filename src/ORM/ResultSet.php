@@ -175,7 +175,7 @@ class ResultSet implements ResultSetInterface
      */
     public function __construct($query, $statement)
     {
-        /** @var Table $repository */
+        /** @var \Cake\ORM\Table $repository */
         $repository = $query->getRepository();
 
         $this->_statement = $statement;

@@ -1084,7 +1084,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function triggerBeforeFind()
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
-            /** @var Table $table */
+            /** @var \Cake\ORM\Table $table */
             $table = $this->getRepository();
             $this->_beforeFindFired = true;
             /* @var \Cake\Event\EventDispatcherInterface $table */
@@ -1147,7 +1147,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
-        /** @var Table $repository */
+        /** @var \Cake\ORM\Table $repository */
         $repository = $this->_repository;
 
         if (empty($this->_parts['from'])) {
@@ -1171,7 +1171,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!count($select) || $this->_autoFields === true) {
             $this->_hasFields = false;
-            /** @var Table $table */
+            /** @var \Cake\ORM\Table $table */
             $table = $this->getRepository();
             $this->select($table->getSchema()->columns());
             $select = $this->clause('select');
@@ -1214,7 +1214,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find($finder, array $options = [])
     {
-        /** @var Table $repository */
+        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         return $repository->callFinder($finder, $this, $options);
@@ -1244,7 +1244,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        /** @var Table $repository */
+        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         $table = $table ?: $repository->getTable();
@@ -1263,7 +1263,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete($table = null)
     {
-        /** @var Table $repository */
+        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         $this->from([$repository->getAlias() => $repository->getTable()]);
@@ -1286,7 +1286,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        /** @var Table $repository */
+        /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();
 
         $table = $repository->getTable();
