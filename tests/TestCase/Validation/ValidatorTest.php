@@ -27,6 +27,13 @@ use Cake\Validation\Validator;
 class ValidatorTest extends TestCase
 {
     /**
+     * Used to flag nested rules created with addNested() and addNestedMany()
+     *
+     * @var string
+     */
+    protected const NESTED = '_nested';
+
+    /**
      * tests getRequiredMessage
      *
      * @return void
@@ -155,17 +162,17 @@ class ValidatorTest extends TestCase
 
         $this->assertCount(1, $validator->field('user'));
 
-        $rule = $validator->field('user')->rule(Validator::NESTED);
+        $rule = $validator->field('user')->rule(static::NESTED);
         $this->assertSame('create', $rule->get('on'));
 
         $errors = $validator->errors(['user' => 'string']);
         $this->assertArrayHasKey('user', $errors);
-        $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
-        $this->assertSame('errors found', $errors['user'][Validator::NESTED]);
+        $this->assertArrayHasKey(static::NESTED, $errors['user']);
+        $this->assertSame('errors found', $errors['user'][static::NESTED]);
 
         $errors = $validator->errors(['user' => ['key' => 'value']]);
         $this->assertArrayHasKey('user', $errors);
-        $this->assertArrayHasKey(Validator::NESTED, $errors['user']);
+        $this->assertArrayHasKey(static::NESTED, $errors['user']);
 
         $this->assertEmpty($validator->errors(['user' => ['key' => 'value']], false));
     }
@@ -222,22 +229,22 @@ class ValidatorTest extends TestCase
 
         $this->assertCount(1, $validator->field('comments'));
 
-        $rule = $validator->field('comments')->rule(Validator::NESTED);
+        $rule = $validator->field('comments')->rule(static::NESTED);
         $this->assertSame('create', $rule->get('on'));
 
         $errors = $validator->errors(['comments' => 'string']);
         $this->assertArrayHasKey('comments', $errors);
-        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
-        $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
+        $this->assertArrayHasKey(static::NESTED, $errors['comments']);
+        $this->assertSame('errors found', $errors['comments'][static::NESTED]);
 
         $errors = $validator->errors(['comments' => ['string']]);
         $this->assertArrayHasKey('comments', $errors);
-        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
-        $this->assertSame('errors found', $errors['comments'][Validator::NESTED]);
+        $this->assertArrayHasKey(static::NESTED, $errors['comments']);
+        $this->assertSame('errors found', $errors['comments'][static::NESTED]);
 
         $errors = $validator->errors(['comments' => [['body' => null]]]);
         $this->assertArrayHasKey('comments', $errors);
-        $this->assertArrayHasKey(Validator::NESTED, $errors['comments']);
+        $this->assertArrayHasKey(static::NESTED, $errors['comments']);
 
         $this->assertEmpty($validator->errors(['comments' => [['body' => null]]], false));
     }
@@ -716,7 +723,7 @@ class ValidatorTest extends TestCase
                 'when' => true,
             ],
             'show_at' => [
-                'when' => 'update',
+                'when' => Validator::WHEN_UPDATE,
             ],
         ], 'create', 'Cannot be empty');
         $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
@@ -785,10 +792,10 @@ class ValidatorTest extends TestCase
                 'when' => false,
             ],
             'content' => [
-                'when' => 'update',
+                'when' => Validator::WHEN_UPDATE,
             ],
             'posted_at' => [
-                'when' => 'create',
+                'when' => Validator::WHEN_CREATE,
             ],
             'show_at' => [
                 'message' => 'Show date cannot be empty',

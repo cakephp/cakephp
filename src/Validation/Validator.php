@@ -32,11 +32,21 @@ use IteratorAggregate;
 class Validator implements ArrayAccess, IteratorAggregate, Countable
 {
     /**
+     * By using 'create' you can make fields required when records are first created.
+     */
+    public const WHEN_CREATE = 'create';
+
+    /**
+     * By using 'update', you can make fields required when they are updated.
+     */
+    public const WHEN_UPDATE = 'update';
+
+    /**
      * Used to flag nested rules created with addNested() and addNestedMany()
      *
      * @var string
      */
-    public const NESTED = '_nested';
+    protected const NESTED = '_nested';
 
     /**
      * Holds the ValidationSet objects array
@@ -85,7 +95,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Constructor
-     *
      */
     public function __construct()
     {
@@ -192,7 +201,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @return object|string|null
-     * @throws \ReflectionException
      */
     public function getProvider(string $name)
     {
@@ -627,6 +635,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $defaults default settings
      * @param string|array $settings settings from data
      * @return array
+     * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray($fieldName, $defaults = [], $settings = []): array
     {
@@ -726,8 +735,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $fieldName = current(array_keys($settings));
             $whenSetting = $settings[$fieldName]['when'];
 
-            if ($whenSetting === 'create' || $whenSetting === 'update') {
-                $whenSetting = $whenSetting === 'create' ? 'update' : 'create';
+            if ($whenSetting === static::WHEN_CREATE || $whenSetting === static::WHEN_UPDATE) {
+                $whenSetting = $whenSetting === static::WHEN_CREATE ? static::WHEN_UPDATE : static::WHEN_CREATE;
             } elseif (is_callable($whenSetting)) {
                 $whenSetting = function ($context) use ($whenSetting) {
                     return !$whenSetting($context);
@@ -791,6 +800,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::alphaNumeric()
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function lengthBetween(string $field, array $range, ?string $message = null, $when = null)
     {
@@ -1478,6 +1488,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   true when the validation rule should be applied.
      * @see \Cake\Validation\Validation::range()
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function range(string $field, array $range, ?string $message = null, $when = null)
     {
@@ -1982,9 +1993,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         $newRecord = $context['newRecord'];
-        if (in_array($required, ['create', 'update'], true)) {
-            return ($required === 'create' && !$newRecord) ||
-                ($required === 'update' && $newRecord);
+        if (in_array($required, [static::WHEN_CREATE, static::WHEN_UPDATE], true)) {
+            return ($required === static::WHEN_CREATE && !$newRecord) ||
+                ($required === static::WHEN_UPDATE && $newRecord);
         }
 
         return !$required;
@@ -2006,10 +2017,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         $newRecord = $context['newRecord'];
-        if (in_array($allowed, ['create', 'update'], true)) {
+        if (in_array($allowed, [static::WHEN_CREATE, static::WHEN_UPDATE], true)) {
             $allowed = (
-                ($allowed === 'create' && $newRecord) ||
-                ($allowed === 'update' && !$newRecord)
+                ($allowed === static::WHEN_CREATE && $newRecord) ||
+                ($allowed === static::WHEN_UPDATE && !$newRecord)
             );
         }
 
