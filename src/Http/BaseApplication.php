@@ -99,7 +99,7 @@ abstract class BaseApplication implements
             $plugin = $name;
         }
         if (!$plugin instanceof PluginInterface) {
-            throw new InvalidArgumentException("The `{$plugin}` plugin does not implement Cake\Core\PluginInterface.");
+            throw new InvalidArgumentException("The " . ($name instanceof PluginInterface ? $name->getName() : (string)$name) . " plugin does not implement Cake\Core\PluginInterface.");
         }
         $this->plugins->add($plugin);
 

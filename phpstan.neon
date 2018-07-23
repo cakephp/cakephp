@@ -33,6 +33,8 @@ parameters:
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
         - '#Call to an undefined method Cake\\Console\\ConsoleOutput\|PHPUnit_Framework_MockObject_MockObject::messages\(\)#'
         - '#Return typehint of method Cake\\Controller\\Component\\AuthComponent::storage\(\) has invalid type Cake\\Core\\InstanceConfigTrait#'
+        - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
+        - '#Binary operation "\+=" between \(array\&hasOffset\(.*\)\) and array results in an error#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort

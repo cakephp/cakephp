@@ -388,10 +388,14 @@ class RouteBuilder
      */
     public function resources($name, $options = [], $callback = null)
     {
-        if (is_callable($options)) {
+        if (is_callable($options) && $callback === null) {
             $callback = $options;
             $options = [];
         }
+        if (!is_array($options)) {
+            throw new InvalidArgumentException('Invalid options passed.');
+        }
+
         $options += [
             'connectOptions' => [],
             'inflect' => 'underscore',
