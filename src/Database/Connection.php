@@ -773,26 +773,10 @@ class Connection implements ConnectionInterface
     /**
      * Enable/disable query logging
      *
-     * @param bool|null $value The value to set or read by using null.
-     * @return bool
-     */
-    public function logQueries($value = null): bool
-    {
-        if ($value === null) {
-            return $this->_logQueries;
-        }
-        $this->enableQueryLogging($value);
-
-        return $this->_logQueries;
-    }
-
-    /**
-     * Enable/disable query logging
-     *
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging($value)
+    public function enableQueryLogging($value): ConnectionInterface
     {
         $this->_logQueries = (bool)$value;
 
