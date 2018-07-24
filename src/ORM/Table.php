@@ -581,7 +581,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the display field.
      *
-     * @param array $field Name to be used as display field.
+     * @param string|array $field Name to be used as display field.
      * @return $this
      */
     public function setDisplayField($field): self
