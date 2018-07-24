@@ -50,7 +50,7 @@ class AssetsTask extends Shell
      */
     public function copy(?string $name = null): void
     {
-        $this->_process($this->_list($name), true, $this->param('overwrite'));
+        $this->_process($this->_list($name), true, (bool)$this->param('overwrite'));
     }
 
     /**
@@ -297,7 +297,7 @@ class AssetsTask extends Shell
      * @param string $destination Destination directory
      * @return bool
      */
-    protected function _copyDirectory(string $source, bool $destination): bool
+    protected function _copyDirectory(string $source, string $destination): bool
     {
         $folder = new Folder($source);
         if ($folder->copy($destination)) {
