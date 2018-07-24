@@ -1440,7 +1440,7 @@ class QueryTest extends TestCase
      */
     public function testHydrateCustomObject()
     {
-        $class = $this->getMockClass('\Cake\ORM\Entity', ['fakeMethod']);
+        $class = $this->getMockClass('Cake\ORM\Entity', ['fakeMethod']);
         $table = $this->getTableLocator()->get('articles', [
             'table' => 'articles',
             'entityClass' => '\\' . $class,
@@ -1469,8 +1469,8 @@ class QueryTest extends TestCase
      */
     public function testHydrateHasManyCustomEntity()
     {
-        $authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
-        $articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+        $authorEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
+        $articleEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
         $table = $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,
         ]);
@@ -1510,7 +1510,7 @@ class QueryTest extends TestCase
      */
     public function testHydrateBelongsToCustomEntity()
     {
-        $authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+        $authorEntity = $this->getMockClass('Cake\ORM\Entity', ['foo']);
         $table = $this->getTableLocator()->get('articles');
         $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,
@@ -1848,7 +1848,7 @@ class QueryTest extends TestCase
      */
     public function testClearContain()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['all'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
@@ -1878,12 +1878,12 @@ class QueryTest extends TestCase
      */
     public function testCollectionProxy($method, $arg, $return)
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['all'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
         $query->select();
-        $resultSet = $this->getMockbuilder('\Cake\ORM\ResultSet')
+        $resultSet = $this->getMockbuilder('Cake\ORM\ResultSet')
             ->setConstructorArgs([$query, null])
             ->getMock();
         $query->expects($this->once())
@@ -1931,11 +1931,11 @@ class QueryTest extends TestCase
      */
     public function testCacheReadIntegration()
     {
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute'])
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
-        $resultSet = $this->getMockBuilder('\Cake\ORM\ResultSet')
+        $resultSet = $this->getMockBuilder('Cake\ORM\ResultSet')
             ->setConstructorArgs([$query, null])
             ->getMock();
 

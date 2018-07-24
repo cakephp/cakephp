@@ -897,7 +897,7 @@ class ConnectionTest extends TestCase
 
         $this->connection->enableQueryLogging(false);
         $st = $this->connection->prepare('SELECT 1');
-        $this->assertNotInstanceOf('\Cake\Database\Log\LoggingStatement', $st);
+        $this->assertNotInstanceOf('Cake\Database\Log\LoggingStatement', $st);
     }
 
     /**
@@ -942,7 +942,7 @@ class ConnectionTest extends TestCase
         $this->connection->setLogger($logger);
         $logger->expects($this->once())->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT 1')
             ));
         $this->connection->log('SELECT 1');
@@ -969,12 +969,12 @@ class ConnectionTest extends TestCase
         $connection->setLogger($logger);
         $logger->expects($this->at(0))->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'BEGIN')
             ));
         $logger->expects($this->at(1))->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'ROLLBACK')
             ));
 
@@ -1001,7 +1001,7 @@ class ConnectionTest extends TestCase
 
         $logger->expects($this->at(1))->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'COMMIT')
             ));
         $connection->enableQueryLogging(true);

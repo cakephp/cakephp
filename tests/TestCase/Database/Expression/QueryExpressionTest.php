@@ -48,7 +48,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls()
     {
         $expr = new QueryExpression();
-        $expected = '\Cake\Database\Expression\QueryExpression';
+        $expected = 'Cake\Database\Expression\QueryExpression';
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }

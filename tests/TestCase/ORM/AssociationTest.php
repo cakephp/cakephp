@@ -55,14 +55,14 @@ class AssociationTest extends TestCase
         parent::setUp();
         $this->source = new TestTable;
         $config = [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'className' => 'Cake\Test\TestCase\ORM\TestTable',
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
         ];
-        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+        $this->association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
@@ -150,7 +150,7 @@ class AssociationTest extends TestCase
      */
     public function testClassName()
     {
-        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+        $this->assertEquals('Cake\Test\TestCase\ORM\TestTable', $this->association->className());
     }
 
     /**
@@ -163,7 +163,7 @@ class AssociationTest extends TestCase
         $config = [
             'className' => 'Test',
         ];
-        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+        $this->association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
@@ -186,9 +186,9 @@ class AssociationTest extends TestCase
         $this->getTableLocator()->get('Test');
 
         $config = [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'className' => 'Cake\Test\TestCase\ORM\TestTable',
         ];
-        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+        $this->association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
@@ -207,14 +207,14 @@ class AssociationTest extends TestCase
     public function testTargetTableDescendant()
     {
         $this->getTableLocator()->get('Test', [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'className' => 'Cake\Test\TestCase\ORM\TestTable',
         ]);
-        $className = '\Cake\ORM\Table';
+        $className = 'Cake\ORM\Table';
 
         $config = [
             'className' => $className,
         ];
-        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+        $this->association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
@@ -352,7 +352,7 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
         ];
 
-        $this->association = $this->getMockBuilder('\Cake\ORM\Association')
+        $this->association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
                 'requiresKeys',
@@ -441,7 +441,7 @@ class AssociationTest extends TestCase
         $this->source->setSchema(['foo' => ['type' => 'string']]);
 
         $config = [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'className' => 'Cake\Test\TestCase\ORM\TestTable',
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
@@ -449,7 +449,7 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
             'propertyName' => 'foo',
         ];
-        $association = $this->getMockBuilder('\Cake\ORM\Association')
+        $association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
@@ -507,7 +507,7 @@ class AssociationTest extends TestCase
     public function testFinderInConstructor()
     {
         $config = [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'className' => 'Cake\Test\TestCase\ORM\TestTable',
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
@@ -515,7 +515,7 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
             'finder' => 'published',
         ];
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association')
+        $assoc = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
                 'requiresKeys',
@@ -549,10 +549,10 @@ class AssociationTest extends TestCase
     {
         $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [
-            'className' => '\Cake\Test\TestCase\ORM\TestTable',
+            'className' => 'Cake\Test\TestCase\ORM\TestTable',
             'tableLocator' => $locator,
         ];
-        $assoc = $this->getMockBuilder('\Cake\ORM\Association')
+        $assoc = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
                 'requiresKeys',

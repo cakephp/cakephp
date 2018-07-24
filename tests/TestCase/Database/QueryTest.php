@@ -1371,8 +1371,8 @@ class QueryTest extends TestCase
         $query->select(['id'])
             ->from('articles')
             ->where([
-                'id' => '\Cake\Error\Debugger::dump',
-                'title' => ['\Cake\Error\Debugger', 'dump'],
+                'id' => 'Cake\Error\Debugger::dump',
+                'title' => ['Cake\Error\Debugger', 'dump'],
                 'author_id' => function ($exp) {
                     return 1;
                 },
@@ -4416,7 +4416,7 @@ class QueryTest extends TestCase
     {
         $query = new Query($this->connection);
 
-        $this->assertInstanceOf('\Cake\Database\ValueBinder', $query->getValueBinder());
+        $this->assertInstanceOf('Cake\Database\ValueBinder', $query->getValueBinder());
     }
 
     /**

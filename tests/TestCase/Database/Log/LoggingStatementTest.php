@@ -31,11 +31,11 @@ class LoggingStatementTest extends TestCase
     {
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('rowCount')->will($this->returnValue(3));
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT bar FROM foo'),
                 $this->attributeEqualTo('took', 5, 200),
                 $this->attributeEqualTo('numRows', 3),
@@ -56,11 +56,11 @@ class LoggingStatementTest extends TestCase
     {
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('rowCount')->will($this->returnValue(4));
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT bar FROM foo'),
                 $this->attributeEqualTo('took', 5, 200),
                 $this->attributeEqualTo('numRows', 4),
@@ -81,11 +81,11 @@ class LoggingStatementTest extends TestCase
     {
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->any())->method('rowCount')->will($this->returnValue(4));
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->at(0))
             ->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT bar FROM foo'),
                 $this->attributeEqualTo('took', 5, 200),
                 $this->attributeEqualTo('numRows', 4),
@@ -94,7 +94,7 @@ class LoggingStatementTest extends TestCase
         $logger->expects($this->at(1))
             ->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT bar FROM foo'),
                 $this->attributeEqualTo('took', 5, 200),
                 $this->attributeEqualTo('numRows', 4),
@@ -103,7 +103,7 @@ class LoggingStatementTest extends TestCase
         $date = new \DateTime('2013-01-01');
         $inner->expects($this->at(0))->method('bindValue')->with('a', 1);
         $inner->expects($this->at(1))->method('bindValue')->with('b', $date);
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
         $st->setLogger($logger);
@@ -127,11 +127,11 @@ class LoggingStatementTest extends TestCase
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
         $inner->expects($this->once())->method('execute')
             ->will($this->throwException($exception));
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT bar FROM foo'),
                 $this->attributeEqualTo('took', 5, 200),
                 $this->attributeEqualTo('params', []),
@@ -150,7 +150,7 @@ class LoggingStatementTest extends TestCase
      */
     public function testSetAndGetLogger()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $st = new LoggingStatement();
         $this->assertNull($st->getLogger());
         $st->setLogger($logger);

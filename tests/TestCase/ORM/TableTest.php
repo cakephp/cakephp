@@ -142,7 +142,7 @@ class TableTest extends TestCase
         $table = new UsersTable;
         $this->assertEquals('users', $table->getTable());
 
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingsTable')
             ->getMock();
@@ -174,7 +174,7 @@ class TableTest extends TestCase
         $table = new UsersTable;
         $this->assertEquals('Users', $table->getAlias());
 
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingTable')
             ->getMock();
@@ -1173,12 +1173,12 @@ class TableTest extends TestCase
      */
     public function testStackingFinders()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['find', 'findList'])
             ->disableOriginalConstructor()
             ->getMock();
         $params = [$this->connection, $table];
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['addDefaultTypes'])
             ->setConstructorArgs($params)
             ->getMock();
@@ -1392,7 +1392,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInApp()
     {
-        $class = $this->getMockClass('\Cake\ORM\Entity');
+        $class = $this->getMockClass('Cake\ORM\Entity');
 
         if (!class_exists('TestApp\Model\Entity\TestUser')) {
             class_alias($class, 'TestApp\Model\Entity\TestUser');
@@ -1410,7 +1410,7 @@ class TableTest extends TestCase
      */
     public function testEntityClassInflection()
     {
-        $class = $this->getMockClass('\Cake\ORM\Entity');
+        $class = $this->getMockClass('Cake\ORM\Entity');
 
         if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
             class_alias($class, 'TestApp\Model\Entity\CustomCookie');
@@ -1428,7 +1428,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInPlugin()
     {
-        $class = $this->getMockClass('\Cake\ORM\Entity');
+        $class = $this->getMockClass('Cake\ORM\Entity');
 
         if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
             class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
@@ -1476,7 +1476,7 @@ class TableTest extends TestCase
     public function testSetEntityClass()
     {
         $table = new Table;
-        $class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
+        $class = '\\' . $this->getMockClass('Cake\ORM\Entity');
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertEquals($class, $table->getEntityClass());
     }
@@ -2576,15 +2576,15 @@ class TableTest extends TestCase
      */
     public function testAfterSaveNotCalled()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([null, $table])
             ->getMock();
-        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
         $data = new Entity([
             'username' => 'superuser',
             'created' => new Time('2013-10-10 00:00'),
@@ -2685,13 +2685,13 @@ class TableTest extends TestCase
     {
         $config = ConnectionManager::getConfig('test');
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['begin', 'commit', 'inTransaction'])
             ->setConstructorArgs([$config])
             ->getMock();
         $connection->setDriver($this->connection->getDriver());
 
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
@@ -2718,16 +2718,16 @@ class TableTest extends TestCase
     public function testAtomicSaveRollback()
     {
         $this->expectException(\PDOException::class);
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
             ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
         $connection->setDriver(ConnectionManager::get('test')->getDriver());
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([null, $table])
             ->getMock();
@@ -2758,16 +2758,16 @@ class TableTest extends TestCase
      */
     public function testAtomicSaveRollbackOnFailure()
     {
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['begin', 'rollback'])
             ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
         $connection->setDriver(ConnectionManager::get('test')->getDriver());
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
             ->getMock();
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([null, $table])
             ->getMock();
@@ -2778,7 +2778,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
         $statement->expects($this->once())
             ->method('rowCount')
             ->will($this->returnValue(0));
@@ -2924,7 +2924,7 @@ class TableTest extends TestCase
      */
     public function testSaveUpdateWithHint()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['exists'])
             ->setConstructorArgs([['table' => 'users', 'connection' => ConnectionManager::get('test')]])
             ->getMock();
@@ -2946,12 +2946,12 @@ class TableTest extends TestCase
      */
     public function testSaveUpdatePrimaryKeyNotModified()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
 
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes', 'set'])
             ->setConstructorArgs([null, $table])
             ->getMock();
@@ -2959,7 +2959,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('query')
             ->will($this->returnValue($query));
 
-        $statement = $this->getMockBuilder('\Cake\Database\Statement\StatementDecorator')->getMock();
+        $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
         $statement->expects($this->once())
             ->method('errorCode')
             ->will($this->returnValue('00000'));
@@ -2988,7 +2988,7 @@ class TableTest extends TestCase
      */
     public function testUpdateNoChange()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
@@ -3026,7 +3026,7 @@ class TableTest extends TestCase
     public function testUpdateNoPrimaryButOtherKeys()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
             ->getMock();
@@ -3539,7 +3539,7 @@ class TableTest extends TestCase
      */
     public function testValidationWithDefiner()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['validationForOtherStuff'])
             ->getMock();
         $table->expects($this->once())->method('validationForOtherStuff')
@@ -3559,7 +3559,7 @@ class TableTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The Cake\ORM\Table::validationBad() validation method must return an instance of Cake\Validation\Validator.');
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['validationBad'])
             ->getMock();
         $table->expects($this->once())
@@ -4241,7 +4241,7 @@ class TableTest extends TestCase
      */
     public function testSaveCleanEntity()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_processSave'])
             ->getMock();
         $entity = new Entity(
@@ -4285,15 +4285,15 @@ class TableTest extends TestCase
      */
     public function testSaveDeepAssociationOptions()
     {
-        $articles = $this->getMockBuilder('\Cake\ORM\Table')
+        $articles = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
             ->getMock();
-        $authors = $this->getMockBuilder('\Cake\ORM\Table')
+        $authors = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
-        $supervisors = $this->getMockBuilder('\Cake\ORM\Table')
+        $supervisors = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_insert', 'validate'])
             ->setConstructorArgs([[
                 'table' => 'authors',
@@ -4301,7 +4301,7 @@ class TableTest extends TestCase
                 'connection' => $this->connection,
             ]])
             ->getMock();
-        $tags = $this->getMockBuilder('\Cake\ORM\Table')
+        $tags = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'tags', 'connection' => $this->connection]])
             ->getMock();
@@ -5575,7 +5575,7 @@ class TableTest extends TestCase
      */
     public function testSimplifiedFind()
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['callFinder'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
@@ -5607,7 +5607,7 @@ class TableTest extends TestCase
      */
     public function testGet($options)
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['callFinder', 'query'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
@@ -5619,7 +5619,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
@@ -5657,7 +5657,7 @@ class TableTest extends TestCase
      */
     public function testGetWithCustomFinder($options)
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['callFinder', 'query'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
@@ -5669,7 +5669,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();
@@ -5716,7 +5716,7 @@ class TableTest extends TestCase
      */
     public function testGetWithCache($options, $cacheKey, $cacheConfig)
     {
-        $table = $this->getMockBuilder('\Cake\ORM\Table')
+        $table = $this->getMockBuilder('Cake\ORM\Table')
             ->setMethods(['callFinder', 'query'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
@@ -5729,7 +5729,7 @@ class TableTest extends TestCase
             ->getMock();
         $table->setTable('table_name');
 
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache'])
             ->setConstructorArgs([$this->connection, $table])
             ->getMock();

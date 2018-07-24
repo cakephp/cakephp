@@ -376,8 +376,8 @@ class BelongsToTest extends TestCase
         $association = new BelongsTo('Companies', $config);
         $listener->expects($this->once())->method('__invoke')
             ->with(
-                $this->isInstanceOf('\Cake\Event\Event'),
-                $this->isInstanceOf('\Cake\ORM\Query'),
+                $this->isInstanceOf('Cake\Event\Event'),
+                $this->isInstanceOf('Cake\ORM\Query'),
                 $this->isInstanceOf('\ArrayObject'),
                 false
             );
@@ -405,8 +405,8 @@ class BelongsToTest extends TestCase
         $options = new \ArrayObject(['something' => 'more']);
         $listener->expects($this->once())->method('__invoke')
             ->with(
-                $this->isInstanceOf('\Cake\Event\Event'),
-                $this->isInstanceOf('\Cake\ORM\Query'),
+                $this->isInstanceOf('Cake\Event\Event'),
+                $this->isInstanceOf('Cake\ORM\Query'),
                 $options,
                 false
             );

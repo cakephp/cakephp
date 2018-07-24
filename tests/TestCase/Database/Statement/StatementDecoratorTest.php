@@ -31,7 +31,7 @@ class StatementDecoratorTest extends TestCase
     public function testLastInsertId()
     {
         $statement = $this->getMockBuilder('\PDOStatement')->getMock();
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($statement, $driver);
 
         $driver->expects($this->once())->method('lastInsertId')
@@ -49,7 +49,7 @@ class StatementDecoratorTest extends TestCase
     public function testLastInsertIdWithReturning()
     {
         $internal = $this->getMockBuilder('\PDOStatement')->getMock();
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($internal, $driver);
 
         $internal->expects($this->once())->method('columnCount')
@@ -70,7 +70,7 @@ class StatementDecoratorTest extends TestCase
     public function testNoDoubleExecution()
     {
         $inner = $this->getMockBuilder('\PDOStatement')->getMock();
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($inner, $driver);
 
         $inner->expects($this->once())->method('execute');

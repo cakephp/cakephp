@@ -254,7 +254,7 @@ class SqlserverTest extends TestCase
             ->method('_version')
             ->will($this->returnValue(12));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
@@ -305,7 +305,7 @@ class SqlserverTest extends TestCase
             ->method('_version')
             ->will($this->returnValue(8));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
@@ -363,7 +363,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
