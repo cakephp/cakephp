@@ -26,7 +26,7 @@ class PaginatorPostsTable extends Table
      *
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->setTable('posts');
         $this->belongsTo('PaginatorAuthor', [

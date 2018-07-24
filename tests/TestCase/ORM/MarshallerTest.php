@@ -66,7 +66,7 @@ class GreedyCommentsTable extends Table
      * @param array $config Config data.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->setTable('comments');
         $this->setAlias('Comments');
@@ -79,7 +79,7 @@ class GreedyCommentsTable extends Table
      * @param array $options find options
      * @return object
      */
-    public function find($type = 'all', $options = [])
+    public function find(string $type = 'all', $options = [])
     {
         if (empty($options['conditions'])) {
             $options['conditions'] = [];

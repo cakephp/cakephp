@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@
 namespace Cake\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Datasource\EntityInterface;
 
@@ -66,7 +68,7 @@ class LazyEagerLoader
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\ORM\Query
      */
-    protected function _getQuery($objects, $contain, $source)
+    protected function _getQuery(CollectionInterface $objects, array $contain, Table $source): Query
     {
         $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
@@ -112,7 +114,7 @@ class LazyEagerLoader
      * @param array $associations The name of the top level associations
      * @return array
      */
-    protected function _getPropertyMap($source, $associations)
+    protected function _getPropertyMap(Table $source, array $associations): array
     {
         $map = [];
         $container = $source->associations();
@@ -127,13 +129,13 @@ class LazyEagerLoader
      * Injects the results of the eager loader query into the original list of
      * entities.
      *
-     * @param array|\Traversable $objects The original list of entities
+     * @param iterable $objects The original list of entities
      * @param \Cake\Collection\CollectionInterface|\Cake\Database\Query $results The loaded results
      * @param array $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array
      */
-    protected function _injectResults($objects, $results, $associations, $source)
+    protected function _injectResults(iterable $objects, $results, array $associations, Table $source): array
     {
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);

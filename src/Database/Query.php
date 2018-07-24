@@ -248,7 +248,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * associated values for expressions
      * @return string
      */
-    public function sql(?ValueBinder $generator = null)
+    public function sql(?ValueBinder $generator = null): string
     {
         if (!$generator) {
             $generator = $this->getValueBinder();

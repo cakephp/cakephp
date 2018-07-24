@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  */
 class TestTable extends Table
 {
-    public function initialize(array $config = [])
+    public function initialize(array $config = []): void
     {
         $this->setSchema(['id' => ['type' => 'integer']]);
     }

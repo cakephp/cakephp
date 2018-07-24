@@ -20,7 +20,7 @@ use Cake\ORM\Table;
  */
 class AuthorsTable extends Table
 {
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->hasMany('articles');
     }

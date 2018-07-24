@@ -1884,7 +1884,7 @@ class QueryTest extends TestCase
             ->getMock();
         $query->select();
         $resultSet = $this->getMockbuilder('Cake\ORM\ResultSet')
-            ->setConstructorArgs([$query, null])
+            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
             ->getMock();
         $query->expects($this->once())
             ->method('all')
@@ -1936,7 +1936,7 @@ class QueryTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
         $resultSet = $this->getMockBuilder('Cake\ORM\ResultSet')
-            ->setConstructorArgs([$query, null])
+            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
             ->getMock();
 
         $query->expects($this->never())

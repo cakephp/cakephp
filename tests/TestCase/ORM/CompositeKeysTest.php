@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\ConnectionManager;
@@ -590,7 +591,7 @@ class CompositeKeyTest extends TestCase
         $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['_addDefaultFields', 'execute'])
-            ->setConstructorArgs([null, $table])
+            ->setConstructorArgs([$table->getConnection(), $table])
             ->getMock();
 
         $items = new \Cake\Datasource\ResultSetDecorator([

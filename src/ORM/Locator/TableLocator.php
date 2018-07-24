@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -90,7 +91,7 @@ class TableLocator implements LocatorInterface
      * @param string|null $alias Alias to get config for, null for complete config.
      * @return array The config data.
      */
-    public function getConfig($alias = null)
+    public function getConfig(?string $alias = null): array
     {
         if ($alias === null) {
             return $this->_config;
@@ -135,7 +136,7 @@ class TableLocator implements LocatorInterface
      * @return \Cake\ORM\Table
      * @throws \RuntimeException When you try to configure an alias that already exists.
      */
-    public function get($alias, array $options = [])
+    public function get(string $alias, array $options = []): Table
     {
         if (isset($this->_instances[$alias])) {
             if (!empty($options) && $this->_options[$alias] !== $options) {
@@ -202,7 +203,7 @@ class TableLocator implements LocatorInterface
      * @param array $options Table options array.
      * @return string|null
      */
-    protected function _getClassName($alias, array $options = [])
+    protected function _getClassName(string $alias, array $options = []): ?string
     {
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
@@ -217,7 +218,7 @@ class TableLocator implements LocatorInterface
      * @param array $options The alias to check for.
      * @return \Cake\ORM\Table
      */
-    protected function _create(array $options)
+    protected function _create(array $options): Table
     {
         return new $options['className']($options);
     }
@@ -225,7 +226,7 @@ class TableLocator implements LocatorInterface
     /**
      * {@inheritDoc}
      */
-    public function exists($alias)
+    public function exists(string $alias): bool
     {
         return isset($this->_instances[$alias]);
     }
@@ -233,7 +234,7 @@ class TableLocator implements LocatorInterface
     /**
      * {@inheritDoc}
      */
-    public function set($alias, Table $object)
+    public function set(string $alias, Table $object): Table
     {
         return $this->_instances[$alias] = $object;
     }
@@ -241,7 +242,7 @@ class TableLocator implements LocatorInterface
     /**
      * {@inheritDoc}
      */
-    public function clear()
+    public function clear(): void
     {
         $this->_instances = [];
         $this->_config = [];
@@ -256,7 +257,7 @@ class TableLocator implements LocatorInterface
      *
      * @return \Cake\ORM\Table[]
      */
-    public function genericInstances()
+    public function genericInstances(): array
     {
         return $this->_fallbacked;
     }
@@ -264,7 +265,7 @@ class TableLocator implements LocatorInterface
     /**
      * {@inheritDoc}
      */
-    public function remove($alias)
+    public function remove(string $alias): void
     {
         unset(
             $this->_instances[$alias],

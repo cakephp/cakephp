@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -70,7 +71,7 @@ class TableRegistry
      * @return \Cake\ORM\Locator\LocatorInterface
      * @deprecated 3.5.0 Use getTableLocator()/setTableLocator() instead.
      */
-    public static function locator(?LocatorInterface $locator = null)
+    public static function locator(?LocatorInterface $locator = null): LocatorInterface
     {
         deprecationWarning(
             'TableRegistry::locator() is deprecated. ' .
@@ -88,7 +89,7 @@ class TableRegistry
      *
      * @return \Cake\ORM\Locator\LocatorInterface
      */
-    public static function getTableLocator()
+    public static function getTableLocator(): LocatorInterface
     {
         if (!static::$_locator) {
             static::$_locator = new static::$_defaultLocatorClass();
@@ -103,7 +104,7 @@ class TableRegistry
      * @param \Cake\ORM\Locator\LocatorInterface $tableLocator Instance of a locator to use.
      * @return void
      */
-    public static function setTableLocator(LocatorInterface $tableLocator)
+    public static function setTableLocator(LocatorInterface $tableLocator): void
     {
         static::$_locator = $tableLocator;
     }
@@ -117,7 +118,7 @@ class TableRegistry
      * @return array The config data.
      * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::getConfig()/setConfig() instead.
      */
-    public static function config($alias = null, $options = null)
+    public static function config(?string $alias = null, ?array $options = null): array
     {
         deprecationWarning(
             'TableRegistry::config() is deprecated. ' .
@@ -145,7 +146,7 @@ class TableRegistry
      * @return \Cake\ORM\Table
      * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::get() instead.
      */
-    public static function get($alias, array $options = [])
+    public static function get(string $alias, array $options = []): Table
     {
         return static::getTableLocator()->get($alias, $options);
     }
@@ -157,7 +158,7 @@ class TableRegistry
      * @return bool
      * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::exists() instead.
      */
-    public static function exists($alias)
+    public static function exists(string $alias): bool
     {
         return static::getTableLocator()->exists($alias);
     }
@@ -170,7 +171,7 @@ class TableRegistry
      * @return \Cake\ORM\Table
      * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::set() instead.
      */
-    public static function set($alias, Table $object)
+    public static function set(string $alias, Table $object): Table
     {
         return static::getTableLocator()->set($alias, $object);
     }
@@ -182,7 +183,7 @@ class TableRegistry
      * @return void
      * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::remove() instead.
      */
-    public static function remove($alias)
+    public static function remove(string $alias): void
     {
         static::getTableLocator()->remove($alias);
     }
@@ -193,7 +194,7 @@ class TableRegistry
      * @return void
      * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::clear() instead.
      */
-    public static function clear()
+    public static function clear(): void
     {
         static::getTableLocator()->clear();
     }

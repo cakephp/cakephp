@@ -52,7 +52,7 @@ interface RepositoryInterface
      * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
      * @return \Cake\Datasource\QueryInterface
      */
-    public function find($type = 'all', $options = []);
+    public function find(string $type = 'all', $options = []);
 
     /**
      * Returns a single record after finding it by its primary key, if no record is
@@ -74,7 +74,7 @@ interface RepositoryInterface
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
-    public function get($primaryKey, $options = []);
+    public function get($primaryKey, $options = []): EntityInterface;
 
     /**
      * Creates a new Query instance for this repository
@@ -164,7 +164,7 @@ interface RepositoryInterface
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function newEntity(?array $data = null, array $options = []);
+    public function newEntity(?array $data = null, array $options = []): EntityInterface;
 
     /**
      * Create a list of entities + associated entities from an array.
@@ -182,7 +182,7 @@ interface RepositoryInterface
      * @param array $options A list of options for the objects hydration.
      * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
      */
-    public function newEntities(array $data, array $options = []);
+    public function newEntities(array $data, array $options = []): array;
 
     /**
      * Merges the passed `$data` into `$entity` respecting the accessible
@@ -201,7 +201,7 @@ interface RepositoryInterface
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function patchEntity(EntityInterface $entity, array $data, array $options = []);
+    public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface;
 
     /**
      * Merges each of the elements passed in `$data` into the entities
@@ -221,5 +221,5 @@ interface RepositoryInterface
      * @param array $options A list of options for the objects hydration.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    public function patchEntities($entities, array $data, array $options = []);
+    public function patchEntities($entities, array $data, array $options = []): array;
 }
