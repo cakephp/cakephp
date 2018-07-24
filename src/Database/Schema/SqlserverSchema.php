@@ -156,9 +156,9 @@ class SqlserverSchema extends BaseSchema
     {
         $field = $this->_convertColumn(
             $row['type'],
-            $row['char_length'],
-            $row['precision'],
-            $row['scale']
+            (int)$row['char_length'],
+            (int)$row['precision'],
+            (int)$row['scale']
         );
         if (!empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');
@@ -194,7 +194,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         // Remove quotes
-        if (preg_match("/^N?'(.*)'/", $default, $matches)) {
+        if (is_string($default) && preg_match("/^N?'(.*)'/", $default, $matches)) {
             return str_replace("''", "'", $matches[1]);
         }
 
