@@ -46,7 +46,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var string
      */
-    protected const NESTED = '_nested';
+    public const NESTED = '_nested';
 
     /**
      * Holds the ValidationSet objects array
