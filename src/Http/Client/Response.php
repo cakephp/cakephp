@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -152,7 +153,7 @@ class Response extends Message implements ResponseInterface
      * @param array $headers Unparsed headers.
      * @param string $body The response body.
      */
-    public function __construct($headers = [], $body = '')
+    public function __construct(array $headers = [], string $body = '')
     {
         $this->_parseHeaders($headers);
         if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
@@ -174,7 +175,7 @@ class Response extends Message implements ResponseInterface
      * @return string
      * @throws \RuntimeException When attempting to decode gzip content without gzinflate.
      */
-    protected function _decodeGzipBody($body)
+    protected function _decodeGzipBody(string $body): string
     {
         if (!function_exists('gzinflate')) {
             throw new RuntimeException('Cannot decompress gzip response body without gzinflate()');
@@ -199,7 +200,7 @@ class Response extends Message implements ResponseInterface
      * @param array $headers Headers to parse.
      * @return void
      */
-    protected function _parseHeaders($headers)
+    protected function _parseHeaders(array $headers): void
     {
         foreach ($headers as $key => $value) {
             if (substr($value, 0, 5) === 'HTTP/') {
@@ -229,7 +230,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return bool
      */
-    public function isOk()
+    public function isOk(): bool
     {
         return $this->code >= 200 && $this->code <= 399;
     }
@@ -239,7 +240,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return bool
      */
-    public function isSuccess()
+    public function isSuccess(): bool
     {
         return $this->code >= 200 && $this->code <= 299;
     }
@@ -249,7 +250,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return bool
      */
-    public function isRedirect()
+    public function isRedirect(): bool
     {
         $codes = [
             static::STATUS_MOVED_PERMANENTLY,
@@ -267,9 +268,9 @@ class Response extends Message implements ResponseInterface
      *
      * @return int The status code.
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
-        return $this->code;
+        return (int)$this->code;
     }
 
     /**
@@ -279,7 +280,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase The status reason phrase.
      * @return $this A copy of the current object with an updated status code.
      */
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): self
     {
         $new = clone $this;
         $new->code = $code;
@@ -293,7 +294,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return string The current reason phrase.
      */
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;
     }
@@ -303,7 +304,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return string|null
      */
-    public function getEncoding()
+    public function getEncoding(): ?string
     {
         $content = $this->getHeaderLine('content-type');
         if (!$content) {
@@ -322,7 +323,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return array The cookie data
      */
-    public function getCookies()
+    public function getCookies(): array
     {
         return $this->_getCookies();
     }
@@ -335,7 +336,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return \Cake\Http\Cookie\CookieCollection
      */
-    public function getCookieCollection()
+    public function getCookieCollection(): CookieCollection
     {
         $this->buildCookieCollection();
 
@@ -348,7 +349,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name The name of the cookie value.
      * @return string|array|null Either the cookie's value or null when the cookie is undefined.
      */
-    public function getCookie($name)
+    public function getCookie(string $name)
     {
         $this->buildCookieCollection();
         if (!$this->cookies->has($name)) {
@@ -364,7 +365,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name The name of the cookie value.
      * @return array|null Either the cookie's data or null when the cookie is undefined.
      */
-    public function getCookieData($name)
+    public function getCookieData(string $name): ?array
     {
         $this->buildCookieCollection();
 
@@ -386,7 +387,7 @@ class Response extends Message implements ResponseInterface
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie object.
      * @return array
      */
-    protected function convertCookieToArray(CookieInterface $cookie)
+    protected function convertCookieToArray(CookieInterface $cookie): array
     {
         return [
             'name' => $cookie->getName(),
@@ -404,7 +405,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return void
      */
-    protected function buildCookieCollection()
+    protected function buildCookieCollection(): void
     {
         if ($this->cookies) {
             return;
@@ -417,7 +418,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return array Array of Cookie data.
      */
-    protected function _getCookies()
+    protected function _getCookies(): array
     {
         $this->buildCookieCollection();
 
@@ -496,7 +497,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return array
      */
-    protected function _getHeaders()
+    protected function _getHeaders(): array
     {
         $out = [];
         foreach ($this->headers as $key => $values) {
@@ -524,7 +525,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name Property name.
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (!isset($this->_exposedProperties[$name])) {
             return false;
@@ -543,7 +544,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name Property name.
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name)
     {
         if (!isset($this->_exposedProperties[$name])) {
             return false;

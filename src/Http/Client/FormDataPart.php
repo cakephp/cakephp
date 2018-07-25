@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -80,7 +81,7 @@ class FormDataPart
      * @param string $value The value of the data.
      * @param string $disposition The type of disposition to use, defaults to form-data.
      */
-    public function __construct($name, $value, $disposition = 'form-data')
+    public function __construct(string $name, string $value, string $disposition = 'form-data')
     {
         $this->_name = $name;
         $this->_value = $value;
@@ -96,12 +97,13 @@ class FormDataPart
      * @param null|string $disposition Use null to get/string to set.
      * @return string|null
      */
-    public function disposition($disposition = null)
+    public function disposition(?string $disposition = null): ?string
     {
         if ($disposition === null) {
             return $this->_disposition;
         }
-        $this->_disposition = $disposition;
+
+        return $this->_disposition = $disposition;
     }
 
     /**
@@ -110,12 +112,13 @@ class FormDataPart
      * @param null|string $id The content id.
      * @return string|null
      */
-    public function contentId($id = null)
+    public function contentId(?string $id = null): ?string
     {
         if ($id === null) {
             return $this->_contentId;
         }
-        $this->_contentId = $id;
+
+        return $this->_contentId = $id;
     }
 
     /**
@@ -127,12 +130,13 @@ class FormDataPart
      * @param null|string $filename Use null to get/string to set.
      * @return string|null
      */
-    public function filename($filename = null)
+    public function filename(?string $filename = null): ?string
     {
         if ($filename === null) {
             return $this->_filename;
         }
-        $this->_filename = $filename;
+
+        return $this->_filename = $filename;
     }
 
     /**
@@ -141,12 +145,13 @@ class FormDataPart
      * @param null|string $type Use null to get/string to set.
      * @return string|null
      */
-    public function type($type)
+    public function type(?string $type): ?string
     {
         if ($type === null) {
             return $this->_type;
         }
-        $this->_type = $type;
+
+        return $this->_type = $type;
     }
 
     /**
@@ -157,12 +162,13 @@ class FormDataPart
      * @param null|string $type The type of encoding the value has.
      * @return string|null
      */
-    public function transferEncoding($type)
+    public function transferEncoding(?string $type): ?string
     {
         if ($type === null) {
             return $this->_transferEncoding;
         }
-        $this->_transferEncoding = $type;
+
+        return $this->_transferEncoding = $type;
     }
 
     /**
@@ -170,7 +176,7 @@ class FormDataPart
      *
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->_name;
     }
@@ -180,7 +186,7 @@ class FormDataPart
      *
      * @return string
      */
-    public function value()
+    public function value(): string
     {
         return $this->_value;
     }
@@ -192,7 +198,7 @@ class FormDataPart
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $out = '';
         if ($this->_disposition) {

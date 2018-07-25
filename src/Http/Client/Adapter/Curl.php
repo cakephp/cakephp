@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,7 @@ class Curl implements AdapterInterface
     /**
      * {@inheritDoc}
      */
-    public function send(Request $request, array $options)
+    public function send(Request $request, array $options): array
     {
         $ch = curl_init();
         $options = $this->buildOptions($request, $options);
@@ -63,7 +64,7 @@ class Curl implements AdapterInterface
      * @param array $options The client options
      * @return array
      */
-    public function buildOptions(Request $request, array $options)
+    public function buildOptions(Request $request, array $options): array
     {
         $headers = [];
         foreach ($request->getHeaders() as $key => $values) {
@@ -136,9 +137,9 @@ class Curl implements AdapterInterface
      *
      * @param resource $handle Curl handle
      * @param string $responseData string The response data from curl_exec
-     * @return \Cake\Http\Client\Response
+     * @return array
      */
-    protected function createResponse($handle, $responseData)
+    protected function createResponse($handle, $responseData): array
     {
         $meta = curl_getinfo($handle);
         $headers = trim(substr($responseData, 0, $meta['header_size']));

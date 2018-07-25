@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,7 @@ class Basic
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
-    public function authentication(Request $request, array $credentials)
+    public function authentication(Request $request, array $credentials): Request
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
@@ -49,7 +50,7 @@ class Basic
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
-    public function proxyAuthentication(Request $request, array $credentials)
+    public function proxyAuthentication(Request $request, array $credentials): Request
     {
         if (isset($credentials['username'], $credentials['password'])) {
             $value = $this->_generateHeader($credentials['username'], $credentials['password']);
@@ -66,7 +67,7 @@ class Basic
      * @param string $pass Password.
      * @return string
      */
-    protected function _generateHeader($user, $pass)
+    protected function _generateHeader(string $user, string $pass): string
     {
         return 'Basic ' . base64_encode($user . ':' . $pass);
     }

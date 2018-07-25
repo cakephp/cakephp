@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class Digest
      * @param \Cake\Http\Client $client Http client object.
      * @param array|null $options Options list.
      */
-    public function __construct(Client $client, $options = null)
+    public function __construct(Client $client, ?array $options = null)
     {
         $this->_client = $client;
     }
@@ -50,7 +51,7 @@ class Digest
      * @return \Cake\Http\Client\Request The updated request.
      * @see https://www.ietf.org/rfc/rfc2617.txt
      */
-    public function authentication(Request $request, array $credentials)
+    public function authentication(Request $request, array $credentials): Request
     {
         if (!isset($credentials['username'], $credentials['password'])) {
             return $request;
@@ -77,7 +78,7 @@ class Digest
      * @param array $credentials Authentication credentials.
      * @return array modified credentials.
      */
-    protected function _getServerInfo(Request $request, $credentials)
+    protected function _getServerInfo(Request $request, array $credentials): array
     {
         $response = $this->_client->get(
             $request->getUri(),
@@ -111,7 +112,7 @@ class Digest
      * @param array $credentials Authentication credentials.
      * @return string
      */
-    protected function _generateHeader(Request $request, $credentials)
+    protected function _generateHeader(Request $request, array $credentials): string
     {
         $path = $request->getUri()->getPath();
         $a1 = md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);

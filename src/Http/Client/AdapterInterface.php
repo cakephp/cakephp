@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,5 +23,5 @@ interface AdapterInterface
      * @param array $options Array of options for the stream.
      * @return \Cake\Http\Client\Response[] Array of populated Response objects
      */
-    public function send(Request $request, array $options);
+    public function send(Request $request, array $options): array;
 }
