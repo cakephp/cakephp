@@ -79,9 +79,9 @@ class EncryptedCookieMiddleware
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @param callable $next The next middleware to call.
-     * @return \Cake\Http\Response A response.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): Response
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if ($request->getCookieParams()) {
             $request = $this->decodeCookies($request);
