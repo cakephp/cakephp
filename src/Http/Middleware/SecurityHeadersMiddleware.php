@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -38,7 +39,7 @@ class SecurityHeadersMiddleware
      * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
      * @return $this
      */
-    public function noSniff()
+    public function noSniff(): self
     {
         $this->headers['x-content-type-options'] = 'nosniff';
 
@@ -53,7 +54,7 @@ class SecurityHeadersMiddleware
      * @link https://msdn.microsoft.com/en-us/library/jj542450(v=vs.85).aspx
      * @return $this
      */
-    public function noOpen()
+    public function noOpen(): self
     {
         $this->headers['x-download-options'] = 'noopen';
 
@@ -68,7 +69,7 @@ class SecurityHeadersMiddleware
      *        'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
-    public function setReferrerPolicy($policy = 'same-origin')
+    public function setReferrerPolicy(string $policy = 'same-origin'): self
     {
         $available = [
             'no-referrer', 'no-referrer-when-downgrade', 'origin',
@@ -91,7 +92,7 @@ class SecurityHeadersMiddleware
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
-    public function setXFrameOptions($option = 'sameorigin', $url = null)
+    public function setXFrameOptions(string $option = 'sameorigin', ?string $url = null): self
     {
         $this->checkValues($option, ['deny', 'sameorigin', 'allow-from']);
 
@@ -114,7 +115,7 @@ class SecurityHeadersMiddleware
      * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
-    public function setXssProtection($mode = 'block')
+    public function setXssProtection(string $mode = 'block'): self
     {
         $mode = (string)$mode;
 
@@ -135,7 +136,7 @@ class SecurityHeadersMiddleware
      * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
      * @return $this
      */
-    public function setCrossDomainPolicy($policy = 'all')
+    public function setCrossDomainPolicy(string $policy = 'all'): self
     {
         $this->checkValues($policy, ['all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename']);
         $this->headers['x-permitted-cross-domain-policies'] = $policy;
@@ -151,7 +152,7 @@ class SecurityHeadersMiddleware
      * @param array $allowed List of allowed values
      * @return void
      */
-    protected function checkValues($value, array $allowed)
+    protected function checkValues(string $value, array $allowed): void
     {
         if (!in_array($value, $allowed)) {
             throw new InvalidArgumentException(sprintf(
@@ -170,7 +171,7 @@ class SecurityHeadersMiddleware
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $response = $next($request, $response);
         foreach ($this->headers as $header => $value) {

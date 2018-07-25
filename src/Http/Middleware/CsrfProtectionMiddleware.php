@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -84,12 +85,12 @@ class CsrfProtectionMiddleware
      * @param callable $next Callback to invoke the next middleware.
      * @return \Cake\Http\Response A response
      */
-    public function __invoke(ServerRequest $request, Response $response, $next)
+    public function __invoke(ServerRequest $request, Response $response, callable $next): Response
     {
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
-        if (strlen($cookieData) > 0) {
+        if ($cookieData !== null && strlen($cookieData) > 0) {
             $params = $request->getAttribute('params');
             $params['_csrfToken'] = $cookieData;
             $request = $request->withAttribute('params', $params);
@@ -114,7 +115,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\ServerRequest $request The request object.
      * @return \Cake\Http\ServerRequest
      */
-    protected function _validateAndUnsetTokenField(ServerRequest $request)
+    protected function _validateAndUnsetTokenField(ServerRequest $request): ServerRequest
     {
         if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH']) || $request->getData()) {
             $this->_validateToken($request);
@@ -133,7 +134,7 @@ class CsrfProtectionMiddleware
      *
      * @return string
      */
-    protected function _createToken()
+    protected function _createToken(): string
     {
         return hash('sha512', Security::randomBytes(16), false);
     }
@@ -145,7 +146,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\ServerRequest $request The request to augment
      * @return \Cake\Http\ServerRequest Modified request
      */
-    protected function _addTokenToRequest($token, ServerRequest $request)
+    protected function _addTokenToRequest(string $token, ServerRequest $request): ServerRequest
     {
         $params = $request->getAttribute('params');
         $params['_csrfToken'] = $token;
@@ -161,7 +162,7 @@ class CsrfProtectionMiddleware
      * @param \Cake\Http\Response $response The response.
      * @return \Cake\Http\Response $response Modified response.
      */
-    protected function _addTokenCookie($token, ServerRequest $request, Response $response)
+    protected function _addTokenCookie(string $token, ServerRequest $request, Response $response): Response
     {
         $expiry = new Time($this->_config['expiry']);
 
@@ -185,7 +186,7 @@ class CsrfProtectionMiddleware
      * @return void
      * @throws \Cake\Http\Exception\InvalidCsrfTokenException When the CSRF token is invalid or missing.
      */
-    protected function _validateToken(ServerRequest $request)
+    protected function _validateToken(ServerRequest $request): void
     {
         $cookies = $request->getCookieParams();
         $cookie = Hash::get($cookies, $this->_config['cookieName']);
