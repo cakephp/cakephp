@@ -699,7 +699,7 @@ abstract class TestCase extends BaseTestCase
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
-            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+            $entityAlias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
             $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
             if (class_exists($entityClass)) {
                 $mock->setEntityClass($entityClass);

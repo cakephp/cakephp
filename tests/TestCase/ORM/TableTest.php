@@ -1519,6 +1519,13 @@ class TableTest extends TestCase
 
         $table = $this->getTableLocator()->get('CustomCookies');
         $this->assertEquals('TestApp\Model\Entity\CustomCookie', $table->getEntityClass());
+
+        if (!class_exists('TestApp\Model\Entity\Address')) {
+            class_alias($class, 'TestApp\Model\Entity\Address');
+        }
+
+        $table = $this->getTableLocator()->get('Addresses');
+        $this->assertEquals('TestApp\Model\Entity\Address', $table->getEntityClass());
     }
 
     /**
