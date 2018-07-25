@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,7 @@ class RoutesShell extends Shell
      *
      * @return void
      */
-    public function main()
+    public function main(): void
     {
         $output = [
             ['Route name', 'URI template', 'Defaults'],
@@ -51,7 +52,7 @@ class RoutesShell extends Shell
      * @param string $url The URL to parse
      * @return bool Success
      */
-    public function check($url)
+    public function check(string $url): bool
     {
         try {
             $request = new ServerRequest(['url' => $url]);
@@ -89,7 +90,7 @@ class RoutesShell extends Shell
      * Takes variadic arguments of key/value pairs.
      * @return bool Success
      */
-    public function generate()
+    public function generate(): bool
     {
         try {
             $args = $this->_splitArgs($this->args);
@@ -136,7 +137,7 @@ class RoutesShell extends Shell
      * @param array $args The arguments to split.
      * @return array
      */
-    protected function _splitArgs($args)
+    protected function _splitArgs(array $args): array
     {
         $out = [];
         foreach ($args as $arg) {

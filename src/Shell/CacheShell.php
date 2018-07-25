@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -71,7 +72,7 @@ class CacheShell extends Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    public function clear($prefix = null): void
+    public function clear(?string $prefix = null): void
     {
         try {
             $engine = Cache::engine($prefix);
@@ -95,7 +96,7 @@ class CacheShell extends Shell
      *
      * @return void
      */
-    public function clearAll()
+    public function clearAll(): void
     {
         $prefixes = Cache::configured();
         foreach ($prefixes as $prefix) {
@@ -108,7 +109,7 @@ class CacheShell extends Shell
      *
      * @return void
      */
-    public function listPrefixes()
+    public function listPrefixes(): void
     {
         $prefixes = Cache::configured();
         foreach ($prefixes as $prefix) {

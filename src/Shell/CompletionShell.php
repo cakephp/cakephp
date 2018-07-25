@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -165,7 +166,7 @@ class CompletionShell extends Shell
      * @param array $options The options to output
      * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
-    protected function _output($options = [])
+    protected function _output(array $options = [])
     {
         if ($options) {
             return $this->out(implode($options, ' '));

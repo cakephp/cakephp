@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -47,7 +48,7 @@ class I18nShell extends Shell
      * @throws \Cake\Core\Exception\MissingPluginException
      * @throws \Cake\Console\Exception\StopException
      */
-    public function main()
+    public function main(): void
     {
         $this->out('<info>I18n Shell</info>');
         $this->hr();
@@ -85,7 +86,7 @@ class I18nShell extends Shell
      * @return void
      * @throws \Cake\Console\Exception\StopException
      */
-    public function init($language = null)
+    public function init(?string $language = null): void
     {
         if (!$language) {
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');

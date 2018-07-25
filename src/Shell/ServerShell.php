@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -112,7 +113,7 @@ class ServerShell extends Shell
      *
      * @return void
      */
-    protected function _welcome()
+    protected function _welcome(): void
     {
         $this->out();
         $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
@@ -129,7 +130,7 @@ class ServerShell extends Shell
      *
      * @return void
      */
-    public function main()
+    public function main(): void
     {
         $command = sprintf(
             'php -S %s:%d -t %s',
