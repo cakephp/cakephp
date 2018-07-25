@@ -716,7 +716,7 @@ class ValidatorTest extends TestCase
                 'when' => true,
             ],
             'show_at' => [
-                'when' => 'update',
+                'when' => Validator::WHEN_UPDATE,
             ],
         ], 'create', 'Cannot be empty');
         $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
@@ -785,10 +785,10 @@ class ValidatorTest extends TestCase
                 'when' => false,
             ],
             'content' => [
-                'when' => 'update',
+                'when' => Validator::WHEN_UPDATE,
             ],
             'posted_at' => [
-                'when' => 'create',
+                'when' => Validator::WHEN_CREATE,
             ],
             'show_at' => [
                 'message' => 'Show date cannot be empty',
