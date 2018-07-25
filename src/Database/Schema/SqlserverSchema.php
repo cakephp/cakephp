@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config)
+    public function listTablesSql(array $config): array
     {
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
@@ -39,7 +40,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeColumnSql($tableName, $config)
+    public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = 'SELECT DISTINCT
             AC.column_id AS [column_id],
@@ -77,7 +78,7 @@ class SqlserverSchema extends BaseSchema
      * @return array Array of column information.
      * @link https://technet.microsoft.com/en-us/library/ms187752.aspx
      */
-    protected function _convertColumn($col, $length = null, $precision = null, $scale = null)
+    protected function _convertColumn(string $col, ?int $length = null, ?int $precision = null, ?int $scale = null): array
     {
         $col = strtolower($col);
         $length = (int)$length;
@@ -151,13 +152,13 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(TableSchema $schema, $row)
+    public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn(
             $row['type'],
-            $row['char_length'],
-            $row['precision'],
-            $row['scale']
+            (int)$row['char_length'],
+            (int)$row['precision'],
+            (int)$row['scale']
         );
         if (!empty($row['default'])) {
             $row['default'] = trim($row['default'], '()');
@@ -183,8 +184,8 @@ class SqlserverSchema extends BaseSchema
      * Sqlite includes quotes and bared NULLs in default values.
      * We need to remove those.
      *
-     * @param string|null $default The default value.
-     * @return string|null
+     * @param string|int|null $default The default value.
+     * @return string|int|null
      */
     protected function _defaultValue($default)
     {
@@ -193,7 +194,7 @@ class SqlserverSchema extends BaseSchema
         }
 
         // Remove quotes
-        if (preg_match("/^N?'(.*)'/", $default, $matches)) {
+        if (is_string($default) && preg_match("/^N?'(.*)'/", $default, $matches)) {
             return str_replace("''", "'", $matches[1]);
         }
 
@@ -203,7 +204,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeIndexSql($tableName, $config)
+    public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = "SELECT
                 I.[name] AS [index_name],
@@ -227,7 +228,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertIndexDescription(TableSchema $schema, $row)
+    public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $type = TableSchema::INDEX_INDEX;
         $name = $row['index_name'];
@@ -266,7 +267,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeForeignKeySql($tableName, $config)
+    public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = 'SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
                 FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
@@ -288,7 +289,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(TableSchema $schema, $row)
+    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $data = [
             'type' => TableSchema::CONSTRAINT_FOREIGN,
@@ -304,7 +305,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    protected function _foreignOnClause($on)
+    protected function _foreignOnClause(?string $on): string
     {
         $parent = parent::_foreignOnClause($on);
 
@@ -314,7 +315,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    protected function _convertOnClause($clause)
+    protected function _convertOnClause(string $clause): ?string
     {
         switch ($clause) {
             case 'NO_ACTION':
@@ -333,7 +334,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(TableSchema $schema, $name)
+    public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
@@ -432,7 +433,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(TableSchema $schema)
+    public function addConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
@@ -451,7 +452,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(TableSchema $schema)
+    public function dropConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
         $sql = [];
@@ -471,7 +472,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(TableSchema $schema, $name)
+    public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
         $columns = array_map(
@@ -490,7 +491,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(TableSchema $schema, $name)
+    public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
@@ -511,7 +512,7 @@ class SqlserverSchema extends BaseSchema
      * @param array $data Key data.
      * @return string
      */
-    protected function _keySql($prefix, $data)
+    protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
@@ -534,7 +535,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
+    public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
@@ -551,7 +552,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function truncateTableSql(TableSchema $schema)
+    public function truncateTableSql(TableSchema $schema): array
     {
         $name = $this->_driver->quoteIdentifier($schema->name());
         $queries = [

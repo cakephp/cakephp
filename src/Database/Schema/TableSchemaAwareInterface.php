@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -24,7 +25,7 @@ interface TableSchemaAwareInterface
      *
      * @return \Cake\Database\Schema\TableSchemaInterface|null
      */
-    public function getTableSchema();
+    public function getTableSchema(): ?\Cake\Database\Schema\TableSchemaInterface;
 
     /**
      * Get and set the schema for this fixture.

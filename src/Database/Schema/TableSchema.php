@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -288,7 +289,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @param string $table The table name.
      * @param array $columns The list of columns for the schema.
      */
-    public function __construct($table, array $columns = [])
+    public function __construct(string $table, array $columns = [])
     {
         $this->_table = $table;
         foreach ($columns as $field => $definition) {
@@ -455,7 +456,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
-    public function addIndex($name, $attrs)
+    public function addIndex(string $name, array $attrs): TableSchemaInterface
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -491,7 +492,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function indexes()
+    public function indexes(): array
     {
         return array_keys($this->_indexes);
     }
@@ -499,7 +500,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getIndex($name)
+    public function getIndex(string $name): ?array
     {
         if (!isset($this->_indexes[$name])) {
             return null;
@@ -511,7 +512,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function primaryKey()
+    public function primaryKey(): array
     {
         foreach ($this->_constraints as $name => $data) {
             if ($data['type'] === static::CONSTRAINT_PRIMARY) {
@@ -526,7 +527,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * {@inheritDoc}
      * @throws \Cake\Database\Exception
      */
-    public function addConstraint($name, $attrs)
+    public function addConstraint(string $name, array $attrs): TableSchemaInterface
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -582,7 +583,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function dropConstraint($name)
+    public function dropConstraint(string $name)
     {
         if (isset($this->_constraints[$name])) {
             unset($this->_constraints[$name]);
@@ -596,7 +597,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @return bool
      */
-    public function hasAutoincrement()
+    public function hasAutoincrement(): bool
     {
         foreach ($this->_columns as $column) {
             if (isset($column['autoIncrement']) && $column['autoIncrement']) {
@@ -614,7 +615,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @return array
      * @throws \Cake\Database\Exception When foreign key definition is not valid.
      */
-    protected function _checkForeignKey($attrs)
+    protected function _checkForeignKey(array $attrs): array
     {
         if (count($attrs['references']) < 2) {
             throw new Exception('References must contain a table and column.');
@@ -632,7 +633,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function constraints()
+    public function constraints(): array
     {
         return array_keys($this->_constraints);
     }
@@ -640,7 +641,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function getConstraint($name)
+    public function getConstraint(string $name): ?array
     {
         if (!isset($this->_constraints[$name])) {
             return null;
@@ -652,7 +653,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): TableSchemaInterface
     {
         $this->_options = array_merge($this->_options, $options);
 
@@ -670,7 +671,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function setTemporary($temporary)
+    public function setTemporary(bool $temporary): TableSchemaInterface
     {
         $this->_temporary = (bool)$temporary;
 
@@ -680,7 +681,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function isTemporary()
+    public function isTemporary(): bool
     {
         return $this->_temporary;
     }
@@ -688,7 +689,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function createSql(Connection $connection)
+    public function createSql(Connection $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
         $columns = $constraints = $indexes = [];
@@ -708,7 +709,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function dropSql(Connection $connection)
+    public function dropSql(Connection $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -718,7 +719,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function truncateSql(Connection $connection)
+    public function truncateSql(Connection $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -728,7 +729,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(Connection $connection)
+    public function addConstraintSql(Connection $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -738,7 +739,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(Connection $connection)
+    public function dropConstraintSql(Connection $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -750,7 +751,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'table' => $this->_table,
