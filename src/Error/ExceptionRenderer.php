@@ -134,7 +134,25 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $controller = null;
 
         try {
-            $class = App::className('Error', 'Controller', 'Controller');
+            $namespace = 'Controller';
+            $prefix = $request->getParam('prefix');
+            if ($prefix) {
+                if (strpos($request->getParam('prefix'), '/') === false) {
+                    $namespace .= '/' . Inflector::camelize($prefix);
+                } else {
+                    $prefixes = array_map(
+                        'Cake\Utility\Inflector::camelize',
+                        explode('/', $prefix)
+                    );
+                    $namespace .= '/' . implode('/', $prefixes);
+                }
+            }
+
+            $class = App::className('Error', $namespace, 'Controller');
+            if (!$class && $namespace !== 'Controller') {
+                $class = App::className('Error', 'Controller', 'Controller');
+            }
+
             /* @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
