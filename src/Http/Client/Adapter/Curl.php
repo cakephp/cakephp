@@ -155,7 +155,7 @@ class Curl implements AdapterInterface
      * @param resource $ch Curl Resource handle
      * @return string
      */
-    protected function exec($ch)
+    protected function exec($ch): string
     {
         return curl_exec($ch);
     }

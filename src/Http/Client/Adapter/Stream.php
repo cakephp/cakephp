@@ -89,7 +89,7 @@ class Stream implements AdapterInterface
      * @param string $content The response content.
      * @return \Cake\Http\Client\Response[] The list of responses from the request(s)
      */
-    public function createResponses($headers, string $content): array
+    public function createResponses(array $headers, string $content): array
     {
         $indexes = $responses = [];
         foreach ($headers as $i => $header) {

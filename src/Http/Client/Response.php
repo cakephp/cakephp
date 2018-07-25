@@ -18,6 +18,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use SimpleXMLElement;
 use Zend\Diactoros\MessageTrait;
 use Zend\Diactoros\Stream;
 
@@ -460,7 +461,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return array|null
+     * @return mixed
      */
     protected function _getJson()
     {
@@ -476,7 +477,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return null|\SimpleXMLElement
      */
-    protected function _getXml()
+    protected function _getXml(): ?SimpleXMLElement
     {
         if ($this->_xml) {
             return $this->_xml;
@@ -510,9 +511,9 @@ class Response extends Message implements ResponseInterface
     /**
      * Provides magic __get() support.
      *
-     * @return array
+     * @return string
      */
-    protected function _getBody()
+    protected function _getBody(): string
     {
         $this->stream->rewind();
 
@@ -525,7 +526,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name Property name.
      * @return mixed
      */
-    public function __get(string $name)
+    public function __get($name)
     {
         if (!isset($this->_exposedProperties[$name])) {
             return false;
@@ -544,7 +545,7 @@ class Response extends Message implements ResponseInterface
      * @param string $name Property name.
      * @return bool
      */
-    public function __isset(string $name)
+    public function __isset($name)
     {
         if (!isset($this->_exposedProperties[$name])) {
             return false;
