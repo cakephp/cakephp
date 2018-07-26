@@ -43,6 +43,7 @@ use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use RuntimeException;
+use TestApp\Controller\Admin\ErrorController;
 
 /**
  * BlueberryComponent class
@@ -182,6 +183,22 @@ class ExceptionRendererTest extends TestCase
         if ($this->_restoreError) {
             restore_error_handler();
         }
+    }
+
+    public function testControllerInstanceForPrefixedRequest()
+    {
+        $namespace = Configure::read('App.namespace');
+        Configure::write('App.namespace', 'TestApp');
+
+        $exception = new NotFoundException('Page not found');
+        $request = new ServerRequest();
+        $request = $request->withParam('prefix', 'admin');
+
+        $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
+
+        $this->assertInstanceOf(ErrorController::class, $ExceptionRenderer->controller);
+
+        Configure::write('App.namespace', $namespace);
     }
 
     /**

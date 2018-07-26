@@ -22,6 +22,7 @@ use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\DispatcherFactory;
 use Cake\Routing\Router;
@@ -29,7 +30,6 @@ use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use PDOException;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Exception Renderer.
@@ -83,7 +83,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * If set, this will be request used to create the controller that will render
      * the error.
      *
-     * @var \Psr\Http\Message\ServerRequestInterface|null
+     * @var \Cake\Http\ServerRequest|null
      */
     protected $request = null;
 
@@ -93,9 +93,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Exception $exception Exception.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
+     * @param \Cake\Http\ServerRequest $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Exception $exception, ServerRequestInterface $request = null)
+    public function __construct(Exception $exception, ServerRequest $request = null)
     {
         $this->error = $exception;
         $this->request = $request;
@@ -134,7 +134,25 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $controller = null;
 
         try {
-            $class = App::className('Error', 'Controller', 'Controller');
+            $namespace = 'Controller';
+            $prefix = $request->getParam('prefix');
+            if ($prefix) {
+                if (strpos($prefix, '/') === false) {
+                    $namespace .= '/' . Inflector::camelize($prefix);
+                } else {
+                    $prefixes = array_map(
+                        'Cake\Utility\Inflector::camelize',
+                        explode('/', $prefix)
+                    );
+                    $namespace .= '/' . implode('/', $prefixes);
+                }
+            }
+
+            $class = App::className('Error', $namespace, 'Controller');
+            if (!$class && $namespace !== 'Controller') {
+                $class = App::className('Error', 'Controller', 'Controller');
+            }
+
             /* @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
