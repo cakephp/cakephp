@@ -1816,7 +1816,6 @@ class MarshallerTest extends TestCase
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
     }
 
-
     /**
      * Tests that merging data to an entity containing belongsToMany and _ids
      * will not generate conflicting queries when associations are automatically selected
