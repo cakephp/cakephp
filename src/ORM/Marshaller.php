@@ -243,11 +243,13 @@ class Marshaller
         }
 
         $validator = null;
+
         if ($options['validate'] === true) {
             $validator = $this->_table->getValidator();
         } elseif (is_string($options['validate'])) {
             $validator = $this->_table->getValidator($options['validate']);
         } elseif (is_object($options['validate'])) {
+            /** @var \Cake\Validation\Validator|null $validator */
             $validator = $options['validate'];
         }
 

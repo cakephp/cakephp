@@ -612,7 +612,7 @@ class Session
         $result = false;
 
         $checkTime = $time !== null && $this->_lifetime > 0;
-        if ($checkTime && (time() - $time > $this->_lifetime)) {
+        if ($checkTime && (time() - (int)$time > $this->_lifetime)) {
             $result = true;
         }
 

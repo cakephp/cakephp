@@ -1129,7 +1129,7 @@ class BelongsToMany extends Association
     protected function _appendJunctionJoin($query, $conditions)
     {
         $name = $this->_junctionAssociationName();
-        $joins = $query->join();
+        $joins = (array)$query->join();
         $matching = [
             $name => [
                 'table' => $this->junction()->getTable(),
@@ -1385,6 +1385,7 @@ class BelongsToMany extends Association
         $foreignKey = (array)$this->getForeignKey();
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
+        $unions = [];
 
         foreach ($missing as $key) {
             $unions[] = $hasMany->find('all')

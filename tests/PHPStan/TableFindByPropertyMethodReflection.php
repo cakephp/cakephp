@@ -2,10 +2,11 @@
 
 namespace Cake\PHPStan;
 
+use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
 
 class TableFindByPropertyMethodReflection implements MethodReflection
 {
@@ -21,32 +22,24 @@ class TableFindByPropertyMethodReflection implements MethodReflection
         $this->declaringClass = $declaringClass;
     }
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getPrototype(): ClassMemberReflection
+    {
+        return $this;
+    }
+
     public function getDeclaringClass(): ClassReflection
     {
         return $this->declaringClass;
     }
 
-    public function getPrototype(): MethodReflection
-    {
-        return $this;
-    }
-
     public function isStatic(): bool
     {
         return false;
-    }
-
-    /**
-     * @return \PHPStan\Reflection\ParameterReflection[]
-     */
-    public function getParameters(): array
-    {
-        return [];
-    }
-
-    public function isVariadic(): bool
-    {
-        return true;
     }
 
     public function isPrivate(): bool
@@ -59,13 +52,17 @@ class TableFindByPropertyMethodReflection implements MethodReflection
         return true;
     }
 
-    public function getName(): string
+    /**
+     * @return \PHPStan\Reflection\ParametersAcceptor[]
+     */
+    public function getVariants(): array
     {
-        return $this->name;
-    }
-
-    public function getReturnType(): Type
-    {
-        return new ObjectType('\Cake\ORM\Query');
+        return [
+            new FunctionVariant(
+                [],
+                true,
+                new ObjectType('\Cake\ORM\Query')
+            )
+        ];
     }
 }

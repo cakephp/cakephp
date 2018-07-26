@@ -188,7 +188,7 @@ class RelativeTimeFormatter
      */
     protected function _diffData($futureTime, $pastTime, $backwards, $options)
     {
-        $diff = $futureTime - $pastTime;
+        $diff = (int)$futureTime->format('U') - (int)$pastTime->format('U');
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {

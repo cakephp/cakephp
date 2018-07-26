@@ -392,6 +392,10 @@ class RouteBuilder
             $callback = $options;
             $options = [];
         }
+        if (!is_array($options)) {
+            throw new InvalidArgumentException('Invalid options passed.');
+        }
+
         $options += [
             'connectOptions' => [],
             'inflect' => 'underscore',
@@ -987,8 +991,10 @@ class RouteBuilder
             $params = [];
         }
         if (!is_callable($callback)) {
-            $msg = 'Need a callable function/object to connect routes.';
-            throw new InvalidArgumentException($msg);
+            throw new InvalidArgumentException('Need a callable function/object to connect routes.');
+        }
+        if (!is_array($params)) {
+            throw new InvalidArgumentException('Invalid params passed.');
         }
 
         if ($this->_path !== '/') {
