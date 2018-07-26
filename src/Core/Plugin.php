@@ -15,8 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
-use DirectoryIterator;
-
 /**
  * Plugin is used to load and locate plugins.
  *
@@ -122,22 +120,6 @@ class Plugin
         } else {
             static::getCollection()->remove($plugin);
         }
-    }
-
-    /**
-     * Include file, ignoring include error if needed if file is missing
-     *
-     * @param string $file File to include
-     * @param bool $ignoreMissing Whether to ignore include error for missing files
-     * @return mixed
-     */
-    protected static function _includeFile(string $file, bool $ignoreMissing = false)
-    {
-        if ($ignoreMissing && !is_file($file)) {
-            return false;
-        }
-
-        return include $file;
     }
 
     /**

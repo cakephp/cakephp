@@ -366,19 +366,10 @@ class FixtureManager
         $dbs = $this->_fixtureConnections($fixtures);
         foreach ($dbs as $connection => $fixtures) {
             $db = ConnectionManager::get($connection);
-            $newMethods = method_exists($db, 'isQueryLoggingEnabled');
-            if ($newMethods) {
-                $logQueries = $db->isQueryLoggingEnabled();
-            } else {
-                $logQueries = $db->logQueries();
-            }
+            $logQueries = $db->isQueryLoggingEnabled();
 
             if ($logQueries && !$this->_debug) {
-                if ($newMethods) {
-                    $db->enableQueryLogging(false);
-                } else {
-                    $db->logQueries(false);
-                }
+                $db->enableQueryLogging(false);
             }
             $db->transactional(function ($db) use ($fixtures, $operation) {
                 $db->disableConstraints(function ($db) use ($fixtures, $operation) {
@@ -386,11 +377,7 @@ class FixtureManager
                 });
             });
             if ($logQueries) {
-                if ($newMethods) {
-                    $db->enableQueryLogging(true);
-                } else {
-                    $db->logQueries(true);
-                }
+                $db->enableQueryLogging(true);
             }
         }
     }
