@@ -180,15 +180,15 @@ class RelativeTimeFormatter
     /**
      * Calculate the data needed to format a relative difference string.
      *
-     * @param \DateTime $futureTime The time from the future.
-     * @param \DateTime $pastTime The time from the past.
+     * @param int|string $futureTime The timestamp from the future.
+     * @param int|string $pastTime The timestamp from the past.
      * @param bool $backwards Whether or not the difference was backwards.
      * @param array $options An array of options.
      * @return array An array of values.
      */
     protected function _diffData($futureTime, $pastTime, $backwards, $options)
     {
-        $diff = $futureTime - $pastTime;
+        $diff = (int)$futureTime - (int)$pastTime;
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {

@@ -1084,10 +1084,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function triggerBeforeFind()
     {
         if (!$this->_beforeFindFired && $this->_type === 'select') {
-            $table = $this->getRepository();
             $this->_beforeFindFired = true;
-            /* @var \Cake\Event\EventDispatcherInterface $table */
-            $table->dispatchEvent('Model.beforeFind', [
+
+            /** @var \Cake\Event\EventDispatcherInterface $repository */
+            $repository = $this->getRepository();
+            $repository->dispatchEvent('Model.beforeFind', [
                 $this,
                 new ArrayObject($this->_options),
                 !$this->isEagerLoaded()
@@ -1146,11 +1147,14 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return;
         }
 
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+
         if (empty($this->_parts['from'])) {
-            $this->from([$this->_repository->getAlias() => $this->_repository->getTable()]);
+            $this->from([$repository->getAlias() => $repository->getTable()]);
         }
         $this->_addDefaultFields();
-        $this->getEagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
+        $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
         $this->_addDefaultSelectTypes();
     }
 
@@ -1165,13 +1169,16 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $select = $this->clause('select');
         $this->_hasFields = true;
 
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+
         if (!count($select) || $this->_autoFields === true) {
             $this->_hasFields = false;
-            $this->select($this->getRepository()->getSchema()->columns());
+            $this->select($repository->getSchema()->columns());
             $select = $this->clause('select');
         }
 
-        $aliased = $this->aliasFields($select, $this->getRepository()->getAlias());
+        $aliased = $this->aliasFields($select, $repository->getAlias());
         $this->select($aliased, true);
     }
 
@@ -1208,7 +1215,10 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function find($finder, array $options = [])
     {
-        return $this->getRepository()->callFinder($finder, $this, $options);
+        /** @var \Cake\ORM\Table $table */
+        $table = $this->getRepository();
+
+        return $table->callFinder($finder, $this, $options);
     }
 
     /**
@@ -1235,7 +1245,11 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function update($table = null)
     {
-        $table = $table ?: $this->getRepository()->getTable();
+        if (!$table) {
+            /** @var \Cake\ORM\Table $repository */
+            $repository = $this->getRepository();
+            $table = $repository->getTable();
+        }
 
         return parent::update($table);
     }
@@ -1251,8 +1265,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function delete($table = null)
     {
-        $repo = $this->getRepository();
-        $this->from([$repo->getAlias() => $repo->getTable()]);
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+        $this->from([$repository->getAlias() => $repository->getTable()]);
 
         return parent::delete();
     }
@@ -1272,7 +1287,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      */
     public function insert(array $columns, array $types = [])
     {
-        $table = $this->getRepository()->getTable();
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $this->getRepository();
+        $table = $repository->getTable();
         $this->into($table);
 
         return parent::insert($columns, $types);

@@ -337,7 +337,7 @@ class CookieComponent extends Component
 
         $controller->response = $controller->response->withCookie($name, [
             'value' => '',
-            'expire' => $expires->format('U') - 42000,
+            'expire' => (int)$expires->format('U') - 42000,
             'path' => $config['path'],
             'domain' => $config['domain'],
             'secure' => $config['secure'],
