@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -84,6 +85,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertEquals(0, $cookie['expire'], 'session duration.');
             $this->assertEquals('/dir/', $cookie['path'], 'session path.');
             $this->assertEquals($cookie['value'], $request->getParam('_csrfToken'));
+
+            return $response;
         };
 
         $middleware = new CsrfProtectionMiddleware();
@@ -179,6 +182,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $closure = function ($request, $response) {
             $this->assertNull($request->getData('_csrfToken'));
+
+            return $response;
         };
 
         // No exception means everything is OK
@@ -273,6 +278,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
             $this->assertEquals('/dir/', $cookie['path'], 'session path.');
             $this->assertTrue($cookie['secure'], 'cookie security flag missing');
             $this->assertTrue($cookie['httpOnly'], 'cookie httpOnly flag missing');
+
+            return $response;
         };
 
         $middleware = new CsrfProtectionMiddleware([
