@@ -3,7 +3,6 @@ namespace ParentPlugin;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
-use Cake\Core\Plugin as CorePlugin;
 use Cake\Core\PluginApplicationInterface;
 
 class Plugin extends BasePlugin
@@ -12,7 +11,7 @@ class Plugin extends BasePlugin
     {
         Configure::write('ParentPlugin.bootstrap', true);
 
-        CorePlugin::load('TestPluginTwo', ['bootstrap' => true]);
+        $app->addPlugin('TestPluginTwo', ['bootstrap' => true]);
         $app->addPlugin('TestPlugin', ['bootstrap' => true]);
     }
 }
