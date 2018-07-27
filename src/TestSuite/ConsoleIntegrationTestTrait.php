@@ -238,7 +238,7 @@ trait ConsoleIntegrationTestTrait
     /**
      * Builds the appropriate command dispatcher
      *
-     * @return CommandRunner|LegacyCommandRunner
+     * @return \Cake\Console\CommandRunner|\Cake\TestSuite\LegacyCommandRunner
      */
     protected function makeRunner()
     {

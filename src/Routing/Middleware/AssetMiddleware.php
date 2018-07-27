@@ -183,7 +183,7 @@ class AssetMiddleware
     /**
      * Return the type from a File object
      *
-     * @param File $file The file from which you get the type
+     * @param \Cake\Filesystem\File $file The file from which you get the type
      * @return string
      */
     protected function getType(File $file): string

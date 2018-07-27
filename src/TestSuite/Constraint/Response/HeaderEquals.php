@@ -30,7 +30,7 @@ class HeaderEquals extends ResponseBase
     /**
      * Constructor.
      *
-     * @param Response $response Response
+     * @param \Cake\Http\Response $response \Cake\Http\Response
      * @param string $headerName Header name
      */
     public function __construct(Response $response, $headerName)

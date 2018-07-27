@@ -30,7 +30,7 @@ class BodyContains extends ResponseBase
     /**
      * Constructor.
      *
-     * @param Response $response Response
+     * @param \Cake\Http\Response $response \Cake\Http\Response
      * @param bool $ignoreCase Ignore case
      */
     public function __construct(Response $response, $ignoreCase = false)

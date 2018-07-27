@@ -30,7 +30,7 @@ class CookieEquals extends ResponseBase
     /**
      * Constructor.
      *
-     * @param Response $response Response
+     * @param \Cake\Http\Response $response \Cake\Http\Response
      * @param string $cookieName Cookie name
      */
     public function __construct(Response $response, $cookieName)

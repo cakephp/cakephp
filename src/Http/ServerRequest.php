@@ -437,7 +437,7 @@ class ServerRequest implements ServerRequestInterface
      * recursively process the data.
      *
      * @param array $value $_FILES struct
-     * @return array|UploadedFileInterface
+     * @return array|\Psr\Http\Message\UploadedFileInterface
      */
     protected function _createUploadedFile(array $value)
     {

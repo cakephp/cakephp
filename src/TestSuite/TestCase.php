@@ -223,7 +223,7 @@ abstract class TestCase extends BaseTestCase
      * Asserts that a global event was fired. You must track events in your event manager for this assertion to work
      *
      * @param string $name Event name
-     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
+     * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
      */
@@ -243,7 +243,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $name Event name
      * @param string $dataKey Data key
      * @param string $dataValue Data value
-     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
+     * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
      */
