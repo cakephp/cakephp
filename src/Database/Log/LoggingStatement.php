@@ -46,7 +46,7 @@ class LoggingStatement extends StatementDecorator
      * @return bool True on success, false otherwise
      * @throws \Exception Re-throws any exception raised during query execution.
      */
-    public function execute($params = null)
+    public function execute(?array $params = null): bool
     {
         $t = microtime(true);
         $query = new LoggedQuery();
@@ -92,7 +92,7 @@ class LoggingStatement extends StatementDecorator
      * @param string|int|null $type PDO type or name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string')
+    public function bindValue($column, $value, $type = 'string'): void
     {
         parent::bindValue($column, $value, $type);
         if ($type === null) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ class PDOStatement extends StatementDecorator
      * @param \PDOStatement|null $statement Original statement to be decorated.
      * @param \Cake\Database\Driver|null $driver Driver instance.
      */
-    public function __construct(?Statement $statement = null, $driver = null)
+    public function __construct(?Statement $statement = null, ?\Cake\Database\Driver $driver = null)
     {
         parent::__construct($statement, $driver);
     }
@@ -59,7 +60,7 @@ class PDOStatement extends StatementDecorator
      * @param string|int $type PDO type or name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string')
+    public function bindValue($column, $value, $type = 'string'): void
     {
         if ($type === null) {
             $type = 'string';
@@ -83,7 +84,7 @@ class PDOStatement extends StatementDecorator
      *  print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
      * ```
      *
-     * @param string $type 'num' for positional columns, assoc for named columns
+     * @param string|int $type 'num' for positional columns, assoc for named columns
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
@@ -113,7 +114,7 @@ class PDOStatement extends StatementDecorator
      *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string $type num for fetching columns as positional keys or assoc for column names as keys
+     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array|false list of all results from database for this statement, false on failure
      */
     public function fetchAll($type = parent::FETCH_TYPE_NUM)

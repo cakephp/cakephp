@@ -30,7 +30,9 @@ class LoggingStatementTest extends TestCase
     public function testExecuteNoParams()
     {
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
-        $inner->expects($this->once())->method('rowCount')->will($this->returnValue(3));
+        $inner->method('rowCount')->will($this->returnValue(3));
+        $inner->method('execute')->will($this->returnValue(true));
+
         $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
@@ -55,7 +57,9 @@ class LoggingStatementTest extends TestCase
     public function testExecuteWithParams()
     {
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
-        $inner->expects($this->once())->method('rowCount')->will($this->returnValue(4));
+        $inner->method('rowCount')->will($this->returnValue(4));
+        $inner->method('execute')->will($this->returnValue(true));
+
         $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
             ->method('log')
@@ -80,7 +84,9 @@ class LoggingStatementTest extends TestCase
     public function testExecuteWithBinding()
     {
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
-        $inner->expects($this->any())->method('rowCount')->will($this->returnValue(4));
+        $inner->method('rowCount')->will($this->returnValue(4));
+        $inner->method('execute')->will($this->returnValue(true));
+
         $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->at(0))
             ->method('log')
@@ -125,7 +131,8 @@ class LoggingStatementTest extends TestCase
         $this->expectExceptionMessage('This is bad');
         $exception = new \LogicException('This is bad');
         $inner = $this->getMockBuilder('PDOStatement')->getMock();
-        $inner->expects($this->once())->method('execute')
+        $inner->expects($this->once())
+            ->method('execute')
             ->will($this->throwException($exception));
         $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')->getMock();
         $logger->expects($this->once())
