@@ -19,8 +19,6 @@ use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
-use Cake\Http\ControllerFactory;
-use Cake\Http\Response;
 use Cake\Routing\Router;
 use LogicException;
 
