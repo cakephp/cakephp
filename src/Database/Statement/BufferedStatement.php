@@ -99,7 +99,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * {@inheritDoc}
      */
-    public function bindValue($column, $value, string $type = 'string'): void
+    public function bindValue($column, $value, $type = 'string'): void
     {
         $this->statement->bindValue($column, $value, $type);
     }
@@ -190,10 +190,10 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * {@inheritDoc}
      *
-     * @param string $type The type to fetch.
+     * @param int|string $type The type to fetch.
      * @return array|false
      */
-    public function fetch(string $type = self::FETCH_TYPE_NUM)
+    public function fetch($type = self::FETCH_TYPE_NUM)
     {
         if ($this->_allFetched) {
             $row = false;
@@ -338,7 +338,7 @@ class BufferedStatement implements Iterator, StatementInterface
      *
      * @return \Cake\Database\StatementInterface
      */
-    public function getInnerStatement(): \Cake\Database\StatementInterface
+    public function getInnerStatement(): StatementInterface
     {
         return $this->statement;
     }

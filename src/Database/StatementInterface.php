@@ -60,10 +60,10 @@ interface StatementInterface
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
-     * @param string $type name of configured Type class
+     * @param string|int $type name of configured Type class, or PDO type constant.
      * @return void
      */
-    public function bindValue($column, $value, string $type = 'string'): void;
+    public function bindValue($column, $value, $type = 'string'): void;
 
     /**
      * Closes a cursor in the database, freeing up any resources and memory
@@ -128,11 +128,11 @@ interface StatementInterface
      *  print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
      * ```
      *
-     * @param string $type 'num' for positional columns, assoc for named columns
+     * @param string|int $type 'num' for positional columns, assoc for named columns, or PDO fetch mode constants.
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch(string $type = 'num');
+    public function fetch($type = 'num');
 
     /**
      * Returns an array with all rows resulting from executing this statement
