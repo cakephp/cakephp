@@ -26,8 +26,6 @@ namespace Cake\Datasource;
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
- * @method $this enableQueryLogging($value)
- * @method bool isQueryLoggingEnabled()
  * @method string quote($value, $type = null)
  */
 interface ConnectionInterface
@@ -75,11 +73,17 @@ interface ConnectionInterface
     public function disableConstraints(callable $operation);
 
     /**
-     * Enables or disables query logging for this connection.
+     * Enable/disable query logging
      *
-     * @param bool|null $enable whether to turn logging on or disable it.
-     *   Use null to read current value.
+     * @param bool $value Enable/disable query logging
+     * @return $this
+     */
+    public function enableQueryLogging($value): self;
+
+    /**
+     * Check if query logging is enabled.
+     *
      * @return bool
      */
-    public function logQueries($enable = null): bool;
+    public function isQueryLoggingEnabled();
 }

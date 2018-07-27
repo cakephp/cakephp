@@ -901,23 +901,6 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * test logQueries method
-     *
-     * @deprecated
-     * @return void
-     */
-    public function testLogQueries()
-    {
-        $this->deprecated(function () {
-            $this->connection->logQueries(true);
-            $this->assertTrue($this->connection->logQueries());
-
-            $this->connection->logQueries(false);
-            $this->assertFalse($this->connection->logQueries());
-        });
-    }
-
-    /**
      * test enableQueryLogging method
      *
      * @return void
