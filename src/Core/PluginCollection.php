@@ -104,7 +104,7 @@ class PluginCollection implements Iterator, Countable
      *
      * @param string $name The plugin name to locate a path for. Will return '' when a plugin cannot be found.
      * @return string
-     * @throws Cake\Core\Exception\MissingPluginException when a plugin path cannot be resolved.
+     * @throws \Cake\Core\Exception\MissingPluginException when a plugin path cannot be resolved.
      * @internal
      */
     public function findPath($name)
