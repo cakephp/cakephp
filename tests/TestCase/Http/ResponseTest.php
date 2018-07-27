@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1479,7 +1480,7 @@ class ResponseTest extends TestCase
         $this->assertNotSame($response, $newResponse);
 
         $response = new Response();
-        $newResponse = $response->withStringBody(1337);
+        $newResponse = $response->withStringBody('1337');
         $body = $newResponse->getBody();
         $this->assertSame('1337', (string)$body);
         $this->assertNotSame($response, $newResponse);

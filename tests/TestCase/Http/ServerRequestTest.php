@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1069,9 +1070,6 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $request = $request->withEnv('HTTPS', 1);
-        $this->assertTrue($request->is('ssl'));
-
         $request = $request->withEnv('HTTPS', 'on');
         $this->assertTrue($request->is('ssl'));
 
@@ -1082,9 +1080,6 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('ssl'));
 
         $request = $request->withEnv('HTTPS', 'off');
-        $this->assertFalse($request->is('ssl'));
-
-        $request = $request->withEnv('HTTPS', false);
         $this->assertFalse($request->is('ssl'));
 
         $request = $request->withEnv('HTTPS', '');
