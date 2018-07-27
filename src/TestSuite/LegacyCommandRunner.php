@@ -30,7 +30,7 @@ class LegacyCommandRunner
      * Mimics functionality of Cake\Console\CommandRunner
      *
      * @param array $argv Argument array
-     * @param ConsoleIo $io ConsoleIo
+     * @param \Cake\Console\ConsoleIo $io A ConsoleIo instance.
      * @return int
      */
     public function run(array $argv, ?ConsoleIo $io = null)

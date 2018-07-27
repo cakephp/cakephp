@@ -53,7 +53,7 @@ class ReconnectStrategy implements RetryStrategyInterface
     /**
      * The connection to check for validity
      *
-     * @var Connection
+     * @var \Cake\Database\Connection
      */
     protected $connection;
 
@@ -73,7 +73,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      * Checks whether or not the exception was caused by a lost connection,
      * and returns true if it was able to successfully reconnect.
      *
-     * @param Exception $exception The exception to check for its message
+     * @param \Exception $exception The exception to check for its message
      * @param int $retryCount The number of times the action has been already called
      * @return bool Whether or not it is OK to retry the action
      */

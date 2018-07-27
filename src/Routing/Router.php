@@ -887,7 +887,7 @@ class Router
     /**
      * Set the RouteCollection inside the Router
      *
-     * @param RouteCollection $routeCollection route collection
+     * @param \Cake\Routing\RouteCollection $routeCollection route collection
      * @return void
      */
     public static function setRouteCollection(RouteCollection $routeCollection): void

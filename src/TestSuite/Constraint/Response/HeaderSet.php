@@ -30,7 +30,7 @@ class HeaderSet extends ResponseBase
     /**
      * Constructor.
      *
-     * @param Response $response Response
+     * @param \Cake\Http\Response $response A response instance.
      * @param string $headerName Header name
      */
     public function __construct(Response $response, $headerName)
