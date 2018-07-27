@@ -34,7 +34,7 @@ class ApplicationWithDefaultRoutes extends BaseApplication
      *
      * @return void
      */
-    public function bootstrap()
+    public function bootstrap(): void
     {
         // Do nothing.
     }

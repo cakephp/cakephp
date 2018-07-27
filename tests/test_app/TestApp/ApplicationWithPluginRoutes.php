@@ -19,7 +19,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
 
 class ApplicationWithPluginRoutes extends BaseApplication
 {
-    public function bootstrap()
+    public function bootstrap(): void
     {
         parent::bootstrap();
         $this->addPlugin('TestPlugin');
@@ -38,7 +38,7 @@ class ApplicationWithPluginRoutes extends BaseApplication
      * @param \Cake\Routing\RouteBuilder $routes
      * @return void
      */
-    public function routes($routes)
+    public function routes($routes): void
     {
         $routes->scope('/app', function ($routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
