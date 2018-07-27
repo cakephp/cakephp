@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;
 
 /**
@@ -51,7 +53,7 @@ abstract class ServerRequestFactory extends BaseFactory
         ?array $body = null,
         ?array $cookies = null,
         ?array $files = null
-    ) {
+    ): ServerRequest {
         $server = static::normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
         $sessionConfig = (array)Configure::read('Session') + [
@@ -81,7 +83,7 @@ abstract class ServerRequestFactory extends BaseFactory
      *   $_SERVER will be added into the $server parameter.
      * @return \Psr\Http\Message\UriInterface New instance.
      */
-    public static function createUri(array $server = [])
+    public static function createUri(array $server = []): UriInterface
     {
         $server += $_SERVER;
         $server = static::normalizeServer($server);
@@ -100,7 +102,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param array $headers The normalized headers
      * @return \Psr\Http\Message\UriInterface a constructed Uri
      */
-    public static function marshalUriFromServer(array $server, array $headers)
+    public static function marshalUriFromServer(array $server, array $headers): UriInterface
     {
         $uri = parent::marshalUriFromServer($server, $headers);
         list($base, $webroot) = static::getBase($uri, $server);
@@ -133,7 +135,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param \Psr\Http\Message\UriInterface $uri The uri to update.
      * @return \Psr\Http\Message\UriInterface The modified Uri instance.
      */
-    protected static function updatePath($base, $uri)
+    protected static function updatePath(string $base, UriInterface $uri): UriInterface
     {
         $path = $uri->getPath();
         if (strlen($base) > 0 && strpos($path, $base) === 0) {
@@ -163,7 +165,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * @param array $server The SERVER data to use.
      * @return array An array containing the [baseDir, webroot]
      */
-    protected static function getBase($uri, $server)
+    protected static function getBase(UriInterface $uri, array $server): array
     {
         $config = (array)Configure::read('App') + [
             'base' => null,

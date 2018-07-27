@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Database Session save handler. Allows saving session information into a model.
  *
@@ -73,7 +74,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $timeout The timeout duration.
      * @return $this
      */
-    public function setTimeout($timeout)
+    public function setTimeout(int $timeout): self
     {
         $this->_timeout = $timeout;
 

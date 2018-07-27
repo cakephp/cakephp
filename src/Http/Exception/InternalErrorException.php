@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -12,6 +13,8 @@
  */
 namespace Cake\Http\Exception;
 
+use Exception;
+
 /**
  * Represents an HTTP 500 error.
  */
@@ -21,10 +24,10 @@ class InternalErrorException extends HttpException
      * Constructor
      *
      * @param string|null $message If no message is given 'Internal Server Error' will be the message
-     * @param int $code Status code, defaults to 500
+     * @param int|null $code Status code, defaults to 500
      * @param \Exception|null $previous The previous exception.
      */
-    public function __construct($message = null, $code = null, $previous = null)
+    public function __construct(?string $message = null, ?int $code = null, ?Exception $previous = null)
     {
         if (empty($message)) {
             $message = 'Internal Server Error';

@@ -138,31 +138,6 @@ class CookieTest extends TestCase
      *
      * @return void
      */
-    public function testWithDomainInvalidConstructor()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `string` but `integer` given');
-        new Cookie('cakephp', 'rocks', null, '', 1234);
-    }
-
-    /**
-     * Test setting domain in cookies
-     *
-     * @return void
-     */
-    public function testWithDomainInvalid()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `string` but `array` given');
-        $cookie = new Cookie('cakephp', 'rocks');
-        $cookie->withDomain(['oops']);
-    }
-
-    /**
-     * Test setting domain in cookies
-     *
-     * @return void
-     */
     public function testWithDomain()
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
@@ -170,31 +145,6 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should make a clone');
         $this->assertNotContains('example.com', $cookie->toHeaderValue(), 'old instance not modified');
         $this->assertContains('domain=example.com', $new->toHeaderValue());
-    }
-
-    /**
-     * Test setting path in cookies
-     *
-     * @return void
-     */
-    public function testWithPathInvalid()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `string` but `array` given');
-        $cookie = new Cookie('cakephp', 'rocks');
-        $cookie->withPath(['oops']);
-    }
-
-    /**
-     * Test setting path in cookies
-     *
-     * @return void
-     */
-    public function testWithPathInvalidConstructor()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `string` but `integer` given');
-        new Cookie('cakephp', 'rocks', null, 123);
     }
 
     /**
@@ -227,31 +177,6 @@ class CookieTest extends TestCase
      *
      * @return void
      */
-    public function testWithHttpOnlyInvalidConstructor()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
-        new Cookie('cakephp', 'cakephp-rocks', null, '', '', false, 'invalid');
-    }
-
-    /**
-     * Test setting httponly in cookies
-     *
-     * @return void
-     */
-    public function testWithHttpOnlyInvalid()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie->withHttpOnly('no');
-    }
-
-    /**
-     * Test setting httponly in cookies
-     *
-     * @return void
-     */
     public function testWithHttpOnly()
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
@@ -259,31 +184,6 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should clone');
         $this->assertFalse($cookie->isHttpOnly());
         $this->assertTrue($new->isHttpOnly());
-    }
-
-    /**
-     * Test setting secure in cookies
-     *
-     * @return void
-     */
-    public function testWithSecureInvalidConstructor()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
-        new Cookie('cakephp', 'cakephp-rocks', null, '', '', 'invalid');
-    }
-
-    /**
-     * Test setting secure in cookies
-     *
-     * @return void
-     */
-    public function testWithSecureInvalid()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The provided arg must be of type `bool` but `string` given');
-        $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $cookie->withSecure('no');
     }
 
     /**

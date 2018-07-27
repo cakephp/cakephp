@@ -80,7 +80,7 @@ class ResponseTest extends TestCase
             'body' => 'This is the body',
             'charset' => 'my-custom-charset',
             'type' => 'mp3',
-            'status' => '203',
+            'status' => 203,
         ];
         $response = new Response($options);
         $this->assertEquals('This is the body', (string)$response->getBody());
@@ -1482,25 +1482,6 @@ class ResponseTest extends TestCase
         $newResponse = $response->withStringBody(1337);
         $body = $newResponse->getBody();
         $this->assertSame('1337', (string)$body);
-        $this->assertNotSame($response, $newResponse);
-    }
-
-    /**
-     * Test with string body with passed array.
-     *
-     * This should produce an "Array to string conversion" error
-     * which gets thrown as a \PHPUnit\Framework\Error\Error Exception by PHPUnit.
-     *
-     * @return void
-     */
-    public function testWithStringBodyArray()
-    {
-        $this->expectException(\PHPUnit\Framework\Error\Error::class);
-        $this->expectExceptionMessage('Array to string conversion');
-        $response = new Response();
-        $newResponse = $response->withStringBody(['foo' => 'bar']);
-        $body = $newResponse->getBody();
-        $this->assertSame('', (string)$body);
         $this->assertNotSame($response, $newResponse);
     }
 

@@ -40,8 +40,6 @@ class RunnerTest extends TestCase
         $this->pass = function ($req, $res, $next) {
             return $next($req, $res);
         };
-        $this->noNext = function ($req, $res, $next) {
-        };
         $this->fail = function ($req, $res, $next) {
             throw new RuntimeException('A bad thing');
         };
@@ -136,21 +134,5 @@ class RunnerTest extends TestCase
 
         $runner = new Runner();
         $runner->run($this->stack, $req, $res);
-    }
-
-    /**
-     * Test that 'bad' middleware returns null.
-     *
-     * @return void
-     */
-    public function testRunNextNotCalled()
-    {
-        $this->stack->add($this->noNext);
-        $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
-        $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
-
-        $runner = new Runner();
-        $result = $runner->run($this->stack, $req, $res);
-        $this->assertNull($result);
     }
 }

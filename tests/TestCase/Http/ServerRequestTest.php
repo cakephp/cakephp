@@ -1180,7 +1180,7 @@ class ServerRequestTest extends TestCase
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16',
             'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
+            'CONTENT_LENGTH' => '1337',
             'HTTP_CONTENT_MD5' => 'abc123',
         ]]);
 
@@ -1270,7 +1270,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
+            'CONTENT_LENGTH' => '1337',
             'HTTP_CONTENT_MD5' => 'abc123',
             'HTTP_DOUBLE' => ['a', 'b'],
         ]]);

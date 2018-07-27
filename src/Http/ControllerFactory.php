@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -50,7 +51,7 @@ class ControllerFactory
      * Determine the controller class name based on current request and controller param
      *
      * @param \Cake\Http\ServerRequest $request The request to build a controller for.
-     * @return string|null
+     * @return string|false
      */
     public function getControllerClass(ServerRequest $request)
     {
@@ -96,7 +97,7 @@ class ControllerFactory
      * @throws \Cake\Routing\Exception\MissingControllerException
      * @return void
      */
-    protected function missingController($request)
+    protected function missingController(ServerRequest $request): void
     {
         throw new MissingControllerException([
             'class' => $request->getParam('controller'),

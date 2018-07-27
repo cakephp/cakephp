@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,10 +20,14 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\ActionDispatcher;
+use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -60,7 +65,7 @@ abstract class BaseApplication implements
      * @param string $configDir The directory the bootstrap configuration is held in.
      * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
      */
-    public function __construct($configDir, ?EventManagerInterface $eventManager = null)
+    public function __construct(string $configDir, ?EventManagerInterface $eventManager = null)
     {
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();
@@ -108,7 +113,7 @@ abstract class BaseApplication implements
      *
      * @return \Cake\Core\PluginCollection
      */
-    public function getPlugins()
+    public function getPlugins(): PluginCollection
     {
         return $this->plugins;
     }
@@ -120,14 +125,22 @@ abstract class BaseApplication implements
      * @param array $config Configuration options for the plugin
      * @return \Cake\Core\PluginInterface
      */
-    protected function makePlugin($name, array $config)
+    protected function makePlugin(string $name, array $config): PluginInterface
     {
         $className = $name;
         if (strpos($className, '\\') === false) {
             $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
         }
         if (class_exists($className)) {
-            return new $className($config);
+            $plugin = new $className($config);
+            if (!$plugin instanceof PluginInterface) {
+                throw new InvalidArgumentException(sprintf(
+                    'The `%s` plugin does not implement Cake\Core\PluginInterface.',
+                    get_class($plugin)
+                ));
+            }
+
+            return $plugin;
         }
 
         if (!isset($config['path'])) {
@@ -141,7 +154,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function bootstrap()
+    public function bootstrap(): void
     {
         require_once $this->configDir . '/bootstrap.php';
     }
@@ -164,7 +177,7 @@ abstract class BaseApplication implements
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
      */
-    public function routes($routes)
+    public function routes($routes): void
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
@@ -222,7 +235,7 @@ abstract class BaseApplication implements
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         return $this->getDispatcher()->dispatch($request, $response);
     }
@@ -232,7 +245,7 @@ abstract class BaseApplication implements
      *
      * @return \Cake\Http\ActionDispatcher
      */
-    protected function getDispatcher()
+    protected function getDispatcher(): ActionDispatcher
     {
         return new ActionDispatcher(null, $this->getEventManager());
     }

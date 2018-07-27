@@ -196,20 +196,6 @@ class ServerTest extends TestCase
     }
 
     /**
-     * Test middleware not creating a response.
-     *
-     * @return void
-     */
-    public function testRunMiddlewareNoResponse()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Application did not create a response. Got "Not a response" instead.');
-        $app = new BadResponseApplication($this->config);
-        $server = new Server($app);
-        $server->run();
-    }
-
-    /**
      * Test that emit invokes the appropriate methods on the emitter.
      *
      * @return void

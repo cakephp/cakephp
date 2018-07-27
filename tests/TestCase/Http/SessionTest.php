@@ -47,7 +47,7 @@ class TestDatabaseSession extends DatabaseSession
  */
 class TestWebSession extends Session
 {
-    protected function _hasSession()
+    protected function _hasSession(): bool
     {
         $isCLI = $this->_isCLI;
         $this->_isCLI = false;
@@ -255,9 +255,6 @@ class SessionTest extends TestCase
         $value = $session->consume('');
         $this->assertNull($value);
 
-        $value = $session->consume(null);
-        $this->assertNull($value);
-
         $value = $session->consume('Some.array');
         $expected = ['key1' => 'value1', 'key2' => 'value2'];
         $this->assertEquals($expected, $value);
@@ -330,8 +327,6 @@ class SessionTest extends TestCase
 
         $session->write('Clearing.sale', 'everything must go');
         $session->delete('');
-        $this->assertTrue($session->check('Clearing.sale'));
-        $session->delete(null);
         $this->assertTrue($session->check('Clearing.sale'));
 
         $session->delete('Clearing');

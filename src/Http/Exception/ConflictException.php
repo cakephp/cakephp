@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -11,6 +12,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Exception;
+
+use Exception;
 
 /**
  * Represents an HTTP 409 error.
@@ -26,10 +29,10 @@ class ConflictException extends HttpException
      * Constructor
      *
      * @param string|null $message If no message is given 'Conflict' will be the message
-     * @param int $code Status code, defaults to 409
+     * @param int|null $code Status code, defaults to 409
      * @param \Exception|null $previous The previous exception.
      */
-    public function __construct($message = null, $code = null, $previous = null)
+    public function __construct(?string $message = null, ?int $code = null, ?Exception $previous = null)
     {
         if (empty($message)) {
             $message = 'Conflict';

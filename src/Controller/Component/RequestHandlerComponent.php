@@ -251,6 +251,7 @@ class RequestHandlerComponent extends Component
         $request = $controller->getRequest();
 
         $isRecognized = (
+            $this->ext &&
             !in_array($this->ext, ['html', 'htm']) &&
             $response->getMimeType($this->ext)
         );

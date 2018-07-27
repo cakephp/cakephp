@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -74,7 +75,7 @@ class ResponseEmitter implements EmitterInterface
      * @param int $maxBufferLength The chunk size to emit
      * @return void
      */
-    protected function emitBody(ResponseInterface $response, $maxBufferLength)
+    protected function emitBody(ResponseInterface $response, int $maxBufferLength): void
     {
         if (in_array($response->getStatusCode(), [204, 304])) {
             return;
@@ -101,7 +102,7 @@ class ResponseEmitter implements EmitterInterface
      * @param int $maxBufferLength The chunk size to emit
      * @return void
      */
-    protected function emitBodyRange(array $range, ResponseInterface $response, $maxBufferLength)
+    protected function emitBodyRange(array $range, ResponseInterface $response, int $maxBufferLength): void
     {
         list($unit, $first, $last, $length) = $range;
 
@@ -138,7 +139,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @return void
      */
-    protected function emitStatusLine(ResponseInterface $response)
+    protected function emitStatusLine(ResponseInterface $response): void
     {
         $reasonPhrase = $response->getReasonPhrase();
         header(sprintf(
@@ -160,7 +161,7 @@ class ResponseEmitter implements EmitterInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit
      * @return void
      */
-    protected function emitHeaders(ResponseInterface $response)
+    protected function emitHeaders(ResponseInterface $response): void
     {
         $cookies = [];
         if (method_exists($response, 'getCookies')) {
@@ -192,7 +193,7 @@ class ResponseEmitter implements EmitterInterface
      * @param array $cookies An array of Set-Cookie headers.
      * @return void
      */
-    protected function emitCookies(array $cookies)
+    protected function emitCookies(array $cookies): void
     {
         foreach ($cookies as $cookie) {
             if (is_array($cookie)) {
@@ -259,7 +260,7 @@ class ResponseEmitter implements EmitterInterface
      * @param int|null $maxBufferLevel Flush up to this buffer level.
      * @return void
      */
-    protected function flush($maxBufferLevel = null)
+    protected function flush(?int $maxBufferLevel = null): void
     {
         if ($maxBufferLevel === null) {
             $maxBufferLevel = ob_get_level();
@@ -278,7 +279,7 @@ class ResponseEmitter implements EmitterInterface
      * @return false|array [unit, first, last, length]; returns false if no
      *     content range or an invalid content range is provided
      */
-    protected function parseContentRange($header)
+    protected function parseContentRange(string $header)
     {
         if (preg_match('/(?P<unit>[\w]+)\s+(?P<first>\d+)-(?P<last>\d+)\/(?P<length>\d+|\*)/', $header, $matches)) {
             return [

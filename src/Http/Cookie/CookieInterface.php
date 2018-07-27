@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -31,14 +32,14 @@ interface CookieInterface
      * @param string $name Name of the cookie
      * @return static
      */
-    public function withName($name);
+    public function withName(string $name): CookieInterface;
 
     /**
      * Gets the cookie name
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Gets the cookie value
@@ -62,7 +63,7 @@ interface CookieInterface
      * @param string|array $value Value of the cookie to set
      * @return static
      */
-    public function withValue($value);
+    public function withValue($value): CookieInterface;
 
     /**
      * Get the id for a cookie
@@ -71,14 +72,14 @@ interface CookieInterface
      *
      * @return string
      */
-    public function getId();
+    public function getId(): string;
 
     /**
      * Get the path attribute.
      *
      * @return string
      */
-    public function getPath();
+    public function getPath(): string;
 
     /**
      * Create a new cookie with an updated path
@@ -86,14 +87,14 @@ interface CookieInterface
      * @param string $path Sets the path
      * @return static
      */
-    public function withPath($path);
+    public function withPath(string $path): CookieInterface;
 
     /**
      * Get the domain attribute.
      *
      * @return string
      */
-    public function getDomain();
+    public function getDomain(): string;
 
     /**
      * Create a cookie with an updated domain
@@ -101,7 +102,7 @@ interface CookieInterface
      * @param string $domain Domain to set
      * @return static
      */
-    public function withDomain($domain);
+    public function withDomain(string $domain): CookieInterface;
 
     /**
      * Get the current expiry time
@@ -118,14 +119,14 @@ interface CookieInterface
      *
      * @return string|null The expiry time as a string timestamp.
      */
-    public function getExpiresTimestamp();
+    public function getExpiresTimestamp(): ?string;
 
     /**
      * Builds the expiration value part of the header string
      *
      * @return string
      */
-    public function getFormattedExpires();
+    public function getFormattedExpires(): string;
 
     /**
      * Create a cookie with an updated expiration date
@@ -133,14 +134,14 @@ interface CookieInterface
      * @param \DateTime|\DateTimeImmutable $dateTime Date time object
      * @return static
      */
-    public function withExpiry($dateTime);
+    public function withExpiry($dateTime): CookieInterface;
 
     /**
      * Create a new cookie that will virtually never expire.
      *
      * @return static
      */
-    public function withNeverExpire();
+    public function withNeverExpire(): CookieInterface;
 
     /**
      * Create a new cookie that will expire/delete the cookie from the browser.
@@ -149,7 +150,7 @@ interface CookieInterface
      *
      * @return static
      */
-    public function withExpired();
+    public function withExpired(): CookieInterface;
 
     /**
      * Check if a cookie is expired when compared to $time
@@ -159,14 +160,14 @@ interface CookieInterface
      * @param \DateTime|\DateTimeImmutable $time The time to test against. Defaults to 'now' in UTC.
      * @return bool
      */
-    public function isExpired($time = null);
+    public function isExpired($time = null): bool;
 
     /**
      * Check if the cookie is HTTP only
      *
      * @return bool
      */
-    public function isHttpOnly();
+    public function isHttpOnly(): bool;
 
     /**
      * Create a cookie with HTTP Only updated
@@ -174,14 +175,14 @@ interface CookieInterface
      * @param bool $httpOnly HTTP Only
      * @return static
      */
-    public function withHttpOnly($httpOnly);
+    public function withHttpOnly(bool $httpOnly): CookieInterface;
 
     /**
      * Check if the cookie is secure
      *
      * @return bool
      */
-    public function isSecure();
+    public function isSecure(): bool;
 
     /**
      * Create a cookie with Secure updated
@@ -189,12 +190,12 @@ interface CookieInterface
      * @param bool $secure Secure attribute value
      * @return static
      */
-    public function withSecure($secure);
+    public function withSecure(bool $secure): CookieInterface;
 
     /**
      * Returns the cookie as header value
      *
      * @return string
      */
-    public function toHeaderValue();
+    public function toHeaderValue(): string;
 }

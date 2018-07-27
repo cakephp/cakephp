@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,9 @@ namespace Cake\Http;
 use Cake\Controller\Controller;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
+use Cake\Http\ControllerFactory;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 use LogicException;
 
@@ -51,7 +55,7 @@ class ActionDispatcher implements EventDispatcherInterface
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
      */
-    public function __construct($factory = null, $eventManager = null)
+    public function __construct(?ControllerFactory $factory = null, ?EventManager $eventManager = null)
     {
         if ($eventManager) {
             $this->setEventManager($eventManager);
@@ -67,7 +71,7 @@ class ActionDispatcher implements EventDispatcherInterface
      * @return \Cake\Http\Response A modified/replaced response.
      * @throws \ReflectionException
      */
-    public function dispatch(ServerRequest $request, Response $response)
+    public function dispatch(ServerRequest $request, Response $response): Response
     {
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
@@ -104,7 +108,7 @@ class ActionDispatcher implements EventDispatcherInterface
      * @return \Cake\Http\Response The response
      * @throws \LogicException If the controller action returns a non-response value.
      */
-    protected function _invoke(Controller $controller)
+    protected function _invoke(Controller $controller): Response
     {
         $this->dispatchEvent('Dispatcher.invokeController', ['controller' => $controller]);
 
@@ -138,7 +142,7 @@ class ActionDispatcher implements EventDispatcherInterface
      *
      * @return array
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->filters;
     }

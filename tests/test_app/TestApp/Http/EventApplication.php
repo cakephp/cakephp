@@ -38,7 +38,7 @@ class EventApplication extends BaseApplication
         return $commands->addMany(['ex' => DemoCommand::class]);
     }
 
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, $next)
+    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface
     {
         return $res;
     }
