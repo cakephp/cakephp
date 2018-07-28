@@ -13,6 +13,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
+use Throwable;
+
 /**
  * Represents an HTTP 409 error.
  */
