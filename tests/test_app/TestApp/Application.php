@@ -14,8 +14,11 @@
  */
 namespace TestApp;
 
+use Cake\Console\CommandCollection;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\RouteBuilder;
 use TestApp\Command\AbortCommand;
 
 class Application extends BaseApplication
@@ -25,14 +28,14 @@ class Application extends BaseApplication
         parent::bootstrap();
     }
 
-    public function console($commands)
+    public function console(CommandCollection $commands): CommandCollection
     {
         return $commands
             ->add('abort_command', new AbortCommand())
             ->addMany($commands->autoDiscover());
     }
 
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         $middleware->add(new RoutingMiddleware($this));
         $middleware->add(function ($req, $res, $next) {
@@ -50,7 +53,7 @@ class Application extends BaseApplication
      * @param \Cake\Routing\RouteBuilder $routes
      * @return void
      */
-    public function routes($routes): void
+    public function routes(RouteBuilder $routes): void
     {
         $routes->scope('/app', function ($routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);

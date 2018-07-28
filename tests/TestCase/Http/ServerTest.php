@@ -168,20 +168,6 @@ class ServerTest extends TestCase
     }
 
     /**
-     * Test an application failing to build middleware properly
-     *
-     * @return void
-     */
-    public function testRunWithApplicationNotMakingMiddleware()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The application `middleware` method');
-        $app = new InvalidMiddlewareApplication($this->config);
-        $server = new Server($app);
-        $server->run();
-    }
-
-    /**
      * Test middleware being invoked.
      *
      * @return void

@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
@@ -25,6 +26,7 @@ use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -73,12 +75,12 @@ abstract class BaseApplication implements
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    abstract public function middleware($middleware);
+    abstract public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
      * {@inheritDoc}
      */
-    public function pluginMiddleware($middleware)
+    public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         foreach ($this->plugins->with('middleware') as $plugin) {
             $middleware = $plugin->middleware($middleware);
@@ -174,7 +176,7 @@ abstract class BaseApplication implements
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
      */
-    public function routes($routes): void
+    public function routes(RouteBuilder $routes): void
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
@@ -185,7 +187,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginRoutes($routes)
+    public function pluginRoutes(RouteBuilder $routes): RouteBuilder
     {
         foreach ($this->plugins->with('routes') as $plugin) {
             $plugin->routes($routes);
@@ -203,7 +205,7 @@ abstract class BaseApplication implements
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
-    public function console($commands)
+    public function console(CommandCollection $commands): CommandCollection
     {
         return $commands->addMany($commands->autoDiscover());
     }
@@ -211,7 +213,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginConsole($commands)
+    public function pluginConsole(CommandCollection $commands): CommandCollection
     {
         foreach ($this->plugins->with('console') as $plugin) {
             $commands = $plugin->console($commands);

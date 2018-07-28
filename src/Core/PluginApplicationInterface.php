@@ -15,7 +15,10 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Console\CommandCollection;
 use Cake\Event\EventDispatcherInterface;
+use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
 
 /**
  * Interface for Applications that leverage plugins & events.
@@ -51,7 +54,7 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param \Cake\Routing\RouteBuilder $routes The route builder to use.
      * @return \Cake\Routing\RouteBuilder
      */
-    public function pluginRoutes($routes);
+    public function pluginRoutes(RouteBuilder $routes): RouteBuilder;
 
     /**
      * Run middleware hooks for plugins
@@ -59,7 +62,7 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param \Cake\Http\MiddlewareQueue $middleware The MiddlewareQueue to use.
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function pluginMiddleware($middleware);
+    public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
      * Run console hooks for plugins
@@ -67,5 +70,5 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to use.
      * @return \Cake\Console\CommandCollection
      */
-    public function pluginConsole($commands);
+    public function pluginConsole(CommandCollection $commands): CommandCollection;
 }

@@ -15,7 +15,9 @@
 namespace TestApp;
 
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\RouteBuilder;
 
 class ApplicationWithPluginRoutes extends BaseApplication
 {
@@ -25,7 +27,7 @@ class ApplicationWithPluginRoutes extends BaseApplication
         $this->addPlugin('TestPlugin');
     }
 
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         $middleware->add(new RoutingMiddleware($this));
 
@@ -38,7 +40,7 @@ class ApplicationWithPluginRoutes extends BaseApplication
      * @param \Cake\Routing\RouteBuilder $routes
      * @return void
      */
-    public function routes($routes): void
+    public function routes(RouteBuilder $routes): void
     {
         $routes->scope('/app', function ($routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);

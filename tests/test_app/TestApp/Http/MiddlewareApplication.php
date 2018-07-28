@@ -2,6 +2,7 @@
 namespace TestApp\Http;
 
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -11,7 +12,7 @@ class MiddlewareApplication extends BaseApplication
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware stack to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         $middleware
             ->add(function ($req, $res, $next) {
