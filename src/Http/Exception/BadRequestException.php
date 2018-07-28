@@ -13,8 +13,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Exception;
 
-use Exception;
-
 /**
  * Represents an HTTP 400 error.
  */
