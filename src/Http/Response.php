@@ -510,7 +510,7 @@ class Response implements ResponseInterface
      * @param string $url The location to redirect to.
      * @return static A new response with the Location header set.
      */
-    public function withLocation(string $url): ResponseInterface
+    public function withLocation(string $url): self
     {
         $new = $this->withHeader('Location', $url);
         if ($new->_status === 200) {
@@ -742,7 +742,7 @@ class Response implements ResponseInterface
      * @param string $charset Character set string.
      * @return static
      */
-    public function withCharset(string $charset): ResponseInterface
+    public function withCharset(string $charset): self
     {
         $new = clone $this;
         $new->_charset = $charset;
@@ -756,7 +756,7 @@ class Response implements ResponseInterface
      *
      * @return static
      */
-    public function withDisabledCache(): ResponseInterface
+    public function withDisabledCache(): self
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
             ->withHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT')
@@ -770,7 +770,7 @@ class Response implements ResponseInterface
      * @param int|string $time a valid time for cache expiry
      * @return static
      */
-    public function withCache($since, $time = '+1 day'): ResponseInterface
+    public function withCache($since, $time = '+1 day'): self
     {
         if (!is_int($time)) {
             $time = strtotime($time);
@@ -791,7 +791,7 @@ class Response implements ResponseInterface
      * @param int|null $time time in seconds after which the response should no longer be considered fresh.
      * @return static
      */
-    public function withSharable(bool $public, ?int $time = null): ResponseInterface
+    public function withSharable(bool $public, ?int $time = null): self
     {
         $new = clone $this;
         unset($new->_cacheDirectives['private'], $new->_cacheDirectives['public']);
@@ -816,7 +816,7 @@ class Response implements ResponseInterface
      * @param int $seconds The number of seconds for shared max-age
      * @return static
      */
-    public function withSharedMaxAge(int $seconds): ResponseInterface
+    public function withSharedMaxAge(int $seconds): self
     {
         $new = clone $this;
         $new->_cacheDirectives['s-maxage'] = $seconds;
@@ -834,7 +834,7 @@ class Response implements ResponseInterface
      * @param int $seconds The seconds a cached response can be considered valid
      * @return static
      */
-    public function withMaxAge(int $seconds): ResponseInterface
+    public function withMaxAge(int $seconds): self
     {
         $new = clone $this;
         $new->_cacheDirectives['max-age'] = $seconds;
@@ -854,7 +854,7 @@ class Response implements ResponseInterface
      * @param bool $enable If boolean sets or unsets the directive.
      * @return static
      */
-    public function withMustRevalidate(bool $enable): ResponseInterface
+    public function withMustRevalidate(bool $enable): self
     {
         $new = clone $this;
         if ($enable) {
@@ -900,7 +900,7 @@ class Response implements ResponseInterface
      * @param string|\DateTime $time Valid time string or \DateTime instance.
      * @return static
      */
-    public function withExpires($time): ResponseInterface
+    public function withExpires($time): self
     {
         $date = $this->_getUTCDate($time);
 
@@ -923,7 +923,7 @@ class Response implements ResponseInterface
      * @param int|string|\DateTime $time Valid time string or \DateTime instance.
      * @return static
      */
-    public function withModified($time): ResponseInterface
+    public function withModified($time): self
     {
         $date = $this->_getUTCDate($time);
 
@@ -967,7 +967,7 @@ class Response implements ResponseInterface
      *
      * @return static
      */
-    public function withNotModified(): ResponseInterface
+    public function withNotModified(): self
     {
         $new = $this->withStatus(304);
         $new->_createStream();
@@ -998,7 +998,7 @@ class Response implements ResponseInterface
      *   containing the list for variances.
      * @return static
      */
-    public function withVary($cacheVariances): ResponseInterface
+    public function withVary($cacheVariances): self
     {
         return $this->withHeader('Vary', (array)$cacheVariances);
     }
@@ -1024,7 +1024,7 @@ class Response implements ResponseInterface
      *   other with the same hash or not. Defaults to false
      * @return static
      */
-    public function withEtag(string $hash, bool $weak = false): ResponseInterface
+    public function withEtag(string $hash, bool $weak = false): self
     {
         $hash = sprintf('%s"%s"', $weak ? 'W/' : null, $hash);
 
@@ -1084,7 +1084,7 @@ class Response implements ResponseInterface
      * @param string $filename The name of the file as the browser will download the response
      * @return static
      */
-    public function withDownload(string $filename): ResponseInterface
+    public function withDownload(string $filename): self
     {
         return $this->withHeader('Content-Disposition', 'attachment; filename="' . $filename . '"');
     }
@@ -1095,7 +1095,7 @@ class Response implements ResponseInterface
      * @param int|string $bytes Number of bytes
      * @return static
      */
-    public function withLength($bytes): ResponseInterface
+    public function withLength($bytes): self
     {
         return $this->withHeader('Content-Length', (string)$bytes);
     }
@@ -1122,7 +1122,7 @@ class Response implements ResponseInterface
      * @return static
      * @since 3.6.0
      */
-    public function withAddedLink(string $url, array $options = []): ResponseInterface
+    public function withAddedLink(string $url, array $options = []): self
     {
         $params = [];
         foreach ($options as $key => $option) {
@@ -1219,7 +1219,7 @@ class Response implements ResponseInterface
      * @param array|string $data Either a string value, or an array of cookie options.
      * @return static
      */
-    public function withCookie($name, $data = ''): ResponseInterface
+    public function withCookie($name, $data = ''): self
     {
         if ($name instanceof Cookie) {
             $cookie = $name;
@@ -1285,7 +1285,7 @@ class Response implements ResponseInterface
      * @param array $options An array of cookie options.
      * @return static
      */
-    public function withExpiredCookie($name, array $options = []): ResponseInterface
+    public function withExpiredCookie($name, array $options = []): self
     {
         if ($name instanceof CookieInterface) {
             $cookie = $name->withExpired();
@@ -1422,7 +1422,7 @@ class Response implements ResponseInterface
      * @return static
      * @throws \Cake\Http\Exception\NotFoundException
      */
-    public function withFile(string $path, array $options = []): ResponseInterface
+    public function withFile(string $path, array $options = []): self
     {
         $file = $this->validateFile($path);
         $options += [
@@ -1478,7 +1478,7 @@ class Response implements ResponseInterface
      * @param string $string The string to be sent
      * @return static
      */
-    public function withStringBody(?string $string): ResponseInterface
+    public function withStringBody(?string $string): self
     {
         $new = clone $this;
         $new->_createStream();

@@ -1435,7 +1435,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
      * @return static
      */
-    public function withCookieCollection(CookieCollection $cookies): ServerRequestInterface
+    public function withCookieCollection(CookieCollection $cookies): self
     {
         $new = clone $this;
         $values = [];
@@ -1463,7 +1463,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies The new cookie data to use.
      * @return static
      */
-    public function withCookieParams(array $cookies): ServerRequestInterface
+    public function withCookieParams(array $cookies): self
     {
         $new = clone $this;
         $new->cookies = $cookies;
@@ -1494,7 +1494,7 @@ class ServerRequest implements ServerRequestInterface
      *     typically be in an array or object.
      * @return static
      */
-    public function withParsedBody($data): ServerRequestInterface
+    public function withParsedBody($data): self
     {
         $new = clone $this;
         $new->data = $data;
@@ -1573,7 +1573,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $value Value to set
      * @return static
      */
-    public function withEnv(string $key, string $value): ServerRequestInterface
+    public function withEnv(string $key, string $value): self
     {
         $new = clone $this;
         $new->_environment[$key] = $value;
@@ -1642,7 +1642,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the request data.
      * @return static
      */
-    public function withData(string $name, $value): ServerRequestInterface
+    public function withData(string $name, $value): self
     {
         $copy = clone $this;
         $copy->data = Hash::insert($copy->data, $name, $value);
@@ -1659,7 +1659,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The dot separated path to remove.
      * @return static
      */
-    public function withoutData(string $name): ServerRequestInterface
+    public function withoutData(string $name): self
     {
         $copy = clone $this;
         $copy->data = Hash::remove($copy->data, $name);
@@ -1677,7 +1677,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the the request parameters.
      * @return static
      */
-    public function withParam(string $name, $value): ServerRequestInterface
+    public function withParam(string $name, $value): self
     {
         $copy = clone $this;
         $copy->params = Hash::insert($copy->params, $name, $value);
