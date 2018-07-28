@@ -100,42 +100,6 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * Test that the console hook not returning a command collection
-     * raises an error.
-     *
-     * @return void
-     */
-    public function testRunConsoleHookFailure()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The application\'s `console` method did not return a CommandCollection.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['console', 'middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $runner = new CommandRunner($app);
-        $runner->run(['cake', '-h']);
-    }
-
-    /**
-     * Test that the console hook not returning a command collection
-     * raises an error.
-     *
-     * @return void
-     */
-    public function testRunPluginConsoleHookFailure()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The application\'s `pluginConsole` method did not return a CommandCollection.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['pluginConsole', 'middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $runner = new CommandRunner($app);
-        $runner->run(['cake', '-h']);
-    }
-
-    /**
      * Test that running with empty argv fails
      *
      * @return void
