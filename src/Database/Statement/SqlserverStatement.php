@@ -30,7 +30,7 @@ class SqlserverStatement extends PDOStatement
      *
      * {@inheritDoc}
      */
-    public function bindValue($column, $value, $type = 'string')
+    public function bindValue($column, $value, $type = 'string'): void
     {
         if ($type === null) {
             $type = 'string';
