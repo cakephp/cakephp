@@ -535,7 +535,7 @@ class ServerRequest implements ServerRequestInterface
             $ipaddr = $this->getEnv('REMOTE_ADDR');
         }
 
-        return trim($ipaddr);
+        return trim((string)$ipaddr);
     }
 
     /**

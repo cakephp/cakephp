@@ -656,7 +656,7 @@ class Response implements ResponseInterface
      * @param string $contentType Either a file extension which will be mapped to a mime-type or a concrete mime-type.
      * @return static
      */
-    public function withType(string $contentType): ResponseInterface
+    public function withType(string $contentType): self
     {
         $mappedType = $this->resolveType($contentType);
         $new = clone $this;
