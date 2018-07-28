@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -656,8 +657,12 @@ class QueryExpression implements ExpressionInterface, Countable
             }
 
             $isArray = is_array($c);
-            $isOperator = in_array(strtolower($k), $operators);
-            $isNot = strtolower($k) === 'not';
+            $isOperator = $isNot = false;
+            if (!$numericKey) {
+                $normalizedKey = strtolower($k);
+                $isOperator = in_array($normalizedKey, $operators);
+                $isNot = $normalizedKey === 'not';
+            }
 
             if (($isOperator || $isNot) && ($isArray || $c instanceof Countable) && count($c) === 0) {
                 continue;
@@ -714,7 +719,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $type = $this->getTypeMap()->type($expression);
         $operator = strtolower(trim($operator));
 
-        $typeMultiple = strpos($type, '[]') !== false;
+        $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);
         if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
             $type = $type ?: 'string';
             $type .= $typeMultiple ? null : '[]';
