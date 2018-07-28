@@ -24,8 +24,6 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
-use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
