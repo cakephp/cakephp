@@ -30,9 +30,9 @@ class GoneException extends HttpException
      *
      * @param string|null $message If no message is given 'Gone' will be the message
      * @param int|null $code Status code, defaults to 410
-     * @param \Exception|null $previous The previous exception.
+     * @param \Throwable|null $previous The previous exception.
      */
-    public function __construct(?string $message = null, ?int $code = null, ?Exception $previous = null)
+    public function __construct(?string $message = null, ?int $code = null, ?Throwable $previous = null)
     {
         if (empty($message)) {
             $message = 'Gone';

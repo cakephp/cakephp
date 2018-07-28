@@ -30,9 +30,9 @@ class ServiceUnavailableException extends HttpException
      *
      * @param string|null $message If no message is given 'Service Unavailable' will be the message
      * @param int|null $code Status code, defaults to 503
-     * @param \Exception|null $previous The previous exception.
+     * @param \Throwable|null $previous The previous exception.
      */
-    public function __construct(?string $message = null, ?int $code = null, ?Exception $previous = null)
+    public function __construct(?string $message = null, ?int $code = null, ?Throwable $previous = null)
     {
         if (empty($message)) {
             $message = 'Service Unavailable';
