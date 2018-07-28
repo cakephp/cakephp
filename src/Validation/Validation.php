@@ -783,7 +783,8 @@ class Validation
     {
         if ($check instanceof UploadedFileInterface) {
             return static::extension($check->getClientFilename(), $extensions);
-        } elseif (is_array($check)) {
+        }
+        if (is_array($check)) {
             $check = isset($check['name']) ? $check['name'] : array_shift($check);
 
             return static::extension($check, $extensions);
