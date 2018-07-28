@@ -134,17 +134,11 @@ class Cookie implements CookieInterface
 
         $this->_setValue($value);
 
-        $this->validateString($domain);
         $this->domain = $domain;
-
-        $this->validateBool($httpOnly);
         $this->httpOnly = $httpOnly;
-
-        $this->validateString($path);
         $this->path = $path;
-
-        $this->validateBool($secure);
         $this->secure = $secure;
+
         if ($expiresAt) {
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
@@ -280,7 +274,6 @@ class Cookie implements CookieInterface
      */
     public function withPath(string $path): CookieInterface
     {
-        $this->validateString($path);
         $new = clone $this;
         $new->path = $path;
 
@@ -300,7 +293,6 @@ class Cookie implements CookieInterface
      */
     public function withDomain(string $domain): CookieInterface
     {
-        $this->validateString($domain);
         $new = clone $this;
         $new->domain = $domain;
 
@@ -316,23 +308,6 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Validate that an argument is a string
-     *
-     * @param string $value The value to validate.
-     * @return void
-     * @throws \InvalidArgumentException
-     */
-    protected function validateString(string $value): void
-    {
-        if (!is_string($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'The provided arg must be of type `string` but `%s` given',
-                gettype($value)
-            ));
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function isSecure(): bool
@@ -345,7 +320,6 @@ class Cookie implements CookieInterface
      */
     public function withSecure(bool $secure): CookieInterface
     {
-        $this->validateBool($secure);
         $new = clone $this;
         $new->secure = $secure;
 
@@ -357,28 +331,10 @@ class Cookie implements CookieInterface
      */
     public function withHttpOnly(bool $httpOnly): CookieInterface
     {
-        $this->validateBool($httpOnly);
         $new = clone $this;
         $new->httpOnly = $httpOnly;
 
         return $new;
-    }
-
-    /**
-     * Validate that an argument is a boolean
-     *
-     * @param bool $value The value to validate.
-     * @return void
-     * @throws \InvalidArgumentException
-     */
-    protected function validateBool(bool $value): void
-    {
-        if (!is_bool($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'The provided arg must be of type `bool` but `%s` given',
-                gettype($value)
-            ));
-        }
     }
 
     /**
