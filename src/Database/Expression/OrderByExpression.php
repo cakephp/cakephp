@@ -41,7 +41,7 @@ class OrderByExpression extends QueryExpression
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $order = [];
         foreach ($this->_conditions as $k => $direction) {
@@ -64,7 +64,7 @@ class OrderByExpression extends QueryExpression
      * @param array $types list of types associated on fields referenced in $conditions
      * @return void
      */
-    protected function _addConditions(array $orders, array $types)
+    protected function _addConditions(array $orders, array $types): void
     {
         $this->_conditions = array_merge($this->_conditions, $orders);
     }

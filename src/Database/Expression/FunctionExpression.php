@@ -64,7 +64,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * passed arguments
      * @param string $returnType The return type of this expression
      */
-    public function __construct($name, $params = [], $types = [], $returnType = 'string')
+    public function __construct(string $name, array $params = [], array $types = [], string $returnType = 'string')
     {
         $this->_name = $name;
         $this->_returnType = $returnType;
@@ -77,7 +77,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param string $name The name of the function
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->_name = $name;
 
@@ -89,7 +89,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -105,7 +105,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
      * @return $this
      */
-    public function add($params, $types = [], $prepend = false)
+    public function add($params, $types = [], bool $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);
@@ -146,7 +146,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $parts = [];
         foreach ($this->_conditions as $condition) {
@@ -172,7 +172,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return 1 + count($this->_conditions);
     }

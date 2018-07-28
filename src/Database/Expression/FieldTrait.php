@@ -33,7 +33,7 @@ trait FieldTrait
      * @param string|\Cake\Database\ExpressionInterface $field The field to compare with.
      * @return void
      */
-    public function setField($field)
+    public function setField($field): void
     {
         $this->_field = $field;
     }

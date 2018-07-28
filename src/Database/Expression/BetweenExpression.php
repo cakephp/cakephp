@@ -75,7 +75,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $parts = [
             'from' => $this->_from,
@@ -119,7 +119,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      * @param string $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue($value, $generator, $type)
+    protected function _bindValue($value, $generator, $type): string
     {
         $placeholder = $generator->placeholder('c');
         $generator->bind($placeholder, $value, $type);

@@ -27,7 +27,7 @@ interface FieldInterface
      * @param string|\Cake\Database\ExpressionInterface $field The field to compare with.
      * @return void
      */
-    public function setField($field);
+    public function setField($field): void;
 
     /**
      * Returns the field name

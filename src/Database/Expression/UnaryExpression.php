@@ -63,7 +63,7 @@ class UnaryExpression implements ExpressionInterface
      * @param mixed $value the value to use as the operand for the expression
      * @param int $mode either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct($operator, $value, $mode = self::PREFIX)
+    public function __construct(string $operator, $value, $mode = self::PREFIX)
     {
         $this->_operator = $operator;
         $this->_value = $value;
@@ -76,7 +76,7 @@ class UnaryExpression implements ExpressionInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $operand = $this->_value;
         if ($operand instanceof ExpressionInterface) {

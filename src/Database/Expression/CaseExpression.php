@@ -110,7 +110,7 @@ class CaseExpression implements ExpressionInterface
      *
      * @return void
      */
-    protected function _addExpressions($conditions, $values, $types)
+    protected function _addExpressions($conditions, $values, $types): void
     {
         $rawValues = array_values($values);
         $keyValues = array_keys($values);
@@ -164,7 +164,7 @@ class CaseExpression implements ExpressionInterface
      *
      * @return void
      */
-    public function elseValue($value = null, $type = null)
+    public function elseValue($value = null, $type = null): void
     {
         if (is_array($value)) {
             end($value);
@@ -190,7 +190,7 @@ class CaseExpression implements ExpressionInterface
      *
      * @return string
      */
-    protected function _compile($part, ValueBinder $generator)
+    protected function _compile($part, ValueBinder $generator): string
     {
         if ($part instanceof ExpressionInterface) {
             $part = $part->sql($generator);
@@ -210,7 +210,7 @@ class CaseExpression implements ExpressionInterface
      *
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $parts = [];
         $parts[] = 'CASE';
