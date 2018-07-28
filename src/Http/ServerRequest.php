@@ -1377,13 +1377,13 @@ class ServerRequest implements ServerRequestInterface
      *
      * Any additional parameters are applied to the callback in the order they are given.
      *
-     * @param string|null $callback A decoding callback that will convert the string data to another
+     * @param callable|null $callback A decoding callback that will convert the string data to another
      *     representation. Leave empty to access the raw input data. You can also
      *     supply additional parameters for the decoding callback using var args, see above.
      * @param array ...$args The additional arguments
      * @return mixed The decoded/processed request data.
      */
-    public function input(?string $callback = null, ...$args)
+    public function input(?callable $callback = null, ...$args)
     {
         $this->stream->rewind();
         $input = $this->stream->getContents();
