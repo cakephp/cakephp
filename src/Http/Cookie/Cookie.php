@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -120,30 +121,24 @@ class Cookie implements CookieInterface
      * @param bool $httpOnly HTTP Only
      */
     public function __construct(
-        $name,
+        string $name,
         $value = '',
         $expiresAt = null,
-        $path = '/',
-        $domain = '',
-        $secure = false,
-        $httpOnly = false
+        string $path = '/',
+        string $domain = '',
+        bool $secure = false,
+        bool $httpOnly = false
     ) {
         $this->validateName($name);
         $this->name = $name;
 
         $this->_setValue($value);
 
-        $this->validateString($domain);
         $this->domain = $domain;
-
-        $this->validateBool($httpOnly);
         $this->httpOnly = $httpOnly;
-
-        $this->validateString($path);
         $this->path = $path;
-
-        $this->validateBool($secure);
         $this->secure = $secure;
+
         if ($expiresAt) {
             $expiresAt = $expiresAt->setTimezone(new DateTimeZone('GMT'));
         }
@@ -155,7 +150,7 @@ class Cookie implements CookieInterface
      *
      * @return string
      */
-    public function toHeaderValue()
+    public function toHeaderValue(): string
     {
         $value = $this->value;
         if ($this->isExpanded) {
@@ -185,7 +180,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withName($name)
+    public function withName(string $name): CookieInterface
     {
         $this->validateName($name);
         $new = clone $this;
@@ -197,7 +192,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function getId()
+    public function getId(): string
     {
         return "{$this->name};{$this->domain};{$this->path}";
     }
@@ -205,7 +200,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -218,7 +213,7 @@ class Cookie implements CookieInterface
      * @throws \InvalidArgumentException
      * @link https://tools.ietf.org/html/rfc2616#section-2.2 Rules for naming cookies.
      */
-    protected function validateName($name)
+    protected function validateName(string $name): void
     {
         if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
@@ -254,7 +249,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withValue($value)
+    public function withValue($value): CookieInterface
     {
         $new = clone $this;
         $new->_setValue($value);
@@ -268,7 +263,7 @@ class Cookie implements CookieInterface
      * @param mixed $value The value to store.
      * @return void
      */
-    protected function _setValue($value)
+    protected function _setValue($value): void
     {
         $this->isExpanded = is_array($value);
         $this->value = $value;
@@ -277,9 +272,8 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withPath($path)
+    public function withPath(string $path): CookieInterface
     {
-        $this->validateString($path);
         $new = clone $this;
         $new->path = $path;
 
@@ -289,7 +283,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -297,9 +291,8 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withDomain($domain)
+    public function withDomain(string $domain): CookieInterface
     {
-        $this->validateString($domain);
         $new = clone $this;
         $new->domain = $domain;
 
@@ -309,32 +302,15 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
     }
 
     /**
-     * Validate that an argument is a string
-     *
-     * @param string $value The value to validate.
-     * @return void
-     * @throws \InvalidArgumentException
-     */
-    protected function validateString($value)
-    {
-        if (!is_string($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'The provided arg must be of type `string` but `%s` given',
-                gettype($value)
-            ));
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
-    public function isSecure()
+    public function isSecure(): bool
     {
         return $this->secure;
     }
@@ -342,9 +318,8 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withSecure($secure)
+    public function withSecure(bool $secure): CookieInterface
     {
-        $this->validateBool($secure);
         $new = clone $this;
         $new->secure = $secure;
 
@@ -354,9 +329,8 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withHttpOnly($httpOnly)
+    public function withHttpOnly(bool $httpOnly): CookieInterface
     {
-        $this->validateBool($httpOnly);
         $new = clone $this;
         $new->httpOnly = $httpOnly;
 
@@ -364,26 +338,9 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * Validate that an argument is a boolean
-     *
-     * @param bool $value The value to validate.
-     * @return void
-     * @throws \InvalidArgumentException
-     */
-    protected function validateBool($value)
-    {
-        if (!is_bool($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'The provided arg must be of type `bool` but `%s` given',
-                gettype($value)
-            ));
-        }
-    }
-
-    /**
      * {@inheritDoc}
      */
-    public function isHttpOnly()
+    public function isHttpOnly(): bool
     {
         return $this->httpOnly;
     }
@@ -391,7 +348,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withExpiry($dateTime)
+    public function withExpiry($dateTime): CookieInterface
     {
         $new = clone $this;
         $new->expiresAt = $dateTime->setTimezone(new DateTimeZone('GMT'));
@@ -410,7 +367,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function getExpiresTimestamp()
+    public function getExpiresTimestamp(): ?string
     {
         if (!$this->expiresAt) {
             return null;
@@ -422,7 +379,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function getFormattedExpires()
+    public function getFormattedExpires(): string
     {
         if (!$this->expiresAt) {
             return '';
@@ -434,7 +391,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function isExpired($time = null)
+    public function isExpired($time = null): bool
     {
         $time = $time ?: new DateTimeImmutable('now', new DateTimeZone('UTC'));
         if (!$this->expiresAt) {
@@ -447,7 +404,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withNeverExpire()
+    public function withNeverExpire(): CookieInterface
     {
         $new = clone $this;
         $new->expiresAt = Chronos::createFromDate(2038, 1, 1);
@@ -458,7 +415,7 @@ class Cookie implements CookieInterface
     /**
      * {@inheritDoc}
      */
-    public function withExpired()
+    public function withExpired(): CookieInterface
     {
         $new = clone $this;
         $new->expiresAt = Chronos::createFromTimestamp(1);
@@ -475,7 +432,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to check
      * @return bool
      */
-    public function check($path)
+    public function check(string $path): bool
     {
         if ($this->isExpanded === false) {
             $this->value = $this->_expand($this->value);
@@ -491,7 +448,7 @@ class Cookie implements CookieInterface
      * @param mixed $value Value to write
      * @return static
      */
-    public function withAddedValue($path, $value)
+    public function withAddedValue(string $path, $value): CookieInterface
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
@@ -508,7 +465,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to remove
      * @return static
      */
-    public function withoutAddedValue($path)
+    public function withoutAddedValue(string $path): CookieInterface
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
@@ -528,7 +485,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to read the data from
      * @return mixed
      */
-    public function read($path = null)
+    public function read(?string $path = null)
     {
         if ($this->isExpanded === false) {
             $this->value = $this->_expand($this->value);
@@ -546,7 +503,7 @@ class Cookie implements CookieInterface
      *
      * @return bool
      */
-    public function isExpanded()
+    public function isExpanded(): bool
     {
         return $this->isExpanded;
     }
@@ -557,7 +514,7 @@ class Cookie implements CookieInterface
      * @param array $array Map of key and values
      * @return string A json encoded string.
      */
-    protected function _flatten(array $array)
+    protected function _flatten(array $array): string
     {
         return json_encode($array);
     }
@@ -569,7 +526,7 @@ class Cookie implements CookieInterface
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return string|array Map of key and values
      */
-    protected function _expand($string)
+    protected function _expand(string $string)
     {
         $this->isExpanded = true;
         $first = substr($string, 0, 1);

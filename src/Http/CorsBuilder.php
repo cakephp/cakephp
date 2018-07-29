@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -65,7 +66,7 @@ class CorsBuilder
      * @param string $origin The request's Origin header.
      * @param bool $isSsl Whether or not the request was over SSL.
      */
-    public function __construct(MessageInterface $response, $origin, $isSsl = false)
+    public function __construct(MessageInterface $response, string $origin, bool $isSsl = false)
     {
         $this->_origin = $origin;
         $this->_isSsl = $isSsl;
@@ -80,7 +81,7 @@ class CorsBuilder
      *
      * @return \Psr\Http\Message\MessageInterface A new instance of the response with new headers.
      */
-    public function build()
+    public function build(): MessageInterface
     {
         $response = $this->_response;
         if (empty($this->_origin)) {
@@ -126,7 +127,7 @@ class CorsBuilder
      * @param array $domains Domain names to normalize.
      * @return array
      */
-    protected function _normalizeDomains($domains)
+    protected function _normalizeDomains(array $domains): array
     {
         $result = [];
         foreach ($domains as $domain) {
@@ -200,7 +201,7 @@ class CorsBuilder
     /**
      * Define the max-age preflight OPTIONS requests are valid for.
      *
-     * @param int $age The max-age for OPTIONS requests in seconds
+     * @param int|string $age The max-age for OPTIONS requests in seconds
      * @return $this
      */
     public function maxAge($age)

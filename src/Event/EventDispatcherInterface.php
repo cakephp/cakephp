@@ -50,7 +50,7 @@ interface EventDispatcherInterface
      * @param \Cake\Event\EventManagerInterface $eventManager the eventManager to set
      * @return \Cake\Event\EventDispatcherInterface
      */
-    public function setEventManager(EventManagerInterface $eventManager): self;
+    public function setEventManager(EventManagerInterface $eventManager): EventDispatcherInterface;
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.

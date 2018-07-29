@@ -81,7 +81,7 @@ class Digest
     protected function _getServerInfo(Request $request, array $credentials): array
     {
         $response = $this->_client->get(
-            $request->getUri(),
+            (string)$request->getUri(),
             [],
             ['auth' => ['type' => null]]
         );

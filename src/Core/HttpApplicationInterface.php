@@ -14,6 +14,8 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -30,7 +32,7 @@ interface HttpApplicationInterface
      *
      * @return void
      */
-    public function bootstrap();
+    public function bootstrap(): void;
 
     /**
      * Define the routes for an application.
@@ -40,7 +42,7 @@ interface HttpApplicationInterface
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
      */
-    public function routes($routes);
+    public function routes(RouteBuilder $routes): void;
 
     /**
      * Define the HTTP middleware layers for an application.
@@ -48,7 +50,7 @@ interface HttpApplicationInterface
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware($middleware);
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
      * Invoke the application.
@@ -58,5 +60,5 @@ interface HttpApplicationInterface
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next): ResponseInterface;
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface;
 }

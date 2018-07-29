@@ -949,7 +949,7 @@ XML;
         $this->assertEquals('html', $this->RequestHandler->prefers());
         $this->assertFalse($this->RequestHandler->prefers('rss'));
 
-        $this->Controller->setRequest($this->request->withEnv('HTTP_ACCEPT', null));
+        $this->Controller->setRequest($this->request->withEnv('HTTP_ACCEPT', ''));
         $this->RequestHandler->ext = 'json';
         $this->assertFalse($this->RequestHandler->prefers('xml'));
     }

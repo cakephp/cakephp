@@ -15,6 +15,7 @@
 namespace TestApp;
 
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
 
 /**
@@ -34,12 +35,12 @@ class ApplicationWithDefaultRoutes extends BaseApplication
      *
      * @return void
      */
-    public function bootstrap()
+    public function bootstrap(): void
     {
         // Do nothing.
     }
 
-    public function middleware($middlewareQueue)
+    public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue->add(new RoutingMiddleware($this));
 

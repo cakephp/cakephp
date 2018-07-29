@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,15 +15,18 @@
  */
 namespace Cake\Http;
 
+use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Core\PluginCollection;
 use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -60,7 +64,7 @@ abstract class BaseApplication implements
      * @param string $configDir The directory the bootstrap configuration is held in.
      * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
      */
-    public function __construct($configDir, ?EventManagerInterface $eventManager = null)
+    public function __construct(string $configDir, ?EventManagerInterface $eventManager = null)
     {
         $this->configDir = $configDir;
         $this->plugins = Plugin::getCollection();
@@ -71,12 +75,12 @@ abstract class BaseApplication implements
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    abstract public function middleware($middleware);
+    abstract public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
      * {@inheritDoc}
      */
-    public function pluginMiddleware($middleware)
+    public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         foreach ($this->plugins->with('middleware') as $plugin) {
             $middleware = $plugin->middleware($middleware);
@@ -108,7 +112,7 @@ abstract class BaseApplication implements
      *
      * @return \Cake\Core\PluginCollection
      */
-    public function getPlugins()
+    public function getPlugins(): PluginCollection
     {
         return $this->plugins;
     }
@@ -120,14 +124,22 @@ abstract class BaseApplication implements
      * @param array $config Configuration options for the plugin
      * @return \Cake\Core\PluginInterface
      */
-    protected function makePlugin($name, array $config)
+    protected function makePlugin(string $name, array $config): PluginInterface
     {
         $className = $name;
         if (strpos($className, '\\') === false) {
             $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
         }
         if (class_exists($className)) {
-            return new $className($config);
+            $plugin = new $className($config);
+            if (!$plugin instanceof PluginInterface) {
+                throw new InvalidArgumentException(sprintf(
+                    'The `%s` plugin does not implement Cake\Core\PluginInterface.',
+                    get_class($plugin)
+                ));
+            }
+
+            return $plugin;
         }
 
         if (!isset($config['path'])) {
@@ -141,7 +153,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function bootstrap()
+    public function bootstrap(): void
     {
         require_once $this->configDir . '/bootstrap.php';
     }
@@ -164,7 +176,7 @@ abstract class BaseApplication implements
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
      */
-    public function routes($routes)
+    public function routes(RouteBuilder $routes): void
     {
         // Only load routes if the router is empty
         if (!Router::routes()) {
@@ -175,7 +187,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginRoutes($routes)
+    public function pluginRoutes(RouteBuilder $routes): RouteBuilder
     {
         foreach ($this->plugins->with('routes') as $plugin) {
             $plugin->routes($routes);
@@ -193,7 +205,7 @@ abstract class BaseApplication implements
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
-    public function console($commands)
+    public function console(CommandCollection $commands): CommandCollection
     {
         return $commands->addMany($commands->autoDiscover());
     }
@@ -201,7 +213,7 @@ abstract class BaseApplication implements
     /**
      * {@inheritDoc}
      */
-    public function pluginConsole($commands)
+    public function pluginConsole(CommandCollection $commands): CommandCollection
     {
         foreach ($this->plugins->with('console') as $plugin) {
             $commands = $plugin->console($commands);
@@ -222,7 +234,7 @@ abstract class BaseApplication implements
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         return $this->getDispatcher()->dispatch($request, $response);
     }
@@ -232,7 +244,7 @@ abstract class BaseApplication implements
      *
      * @return \Cake\Http\ActionDispatcher
      */
-    protected function getDispatcher()
+    protected function getDispatcher(): ActionDispatcher
     {
         return new ActionDispatcher(null, $this->getEventManager());
     }
