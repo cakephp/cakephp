@@ -28,7 +28,6 @@ parameters:
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#Call to an undefined method Traversable::getInnerIterator\(\)#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
-        - '#Call to an undefined method Cake\\Console\\ConsoleOutput\|PHPUnit_Framework_MockObject_MockObject::messages\(\)#'
         - '#Binary operation "\+=" between \(array\&hasOffset\(.*\)\) and array results in an error#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
