@@ -43,14 +43,14 @@ abstract class ConsoleIntegrationTestCase extends TestCase
     /**
      * Console output stub
      *
-     * @var \Cake\Console\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $_out;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\Console\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     protected $_err;
 
