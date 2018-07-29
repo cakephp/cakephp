@@ -128,7 +128,7 @@ class Plugin
      * @internal
      * @return \Cake\Core\PluginCollection
      */
-    public static function getCollection()
+    public static function getCollection(): PluginCollection
     {
         if (!isset(static::$plugins)) {
             static::$plugins = new PluginCollection();

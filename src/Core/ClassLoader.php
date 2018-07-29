@@ -32,7 +32,7 @@ class ClassLoader
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         spl_autoload_register([$this, 'loadClass']);
     }
@@ -48,7 +48,7 @@ class ClassLoader
      * than last.
      * @return void
      */
-    public function addNamespace($prefix, $baseDir, $prepend = false)
+    public function addNamespace(string $prefix, string $baseDir, bool $prepend = false): void
     {
         $prefix = trim($prefix, '\\') . '\\';
 
@@ -73,7 +73,7 @@ class ClassLoader
      * @return string|false The mapped file name on success, or boolean false on
      * failure.
      */
-    public function loadClass($class)
+    public function loadClass(string $class)
     {
         $prefix = $class;
 
@@ -100,7 +100,7 @@ class ClassLoader
      * @return mixed Boolean false if no mapped file can be loaded, or the
      * name of the mapped file that was loaded.
      */
-    protected function _loadMappedFile($prefix, $relativeClass)
+    protected function _loadMappedFile(string $prefix, string $relativeClass)
     {
         if (!isset($this->_prefixes[$prefix])) {
             return false;
@@ -123,7 +123,7 @@ class ClassLoader
      * @param string $file The file to require.
      * @return bool True if the file exists, false if not.
      */
-    protected function _requireFile($file)
+    protected function _requireFile(string $file): bool
     {
         if (file_exists($file)) {
             require $file;

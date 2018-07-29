@@ -78,7 +78,7 @@ class IniConfig implements ConfigEngineInterface
      * @param string|null $section Only get one section, leave null to parse and fetch
      *     all sections in the ini file.
      */
-    public function __construct($path = null, $section = null)
+    public function __construct(?string $path = null, ?string $section = null)
     {
         if ($path === null) {
             $path = CONFIG;

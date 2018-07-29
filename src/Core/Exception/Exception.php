@@ -78,7 +78,7 @@ class Exception extends RuntimeException
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->_attributes;
     }
@@ -93,7 +93,7 @@ class Exception extends RuntimeException
      * @param string|null $value The header value.
      * @return array
      */
-    public function responseHeader($header = null, $value = null)
+    public function responseHeader($header = null, $value = null): array
     {
         if ($header === null) {
             return $this->_responseHeaders;

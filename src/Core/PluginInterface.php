@@ -13,6 +13,10 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Console\CommandCollection;
+use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
+
 /**
  * Plugin Interface
  */
@@ -63,7 +67,7 @@ interface PluginInterface
      * @param \Cake\Core\PluginApplicationInterface $app The host application
      * @return void
      */
-    public function bootstrap(PluginApplicationInterface $app);
+    public function bootstrap(PluginApplicationInterface $app): void;
 
     /**
      * Add console commands for the plugin.
@@ -71,7 +75,7 @@ interface PluginInterface
      * @param \Cake\Console\CommandCollection $commands The command collection to update
      * @return \Cake\Console\CommandCollection
      */
-    public function console($commands);
+    public function console(CommandCollection $commands): CommandCollection;
 
     /**
      * Add middleware for the plugin.
@@ -79,7 +83,7 @@ interface PluginInterface
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue to update.
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware($middleware);
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
      * Add routes for the plugin.
@@ -90,7 +94,7 @@ interface PluginInterface
      * @param \Cake\Routing\RouteBuilder $routes The route builder to update.
      * @return void
      */
-    public function routes($routes);
+    public function routes(RouteBuilder $routes): void;
 
     /**
      * Disables the named hook
@@ -98,7 +102,7 @@ interface PluginInterface
      * @param string $hook The hook to disable
      * @return $this
      */
-    public function disable(string $hook): self;
+    public function disable(string $hook): PluginInterface;
 
     /**
      * Enables the named hook
@@ -106,7 +110,7 @@ interface PluginInterface
      * @param string $hook The hook to disable
      * @return $this
      */
-    public function enable(string $hook): self;
+    public function enable(string $hook): PluginInterface;
 
     /**
      * Check if the named hook is enabled

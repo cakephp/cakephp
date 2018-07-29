@@ -169,7 +169,7 @@ trait InstanceConfigTrait
      * @param string|null $key Key to read.
      * @return mixed
      */
-    protected function _configRead($key)
+    protected function _configRead(?string $key)
     {
         if ($key === null) {
             return $this->_config;
@@ -203,7 +203,7 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
      */
-    protected function _configWrite($key, $value, $merge = false)
+    protected function _configWrite($key, $value, $merge = false): void
     {
         if (is_string($key) && $value === null) {
             $this->_configDelete($key);
