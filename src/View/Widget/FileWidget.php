@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use Cake\View\StringTemplate;
 
 /**
  * Input widget class for generating a file upload control.
@@ -37,7 +38,7 @@ class FileWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct($templates)
+    public function __construct(StringTemplate $templates)
     {
         $this->_templates = $templates;
     }

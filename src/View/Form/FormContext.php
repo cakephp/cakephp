@@ -113,7 +113,7 @@ class FormContext implements ContextInterface
 
      * @return mixed
      */
-    protected function _schemaDefault($field)
+    protected function _schemaDefault(string $field)
     {
         $field = $this->_form->schema()->field($field);
         if ($field) {

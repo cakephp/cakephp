@@ -141,7 +141,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array $data The context for rendering a select.
      * @return array
      */
-    protected function _renderContent($data)
+    protected function _renderContent(array $data): array
     {
         $options = $data['options'];
 
@@ -172,7 +172,7 @@ class SelectBoxWidget extends BasicWidget
      * @param string|bool|array $value The provided empty value.
      * @return array The generated option key/value.
      */
-    protected function _emptyValue($value)
+    protected function _emptyValue($value): array
     {
         if ($value === true) {
             return ['' => ''];
@@ -191,14 +191,14 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of an optgroup element.
      *
      * @param string $label The optgroup label text
-     * @param array $optgroup The opt group data.
+     * @param array|\ArrayAccess $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
      */
-    protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $templateVars, $escape)
+    protected function _renderOptgroup(string $label, $optgroup, ?array $disabled, $selected, $templateVars, $escape): string
     {
         $opts = $optgroup;
         $attrs = [];
@@ -222,14 +222,14 @@ class SelectBoxWidget extends BasicWidget
      *
      * Will recursively call itself when option groups are in use.
      *
-     * @param array $options The options to render.
-     * @param array|null $disabled The options to disable.
+     * @param array|\ArrayAccess  $options The options to render.
+     * @param array|\ArrayAccess|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array Option elements.
      */
-    protected function _renderOptions($options, $disabled, $selected, $templateVars, $escape)
+    protected function _renderOptions($options, $disabled, $selected, $templateVars, $escape): array
     {
         $out = [];
         foreach ($options as $key => $val) {
@@ -238,7 +238,7 @@ class SelectBoxWidget extends BasicWidget
             if ((!is_int($key) && $arrayVal) ||
                 (is_int($key) && $arrayVal && (isset($val['options']) || !isset($val['value'])))
             ) {
-                $out[] = $this->_renderOptgroup($key, $val, $disabled, $selected, $templateVars, $escape);
+                $out[] = $this->_renderOptgroup((string)$key, $val, $disabled, $selected, $templateVars, $escape);
                 continue;
             }
 
@@ -255,10 +255,10 @@ class SelectBoxWidget extends BasicWidget
             if (!isset($optAttrs['templateVars'])) {
                 $optAttrs['templateVars'] = [];
             }
-            if ($this->_isSelected($key, $selected)) {
+            if ($this->_isSelected((string)$key, $selected)) {
                 $optAttrs['selected'] = true;
             }
-            if ($this->_isDisabled($key, $disabled)) {
+            if ($this->_isDisabled((string)$key, $disabled)) {
                 $optAttrs['disabled'] = true;
             }
             if (!empty($templateVars)) {
@@ -284,7 +284,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array|string|null $selected The selected values.
      * @return bool
      */
-    protected function _isSelected($key, $selected)
+    protected function _isSelected(string $key, $selected): bool
     {
         if ($selected === null) {
             return false;
@@ -293,11 +293,11 @@ class SelectBoxWidget extends BasicWidget
         if (!$isArray) {
             $selected = $selected === false ? '0' : $selected;
 
-            return (string)$key === (string)$selected;
+            return $key === (string)$selected;
         }
         $strict = !is_numeric($key);
 
-        return in_array((string)$key, $selected, $strict);
+        return in_array($key, $selected, $strict);
     }
 
     /**
@@ -307,13 +307,13 @@ class SelectBoxWidget extends BasicWidget
      * @param array|null $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled($key, $disabled)
+    protected function _isDisabled(string $key, ?array $disabled): bool
     {
         if ($disabled === null) {
             return false;
         }
         $strict = !is_numeric($key);
 
-        return in_array((string)$key, $disabled, $strict);
+        return in_array($key, $disabled, $strict);
     }
 }

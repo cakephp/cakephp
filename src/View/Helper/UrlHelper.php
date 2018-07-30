@@ -205,7 +205,7 @@ class UrlHelper extends Helper
      * @param string $url The URL to encode.
      * @return string The URL encoded for both URL & HTML contexts.
      */
-    protected function _encodeUrl($url)
+    protected function _encodeUrl(string $url): string
     {
         $path = parse_url($url, PHP_URL_PATH);
         $parts = array_map('rawurldecode', explode('/', $path));
@@ -227,7 +227,7 @@ class UrlHelper extends Helper
      * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public function assetTimestamp($path, $timestamp = null): string
+    public function assetTimestamp(string $path, $timestamp = null): string
     {
         if ($timestamp === null) {
             $timestamp = Configure::read('Asset.timestamp');
@@ -263,7 +263,7 @@ class UrlHelper extends Helper
      * @param string $file The file to create a webroot path to.
      * @return string Web accessible path to file.
      */
-    public function webroot($file): string
+    public function webroot(string $file): string
     {
         $request = $this->_View->getRequest();
 
@@ -303,7 +303,7 @@ class UrlHelper extends Helper
      * @param string $name Name of the theme which should be inflected.
      * @return string Inflected name of the theme
      */
-    protected function _inflectThemeName($name)
+    protected function _inflectThemeName(string $name): string
     {
         return Inflector::underscore($name);
     }

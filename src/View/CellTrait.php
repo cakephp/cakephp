@@ -86,11 +86,11 @@ trait CellTrait
      *
      * @param string $className The cell classname.
      * @param string $action The action name.
-     * @param string $plugin The plugin name.
+     * @param string|null $plugin The plugin name.
      * @param array $options The constructor options for the cell.
      * @return \Cake\View\Cell
      */
-    protected function _createCell($className, $action, $plugin, $options)
+    protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
         /* @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
