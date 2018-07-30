@@ -235,11 +235,11 @@ class MultiCheckboxWidget implements WidgetInterface
         }
         $isArray = is_array($selected);
         if (!$isArray) {
-            return (string)$key === (string)$selected;
+            return $key === (string)$selected;
         }
         $strict = !is_numeric($key);
 
-        return in_array((string)$key, $selected, $strict);
+        return in_array($key, $selected, $strict);
     }
 
     /**
@@ -259,7 +259,7 @@ class MultiCheckboxWidget implements WidgetInterface
         }
         $strict = !is_numeric($key);
 
-        return in_array((string)$key, $disabled, $strict);
+        return in_array($key, $disabled, $strict);
     }
 
     /**
