@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -43,7 +44,7 @@ class RulesChecker extends BaseRulesChecker
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable
      */
-    public function isUnique(array $fields, $message = null)
+    public function isUnique(array $fields, $message = null): callable
     {
         $options = [];
         if (is_array($message)) {
@@ -89,7 +90,7 @@ class RulesChecker extends BaseRulesChecker
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
      * @return callable
      */
-    public function existsIn($field, $table, $message = null)
+    public function existsIn($field, $table, $message = null): callable
     {
         $options = [];
         if (is_array($message)) {
@@ -120,7 +121,7 @@ class RulesChecker extends BaseRulesChecker
      * @param string|null $message The error message to show in case the rule does not pass.
      * @return callable
      */
-    public function validCount($field, $count = 0, $operator = '>', $message = null)
+    public function validCount(string $field, int $count = 0, string $operator = '>', ?string $message = null): callable
     {
         if (!$message) {
             if ($this->_useI18n) {

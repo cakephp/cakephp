@@ -25,6 +25,7 @@ use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -380,7 +381,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * {@inheritDoc}
      */
-    public function buildMarshalMap($marshaller, $map, $options)
+    public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {
         if (isset($options['translations']) && !$options['translations']) {
             return [];

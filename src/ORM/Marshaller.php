@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -62,7 +63,7 @@ class Marshaller
      * @throws \InvalidArgumentException When associations do not exist.
      * @return array
      */
-    protected function _buildPropertyMap($data, $options)
+    protected function _buildPropertyMap(array $data, array $options): array
     {
         $map = [];
         $schema = $this->_table->getSchema();
@@ -163,7 +164,7 @@ class Marshaller
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function one(array $data, array $options = [])
+    public function one(array $data, array $options = []): EntityInterface
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
@@ -234,7 +235,7 @@ class Marshaller
      * @return array The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
      */
-    protected function _validate($data, $options, $isNew)
+    protected function _validate(array $data, array $options, bool $isNew): array
     {
         if (!$options['validate']) {
             return [];
@@ -265,7 +266,7 @@ class Marshaller
      * @param array $options The options passed to this marshaller.
      * @return array An array containing prepared data and options.
      */
-    protected function _prepareDataAndOptions($data, $options)
+    protected function _prepareDataAndOptions(array $data, array $options): array
     {
         $options += ['validate' => true];
 
@@ -286,11 +287,11 @@ class Marshaller
      * Create a new sub-marshaller and marshal the associated data.
      *
      * @param \Cake\ORM\Association $assoc The association to marshall
-     * @param array $value The data to hydrate
+     * @param mixed $value The data to hydrate. If not an array, this method will return null.
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|null
      */
-    protected function _marshalAssociation($assoc, $value, $options)
+    protected function _marshalAssociation(Association $assoc, $value, array $options)
     {
         if (!is_array($value)) {
             return null;
@@ -340,7 +341,7 @@ class Marshaller
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function many(array $data, array $options = [])
+    public function many(array $data, array $options = []): array
     {
         $output = [];
         foreach ($data as $record) {
@@ -367,7 +368,7 @@ class Marshaller
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    protected function _belongsToMany(BelongsToMany $assoc, array $data, $options = [])
+    protected function _belongsToMany(BelongsToMany $assoc, array $data, array $options = []): array
     {
         $associated = $options['associated'] ?? [];
         $forceNew = $options['forceNew'] ?? false;
@@ -459,7 +460,7 @@ class Marshaller
      * @param array $ids The list of ids to load.
      * @return \Cake\Datasource\EntityInterface[] An array of entities.
      */
-    protected function _loadAssociatedByIds($assoc, $ids)
+    protected function _loadAssociatedByIds(Association $assoc, array $ids): array
     {
         if (empty($ids)) {
             return [];
@@ -520,7 +521,7 @@ class Marshaller
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function merge(EntityInterface $entity, array $data, array $options = [])
+    public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
@@ -624,7 +625,7 @@ class Marshaller
      * @return \Cake\Datasource\EntityInterface[]
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function mergeMany($entities, array $data, array $options = [])
+    public function mergeMany($entities, array $data, array $options = []): array
     {
         $primary = (array)$this->_table->getPrimaryKey();
 
@@ -662,7 +663,7 @@ class Marshaller
 
         $conditions = (new Collection($indexed))
             ->map(function ($data, $key) {
-                return explode(';', $key);
+                return explode(';', (string)$key);
             })
             ->filter(function ($keys) use ($primary) {
                 return count(array_filter($keys, 'strlen')) === count($primary);
@@ -700,11 +701,11 @@ class Marshaller
      *
      * @param \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[] $original The original entity
      * @param \Cake\ORM\Association $assoc The association to merge
-     * @param array $value The data to hydrate
+     * @param mixed $value The array of data to hydrate. If not an array, this method will return null.
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|null
      */
-    protected function _mergeAssociation($original, $assoc, $value, $options)
+    protected function _mergeAssociation($original, Association $assoc, $value, array $options)
     {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);
@@ -736,7 +737,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    protected function _mergeBelongsToMany($original, $assoc, $value, $options)
+    protected function _mergeBelongsToMany($original, Association $assoc, $value, array $options): array
     {
         $associated = $options['associated'] ?? [];
 
@@ -766,7 +767,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[] An array of entities
      */
-    protected function _mergeJoinData($original, $assoc, $value, $options)
+    protected function _mergeJoinData($original, BelongsToMany $assoc, array $value, array $options): array
     {
         $associated = $options['associated'] ?? [];
         $extra = [];

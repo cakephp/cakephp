@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -922,9 +923,6 @@ class EntityTest extends TestCase
         $this->assertTrue($entity->isNew());
 
         $entity->isNew(true);
-        $this->assertTrue($entity->isNew());
-
-        $entity->isNew('derpy');
         $this->assertTrue($entity->isNew());
 
         $entity->isNew(false);

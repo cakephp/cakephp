@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -590,7 +591,7 @@ class CompositeKeyTest extends TestCase
         $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['_addDefaultFields', 'execute'])
-            ->setConstructorArgs([null, $table])
+            ->setConstructorArgs([$table->getConnection(), $table])
             ->getMock();
 
         $items = new \Cake\Datasource\ResultSetDecorator([
