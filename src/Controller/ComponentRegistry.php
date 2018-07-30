@@ -91,11 +91,11 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the component is missing in.
+     * @param string|null $plugin The plugin the component is missing in.
      * @return void
      * @throws \Cake\Controller\Exception\MissingComponentException
      */
-    protected function _throwMissingClassError($class, $plugin): void
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingComponentException([
             'class' => $class . 'Component',
@@ -114,7 +114,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param array $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
      */
-    protected function _create($class, $alias, $config): Component
+    protected function _create($class, string $alias, array $config): Component
     {
         $instance = new $class($this, $config);
         $enable = $config['enabled'] ?? true;

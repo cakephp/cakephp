@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\ORM\Behavior;
 use Cake\ORM\Exception\MissingBehaviorException;
 use LogicException;
 
@@ -117,11 +118,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the behavior is missing in.
+     * @param string|null $plugin The plugin the behavior is missing in.
      * @return void
      * @throws \Cake\ORM\Exception\MissingBehaviorException
      */
-    protected function _throwMissingClassError($class, $plugin)
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingBehaviorException([
             'class' => $class . 'Behavior',
@@ -140,7 +141,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param array $config An array of config to use for the behavior.
      * @return \Cake\ORM\Behavior The constructed behavior class.
      */
-    protected function _create($class, $alias, $config)
+    protected function _create($class, string $alias, array $config): Behavior
     {
         $instance = new $class($this->_table, $config);
         $enable = $config['enabled'] ?? true;

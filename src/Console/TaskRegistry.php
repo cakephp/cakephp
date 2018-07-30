@@ -66,7 +66,7 @@ class TaskRegistry extends ObjectRegistry
      * @return void
      * @throws \Cake\Console\Exception\MissingTaskException
      */
-    protected function _throwMissingClassError($class, $plugin)
+    protected function _throwMissingClassError(string $class, ?string  $plugin): void
     {
         throw new MissingTaskException([
             'class' => $class,
@@ -84,7 +84,7 @@ class TaskRegistry extends ObjectRegistry
      * @param array $settings An array of settings to use for the task.
      * @return \Cake\Console\Shell The constructed task class.
      */
-    protected function _create($class, $alias, $settings)
+    protected function _create($class, string $alias, array $settings): Shell
     {
         return new $class($this->_Shell->getIo());
     }
