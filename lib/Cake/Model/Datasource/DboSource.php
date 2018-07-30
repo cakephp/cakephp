@@ -1076,7 +1076,7 @@ class DboSource extends DataSource {
 
 		for ($i = 0; $i < $count; $i++) {
 			$schema = $Model->schema();
-			$valueInsert[] = $this->value($values[$i], $Model->getColumnType($fields[$i]), isset($schema[$fields[$i]]) ? $schema[$fields[$i]]['null'] : true);
+			$valueInsert[] = $this->value($values[$i], $Model->getColumnType($fields[$i]), isset($schema[$fields[$i]]['null']) ? $schema[$fields[$i]]['null'] : true);
 			$fieldInsert[] = $this->name($fields[$i]);
 			if ($fields[$i] === $Model->primaryKey) {
 				$id = $values[$i];
