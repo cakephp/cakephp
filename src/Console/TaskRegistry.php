@@ -66,7 +66,7 @@ class TaskRegistry extends ObjectRegistry
      * @return void
      * @throws \Cake\Console\Exception\MissingTaskException
      */
-    protected function _throwMissingClassError(string $class, ?string  $plugin): void
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingTaskException([
             'class' => $class,

@@ -19,7 +19,6 @@ use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\ORM\Behavior;
 use Cake\ORM\Exception\MissingBehaviorException;
 use LogicException;
 

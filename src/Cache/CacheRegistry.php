@@ -15,7 +15,6 @@
 namespace Cake\Cache;
 
 use BadMethodCallException;
-use Cake\Cache\CacheEngine;
 use Cake\Core\App;
 use Cake\Core\ObjectRegistry;
 use RuntimeException;
