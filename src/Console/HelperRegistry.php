@@ -71,11 +71,11 @@ class HelperRegistry extends ObjectRegistry
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the helper is missing in.
+     * @param string|null $plugin The plugin the helper is missing in.
      * @return void
      * @throws \Cake\Console\Exception\MissingHelperException
      */
-    protected function _throwMissingClassError($class, $plugin)
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingHelperException([
             'class' => $class,
@@ -93,7 +93,7 @@ class HelperRegistry extends ObjectRegistry
      * @param array $settings An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
      */
-    protected function _create($class, $alias, $settings)
+    protected function _create($class, string $alias, array $settings): Helper
     {
         return new $class($this->_io, $settings);
     }

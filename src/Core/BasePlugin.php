@@ -14,6 +14,9 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Console\CommandCollection;
+use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
 use InvalidArgumentException;
 use ReflectionClass;
 
@@ -103,9 +106,11 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Initialization hook called from constructor.
+     *
+     * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
     }
 
@@ -221,7 +226,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function routes($routes)
+    public function routes(RouteBuilder $routes): void
     {
         $path = $this->getConfigPath() . 'routes.php';
         if (file_exists($path)) {
@@ -232,7 +237,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function bootstrap(PluginApplicationInterface $app)
+    public function bootstrap(PluginApplicationInterface $app): void
     {
         $bootstrap = $this->getConfigPath() . 'bootstrap.php';
         if (file_exists($bootstrap)) {
@@ -243,7 +248,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function console($commands)
+    public function console(CommandCollection $commands): CommandCollection
     {
         return $commands->addMany($commands->discoverPlugin($this->getName()));
     }
@@ -251,7 +256,7 @@ class BasePlugin implements PluginInterface
     /**
      * {@inheritdoc}
      */
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         return $middleware;
     }

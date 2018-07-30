@@ -48,11 +48,11 @@ class LogEngineRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the logger is missing in.
+     * @param string|null $plugin The plugin the logger is missing in.
      * @return void
      * @throws \RuntimeException
      */
-    protected function _throwMissingClassError($class, $plugin)
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new RuntimeException(sprintf('Could not load class %s', $class));
     }
@@ -68,7 +68,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @return \Psr\Log\LoggerInterface The constructed logger class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, $alias, $settings)
+    protected function _create($class, string $alias, array $settings): LoggerInterface
     {
         if (is_callable($class)) {
             $class = $class($alias);
@@ -97,7 +97,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @param string $name The logger name.
      * @return $this
      */
-    public function unload(string $name)
+    public function unload(string $name): ObjectRegistry
     {
         unset($this->_loaded[$name]);
 

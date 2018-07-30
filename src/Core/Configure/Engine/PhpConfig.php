@@ -59,7 +59,7 @@ class PhpConfig implements ConfigEngineInterface
      *
      * @param string|null $path The path to read config files from. Defaults to CONFIG.
      */
-    public function __construct($path = null)
+    public function __construct(?string $path = null)
     {
         if ($path === null) {
             $path = CONFIG;
