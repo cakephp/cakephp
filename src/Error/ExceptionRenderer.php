@@ -56,28 +56,28 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Exception
      */
-    public $error;
+    protected $error;
 
     /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    public $controller;
+    protected $controller;
 
     /**
      * Template to render for Cake\Core\Exception\Exception
      *
      * @var string
      */
-    public $template = '';
+    protected $template = '';
 
     /**
      * The method corresponding to the Exception this object is for.
      *
      * @var string
      */
-    public $method = '';
+    protected $method = '';
 
     /**
      * If set, this will be request used to create the controller that will render
@@ -425,5 +425,71 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $result = $dispatcher->dispatchEvent('Dispatcher.afterDispatch', $args);
 
         return $result->getData('response');
+    }
+
+    /**
+     * Magic accessor for properties made protected.
+     *
+     * @param string $name Name of the attribute to get.
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $protected = [
+            'error',
+            'controller',
+            'template',
+            'method',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
+                $name
+            ));
+        }
+
+        return $this->{$name};
+    }
+
+    /**
+     * Magic setter for properties made protected.
+     *
+     * @param string $name Name to property.
+     * @param mixed $value Value for property.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $protected = [
+            'error',
+            'controller',
+            'template',
+            'method',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
+                $name
+            ));
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'error' => $this->error,
+            'request' => $this->request,
+            'controller' => $this->controller,
+            'template' => $this->template,
+            'method' => $this->method,
+        ];
     }
 }
