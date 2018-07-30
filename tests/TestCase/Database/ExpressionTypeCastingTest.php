@@ -22,6 +22,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Database\Type\StringType;
 use Cake\Database\TypeFactory;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
@@ -176,7 +177,7 @@ class ExpressionTypeCastingTest extends TestCase
      */
     public function testValuesExpression()
     {
-        $values = new ValuesExpression(['title'], ['title' => 'test']);
+        $values = new ValuesExpression(['title'], new TypeMap(['title' => 'test']));
         $values->add(['title' => 'foo']);
         $values->add(['title' => 'bar']);
 

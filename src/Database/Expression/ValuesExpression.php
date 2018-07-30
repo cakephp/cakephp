@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ use Cake\Database\Exception;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
+use Cake\Database\TypeMap;
 use Cake\Database\TypeMapTrait;
 use Cake\Database\ValueBinder;
 
@@ -67,7 +69,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $columns The list of columns that are going to be part of the values.
      * @param \Cake\Database\TypeMap $typeMap A dictionary of column -> type names
      */
-    public function __construct(array $columns, $typeMap)
+    public function __construct(array $columns, TypeMap $typeMap)
     {
         $this->_columns = $columns;
         $this->setTypeMap($typeMap);
@@ -81,7 +83,7 @@ class ValuesExpression implements ExpressionInterface
      * @return void
      * @throws \Cake\Database\Exception When mixing array + Query data types.
      */
-    public function add($data)
+    public function add($data): void
     {
         if ((count($this->_values) && $data instanceof Query) ||
             ($this->_query && is_array($data))
@@ -105,7 +107,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $cols Array with columns to be inserted.
      * @return $this
      */
-    public function setColumns($cols)
+    public function setColumns(array $cols)
     {
         $this->_columns = $cols;
         $this->_castedExpressions = false;
@@ -118,7 +120,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return array
      */
-    public function getColumns()
+    public function getColumns(): array
     {
         return $this->_columns;
     }
@@ -131,7 +133,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return array
      */
-    protected function _columnNames()
+    protected function _columnNames(): array
     {
         $columns = [];
         foreach ($this->_columns as $col) {
@@ -150,7 +152,7 @@ class ValuesExpression implements ExpressionInterface
      * @param array $values Array with values to be inserted.
      * @return $this
      */
-    public function setValues($values)
+    public function setValues(array $values)
     {
         $this->_values = $values;
         $this->_castedExpressions = false;
@@ -163,7 +165,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return array
      */
-    public function getValues()
+    public function getValues(): array
     {
         if (!$this->_castedExpressions) {
             $this->_processExpressions();
@@ -192,7 +194,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return \Cake\Database\Query|null
      */
-    public function getQuery()
+    public function getQuery(): ?Query
     {
         return $this->_query;
     }
@@ -203,7 +205,7 @@ class ValuesExpression implements ExpressionInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         if (empty($this->_values) && empty($this->_query)) {
             return '';
@@ -259,7 +261,7 @@ class ValuesExpression implements ExpressionInterface
      * @param callable $visitor The visitor to traverse the expression with.
      * @return void
      */
-    public function traverse(callable $visitor)
+    public function traverse(callable $visitor): void
     {
         if ($this->_query) {
             return;
@@ -290,7 +292,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return void
      */
-    protected function _processExpressions()
+    protected function _processExpressions(): void
     {
         $types = [];
         $typeMap = $this->getTypeMap();

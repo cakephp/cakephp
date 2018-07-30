@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -90,7 +91,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param mixed $value The value to compare
      * @return void
      */
-    public function setValue($value)
+    public function setValue($value): void
     {
         $hasType = isset($this->_type) && is_string($this->_type);
         $isMultiple = $hasType && strpos($this->_type, '[]') !== false;
@@ -123,7 +124,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string $operator The operator to be used for the comparison.
      * @return void
      */
-    public function setOperator($operator)
+    public function setOperator(string $operator): void
     {
         $this->_operator = $operator;
     }
@@ -133,7 +134,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @return string
      */
-    public function getOperator()
+    public function getOperator(): string
     {
         return $this->_operator;
     }
@@ -144,7 +145,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $field = $this->_field;
 
@@ -207,7 +208,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ValueBinder $generator The value binder to use.
      * @return array First position containing the template and the second a placeholder
      */
-    protected function _stringExpression($generator)
+    protected function _stringExpression(\Cake\Database\ValueBinder $generator): array
     {
         $template = '%s ';
 
@@ -244,7 +245,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue($value, $generator, $type)
+    protected function _bindValue($value, ValueBinder $generator, $type): string
     {
         $placeholder = $generator->placeholder('c');
         $generator->bind($placeholder, $value, $type);
@@ -261,7 +262,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue($value, $generator, $type = 'string')
+    protected function _flattenValue($value, $generator, $type = 'string'): string
     {
         $parts = [];
         foreach ($this->_valueExpressions as $k => $v) {
@@ -284,7 +285,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param array|\Traversable $values The rows to insert
      * @return array
      */
-    protected function _collectExpressions($values)
+    protected function _collectExpressions($values): array
     {
         if ($values instanceof ExpressionInterface) {
             return [$values, []];
