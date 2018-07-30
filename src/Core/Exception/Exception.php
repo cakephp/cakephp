@@ -91,9 +91,9 @@ class Exception extends RuntimeException
      * @param string|array|null $header A single header string or an associative
      *   array of "header name" => "header value"
      * @param string|null $value The header value.
-     * @return array
+     * @return array|null
      */
-    public function responseHeader($header = null, $value = null): array
+    public function responseHeader($header = null, $value = null): ?array
     {
         if ($header === null) {
             return $this->_responseHeaders;
