@@ -22,6 +22,7 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 use RuntimeException;
 use Traversable;
 
@@ -125,7 +126,7 @@ class EntityContext implements ContextInterface
      * @return void
      * @throws \RuntimeException When a table object cannot be located/inferred.
      */
-    protected function _prepare()
+    protected function _prepare(): void
     {
         $table = $this->_context['table'];
         $entity = $this->_context['entity'];
@@ -279,7 +280,7 @@ class EntityContext implements ContextInterface
      * @param array $parts Each one of the parts in a path for a field name
      * @return mixed
      */
-    protected function _schemaDefault($parts)
+    protected function _schemaDefault(array $parts)
     {
         $table = $this->_getTable($parts);
         if ($table === false) {
@@ -302,7 +303,7 @@ class EntityContext implements ContextInterface
      * @param array $path Each one of the parts in a path for a field name
      * @return array|null
      */
-    protected function _extractMultiple($values, $path)
+    protected function _extractMultiple($values, $path): ?array
     {
         if (!(is_array($values) || $values instanceof Traversable)) {
             return null;
@@ -476,7 +477,7 @@ class EntityContext implements ContextInterface
      * @param array $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
      */
-    protected function _getValidator($parts)
+    protected function _getValidator(array $parts): Validator
     {
         $keyParts = array_filter(array_slice($parts, 0, -1), function ($part) {
             return !is_numeric($part);

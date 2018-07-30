@@ -136,7 +136,7 @@ class Helper implements EventListenerInterface
      * @param array $options Array of options
      * @return string onclick JS code
      */
-    protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
+    protected function _confirm(string $message, string $okCode, string $cancelCode = '', array $options = []): string
     {
         $message = $this->_cleanConfirmMessage($message);
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
@@ -156,7 +156,7 @@ class Helper implements EventListenerInterface
      * @param string|null $message The message to clean
      * @return string
      */
-    protected function _cleanConfirmMessage($message)
+    protected function _cleanConfirmMessage(?string $message): string
     {
         if ($message === null) {
             return '';

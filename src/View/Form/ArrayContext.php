@@ -319,7 +319,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path
      * @return string A string with stripped numeric nesting
      */
-    protected function stripNesting($field)
+    protected function stripNesting(string $field): string
     {
         return preg_replace('/\.\d*\./', '.', $field);
     }

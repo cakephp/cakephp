@@ -168,7 +168,7 @@ class StringTemplate
      * @param array $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
-    protected function _compileTemplates(array $templates = [])
+    protected function _compileTemplates(array $templates = []): void
     {
         if (empty($templates)) {
             $templates = array_keys($this->_config);
@@ -288,7 +288,7 @@ class StringTemplate
 
         foreach ($options as $key => $value) {
             if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-                $attributes[] = $this->_formatAttribute($key, $value, $escape);
+                $attributes[] = $this->_formatAttribute((string)$key, $value, $escape);
             }
         }
         $out = trim(implode(' ', $attributes));
@@ -305,7 +305,7 @@ class StringTemplate
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
-    protected function _formatAttribute($key, $value, $escape = true)
+    protected function _formatAttribute(string $key, $value, $escape = true): string
     {
         if (is_array($value)) {
             $value = implode(' ', $value);

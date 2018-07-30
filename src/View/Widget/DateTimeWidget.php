@@ -174,7 +174,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $data Data to normalize.
      * @return array Normalized data.
      */
-    protected function _normalizeData($data)
+    protected function _normalizeData(array $data): array
     {
         $data += [
             'name' => '',
@@ -209,7 +209,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options Options for conversion.
      * @return array
      */
-    protected function _deconstructDate($value, $options)
+    protected function _deconstructDate($value, $options): array
     {
         if ($value === '' || $value === null) {
             return [
@@ -250,7 +250,7 @@ class DateTimeWidget implements WidgetInterface
                         $dateArray['hour'] = $isAm ? $dateArray['hour'] : $dateArray['hour'] + 12;
                     }
                     if (!empty($dateArray['minute']) && isset($options['minute']['interval'])) {
-                        $dateArray['minute'] += $this->_adjustValue($dateArray['minute'], $options['minute']);
+                        $dateArray['minute'] += $this->_adjustValue((int)$dateArray['minute'], $options['minute']);
                         $dateArray['minute'] = str_pad((string)$dateArray['minute'], 2, '0', STR_PAD_LEFT);
                     }
 
@@ -267,7 +267,7 @@ class DateTimeWidget implements WidgetInterface
         }
 
         if (isset($options['minute']['interval'])) {
-            $change = $this->_adjustValue($date->format('i'), $options['minute']);
+            $change = $this->_adjustValue((int)$date->format('i'), $options['minute']);
             $date->modify($change > 0 ? "+$change minutes" : "$change minutes");
         }
 
@@ -289,7 +289,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options The options containing interval and possibly round.
      * @return int The amount to adjust $value by.
      */
-    protected function _adjustValue($value, $options)
+    protected function _adjustValue(int $value, array $options): int
     {
         $options += ['interval' => 1, 'round' => null];
         $changeValue = $value * (1 / $options['interval']);
@@ -304,7 +304,7 @@ class DateTimeWidget implements WidgetInterface
                 $changeValue = round($changeValue);
         }
 
-        return ($changeValue * $options['interval']) - $value;
+        return (int)($changeValue * $options['interval']) - $value;
     }
 
     /**
@@ -314,7 +314,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _yearSelect($options, $context)
+    protected function _yearSelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -331,7 +331,7 @@ class DateTimeWidget implements WidgetInterface
             $options['end'] = max($options['val'], $options['end']);
         }
         if (empty($options['options'])) {
-            $options['options'] = $this->_generateNumbers($options['start'], $options['end']);
+            $options['options'] = $this->_generateNumbers((int)$options['start'], (int)$options['end']);
         }
         if ($options['order'] === 'desc') {
             $options['options'] = array_reverse($options['options'], true);
@@ -348,7 +348,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _monthSelect($options, $context)
+    protected function _monthSelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -381,7 +381,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _daySelect($options, $context)
+    protected function _daySelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -404,7 +404,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _hourSelect($options, $context)
+    protected function _hourSelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -460,7 +460,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _minuteSelect($options, $context)
+    protected function _minuteSelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -493,7 +493,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _secondSelect($options, $context)
+    protected function _secondSelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -516,7 +516,7 @@ class DateTimeWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    protected function _meridianSelect($options, $context)
+    protected function _meridianSelect(array $options, ContextInterface $context): string
     {
         $options += [
             'name' => '',
@@ -534,7 +534,7 @@ class DateTimeWidget implements WidgetInterface
      * @param bool $leadingZero Whether to generate month keys with leading zero.
      * @return array
      */
-    protected function _getMonthNames($leadingZero = false)
+    protected function _getMonthNames(bool $leadingZero = false): array
     {
         $months = [
             '01' => __d('cake', 'January'),
@@ -576,7 +576,7 @@ class DateTimeWidget implements WidgetInterface
      * @param array $options Options list.
      * @return array
      */
-    protected function _generateNumbers($start, $end, $options = [])
+    protected function _generateNumbers(int $start, int $end, array $options = []): array
     {
         $options += [
             'leadingZeroKey' => true,

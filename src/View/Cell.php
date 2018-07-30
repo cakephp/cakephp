@@ -223,7 +223,7 @@ abstract class Cell implements EventDispatcherInterface
      * @param string|null $template The name of the template to be rendered.
      * @return array The cache configuration.
      */
-    protected function _cacheConfig($action, $template = null)
+    protected function _cacheConfig(string $action, ?string $template = null): array
     {
         if (empty($this->_cache)) {
             return [];

@@ -17,6 +17,7 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
+use Cake\View\StringTemplate;
 
 /**
  * Input widget class for generating multiple checkboxes.
@@ -55,7 +56,7 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param \Cake\View\StringTemplate $templates Templates list.
      * @param \Cake\View\Widget\LabelWidget $label Label widget instance.
      */
-    public function __construct($templates, $label)
+    public function __construct(StringTemplate $templates, LabelWidget $label)
     {
         $this->_templates = $templates;
         $this->_label = $label;
@@ -128,7 +129,7 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return array An array of rendered inputs.
      */
-    protected function _renderInputs($data, $context)
+    protected function _renderInputs(array $data, ContextInterface $context): array
     {
         $out = [];
         foreach ($data['options'] as $key => $val) {
@@ -161,10 +162,10 @@ class MultiCheckboxWidget implements WidgetInterface
             }
             $checkbox['name'] = $data['name'];
             $checkbox['escape'] = $data['escape'];
-            $checkbox['checked'] = $this->_isSelected($checkbox['value'], $data['val']);
-            $checkbox['disabled'] = $this->_isDisabled($checkbox['value'], $data['disabled']);
+            $checkbox['checked'] = $this->_isSelected((string)$checkbox['value'], $data['val']);
+            $checkbox['disabled'] = $this->_isDisabled((string)$checkbox['value'], $data['disabled']);
             if (empty($checkbox['id'])) {
-                $checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
+                $checkbox['id'] = $this->_id($checkbox['name'], (string)$checkbox['value']);
             }
             $out[] = $this->_renderInput($checkbox + $data, $context);
         }
@@ -179,7 +180,7 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context Context object.
      * @return string
      */
-    protected function _renderInput($checkbox, $context)
+    protected function _renderInput(array $checkbox, ContextInterface $context): string
     {
         $input = $this->_templates->format('checkbox', [
             'name' => $checkbox['name'] . '[]',
@@ -227,18 +228,18 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param array|string|null $selected The selected values.
      * @return bool
      */
-    protected function _isSelected($key, $selected)
+    protected function _isSelected(string $key, $selected): bool
     {
         if ($selected === null) {
             return false;
         }
         $isArray = is_array($selected);
         if (!$isArray) {
-            return (string)$key === (string)$selected;
+            return $key === (string)$selected;
         }
         $strict = !is_numeric($key);
 
-        return in_array((string)$key, $selected, $strict);
+        return in_array($key, $selected, $strict);
     }
 
     /**
@@ -248,7 +249,7 @@ class MultiCheckboxWidget implements WidgetInterface
      * @param array|bool|null $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled($key, $disabled)
+    protected function _isDisabled(string $key, $disabled): bool
     {
         if ($disabled === null || $disabled === false) {
             return false;
@@ -258,7 +259,7 @@ class MultiCheckboxWidget implements WidgetInterface
         }
         $strict = !is_numeric($key);
 
-        return in_array((string)$key, $disabled, $strict);
+        return in_array($key, $disabled, $strict);
     }
 
     /**

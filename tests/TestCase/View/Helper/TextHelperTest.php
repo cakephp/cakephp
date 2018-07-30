@@ -97,8 +97,8 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method);
-            $Text->{$method}('who', 'what', 'when', 'where', 'how');
+            $String->expects($this->at(0))->method($method)->willReturn('');
+            $Text->{$method}(['who'], 'what', 'when', 'where', 'how');
         }
 
         $methods = [
@@ -110,12 +110,12 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method);
+            $String->expects($this->at(0))->method($method)->willReturn('');
             $Text->{$method}('who', 'what');
         }
 
         $methods = [
-            'highlight', 'truncate',
+            'highlight',
         ];
         $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
             ->setMethods($methods)
@@ -123,12 +123,12 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method);
-            $Text->{$method}('who', ['what']);
+            $String->expects($this->at(0))->method($method)->willReturn('');
+            $Text->{$method}('who', 'what');
         }
 
         $methods = [
-            'tail',
+            'tail', 'truncate',
         ];
         $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
             ->setMethods($methods)
@@ -136,7 +136,7 @@ class TextHelperTest extends TestCase
         $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
         $Text->attach($String);
         foreach ($methods as $method) {
-            $String->expects($this->at(0))->method($method);
+            $String->expects($this->at(0))->method($method)->willReturn('');
             $Text->{$method}('who', 1, ['what']);
         }
     }

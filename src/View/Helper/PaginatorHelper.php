@@ -18,6 +18,7 @@ namespace Cake\View\Helper;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
+use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
 use InvalidArgumentException;
@@ -278,7 +279,7 @@ class PaginatorHelper extends Helper
      * @param array $templates An array of templates with the 'active' and 'disabled' keys.
      * @return string Generated HTML
      */
-    protected function _toggledLink($text, $enabled, $options, $templates)
+    protected function _toggledLink($text, $enabled, $options, $templates): string
     {
         $template = $templates['active'];
         if (!$enabled) {
@@ -628,11 +629,11 @@ class PaginatorHelper extends Helper
     /**
      * Does $model have $page in its range?
      *
-     * @param string $model Model name to get parameters for.
+     * @param string|null $model Model name to get parameters for.
      * @param string $dir Direction
      * @return bool Whether model has $dir
      */
-    protected function _hasPage($model, $dir)
+    protected function _hasPage(?string $model, string $dir): bool
     {
         $params = $this->params($model);
 
@@ -789,7 +790,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options from the numbers() method.
      * @return array An array with the start and end numbers.
      */
-    protected function _getNumbersStartAndEnd($params, $options)
+    protected function _getNumbersStartAndEnd(array $params, array $options): array
     {
         $half = (int)($options['modulus'] / 2);
         $end = max(1 + $options['modulus'], $params['page'] + $half);
@@ -824,7 +825,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options from the numbers() method.
      * @return string
      */
-    protected function _formatNumber($templater, $options)
+    protected function _formatNumber(StringTemplate $templater, array $options): string
     {
         $url = array_merge($options['url'], ['page' => $options['page']]);
         $vars = [
@@ -843,7 +844,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _modulusNumbers($templater, $params, $options)
+    protected function _modulusNumbers(StringTemplate $templater, array $params, array $options): string
     {
         $out = '';
         $ellipsis = $templater->format('ellipsis', []);
@@ -904,7 +905,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _firstNumber($ellipsis, $params, $start, $options)
+    protected function _firstNumber(string $ellipsis, array $params, int $start, array $options): string
     {
         $out = '';
         $first = is_int($options['first']) ? $options['first'] : 0;
@@ -928,7 +929,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _lastNumber($ellipsis, $params, $end, $options)
+    protected function _lastNumber(string $ellipsis, array $params, int $end, array $options): string
     {
         $out = '';
         $last = is_int($options['last']) ? $options['last'] : 0;
@@ -951,7 +952,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _numbers($templater, $params, $options)
+    protected function _numbers(StringTemplate $templater, array $params, array $options): string
     {
         $out = '';
         $out .= $options['before'];
@@ -1192,7 +1193,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options for Select tag attributes like class, id or event
      * @return string html output.
      */
-    public function limitControl(array $limits = [], $default = null, array $options = []): ?string
+    public function limitControl(array $limits = [], ?int $default = null, array $options = []): ?string
     {
         $out = $this->Form->create(null, ['type' => 'get']);
 
