@@ -101,6 +101,7 @@ class Exception extends RuntimeException
         if (is_array($header)) {
             return $this->_responseHeaders = $header;
         }
-        $this->_responseHeaders = [$header => $value];
+
+        return $this->_responseHeaders = [$header => $value];
     }
 }
