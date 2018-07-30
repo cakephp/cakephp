@@ -648,6 +648,8 @@ class SmtpTransportTest extends TestCase
 
         $callback = function ($arg) {
             $this->assertNotEquals("QUIT\r\n", $arg);
+
+            return 1;
         };
         $this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
         $this->socket->expects($this->never())->method('disconnect');

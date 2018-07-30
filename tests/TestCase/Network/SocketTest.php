@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -199,14 +200,14 @@ class SocketTest extends TestCase
      */
     public function testTimeOutConnection()
     {
-        $config = ['host' => '127.0.0.1', 'timeout' => 0.5];
+        $config = ['host' => '127.0.0.1', 'timeout' => 1];
         $this->Socket = new Socket($config);
         try {
             $this->assertTrue($this->Socket->connect());
 
-            $config = ['host' => '127.0.0.1', 'timeout' => 0.00001];
+            $config = ['host' => '127.0.0.1', 'timeout' => 1];
             $this->Socket = new Socket($config);
-            $this->assertFalse($this->Socket->read(1024 * 1024));
+            $this->assertNull($this->Socket->read(1024 * 1024));
             $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
@@ -264,7 +265,7 @@ class SocketTest extends TestCase
     public function testEnableCryptoSocketExceptionNoSsl()
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
-        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
+        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 1];
 
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
@@ -292,7 +293,7 @@ class SocketTest extends TestCase
      */
     public function testEnableCryptoSocketExceptionNoTls()
     {
-        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
+        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 1];
 
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
