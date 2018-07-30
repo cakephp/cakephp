@@ -775,12 +775,15 @@ class Validation
     /**
      * Checks that value has a valid file extension.
      *
-     * @param string|array $check Value to check
+     * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check
      * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension($check, $extensions = ['gif', 'jpeg', 'png', 'jpg'])
     {
+        if ($check instanceof UploadedFileInterface) {
+            return static::extension($check->getClientFilename(), $extensions);
+        }
         if (is_array($check)) {
             $check = isset($check['name']) ? $check['name'] : array_shift($check);
 
@@ -1108,7 +1111,7 @@ class Validation
         }
 
         for ($position = ($length % 2); $position < $length; $position += 2) {
-            $number = $check[$position] * 2;
+            $number = (int)$check[$position] * 2;
             $sum += ($number < 10) ? $number : $number - 9;
         }
 
@@ -1258,7 +1261,7 @@ class Validation
      * - `optional` - Whether or not this file is optional. Defaults to false.
      *   If true a missing file will pass the validator regardless of other constraints.
      *
-     * @param array $file The uploaded file data from PHP.
+     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
      * @param array $options An array of options for the validation.
      * @return bool
      */
@@ -1310,7 +1313,7 @@ class Validation
     /**
      * Validates the size of an uploaded image.
      *
-     * @param array $file The uploaded file data from PHP.
+     * @param array|\Psr\Http\Message\UploadedFileInterface  $file The uploaded file data from PHP.
      * @param array $options Options to validate width and height.
      * @return bool
      */
@@ -1320,11 +1323,7 @@ class Validation
             throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
         }
 
-        if ($file instanceof UploadedFileInterface) {
-            $file = $file->getStream()->getContents();
-        } elseif (is_array($file) && isset($file['tmp_name'])) {
-            $file = $file['tmp_name'];
-        }
+        $file = static::getFilename($file);
 
         list($width, $height) = getimagesize($file);
 

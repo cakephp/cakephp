@@ -49,14 +49,14 @@ trait ConsoleIntegrationTestTrait
     /**
      * Console output stub
      *
-     * @var \Cake\Console\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     private $out;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\Console\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
     private $err;
 

@@ -1894,7 +1894,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $options = $options->toArray();
         }
 
-        $options = new ArrayObject($options + [
+        $options = new ArrayObject((array)$options + [
             'atomic' => true,
             'associated' => true,
             'checkRules' => true,
@@ -2272,7 +2272,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function delete(EntityInterface $entity, $options = [])
     {
-        $options = new ArrayObject($options + [
+        $options = new ArrayObject((array)$options + [
             'atomic' => true,
             'checkRules' => true,
             '_primary' => true,
