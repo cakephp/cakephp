@@ -265,7 +265,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _setConfig(array $config): void
     {
-        if (!empty($config['url']) && $config['url'][0] === '/') {
+        if (strlen($config['url']) > 1 && $config['url'][0] === '/') {
             $config['url'] = substr($config['url'], 1);
         }
 

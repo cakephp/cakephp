@@ -160,6 +160,22 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test constructing with a string url.
+     *
+     * @deprecated
+     * @return void
+     */
+    public function testConstructStringUrlIgnoreServer()
+    {
+        $_SERVER['REQUEST_URI'] = '/some/other/path';
+
+        $request = new ServerRequest('/articles/view/1');
+        $this->assertEquals('/articles/view/1', $request->getUri()->getPath());
+
+        $request = new ServerRequest('/');
+        $this->assertEquals('/', $request->getUri()->getPath());
+    }
+    /**
      * Test that querystring args provided in the URL string are parsed.
      *
      * @return void

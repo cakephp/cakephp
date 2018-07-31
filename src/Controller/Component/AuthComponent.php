@@ -841,7 +841,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *
      * @param \Cake\Auth\Storage\StorageInterface|null $storage Sets provided
      *   object as storage or if null returns configured storage object.
-     * @return \Cake\Auth\Storage\StorageInterface|\Cake\Core\InstanceConfigTrait|null
+     * @return \Cake\Auth\Storage\StorageInterface|null
      */
     public function storage(?StorageInterface $storage = null)
     {

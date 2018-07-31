@@ -2319,6 +2319,20 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test extension with a PSR7 object
+     */
+    public function testExtensionPsr7()
+    {
+        $file = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+
+        $upload = new UploadedFile($file, 5308, UPLOAD_ERR_OK, 'extension.jpeg', 'image/jpeg');
+        $this->assertTrue(Validation::extension($upload));
+
+        $upload = new UploadedFile($file, 163, UPLOAD_ERR_OK, 'no_php_extension', 'text/plain');
+        $this->assertFalse(Validation::extension($upload));
+    }
+
+    /**
      * testMoney method
      *
      * @return void
@@ -3096,6 +3110,22 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::imageSize($upload, [
             'width' => [Validation::COMPARE_LESS_OR_EQUAL, 299],
             'height' => [Validation::COMPARE_GREATER_OR_EQUAL, 300],
+        ]));
+    }
+
+    /**
+     * Test imageSize with a PSR7 object
+     *
+     * @return void
+     */
+    public function testImageSizePsr7()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_GREATER, 100],
+            'height' => [Validation::COMPARE_GREATER, 100],
         ]));
     }
 

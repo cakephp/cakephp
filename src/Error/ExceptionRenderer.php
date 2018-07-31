@@ -23,6 +23,7 @@ use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\Event;
 use Cake\Http\Exception\HttpException;
 use Cake\Http\Response;
+use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -30,7 +31,6 @@ use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -57,34 +57,34 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Throwable
      */
-    public $error;
+    protected $error;
 
     /**
      * Controller instance.
      *
      * @var \Cake\Controller\Controller
      */
-    public $controller;
+    protected $controller;
 
     /**
      * Template to render for Cake\Core\Exception\Exception
      *
      * @var string
      */
-    public $template = '';
+    protected $template = '';
 
     /**
      * The method corresponding to the Exception this object is for.
      *
      * @var string
      */
-    public $method = '';
+    protected $method = '';
 
     /**
      * If set, this will be request used to create the controller that will render
      * the error.
      *
-     * @var \Psr\Http\Message\ServerRequestInterface|null
+     * @var \Cake\Http\ServerRequest|null
      */
     protected $request = null;
 
@@ -94,9 +94,9 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Throwable $exception Exception.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request - if this is set it will be used instead of creating a new one
+     * @param \Cake\Http\ServerRequest $request The request - if this is set it will be used instead of creating a new one
      */
-    public function __construct(Throwable $exception, ?ServerRequestInterface $request = null)
+    public function __construct(Throwable $exception, ?ServerRequest $request = null)
     {
         $this->error = $exception;
         $this->request = $request;
@@ -123,7 +123,25 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $controller = null;
 
         try {
-            $class = App::className('Error', 'Controller', 'Controller');
+            $namespace = 'Controller';
+            $prefix = $request->getParam('prefix');
+            if ($prefix) {
+                if (strpos($prefix, '/') === false) {
+                    $namespace .= '/' . Inflector::camelize($prefix);
+                } else {
+                    $prefixes = array_map(
+                        'Cake\Utility\Inflector::camelize',
+                        explode('/', $prefix)
+                    );
+                    $namespace .= '/' . implode('/', $prefixes);
+                }
+            }
+
+            $class = App::className('Error', $namespace, 'Controller');
+            if (!$class && $namespace !== 'Controller') {
+                $class = App::className('Error', 'Controller', 'Controller');
+            }
+
             /* @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
@@ -381,5 +399,71 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $this->controller->dispatchEvent('Controller.shutdown');
 
         return $this->controller->getResponse();
+    }
+
+    /**
+     * Magic accessor for properties made protected.
+     *
+     * @param string $name Name of the attribute to get.
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $protected = [
+            'error',
+            'controller',
+            'template',
+            'method',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
+                $name
+            ));
+        }
+
+        return $this->{$name};
+    }
+
+    /**
+     * Magic setter for properties made protected.
+     *
+     * @param string $name Name to property.
+     * @param mixed $value Value for property.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $protected = [
+            'error',
+            'controller',
+            'template',
+            'method',
+        ];
+        if (in_array($name, $protected, true)) {
+            deprecationWarning(sprintf(
+                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
+                $name
+            ));
+        }
+
+        $this->{$name} = $value;
+    }
+
+    /**
+     * Returns an array that can be used to describe the internal state of this
+     * object.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return [
+            'error' => $this->error,
+            'request' => $this->request,
+            'controller' => $this->controller,
+            'template' => $this->template,
+            'method' => $this->method,
+        ];
     }
 }

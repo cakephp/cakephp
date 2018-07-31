@@ -68,6 +68,7 @@ class FilterIterator extends Collection
      */
     public function unwrap(): Traversable
     {
+        /** @var \IteratorIterator $filter */
         $filter = $this->getInnerIterator();
         $iterator = $filter->getInnerIterator();
 

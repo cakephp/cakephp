@@ -1066,6 +1066,7 @@ class BelongsToMany extends Association
     protected function _appendJunctionJoin(Query $query, $conditions): Query
     {
         $name = $this->_junctionAssociationName();
+        /** @var array $joins */
         $joins = $query->clause('join');
         $matching = [
             $name => [
@@ -1323,6 +1324,7 @@ class BelongsToMany extends Association
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());
 
+        $unions = [];
         foreach ($missing as $key) {
             $unions[] = $hasMany->find('all')
                 ->where(array_combine($foreignKey, $sourceKey))

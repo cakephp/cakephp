@@ -347,7 +347,7 @@ class RouteBuilder
      */
     public function resources(string $name, $options = [], $callback = null): void
     {
-        if (is_callable($options) && $callback === null) {
+        if (is_callable($options)) {
             $callback = $options;
             $options = [];
         }
@@ -918,7 +918,7 @@ class RouteBuilder
      */
     public function scope(string $path, $params, $callback = null): void
     {
-        if ($callback === null) {
+        if (is_callable($params)) {
             $callback = $params;
             $params = [];
         }
