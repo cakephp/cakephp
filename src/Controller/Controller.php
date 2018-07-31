@@ -372,11 +372,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Sets the plugin name.
      *
-     * @param string $name Plugin name.
+     * @param string|null $name Plugin name.
      * @return $this
      * @since 3.6.0
      */
-    public function setPlugin(string $name)
+    public function setPlugin(?string $name)
     {
         $this->plugin = $name;
 

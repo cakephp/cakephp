@@ -742,7 +742,7 @@ class ExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
-        $controller->helpers = ['Fail', 'Boom'];
+        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
         $controller->request = new ServerRequest;
         $controller->expects($this->at(0))
             ->method('render')
@@ -752,8 +752,9 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
-        sort($controller->helpers);
-        $this->assertEquals(['Form', 'Html'], $controller->helpers);
+        $helpers = $controller->viewBuilder()->getHelpers();
+        sort($helpers);
+        $this->assertEquals(['Form', 'Html'], $helpers);
         $this->assertContains('Helper class Fail', (string)$response->getBody());
     }
 
@@ -793,7 +794,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
         $controller = new Controller();
-        $controller->helpers = ['Fail', 'Boom'];
+        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
         $controller->getEventManager()->on(
             'Controller.beforeRender',
             function (EventInterface $event) {

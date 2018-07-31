@@ -1230,7 +1230,7 @@ class Validation
      * @param array $options Options to validate width and height.
      * @return bool
      */
-    public static function imageSize(array $file, array $options): bool
+    public static function imageSize($file, array $options): bool
     {
         if (!isset($options['height']) && !isset($options['width'])) {
             throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');

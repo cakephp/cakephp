@@ -169,10 +169,10 @@ class ServerRequestTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/some/other/path';
 
-        $request = new ServerRequest('/articles/view/1');
+        $request = new ServerRequest(['url' => '/articles/view/1']);
         $this->assertEquals('/articles/view/1', $request->getUri()->getPath());
 
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $this->assertEquals('/', $request->getUri()->getPath());
     }
     /**

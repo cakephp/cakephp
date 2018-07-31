@@ -14,7 +14,7 @@
 namespace TestApp\Controller\Admin;
 
 use Cake\Controller\Controller;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\Response;
 
 /**
@@ -40,7 +40,7 @@ class ErrorController extends Controller
      * @param \Cake\Event\Event $event Event.
      * @return Cake\Http\Response|null
      */
-    public function beforeRender(Event $event): ?Response
+    public function beforeRender(EventInterface $event): ?Response
     {
         $this->viewBuilder()->setTemplatePath('Error');
 
