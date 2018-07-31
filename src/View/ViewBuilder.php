@@ -264,10 +264,10 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Sets the name of the view file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name View file name to set.
+     * @param string|null $name View file name to set.
      * @return $this
      */
-    public function setTemplate($name): self
+    public function setTemplate(?string $name): self
     {
         $this->_template = $name;
 
@@ -280,7 +280,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @return string|null
      */
-    public function getTemplate()
+    public function getTemplate(): ?string
     {
         return $this->_template;
     }

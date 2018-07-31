@@ -147,7 +147,7 @@ class App
      * @param string $namespace Namespace.
      * @return bool
      */
-    protected static function _classExistsInBase($name, $namespace)
+    protected static function _classExistsInBase(string $name, string $namespace): bool
     {
         return class_exists($namespace . $name);
     }

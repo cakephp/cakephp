@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -126,7 +127,7 @@ class EagerLoadable
      * @param string $name The Association name.
      * @param array $config The list of properties to set.
      */
-    public function __construct($name, array $config = [])
+    public function __construct(string $name, array $config = [])
     {
         $this->_name = $name;
         $allowed = [
@@ -147,7 +148,7 @@ class EagerLoadable
      * @param \Cake\ORM\EagerLoadable $association The association to load.
      * @return void
      */
-    public function addAssociation($name, EagerLoadable $association)
+    public function addAssociation(string $name, EagerLoadable $association): void
     {
         $this->_associations[$name] = $association;
     }
@@ -157,7 +158,7 @@ class EagerLoadable
      *
      * @return array
      */
-    public function associations()
+    public function associations(): array
     {
         return $this->_associations;
     }
@@ -167,7 +168,7 @@ class EagerLoadable
      *
      * @return \Cake\ORM\Association|null
      */
-    public function instance()
+    public function instance(): ?Association
     {
         return $this->_instance;
     }
@@ -178,7 +179,7 @@ class EagerLoadable
      *
      * @return string|null
      */
-    public function aliasPath()
+    public function aliasPath(): ?string
     {
         return $this->_aliasPath;
     }
@@ -197,7 +198,7 @@ class EagerLoadable
      *
      * @return string|null
      */
-    public function propertyPath()
+    public function propertyPath(): ?string
     {
         return $this->_propertyPath;
     }
@@ -208,7 +209,7 @@ class EagerLoadable
      * @param bool $possible The value to set.
      * @return $this
      */
-    public function setCanBeJoined($possible)
+    public function setCanBeJoined(bool $possible): self
     {
         $this->_canBeJoined = (bool)$possible;
 
@@ -220,7 +221,7 @@ class EagerLoadable
      *
      * @return bool
      */
-    public function canBeJoined()
+    public function canBeJoined(): bool
     {
         return $this->_canBeJoined;
     }
@@ -232,7 +233,7 @@ class EagerLoadable
      * @param array $config The value to set.
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): self
     {
         $this->_config = $config;
 
@@ -245,7 +246,7 @@ class EagerLoadable
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->_config;
     }
@@ -256,7 +257,7 @@ class EagerLoadable
      *
      * @return bool|null
      */
-    public function forMatching()
+    public function forMatching(): ?bool
     {
         return $this->_forMatching;
     }
@@ -275,7 +276,7 @@ class EagerLoadable
      *
      * @return string|null
      */
-    public function targetProperty()
+    public function targetProperty(): ?string
     {
         return $this->_targetProperty;
     }
@@ -286,7 +287,7 @@ class EagerLoadable
      *
      * @return array
      */
-    public function asContainArray()
+    public function asContainArray(): array
     {
         $associations = [];
         foreach ($this->_associations as $assoc) {

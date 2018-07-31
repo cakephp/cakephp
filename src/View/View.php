@@ -1019,7 +1019,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeRenderFile $this, [$viewFile]
      * @triggers View.afterRenderFile $this, [$viewFile, $content]
      */
-    protected function _render($viewFile, $data = [])
+    protected function _render(string $viewFile, array $data = []): string
     {
         if (empty($data)) {
             $data = $this->viewVars;
@@ -1063,7 +1063,7 @@ class View implements EventDispatcherInterface
      * @param array $dataForView Data to include in rendered view.
      * @return string Rendered output
      */
-    protected function _evaluate($viewFile, $dataForView)
+    protected function _evaluate(string $viewFile, array $dataForView): string
     {
         extract($dataForView);
         ob_start();
@@ -1192,7 +1192,7 @@ class View implements EventDispatcherInterface
      * @return string Template filename
      * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
      */
-    protected function _getViewFileName($name = null)
+    protected function _getViewFileName(?string $name = null): string
     {
         $templatePath = $subDir = '';
 
@@ -1240,7 +1240,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of file which should be inflected.
      * @return string File name after conversion
      */
-    protected function _inflectViewFileName($name)
+    protected function _inflectViewFileName(string $name): string
     {
         return Inflector::underscore($name);
     }
@@ -1256,7 +1256,7 @@ class View implements EventDispatcherInterface
      * @return string The file path
      * @throws \InvalidArgumentException
      */
-    protected function _checkFilePath($file, $path)
+    protected function _checkFilePath(string $file, string $path): string
     {
         if (strpos($file, '..') === false) {
             return $file;
@@ -1303,7 +1303,7 @@ class View implements EventDispatcherInterface
      * @return string Filename for layout file (.ctp).
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
      */
-    protected function _getLayoutFileName($name = null)
+    protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
             $name = $this->layout;
@@ -1337,7 +1337,7 @@ class View implements EventDispatcherInterface
      * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
-    protected function _getElementFileName($name, $pluginCheck = true)
+    protected function _getElementFileName(string $name, bool $pluginCheck = true)
     {
         list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
@@ -1366,7 +1366,7 @@ class View implements EventDispatcherInterface
      * @param string $basePath Base path on which to get the prefixed one.
      * @return array Array with all the templates paths.
      */
-    protected function _getSubPaths($basePath)
+    protected function _getSubPaths(string $basePath): array
     {
         $paths = [$basePath];
         if ($this->request->getParam('prefix')) {
@@ -1392,7 +1392,7 @@ class View implements EventDispatcherInterface
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
      * @return array paths
      */
-    protected function _paths($plugin = null, $cached = true)
+    protected function _paths(?string $plugin = null, bool $cached = true): array
     {
         if ($cached === true) {
             if ($plugin === null && !empty($this->_paths)) {
@@ -1443,7 +1443,7 @@ class View implements EventDispatcherInterface
      * @param array $options Element options
      * @return array Element Cache configuration.
      */
-    protected function _elementCache($name, $data, $options)
+    protected function _elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
             $cache = $options['cache'];
@@ -1494,7 +1494,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeRender $this, [$file]
      * @triggers View.afterRender $this, [$file, $element]
      */
-    protected function _renderElement($file, $data, $options)
+    protected function _renderElement(string $file, array $data, array $options): string
     {
         $current = $this->_current;
         $restore = $this->_currentType;

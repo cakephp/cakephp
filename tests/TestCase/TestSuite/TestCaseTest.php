@@ -33,7 +33,7 @@ class SecondaryPostsTable extends Table
     /**
      * @return string
      */
-    public static function defaultConnectionName()
+    public static function defaultConnectionName(): string
     {
         return 'secondary';
     }
@@ -361,7 +361,7 @@ class TestCaseTest extends TestCase
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
         $this->assertNull($Posts->save($entity));
-        $this->assertNull($Posts->getTable());
+        $this->assertSame('', $Posts->getTable());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->at(0))

@@ -807,7 +807,7 @@ class HtmlHelper extends Helper
      * @param bool $useCount Renders the count into the row. Default is false.
      * @return string[]
      */
-    protected function _renderCells($line, $useCount = false)
+    protected function _renderCells(array $line, bool $useCount = false): array
     {
         $i = 0;
         $cellsOut = [];
@@ -877,11 +877,8 @@ class HtmlHelper extends Helper
      * @param array $options Additional HTML attributes of the DIV tag, see above.
      * @return string The formatted tag element
      */
-    public function tag($name, ?string $text = null, array $options = []): string
+    public function tag(string $name, ?string $text = null, array $options = []): string
     {
-        if (empty($name)) {
-            return $text;
-        }
         if (isset($options['escape']) && $options['escape']) {
             $text = h($text);
             unset($options['escape']);
@@ -1120,7 +1117,7 @@ class HtmlHelper extends Helper
      * @return string The nested list element
      * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */
-    protected function _nestedListItem($items, $options, $itemOptions)
+    protected function _nestedListItem(array $items, array $options, array $itemOptions): string
     {
         $out = '';
 

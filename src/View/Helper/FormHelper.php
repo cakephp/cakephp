@@ -493,7 +493,7 @@ class FormHelper extends Helper
      * @param array $options An array of options from create()
      * @return string|array The action attribute for the form.
      */
-    protected function _formUrl($context, $options)
+    protected function _formUrl(ContextInterface $context, array $options)
     {
         $request = $this->_View->getRequest();
 
@@ -524,7 +524,7 @@ class FormHelper extends Helper
      * @param string|array $url The URL of the last form.
      * @return void
      */
-    protected function _lastAction($url)
+    protected function _lastAction($url): void
     {
         $action = Router::url($url, true);
         $query = parse_url($action, PHP_URL_QUERY);
@@ -539,7 +539,7 @@ class FormHelper extends Helper
      *
      * @return string
      */
-    protected function _csrfField()
+    protected function _csrfField(): string
     {
         $request = $this->_View->getRequest();
 
@@ -683,7 +683,7 @@ class FormHelper extends Helper
      * @param mixed $value Field value, if value should not be tampered with.
      * @return void
      */
-    protected function _secure($lock, $field, $value = null)
+    protected function _secure(bool $lock, $field, $value = null): void
     {
         if (empty($field) && $field !== '0') {
             return;
@@ -1148,7 +1148,7 @@ class FormHelper extends Helper
      * @param array $options The options for group template
      * @return string The generated group template
      */
-    protected function _groupTemplate($options)
+    protected function _groupTemplate(array $options): string
     {
         $groupTemplate = $options['options']['type'] . 'FormGroup';
         if (!$this->templater()->get($groupTemplate)) {
@@ -1169,7 +1169,7 @@ class FormHelper extends Helper
      * @param array $options The options for input container template
      * @return string The generated input container template
      */
-    protected function _inputContainerTemplate($options)
+    protected function _inputContainerTemplate(array $options): string
     {
         $inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
         if (!$this->templater()->get($inputContainerTemplate)) {
@@ -1192,7 +1192,7 @@ class FormHelper extends Helper
      * @param array $options The options for the input element
      * @return string|array The generated input element
      */
-    protected function _getInput($fieldName, $options)
+    protected function _getInput(string $fieldName, array $options)
     {
         $label = $options['labelOptions'];
         unset($options['labelOptions']);
@@ -1227,7 +1227,7 @@ class FormHelper extends Helper
      * @param array $options Options list.
      * @return array Options
      */
-    protected function _parseOptions($fieldName, $options)
+    protected function _parseOptions(string $fieldName, array $options): array
     {
         $needsMagicType = false;
         if (empty($options['type'])) {
@@ -1249,7 +1249,7 @@ class FormHelper extends Helper
      * @param array $options the options passed to the input method
      * @return string
      */
-    protected function _inputType($fieldName, $options)
+    protected function _inputType(string $fieldName, array $options): string
     {
         $context = $this->_getContext();
 
@@ -1292,7 +1292,7 @@ class FormHelper extends Helper
      * @param array $options Options list.
      * @return array
      */
-    protected function _optionsOptions($fieldName, $options)
+    protected function _optionsOptions(string $fieldName, array $options): array
     {
         if (isset($options['options'])) {
             return $options;
@@ -1331,7 +1331,7 @@ class FormHelper extends Helper
      * overwrite the 'type' key in options.
      * @return array
      */
-    protected function _magicOptions($fieldName, $options, $allowOverride)
+    protected function _magicOptions(string $fieldName, array $options, bool $allowOverride): array
     {
         $context = $this->_getContext();
 
@@ -1407,7 +1407,7 @@ class FormHelper extends Helper
      * @param array $options Options list.
      * @return bool|string false or Generated label element
      */
-    protected function _getLabel($fieldName, $options)
+    protected function _getLabel(string $fieldName, array $options)
     {
         if ($options['type'] === 'hidden') {
             return false;
@@ -1436,7 +1436,7 @@ class FormHelper extends Helper
      * @param mixed $default The default option value
      * @return mixed the contents of the option or default
      */
-    protected function _extractOption($name, $options, $default = null)
+    protected function _extractOption(string $name, array $options, $default = null)
     {
         if (array_key_exists($name, $options)) {
             return $options[$name];
@@ -1456,7 +1456,7 @@ class FormHelper extends Helper
      * @param array $options Options for the label element.
      * @return string Generated label element
      */
-    protected function _inputLabel($fieldName, $label, $options)
+    protected function _inputLabel(string $fieldName, $label, $options): string
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
         $labelAttributes = ['templateVars' => $options['templateVars']];
@@ -2116,7 +2116,7 @@ class FormHelper extends Helper
      * @param string $keep The option to not disable.
      * @return array
      */
-    protected function _singleDatetime($options, $keep)
+    protected function _singleDatetime(array $options, string $keep): array
     {
         $off = array_diff($this->_datetimeParts, [$keep]);
         $off = array_combine(
@@ -2387,7 +2387,7 @@ class FormHelper extends Helper
      * @param array $options Options to convert.
      * @return array Converted options.
      */
-    protected function _datetimeOptions($options)
+    protected function _datetimeOptions(array $options): array
     {
         foreach ($this->_datetimeParts as $type) {
             if (!array_key_exists($type, $options)) {
@@ -2539,7 +2539,7 @@ class FormHelper extends Helper
      * @param array $options Array of options to append options into.
      * @return array Array of options for the input.
      */
-    protected function _initInputField($field, $options = [])
+    protected function _initInputField(string $field, array $options = []): array
     {
         if (!isset($options['secure'])) {
             $options['secure'] = (bool)$this->_View->getRequest()->getParam('_Token');
@@ -2606,7 +2606,7 @@ class FormHelper extends Helper
      * @param array $options The option set.
      * @return bool Whether or not the field is disabled.
      */
-    protected function _isDisabled($options)
+    protected function _isDisabled(array $options): bool
     {
         if (!isset($options['disabled'])) {
             return false;
@@ -2647,7 +2647,7 @@ class FormHelper extends Helper
      * @return array Array of field name params like ['Model.field'] or
      *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
-    protected function _secureFieldName($name)
+    protected function _secureFieldName(string $name): array
     {
         if (empty($name) && $name !== '0') {
             return [];
@@ -2711,7 +2711,7 @@ class FormHelper extends Helper
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    protected function _getContext($data = [])
+    protected function _getContext($data = []): ContextInterface
     {
         if (isset($this->_context) && empty($data)) {
             return $this->_context;

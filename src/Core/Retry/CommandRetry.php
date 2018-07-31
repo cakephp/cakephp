@@ -45,7 +45,7 @@ class CommandRetry
      * @param \Cake\Core\Retry\RetryStrategyInterface $strategy The strategy to follow should the action fail
      * @param int $retries The number of times the action has been already called
      */
-    public function __construct(RetryStrategyInterface $strategy, $retries = 1)
+    public function __construct(RetryStrategyInterface $strategy, int $retries = 1)
     {
         $this->strategy = $strategy;
         $this->retries = $retries;

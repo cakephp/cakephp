@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -2589,7 +2590,7 @@ class TableTest extends TestCase
             ->getMock();
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
-            ->setConstructorArgs([null, $table])
+            ->setConstructorArgs([$this->connection, $table])
             ->getMock();
         $statement = $this->getMockBuilder('Cake\Database\Statement\StatementDecorator')->getMock();
         $data = new Entity([
@@ -2736,7 +2737,7 @@ class TableTest extends TestCase
             ->getMock();
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
-            ->setConstructorArgs([null, $table])
+            ->setConstructorArgs([$connection, $table])
             ->getMock();
         $table->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
@@ -2776,7 +2777,7 @@ class TableTest extends TestCase
             ->getMock();
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes'])
-            ->setConstructorArgs([null, $table])
+            ->setConstructorArgs([$connection, $table])
             ->getMock();
 
         $table->expects($this->any())->method('getConnection')
@@ -2960,7 +2961,7 @@ class TableTest extends TestCase
 
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['execute', 'addDefaultTypes', 'set'])
-            ->setConstructorArgs([null, $table])
+            ->setConstructorArgs([$this->connection, $table])
             ->getMock();
 
         $table->expects($this->once())->method('query')

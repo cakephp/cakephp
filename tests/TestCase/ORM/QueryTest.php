@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1884,7 +1885,7 @@ class QueryTest extends TestCase
             ->getMock();
         $query->select();
         $resultSet = $this->getMockbuilder('Cake\ORM\ResultSet')
-            ->setConstructorArgs([$query, null])
+            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
             ->getMock();
         $query->expects($this->once())
             ->method('all')
@@ -1936,7 +1937,7 @@ class QueryTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
         $resultSet = $this->getMockBuilder('Cake\ORM\ResultSet')
-            ->setConstructorArgs([$query, null])
+            ->setConstructorArgs([$query, $this->getMockBuilder(StatementInterface::class)->getMock()])
             ->getMock();
 
         $query->expects($this->never())

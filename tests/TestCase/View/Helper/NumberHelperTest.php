@@ -113,8 +113,9 @@ class NumberHelperTest extends TestCase
         $helper->attach($number);
         $number->expects($this->at(0))
             ->method($method)
-            ->with(12.3);
-        $helper->{$method}(12.3, ['options']);
+            ->with(12.3)
+            ->willReturn('');
+        $helper->{$method}(12.3);
     }
 
     /**

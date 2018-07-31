@@ -16,6 +16,7 @@ namespace Cake\Core;
 
 use Cake\Core\Exception\MissingPluginException;
 use Countable;
+use Generator;
 use InvalidArgumentException;
 use Iterator;
 
@@ -191,7 +192,7 @@ class PluginCollection implements Iterator, Countable
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->position++;
     }
@@ -211,7 +212,7 @@ class PluginCollection implements Iterator, Countable
      *
      * @return \Cake\Core\PluginInterface
      */
-    public function current()
+    public function current(): PluginInterface
     {
         $name = $this->names[$this->position];
 
@@ -257,7 +258,7 @@ class PluginCollection implements Iterator, Countable
      * @return \Generator A generator containing matching plugins.
      * @throws \InvalidArgumentException on invalid hooks
      */
-    public function with(string $hook)
+    public function with(string $hook): Generator
     {
         if (!in_array($hook, PluginInterface::VALID_HOOKS)) {
             throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");

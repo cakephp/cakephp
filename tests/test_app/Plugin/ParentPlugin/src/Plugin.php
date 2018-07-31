@@ -7,7 +7,7 @@ use Cake\Core\PluginApplicationInterface;
 
 class Plugin extends BasePlugin
 {
-    public function bootstrap(PluginApplicationInterface $app)
+    public function bootstrap(PluginApplicationInterface $app): void
     {
         Configure::write('ParentPlugin.bootstrap', true);
 

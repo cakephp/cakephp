@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,6 +21,7 @@ use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
@@ -66,7 +68,7 @@ class GreedyCommentsTable extends Table
      * @param array $config Config data.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->setTable('comments');
         $this->setAlias('Comments');
@@ -77,9 +79,9 @@ class GreedyCommentsTable extends Table
      *
      * @param string $type Find type
      * @param array $options find options
-     * @return object
+     * @return \Cake\ORM\Query
      */
-    public function find($type = 'all', $options = [])
+    public function find(string $type = 'all', $options = []): Query
     {
         if (empty($options['conditions'])) {
             $options['conditions'] = [];

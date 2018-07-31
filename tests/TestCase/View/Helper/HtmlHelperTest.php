@@ -1877,15 +1877,6 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->tag('div', '<text>', ['class' => 'class-name', 'escape' => true]);
         $expected = ['div' => ['class' => 'class-name'], '&lt;text&gt;', '/div'];
         $this->assertHtml($expected, $result);
-
-        $result = $this->Html->tag(false, '<em>stuff</em>');
-        $this->assertEquals('<em>stuff</em>', $result);
-
-        $result = $this->Html->tag(null, '<em>stuff</em>');
-        $this->assertEquals('<em>stuff</em>', $result);
-
-        $result = $this->Html->tag('', '<em>stuff</em>');
-        $this->assertEquals('<em>stuff</em>', $result);
     }
 
     /**
