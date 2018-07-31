@@ -68,7 +68,7 @@ trait MysqlDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function disableForeignKeySQL()
+    public function disableForeignKeySQL(): string
     {
         return 'SET foreign_key_checks = 0';
     }
@@ -76,7 +76,7 @@ trait MysqlDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function enableForeignKeySQL()
+    public function enableForeignKeySQL(): string
     {
         return 'SET foreign_key_checks = 1';
     }

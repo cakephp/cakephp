@@ -337,7 +337,7 @@ trait SqlserverDialectTrait
      * @param string $name save point name
      * @return string
      */
-    public function savePointSQL($name)
+    public function savePointSQL(string $name): string
     {
         return 'SAVE TRANSACTION t' . $name;
     }
@@ -348,7 +348,7 @@ trait SqlserverDialectTrait
      * @param string $name save point name
      * @return string
      */
-    public function releaseSavePointSQL($name)
+    public function releaseSavePointSQL(string $name): string
     {
         return 'COMMIT TRANSACTION t' . $name;
     }
@@ -359,7 +359,7 @@ trait SqlserverDialectTrait
      * @param string $name save point name
      * @return string
      */
-    public function rollbackSavePointSQL($name)
+    public function rollbackSavePointSQL(string $name): string
     {
         return 'ROLLBACK TRANSACTION t' . $name;
     }
@@ -377,7 +377,7 @@ trait SqlserverDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function disableForeignKeySQL()
+    public function disableForeignKeySQL(): string
     {
         return 'EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"';
     }
@@ -385,7 +385,7 @@ trait SqlserverDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function enableForeignKeySQL()
+    public function enableForeignKeySQL(): string
     {
         return 'EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
     }

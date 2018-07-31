@@ -135,10 +135,10 @@ class DriverTest extends TestCase
         $connection
             ->expects($this->once())
             ->method('quote')
-            ->with($value, PDO::PARAM_STR);
+            ->with($value, PDO::PARAM_STR)
+            ->will($this->returnValue('string'));
 
         $this->driver->setConnection($connection);
-
         $this->driver->schemaValue($value);
     }
 
