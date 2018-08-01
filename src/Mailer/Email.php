@@ -2749,7 +2749,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         foreach ($types as $type) {
-            $View->hasRendered = false;
+            $View->resetHasRendered();
             $View->setTemplatePath('Email' . DIRECTORY_SEPARATOR . $type);
             $View->setLayoutPath('Email' . DIRECTORY_SEPARATOR . $type);
 
