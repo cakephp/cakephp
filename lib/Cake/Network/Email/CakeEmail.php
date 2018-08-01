@@ -624,10 +624,10 @@ class CakeEmail {
 		} elseif (preg_match($this->_emailPattern, $email)) {
 			return;
 		}
-		 if ($email == '') {
-            throw new SocketException(__d('cake_dev', 'The email set for "%s" is empty.', $context));
+		if ($email == '') {
+			throw new SocketException(__d('cake_dev', 'The email set for "%s" is empty.', $context));
         }
-        throw new SocketException(__d('cake_dev', 'Invalid email set for "%s". You passed "%s".', $context, $email));
+		throw new SocketException(__d('cake_dev', 'Invalid email set for "%s". You passed "%s".', $context, $email));
 	}
 
 /**
