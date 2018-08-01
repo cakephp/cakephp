@@ -249,6 +249,7 @@ class DriverTest extends TestCase
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $query->method('type')->will($this->returnValue('select'));
 
         $result = $driver->compileQuery($query, new ValueBinder);
 
