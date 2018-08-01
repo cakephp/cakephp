@@ -341,7 +341,7 @@ class CakeEmailTest extends CakeTestCase {
 	public function testInvalidEmail() {
 		$this->CakeEmail->to('');
 	}
-	
+
 /**
  * testBuildInvalidData
  *
