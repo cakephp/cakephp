@@ -39,12 +39,10 @@ class ErrorController extends Controller
      * beforeRender callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      */
-    public function beforeRender(EventInterface $event): ?Response
+    public function beforeRender(EventInterface $event)
     {
         $this->viewBuilder()->setTemplatePath('Error');
-
-        return null;
     }
 }

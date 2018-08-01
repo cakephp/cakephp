@@ -777,12 +777,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeFilter(EventInterface $event): ?Response
+    public function beforeFilter(EventInterface $event)
     {
-        return null;
     }
 
     /**
@@ -790,12 +789,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * to perform logic or set view variables that are required on every request.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRender(EventInterface $event): ?Response
+    public function beforeRender(EventInterface $event)
     {
-        return null;
     }
 
     /**
@@ -811,23 +809,21 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string|array $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function beforeRedirect(EventInterface $event, $url, Response $response): ?Response
+    public function beforeRedirect(EventInterface $event, $url, Response $response)
     {
-        return null;
     }
 
     /**
      * Called after the controller action is run and rendered.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      * @link https://book.cakephp.org/3.0/en/controllers.html#request-life-cycle-callbacks
      */
-    public function afterFilter(EventInterface $event): ?Response
+    public function afterFilter(EventInterface $event)
     {
-        return null;
     }
 }
