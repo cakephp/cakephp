@@ -88,7 +88,7 @@ trait SqlDialectTrait
      * (select, insert, update, delete)
      * @return callable
      */
-    public function queryTranslator($type)
+    public function queryTranslator(string $type)
     {
         return function ($query) use ($type) {
             if ($this->isAutoQuotingEnabled()) {

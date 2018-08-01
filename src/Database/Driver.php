@@ -251,7 +251,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function queryTranslator($type);
+    abstract public function queryTranslator(string $type);
 
     /**
      * {@inheritDoc}
