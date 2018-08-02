@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -49,7 +50,7 @@ class Postgres extends Driver
      *
      * @return bool true on success
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->_connection) {
             return true;
@@ -92,7 +93,7 @@ class Postgres extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
-    public function enabled()
+    public function enabled(): bool
     {
         return in_array('pgsql', PDO::getAvailableDrivers());
     }
@@ -103,7 +104,7 @@ class Postgres extends Driver
      * @param string $encoding The encoding to use.
      * @return void
      */
-    public function setEncoding($encoding)
+    public function setEncoding(string $encoding): void
     {
         $this->connect();
         $this->_connection->exec('SET NAMES ' . $this->_connection->quote($encoding));
@@ -116,7 +117,7 @@ class Postgres extends Driver
      * @param string $schema The schema names to set `search_path` to.
      * @return void
      */
-    public function setSchema($schema)
+    public function setSchema(string $schema): void
     {
         $this->connect();
         $this->_connection->exec('SET search_path TO ' . $this->_connection->quote($schema));
@@ -125,7 +126,7 @@ class Postgres extends Driver
     /**
      * {@inheritDoc}
      */
-    public function supportsDynamicConstraints()
+    public function supportsDynamicConstraints(): bool
     {
         return true;
     }

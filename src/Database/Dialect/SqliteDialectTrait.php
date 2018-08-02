@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -175,7 +176,7 @@ trait SqliteDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function disableForeignKeySQL()
+    public function disableForeignKeySQL(): string
     {
         return 'PRAGMA foreign_keys = OFF';
     }
@@ -183,7 +184,7 @@ trait SqliteDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function enableForeignKeySQL()
+    public function enableForeignKeySQL(): string
     {
         return 'PRAGMA foreign_keys = ON';
     }

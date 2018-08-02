@@ -1769,9 +1769,9 @@ class MarshallerTest extends TestCase
             'comments' => [
                 '_ids' => [1],
                 [
-                    'comment' => 'Nope'
-                ]
-            ]
+                    'comment' => 'Nope',
+                ],
+            ],
         ];
         $result = $marshall->merge($entity, $data, ['associated' => ['Comments' => ['onlyIds' => true]]]);
 

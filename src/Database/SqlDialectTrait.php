@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,7 @@ trait SqlDialectTrait
      * @param string $identifier The identifier to quote.
      * @return string
      */
-    public function quoteIdentifier($identifier)
+    public function quoteIdentifier(string $identifier): string
     {
         $identifier = trim($identifier);
 
@@ -87,7 +88,7 @@ trait SqlDialectTrait
      * (select, insert, update, delete)
      * @return callable
      */
-    public function queryTranslator($type)
+    public function queryTranslator(string $type)
     {
         return function ($query) use ($type) {
             if ($this->isAutoQuotingEnabled()) {
@@ -258,7 +259,7 @@ trait SqlDialectTrait
      * @param string $name save point name
      * @return string
      */
-    public function savePointSQL($name)
+    public function savePointSQL(string $name): string
     {
         return 'SAVEPOINT LEVEL' . $name;
     }
@@ -269,7 +270,7 @@ trait SqlDialectTrait
      * @param string $name save point name
      * @return string
      */
-    public function releaseSavePointSQL($name)
+    public function releaseSavePointSQL(string $name): string
     {
         return 'RELEASE SAVEPOINT LEVEL' . $name;
     }
@@ -280,7 +281,7 @@ trait SqlDialectTrait
      * @param string $name save point name
      * @return string
      */
-    public function rollbackSavePointSQL($name)
+    public function rollbackSavePointSQL(string $name): string
     {
         return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
     }
