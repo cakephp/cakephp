@@ -15,7 +15,6 @@ namespace TestApp\Controller\Admin;
 
 use Cake\Controller\Controller;
 use Cake\Event\EventInterface;
-use Cake\Http\Response;
 
 /**
  * Error Handling Controller
