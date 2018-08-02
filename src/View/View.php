@@ -1292,6 +1292,7 @@ class View implements EventDispatcherInterface
             'plugin' => 'setPlugin',
             'name' => 'setName',
             'elementCache' => 'setElementCache',
+            'hasRendered' => 'resetHasRendered',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1439,6 +1440,19 @@ class View implements EventDispatcherInterface
     public function hasRendered()
     {
         return $this->hasRendered;
+    }
+
+    /**
+     * Reset $hadRendered property to false to allow running render() again.
+     *
+     * @return $this
+     * @since 3.7.0
+     */
+    public function resetHasRendered()
+    {
+        $this->hasRendered = false;
+
+        return $this;
     }
 
     /**

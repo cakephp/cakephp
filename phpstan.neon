@@ -1,6 +1,3 @@
-includes:
-    - vendor/phpstan/phpstan-phpunit/extension.neon
-
 parameters:
     autoload_files:
         - tests/bootstrap.php
@@ -32,6 +29,7 @@ parameters:
         - '#Call to an undefined method Traversable::getInnerIterator\(\)#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
         - '#Binary operation "\+=" between \(array\&hasOffset\(.*\)\) and array results in an error#'
+        - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort
