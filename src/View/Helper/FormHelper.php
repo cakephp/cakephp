@@ -28,7 +28,6 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
 use DateTime;
 use RuntimeException;
-use Traversable;
 
 /**
  * Form helper library.
