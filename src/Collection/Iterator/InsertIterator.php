@@ -65,7 +65,7 @@ class InsertIterator extends Collection
      * @param array|\Traversable $values The source collection from which the values will
      * be inserted at the specified path.
      */
-    public function __construct($into, $path, $values)
+    public function __construct(iterable $into, $path, iterable $values)
     {
         parent::__construct($into);
 

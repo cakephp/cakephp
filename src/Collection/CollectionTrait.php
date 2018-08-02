@@ -662,7 +662,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function zip($items): CollectionInterface
+    public function zip(iterable $items): CollectionInterface
     {
         return new ZipIterator(array_merge([$this->unwrap()], func_get_args()));
     }
@@ -670,7 +670,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function zipWith($items, $callable): CollectionInterface
+    public function zipWith(iterable $items, $callable): CollectionInterface
     {
         if (func_num_args() > 2) {
             $items = func_get_args();
@@ -865,7 +865,7 @@ trait CollectionTrait
      *
      * @return \Traversable|array
      */
-    protected function optimizeUnwrap()
+    protected function optimizeUnwrap(): iterable
     {
         $iterator = $this->unwrap();
 

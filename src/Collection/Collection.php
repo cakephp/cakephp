@@ -16,10 +16,8 @@ declare(strict_types=1);
 namespace Cake\Collection;
 
 use ArrayIterator;
-use InvalidArgumentException;
 use IteratorIterator;
 use Serializable;
-use Traversable;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
@@ -35,15 +33,10 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      * @param array|\Traversable $items Items.
      * @throws \InvalidArgumentException If passed incorrect type for items.
      */
-    public function __construct($items)
+    public function __construct(iterable $items)
     {
         if (is_array($items)) {
             $items = new ArrayIterator($items);
-        }
-
-        if (!($items instanceof Traversable)) {
-            $msg = 'Only an array or \Traversable is allowed for Collection';
-            throw new InvalidArgumentException($msg);
         }
 
         parent::__construct($items);

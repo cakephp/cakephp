@@ -56,7 +56,7 @@ class StoppableIterator extends Collection
      * the collection, if the result evaluates to false, no more items will be
      * yielded from this iterator.
      */
-    public function __construct($items, callable $condition)
+    public function __construct(iterable $items, callable $condition)
     {
         $this->_condition = $condition;
         parent::__construct($items);

@@ -23,7 +23,7 @@ if (!function_exists('collection')) {
      * @param \Traversable|array $items The items from which the collection will be built.
      * @return \Cake\Collection\Collection
      */
-    function collection($items): CollectionInterface
+    function collection(iterable $items): CollectionInterface
     {
         return new Collection($items);
     }

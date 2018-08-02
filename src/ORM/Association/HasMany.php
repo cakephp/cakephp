@@ -158,9 +158,7 @@ class HasMany extends Association
             $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) &&
-            !($targetEntities instanceof Traversable)
-        ) {
+        if (!is_iterable($targetEntities)) {
             $name = $this->getProperty();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
@@ -199,7 +197,7 @@ class HasMany extends Association
      * @param array $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
      */
-    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, $entities, array $options): bool
+    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, iterable $entities, array $options): bool
     {
         $foreignKey = array_keys($foreignKeyReference);
         $table = $this->getTarget();

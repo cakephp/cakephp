@@ -51,7 +51,7 @@ class ReplaceIterator extends Collection
      * @param array|\Traversable $items The items to be filtered.
      * @param callable $callback Callback.
      */
-    public function __construct($items, callable $callback)
+    public function __construct(iterable $items, callable $callback)
     {
         $this->_callback = $callback;
         parent::__construct($items);

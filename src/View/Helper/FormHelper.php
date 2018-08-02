@@ -1311,7 +1311,7 @@ class FormHelper extends Helper
             $pluralize ? Inflector::pluralize($fieldName) : $fieldName
         );
         $varOptions = $this->_View->get($varName);
-        if (!is_array($varOptions) && !($varOptions instanceof Traversable)) {
+        if (!is_iterable($varOptions)) {
             return $options;
         }
         if ($options['type'] !== 'radio') {
@@ -1560,7 +1560,7 @@ class FormHelper extends Helper
      * @return string Completed radio widget set.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-radio-buttons
      */
-    public function radio(string $fieldName, $options = [], array $attributes = []): string
+    public function radio(string $fieldName, iterable $options = [], array $attributes = []): string
     {
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
@@ -2003,14 +2003,14 @@ class FormHelper extends Helper
      * ```
      *
      * @param string $fieldName Name attribute of the SELECT
-     * @param array|\Traversable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+     * @param array|\Traversable|null $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
      *   SELECT element
      * @param array $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-select-pickers
      */
-    public function select(string $fieldName, $options = [], array $attributes = []): string
+    public function select(string $fieldName, ?iterable $options = [], array $attributes = []): string
     {
         $attributes += [
             'disabled' => null,
@@ -2082,7 +2082,7 @@ class FormHelper extends Helper
      * @return string Formatted SELECT element
      * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
      */
-    public function multiCheckbox(string $fieldName, $options, array $attributes = []): string
+    public function multiCheckbox(string $fieldName, iterable $options, array $attributes = []): string
     {
         $attributes += [
             'disabled' => null,

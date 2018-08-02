@@ -20,7 +20,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use RuntimeException;
-use Traversable;
 
 /**
  * Factory for getting form context instance based on provided data.
@@ -60,7 +59,7 @@ class ContextFactory
             [
                 'type' => 'orm',
                 'callable' => function ($request, $data) {
-                    if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
+                    if (is_iterable($data['entity'])) {
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
                             return new EntityContext($request, $data);

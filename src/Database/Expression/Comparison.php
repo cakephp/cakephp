@@ -262,7 +262,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue($value, $generator, $type = 'string'): string
+    protected function _flattenValue(iterable $value, $generator, $type = 'string'): string
     {
         $parts = [];
         foreach ($this->_valueExpressions as $k => $v) {
@@ -282,7 +282,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * and all ExpressionInterface objects that could be found in the second
      * position.
      *
-     * @param array|\Traversable $values The rows to insert
+     * @param array|\Traversable|\Cake\Database\ExpressionInterface $values The rows to insert
      * @return array
      */
     protected function _collectExpressions($values): array

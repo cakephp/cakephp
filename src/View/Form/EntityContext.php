@@ -131,7 +131,7 @@ class EntityContext implements ContextInterface
         $table = $this->_context['table'];
         $entity = $this->_context['entity'];
         if (empty($table)) {
-            if (is_array($entity) || $entity instanceof Traversable) {
+            if (is_iterable($entity)) {
                 foreach ($entity as $e) {
                     $entity = $e;
                     break;
@@ -203,7 +203,7 @@ class EntityContext implements ContextInterface
     public function isCreate(): bool
     {
         $entity = $this->_context['entity'];
-        if (is_array($entity) || $entity instanceof Traversable) {
+        if (is_iterable($entity)) {
             foreach ($entity as $e) {
                 $entity = $e;
                 break;
@@ -305,7 +305,7 @@ class EntityContext implements ContextInterface
      */
     protected function _extractMultiple($values, $path): ?array
     {
-        if (!(is_array($values) || $values instanceof Traversable)) {
+        if (!is_iterable($values)) {
             return null;
         }
         $table = $this->_getTable($path, false);
@@ -359,8 +359,7 @@ class EntityContext implements ContextInterface
             }
 
             $isTraversable = (
-                is_array($next) ||
-                $next instanceof Traversable ||
+                is_iterable($next) ||
                 $next instanceof EntityInterface
             );
             if ($isLast || !$isTraversable) {

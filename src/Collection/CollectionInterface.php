@@ -965,7 +965,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param array|\Traversable ...$items The collections to zip.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function zip($items): CollectionInterface;
+    public function zip(iterable $items): CollectionInterface;
 
     /**
      * Combines the elements of this collection with each of the elements of the
@@ -987,7 +987,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param callable $callable The function to use for zipping the elements together.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function zipWith($items, $callable): CollectionInterface;
+    public function zipWith(iterable $items, $callable): CollectionInterface;
 
     /**
      * Breaks the collection into smaller arrays of the given size.

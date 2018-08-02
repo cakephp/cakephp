@@ -626,7 +626,7 @@ class Marshaller
      * @return \Cake\Datasource\EntityInterface[]
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function mergeMany($entities, array $data, array $options = []): array
+    public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
         $primary = (array)$this->_table->getPrimaryKey();
 

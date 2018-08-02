@@ -221,5 +221,5 @@ interface RepositoryInterface
      * @param array $options A list of options for the objects hydration.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    public function patchEntities($entities, array $data, array $options = []): array;
+    public function patchEntities(iterable $entities, array $data, array $options = []): array;
 }

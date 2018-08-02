@@ -54,7 +54,7 @@ class ExtractIterator extends Collection
      * @param string $path a dot separated string symbolizing the path to follow
      * inside the hierarchy of each value so that the column can be extracted.
      */
-    public function __construct($items, $path)
+    public function __construct(iterable $items, $path)
     {
         $this->_extractor = $this->_propertyExtractor($path);
         parent::__construct($items);

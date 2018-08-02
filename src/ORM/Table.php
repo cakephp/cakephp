@@ -2538,7 +2538,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
      */
-    public function patchEntities($entities, array $data, array $options = []): array
+    public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();

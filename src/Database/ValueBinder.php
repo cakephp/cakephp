@@ -81,7 +81,7 @@ class ValueBinder
      * @param string $type The type with which all values will be bound
      * @return array with the placeholders to insert in the query
      */
-    public function generateManyNamed($values, $type = 'string')
+    public function generateManyNamed(iterable $values, $type = 'string')
     {
         $placeholders = [];
         foreach ($values as $k => $value) {
