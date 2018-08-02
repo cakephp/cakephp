@@ -608,11 +608,11 @@ class Session
      */
     protected function _timedOut()
     {
-        $time = (int)$this->read('Config.time');
+        $time = $this->read('Config.time');
         $result = false;
 
         $checkTime = $time !== null && $this->_lifetime > 0;
-        if ($checkTime && (time() - $time > $this->_lifetime)) {
+        if ($checkTime && (time() - (int)$time > $this->_lifetime)) {
             $result = true;
         }
 
