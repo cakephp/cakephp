@@ -17,7 +17,6 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Filesystem\File;
-use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
@@ -1193,65 +1192,18 @@ class Response implements ResponseInterface
     /**
      * Create a new response with a cookie set.
      *
-     * ### Data
-     *
-     * - `value`: Value of the cookie
-     * - `expire`: Time the cookie expires in
-     * - `path`: Path the cookie applies to
-     * - `domain`: Domain the cookie is for.
-     * - `secure`: Is the cookie https?
-     * - `httpOnly`: Is the cookie available in the client?
-     *
-     * ### Examples
+     * ### Example
      *
      * ```
-     * // set scalar value with defaults
-     * $response = $response->withCookie('remember_me', 1);
-     *
-     * // customize cookie attributes
-     * $response = $response->withCookie('remember_me', ['path' => '/login']);
-     *
      * // add a cookie object
      * $response = $response->withCookie(new Cookie('remember_me', 1));
      * ```
      *
-     * @param string|\Cake\Http\Cookie\Cookie $name The name of the cookie to set, or a cookie object
-     * @param array|string $data Either a string value, or an array of cookie options.
+     * @param \Cake\Http\Cookie\CookieInterface $cookie cookie object
      * @return static
      */
-    public function withCookie($name, $data = ''): self
+    public function withCookie(CookieInterface $cookie): self
     {
-        if ($name instanceof Cookie) {
-            $cookie = $name;
-        } else {
-            deprecationWarning(
-                get_called_class() . '::withCookie(string $name, array $data) is deprecated. ' .
-                'Pass an instance of \Cake\Http\Cookie\Cookie instead.'
-            );
-
-            if (!is_array($data)) {
-                $data = ['value' => $data];
-            }
-            $data += [
-                'value' => '',
-                'expire' => 0,
-                'path' => '/',
-                'domain' => '',
-                'secure' => false,
-                'httpOnly' => false,
-            ];
-            $expires = $data['expire'] ? new DateTime('@' . $data['expire']) : null;
-            $cookie = new Cookie(
-                $name,
-                $data['value'],
-                $expires,
-                $data['path'],
-                $data['domain'],
-                $data['secure'],
-                $data['httpOnly']
-            );
-        }
-
         $new = clone $this;
         $new->_cookies = $new->_cookies->add($cookie);
 
@@ -1261,57 +1213,19 @@ class Response implements ResponseInterface
     /**
      * Create a new response with an expired cookie set.
      *
-     * ### Options
-     *
-     * - `path`: Path the cookie applies to
-     * - `domain`: Domain the cookie is for.
-     * - `secure`: Is the cookie https?
-     * - `httpOnly`: Is the cookie available in the client?
-     *
-     * ### Examples
+     * ### Example
      *
      * ```
-     * // set scalar value with defaults
-     * $response = $response->withExpiredCookie('remember_me');
-     *
-     * // customize cookie attributes
-     * $response = $response->withExpiredCookie('remember_me', ['path' => '/login']);
-     *
      * // add a cookie object
      * $response = $response->withExpiredCookie(new Cookie('remember_me'));
      * ```
      *
-     * @param string|\Cake\Http\Cookie\CookieInterface $name The name of the cookie to expire, or a cookie object
-     * @param array $options An array of cookie options.
+     * @param \Cake\Http\Cookie\CookieInterface $cookie cookie object
      * @return static
      */
-    public function withExpiredCookie($name, array $options = []): self
+    public function withExpiredCookie(CookieInterface $cookie): self
     {
-        if ($name instanceof CookieInterface) {
-            $cookie = $name->withExpired();
-        } else {
-            deprecationWarning(
-                get_called_class() . '::withExpiredCookie(string $name, array $data) is deprecated. ' .
-                'Pass an instance of \Cake\Http\Cookie\Cookie instead.'
-            );
-
-            $options += [
-                'path' => '/',
-                'domain' => '',
-                'secure' => false,
-                'httpOnly' => false,
-            ];
-
-            $cookie = new Cookie(
-                $name,
-                '',
-                DateTime::createFromFormat('U', 1),
-                $options['path'],
-                $options['domain'],
-                $options['secure'],
-                $options['httpOnly']
-            );
-        }
+        $cookie = $cookie->withExpired();
 
         $new = clone $this;
         $new->_cookies = $new->_cookies->add($cookie);

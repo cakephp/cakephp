@@ -196,9 +196,7 @@ class BaseApplicationTest extends TestCase
             [$this->path]
         );
         $app->addPlugin('ParentPlugin');
-        $this->deprecated(function () use ($app) {
-            $app->pluginBootstrap();
-        });
+        $app->pluginBootstrap();
         $this->assertTrue(
             Configure::check('ParentPlugin.bootstrap'),
             'Plugin bootstrap should be run'
