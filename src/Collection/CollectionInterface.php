@@ -624,7 +624,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * Returns a new collection as the result of concatenating the list of elements
      * in this collection with the passed list of elements
      *
-     * @param array|\Traversable $items Items list.
+     * @param iterable $items Items list.
      * @return \Cake\Collection\CollectionInterface
      */
     public function append($items): CollectionInterface;
@@ -962,7 +962,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $collection->zip([3, 4], [5, 6])->toList(); // returns [[1, 3, 5], [2, 4, 6]]
      * ```
      *
-     * @param array|\Traversable ...$items The collections to zip.
+     * @param iterable ...$items The collections to zip.
      * @return \Cake\Collection\CollectionInterface
      */
     public function zip(iterable $items): CollectionInterface;
@@ -983,7 +983,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
      * ```
      *
-     * @param array|\Traversable ...$items The collections to zip.
+     * @param iterable ...$items The collections to zip.
      * @param callable $callable The function to use for zipping the elements together.
      * @return \Cake\Collection\CollectionInterface
      */

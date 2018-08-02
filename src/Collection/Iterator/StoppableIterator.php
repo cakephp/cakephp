@@ -51,7 +51,7 @@ class StoppableIterator extends Collection
      * in the current iteration, the key of the element and the passed $items iterator
      * as arguments, in that order.
      *
-     * @param array|\Traversable $items The list of values to iterate
+     * @param iterable $items The list of values to iterate
      * @param callable $condition A function that will be called for each item in
      * the collection, if the result evaluates to false, no more items will be
      * yielded from this iterator.

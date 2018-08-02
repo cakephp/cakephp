@@ -675,7 +675,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $parentEntity the source entity containing the target
      * entities to be saved.
-     * @param array|\Traversable $entities list of entities to persist in target table and to
+     * @param iterable $entities list of entities to persist in target table and to
      * link to the parent entity
      * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association

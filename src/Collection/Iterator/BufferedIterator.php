@@ -73,7 +73,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      * Maintains an in-memory cache of the results yielded by the internal
      * iterator.
      *
-     * @param array|\Traversable $items The items to be filtered.
+     * @param iterable $items The items to be filtered.
      */
     public function __construct(iterable $items)
     {

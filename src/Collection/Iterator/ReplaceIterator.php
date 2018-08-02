@@ -48,7 +48,7 @@ class ReplaceIterator extends Collection
      * in the current iteration, the key of the element and the passed $items iterator
      * as arguments, in that order.
      *
-     * @param array|\Traversable $items The items to be filtered.
+     * @param iterable $items The items to be filtered.
      * @param callable $callback Callback.
      */
     public function __construct(iterable $items, callable $callback)

@@ -58,11 +58,11 @@ class InsertIterator extends Collection
      * Constructs a new collection that will dynamically add properties to it out of
      * the values found in $values.
      *
-     * @param array|\Traversable $into The target collection to which the values will
+     * @param iterable $into The target collection to which the values will
      * be inserted at the specified path.
      * @param string $path A dot separated list of properties that need to be traversed
      * to insert the value into the target collection.
-     * @param array|\Traversable $values The source collection from which the values will
+     * @param iterable $values The source collection from which the values will
      * be inserted at the specified path.
      */
     public function __construct(iterable $into, $path, iterable $values)

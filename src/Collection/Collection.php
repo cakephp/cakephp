@@ -30,7 +30,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     /**
      * Constructor. You can provide an array or any traversable object
      *
-     * @param array|\Traversable $items Items.
+     * @param iterable $items Items.
      * @throws \InvalidArgumentException If passed incorrect type for items.
      */
     public function __construct(iterable $items)

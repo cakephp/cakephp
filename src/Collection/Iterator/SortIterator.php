@@ -50,7 +50,7 @@ class SortIterator extends Collection
      * element. Please note that the callback function could be called more than once
      * per element.
      *
-     * @param array|\Traversable $items The values to sort
+     * @param iterable $items The values to sort
      * @param callable|string $callback A function used to return the actual value to
      * be compared. It can also be a string representing the path to use to fetch a
      * column or property in each element

@@ -20,7 +20,7 @@ if (!function_exists('collection')) {
     /**
      * Returns a new Cake\Collection\Collection object wrapping the passed argument.
      *
-     * @param \Traversable|array $items The items from which the collection will be built.
+     * @param iterable $items The items from which the collection will be built.
      * @return \Cake\Collection\Collection
      */
     function collection(iterable $items): CollectionInterface

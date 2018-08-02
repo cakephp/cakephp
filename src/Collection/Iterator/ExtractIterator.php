@@ -50,7 +50,7 @@ class ExtractIterator extends Collection
      * $extractor = new ExtractIterator($items, 'comment.user.name'');
      * ```
      *
-     * @param array|\Traversable $items The list of values to iterate
+     * @param iterable $items The list of values to iterate
      * @param string $path a dot separated string symbolizing the path to follow
      * inside the hierarchy of each value so that the column can be extracted.
      */

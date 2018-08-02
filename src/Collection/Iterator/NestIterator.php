@@ -35,7 +35,7 @@ class NestIterator extends Collection implements RecursiveIterator
     /**
      * Constructor
      *
-     * @param array|\Traversable $items Collection items.
+     * @param iterable $items Collection items.
      * @param string|callable $nestKey the property that contains the nested items
      * If a callable is passed, it should return the childrens for the passed item
      */

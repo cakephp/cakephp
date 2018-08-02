@@ -46,7 +46,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      * Creates the iterator that will generate child iterators from each of the
      * elements it was constructed with.
      *
-     * @param array|\Traversable $items The list of values to iterate
+     * @param iterable $items The list of values to iterate
      * @param callable $unfolder A callable function that will receive the
      * current item and key. It must return an array or Traversable object
      * out of which the nested iterators will be yielded.

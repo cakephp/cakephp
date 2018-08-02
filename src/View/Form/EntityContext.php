@@ -299,7 +299,7 @@ class EntityContext implements ContextInterface
      * Helper method used to extract all the primary key values out of an array, The
      * primary key column is guessed out of the provided $path array
      *
-     * @param array|\Traversable $values The list from which to extract primary keys from
+     * @param iterable $values The list from which to extract primary keys from
      * @param array $path Each one of the parts in a path for a field name
      * @return array|null
      */
@@ -323,7 +323,7 @@ class EntityContext implements ContextInterface
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
-     * @return \Cake\Datasource\EntityInterface|\Traversable|array|bool
+     * @return \Cake\Datasource\EntityInterface|iterable|bool
      * @throws \RuntimeException When properties cannot be read.
      */
     public function entity(?array $path = null)

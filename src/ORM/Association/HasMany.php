@@ -192,7 +192,7 @@ class HasMany extends Association
      * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $parentEntity The source entity containing the target
      * entities to be saved.
-     * @param array|\Traversable $entities list of entities to persist in target table and to
+     * @param iterable $entities list of entities to persist in target table and to
      * link to the parent entity
      * @param array $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
