@@ -2106,17 +2106,4 @@ TEXT;
         $layout = $this->View->getLayout();
         $this->assertSame($layout, 'foo');
     }
-
-    /**
-     * Test testHasRendered()
-     *
-     * @return void
-     */
-    public function testHasRendered()
-    {
-        $this->assertFalse($this->View->hasRendered());
-
-        $this->View->render('index');
-        $this->assertTrue($this->View->hasRendered());
-    }
 }

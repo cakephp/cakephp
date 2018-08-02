@@ -175,13 +175,6 @@ class View implements EventDispatcherInterface
     protected $theme;
 
     /**
-     * True when the view has been rendered.
-     *
-     * @var bool
-     */
-    protected $hasRendered = false;
-
-    /**
      * An instance of a \Cake\Http\ServerRequest object that contains information about the current request.
      * This object contains all the information about a request and several methods for reading
      * additional information about the request.
@@ -701,8 +694,6 @@ class View implements EventDispatcherInterface
             $this->layout = $defaultLayout;
         }
 
-        $this->hasRendered = true;
-
         return $this->Blocks->get('content');
     }
 
@@ -1101,17 +1092,6 @@ class View implements EventDispatcherInterface
         $helpers = $this->helpers();
 
         return $this->{$class} = $helpers->load($name, $config);
-    }
-
-    /**
-     * Check whether the view has been rendered.
-     *
-     * @return bool
-     * @since 3.7.0
-     */
-    public function hasRendered(): bool
-    {
-        return $this->hasRendered;
     }
 
     /**
