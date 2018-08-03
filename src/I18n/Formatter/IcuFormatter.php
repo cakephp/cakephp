@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,7 +36,7 @@ class IcuFormatter implements FormatterInterface
      * @throws \Aura\Intl\Exception\CannotFormat
      * @throws \Aura\Intl\Exception\CannotInstantiateFormatter
      */
-    public function format($locale, $message, array $vars)
+    public function format($locale, $message, array $vars): string
     {
         unset($vars['_singular'], $vars['_count']);
 
@@ -54,7 +55,7 @@ class IcuFormatter implements FormatterInterface
      * @throws \Aura\Intl\Exception\CannotFormat If any error related to the passed
      * variables is found
      */
-    protected function _formatMessage($locale, $message, $vars)
+    protected function _formatMessage(string $locale, $message, array $vars): string
     {
         if ($message === '') {
             return $message;
