@@ -35,11 +35,11 @@ class NestIterator extends Collection implements RecursiveIterator
     /**
      * Constructor
      *
-     * @param array|\Traversable $items Collection items.
+     * @param iterable $items Collection items.
      * @param string|callable $nestKey the property that contains the nested items
      * If a callable is passed, it should return the childrens for the passed item
      */
-    public function __construct($items, $nestKey)
+    public function __construct(iterable $items, $nestKey)
     {
         parent::__construct($items);
         $this->_nestKey = $nestKey;

@@ -131,7 +131,7 @@ class EntityContext implements ContextInterface
         $table = $this->_context['table'];
         $entity = $this->_context['entity'];
         if (empty($table)) {
-            if (is_array($entity) || $entity instanceof Traversable) {
+            if (is_iterable($entity)) {
                 foreach ($entity as $e) {
                     $entity = $e;
                     break;
@@ -203,7 +203,7 @@ class EntityContext implements ContextInterface
     public function isCreate(): bool
     {
         $entity = $this->_context['entity'];
-        if (is_array($entity) || $entity instanceof Traversable) {
+        if (is_iterable($entity)) {
             foreach ($entity as $e) {
                 $entity = $e;
                 break;
@@ -299,13 +299,13 @@ class EntityContext implements ContextInterface
      * Helper method used to extract all the primary key values out of an array, The
      * primary key column is guessed out of the provided $path array
      *
-     * @param array|\Traversable $values The list from which to extract primary keys from
+     * @param iterable $values The list from which to extract primary keys from
      * @param array $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple($values, $path): ?array
     {
-        if (!(is_array($values) || $values instanceof Traversable)) {
+        if (!is_iterable($values)) {
             return null;
         }
         $table = $this->_getTable($path, false);
@@ -323,7 +323,7 @@ class EntityContext implements ContextInterface
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
-     * @return \Cake\Datasource\EntityInterface|\Traversable|array|bool
+     * @return \Cake\Datasource\EntityInterface|iterable|bool
      * @throws \RuntimeException When properties cannot be read.
      */
     public function entity(?array $path = null)
@@ -359,8 +359,7 @@ class EntityContext implements ContextInterface
             }
 
             $isTraversable = (
-                is_array($next) ||
-                $next instanceof Traversable ||
+                is_iterable($next) ||
                 $next instanceof EntityInterface
             );
             if ($isLast || !$isTraversable) {

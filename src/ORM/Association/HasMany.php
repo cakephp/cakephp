@@ -26,7 +26,6 @@ use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
-use Traversable;
 
 /**
  * Represents an N - 1 relationship where the target side of the relationship
@@ -158,9 +157,7 @@ class HasMany extends Association
             $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) &&
-            !($targetEntities instanceof Traversable)
-        ) {
+        if (!is_iterable($targetEntities)) {
             $name = $this->getProperty();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
@@ -194,12 +191,12 @@ class HasMany extends Association
      * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $parentEntity The source entity containing the target
      * entities to be saved.
-     * @param array|\Traversable $entities list of entities to persist in target table and to
+     * @param iterable $entities list of entities to persist in target table and to
      * link to the parent entity
      * @param array $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
      */
-    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, $entities, array $options): bool
+    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, iterable $entities, array $options): bool
     {
         $foreignKey = array_keys($foreignKeyReference);
         $table = $this->getTarget();

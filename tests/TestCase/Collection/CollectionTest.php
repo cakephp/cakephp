@@ -27,7 +27,7 @@ class TestCollection extends \IteratorIterator implements CollectionInterface
 {
     use CollectionTrait;
 
-    public function __construct($items)
+    public function __construct(iterable $items)
     {
         if (is_array($items)) {
             $items = new \ArrayIterator($items);
@@ -992,18 +992,6 @@ class CollectionTest extends TestCase
         $data = [1, 2, 3, 4];
         $collection = new Collection($data);
         $this->assertEquals(json_encode($data), json_encode($collection));
-    }
-
-    /**
-     * Tests that only arrays and Traversables are allowed in the constructor
-     *
-     * @return void
-     */
-    public function testInvalidConstructorArgument()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Only an array or \Traversable is allowed for Collection');
-        new Collection('Derp');
     }
 
     /**

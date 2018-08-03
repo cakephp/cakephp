@@ -28,7 +28,6 @@ use Cake\Utility\Inflector;
 use Closure;
 use InvalidArgumentException;
 use SplObjectStorage;
-use Traversable;
 
 /**
  * Represents an M - N relationship where there exists a junction - or join - table
@@ -676,7 +675,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $parentEntity the source entity containing the target
      * entities to be saved.
-     * @param array|\Traversable $entities list of entities to persist in target table and to
+     * @param iterable $entities list of entities to persist in target table and to
      * link to the parent entity
      * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
@@ -684,19 +683,13 @@ class BelongsToMany extends Association
      * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
      * created if no errors happened, false otherwise
      */
-    protected function _saveTarget(EntityInterface $parentEntity, $entities, $options)
+    protected function _saveTarget(EntityInterface $parentEntity, iterable $entities, $options)
     {
         $joinAssociations = false;
         if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
             $joinAssociations = $options['associated'][$this->_junctionProperty]['associated'];
         }
         unset($options['associated'][$this->_junctionProperty]);
-
-        if (!(is_array($entities) || $entities instanceof Traversable)) {
-            $name = $this->getProperty();
-            $message = sprintf('Could not save %s, it cannot be traversed', $name);
-            throw new InvalidArgumentException($message);
-        }
 
         $table = $this->getTarget();
         $original = $entities;
