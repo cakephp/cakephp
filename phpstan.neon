@@ -8,7 +8,6 @@ parameters:
         - '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
         - '#Access to undefined constant PDO::SQLSRV_ATTR_ENCODING#'
         - '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
-        - '#Call to an undefined method Psr\\Http\\Message\\ResponseInterface::getCookies\(\)#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$webroot#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
         - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
