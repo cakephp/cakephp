@@ -210,7 +210,7 @@ class Number
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
-     * @param floatt|string $value Value to format.
+     * @param \Cake\I18n\floatt|string $value Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array $options Options list.
      * @return string Number formatted as a currency.

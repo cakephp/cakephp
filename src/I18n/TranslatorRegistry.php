@@ -228,7 +228,7 @@ class TranslatorRegistry extends TranslatorLocator
      *
      * @param string $name The translation package name.
      * @param string $locale The locale to create the translator for.
-     * @return \Aura\Intl\TranslatorInterface|closure
+     * @return \Aura\Intl\TranslatorInterface|\Cake\I18n\closure
      */
     protected function _fallbackLoader(string $name, string $locale)
     {
