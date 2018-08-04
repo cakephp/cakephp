@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -69,7 +70,7 @@ class PoFileParser
      *
      * @return array
      */
-    public function parse($resource)
+    public function parse(string $resource): array
     {
         $stream = fopen($resource, 'rb');
 
@@ -135,7 +136,7 @@ class PoFileParser
      * @param array $item The current item being inspected
      * @return void
      */
-    protected function _addMessage(array &$messages, array $item)
+    protected function _addMessage(array &$messages, array $item): void
     {
         if (empty($item['ids']['singular']) && empty($item['ids']['plural'])) {
             return;
@@ -149,7 +150,7 @@ class PoFileParser
             $translation = $translation[0];
         }
 
-        $translation = stripcslashes($translation);
+        $translation = stripcslashes((string)$translation);
 
         if ($context !== null && !isset($messages[$singular]['_context'][$context])) {
             $messages[$singular]['_context'][$context] = $translation;

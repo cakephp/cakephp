@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -91,9 +92,9 @@ class Translator extends BaseTranslator
      * @param string $key The message key being handled.
      * @param string|array $message The message content.
      * @param array $vars The variables containing the `_context` key.
-     * @return string
+     * @return string|array
      */
-    protected function resolveContext($key, $message, array $vars)
+    protected function resolveContext(string $key, $message, array $vars)
     {
         $context = $vars['_context'] ?? null;
 

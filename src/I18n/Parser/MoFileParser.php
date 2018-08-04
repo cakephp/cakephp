@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -56,7 +57,7 @@ class MoFileParser
      * @return array List of messages extracted from the file
      * @throws \RuntimeException If stream content has an invalid format.
      */
-    public function parse($resource)
+    public function parse($resource): array
     {
         $stream = fopen($resource, 'rb');
 
@@ -151,11 +152,11 @@ class MoFileParser
      * @param bool $isBigEndian Whether or not the current platform is Big Endian
      * @return int
      */
-    protected function _readLong($stream, $isBigEndian)
+    protected function _readLong($stream, $isBigEndian): int
     {
         $result = unpack($isBigEndian ? 'N1' : 'V1', fread($stream, 4));
         $result = current($result);
 
-        return (int)substr($result, -8);
+        return (int)substr((string)$result, -8);
     }
 }
