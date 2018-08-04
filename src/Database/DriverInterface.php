@@ -90,26 +90,26 @@ interface DriverInterface
     /**
      * Get the SQL for releasing a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
-    public function releaseSavePointSQL(string $name): string;
+    public function releaseSavePointSQL($name): string;
 
     /**
      * Get the SQL for creating a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
-    public function savePointSQL(string $name): string;
+    public function savePointSQL($name): string;
 
     /**
      * Get the SQL for rollingback a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
-    public function rollbackSavePointSQL(string $name): string;
+    public function rollbackSavePointSQL($name): string;
 
     /**
      * Get the SQL for disabling foreign keys.

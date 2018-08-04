@@ -192,17 +192,17 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function releaseSavePointSQL(string $name): string;
+    abstract public function releaseSavePointSQL($name): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function savePointSQL(string $name): string;
+    abstract public function savePointSQL($name): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function rollbackSavePointSQL(string $name): string;
+    abstract public function rollbackSavePointSQL($name): string;
 
     /**
      * {@inheritDoc}
