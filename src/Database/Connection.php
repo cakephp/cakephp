@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -567,7 +568,7 @@ class Connection implements ConnectionInterface
     /**
      * Creates a new save point for nested transactions.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function createSavePoint($name)
@@ -578,7 +579,7 @@ class Connection implements ConnectionInterface
     /**
      * Releases a save point by its name.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function releaseSavePoint($name)
@@ -589,7 +590,7 @@ class Connection implements ConnectionInterface
     /**
      * Rollback a save point by its name.
      *
-     * @param string $name The save point name.
+     * @param string|int $name The save point name.
      * @return void
      */
     public function rollbackSavepoint($name)

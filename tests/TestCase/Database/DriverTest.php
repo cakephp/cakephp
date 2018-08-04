@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -199,18 +200,6 @@ class DriverTest extends TestCase
         $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
         $this->driver->enableAutoQuoting(false);
-        $this->assertFalse($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting('string');
-        $this->assertTrue($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting('0');
-        $this->assertFalse($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting(1);
-        $this->assertTrue($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting(0);
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
     }
 
