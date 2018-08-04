@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
@@ -321,11 +322,10 @@ class TestFixtureTest extends TestCase
             ->will($this->returnValue(['sql', 'sql']));
         $fixture->setTableSchema($table);
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['execute', 'closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->atLeastOnce())->method('closeCursor');
         $statement->expects($this->atLeastOnce())->method('execute');
+
         $db->expects($this->exactly(2))
             ->method('prepare')
             ->will($this->returnValue($statement));
@@ -403,10 +403,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[2])
             ->will($this->returnSelf());
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $query->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($statement));
@@ -451,10 +450,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[0])
             ->will($this->returnSelf());
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $query->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($statement));
@@ -509,10 +507,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[2])
             ->will($this->returnSelf());
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $query->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($statement));
@@ -532,9 +529,7 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
         $db->expects($this->once())->method('execute')
             ->with('sql')
@@ -564,10 +559,9 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $db->expects($this->once())->method('execute')
             ->with('sql')
             ->will($this->returnValue($statement));

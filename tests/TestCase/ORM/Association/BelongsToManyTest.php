@@ -189,7 +189,7 @@ class BelongsToManyTest extends TestCase
     {
         $mock = $this->getMockBuilder('Cake\Database\Connection')
                 ->setMethods(['setDriver'])
-                ->setConstructorArgs(['name' => 'other_source'])
+                ->setConstructorArgs([['name' => 'other_source']])
                 ->getMock();
         ConnectionManager::setConfig('other_source', $mock);
         $this->article->setConnection(ConnectionManager::get('other_source'));
