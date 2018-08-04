@@ -32,7 +32,7 @@ trait TypedResultTrait
      *
      * @return string
      */
-    public function getReturnType()
+    public function getReturnType(): string
     {
         return $this->_returnType;
     }
@@ -43,7 +43,7 @@ trait TypedResultTrait
      * @param string $type The name of the type that is to be returned
      * @return $this
      */
-    public function setReturnType($type)
+    public function setReturnType(string $type)
     {
         $this->_returnType = $type;
 

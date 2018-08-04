@@ -77,6 +77,37 @@ class Query implements ExpressionInterface, IteratorAggregate
     ];
 
     /**
+     * The list of query clauses to traverse for generating a SELECT statement
+     *
+     * @var array
+     */
+    protected $_selectParts = [
+        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'offset', 'union', 'epilog',
+    ];
+
+    /**
+     * The list of query clauses to traverse for generating an UPDATE statement
+     *
+     * @var array
+     */
+    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+
+    /**
+     * The list of query clauses to traverse for generating a DELETE statement
+     *
+     * @var array
+     */
+    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+
+    /**
+     * The list of query clauses to traverse for generating an INSERT statement
+     *
+     * @var array
+     */
+    protected $_insertParts = ['insert', 'values', 'epilog'];
+
+    /**
      * Indicates whether internal state of this query was changed, this is used to
      * discard internal cached objects such as the transformed query or the reference
      * to the executed statement.
@@ -144,7 +175,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param \Cake\Database\Connection $connection The connection
      * object to be used for transforming and executing this query
      */
-    public function __construct($connection)
+    public function __construct(Connection $connection)
     {
         $this->setConnection($connection);
     }
@@ -155,7 +186,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param \Cake\Database\Connection $connection Connection instance
      * @return $this
      */
-    public function setConnection($connection)
+    public function setConnection(Connection $connection)
     {
         $this->_dirty();
         $this->_connection = $connection;
@@ -168,7 +199,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return \Cake\Database\Connection
      */
-    public function getConnection()
+    public function getConnection(): Connection
     {
         return $this->_connection;
     }
@@ -193,7 +224,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return \Cake\Database\StatementInterface
      */
-    public function execute()
+    public function execute(): StatementInterface
     {
         $statement = $this->_connection->run($this);
         $this->_iterator = $this->_decorateStatement($statement);
@@ -223,7 +254,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return int
      */
-    public function rowCountAndClose()
+    public function rowCountAndClose(): int
     {
         $statement = $this->execute();
         try {
@@ -278,12 +309,12 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param callable $visitor A function or callable to be executed for each part
-     * @param array $parts The query clauses to traverse
      * @return $this
      */
-    public function traverse(callable $visitor, array $parts = [])
+    public function traverse(callable $visitor)
     {
-        $parts = $parts ?: array_keys($this->_parts);
+        $partList = "_{$this->type()}Parts";
+        $parts = $this->{$partList} ?? array_keys($this->_parts);
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }
@@ -605,7 +636,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string $name The alias/name of the join to remove.
      * @return $this
      */
-    public function removeJoin($name)
+    public function removeJoin(string $name)
     {
         unset($this->_parts['join'][$name]);
         $this->_dirty();
@@ -710,7 +741,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string $type the join type to use
      * @return array
      */
-    protected function _makeJoin($table, $conditions, $type)
+    protected function _makeJoin($table, $conditions, $type): array
     {
         $alias = $table;
 
@@ -917,7 +948,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $options Options
      * @return $this
      */
-    public function whereInList($field, array $values, array $options = [])
+    public function whereInList(string $field, array $values, array $options = [])
     {
         $options += [
             'types' => [],
@@ -944,7 +975,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $options Options
      * @return $this
      */
-    public function whereNotInList($field, array $values, array $options = [])
+    public function whereNotInList(string $field, array $values, array $options = [])
     {
         $options += [
             'types' => [],
@@ -1252,7 +1283,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @return $this
      * @throws \InvalidArgumentException If page number < 1.
      */
-    public function page($num, $limit = null)
+    public function page(int $num, ?int $limit = null)
     {
         if ($num < 1) {
             throw new InvalidArgumentException('Pages must start at 1.');
@@ -1437,7 +1468,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string $table The table name to insert into.
      * @return $this
      */
-    public function into($table)
+    public function into(string $table)
     {
         $this->_dirty();
         $this->_type = 'insert';
@@ -1462,7 +1493,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string $identifier The identifier for an expression
      * @return \Cake\Database\ExpressionInterface
      */
-    public function identifier($identifier)
+    public function identifier(string $identifier): ExpressionInterface
     {
         return new IdentifierExpression($identifier);
     }
@@ -1598,7 +1629,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param string|null $table The table to use when deleting.
      * @return $this
      */
-    public function delete($table = null)
+    public function delete(?string $table = null)
     {
         $this->_dirty();
         $this->_type = 'delete';
@@ -1639,7 +1670,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return string
      */
-    public function type()
+    public function type(): string
     {
         return $this->_type;
     }
@@ -1661,7 +1692,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param mixed $rawExpression A string, array or anything you want wrapped in an expression object
      * @return \Cake\Database\Expression\QueryExpression
      */
-    public function newExpr($rawExpression = null)
+    public function newExpr($rawExpression = null): QueryExpression
     {
         $expression = new QueryExpression([], $this->getTypeMap());
 
@@ -1685,7 +1716,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return \Cake\Database\FunctionsBuilder
      */
-    public function func()
+    public function func(): FunctionsBuilder
     {
         if ($this->_functionsBuilder === null) {
             $this->_functionsBuilder = new FunctionsBuilder();
@@ -1743,7 +1774,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @return mixed
      * @throws \InvalidArgumentException When the named clause does not exist.
      */
-    public function clause($name)
+    public function clause(string $name)
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = implode(', ', array_keys($this->_parts));
@@ -1781,7 +1812,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param bool $overwrite Whether or not this should append or replace all existing decorators.
      * @return $this
      */
-    public function decorateResults($callback, $overwrite = false)
+    public function decorateResults(?callable $callback, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_resultDecorators = [];
@@ -1866,7 +1897,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return \Cake\Database\ValueBinder
      */
-    public function getValueBinder()
+    public function getValueBinder(): ValueBinder
     {
         if ($this->_valueBinder === null) {
             $this->_valueBinder = new ValueBinder();
@@ -1885,7 +1916,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param \Cake\Database\ValueBinder|null $binder The binder or null to disable binding.
      * @return $this
      */
-    public function setValueBinder($binder)
+    public function setValueBinder(?ValueBinder $binder)
     {
         $this->_valueBinder = $binder;
 
@@ -1905,7 +1936,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param bool $enable Whether or not to enable buffering
      * @return $this
      */
-    public function enableBufferedResults($enable = true)
+    public function enableBufferedResults(bool $enable = true)
     {
         $this->_dirty();
         $this->_useBufferedResults = (bool)$enable;
@@ -1925,7 +1956,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return bool
      */
-    public function isBufferedResultsEnabled()
+    public function isBufferedResultsEnabled(): bool
     {
         return $this->_useBufferedResults;
     }
@@ -1951,7 +1982,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return \Cake\Database\TypeMap
      */
-    public function getSelectTypeMap()
+    public function getSelectTypeMap(): TypeMap
     {
         if ($this->_selectTypeMap === null) {
             $this->_selectTypeMap = new TypeMap();
@@ -1991,7 +2022,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param \Cake\Database\StatementInterface $statement to be decorated
      * @return \Cake\Database\Statement\CallbackStatement|\Cake\Database\StatementInterface
      */
-    protected function _decorateStatement($statement)
+    protected function _decorateStatement(StatementInterface $statement)
     {
         $typeMap = $this->getSelectTypeMap();
         $driver = $this->getConnection()->getDriver();
@@ -2016,7 +2047,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query
      * @return void
      */
-    protected function _conjugate($part, $append, $conjunction, $types)
+    protected function _conjugate(string $part, $append, $conjunction, $types): void
     {
         $expression = $this->_parts[$part] ?: $this->newExpr();
         if (empty($append)) {
@@ -2047,7 +2078,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return void
      */
-    protected function _dirty()
+    protected function _dirty(): void
     {
         $this->_dirty = true;
 
@@ -2109,7 +2140,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function __debugInfo()
     {
         try {
-            set_error_handler(function ($errno, $errstr) {
+            set_error_handler(function ($errno, $errstr): void {
                 throw new RuntimeException($errstr, $errno);
             }, E_ALL);
             $sql = $this->sql();

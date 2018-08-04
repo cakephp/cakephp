@@ -4007,7 +4007,7 @@ class QueryTest extends TestCase
         /* @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $queryMock */
         $queryMock = $this->getMockBuilder(Query::class)
             ->setMethods(['execute'])
-            ->setConstructorArgs((array)$this->connection)
+            ->setConstructorArgs([$this->connection])
             ->getMock();
 
         $queryMock->expects($this->once())

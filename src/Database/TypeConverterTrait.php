@@ -28,7 +28,7 @@ trait TypeConverterTrait
      * @param \Cake\Database\Type|string $type The type name or type instance to use.
      * @return array list containing converted value and internal type
      */
-    public function cast($value, $type)
+    public function cast($value, $type): array
     {
         if (is_string($type)) {
             $type = TypeFactory::build($type);
@@ -51,7 +51,7 @@ trait TypeConverterTrait
      * @param array $types list or associative array of types
      * @return array
      */
-    public function matchTypes($columns, $types)
+    public function matchTypes(array $columns, array $types): array
     {
         if (!is_int(key($types))) {
             $positions = array_intersect_key(array_flip($columns), $types);

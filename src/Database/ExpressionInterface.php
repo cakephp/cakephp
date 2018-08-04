@@ -26,7 +26,7 @@ interface ExpressionInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator);
+    public function sql(ValueBinder $generator): string;
 
     /**
      * Iterates over each part of the expression recursively for every
@@ -35,7 +35,7 @@ interface ExpressionInterface
      * being iterated.
      *
      * @param callable $visitor The callable to apply to all nodes.
-     * @return void
+     * @return $this
      */
     public function traverse(callable $visitor);
 }

@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Schema\BaseSchema;
+
 /**
  * Interface for database driver.
  */
@@ -37,14 +39,14 @@ interface DriverInterface
     /**
      * Returns correct connection resource or object that is internally used.
      *
-     * @return object Connection object used internally.
+     * @return mixed Connection object used internally.
      */
     public function getConnection();
 
     /**
      * Set the internal connection object.
      *
-     * @param object $connection The connection instance.
+     * @param mixed $connection The connection instance.
      * @return $this
      */
     public function setConnection($connection);
@@ -163,7 +165,7 @@ interface DriverInterface
      * (select, insert, update, delete).
      * @return callable
      */
-    public function queryTranslator(string $type);
+    public function queryTranslator(string $type): callable;
 
     /**
      * Get the schema dialect.
@@ -176,7 +178,7 @@ interface DriverInterface
      *
      * @return \Cake\Database\Schema\BaseSchema
      */
-    public function schemaDialect();
+    public function schemaDialect(): BaseSchema;
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
@@ -251,5 +253,5 @@ interface DriverInterface
      *
      * @return \Cake\Database\QueryCompiler
      */
-    public function newCompiler();
+    public function newCompiler(): QueryCompiler;
 }

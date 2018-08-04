@@ -109,7 +109,7 @@ class Connection implements ConnectionInterface
      *
      * @param array $config configuration for connecting to database
      */
-    public function __construct($config)
+    public function __construct(array $config)
     {
         $this->_config = $config;
 
@@ -190,7 +190,7 @@ class Connection implements ConnectionInterface
      *
      * @return \Cake\Core\Retry\CommandRetry The retry wrapper
      */
-    public function getDisconnectRetry()
+    public function getDisconnectRetry(): CommandRetry
     {
         return new CommandRetry(new ReconnectStrategy($this));
     }
@@ -200,7 +200,7 @@ class Connection implements ConnectionInterface
      *
      * @return \Cake\Database\Driver
      */
-    public function getDriver()
+    public function getDriver(): Driver
     {
         return $this->_driver;
     }
@@ -211,7 +211,7 @@ class Connection implements ConnectionInterface
      * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid.
      * @return bool true, if the connection was already established or the attempt was successful.
      */
-    public function connect()
+    public function connect(): bool
     {
         try {
             return $this->_driver->connect();
@@ -225,7 +225,7 @@ class Connection implements ConnectionInterface
      *
      * @return void
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         $this->_driver->disconnect();
     }
@@ -235,7 +235,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         return $this->_driver->isConnected();
     }
@@ -246,7 +246,7 @@ class Connection implements ConnectionInterface
      * @param string|\Cake\Database\Query $sql The SQL to convert into a prepared statement.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($sql)
+    public function prepare($sql): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($sql) {
             $statement = $this->_driver->prepare($sql);
@@ -268,7 +268,7 @@ class Connection implements ConnectionInterface
      * @param array $types list or associative array of types to be used for casting values in query
      * @return \Cake\Database\StatementInterface executed statement
      */
-    public function execute($query, array $params = [], array $types = [])
+    public function execute(string $query, array $params = [], array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($query, $params, $types) {
             if (!empty($params)) {
@@ -291,7 +291,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\ValueBinder $generator The placeholder generator to use
      * @return string
      */
-    public function compileQuery(Query $query, ValueBinder $generator)
+    public function compileQuery(Query $query, ValueBinder $generator): string
     {
         return $this->getDriver()->compileQuery($query, $generator)[1];
     }
@@ -303,7 +303,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Query $query The query to be executed
      * @return \Cake\Database\StatementInterface executed statement
      */
-    public function run(Query $query)
+    public function run(Query $query): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($query) {
             $statement = $this->prepare($query);
@@ -320,7 +320,7 @@ class Connection implements ConnectionInterface
      * @param string $sql The SQL query to execute.
      * @return \Cake\Database\StatementInterface
      */
-    public function query($sql)
+    public function query(string $sql): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($sql) {
             $statement = $this->prepare($sql);
@@ -335,7 +335,7 @@ class Connection implements ConnectionInterface
      *
      * @return \Cake\Database\Query
      */
-    public function newQuery()
+    public function newQuery(): Query
     {
         return new Query($this);
     }
@@ -358,7 +358,7 @@ class Connection implements ConnectionInterface
      *
      * @return \Cake\Database\Schema\Collection
      */
-    public function getSchemaCollection()
+    public function getSchemaCollection(): SchemaCollection
     {
         if ($this->_schemaCollection !== null) {
             return $this->_schemaCollection;
@@ -379,7 +379,7 @@ class Connection implements ConnectionInterface
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
-    public function insert($table, array $data, array $types = [])
+    public function insert(string $table, array $data, array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $data, $types) {
             $columns = array_keys($data);
@@ -400,7 +400,7 @@ class Connection implements ConnectionInterface
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
-    public function update($table, array $data, array $conditions = [], $types = [])
+    public function update(string $table, array $data, array $conditions = [], array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $data, $conditions, $types) {
             return $this->newQuery()->update($table)
@@ -418,7 +418,7 @@ class Connection implements ConnectionInterface
      * @param array $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
-    public function delete($table, $conditions = [], $types = [])
+    public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
     {
         return $this->getDisconnectRetry()->run(function () use ($table, $conditions, $types) {
             return $this->newQuery()->delete($table)
@@ -432,14 +432,14 @@ class Connection implements ConnectionInterface
      *
      * @return void
      */
-    public function begin()
+    public function begin(): void
     {
         if (!$this->_transactionStarted) {
             if ($this->_logQueries) {
                 $this->log('BEGIN');
             }
 
-            $this->getDisconnectRetry()->run(function () {
+            $this->getDisconnectRetry()->run(function (): void {
                 $this->_driver->beginTransaction();
             });
 
@@ -461,7 +461,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool true on success, false otherwise
      */
-    public function commit()
+    public function commit(): bool
     {
         if (!$this->_transactionStarted) {
             return false;
@@ -498,7 +498,7 @@ class Connection implements ConnectionInterface
      * beginning of it. Defaults to false if using savepoints, or true if not.
      * @return bool
      */
-    public function rollback($toBeginning = null)
+    public function rollback(?bool $toBeginning = null): bool
     {
         if (!$this->_transactionStarted) {
             return false;
@@ -544,7 +544,7 @@ class Connection implements ConnectionInterface
      * @param bool $enable Whether or not save points should be used.
      * @return $this
      */
-    public function enableSavePoints($enable)
+    public function enableSavePoints(bool $enable)
     {
         if ($enable === false) {
             $this->_useSavePoints = false;
@@ -560,7 +560,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool true if enabled, false otherwise
      */
-    public function isSavePointsEnabled()
+    public function isSavePointsEnabled(): bool
     {
         return $this->_useSavePoints;
     }
@@ -571,7 +571,7 @@ class Connection implements ConnectionInterface
      * @param string|int $name The save point name.
      * @return void
      */
-    public function createSavePoint($name)
+    public function createSavePoint($name): void
     {
         $this->execute($this->_driver->savePointSQL($name))->closeCursor();
     }
@@ -582,7 +582,7 @@ class Connection implements ConnectionInterface
      * @param string|int $name The save point name.
      * @return void
      */
-    public function releaseSavePoint($name)
+    public function releaseSavePoint($name): void
     {
         $this->execute($this->_driver->releaseSavePointSQL($name))->closeCursor();
     }
@@ -593,7 +593,7 @@ class Connection implements ConnectionInterface
      * @param string|int $name The save point name.
      * @return void
      */
-    public function rollbackSavepoint($name)
+    public function rollbackSavepoint($name): void
     {
         $this->execute($this->_driver->rollbackSavePointSQL($name))->closeCursor();
     }
@@ -603,9 +603,9 @@ class Connection implements ConnectionInterface
      *
      * @return void
      */
-    public function disableForeignKeys()
+    public function disableForeignKeys(): void
     {
-        $this->getDisconnectRetry()->run(function () {
+        $this->getDisconnectRetry()->run(function (): void {
             $this->execute($this->_driver->disableForeignKeySQL())->closeCursor();
         });
     }
@@ -615,9 +615,9 @@ class Connection implements ConnectionInterface
      *
      * @return void
      */
-    public function enableForeignKeys()
+    public function enableForeignKeys(): void
     {
-        $this->getDisconnectRetry()->run(function () {
+        $this->getDisconnectRetry()->run(function (): void {
             $this->execute($this->_driver->enableForeignKeySQL())->closeCursor();
         });
     }
@@ -628,7 +628,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool true if driver supports dynamic constraints
      */
-    public function supportsDynamicConstraints()
+    public function supportsDynamicConstraints(): bool
     {
         return $this->_driver->supportsDynamicConstraints();
     }
@@ -676,7 +676,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool
      */
-    protected function wasNestedTransactionRolledback()
+    protected function wasNestedTransactionRolledback(): bool
     {
         return $this->nestedTransactionRollbackException instanceof NestedTransactionRollbackException;
     }
@@ -715,7 +715,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool True if a transaction is running else false.
      */
-    public function inTransaction()
+    public function inTransaction(): bool
     {
         return $this->_transactionStarted;
     }
@@ -727,7 +727,7 @@ class Connection implements ConnectionInterface
      * @param string|null $type Type to be used for determining kind of quoting to perform
      * @return string Quoted value
      */
-    public function quote($value, $type = null)
+    public function quote($value, $type = null): string
     {
         list($value, $type) = $this->cast($value, $type);
 
@@ -739,7 +739,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool
      */
-    public function supportsQuoting()
+    public function supportsQuoting(): bool
     {
         return $this->_driver->supportsQuoting();
     }
@@ -751,7 +751,7 @@ class Connection implements ConnectionInterface
      * @param string $identifier The identifier to quote.
      * @return string
      */
-    public function quoteIdentifier($identifier)
+    public function quoteIdentifier(string $identifier): string
     {
         return $this->_driver->quoteIdentifier($identifier);
     }
@@ -765,7 +765,7 @@ class Connection implements ConnectionInterface
      *   true to use `_cake_model_` or the name of the cache config to use.
      * @return void
      */
-    public function cacheMetadata($cache)
+    public function cacheMetadata($cache): void
     {
         $this->_schemaCollection = null;
         $this->_config['cacheMetadata'] = $cache;
@@ -777,7 +777,7 @@ class Connection implements ConnectionInterface
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging($value): ConnectionInterface
+    public function enableQueryLogging(bool $value): ConnectionInterface
     {
         $this->_logQueries = (bool)$value;
 
@@ -789,7 +789,7 @@ class Connection implements ConnectionInterface
      *
      * @return bool
      */
-    public function isQueryLoggingEnabled()
+    public function isQueryLoggingEnabled(): bool
     {
         return $this->_logQueries;
     }
@@ -797,7 +797,7 @@ class Connection implements ConnectionInterface
     /**
      * Sets a logger
      *
-     * @param \Cake\Database\Log\QueryLogger $logger Logger object
+     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
      * @return $this
      */
     public function setLogger($logger)
@@ -827,7 +827,7 @@ class Connection implements ConnectionInterface
      * @param string $sql string to be logged
      * @return void
      */
-    public function log($sql)
+    public function log(string $sql): void
     {
         $query = new LoggedQuery();
         $query->query = $sql;
@@ -841,7 +841,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\StatementInterface $statement the instance to be decorated
      * @return \Cake\Database\Log\LoggingStatement
      */
-    protected function _newLogger(StatementInterface $statement)
+    protected function _newLogger(StatementInterface $statement): LoggingStatement
     {
         $log = new LoggingStatement($statement, $this->_driver);
         $log->setLogger($this->getLogger());
@@ -855,7 +855,7 @@ class Connection implements ConnectionInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $secrets = [
             'password' => '*****',

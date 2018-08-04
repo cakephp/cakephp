@@ -103,7 +103,7 @@ class SqlserverTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([]));
+            ->will($this->returnValue(true));
         $driver->connect();
     }
 
@@ -248,19 +248,17 @@ class SqlserverTest extends TestCase
     public function testSelectLimitVersion12()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', '_version'])
+            ->setMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
-            ->method('_version')
+        $driver->method('version')
             ->will($this->returnValue(12));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
-        $connection->expects($this->any())
-            ->method('getDriver')
+        $connection->method('getDriver')
             ->will($this->returnValue($driver));
 
         $query = new Query($connection);
@@ -299,11 +297,11 @@ class SqlserverTest extends TestCase
     public function testSelectLimitOldServer()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', '_version'])
+            ->setMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
-            ->method('_version')
+            ->method('version')
             ->will($this->returnValue(8));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')

@@ -119,7 +119,7 @@ class FieldTypeConverter
      * @param array $row The array with the fields to be casted
      * @return array
      */
-    public function __invoke($row)
+    public function __invoke(array $row): array
     {
         if (!empty($this->_typeMap)) {
             foreach ($this->_typeMap as $field => $type) {

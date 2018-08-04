@@ -80,7 +80,7 @@ class TypeMap
      *
      * @return array
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return $this->_defaults;
     }
@@ -93,7 +93,7 @@ class TypeMap
      * @param array $types The additional types to add.
      * @return void
      */
-    public function addDefaults(array $types)
+    public function addDefaults(array $types): void
     {
         $this->_defaults += $types;
     }
@@ -125,7 +125,7 @@ class TypeMap
      *
      * @return array
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->_types;
     }
@@ -135,10 +135,10 @@ class TypeMap
      * the column type will be looked for inside the default mapping. If neither exist,
      * null will be returned.
      *
-     * @param string $column The type for a given column
+     * @param string|int $column The type for a given column
      * @return null|string
      */
-    public function type($column)
+    public function type($column): ?string
     {
         if (isset($this->_types[$column])) {
             return $this->_types[$column];
@@ -155,7 +155,7 @@ class TypeMap
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->_types + $this->_defaults;
     }

@@ -14,6 +14,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\SqlDialectTrait;
 
@@ -54,9 +55,9 @@ trait MysqlDialectTrait
      * Used by Cake\Database\Schema package to reflect schema and
      * generate schema.
      *
-     * @return \Cake\Database\Schema\MysqlSchema
+     * @return \Cake\Database\Schema\BaseSchema
      */
-    public function schemaDialect()
+    public function schemaDialect(): BaseSchema
     {
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new MysqlSchema($this);

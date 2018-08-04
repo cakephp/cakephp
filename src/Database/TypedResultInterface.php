@@ -17,10 +17,21 @@ namespace Cake\Database;
 
 /**
  * Represents an expression that is known to return a specific type
- *
- * @method string getReturnType()
- * @method $this setReturnType($type)
  */
 interface TypedResultInterface
 {
+    /**
+     * Return the abstract type this expression will return
+     *
+     * @return string
+     */
+    public function getReturnType(): string;
+
+    /**
+     * Set the return type of the expression
+     *
+     * @param string $type The type name to use.
+     * @return void
+     */
+    public function setReturnType(string $type);
 }

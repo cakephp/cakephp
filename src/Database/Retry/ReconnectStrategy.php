@@ -95,7 +95,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      *
      * @return bool Whether or not the connection was re-established
      */
-    protected function reconnect()
+    protected function reconnect(): bool
     {
         if ($this->connection->inTransaction()) {
             // It is not safe to blindly reconnect in the middle of a transaction

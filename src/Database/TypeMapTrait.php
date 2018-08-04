@@ -46,7 +46,7 @@ trait TypeMapTrait
      *
      * @return \Cake\Database\TypeMap
      */
-    public function getTypeMap()
+    public function getTypeMap(): TypeMap
     {
         if ($this->_typeMap === null) {
             $this->_typeMap = new TypeMap();
@@ -73,7 +73,7 @@ trait TypeMapTrait
      *
      * @return array
      */
-    public function getDefaultTypes()
+    public function getDefaultTypes(): array
     {
         return $this->getTypeMap()->getDefaults();
     }

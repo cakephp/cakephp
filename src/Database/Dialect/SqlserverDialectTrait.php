@@ -19,6 +19,8 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\QueryCompiler;
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\SqlserverSchema;
 use Cake\Database\SqlDialectTrait;
 use Cake\Database\SqlserverCompiler;
@@ -69,7 +71,7 @@ trait SqlserverDialectTrait
             $query->order($query->newExpr()->add('(SELECT NULL)'));
         }
 
-        if ($this->_version() < 11 && $offset !== null) {
+        if ($this->version() < 11 && $offset !== null) {
             return $this->_pagingSubquery($query, $limit, $offset);
         }
 
@@ -81,8 +83,7 @@ trait SqlserverDialectTrait
      *
      * @return int
      */
-    // @codingStandardsIgnoreLine
-    public function _version()
+    protected function version()
     {
         $this->connect();
 
@@ -324,9 +325,9 @@ trait SqlserverDialectTrait
      * Used by Cake\Schema package to reflect schema and
      * generate schema.
      *
-     * @return \Cake\Database\Schema\SqlserverSchema
+     * @return \Cake\Database\Schema\BaseSchema
      */
-    public function schemaDialect()
+    public function schemaDialect(): BaseSchema
     {
         return new SqlserverSchema($this);
     }
@@ -369,7 +370,7 @@ trait SqlserverDialectTrait
      *
      * @return \Cake\Database\SqlserverCompiler
      */
-    public function newCompiler()
+    public function newCompiler(): QueryCompiler
     {
         return new SqlserverCompiler();
     }

@@ -63,7 +63,7 @@ class TypeFactory
      * @throws \InvalidArgumentException If type identifier is unknown
      * @return \Cake\Database\TypeInterface
      */
-    public static function build($name)
+    public static function build(string $name): TypeInterface
     {
         if (isset(static::$_builtTypes[$name])) {
             return static::$_builtTypes[$name];
@@ -80,7 +80,7 @@ class TypeFactory
      *
      * @return array
      */
-    public static function buildAll()
+    public static function buildAll(): array
     {
         $result = [];
         foreach (static::$_types as $name => $type) {
@@ -97,7 +97,7 @@ class TypeFactory
      * @param \Cake\Database\TypeInterface $instance The type instance you want to set.
      * @return void
      */
-    public static function set($name, TypeInterface $instance)
+    public static function set(string $name, TypeInterface $instance): void
     {
         static::$_builtTypes[$name] = $instance;
     }
@@ -109,7 +109,7 @@ class TypeFactory
      * @param string $className The classname to register.
      * @return void
      */
-    public static function map(string $type, $className)
+    public static function map(string $type, string $className): void
     {
         static::$_types[$type] = $className;
         unset(static::$_builtTypes[$type]);
@@ -121,7 +121,7 @@ class TypeFactory
      * @param string[] $map List of types to be mapped.
      * @return void
      */
-    public static function setMap(array $map)
+    public static function setMap(array $map): void
     {
         static::$_types = $map;
         static::$_builtTypes = [];
@@ -147,7 +147,7 @@ class TypeFactory
      *
      * @return void
      */
-    public static function clear()
+    public static function clear(): void
     {
         static::$_types = [];
         static::$_builtTypes = [];

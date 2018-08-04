@@ -28,7 +28,7 @@ class NestedTransactionRollbackException extends Exception
      * @param int $code Status code, defaults to 500.
      * @param \Exception|null $previous the previous exception.
      */
-    public function __construct($message = null, $code = 500, $previous = null)
+    public function __construct(?string $message = null, int $code = 500, ?\Exception $previous = null)
     {
         if ($message === null) {
             $message = 'Cannot commit transaction - rollback() has been already called in the nested transaction';

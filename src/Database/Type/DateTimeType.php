@@ -154,7 +154,7 @@ class DateTimeType extends BaseType
     /**
      * Convert strings into DateTime instances.
      *
-     * @param string $value The value to convert.
+     * @param string|int|null $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime|null
      */

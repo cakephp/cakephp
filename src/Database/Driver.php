@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
 use PDO;
@@ -62,7 +63,7 @@ abstract class Driver implements DriverInterface
      * @param array $config The configuration for the driver.
      * @throws \InvalidArgumentException
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
@@ -83,7 +84,7 @@ abstract class Driver implements DriverInterface
      * @param array $config configuration to be used for creating connection
      * @return bool true on success
      */
-    protected function _connect($dsn, array $config)
+    protected function _connect(string $dsn, array $config): bool
     {
         $connection = new PDO(
             $dsn,
@@ -251,12 +252,12 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function queryTranslator(string $type);
+    abstract public function queryTranslator(string $type): callable;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function schemaDialect();
+    abstract public function schemaDialect(): BaseSchema;
 
     /**
      * {@inheritDoc}
@@ -363,7 +364,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function newCompiler()
+    public function newCompiler(): QueryCompiler
     {
         return new QueryCompiler();
     }
@@ -382,7 +383,7 @@ abstract class Driver implements DriverInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'connected' => $this->_connection !== null,

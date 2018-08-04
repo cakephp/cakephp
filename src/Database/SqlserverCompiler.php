@@ -39,16 +39,7 @@ class SqlserverCompiler extends QueryCompiler
         'group' => ' GROUP BY %s ',
         'having' => ' HAVING %s ',
         'order' => ' %s',
-        'offset' => ' OFFSET %s ROWS',
         'epilog' => ' %s',
-    ];
-
-    /**
-     * {@inheritDoc}
-     */
-    protected $_selectParts = [
-        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'offset',
-        'limit', 'union', 'epilog',
     ];
 
     /**
@@ -63,7 +54,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
      * @return string
      */
-    protected function _buildInsertPart($parts, $query, $generator)
+    protected function _buildInsertPart(array $parts, \Cake\Database\Query $query, \Cake\Database\ValueBinder $generator): string
     {
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
@@ -84,12 +75,35 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\Query $query The query that is being compiled
      * @return string
      */
-    protected function _buildLimitPart($limit, $query)
+    protected function _buildLimitPart(int $limit, Query $query): string
     {
-        if ($limit === null || $query->clause('offset') === null) {
+        $offset = $query->clause('offset');
+        if ($limit === null || $offset === null) {
+            return '';
+        }
+        if ($offset !== 0 && $offset !== '') {
+            $offset = sprintf(' OFFSET %s ROWS', $offset);
+        }
+
+        return sprintf('%s FETCH FIRST %d ROWS ONLY', $offset, $limit);
+    }
+
+    /**
+     * Generate the OFFSET part of the query.
+     *
+     * Because of SQLServer syntax requirements, the offset must precede the
+     * limit part. This requires coupling between these two methods.
+     *
+     * @param int $value The offset value.
+     * @param \Cake\Database\Query $query The query being changed.
+     * @return string
+     */
+    protected function _buildOffsetPart(int $value, $query)
+    {
+        if ($query->clause('limit')) {
             return '';
         }
 
-        return sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
+        return sprintf(' OFFSET %s ROWS', $value);
     }
 }
