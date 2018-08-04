@@ -120,7 +120,7 @@ class Connection implements ConnectionInterface
         $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
-            $this->enableQueryLogging($config['log']);
+            $this->enableQueryLogging((bool)$config['log']);
         }
     }
 
@@ -779,7 +779,7 @@ class Connection implements ConnectionInterface
      */
     public function enableQueryLogging(bool $value): ConnectionInterface
     {
-        $this->_logQueries = (bool)$value;
+        $this->_logQueries = $value;
 
         return $this;
     }

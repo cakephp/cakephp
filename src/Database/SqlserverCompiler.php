@@ -54,7 +54,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
      * @return string
      */
-    protected function _buildInsertPart(array $parts, \Cake\Database\Query $query, \Cake\Database\ValueBinder $generator): string
+    protected function _buildInsertPart(array $parts, Query $query, ValueBinder $generator): string
     {
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);

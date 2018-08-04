@@ -45,7 +45,7 @@ class QueryLogger
      * @param \Cake\Database\Log\LoggedQuery $query to be written in log
      * @return void
      */
-    protected function _log(\Cake\Database\Log\LoggedQuery $query): void
+    protected function _log(LoggedQuery $query): void
     {
         Log::write('debug', $query, ['queriesLog']);
     }
@@ -57,7 +57,7 @@ class QueryLogger
      * @param \Cake\Database\Log\LoggedQuery $query The query to log
      * @return string
      */
-    protected function _interpolate(\Cake\Database\Log\LoggedQuery $query): string
+    protected function _interpolate(LoggedQuery $query): string
     {
         $params = array_map(function ($p) {
             if ($p === null) {
