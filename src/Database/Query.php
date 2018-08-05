@@ -299,7 +299,40 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The callback will receive 2 parameters, the first one is the value of the query
      * part that is being iterated and the second the name of such part.
      *
-     * ### Example:
+     * ### Example
+     * ```
+     * $query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
+     *     if ($clause === 'select') {
+     *         var_dump($value);
+     *     }
+     * });
+     * ```
+     *
+     * @param callable $visitor A function or callable to be executed for each part
+     * @return $this
+     */
+    public function traverse(callable $visitor)
+    {
+        $parts = array_keys($this->_parts);
+        foreach ($parts as $name) {
+            $visitor($this->_parts[$name], $name);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Will iterate over the provided parts.
+     *
+     * Traversing functions can aggregate results using variables in the closure
+     * or instance variables. This method can be used to traverse a subset of
+     * query parts in order to render a SQL query.
+     *
+     * The callback will receive 2 parameters, the first one is the value of the query
+     * part that is being iterated and the second the name of such part.
+     *
+     * ### Example
+     *
      * ```
      * $query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
      *     if ($clause === 'select') {
@@ -309,12 +342,11 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param callable $visitor A function or callable to be executed for each part
+     * @param array $parts The list of query parts to traverse
      * @return $this
      */
-    public function traverse(callable $visitor)
+    public function traverseParts(callable $visitor, array $parts)
     {
-        $partList = "_{$this->type()}Parts";
-        $parts = $this->{$partList} ?? array_keys($this->_parts);
         foreach ($parts as $name) {
             $visitor($this->_parts[$name], $name);
         }

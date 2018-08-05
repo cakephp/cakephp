@@ -44,6 +44,37 @@ class QueryCompiler
     ];
 
     /**
+     * The list of query clauses to traverse for generating a SELECT statement
+     *
+     * @var array
+     */
+    protected $_selectParts = [
+        'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+        'offset', 'union', 'epilog',
+    ];
+
+    /**
+     * The list of query clauses to traverse for generating an UPDATE statement
+     *
+     * @var array
+     */
+    protected $_updateParts = ['update', 'set', 'where', 'epilog'];
+
+    /**
+     * The list of query clauses to traverse for generating a DELETE statement
+     *
+     * @var array
+     */
+    protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
+
+    /**
+     * The list of query clauses to traverse for generating an INSERT statement
+     *
+     * @var array
+     */
+    protected $_insertParts = ['insert', 'values', 'epilog'];
+
+    /**
      * Indicate whether or not this query dialect supports ordered unions.
      *
      * Overridden in subclasses.
@@ -63,7 +94,11 @@ class QueryCompiler
     public function compile(Query $query, ValueBinder $generator): string
     {
         $sql = '';
-        $query->traverse($this->_sqlCompiler($sql, $query, $generator));
+        $type = $query->type();
+        $query->traverseParts(
+            $this->_sqlCompiler($sql, $query, $generator),
+            $this->{"_{$type}Parts"}
+        );
 
         // Propagate bound parameters from sub-queries if the
         // placeholders can be found in the SQL statement.
