@@ -152,6 +152,7 @@ class App {
  *
  * @var array
  */
+	protected static $_packages = array();
 
 /**
  * Holds the templates for each customizable package path in the application
