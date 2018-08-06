@@ -235,7 +235,7 @@ class FixtureManager
      * Runs the drop and create commands on the fixtures if necessary.
      *
      * @param \Cake\Datasource\FixtureInterface $fixture the fixture object to create
-     * @param \Cake\Database\ConnectionInterface $db The Connection object instance to use
+     * @param \Cake\Datasource\ConnectionInterface $db The Connection object instance to use
      * @param array $sources The existing tables in the datasource.
      * @param bool $drop whether drop the fixture if it is already created or not
      * @return void
