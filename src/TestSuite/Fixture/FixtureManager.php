@@ -19,7 +19,10 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
+use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FixtureInterface;
+use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
 use PDOException;
 use UnexpectedValueException;
@@ -232,12 +235,12 @@ class FixtureManager
      * Runs the drop and create commands on the fixtures if necessary.
      *
      * @param \Cake\Datasource\FixtureInterface $fixture the fixture object to create
-     * @param \Cake\Database\Connection $db The Connection object instance to use
+     * @param \Cake\Database\ConnectionInterface $db The Connection object instance to use
      * @param array $sources The existing tables in the datasource.
      * @param bool $drop whether drop the fixture if it is already created or not
      * @return void
      */
-    protected function _setupTable(FixtureInterface $fixture, Connection $db, array $sources, bool $drop = true): void
+    protected function _setupTable(FixtureInterface $fixture, ConnectionInterface $db, array $sources, bool $drop = true): void
     {
         $configName = $db->configName();
         $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
