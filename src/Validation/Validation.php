@@ -353,7 +353,7 @@ class Validation
      */
     public static function containsNonAlphaNumeric($check, int $count = 1): bool
     {
-        if (!is_scalar($check)) {
+        if (!is_string($check)) {
             return false;
         }
 
@@ -369,7 +369,7 @@ class Validation
      * @param string|null $regex If $check is passed as a string, $regex must also be set to valid regular expression
      * @return bool Success
      */
-    public static function custom(string $check, ?string $regex = null): bool
+    public static function custom($check, ?string $regex = null): bool
     {
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
@@ -735,12 +735,16 @@ class Validation
     /**
      * Validation of an IP address.
      *
-     * @param string $check The string to test.
+     * @param mixed $check The string to test.
      * @param string $type The IP Protocol version to validate against
      * @return bool Success
      */
-    public static function ip(string $check, string $type = 'both'): bool
+    public static function ip($check, string $type = 'both'): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         $type = strtolower($type);
         $flags = 0;
         if ($type === 'ipv4') {
@@ -756,59 +760,75 @@ class Validation
     /**
      * Checks whether the length of a string (in characters) is greater or equal to a minimal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $min The minimal string length
      * @return bool Success
      */
-    public static function minLength(string $check, int $min): bool
+    public static function minLength($check, int $min): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         return mb_strlen($check) >= $min;
     }
 
     /**
      * Checks whether the length of a string (in characters) is smaller or equal to a maximal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $max The maximal string length
      * @return bool Success
      */
-    public static function maxLength(string $check, int $max): bool
+    public static function maxLength($check, int $max): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         return mb_strlen($check) <= $max;
     }
 
     /**
      * Checks whether the length of a string (in bytes) is greater or equal to a minimal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $min The minimal string length (in bytes)
      * @return bool Success
      */
-    public static function minLengthBytes(string $check, int $min): bool
+    public static function minLengthBytes($check, int $min): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         return strlen($check) >= $min;
     }
 
     /**
      * Checks whether the length of a string (in bytes) is smaller or equal to a maximal length.
      *
-     * @param string $check The string to test
+     * @param mixed $check The string to test
      * @param int $max The maximal string length
      * @return bool Success
      */
-    public static function maxLengthBytes(string $check, int $max): bool
+    public static function maxLengthBytes($check, int $max): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         return strlen($check) <= $max;
     }
 
     /**
      * Checks that a value is a monetary amount.
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @param string $symbolPosition Where symbol is located (left/right)
      * @return bool Success
      */
-    public static function money(string $check, string $symbolPosition = 'left'): bool
+    public static function money($check, string $symbolPosition = 'left'): bool
     {
         $money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{1,2})?';
         if ($symbolPosition === 'right') {
@@ -935,13 +955,17 @@ class Validation
      * - an optional query string (get parameters)
      * - an optional fragment (anchor tag) as defined in RFC 3986
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @param bool $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
      * @return bool Success
      * @link https://tools.ietf.org/html/rfc3986
      */
-    public static function url(string $check, bool $strict = false): bool
+    public static function url($check, bool $strict = false): bool
     {
+        if (!is_string($check)) {
+            return false;
+        }
+
         static::_populateIp();
 
         $emoji = '\x{1F190}-\x{1F9EF}';
@@ -962,7 +986,7 @@ class Validation
     /**
      * Checks if a value is in a given list. Comparison is case sensitive by default.
      *
-     * @param string $check Value to check.
+     * @param mixed $check Value to check.
      * @param array $list List to check against.
      * @param bool $caseInsensitive Set to true for case insensitive comparison.
      * @return bool Success.
@@ -982,10 +1006,10 @@ class Validation
     /**
      * Checks that a value is a valid UUID - https://tools.ietf.org/html/rfc4122
      *
-     * @param string $check Value to check
+     * @param mixed $check Value to check
      * @return bool Success
      */
-    public static function uuid(string $check): bool
+    public static function uuid($check): bool
     {
         $regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[0-5][a-fA-F0-9]{3}-[089aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
 
@@ -1007,7 +1031,7 @@ class Validation
     /**
      * Luhn algorithm
      *
-     * @param string|array $check Value to check.
+     * @param mixed $check Value to check.
      * @return bool Success
      * @see https://en.wikipedia.org/wiki/Luhn_algorithm
      */
@@ -1017,6 +1041,7 @@ class Validation
             return false;
         }
         $sum = 0;
+        $check = (string)$check;
         $length = strlen($check);
 
         for ($position = 1 - ($length % 2); $position < $length; $position += 2) {
@@ -1308,11 +1333,11 @@ class Validation
      * - `format` - By default `both`, can be `long` and `lat` as well to validate
      *   only a part of the coordinate.
      *
-     * @param string $value Geographic location as string
+     * @param mixed $value Geographic location as string
      * @param array $options Options for the validation logic.
      * @return bool
      */
-    public static function geoCoordinate(string $value, array $options = []): bool
+    public static function geoCoordinate($value, array $options = []): bool
     {
         $options += [
             'format' => 'both',
@@ -1332,19 +1357,19 @@ class Validation
             $pattern = '/^' . self::$_pattern['latitude'] . '$/';
         }
 
-        return (bool)preg_match($pattern, $value);
+        return (bool)preg_match($pattern, (string)$value);
     }
 
     /**
      * Convenience method for latitude validation.
      *
-     * @param string $value Latitude as string
+     * @param mixed $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Latitude
      * @see \Cake\Validation\Validation::geoCoordinate()
      */
-    public static function latitude(string $value, array $options = []): bool
+    public static function latitude($value, array $options = []): bool
     {
         $options['format'] = 'lat';
 
@@ -1354,13 +1379,13 @@ class Validation
     /**
      * Convenience method for longitude validation.
      *
-     * @param string $value Latitude as string
+     * @param mixed $value Latitude as string
      * @param array $options Options for the validation logic.
      * @return bool
      * @link https://en.wikipedia.org/wiki/Longitude
      * @see \Cake\Validation\Validation::geoCoordinate()
      */
-    public static function longitude(string $value, array $options = []): bool
+    public static function longitude($value, array $options = []): bool
     {
         $options['format'] = 'long';
 
@@ -1474,13 +1499,15 @@ class Validation
      * Requirements are uppercase, no whitespaces, max length 34, country code and checksum exist at right spots,
      * body matches against checksum via Mod97-10 algorithm
      *
-     * @param string $check The value to check
+     * @param mixed $check The value to check
      *
      * @return bool Success
      */
-    public static function iban(string $check): bool
+    public static function iban($check): bool
     {
-        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)) {
+        if (!is_string($check) ||
+            !preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/', $check)
+        ) {
             return false;
         }
 
