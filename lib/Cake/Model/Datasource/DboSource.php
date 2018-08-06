@@ -2177,7 +2177,7 @@ class DboSource extends DataSource {
 			$update = $quoted . ' = ';
 
 			if ($quoteValues) {
-				$update .= $this->value($value, $Model->getColumnType($field), isset($schema[$field]) ? $schema[$field]['null'] : true);
+				$update .= $this->value($value, $Model->getColumnType($field), isset($schema[$field]['null']) ? $schema[$field]['null'] : true);
 			} elseif ($Model->getColumnType($field) === 'boolean' && (is_int($value) || is_bool($value))) {
 				$update .= $this->boolean($value, true);
 			} elseif (!$alias) {
