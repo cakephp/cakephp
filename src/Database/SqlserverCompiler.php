@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -62,7 +63,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
      * @return string
      */
-    protected function _buildInsertPart($parts, $query, $generator)
+    protected function _buildInsertPart(array $parts, Query $query, ValueBinder $generator): string
     {
         $table = $parts[0];
         $columns = $this->_stringifyExpressions($parts[1], $generator);
@@ -83,7 +84,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\Query $query The query that is being compiled
      * @return string
      */
-    protected function _buildLimitPart($limit, $query)
+    protected function _buildLimitPart(int $limit, Query $query): string
     {
         if ($limit === null || $query->clause('offset') === null) {
             return '';

@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
  */
 class FooType extends IntegerType
 {
-    public function getBaseType()
+    public function getBaseType(): string
     {
         return 'integer';
     }

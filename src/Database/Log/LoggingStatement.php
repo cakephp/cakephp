@@ -71,11 +71,11 @@ class LoggingStatement extends StatementDecorator
      * to the logging system.
      *
      * @param \Cake\Database\Log\LoggedQuery $query The query to log.
-     * @param array $params List of values to be bound to query.
+     * @param array|null $params List of values to be bound to query.
      * @param float $startTime The microtime when the query was executed.
      * @return void
      */
-    protected function _log($query, $params, $startTime)
+    protected function _log(LoggedQuery $query, ?array $params, float $startTime): void
     {
         $query->took = round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
@@ -110,7 +110,7 @@ class LoggingStatement extends StatementDecorator
      * @param \Cake\Database\Log\QueryLogger $logger Logger object
      * @return void
      */
-    public function setLogger($logger)
+    public function setLogger(QueryLogger $logger): void
     {
         $this->_logger = $logger;
     }
@@ -118,9 +118,9 @@ class LoggingStatement extends StatementDecorator
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Cake\Database\Log\QueryLogger|null logger instance
      */
-    public function getLogger()
+    public function getLogger(): ?QueryLogger
     {
         return $this->_logger;
     }

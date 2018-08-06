@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -200,18 +201,6 @@ class DriverTest extends TestCase
 
         $this->driver->enableAutoQuoting(false);
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting('string');
-        $this->assertTrue($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting('0');
-        $this->assertFalse($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting(1);
-        $this->assertTrue($this->driver->isAutoQuotingEnabled());
-
-        $this->driver->enableAutoQuoting(0);
-        $this->assertFalse($this->driver->isAutoQuotingEnabled());
     }
 
     /**
@@ -228,7 +217,7 @@ class DriverTest extends TestCase
         $compiler
             ->expects($this->once())
             ->method('compile')
-            ->willReturn(true);
+            ->willReturn('1');
 
         $driver = $this->getMockBuilder(Driver::class)
             ->setMethods(['newCompiler', 'queryTranslator'])
@@ -255,7 +244,7 @@ class DriverTest extends TestCase
 
         $this->assertInternalType('array', $result);
         $this->assertSame($query, $result[0]);
-        $this->assertTrue($result[1]);
+        $this->assertSame('1', $result[1]);
     }
 
     /**

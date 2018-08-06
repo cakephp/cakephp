@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,6 +14,8 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
+
+use Cake\Database\Schema\BaseSchema;
 
 /**
  * Interface for database driver.
@@ -36,14 +39,14 @@ interface DriverInterface
     /**
      * Returns correct connection resource or object that is internally used.
      *
-     * @return object Connection object used internally.
+     * @return mixed Connection object used internally.
      */
     public function getConnection();
 
     /**
      * Set the internal connection object.
      *
-     * @param object $connection The connection instance.
+     * @param mixed $connection The connection instance.
      * @return $this
      */
     public function setConnection($connection);
@@ -87,26 +90,26 @@ interface DriverInterface
     /**
      * Get the SQL for releasing a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
-    public function releaseSavePointSQL(string $name): string;
+    public function releaseSavePointSQL($name): string;
 
     /**
      * Get the SQL for creating a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
-    public function savePointSQL(string $name): string;
+    public function savePointSQL($name): string;
 
     /**
      * Get the SQL for rollingback a save point.
      *
-     * @param string $name The table name.
+     * @param string|int $name The table name.
      * @return string
      */
-    public function rollbackSavePointSQL(string $name): string;
+    public function rollbackSavePointSQL($name): string;
 
     /**
      * Get the SQL for disabling foreign keys.
@@ -162,7 +165,7 @@ interface DriverInterface
      * (select, insert, update, delete).
      * @return callable
      */
-    public function queryTranslator(string $type);
+    public function queryTranslator(string $type): callable;
 
     /**
      * Get the schema dialect.
@@ -175,7 +178,7 @@ interface DriverInterface
      *
      * @return \Cake\Database\Schema\BaseSchema
      */
-    public function schemaDialect();
+    public function schemaDialect(): BaseSchema;
 
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
@@ -250,5 +253,5 @@ interface DriverInterface
      *
      * @return \Cake\Database\QueryCompiler
      */
-    public function newCompiler();
+    public function newCompiler(): QueryCompiler;
 }

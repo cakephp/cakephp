@@ -159,7 +159,7 @@ interface QueryInterface
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param int $num number of records to be returned
+     * @param int|mixed $num number of records to be returned
      * @return $this
      */
     public function limit($num);
@@ -179,7 +179,7 @@ interface QueryInterface
      *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param int $num number of records to be skipped
+     * @param int|mixed $num number of records to be skipped
      * @return $this
      */
     public function offset($num);
@@ -248,7 +248,7 @@ interface QueryInterface
      * @return $this
      * @throws \InvalidArgumentException If page number < 1.
      */
-    public function page($num, $limit = null);
+    public function page(int $num, ?int $limit = null);
 
     /**
      * Returns an array representation of the results after executing the query.

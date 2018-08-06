@@ -18,7 +18,7 @@ use Cake\Database\Type\StringType;
 
 class FooType extends StringType
 {
-    public function getBaseType()
+    public function getBaseType(): string
     {
         return 'text';
     }

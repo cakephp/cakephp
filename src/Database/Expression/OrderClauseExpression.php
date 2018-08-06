@@ -47,7 +47,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * {@inheritDoc}
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $field = $this->_field;
         if ($field instanceof ExpressionInterface) {
@@ -60,7 +60,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * {@inheritDoc}
      */
-    public function traverse(callable $visitor)
+    public function traverse(callable $visitor): void
     {
         if ($this->_field instanceof ExpressionInterface) {
             $visitor($this->_field);

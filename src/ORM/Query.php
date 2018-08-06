@@ -1207,7 +1207,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @param string|null $table Unused parameter.
      * @return $this
      */
-    public function delete($table = null)
+    public function delete(?string $table = null)
     {
         /** @var \Cake\ORM\Table $repository */
         $repository = $this->getRepository();

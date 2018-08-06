@@ -19,8 +19,6 @@ namespace Cake\Datasource;
  * This interface defines the methods you can depend on in
  * a connection.
  *
- * @method object getLogger() Get the current logger instance
- * @method $this setLogger($logger) Set the current logger.
  * @method bool supportsDynamicConstraints()
  * @method \Cake\Database\Schema\Collection getSchemaCollection()
  * @method \Cake\Database\Query newQuery()
@@ -30,6 +28,21 @@ namespace Cake\Datasource;
  */
 interface ConnectionInterface
 {
+    /**
+     * Set a logger, or clear the current logger.
+     *
+     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
+     * @return $this
+     */
+    public function setLogger($logger);
+
+    /**
+     * Gets the current logger object.
+     *
+     * @return \Cake\Database\Log\QueryLogger logger instance
+     */
+    public function getLogger();
+
     /**
      * Get the configuration name for this connection.
      *
@@ -78,12 +91,12 @@ interface ConnectionInterface
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging($value): self;
+    public function enableQueryLogging(bool $value);
 
     /**
      * Check if query logging is enabled.
      *
      * @return bool
      */
-    public function isQueryLoggingEnabled();
+    public function isQueryLoggingEnabled(): bool;
 }

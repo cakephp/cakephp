@@ -237,7 +237,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * ```
      *
      * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array List of all results from database for this statement
+     * @return array|false List of all results from database for this statement. False on failure.
      */
     public function fetchAll($type = self::FETCH_TYPE_NUM)
     {

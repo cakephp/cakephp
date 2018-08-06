@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -47,7 +48,7 @@ class ValueBinder
      * to database
      * @return void
      */
-    public function bind($param, $value, $type = 'string')
+    public function bind($param, $value, $type = 'string'): void
     {
         $this->_bindings[$param] = compact('value', 'type') + [
             'placeholder' => is_int($param) ? $param : substr($param, 1),
@@ -63,7 +64,7 @@ class ValueBinder
      * if it starts with a colon, then the same string is returned
      * @return string to be used as a placeholder in a query expression
      */
-    public function placeholder($token)
+    public function placeholder(string $token): string
     {
         $number = $this->_bindingsCount++;
         if ($token[0] !== ':' && $token !== '?') {
@@ -81,7 +82,7 @@ class ValueBinder
      * @param string $type The type with which all values will be bound
      * @return array with the placeholders to insert in the query
      */
-    public function generateManyNamed(iterable $values, $type = 'string')
+    public function generateManyNamed(iterable $values, string $type = 'string'): array
     {
         $placeholders = [];
         foreach ($values as $k => $value) {
@@ -103,7 +104,7 @@ class ValueBinder
      *
      * @return array
      */
-    public function bindings()
+    public function bindings(): array
     {
         return $this->_bindings;
     }
@@ -113,7 +114,7 @@ class ValueBinder
      *
      * @return void
      */
-    public function reset()
+    public function reset(): void
     {
         $this->_bindings = [];
         $this->_bindingsCount = 0;
@@ -124,7 +125,7 @@ class ValueBinder
      *
      * @return void
      */
-    public function resetCount()
+    public function resetCount(): void
     {
         $this->_bindingsCount = 0;
     }
@@ -135,7 +136,7 @@ class ValueBinder
      * @param \Cake\Database\StatementInterface $statement The statement to add parameters to.
      * @return void
      */
-    public function attachTo($statement)
+    public function attachTo(StatementInterface $statement): void
     {
         $bindings = $this->bindings();
         if (empty($bindings)) {
