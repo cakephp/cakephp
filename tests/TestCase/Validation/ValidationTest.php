@@ -165,10 +165,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::lengthBetween('abcdefg', 1, 7));
         $this->assertTrue(Validation::lengthBetween('', 0, 7));
         $this->assertTrue(Validation::lengthBetween('אกあアꀀ豈', 1, 7));
+        $this->assertTrue(Validation::lengthBetween(1, 1, 3));
 
         $this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
         $this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
-        $this->assertFalse(Validation::lengthBetween(1, 1, 3));
     }
 
     /**

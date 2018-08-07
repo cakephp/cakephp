@@ -141,10 +141,10 @@ class Validation
      */
     public static function lengthBetween($check, int $min, int $max): bool
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
-        $length = mb_strlen($check);
+        $length = mb_strlen((string)$check);
 
         return $length >= $min && $length <= $max;
     }
@@ -770,11 +770,11 @@ class Validation
      */
     public static function minLength($check, int $min): bool
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
 
-        return mb_strlen($check) >= $min;
+        return mb_strlen((string)$check) >= $min;
     }
 
     /**
@@ -786,11 +786,11 @@ class Validation
      */
     public static function maxLength($check, int $max): bool
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
 
-        return mb_strlen($check) <= $max;
+        return mb_strlen((string)$check) <= $max;
     }
 
     /**
@@ -802,11 +802,11 @@ class Validation
      */
     public static function minLengthBytes($check, int $min): bool
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
 
-        return strlen($check) >= $min;
+        return strlen((string)$check) >= $min;
     }
 
     /**
@@ -818,11 +818,11 @@ class Validation
      */
     public static function maxLengthBytes($check, int $max): bool
     {
-        if (!is_string($check)) {
+        if (!is_scalar($check)) {
             return false;
         }
 
-        return strlen($check) <= $max;
+        return strlen((string)$check) <= $max;
     }
 
     /**
