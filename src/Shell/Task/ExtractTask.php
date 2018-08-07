@@ -50,6 +50,13 @@ class ExtractTask extends Shell
     protected $_merge = false;
 
     /**
+     * Use relative paths in the pot files rather than full path
+     *
+     * @var bool
+     */
+    protected $_relativePaths = false;
+
+    /**
      * Current file being processed
      *
      * @var string|null
@@ -233,6 +240,10 @@ class ExtractTask extends Shell
             $this->_merge = strtolower($response) === 'y';
         }
 
+        if (isset($this->params['relative-paths'])) {
+            $this->_relativePaths = !(strtolower($this->params['relative-paths']) === 'no');
+        }
+
         if (empty($this->_files)) {
             $this->_searchFiles();
         }
@@ -320,6 +331,9 @@ class ExtractTask extends Shell
             'help' => 'Comma separated list of paths.'
         ])->addOption('merge', [
             'help' => 'Merge all domain strings into the default.po file.',
+            'choices' => ['yes', 'no']
+        ])->addOption('relative-paths', [
+            'help' => 'Use relative paths in the .pot file',
             'choices' => ['yes', 'no']
         ])->addOption('output', [
             'help' => 'Full path to output directory.'
@@ -447,6 +461,9 @@ class ExtractTask extends Shell
                         'file' => $this->_file,
                         'line' => $line,
                     ];
+                    if ($this->_relativePaths) {
+                        $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
+                    }
                     if (isset($plural)) {
                         $details['msgid_plural'] = $plural;
                     }
