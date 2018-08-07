@@ -1343,6 +1343,10 @@ class Validation
      */
     public static function geoCoordinate($value, array $options = []): bool
     {
+        if (!is_scalar($value)) {
+            return false;
+        }
+
         $options += [
             'format' => 'both',
             'type' => 'latLong',
