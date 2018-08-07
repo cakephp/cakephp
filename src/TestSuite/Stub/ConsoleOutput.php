@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -45,7 +46,7 @@ class ConsoleOutput extends ConsoleOutputBase
      * @param int $newlines Number of newlines to append
      * @return void
      */
-    public function write($message, int $newlines = 1)
+    public function write($message, int $newlines = 1): void
     {
         foreach ((array)$message as $line) {
             $this->_out[] = $line;

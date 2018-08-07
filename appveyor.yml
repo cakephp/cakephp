@@ -28,11 +28,11 @@ init:
 
 install:
   - cd c:\
-  - curl -fsS https://windows.php.net/downloads/releases/php-7.2.8-nts-Win32-VC15-x86.zip -o php.zip
+  - curl -fsS https://windows.php.net/downloads/releases/php-7.2.8-nts-Win32-VC15-x64.zip -o php.zip
   - 7z x php.zip -oc:\php > nul
-  - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x86.zip -o pdosqlsrv.zip
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
   - 7z x pdosqlsrv.zip -oc:\php\ext php_pdo_sqlsrv.dll > nul
-  - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.2.0/php_sqlsrv-5.2.0-7.2-nts-vc15-x86.zip -o sqlsrv.zip
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.2.0/php_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o sqlsrv.zip
   - 7z x sqlsrv.zip -oc:\php\ext php_sqlsrv.dll > nul
   - cd c:\php
   - copy php.ini-production php.ini
@@ -44,7 +44,7 @@ install:
   - echo extension=php_intl.dll >> php.ini
   - echo extension=php_mbstring.dll >> php.ini
   - echo extension=php_fileinfo.dll >> php.ini
-  - curl -fsS https://windows.php.net/downloads/pecl/releases/wincache/2.0.0.8/php_wincache-2.0.0.8-7.2-nts-vc15-x86.zip -o wincache.zip
+  - curl -fsS https://windows.php.net/downloads/pecl/releases/wincache/2.0.0.8/php_wincache-2.0.0.8-7.2-nts-vc15-x64.zip -o wincache.zip
   - 7z x wincache.zip -oc:\php\ext php_wincache.dll > nul
   - echo extension=php_wincache.dll >> php.ini
   - echo wincache.enablecli = 1 >> php.ini
