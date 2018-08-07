@@ -164,11 +164,11 @@ class Validation
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null): bool
     {
-        if (!is_scalar($check)) {
+        if (!is_numeric($check)) {
             return false;
         }
 
-        $check = str_replace(['-', ' '], '', $check);
+        $check = str_replace(['-', ' '], '', (string)$check);
         if (mb_strlen($check) < 13) {
             return false;
         }
@@ -614,13 +614,17 @@ class Validation
      * - true => Any number of decimal places greater than 0, or a float|double. The '.' is required.
      * - 1..N => Exactly that many number of decimal places. The '.' is required.
      *
-     * @param float $check The value the test for decimal.
+     * @param mixed $check The value the test for decimal.
      * @param int|bool|null $places Decimal places.
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
     public static function decimal($check, $places = null, ?string $regex = null): bool
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
         if ($regex === null) {
             $lnum = '[0-9]+';
             $dnum = "[0-9]*[\.]{$lnum}";
@@ -649,7 +653,7 @@ class Validation
         $decimalPoint = $formatter->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
-        $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
+        $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
 
         return static::_check($check, $regex);
     }
@@ -1486,7 +1490,7 @@ class Validation
     /**
      * Check that the input value is a 6 digits hex color.
      *
-     * @param string|array $check The value to check
+     * @param mixed $check The value to check
      * @return bool Success
      */
     public static function hexColor($check): bool
