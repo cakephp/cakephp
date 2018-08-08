@@ -39,6 +39,7 @@ class QueryTest extends TestCase
      */
     public $fixtures = [
         'core.articles',
+        'core.articles_translations',
         'core.articles_tags',
         'core.authors',
         'core.comments',
@@ -3432,6 +3433,30 @@ class QueryTest extends TestCase
             ->matching('articles')
             ->toArray();
         $this->assertEquals($expected, $results);
+    }
+
+    public function testContainInsideInnerJoinWith()
+    {
+        $Comments = $this->getTableLocator()->get('Comments');
+        $Comments->belongsTo('Articles');
+
+        $Comments->Articles->hasOne('ArticlesTranslations', [
+            'property' => 'translation',
+            'joinType' => 'LEFT',
+            'conditions' => [
+                'ArticlesTranslations.locale' => 'deu',
+            ],
+        ]);
+
+        $query = $Comments
+            ->find()
+            ->innerJoinWith('Articles', function ($q) {
+                return $q
+                    ->contain('ArticlesTranslations')
+                    ->where(['ArticlesTranslations.title' => 'Titel #1']);
+            });
+
+        $this->assertContains('LEFT JOIN articles_translations', (string)$query);
     }
 
     /**
