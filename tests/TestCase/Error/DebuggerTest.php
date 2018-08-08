@@ -357,6 +357,7 @@ class DebuggerTest extends TestCase
         $expected = <<<TEXT
 object(Cake\View\View) {
 	passedArgs => []
+	hasRendered => false
 	uuids => []
 	viewClass => null
 	viewVars => []
@@ -381,7 +382,6 @@ object(Cake\View\View) {
 	[protected] _ext => '.ctp'
 	[protected] subDir => ''
 	[protected] theme => null
-	[protected] hasRendered => false
 	[protected] request => object(Cake\Http\ServerRequest) {}
 	[protected] response => object(Cake\Http\Response) {}
 	[protected] elementCache => 'default'

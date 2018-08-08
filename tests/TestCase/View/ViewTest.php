@@ -2136,16 +2136,16 @@ TEXT;
     }
 
     /**
-     * Test testHasRendered()
+     * Test testHasRendered property
      *
      * @return void
      */
     public function testHasRendered()
     {
-        $this->assertFalse($this->View->hasRendered());
+        $this->assertFalse($this->View->hasRendered);
 
         $this->View->render('index');
-        $this->assertTrue($this->View->hasRendered());
+        $this->assertTrue($this->View->hasRendered);
     }
 
     /**

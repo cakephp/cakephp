@@ -191,8 +191,9 @@ class View implements EventDispatcherInterface
      * True when the view has been rendered.
      *
      * @var bool
+     * @deprecated 3.7.0 The property is deprecated and will be removed in 4.0.0.
      */
-    protected $hasRendered = false;
+    public $hasRendered = false;
 
     /**
      * List of generated DOM UUIDs.
@@ -1292,7 +1293,6 @@ class View implements EventDispatcherInterface
             'plugin' => 'setPlugin',
             'name' => 'setName',
             'elementCache' => 'setElementCache',
-            'hasRendered' => 'resetHasRendered',
         ];
         if (isset($protected[$name])) {
             $method = $protected[$name];
@@ -1429,30 +1429,6 @@ class View implements EventDispatcherInterface
         $helpers = $this->helpers();
 
         return $this->{$class} = $helpers->load($name, $config);
-    }
-
-    /**
-     * Check whether the view has been rendered.
-     *
-     * @return bool
-     * @since 3.7.0
-     */
-    public function hasRendered()
-    {
-        return $this->hasRendered;
-    }
-
-    /**
-     * Reset $hadRendered property to false to allow running render() again.
-     *
-     * @return $this
-     * @since 3.7.0
-     */
-    public function resetHasRendered()
-    {
-        $this->hasRendered = false;
-
-        return $this;
     }
 
     /**
