@@ -163,7 +163,7 @@ class ConsoleIo
      *
      * ### Output levels
      *
-     * There are 3 built-in output level. self::QUIET, self::NORMAL, self::VERBOSE.
+     * There are 3 built-in output level. ConsoleIo::QUIET, ConsoleIo::NORMAL, ConsoleIo::VERBOSE.
      * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
      * present in most shells. Using self::QUIET for a message means it will always display.
      * While using self::VERBOSE means it will only display when verbose output is toggled.
