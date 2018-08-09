@@ -31,7 +31,7 @@ class TestSuite extends BaseTestSuite
      * @param string $directory The directory to add tests from.
      * @return void
      */
-    public function addTestDirectory($directory = '.')
+    public function addTestDirectory(string $directory = '.'): void
     {
         $Folder = new Folder($directory);
         list(, $files) = $Folder->read(true, true, true);
@@ -49,7 +49,7 @@ class TestSuite extends BaseTestSuite
      * @param string $directory The directory subtree to add tests from.
      * @return void
      */
-    public function addTestDirectoryRecursive($directory = '.')
+    public function addTestDirectoryRecursive(string $directory = '.'): void
     {
         $Folder = new Folder($directory);
         $files = $Folder->tree(null, true, 'files');

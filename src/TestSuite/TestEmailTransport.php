@@ -52,7 +52,7 @@ class TestEmailTransport extends AbstractTransport
      *
      * @return void
      */
-    public static function replaceAllTransports()
+    public static function replaceAllTransports(): void
     {
         $configuredTransports = Email::configuredTransport();
 
@@ -79,7 +79,7 @@ class TestEmailTransport extends AbstractTransport
      *
      * @return void
      */
-    public static function clearEmails()
+    public static function clearEmails(): void
     {
         static::$emails = [];
     }
