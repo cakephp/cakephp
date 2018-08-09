@@ -19,6 +19,7 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
+use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
 
@@ -1412,11 +1413,17 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param string $table The table you want to update.
+     * @param string|\Cake\Database\ExpressionInterface $table The table you want to update.
      * @return $this
      */
     public function update($table)
     {
+        if (!is_string($table) && !($table instanceof ExpressionInterface)) {
+            $text = 'Table must be of type string or "%s", got "%s"';
+            $message = sprintf($text, ExpressionInterface::class, gettype($table));
+            throw new InvalidArgumentException($message);
+        }
+
         $this->_dirty();
         $this->_type = 'update';
         $this->_parts['update'][0] = $table;

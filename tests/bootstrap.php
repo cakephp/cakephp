@@ -20,7 +20,11 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 
-require_once 'vendor/autoload.php';
+if (is_file('vendor/autoload.php')) {
+    require_once 'vendor/autoload.php';
+} else {
+    require_once dirname(__DIR__) . '/vendor/autoload.php';
+}
 
 if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);

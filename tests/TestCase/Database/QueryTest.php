@@ -2732,6 +2732,20 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test update with type checking
+     * by passing an array as table arg
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testUpdateArgTypeChecking()
+    {
+        $query = new Query($this->connection);
+        $query->update(['Articles']);
+    }
+
+    /**
      * Test update with multiple fields.
      *
      * @return void

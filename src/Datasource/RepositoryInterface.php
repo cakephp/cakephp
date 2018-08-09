@@ -96,8 +96,6 @@ interface RepositoryInterface
     public function updateAll($fields, $conditions);
 
     /**
-     * Delete all matching records.
-     *
      * Deletes all records matching the provided conditions.
      *
      * This method will *not* trigger beforeDelete/afterDelete events. If you
@@ -109,7 +107,7 @@ interface RepositoryInterface
      *
      * @param mixed $conditions Conditions to be used, accepts anything Query::where()
      * can take.
-     * @return int Count Returns the affected rows.
+     * @return int Returns the number of affected rows.
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
     public function deleteAll($conditions);
