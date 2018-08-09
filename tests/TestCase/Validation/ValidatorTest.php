@@ -1323,6 +1323,7 @@ class ValidatorTest extends TestCase
             ],
             '_presenceMessages' => [],
             '_allowEmptyMessages' => [],
+            '_allowEmptyFlags' => [],
             '_useI18n' => true,
         ];
         $this->assertEquals($expected, $result);
