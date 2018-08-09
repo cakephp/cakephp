@@ -4222,7 +4222,7 @@ class FormHelperTest extends TestCase
             '*/div',
             '/fieldset',
         ];
-        $this->assertHtml($expected, $result, 'A falsey value (array) should not remove the input');
+        $this->assertHtml($expected, $result, true);
     }
 
     /**
