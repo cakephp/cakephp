@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -49,7 +50,9 @@ class LegacyShellDispatcher extends ShellDispatcher
     {
         list($plugin) = pluginSplit($shortName);
         $instance = new $className($this->_io);
-        $instance->plugin = trim($plugin, '.');
+        if ($plugin) {
+            $instance->plugin = trim($plugin, '.');
+        }
 
         return $instance;
     }
