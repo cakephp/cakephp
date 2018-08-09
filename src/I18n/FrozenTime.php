@@ -179,7 +179,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      * @return array List of timezone identifiers
      * @since 2.2
      */
-    public static function listTimezones($filter = null, $country = null, $options = []): array
+    public static function listTimezones($filter = null, ?string $country = null, $options = []): array
     {
         if (is_bool($options)) {
             $options = [
@@ -203,7 +203,7 @@ class FrozenTime extends Chronos implements JsonSerializable
         if ($filter === null) {
             $filter = DateTimeZone::ALL;
         }
-        $identifiers = DateTimeZone::listIdentifiers($filter, $country);
+        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country);
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {
