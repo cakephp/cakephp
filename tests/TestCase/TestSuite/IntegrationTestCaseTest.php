@@ -962,6 +962,19 @@ class IntegrationTestCaseTest extends IntegrationTestCase
     }
 
     /**
+     * Test the location header assertion string not contains
+     *
+     * @return void
+     */
+    public function testAssertRedirectNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response->header('Location', 'http://localhost/tasks/index');
+
+        $this->assertRedirectNotContains('test');
+    }
+
+    /**
      * Test the header assertion.
      *
      * @return void
