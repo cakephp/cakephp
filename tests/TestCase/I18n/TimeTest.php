@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -682,13 +683,13 @@ class TimeTest extends TestCase
     {
         Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
-        $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
+        $this->assertEquals('1 year', $time->diffForHumans(null, true));
 
         $other = new $class('2014-04-27 10:10:10');
-        $this->assertEquals('1 week', $time->diffForHumans($other, ['absolute' => true]));
+        $this->assertEquals('1 week', $time->diffForHumans($other, true));
 
         $time = new $class('2016-04-20 10:10:10');
-        $this->assertEquals('4 months', $time->diffForHumans(null, ['absolute' => true]));
+        $this->assertEquals('4 months', $time->diffForHumans(null, true));
     }
 
     /**

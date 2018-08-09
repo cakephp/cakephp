@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -74,11 +75,11 @@ class DateTest extends TestCase
     public function testConstructFromAnotherInstance($class)
     {
         $time = '2015-01-22';
-        $frozen = new FrozenDate($time, 'America/Chicago');
+        $frozen = new FrozenDate($time);
         $subject = new $class($frozen);
         $this->assertEquals($time, $subject->format('Y-m-d'), 'frozen date construction');
 
-        $mut = new Date($time, 'America/Chicago');
+        $mut = new Date($time);
         $subject = new $class($mut);
         $this->assertEquals($time, $subject->format('Y-m-d'), 'mutable date construction');
     }
