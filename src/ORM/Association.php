@@ -392,7 +392,7 @@ abstract class Association
      *
      * @param array|callable $conditions list of conditions to be used
      * @see \Cake\Database\Query::where() for examples on the format of the array
-     * @return $this
+     * @return \Cake\ORM\Association
      */
     public function setConditions($conditions)
     {

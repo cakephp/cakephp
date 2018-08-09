@@ -154,7 +154,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Sets whether the table is temporary in the database.
      *
      * @param bool $temporary Whether or not the table is to be temporary.
-     * @return $this
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function setTemporary(bool $temporary): self;
 
@@ -186,7 +186,7 @@ interface TableSchemaInterface extends SchemaInterface
      *
      * @param string $name The name of the index.
      * @param array $attrs The attributes for the index.
-     * @return $this
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function addIndex(string $name, array $attrs);
 
@@ -223,7 +223,7 @@ interface TableSchemaInterface extends SchemaInterface
      *
      * @param string $name The name of the constraint.
      * @param array $attrs The attributes for the constraint.
-     * @return $this
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function addConstraint(string $name, array $attrs);
 
@@ -239,7 +239,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Remove a constraint.
      *
      * @param string $name Name of the constraint to remove
-     * @return $this
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function dropConstraint(string $name);
 

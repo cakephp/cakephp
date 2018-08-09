@@ -63,7 +63,7 @@ class DatabaseSession implements SessionHandlerInterface
             $this->_table = $tableLocator->get($config['model']);
         }
 
-        $this->_timeout = ini_get('session.gc_maxlifetime');
+        $this->_timeout = (int)ini_get('session.gc_maxlifetime');
     }
 
     /**
