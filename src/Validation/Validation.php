@@ -164,7 +164,7 @@ class Validation
      */
     public static function cc($check, $type = 'fast', $deep = false, $regex = null): bool
     {
-        if (!is_numeric($check)) {
+        if (!(is_string($check) || is_int($check))) {
             return false;
         }
 

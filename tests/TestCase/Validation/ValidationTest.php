@@ -598,6 +598,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::cc('4916845885268360', ['visa']));
         $this->assertTrue(Validation::cc('4394514669078434', ['visa']));
         $this->assertTrue(Validation::cc('4485611378115042', ['visa']));
+        $this->assertTrue(Validation::cc('4485-6113-7811-5042', ['visa']));
         // Visa Electron
         $this->assertTrue(Validation::cc('4175003346287100', ['electron']));
         $this->assertTrue(Validation::cc('4913042516577228', ['electron']));
