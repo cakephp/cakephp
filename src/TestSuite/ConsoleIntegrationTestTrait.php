@@ -109,7 +109,7 @@ trait ConsoleIntegrationTestTrait
      *
      * @return void
      */
-    public function tearDown(): void
+    public function tearDown()
     {
         parent::tearDown();
 
