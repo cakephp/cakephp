@@ -240,9 +240,7 @@ class ExtractTask extends Shell
             $this->_merge = strtolower($response) === 'y';
         }
 
-        if (isset($this->params['relative-paths'])) {
-            $this->_relativePaths = !(strtolower($this->params['relative-paths']) === 'no');
-        }
+        $this->_relativePaths = $this->param('relative-paths');
 
         if (empty($this->_files)) {
             $this->_searchFiles();
@@ -334,7 +332,8 @@ class ExtractTask extends Shell
             'choices' => ['yes', 'no']
         ])->addOption('relative-paths', [
             'help' => 'Use relative paths in the .pot file',
-            'choices' => ['yes', 'no']
+            'boolean' => true,
+            'default' => false,
         ])->addOption('output', [
             'help' => 'Full path to output directory.'
         ])->addOption('files', [
