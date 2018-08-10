@@ -17,10 +17,10 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Expression\QueryExpression;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
+use Cake\ORM\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 
