@@ -184,6 +184,7 @@ class ExtractTaskTest extends TestCase
         $pattern = '/\#: .*default\.ctp:\d+\n/';
         $this->assertNotRegExp($pattern, $result);
     }
+
     /**
      * testExtractWithoutLocations method
      *
@@ -357,5 +358,30 @@ class ExtractTaskTest extends TestCase
 
         $pattern = '/#: Test\//';
         $this->assertNotRegExp($pattern, $result);
+    }
+
+    /**
+     * test relative-paths option
+     *
+     * @return void
+     */
+    public function testExtractWithRelativePaths()
+    {
+        $this->Task->interactive = false;
+
+        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['relative-paths'] = true;
+
+        $this->Task->method('in')
+            ->will($this->returnValue('y'));
+
+        $this->Task->main();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $expected = '#: ./tests/test_app/TestApp/Template/Pages/extract.ctp:';
+        $this->assertContains($expected, $result);
     }
 }
