@@ -2771,6 +2771,8 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'title',
                 'id' => 'title', 'class' => 'form-error',
                 'required' => 'required',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -2793,6 +2795,8 @@ class FormHelperTest extends TestCase
                 'id' => 'title',
                 'class' => 'form-error',
                 'required' => 'required',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -7175,7 +7179,14 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('title', ['label' => false]);
         $expected = [
             'div' => ['class' => 'input text required'],
-            'input' => ['type' => 'text', 'required' => 'required', 'id' => 'title', 'name' => 'title'],
+            'input' => [
+                'type' => 'text',
+                'required' => 'required',
+                'id' => 'title',
+                'name' => 'title',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
+            ],
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -8411,6 +8422,8 @@ class FormHelperTest extends TestCase
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
+                    'oninvalid' => 'this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
+                    'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
                 ],
                 '/textarea',
             '/div'
@@ -8585,6 +8598,7 @@ class FormHelperTest extends TestCase
         $table->setValidator('default', $validator);
         $contact = new Entity();
 
+        $this->Form->setConfig('autoSetCustomValidity', false);
         $this->Form->create($contact, ['context' => ['table' => 'Contacts']]);
         $this->Form->setTemplates([
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}} data-message="{{customValidityMessage}}" {{custom}}/>',
@@ -8645,6 +8659,8 @@ class FormHelperTest extends TestCase
             ],
         ];
         $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('autoSetCustomValidity', true);
     }
 
     /**
@@ -8673,6 +8689,8 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'id' => 'title',
                 'required' => 'required',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];
