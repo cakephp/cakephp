@@ -103,7 +103,7 @@ interface QueryInterface
      * ```
      *
      * @param array $options list of query clauses to apply new parts to.
-     * @return $this
+     * @return \Cake\Datasource\QueryInterface
      */
     public function applyOptions(array $options);
 

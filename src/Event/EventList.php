@@ -26,7 +26,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Events list
      *
-     * @var \Cake\Event\Event[]
+     * @var \Cake\Event\EventInterface[]
      */
     protected $_events = [];
 

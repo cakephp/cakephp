@@ -32,7 +32,7 @@ class LoggedQuery
     /**
      * Number of milliseconds this query took to complete
      *
-     * @var int
+     * @var float
      */
     public $took = 0;
 
