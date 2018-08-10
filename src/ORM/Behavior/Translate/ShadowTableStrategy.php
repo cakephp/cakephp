@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,7 +21,6 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
@@ -116,7 +116,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * @param \ArrayObject $options The options for the query.
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options)
     {
         $locale = $this->getLocale();
 
@@ -301,7 +301,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * @param \ArrayObject $options the options passed to the save method.
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
     {
         $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];

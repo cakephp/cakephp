@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -49,7 +50,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      *   the behavior fall back to using the globally configured locale.
      * @return $this
      */
-    public function setLocale(?string $locale);
+    public function setLocale(?string $locale): TranslateStrategyInterface;
 
     /**
      * Returns the current locale.
@@ -92,7 +93,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void;
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options);
 
     /**
      * Modifies the entity before it is saved so that translated fields are persisted
@@ -103,7 +104,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void;
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options);
 
     /**
      * Unsets the temporary `_i18n` property after the entity has been saved
@@ -112,5 +113,5 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity): void;
+    public function afterSave(EventInterface $event, EntityInterface $entity);
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\ORM\Table;
  */
 trait TranslateStrategyTrait
 {
-
     /**
      * Table instance
      *
@@ -73,7 +73,7 @@ trait TranslateStrategyTrait
      *   the behavior fall back to using the globally configured locale.
      * @return $this
      */
-    public function setLocale(?string $locale)
+    public function setLocale(?string $locale): TranslateStrategyInterface
     {
         $this->locale = $locale;
 
@@ -184,7 +184,7 @@ trait TranslateStrategyTrait
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity): void
+    public function afterSave(EventInterface $event, EntityInterface $entity)
     {
         $entity->unsetProperty('_i18n');
     }

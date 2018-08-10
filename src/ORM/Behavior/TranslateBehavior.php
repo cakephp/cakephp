@@ -215,7 +215,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
      * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#saving-in-another-language
      */
-    public function setLocale(?string $locale)
+    public function setLocale(?string $locale): self
     {
         $this->getStrategy()->setLocale($locale);
 
@@ -314,7 +314,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param \Cake\ORM\Table $table The table class to get a reference name for.
      * @return string
      */
-    protected function referenceName(Table $table)
+    protected function referenceName(Table $table): string
     {
         $name = namespaceSplit(get_class($table));
         $name = substr(end($name), 0, -5);

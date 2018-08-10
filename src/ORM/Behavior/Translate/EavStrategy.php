@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query;
@@ -160,7 +160,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options): void
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options)
     {
         $locale = $this->getLocale();
 
@@ -222,7 +222,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \ArrayObject $options the options passed to the save method
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options)
     {
         $locale = $entity->get('_locale') ?: $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
@@ -353,14 +353,14 @@ class EavStrategy implements TranslateStrategyInterface
 
             foreach ($this->_config['fields'] as $field) {
                 $name = $field . '_translation';
-                $translation = isset($row[$name]) ? $row[$name] : null;
+                $translation = $row[$name] ?? null;
 
                 if ($translation === null || $translation === false) {
                     unset($row[$name]);
                     continue;
                 }
 
-                $content = isset($translation['content']) ? $translation['content'] : null;
+                $content = $translation['content'] ?? null;
                 if ($content !== null) {
                     $row[$field] = $content;
                 }
