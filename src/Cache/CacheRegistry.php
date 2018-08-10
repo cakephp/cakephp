@@ -26,14 +26,13 @@ use RuntimeException;
  */
 class CacheRegistry extends ObjectRegistry
 {
-
     /**
      * Resolve a cache engine classname.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct classname or null.
      */
     protected function _resolveClassName($class)
     {
@@ -50,11 +49,11 @@ class CacheRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the cache is missing in.
+     * @param string|null $plugin The plugin the cache is missing in.
      * @return void
      * @throws \BadMethodCallException
      */
-    protected function _throwMissingClassError($class, $plugin)
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new BadMethodCallException(sprintf('Cache engine %s is not available.', $class));
     }
@@ -70,7 +69,7 @@ class CacheRegistry extends ObjectRegistry
      * @return \Cake\Cache\CacheEngine The constructed CacheEngine class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, $alias, $config)
+    protected function _create($class, string $alias, array $config): CacheEngine
     {
         if (is_object($class)) {
             $instance = $class;
@@ -105,10 +104,12 @@ class CacheRegistry extends ObjectRegistry
      * Remove a single adapter from the registry.
      *
      * @param string $name The adapter name.
-     * @return void
+     * @return $this
      */
-    public function unload($name)
+    public function unload(string $name): ObjectRegistry
     {
         unset($this->_loaded[$name]);
+
+        return $this;
     }
 }

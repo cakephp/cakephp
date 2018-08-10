@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -106,7 +107,7 @@ class DateTimeType extends BaseType
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -153,7 +154,7 @@ class DateTimeType extends BaseType
     /**
      * Convert strings into DateTime instances.
      *
-     * @param string $value The value to convert.
+     * @param string|int|null $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime|null
      */
@@ -209,7 +210,7 @@ class DateTimeType extends BaseType
      * @param mixed $value Request data
      * @return \DateTimeInterface|null
      */
-    public function marshal($value)
+    public function marshal($value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
             return $value;
@@ -231,13 +232,13 @@ class DateTimeType extends BaseType
                 $compare = true;
             }
             if ($compare && $date && !$this->_compare($date, $value)) {
-                return $value;
+                return null;
             }
             if ($date) {
                 return $date;
             }
         } catch (Exception $e) {
-            return $value;
+            return null;
         }
 
         if (is_array($value) && implode('', $value) === '') {
@@ -265,7 +266,7 @@ class DateTimeType extends BaseType
             $value['minute'],
             $value['second']
         );
-        $tz = isset($value['timezone']) ? $value['timezone'] : null;
+        $tz = $value['timezone'] ?? null;
 
         return new $class($format, $tz);
     }
@@ -275,7 +276,7 @@ class DateTimeType extends BaseType
      * @param mixed $value Request data
      * @return bool
      */
-    protected function _compare($date, $value)
+    protected function _compare($date, $value): bool
     {
         foreach ((array)$this->_format as $format) {
             if ($date->format($format) === $value) {
@@ -293,7 +294,7 @@ class DateTimeType extends BaseType
      * @param bool $enable Whether or not to enable
      * @return $this
      */
-    public function useLocaleParser($enable = true)
+    public function useLocaleParser(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
@@ -345,7 +346,7 @@ class DateTimeType extends BaseType
      * @param string $fallback The classname to use when the preferred class does not exist.
      * @return void
      */
-    protected function _setClassName($class, $fallback)
+    protected function _setClassName(string $class, string $fallback): void
     {
         if (!class_exists($class)) {
             $class = $fallback;
@@ -359,7 +360,7 @@ class DateTimeType extends BaseType
      *
      * @return string
      */
-    public function getDateTimeClassName()
+    public function getDateTimeClassName(): string
     {
         return $this->_className;
     }
@@ -383,7 +384,7 @@ class DateTimeType extends BaseType
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\I18n\Time|null
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value)
     {
         /* @var \Cake\I18n\Time $class */
         $class = $this->_className;

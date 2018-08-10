@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,6 +24,7 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
+use Closure;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -34,7 +36,6 @@ use RuntimeException;
  */
 abstract class Association
 {
-
     use ConventionsTrait;
     use LocatorAwareTrait;
 
@@ -43,49 +44,49 @@ abstract class Association
      *
      * @var string
      */
-    const STRATEGY_JOIN = 'join';
+    public const STRATEGY_JOIN = 'join';
 
     /**
      * Strategy name to use a subquery for fetching associated records
      *
      * @var string
      */
-    const STRATEGY_SUBQUERY = 'subquery';
+    public const STRATEGY_SUBQUERY = 'subquery';
 
     /**
      * Strategy name to use a select for fetching associated records
      *
      * @var string
      */
-    const STRATEGY_SELECT = 'select';
+    public const STRATEGY_SELECT = 'select';
 
     /**
      * Association type for one to one associations.
      *
      * @var string
      */
-    const ONE_TO_ONE = 'oneToOne';
+    public const ONE_TO_ONE = 'oneToOne';
 
     /**
      * Association type for one to many associations.
      *
      * @var string
      */
-    const ONE_TO_MANY = 'oneToMany';
+    public const ONE_TO_MANY = 'oneToMany';
 
     /**
      * Association type for many to many associations.
      *
      * @var string
      */
-    const MANY_TO_MANY = 'manyToMany';
+    public const MANY_TO_MANY = 'manyToMany';
 
     /**
      * Association type for many to one associations.
      *
      * @var string
      */
-    const MANY_TO_ONE = 'manyToOne';
+    public const MANY_TO_ONE = 'manyToOne';
 
     /**
      * Name given to the association, it usually represents the alias
@@ -192,7 +193,7 @@ abstract class Association
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
         self::STRATEGY_SELECT,
-        self::STRATEGY_SUBQUERY
+        self::STRATEGY_SUBQUERY,
     ];
 
     /**
@@ -202,7 +203,7 @@ abstract class Association
      * @param string $alias The name given to the association
      * @param array $options A list of properties to be set on this object
      */
-    public function __construct($alias, array $options = [])
+    public function __construct(string $alias, array $options = [])
     {
         $defaults = [
             'cascadeCallbacks',
@@ -216,7 +217,7 @@ abstract class Association
             'tableLocator',
             'propertyName',
             'sourceTable',
-            'targetTable'
+            'targetTable',
         ];
         foreach ($defaults as $property) {
             if (isset($options[$property])) {
@@ -245,7 +246,7 @@ abstract class Association
      * @param string $name Name to be assigned
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         if ($this->_targetTable !== null) {
             $alias = $this->_targetTable->getAlias();
@@ -265,7 +266,7 @@ abstract class Association
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -276,7 +277,7 @@ abstract class Association
      * @param bool $cascadeCallbacks cascade callbacks switch value
      * @return $this
      */
-    public function setCascadeCallbacks($cascadeCallbacks)
+    public function setCascadeCallbacks(bool $cascadeCallbacks)
     {
         $this->_cascadeCallbacks = $cascadeCallbacks;
 
@@ -288,7 +289,7 @@ abstract class Association
      *
      * @return bool
      */
-    public function getCascadeCallbacks()
+    public function getCascadeCallbacks(): bool
     {
         return $this->_cascadeCallbacks;
     }
@@ -298,7 +299,7 @@ abstract class Association
      *
      * @return string
      */
-    public function className()
+    public function className(): string
     {
         return $this->_className;
     }
@@ -321,7 +322,7 @@ abstract class Association
      *
      * @return \Cake\ORM\Table
      */
-    public function getSource()
+    public function getSource(): Table
     {
         return $this->_sourceTable;
     }
@@ -344,10 +345,10 @@ abstract class Association
      *
      * @return \Cake\ORM\Table
      */
-    public function getTarget()
+    public function getTarget(): Table
     {
         if (!$this->_targetTable) {
-            if (strpos($this->_className, '.')) {
+            if (strpos((string)$this->_className, '.')) {
                 list($plugin) = pluginSplit($this->_className, true);
                 $registryAlias = $plugin . $this->_name;
             } else {
@@ -477,7 +478,7 @@ abstract class Association
      * @param bool $dependent Set the dependent mode. Use null to read the current state.
      * @return $this
      */
-    public function setDependent($dependent)
+    public function setDependent(bool $dependent)
     {
         $this->_dependent = $dependent;
 
@@ -492,7 +493,7 @@ abstract class Association
      *
      * @return bool
      */
-    public function getDependent()
+    public function getDependent(): bool
     {
         return $this->_dependent;
     }
@@ -503,11 +504,11 @@ abstract class Association
      * @param array $options custom options key that could alter the return value
      * @return bool
      */
-    public function canBeJoined(array $options = [])
+    public function canBeJoined(array $options = []): bool
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
+        $strategy = $options['strategy'] ?? $this->getStrategy();
 
-        return $strategy == $this::STRATEGY_JOIN;
+        return $strategy === $this::STRATEGY_JOIN;
     }
 
     /**
@@ -516,7 +517,7 @@ abstract class Association
      * @param string $type the join type to be used (e.g. INNER)
      * @return $this
      */
-    public function setJoinType($type)
+    public function setJoinType(string $type)
     {
         $this->_joinType = $type;
 
@@ -528,7 +529,7 @@ abstract class Association
      *
      * @return string
      */
-    public function getJoinType()
+    public function getJoinType(): string
     {
         return $this->_joinType;
     }
@@ -540,7 +541,7 @@ abstract class Association
      * @param string $name The name of the association property. Use null to read the current value.
      * @return $this
      */
-    public function setProperty($name)
+    public function setProperty(string $name)
     {
         $this->_propertyName = $name;
 
@@ -553,7 +554,7 @@ abstract class Association
      *
      * @return string
      */
-    public function getProperty()
+    public function getProperty(): string
     {
         if (!$this->_propertyName) {
             $this->_propertyName = $this->_propertyName();
@@ -575,7 +576,7 @@ abstract class Association
      *
      * @return string
      */
-    protected function _propertyName()
+    protected function _propertyName(): string
     {
         list(, $name) = pluginSplit($this->_name);
 
@@ -591,7 +592,7 @@ abstract class Association
      * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
      */
-    public function setStrategy($name)
+    public function setStrategy(string $name)
     {
         if (!in_array($name, $this->_validStrategies)) {
             throw new InvalidArgumentException(
@@ -610,7 +611,7 @@ abstract class Association
      *
      * @return string
      */
-    public function getStrategy()
+    public function getStrategy(): string
     {
         return $this->_strategy;
     }
@@ -620,7 +621,7 @@ abstract class Association
      *
      * @return string
      */
-    public function getFinder()
+    public function getFinder(): string
     {
         return $this->_finder;
     }
@@ -631,7 +632,7 @@ abstract class Association
      * @param string $finder the finder name to use
      * @return $this
      */
-    public function setFinder($finder)
+    public function setFinder(string $finder)
     {
         $this->_finder = $finder;
 
@@ -645,7 +646,7 @@ abstract class Association
      * @param array $options List of options used for initialization
      * @return void
      */
-    protected function _options(array $options)
+    protected function _options(array $options): void
     {
     }
 
@@ -678,7 +679,7 @@ abstract class Association
      * @throws \RuntimeException if the query builder passed does not return a query
      * object
      */
-    public function attachTo(Query $query, array $options = [])
+    public function attachTo(Query $query, array $options = []): void
     {
         $target = $this->getTarget();
         $joinType = empty($options['joinType']) ? $this->getJoinType() : $options['joinType'];
@@ -691,7 +692,7 @@ abstract class Association
             'fields' => [],
             'type' => $joinType,
             'table' => $table,
-            'finder' => $this->getFinder()
+            'finder' => $this->getFinder(),
         ];
 
         if (!empty($options['foreignKey'])) {
@@ -737,7 +738,7 @@ abstract class Association
      * @param array $options Options array containing the `negateMatch` key.
      * @return void
      */
-    protected function _appendNotMatching($query, $options)
+    protected function _appendNotMatching(QueryInterface $query, array $options): void
     {
         $target = $this->_targetTable;
         if (!empty($options['negateMatch'])) {
@@ -763,7 +764,7 @@ abstract class Association
      * data shuld be nested in. Will use the default one if not provided.
      * @return array
      */
-    public function transformRow($row, $nestKey, $joined, $targetProperty = null)
+    public function transformRow(array $row, string $nestKey, bool $joined, ?string $targetProperty = null): array
     {
         $sourceAlias = $this->getSource()->getAlias();
         $nestKey = $nestKey ?: $this->_name;
@@ -786,7 +787,7 @@ abstract class Association
      *   with this association
      * @return array
      */
-    public function defaultRowValue($row, $joined)
+    public function defaultRowValue(array $row, bool $joined): array
     {
         $sourceAlias = $this->getSource()->getAlias();
         if (isset($row[$sourceAlias])) {
@@ -807,7 +808,7 @@ abstract class Association
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
      */
-    public function find($type = null, array $options = [])
+    public function find($type = null, array $options = []): \Cake\ORM\Query
     {
         $type = $type ?: $this->getFinder();
         list($type, $opts) = $this->_extractFinder($type);
@@ -826,7 +827,7 @@ abstract class Association
      * @see \Cake\ORM\Table::exists()
      * @return bool
      */
-    public function exists($conditions)
+    public function exists($conditions): bool
     {
         if ($this->_conditions) {
             $conditions = $this
@@ -846,7 +847,7 @@ abstract class Association
      * @see \Cake\ORM\Table::updateAll()
      * @return int Count Returns the affected rows.
      */
-    public function updateAll($fields, $conditions)
+    public function updateAll(array $fields, $conditions): int
     {
         $target = $this->getTarget();
         $expression = $target->query()
@@ -865,7 +866,7 @@ abstract class Association
      * @return int Returns the number of affected rows.
      * @see \Cake\ORM\Table::deleteAll()
      */
-    public function deleteAll($conditions)
+    public function deleteAll($conditions): int
     {
         $target = $this->getTarget();
         $expression = $target->query()
@@ -883,9 +884,9 @@ abstract class Association
      * @param array $options The options containing the strategy to be used.
      * @return bool true if a list of keys will be required
      */
-    public function requiresKeys(array $options = [])
+    public function requiresKeys(array $options = []): bool
     {
-        $strategy = isset($options['strategy']) ? $options['strategy'] : $this->getStrategy();
+        $strategy = $options['strategy'] ?? $this->getStrategy();
 
         return $strategy === static::STRATEGY_SELECT;
     }
@@ -897,7 +898,7 @@ abstract class Association
      * @param \Cake\ORM\Query $query the query this association is attaching itself to
      * @return void
      */
-    protected function _dispatchBeforeFind($query)
+    protected function _dispatchBeforeFind(Query $query): void
     {
         $query->triggerBeforeFind();
     }
@@ -911,7 +912,7 @@ abstract class Association
      * @param array $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _appendFields($query, $surrogate, $options)
+    protected function _appendFields(Query $query, Query $surrogate, array $options): void
     {
         if ($query->getEagerLoader()->isAutoFieldsEnabled() === false) {
             return;
@@ -951,7 +952,7 @@ abstract class Association
      * @param array $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _formatAssociationResults($query, $surrogate, $options)
+    protected function _formatAssociationResults(Query $query, Query $surrogate, array $options): void
     {
         $formatters = $surrogate->getResultFormatters();
 
@@ -996,7 +997,7 @@ abstract class Association
      * @param array $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _bindNewAssociations($query, $surrogate, $options)
+    protected function _bindNewAssociations(Query $query, Query $surrogate, array $options): void
     {
         $loader = $surrogate->getEagerLoader();
         $contain = $loader->getContain();
@@ -1034,7 +1035,7 @@ abstract class Association
      * @throws \RuntimeException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
      */
-    protected function _joinCondition($options)
+    protected function _joinCondition(array $options): array
     {
         $conditions = [];
         $tAlias = $this->_name;
@@ -1086,7 +1087,7 @@ abstract class Association
      * and options as value.
      * @return array
      */
-    protected function _extractFinder($finderData)
+    protected function _extractFinder($finderData): array
     {
         $finderData = (array)$finderData;
 
@@ -1104,7 +1105,7 @@ abstract class Association
      * @param array $options Table options array.
      * @return string
      */
-    protected function _getClassName($alias, array $options = [])
+    protected function _getClassName(string $alias, array $options = []): string
     {
         if (empty($options['className'])) {
             $options['className'] = Inflector::camelize($alias);
@@ -1158,7 +1159,7 @@ abstract class Association
      *
      * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, ONE_TO_MANY or MANY_TO_MANY.
      */
-    abstract public function type();
+    abstract public function type(): string;
 
     /**
      * Eager loads a list of records in the target table that are related to another
@@ -1190,7 +1191,7 @@ abstract class Association
      * @param array $options The options for eager loading.
      * @return \Closure
      */
-    abstract public function eagerLoader(array $options);
+    abstract public function eagerLoader(array $options): Closure;
 
     /**
      * Handles cascading a delete from an associated model.
@@ -1202,7 +1203,7 @@ abstract class Association
      * @param array $options The options for the original delete.
      * @return bool Success
      */
-    abstract public function cascadeDelete(EntityInterface $entity, array $options = []);
+    abstract public function cascadeDelete(EntityInterface $entity, array $options = []): bool;
 
     /**
      * Returns whether or not the passed table is the owning side for this
@@ -1212,7 +1213,7 @@ abstract class Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
-    abstract public function isOwningSide(Table $side);
+    abstract public function isOwningSide(Table $side): bool;
 
     /**
      * Extract the target's association data our from the passed entity and proxies

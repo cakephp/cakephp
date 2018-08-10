@@ -28,7 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class BasicAuthenticateTest extends TestCase
 {
-
     /**
      * Fixtures
      *
@@ -48,7 +47,7 @@ class BasicAuthenticateTest extends TestCase
         $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new BasicAuthenticate($this->Collection, [
             'userModel' => 'Users',
-            'realm' => 'localhost'
+            'realm' => 'localhost',
         ]);
 
         $password = password_hash('password', PASSWORD_BCRYPT);
@@ -66,7 +65,7 @@ class BasicAuthenticateTest extends TestCase
     {
         $object = new BasicAuthenticate($this->Collection, [
             'userModel' => 'AuthUser',
-            'fields' => ['username' => 'user', 'password' => 'password']
+            'fields' => ['username' => 'user', 'password' => 'password'],
         ]);
         $this->assertEquals('AuthUser', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
@@ -96,7 +95,7 @@ class BasicAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['PHP_AUTH_PW' => 'foobar']
+            'environment' => ['PHP_AUTH_PW' => 'foobar'],
         ]);
 
         $this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -111,7 +110,7 @@ class BasicAuthenticateTest extends TestCase
     {
         $request = new ServerRequest([
             'url' => 'posts/index',
-            'environment' => ['PHP_AUTH_USER' => 'mariano']
+            'environment' => ['PHP_AUTH_USER' => 'mariano'],
         ]);
 
         $this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -128,7 +127,7 @@ class BasicAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => [
                 'PHP_AUTH_USER' => '> 1',
-                'PHP_AUTH_PW' => "' OR 1 = 1"
+                'PHP_AUTH_PW' => "' OR 1 = 1",
             ],
         ]);
 
@@ -151,9 +150,9 @@ class BasicAuthenticateTest extends TestCase
             'data' => [
                 'User' => [
                     'user' => '0',
-                    'password' => 'password'
-                ]
-            ]
+                    'password' => 'password',
+                ],
+            ],
         ]);
         $_SERVER['PHP_AUTH_USER'] = '0';
         $_SERVER['PHP_AUTH_PW'] = 'password';
@@ -198,8 +197,8 @@ class BasicAuthenticateTest extends TestCase
             'url' => 'posts/index',
             'environment' => [
                 'PHP_AUTH_USER' => 'mariano',
-                'PHP_AUTH_PW' => 'password'
-            ]
+                'PHP_AUTH_PW' => 'password',
+            ],
         ]);
 
         $result = $this->auth->authenticate($request, $this->response);
@@ -207,7 +206,7 @@ class BasicAuthenticateTest extends TestCase
             'id' => 1,
             'username' => 'mariano',
             'created' => new Time('2007-03-17 01:16:23'),
-            'updated' => new Time('2007-03-17 01:18:31')
+            'updated' => new Time('2007-03-17 01:18:31'),
         ];
         $this->assertEquals($expected, $result);
     }

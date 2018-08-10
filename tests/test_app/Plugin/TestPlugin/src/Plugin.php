@@ -15,6 +15,7 @@ namespace TestPlugin;
 
 use Cake\Core\BasePlugin;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\MiddlewareQueue;
 
 class Plugin extends BasePlugin
 {
@@ -26,7 +27,7 @@ class Plugin extends BasePlugin
         return $events;
     }
 
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         $middleware->add(function ($req, $res, $next) {
             return $next($req, $res);

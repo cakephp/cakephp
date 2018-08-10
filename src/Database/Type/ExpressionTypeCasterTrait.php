@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\Database\TypeFactory;
  */
 trait ExpressionTypeCasterTrait
 {
-
     /**
      * Conditionally converts the passed value to an ExpressionInterface object
      * if the type class implements the ExpressionTypeInterface. Otherwise,
@@ -63,7 +63,7 @@ trait ExpressionTypeCasterTrait
      * @param array $types List of type names
      * @return array
      */
-    protected function _requiresToExpressionCasting($types)
+    protected function _requiresToExpressionCasting(array $types): array
     {
         $result = [];
         $types = array_filter($types);

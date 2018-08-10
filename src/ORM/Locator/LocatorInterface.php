@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,7 @@ interface LocatorInterface
      * @param string|null $alias Alias to get config for, null for complete config.
      * @return array The config data.
      */
-    public function getConfig($alias = null);
+    public function getConfig(?string $alias = null): array;
 
     /**
      * Stores a list of options to be used when instantiating an object
@@ -50,7 +51,7 @@ interface LocatorInterface
      * @param array $options The options you want to build the table with.
      * @return \Cake\ORM\Table
      */
-    public function get($alias, array $options = []);
+    public function get(string $alias, array $options = []): Table;
 
     /**
      * Check to see if an instance exists in the registry.
@@ -58,7 +59,7 @@ interface LocatorInterface
      * @param string $alias The alias to check for.
      * @return bool
      */
-    public function exists($alias);
+    public function exists(string $alias): bool;
 
     /**
      * Set an instance.
@@ -67,14 +68,14 @@ interface LocatorInterface
      * @param \Cake\ORM\Table $object The table to set.
      * @return \Cake\ORM\Table
      */
-    public function set($alias, Table $object);
+    public function set(string $alias, Table $object): Table;
 
     /**
      * Clears the registry of configuration and instances.
      *
      * @return void
      */
-    public function clear();
+    public function clear(): void;
 
     /**
      * Removes an instance from the registry.
@@ -82,5 +83,5 @@ interface LocatorInterface
      * @param string $alias The alias to remove.
      * @return void
      */
-    public function remove($alias);
+    public function remove(string $alias): void;
 }

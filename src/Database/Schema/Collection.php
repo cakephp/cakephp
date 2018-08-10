@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,6 @@ use PDOException;
  */
 class Collection
 {
-
     /**
      * Connection object
      *
@@ -57,7 +57,7 @@ class Collection
      *
      * @return array The list of tables in the connected database/schema.
      */
-    public function listTables()
+    public function listTables(): array
     {
         list($sql, $params) = $this->_dialect->listTablesSql($this->_connection->config());
         $result = [];
@@ -83,10 +83,10 @@ class Collection
      *
      * @param string $name The name of the table to describe.
      * @param array $options The options to use, see above.
-     * @return \Cake\Database\Schema\TableSchema Object with column metadata.
+     * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
      * @throws \Cake\Database\Exception when table cannot be described.
      */
-    public function describe($name, array $options = [])
+    public function describe(string $name, array $options = []): TableSchemaInterface
     {
         $config = $this->_connection->config();
         if (strpos($name, '.')) {
@@ -116,7 +116,7 @@ class Collection
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */
-    protected function _reflect($stage, $name, $config, $schema)
+    protected function _reflect(string $stage, string $name, array $config, \Cake\Database\Schema\TableSchema $schema): void
     {
         $describeMethod = "describe{$stage}Sql";
         $convertMethod = "convert{$stage}Description";

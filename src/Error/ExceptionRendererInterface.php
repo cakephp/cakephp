@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,8 @@
  */
 namespace Cake\Error;
 
+use Psr\Http\Message\ResponseInterface;
+
 /**
  * Interface ExceptionRendererInterface
  */
@@ -24,5 +27,5 @@ interface ExceptionRendererInterface
      *
      * @return \Cake\Http\Response The response to be sent.
      */
-    public function render();
+    public function render(): ResponseInterface;
 }

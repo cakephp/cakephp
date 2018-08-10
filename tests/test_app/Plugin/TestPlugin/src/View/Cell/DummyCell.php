@@ -18,7 +18,6 @@ namespace TestPlugin\View\Cell;
  */
 class DummyCell extends \Cake\View\Cell
 {
-
     /**
      * Default cell action.
      *

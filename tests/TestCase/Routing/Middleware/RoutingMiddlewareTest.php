@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -105,9 +106,11 @@ class RoutingMiddlewareTest extends TestCase
                 'action' => 'index',
                 'plugin' => null,
                 'pass' => [],
-                '_matchedRoute' => '/articles'
+                '_matchedRoute' => '/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -130,9 +133,11 @@ class RoutingMiddlewareTest extends TestCase
                 'plugin' => null,
                 'pass' => [],
                 '_matchedRoute' => '/articles',
-                '_csrfToken' => 'i-am-groot'
+                '_csrfToken' => 'i-am-groot',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -155,11 +160,13 @@ class RoutingMiddlewareTest extends TestCase
                 'action' => 'index',
                 'plugin' => null,
                 'pass' => [],
-                '_matchedRoute' => '/app/articles'
+                '_matchedRoute' => '/app/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertNotEmpty(Router::routes());
             $this->assertEquals('/app/articles', Router::routes()[0]->template);
+
+            return $res;
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
@@ -203,6 +210,8 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals(['controller' => 'Articles'], $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -218,6 +227,7 @@ class RoutingMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
         $response = new Response();
         $next = function ($req, $res) {
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -233,12 +243,12 @@ class RoutingMiddlewareTest extends TestCase
         Router::connect('/articles-patch', [
             'controller' => 'Articles',
             'action' => 'index',
-            '_method' => 'PATCH'
+            '_method' => 'PATCH',
         ]);
         $request = ServerRequestFactory::fromGlobals(
             [
                 'REQUEST_METHOD' => 'POST',
-                'REQUEST_URI' => '/articles-patch'
+                'REQUEST_URI' => '/articles-patch',
             ],
             null,
             ['_method' => 'PATCH']
@@ -251,10 +261,12 @@ class RoutingMiddlewareTest extends TestCase
                 '_method' => 'PATCH',
                 'plugin' => null,
                 'pass' => [],
-                '_matchedRoute' => '/articles-patch'
+                '_matchedRoute' => '/articles-patch',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertEquals('PATCH', $req->getMethod());
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -288,7 +300,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/api/ping'
+            'REQUEST_URI' => '/api/ping',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -335,7 +347,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/api/articles'
+            'REQUEST_URI' => '/api/articles',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -378,7 +390,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/'
+            'REQUEST_URI' => '/',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -427,7 +439,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => $url
+            'REQUEST_URI' => $url,
         ]);
         $response = new Response();
         $next = function ($req, $res) {

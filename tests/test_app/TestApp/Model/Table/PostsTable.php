@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Test App Posts Model
  *
@@ -19,6 +20,5 @@ use Cake\ORM\Table;
 
 class PostsTable extends Table
 {
-
     protected $_table = 'posts';
 }

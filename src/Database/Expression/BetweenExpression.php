@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\Database\ValueBinder;
  */
 class BetweenExpression implements ExpressionInterface, FieldInterface
 {
-
     use ExpressionTypeCasterTrait;
     use FieldTrait;
 
@@ -75,11 +75,11 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $parts = [
             'from' => $this->_from,
-            'to' => $this->_to
+            'to' => $this->_to,
         ];
 
         $field = $this->_field;
@@ -102,7 +102,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      * {@inheritDoc}
      *
      */
-    public function traverse(callable $callable)
+    public function traverse(callable $callable): void
     {
         foreach ([$this->_field, $this->_from, $this->_to] as $part) {
             if ($part instanceof ExpressionInterface) {
@@ -119,7 +119,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      * @param string $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue($value, $generator, $type)
+    protected function _bindValue($value, $generator, $type): string
     {
         $placeholder = $generator->placeholder('c');
         $generator->bind($placeholder, $value, $type);

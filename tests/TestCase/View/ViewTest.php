@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\ServerRequest;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\View;
@@ -33,7 +33,6 @@ use TestApp\View\AppView;
  */
 class ViewPostsController extends Controller
 {
-
     /**
      * name property
      *
@@ -72,7 +71,6 @@ class ViewPostsController extends Controller
  */
 class ThemePostsController extends Controller
 {
-
     /**
      * index method
      *
@@ -92,8 +90,7 @@ class ThemePostsController extends Controller
  */
 class TestView extends AppView
 {
-
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadHelper('Html', ['mykey' => 'myval']);
     }
@@ -149,7 +146,6 @@ class TestView extends AppView
  */
 class TestBeforeAfterHelper extends Helper
 {
-
     /**
      * property property
      *
@@ -187,7 +183,6 @@ class TestBeforeAfterHelper extends Helper
  */
 class TestObjectWithToString
 {
-
     /**
      * Return string value.
      *
@@ -215,7 +210,6 @@ class TestObjectWithoutToString
  */
 class TestViewEventListenerInterface implements EventListenerInterface
 {
-
     /**
      * type of view before rendering has occurred
      *
@@ -235,11 +229,11 @@ class TestViewEventListenerInterface implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'View.beforeRender' => 'beforeRender',
-            'View.afterRender' => 'afterRender'
+            'View.afterRender' => 'afterRender',
         ];
     }
 
@@ -271,7 +265,6 @@ class TestViewEventListenerInterface implements EventListenerInterface
  */
 class ViewTest extends TestCase
 {
-
     /**
      * Fixtures used in this test.
      *
@@ -312,7 +305,7 @@ class ViewTest extends TestCase
         $this->ThemeView = $this->ThemePostsController->createView();
         $this->ThemeView->setTemplatePath('Posts');
 
-        Plugin::load(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin', 'PluginJs', 'TestTheme', 'Company/TestPluginThree']);
         Configure::write('debug', true);
     }
 
@@ -343,7 +336,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
@@ -388,7 +381,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
-            'view' => 'index'
+            'view' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -414,7 +407,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
 
         $view = new TestView(null, null, null, $viewOptions);
@@ -436,7 +429,7 @@ class ViewTest extends TestCase
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
-            'theme' => 'TestTheme'
+            'theme' => 'TestTheme',
         ];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
@@ -465,7 +458,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
-            'view' => 'index'
+            'view' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -495,7 +488,7 @@ class ViewTest extends TestCase
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
-            'theme' => 'TestTheme'
+            'theme' => 'TestTheme',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -524,7 +517,7 @@ class ViewTest extends TestCase
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
             'view' => 'index',
-            'theme' => 'TestTheme'
+            'theme' => 'TestTheme',
         ];
 
         $paths = Configure::read('App.paths.templates');
@@ -558,7 +551,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
             'viewPath' => 'Tests',
-            'view' => 'index'
+            'view' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -584,7 +577,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -607,7 +600,6 @@ class ViewTest extends TestCase
         $result = $View->getViewFileName('page.home');
         $this->assertPathEquals($expected, $result, 'Should not ruin files with dots.');
 
-        Plugin::load('TestPlugin');
         $expected = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages' . DS . 'home.ctp';
         $result = $View->getViewFileName('TestPlugin.home');
         $this->assertPathEquals($expected, $result, 'Plugin is missing the view, cascade to app.');
@@ -696,7 +688,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
-            'action' => 'display'
+            'action' => 'display',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -726,11 +718,10 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
-            'action' => 'display'
+            'action' => 'display',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
-        Plugin::load('TestPlugin');
 
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS .
             'Template' . DS . 'Layout' . DS . 'default.ctp';
@@ -815,7 +806,7 @@ class ViewTest extends TestCase
         $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages'
+            'viewPath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -835,7 +826,7 @@ class ViewTest extends TestCase
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
-            'layout' => 'whatever'
+            'layout' => 'whatever',
         ];
         $View = new TestView(null, null, null, $viewOptions);
         $View->getLayoutFileName();
@@ -849,26 +840,6 @@ class ViewTest extends TestCase
     public function testViewVars()
     {
         $this->assertEquals(['testData' => 'Some test data', 'test2' => 'more data', 'test3' => 'even more data'], $this->View->viewVars);
-    }
-
-    /**
-     * Test generation of UUIDs method
-     *
-     * @return void
-     */
-    public function testUUIDGeneration()
-    {
-        $this->deprecated(function () {
-            Router::connect('/:controller', ['action' => 'index']);
-            $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-            $this->assertEquals('form5988016017', $result);
-
-            $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-            $this->assertEquals('formc3dc6be854', $result);
-
-            $result = $this->View->uuid('form', ['controller' => 'posts', 'action' => 'index']);
-            $this->assertEquals('form28f92cc87f', $result);
-        });
     }
 
     /**
@@ -1030,7 +1001,7 @@ class ViewTest extends TestCase
             'engine' => 'File',
             'duration' => '+1 day',
             'path' => CACHE . 'views/',
-            'prefix' => ''
+            'prefix' => '',
         ]);
         Cache::clear(false, 'test_view');
 
@@ -1052,9 +1023,9 @@ class ViewTest extends TestCase
 
         $View->element('test_element', [
             'param' => 'one',
-            'foo' => 'two'
+            'foo' => 'two',
         ], [
-            'cache' => ['key' => 'custom_key']
+            'cache' => ['key' => 'custom_key'],
         ]);
         $result = Cache::read('element_custom_key', 'test_view');
         $this->assertEquals($expected, $result);
@@ -1062,7 +1033,7 @@ class ViewTest extends TestCase
         $View->setElementCache('default');
         $View->element('test_element', [
             'param' => 'one',
-            'foo' => 'two'
+            'foo' => 'two',
         ], [
             'cache' => ['config' => 'test_view'],
         ]);
@@ -1141,7 +1112,7 @@ class ViewTest extends TestCase
     public function testLoadHelpers()
     {
         $View = new View(null, null, null, [
-            'helpers' => ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']]
+            'helpers' => ['Html' => ['foo' => 'bar'], 'Form' => ['foo' => 'baz']],
         ]);
 
         $result = $View->loadHelpers();
@@ -1279,7 +1250,7 @@ class ViewTest extends TestCase
     {
         $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
-            'Html'
+            'Html',
         ]);
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
@@ -1296,7 +1267,7 @@ class ViewTest extends TestCase
     {
         $this->PostsController->viewBuilder()->setHelpers([
             'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
-            'Html'
+            'Html',
         ]);
         $this->PostsController->set('variable', 'values');
 
@@ -1984,8 +1955,7 @@ TEXT;
      */
     public function testMemoryLeakInPaths()
     {
-        $this->skipIf(env('CODECOVERAGE') == 1, 'Running coverage this causes this tests to fail sometimes.');
-        $this->ThemeController->setPlugin(null);
+        $this->skipIf((bool)env('CODECOVERAGE'), 'Running coverage this causes this tests to fail sometimes.');
         $this->ThemeController->setName('Posts');
 
         $View = $this->ThemeController->createView();
@@ -2135,18 +2105,5 @@ TEXT;
 
         $layout = $this->View->getLayout();
         $this->assertSame($layout, 'foo');
-    }
-
-    /**
-     * Test testHasRendered()
-     *
-     * @return void
-     */
-    public function testHasRendered()
-    {
-        $this->assertFalse($this->View->hasRendered());
-
-        $this->View->render('index');
-        $this->assertTrue($this->View->hasRendered());
     }
 }

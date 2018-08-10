@@ -9,7 +9,6 @@ use Exception;
  */
 class FixturizedTestCase extends TestCase
 {
-
     /**
      * Fixtures to use in this test
      * @var array

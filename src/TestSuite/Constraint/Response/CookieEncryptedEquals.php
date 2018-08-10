@@ -15,7 +15,6 @@ namespace Cake\TestSuite\Constraint\Response;
 
 use Cake\Http\Response;
 use Cake\Utility\CookieCryptTrait;
-use InvalidArgumentException;
 
 /**
  * CookieEncryptedEquals
@@ -39,7 +38,7 @@ class CookieEncryptedEquals extends CookieEquals
     /**
      * Constructor.
      *
-     * @param Response $response Response
+     * @param \Cake\Http\Response $response A response instance.
      * @param string $cookieName Cookie name
      * @param string $mode Mode
      * @param string $key Key

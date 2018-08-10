@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ namespace Cake\Mailer;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
+use Cake\View\ViewBuilder;
 
 /**
  * Mailer base class.
@@ -60,7 +62,7 @@ use Cake\Mailer\Exception\MissingActionException;
  * registration event:
  *
  * ```
- * public function implementedEvents()
+ * public function implementedEvents(): array
  * {
  *     return [
  *         'Model.afterSave' => 'onRegistration',
@@ -137,7 +139,6 @@ use Cake\Mailer\Exception\MissingActionException;
  */
 abstract class Mailer implements EventListenerInterface
 {
-
     use ModelAwareTrait;
 
     /**
@@ -167,7 +168,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param \Cake\Mailer\Email|null $email Email instance.
      */
-    public function __construct(Email $email = null)
+    public function __construct(?Email $email = null)
     {
         if ($email === null) {
             $email = new Email();
@@ -182,7 +183,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         if (!static::$name) {
             static::$name = str_replace(
@@ -200,7 +201,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return \Cake\View\ViewBuilder
      */
-    public function viewBuilder()
+    public function viewBuilder(): ViewBuilder
     {
         return $this->_email->viewBuilder();
     }
@@ -229,7 +230,7 @@ abstract class Mailer implements EventListenerInterface
      * @param mixed $value View variable value.
      * @return $this
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): self
     {
         $this->_email->setViewVars(is_string($key) ? [$key => $value] : $key);
 
@@ -246,7 +247,7 @@ abstract class Mailer implements EventListenerInterface
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
-    public function send($action, $args = [], $headers = [])
+    public function send(string $action, array $args = [], array $headers = []): array
     {
         try {
             if (!method_exists($this, $action)) {
@@ -276,7 +277,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    protected function reset()
+    protected function reset(): self
     {
         $this->_email = clone $this->_clonedEmail;
 
@@ -288,7 +289,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

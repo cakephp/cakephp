@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * NumberHelperTest file
  *
@@ -27,7 +28,6 @@ use Cake\View\View;
  */
 class NumberHelperTestObject extends NumberHelper
 {
-
     public function attach(NumberMock $cakeNumber)
     {
         $this->_engine = $cakeNumber;
@@ -51,7 +51,6 @@ class NumberMock
  */
 class NumberHelperTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -74,6 +73,7 @@ class NumberHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+        Plugin::unload();
         static::setAppNamespace($this->_appNamespace);
         unset($this->View);
     }
@@ -113,8 +113,9 @@ class NumberHelperTest extends TestCase
         $helper->attach($number);
         $number->expects($this->at(0))
             ->method($method)
-            ->with(12.3);
-        $helper->{$method}(12.3, ['options']);
+            ->with(12.3)
+            ->willReturn('');
+        $helper->{$method}(12.3);
     }
 
     /**
@@ -127,7 +128,7 @@ class NumberHelperTest extends TestCase
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
         $this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
         $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());
         Plugin::unload('TestPlugin');

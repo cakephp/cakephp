@@ -48,7 +48,7 @@ class EmailTraitTest extends TestCase
             'from' => 'alternate@example.com',
         ]);
         Email::setConfigTransport('test_tools', [
-            'className' => TestEmailTransport::class
+            'className' => TestEmailTransport::class,
         ]);
 
         TestEmailTransport::replaceAllTransports();

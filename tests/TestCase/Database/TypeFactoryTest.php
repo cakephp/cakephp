@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,6 @@ use TestApp\Database\Type\FooType;
  */
 class TypeFactoryTest extends TestCase
 {
-
     /**
      * Original type map
      *
@@ -190,7 +190,7 @@ class TypeFactoryTest extends TestCase
         );
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->assertSame($integer, $type->toPHP($integer, $driver));
         $this->assertSame($integer, $type->toPHP('' . $integer, $driver));
         $this->assertSame(3, $type->toPHP(3.57, $driver));
@@ -205,7 +205,7 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_INT, $type->toStatement($integer, $driver));
     }
 
@@ -217,7 +217,7 @@ class TypeFactoryTest extends TestCase
     public function testDecimalToPHP()
     {
         $type = TypeFactory::build('decimal');
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
 
         $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
         $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
@@ -233,7 +233,7 @@ class TypeFactoryTest extends TestCase
     {
         $type = TypeFactory::build('decimal');
         $string = '12.55';
-        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->assertEquals(PDO::PARAM_STR, $type->toStatement($string, $driver));
     }
 

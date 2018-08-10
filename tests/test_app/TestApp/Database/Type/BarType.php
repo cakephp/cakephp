@@ -18,7 +18,7 @@ use Cake\Database\Type\StringType;
 
 class BarType extends StringType
 {
-    public function getBaseType()
+    public function getBaseType(): string
     {
         return 'text';
     }

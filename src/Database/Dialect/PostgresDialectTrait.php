@@ -15,6 +15,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\SqlDialectTrait;
 
@@ -26,7 +27,6 @@ use Cake\Database\SqlDialectTrait;
  */
 trait PostgresDialectTrait
 {
-
     use SqlDialectTrait;
 
     /**
@@ -88,7 +88,7 @@ trait PostgresDialectTrait
         $namespace = 'Cake\Database\Expression';
 
         return [
-            $namespace . '\FunctionExpression' => '_transformFunctionExpression'
+            $namespace . '\FunctionExpression' => '_transformFunctionExpression',
         ];
     }
 
@@ -163,9 +163,9 @@ trait PostgresDialectTrait
      * Used by Cake\Database\Schema package to reflect schema and
      * generate schema.
      *
-     * @return \Cake\Database\Schema\PostgresSchema
+     * @return \Cake\Database\Schema\BaseSchema
      */
-    public function schemaDialect()
+    public function schemaDialect(): BaseSchema
     {
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new PostgresSchema($this);
@@ -177,7 +177,7 @@ trait PostgresDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function disableForeignKeySQL()
+    public function disableForeignKeySQL(): string
     {
         return 'SET CONSTRAINTS ALL DEFERRED';
     }
@@ -185,7 +185,7 @@ trait PostgresDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function enableForeignKeySQL()
+    public function enableForeignKeySQL(): string
     {
         return 'SET CONSTRAINTS ALL IMMEDIATE';
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,8 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
 use Cake\ORM\Association;
+use Cake\ORM\Query;
+use Closure;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -28,7 +31,6 @@ use RuntimeException;
  */
 class SelectLoader
 {
-
     /**
      * The alias of the association loading the results
      *
@@ -108,7 +110,7 @@ class SelectLoader
         $this->bindingKey = $options['bindingKey'];
         $this->finder = $options['finder'];
         $this->associationType = $options['associationType'];
-        $this->sort = isset($options['sort']) ? $options['sort'] : null;
+        $this->sort = $options['sort'] ?? null;
     }
 
     /**
@@ -118,7 +120,7 @@ class SelectLoader
      * @param array $options Same options as `Association::eagerLoader()`
      * @return \Closure
      */
-    public function buildEagerLoader(array $options)
+    public function buildEagerLoader(array $options): Closure
     {
         $options += $this->_defaultOptions();
         $fetchQuery = $this->_buildQuery($options);
@@ -132,14 +134,14 @@ class SelectLoader
      *
      * @return array
      */
-    protected function _defaultOptions()
+    protected function _defaultOptions(): array
     {
         return [
             'foreignKey' => $this->foreignKey,
             'conditions' => [],
             'strategy' => $this->strategy,
             'nestKey' => $this->alias,
-            'sort' => $this->sort
+            'sort' => $this->sort,
         ];
     }
 
@@ -152,7 +154,7 @@ class SelectLoader
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
-    protected function _buildQuery($options)
+    protected function _buildQuery(array $options): Query
     {
         $key = $this->_linkField($options);
         $filter = $options['keys'];
@@ -216,7 +218,7 @@ class SelectLoader
      * and options as value.
      * @return array
      */
-    protected function _extractFinder($finderData)
+    protected function _extractFinder($finderData): array
     {
         $finderData = (array)$finderData;
 
@@ -237,7 +239,7 @@ class SelectLoader
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function _assertFieldsPresent($fetchQuery, $key)
+    protected function _assertFieldsPresent(Query $fetchQuery, array $key): void
     {
         $select = $fetchQuery->aliasFields($fetchQuery->clause('select'));
         if (empty($select)) {
@@ -280,7 +282,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
-    protected function _addFilteringJoin($query, $key, $subquery)
+    protected function _addFilteringJoin(Query $query, $key, $subquery): Query
     {
         $filter = [];
         $aliasedTable = $this->sourceAlias;
@@ -318,13 +320,13 @@ class SelectLoader
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */
-    protected function _addFilteringCondition($query, $key, $filter)
+    protected function _addFilteringCondition(Query $query, $key, $filter): Query
     {
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
         }
 
-        $conditions = isset($conditions) ? $conditions : [$key . ' IN' => $filter];
+        $conditions = $conditions ?? [$key . ' IN' => $filter];
 
         return $query->andWhere($conditions);
     }
@@ -339,7 +341,7 @@ class SelectLoader
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
      */
-    protected function _createTupleCondition($query, $keys, $filter, $operator)
+    protected function _createTupleCondition(Query $query, array $keys, $filter, $operator): TupleComparison
     {
         $types = [];
         $defaults = $query->getDefaultTypes();
@@ -359,7 +361,7 @@ class SelectLoader
      * @param array $options The options for getting the link field.
      * @return string|array
      */
-    protected function _linkField($options)
+    protected function _linkField(array $options)
     {
         $links = [];
         $name = $this->alias;
@@ -393,7 +395,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $query the original query used to load source records
      * @return \Cake\ORM\Query
      */
-    protected function _buildSubquery($query)
+    protected function _buildSubquery(Query $query): Query
     {
         $filterQuery = clone $query;
         $filterQuery->enableAutoFields(false);
@@ -424,7 +426,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $query The query to get fields from.
      * @return array The list of fields for the subquery.
      */
-    protected function _subqueryFields($query)
+    protected function _subqueryFields(Query $query): array
     {
         $keys = (array)$this->bindingKey;
 
@@ -438,7 +440,7 @@ class SelectLoader
         $order = $query->clause('order');
         if ($order) {
             $columns = $query->clause('select');
-            $order->iterateParts(function ($direction, $field) use (&$fields, $columns) {
+            $order->iterateParts(function ($direction, $field) use (&$fields, $columns): void {
                 if (isset($columns[$field])) {
                     $fields[$field] = $columns[$field];
                 }
@@ -456,7 +458,7 @@ class SelectLoader
      * @param array $options The options passed to the eager loader
      * @return array
      */
-    protected function _buildResultMap($fetchQuery, $options)
+    protected function _buildResultMap(Query $fetchQuery, array $options): array
     {
         $resultMap = [];
         $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
@@ -490,7 +492,7 @@ class SelectLoader
      * @param array $options The options passed to the eagerLoader method
      * @return \Closure
      */
-    protected function _resultInjector($fetchQuery, $resultMap, $options)
+    protected function _resultInjector(Query $fetchQuery, array $resultMap, array $options): Closure
     {
         $keys = $this->associationType === Association::MANY_TO_ONE ?
             $this->foreignKey :
@@ -528,7 +530,7 @@ class SelectLoader
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */
-    protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey)
+    protected function _multiKeysInjector(array $resultMap, array $sourceKeys, string $nestKey): Closure
     {
         return function ($row) use ($resultMap, $sourceKeys, $nestKey) {
             $values = [];

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Cake\Utility\Hash;
  */
 trait InstanceConfigTrait
 {
-
     /**
      * Runtime config
      *
@@ -113,7 +113,7 @@ trait InstanceConfigTrait
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Config value being read.
      */
-    public function getConfig($key = null, $default = null)
+    public function getConfig(?string $key = null, $default = null)
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
@@ -169,14 +169,14 @@ trait InstanceConfigTrait
      * @param string|null $key Key to read.
      * @return mixed
      */
-    protected function _configRead($key)
+    protected function _configRead(?string $key)
     {
         if ($key === null) {
             return $this->_config;
         }
 
         if (strpos($key, '.') === false) {
-            return isset($this->_config[$key]) ? $this->_config[$key] : null;
+            return $this->_config[$key] ?? null;
         }
 
         $return = $this->_config;
@@ -203,7 +203,7 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
      */
-    protected function _configWrite($key, $value, $merge = false)
+    protected function _configWrite($key, $value, $merge = false): void
     {
         if (is_string($key) && $value === null) {
             $this->_configDelete($key);
@@ -261,7 +261,7 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\Exception if attempting to clobber existing config
      */
-    protected function _configDelete($key)
+    protected function _configDelete(string $key): void
     {
         if (strpos($key, '.') === false) {
             unset($this->_config[$key]);

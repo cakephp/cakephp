@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,16 +19,17 @@ use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\ValuesExpression;
-use Cake\Database\TypeFactory;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeInterface;
 use Cake\Database\Type\StringType;
+use Cake\Database\TypeFactory;
+use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
 class TestType extends StringType implements ExpressionTypeInterface
 {
-
-    public function toExpression($value)
+    public function toExpression($value): ExpressionInterface
     {
         return new FunctionExpression('CONCAT', [$value, ' - foo']);
     }
@@ -40,7 +42,6 @@ class TestType extends StringType implements ExpressionTypeInterface
  */
 class ExpressionTypeCastingTest extends TestCase
 {
-
     /**
      * Setups a mock for FunctionsBuilder
      *
@@ -177,7 +178,7 @@ class ExpressionTypeCastingTest extends TestCase
      */
     public function testValuesExpression()
     {
-        $values = new ValuesExpression(['title'], ['title' => 'test']);
+        $values = new ValuesExpression(['title'], new TypeMap(['title' => 'test']));
         $values->add(['title' => 'foo']);
         $values->add(['title' => 'bar']);
 

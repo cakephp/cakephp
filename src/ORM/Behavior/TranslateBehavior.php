@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ use Cake\I18n\I18n;
 use Cake\ORM\Behavior;
 use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
+use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -98,7 +100,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array $config The config for this behavior.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->getStrategy();
     }
@@ -172,7 +174,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [
             'Model.beforeFind' => 'beforeFind',
@@ -188,7 +190,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * {@inheritDoc}
      */
-    public function buildMarshalMap($marshaller, $map, $options)
+    public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {
         return $this->getStrategy()->buildMarshalMap($marshaller, $map, $options);
     }
@@ -213,7 +215,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#retrieving-one-language-without-using-i18n-locale
      * @link https://book.cakephp.org/3.0/en/orm/behaviors/translate.html#saving-in-another-language
      */
-    public function setLocale($locale)
+    public function setLocale(?string $locale)
     {
         $this->getStrategy()->setLocale($locale);
 
@@ -230,7 +232,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @see \Cake\I18n\I18n::getLocale()
      * @see \Cake\ORM\Behavior\TranslateBehavior::setLocale()
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->getStrategy()->getLocale();
     }
@@ -245,7 +247,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param string $field Field name to be aliased.
      * @return string
      */
-    public function translationField($field)
+    public function translationField(string $field): string
     {
         return $this->getStrategy()->translationField($field);
     }
@@ -272,7 +274,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array $options Options
      * @return \Cake\ORM\Query
      */
-    public function findTranslations(Query $query, array $options)
+    public function findTranslations(Query $query, array $options): Query
     {
         $locales = $options['locales'] ?? [];
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();

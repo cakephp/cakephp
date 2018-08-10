@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -96,42 +97,6 @@ class CommandRunnerTest extends TestCase
         $events = new EventManager();
         $runner = new CommandRunner($app);
         $runner->setEventManager($events);
-    }
-
-    /**
-     * Test that the console hook not returning a command collection
-     * raises an error.
-     *
-     * @return void
-     */
-    public function testRunConsoleHookFailure()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The application\'s `console` method did not return a CommandCollection.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['console', 'middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $runner = new CommandRunner($app);
-        $runner->run(['cake', '-h']);
-    }
-
-    /**
-     * Test that the console hook not returning a command collection
-     * raises an error.
-     *
-     * @return void
-     */
-    public function testRunPluginConsoleHookFailure()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The application\'s `pluginConsole` method did not return a CommandCollection.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['pluginConsole', 'middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $runner = new CommandRunner($app);
-        $runner->run(['cake', '-h']);
     }
 
     /**
@@ -440,7 +405,7 @@ class CommandRunnerTest extends TestCase
         $app = $this->getMockBuilder(BaseApplication::class)
             ->setMethods([
                 'middleware', 'bootstrap', 'routes',
-                'pluginBootstrap', 'pluginConsole', 'pluginRoutes'
+                'pluginBootstrap', 'pluginConsole', 'pluginRoutes',
             ])
             ->setConstructorArgs([$this->config])
             ->getMock();

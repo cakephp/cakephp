@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use TestPlugin\Shell\Helper\ExampleHelper;
  */
 class HelperRegistryTest extends TestCase
 {
-
     /**
      * setUp
      *
@@ -112,7 +112,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->helpers->load('SimpleAliased', ['className' => 'Simple']);
         $this->assertInstanceOf(SimpleHelper::class, $result);
@@ -127,5 +127,6 @@ class HelperRegistryTest extends TestCase
 
         $result = $this->helpers->loaded();
         $this->assertEquals(['SimpleAliased', 'SomeHelper'], $result, 'loaded() results are wrong.');
+        Plugin::unload();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\Datasource\ConnectionInterface;
  */
 class CachedCollection extends Collection
 {
-
     /**
      * The name of the cache config key to use for caching table metadata,
      * of false if disabled.
@@ -47,7 +47,7 @@ class CachedCollection extends Collection
      * {@inheritDoc}
      *
      */
-    public function describe($name, array $options = [])
+    public function describe(string $name, array $options = []): TableSchemaInterface
     {
         $options += ['forceRefresh' => false];
         $cacheConfig = $this->getCacheMetadata();
@@ -75,7 +75,7 @@ class CachedCollection extends Collection
      * @param string $name The name to get a cache key for.
      * @return string The cache key.
      */
-    public function cacheKey($name)
+    public function cacheKey(string $name): string
     {
         return $this->_connection->configName() . '_' . $name;
     }
@@ -84,7 +84,7 @@ class CachedCollection extends Collection
      * Sets the cache config name to use for caching table metadata, or
      * disables it if false is passed.
      *
-     * @param bool $enable Whether or not to enable caching
+     * @param string|bool $enable Whether or not to enable caching
      * @return $this
      */
     public function setCacheMetadata($enable)

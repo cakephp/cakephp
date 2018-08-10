@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Auth;
 
-use Cake\Auth\AbstractPasswordHasher;
 use Cake\Core\App;
 use RuntimeException;
 
@@ -24,7 +23,6 @@ use RuntimeException;
  */
 class PasswordHasherFactory
 {
-
     /**
      * Returns password hasher object out of a hasher name or a configuration array
      *
@@ -46,7 +44,7 @@ class PasswordHasherFactory
         }
 
         $className = App::className($class, 'Auth', 'PasswordHasher');
-        if ($className === false) {
+        if ($className === null) {
             throw new RuntimeException(sprintf('Password hasher class "%s" was not found.', $class));
         }
 

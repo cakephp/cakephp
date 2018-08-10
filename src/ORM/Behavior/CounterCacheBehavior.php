@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
@@ -100,7 +102,6 @@ use RuntimeException;
  */
 class CounterCacheBehavior extends Behavior
 {
-
     /**
      * Store the fields which should be ignored
      *
@@ -118,7 +119,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity, $options)
+    public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -155,7 +156,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity, $options)
+    public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -175,7 +176,7 @@ class CounterCacheBehavior extends Behavior
      * @param \ArrayObject $options The options for the query
      * @return void
      */
-    public function afterDelete(EventInterface $event, EntityInterface $entity, $options)
+    public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         if (isset($options['ignoreCounterCache']) && $options['ignoreCounterCache'] === true) {
             return;
@@ -191,7 +192,7 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return void
      */
-    protected function _processAssociations(EventInterface $event, EntityInterface $entity)
+    protected function _processAssociations(EventInterface $event, EntityInterface $entity): void
     {
         foreach ($this->_config as $assoc => $settings) {
             $assoc = $this->_table->getAssociation($assoc);
@@ -209,7 +210,7 @@ class CounterCacheBehavior extends Behavior
      * @return void
      * @throws \RuntimeException If invalid callable is passed.
      */
-    protected function _processAssociation(EventInterface $event, EntityInterface $entity, Association $assoc, array $settings)
+    protected function _processAssociation(EventInterface $event, EntityInterface $entity, Association $assoc, array $settings): void
     {
         $foreignKeys = (array)$assoc->getForeignKey();
         $primaryKeys = (array)$assoc->getBindingKey();
@@ -268,7 +269,7 @@ class CounterCacheBehavior extends Behavior
      * @param array $conditions Additional conditions given to the query
      * @return int The number of relations matching the given config and conditions
      */
-    protected function _getCount(array $config, array $conditions)
+    protected function _getCount(array $config, array $conditions): int
     {
         $finder = 'all';
         if (!empty($config['finder'])) {

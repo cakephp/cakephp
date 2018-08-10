@@ -29,7 +29,6 @@ use Traversable;
  */
 class FilterIterator extends Collection
 {
-
     /**
      * The callback used to filter the elements in this collection
      *
@@ -69,6 +68,7 @@ class FilterIterator extends Collection
      */
     public function unwrap(): Traversable
     {
+        /** @var \IteratorIterator $filter */
         $filter = $this->getInnerIterator();
         $iterator = $filter->getInnerIterator();
 

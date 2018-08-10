@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,18 +16,16 @@
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception;
-use Cake\Database\Schema\TableSchema;
 
 /**
  * Schema management/reflection features for Postgres.
  */
 class PostgresSchema extends BaseSchema
 {
-
     /**
      * {@inheritDoc}
      */
-    public function listTablesSql($config)
+    public function listTablesSql(array $config): array
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name';
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
@@ -37,7 +36,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeColumnSql($tableName, $config)
+    public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = 'SELECT DISTINCT table_schema AS schema,
             column_name AS name,
@@ -74,7 +73,7 @@ class PostgresSchema extends BaseSchema
      * @throws \Cake\Database\Exception when column cannot be parsed.
      * @return array Array of column information.
      */
-    protected function _convertColumn($column)
+    protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (empty($matches)) {
@@ -146,7 +145,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertColumnDescription(TableSchema $schema, $row)
+    public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn($row['type']);
 
@@ -166,7 +165,7 @@ class PostgresSchema extends BaseSchema
             'default' => $this->_defaultValue($row['default']),
             'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
-            'comment' => $row['comment']
+            'comment' => $row['comment'],
         ];
         $field['length'] = $row['char_length'] ?: $field['length'];
 
@@ -183,8 +182,8 @@ class PostgresSchema extends BaseSchema
      * Postgres includes sequence data and casting information in default values.
      * We need to remove those.
      *
-     * @param string|null $default The default value.
-     * @return string|null
+     * @param string|int|null $default The default value.
+     * @return string|int|null
      */
     protected function _defaultValue($default)
     {
@@ -211,7 +210,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeIndexSql($tableName, $config)
+    public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = 'SELECT
         c2.relname,
@@ -239,7 +238,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertIndexDescription(TableSchema $schema, $row)
+    public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $type = TableSchema::INDEX_INDEX;
         $name = $row['relname'];
@@ -258,7 +257,7 @@ class PostgresSchema extends BaseSchema
         if (!$index) {
             $index = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $index['columns'][] = $row['attname'];
@@ -274,13 +273,13 @@ class PostgresSchema extends BaseSchema
      * @param array $row The metadata record to update with.
      * @return void
      */
-    protected function _convertConstraint($schema, $name, $type, $row)
+    protected function _convertConstraint(\Cake\Database\Schema\TableSchema $schema, string $name, string $type, array $row): void
     {
         $constraint = $schema->getConstraint($name);
         if (!$constraint) {
             $constraint = [
                 'type' => $type,
-                'columns' => []
+                'columns' => [],
             ];
         }
         $constraint['columns'][] = $row['attname'];
@@ -290,7 +289,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function describeForeignKeySql($tableName, $config)
+    public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = 'SELECT
         c.conname AS name,
@@ -318,7 +317,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function convertForeignKeyDescription(TableSchema $schema, $row)
+    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $data = [
             'type' => TableSchema::CONSTRAINT_FOREIGN,
@@ -333,7 +332,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    protected function _convertOnClause($clause)
+    protected function _convertOnClause(string $clause): ?string
     {
         if ($clause === 'r') {
             return TableSchema::ACTION_RESTRICT;
@@ -351,7 +350,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function columnSql(TableSchema $schema, $name)
+    public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
@@ -368,7 +367,7 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_DATETIME => ' TIMESTAMP',
             TableSchema::TYPE_TIMESTAMP => ' TIMESTAMP',
             TableSchema::TYPE_UUID => ' UUID',
-            TableSchema::TYPE_JSON => ' JSONB'
+            TableSchema::TYPE_JSON => ' JSONB',
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -377,7 +376,7 @@ class PostgresSchema extends BaseSchema
 
         if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
             $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' INTEGER' : ' BIGINT';
-            if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
+            if ($schema->primaryKey() === [$name] || $data['autoIncrement'] === true) {
                 $type = $data['type'] === TableSchema::TYPE_INTEGER ? ' SERIAL' : ' BIGSERIAL';
                 unset($data['null'], $data['default']);
             }
@@ -397,7 +396,7 @@ class PostgresSchema extends BaseSchema
                 $type = ' CHAR';
             }
             $out .= $type;
-            if (isset($data['length']) && $data['length'] != 36) {
+            if (isset($data['length']) && $data['length'] !== 36) {
                 $out .= '(' . (int)$data['length'] . ')';
             }
         }
@@ -442,7 +441,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function addConstraintSql(TableSchema $schema)
+    public function addConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
         $sql = [];
@@ -461,7 +460,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function dropConstraintSql(TableSchema $schema)
+    public function dropConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
         $sql = [];
@@ -481,7 +480,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function indexSql(TableSchema $schema, $name)
+    public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
         $columns = array_map(
@@ -500,7 +499,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function constraintSql(TableSchema $schema, $name)
+    public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
@@ -521,7 +520,7 @@ class PostgresSchema extends BaseSchema
      * @param array $data Key data.
      * @return string
      */
-    protected function _keySql($prefix, $data)
+    protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
@@ -544,7 +543,7 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function createTableSql(TableSchema $schema, $columns, $constraints, $indexes)
+    public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
@@ -573,12 +572,12 @@ class PostgresSchema extends BaseSchema
     /**
      * {@inheritDoc}
      */
-    public function truncateTableSql(TableSchema $schema)
+    public function truncateTableSql(TableSchema $schema): array
     {
         $name = $this->_driver->quoteIdentifier($schema->name());
 
         return [
-            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name)
+            sprintf('TRUNCATE %s RESTART IDENTITY CASCADE', $name),
         ];
     }
 
@@ -588,7 +587,7 @@ class PostgresSchema extends BaseSchema
      * @param \Cake\Database\Schema\TableSchema $schema Table instance
      * @return array SQL statements to drop a table.
      */
-    public function dropTableSql(TableSchema $schema)
+    public function dropTableSql(TableSchema $schema): array
     {
         $sql = sprintf(
             'DROP TABLE %s CASCADE',

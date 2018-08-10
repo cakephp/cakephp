@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,6 @@ use RuntimeException;
  */
 class MessagesFileLoader
 {
-
     /**
      * The package (domain) name.
      *
@@ -90,7 +90,7 @@ class MessagesFileLoader
      * @param string $extension The file extension to use. This will also be mapped
      * to a messages parser class.
      */
-    public function __construct($name, $locale, $extension = 'po')
+    public function __construct(string $name, string $locale, string $extension = 'po')
     {
         $this->_name = $name;
         $this->_locale = $locale;
@@ -148,13 +148,13 @@ class MessagesFileLoader
      *
      * @return array The list of folders where the translation file should be looked for
      */
-    public function translationsFolders()
+    public function translationsFolders(): array
     {
         $locale = Locale::parseLocale($this->_locale) + ['region' => null];
 
         $folders = [
             implode('_', [$locale['language'], $locale['region']]),
-            $locale['language']
+            $locale['language'],
         ];
 
         $searchPaths = [];
@@ -171,7 +171,7 @@ class MessagesFileLoader
 
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
-        if (Plugin::loaded($pluginName)) {
+        if (Plugin::isLoaded($pluginName)) {
             $basePath = Plugin::classPath($pluginName) . 'Locale' . DIRECTORY_SEPARATOR;
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;

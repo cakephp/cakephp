@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use PDO;
  */
 class MysqlTest extends TestCase
 {
-
     /**
      * setup
      *
@@ -98,7 +98,7 @@ class MysqlTest extends TestCase
             'init' => [
                 'Execute this',
                 'this too',
-            ]
+            ],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->setMethods(['_connect', 'getConnection'])

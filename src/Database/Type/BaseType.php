@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use PDO;
  */
 abstract class BaseType implements TypeInterface
 {
-
     /**
      * Identifier name for this type
      *
@@ -36,7 +36,7 @@ abstract class BaseType implements TypeInterface
      *
      * @param string|null $name The name identifying this type
      */
-    public function __construct($name = null)
+    public function __construct(?string $name = null)
     {
         $this->_name = $name;
     }
@@ -44,7 +44,7 @@ abstract class BaseType implements TypeInterface
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->_name;
     }
@@ -52,7 +52,7 @@ abstract class BaseType implements TypeInterface
     /**
      * {@inheritDoc}
      */
-    public function getBaseType()
+    public function getBaseType(): string
     {
         return $this->_name;
     }

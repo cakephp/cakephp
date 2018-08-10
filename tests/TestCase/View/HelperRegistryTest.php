@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\View\View;
  */
 class HtmlAliasHelper extends Helper
 {
-
     public function afterRender($viewFile)
     {
     }
@@ -36,7 +36,6 @@ class HtmlAliasHelper extends Helper
  */
 class HelperRegistryTest extends TestCase
 {
-
     /**
      * @var \Cake\View\HelperRegistry
      */
@@ -101,7 +100,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
         $this->View->setPlugin('TestPlugin');
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->OtherHelper;
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
     }
@@ -154,7 +153,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadWithAliasAndPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->load('SomeOther', ['className' => 'TestPlugin.OtherHelper']);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);
@@ -195,7 +194,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadPluginHelper()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helpers->load('TestPlugin.OtherHelper');
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
@@ -209,7 +208,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadPluginHelperDottedAlias()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helpers->load('thing.helper', [
             'className' => 'TestPlugin.OtherHelper',
@@ -362,12 +361,12 @@ class HelperRegistryTest extends TestCase
         $config = [
             'SomeHelper' => [
                 'value' => 1,
-                'value2' => 2
+                'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
                 'value' => 1,
-                'value2' => 2
-            ]
+                'value2' => 2,
+            ],
         ];
         $result = $this->Helpers->normalizeArray($config);
         $expected = [
@@ -375,15 +374,15 @@ class HelperRegistryTest extends TestCase
                 'class' => 'SomeHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
             'SomeOtherHelper' => [
                 'class' => 'Plugin.SomeOtherHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
         ];
         $this->assertEquals($expected, $result);
@@ -400,12 +399,12 @@ class HelperRegistryTest extends TestCase
         $config = [
             'SomeHelper' => [
                 'value' => 1,
-                'value2' => 2
+                'value2' => 2,
             ],
             'Plugin.SomeOtherHelper' => [
                 'value' => 1,
-                'value2' => 2
-            ]
+                'value2' => 2,
+            ],
         ];
 
         $result1 = $this->Helpers->normalizeArray($config);
@@ -415,15 +414,15 @@ class HelperRegistryTest extends TestCase
                 'class' => 'SomeHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
             'SomeOtherHelper' => [
                 'class' => 'Plugin.SomeOtherHelper',
                 'config' => [
                     'value' => 1,
-                    'value2' => 2
-                ]
+                    'value2' => 2,
+                ],
             ],
         ];
         $this->assertEquals($expected, $result2);

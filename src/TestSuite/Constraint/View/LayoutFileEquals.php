@@ -20,7 +20,6 @@ namespace Cake\TestSuite\Constraint\View;
  */
 class LayoutFileEquals extends TemplateFileEquals
 {
-
     /**
      * Assertion message
      *

@@ -12,8 +12,10 @@
  */
 namespace TestApp\Http;
 
+use Cake\Console\CommandCollection;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Command\DemoCommand;
@@ -28,17 +30,17 @@ class EventApplication extends BaseApplication
         return $eventManager;
     }
 
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         return $middleware;
     }
 
-    public function console($commands)
+    public function console(CommandCollection $commands): CommandCollection
     {
         return $commands->addMany(['ex' => DemoCommand::class]);
     }
 
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, $next)
+    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface
     {
         return $res;
     }

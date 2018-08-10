@@ -17,6 +17,7 @@ namespace Cake\ORM\Behavior\Translate;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
+use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 
 /**
@@ -141,7 +142,7 @@ trait TranslateStrategyTrait
      * @param array $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
-    public function buildMarshalMap($marshaller, $map, $options)
+    public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {
         if (isset($options['translations']) && !$options['translations']) {
             return [];

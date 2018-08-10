@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\View\Exception\MissingCellException;
  */
 trait CellTrait
 {
-
     /**
      * Renders the given cell.
      *
@@ -55,7 +55,7 @@ trait CellTrait
      * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
      * @throws \BadMethodCallException If Cell class does not specified cell action.
      */
-    protected function cell($cell, array $data = [], array $options = [])
+    protected function cell(string $cell, array $data = [], array $options = []): Cell
     {
         $parts = explode('::', $cell);
 
@@ -86,11 +86,11 @@ trait CellTrait
      *
      * @param string $className The cell classname.
      * @param string $action The action name.
-     * @param string $plugin The plugin name.
+     * @param string|null $plugin The plugin name.
      * @param array $options The constructor options for the cell.
      * @return \Cake\View\Cell
      */
-    protected function _createCell($className, $action, $plugin, $options)
+    protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
         /* @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);

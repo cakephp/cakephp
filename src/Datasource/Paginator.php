@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -43,7 +44,7 @@ class Paginator implements PaginatorInterface
         'page' => 1,
         'limit' => 20,
         'maxLimit' => 100,
-        'whitelist' => ['limit', 'sort', 'page', 'direction']
+        'whitelist' => ['limit', 'sort', 'page', 'direction'],
     ];
 
     /**
@@ -222,7 +223,7 @@ class Paginator implements PaginatorInterface
             'pageCount' => $pageCount,
             'sort' => $options['sort'],
             'direction' => current($order),
-            'limit' => $defaults['limit'] != $limit ? $limit : null,
+            'limit' => $defaults['limit'] !== $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'scope' => $options['scope'],
@@ -234,7 +235,7 @@ class Paginator implements PaginatorInterface
         if ($requestedPage > $page) {
             throw new PageOutOfBoundsException([
                 'requestedPage' => $requestedPage,
-                'pagingParams' => $this->_pagingParams
+                'pagingParams' => $this->_pagingParams,
             ]);
         }
 
@@ -248,7 +249,7 @@ class Paginator implements PaginatorInterface
      * @return array An array containing in the first position the finder name
      *   and in the second the options to be passed to it.
      */
-    protected function _extractFinder($options)
+    protected function _extractFinder(array $options): array
     {
         $type = !empty($options['finder']) ? $options['finder'] : 'all';
         unset($options['finder'], $options['maxLimit']);
@@ -266,7 +267,7 @@ class Paginator implements PaginatorInterface
      *
      * @return array
      */
-    public function getPagingParams()
+    public function getPagingParams(): array
     {
         return $this->_pagingParams;
     }
@@ -287,7 +288,7 @@ class Paginator implements PaginatorInterface
      * @param array $settings The settings to merge with the request data.
      * @return array Array of merged options.
      */
-    public function mergeOptions($params, $settings)
+    public function mergeOptions(array $params, array $settings): array
     {
         if (!empty($settings['scope'])) {
             $scope = $settings['scope'];
@@ -307,15 +308,15 @@ class Paginator implements PaginatorInterface
      * @return array An array of pagination settings for a model,
      *   or the general settings.
      */
-    public function getDefaults($alias, $settings)
+    public function getDefaults(string $alias, array $settings): array
     {
         if (isset($settings[$alias])) {
             $settings = $settings[$alias];
         }
 
         $defaults = $this->getConfig();
-        $maxLimit = isset($settings['maxLimit']) ? $settings['maxLimit'] : $defaults['maxLimit'];
-        $limit = isset($settings['limit']) ? $settings['limit'] : $defaults['limit'];
+        $maxLimit = $settings['maxLimit'] ?? $defaults['maxLimit'];
+        $limit = $settings['limit'] ?? $defaults['limit'];
 
         if ($limit > $maxLimit) {
             $limit = $maxLimit;
@@ -353,7 +354,7 @@ class Paginator implements PaginatorInterface
      * @return array An array of options with sort + direction removed and
      *   replaced with order if possible.
      */
-    public function validateSort(RepositoryInterface $object, array $options)
+    public function validateSort(RepositoryInterface $object, array $options): array
     {
         if (isset($options['sort'])) {
             $direction = null;
@@ -409,7 +410,7 @@ class Paginator implements PaginatorInterface
      * @param bool $whitelisted Whether or not the field was whitelisted.
      * @return array Final order array.
      */
-    protected function _prefix(RepositoryInterface $object, $order, $whitelisted = false)
+    protected function _prefix(RepositoryInterface $object, array $order, bool $whitelisted = false): array
     {
         $tableAlias = $object->getAlias();
         $tableOrder = [];
@@ -448,7 +449,7 @@ class Paginator implements PaginatorInterface
      * @param array $options An array of options with a limit key to be checked.
      * @return array An array of options for pagination.
      */
-    public function checkLimit(array $options)
+    public function checkLimit(array $options): array
     {
         $options['limit'] = (int)$options['limit'];
         if (empty($options['limit']) || $options['limit'] < 1) {

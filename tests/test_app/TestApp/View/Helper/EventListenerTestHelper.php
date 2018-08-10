@@ -19,7 +19,6 @@ use Cake\View\Helper;
 
 class EventListenerTestHelper extends Helper
 {
-
     /**
      * Before render callback. Stub.
      *
@@ -37,7 +36,7 @@ class EventListenerTestHelper extends Helper
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return ['View.beforeRender' => 'beforeRender'];
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * HelperTest file
  *
@@ -25,7 +26,6 @@ use Cake\View\View;
 
 class TestHelper extends Helper
 {
-
     /**
      * Settings for this helper.
      *
@@ -33,7 +33,7 @@ class TestHelper extends Helper
      */
     protected $_defaultConfig = [
         'key1' => 'val1',
-        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
+        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2'],
     ];
 
     /**
@@ -49,7 +49,6 @@ class TestHelper extends Helper
  */
 class HelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\View
      */
@@ -91,12 +90,12 @@ class HelperTest extends TestCase
     {
         $Helper = new TestHelper($this->View, [
             'key3' => 'val3',
-            'key2' => ['key2.2' => 'newval']
+            'key2' => ['key2.2' => 'newval'],
         ]);
         $expected = [
             'key1' => 'val1',
             'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'newval'],
-            'key3' => 'val3'
+            'key3' => 'val3',
         ];
         $this->assertEquals($expected, $Helper->getConfig());
     }
@@ -108,7 +107,7 @@ class HelperTest extends TestCase
      */
     public function testLazyLoadingHelpers()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $Helper = new TestHelper($this->View);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);
@@ -122,9 +121,7 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached()
     {
-        Plugin::loadAll();
-
-        $events = $this->getMockBuilder('\Cake\Event\EventManager')->getMock();
+        $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $this->View->setEventManager($events);
 
         $events->expects($this->never())
@@ -172,14 +169,14 @@ class HelperTest extends TestCase
         $expected = [
             'helpers' => [
                 'Html',
-                'TestPlugin.OtherHelper'
+                'TestPlugin.OtherHelper',
             ],
             'implementedEvents' => [
             ],
             '_config' => [
                 'key1' => 'val1',
-                'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2']
-            ]
+                'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2'],
+            ],
         ];
         $result = $Helper->__debugInfo();
         $this->assertEquals($expected, $result);
@@ -197,7 +194,7 @@ class HelperTest extends TestCase
         $expected = ['class' => [
             'element1',
             'element2',
-            'element3'
+            'element3',
         ]];
 
         $this->assertEquals($expected, $helper->addClass($input, 'element3'));

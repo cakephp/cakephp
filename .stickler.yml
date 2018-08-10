@@ -1,7 +1,7 @@
 ---
 linters:
   phpcs:
-    standard: CakePHP
+    standard: ./phpcs.xml.dist
     extensions: 'php,ctp'
     fixer: true
 

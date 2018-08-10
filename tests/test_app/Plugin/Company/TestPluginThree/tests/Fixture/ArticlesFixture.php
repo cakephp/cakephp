@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ArticlesFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -32,7 +31,7 @@ class ArticlesFixture extends TestFixture
         'author_id' => ['type' => 'integer', 'null' => true],
         'title' => ['type' => 'string', 'null' => true],
         'body' => 'text',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ use Cake\I18n\Date;
 use Cake\I18n\FrozenDate;
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 
 /**
  * Class DateType
@@ -67,9 +69,9 @@ class DateType extends DateTimeType
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
-    public function marshal($value)
+    public function marshal($value): ?DateTimeInterface
     {
         $date = parent::marshal($value);
         if ($date instanceof DateTime) {
@@ -82,7 +84,7 @@ class DateType extends DateTimeType
     /**
      * {@inheritDoc}
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value)
     {
         /* @var \Cake\I18n\Time $class */
         $class = $this->_className;

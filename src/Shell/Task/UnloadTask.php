@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell\Task;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Filesystem\File;
 
@@ -22,7 +24,6 @@ use Cake\Filesystem\File;
  */
 class UnloadTask extends Shell
 {
-
     /**
      * Path to the bootstrap file.
      *
@@ -36,7 +37,7 @@ class UnloadTask extends Shell
      * @param string|null $plugin The plugin name.
      * @return bool if action passed.
      */
-    public function main($plugin = null)
+    public function main(?string $plugin = null): bool
     {
         $filename = 'bootstrap';
         if ($this->params['cli']) {
@@ -69,7 +70,7 @@ class UnloadTask extends Shell
      * @param string $plugin Name of plugin.
      * @return bool If modify passed.
      */
-    protected function modifyApplication($app, $plugin)
+    protected function modifyApplication(string $app, string $plugin): bool
     {
         $finder = "@\\\$this\-\>addPlugin\(\s*'$plugin'(.|.\n|)+\);+@";
 
@@ -94,7 +95,7 @@ class UnloadTask extends Shell
      * @param string $plugin Name of plugin.
      * @return bool If modify passed.
      */
-    protected function _modifyBootstrap($plugin)
+    protected function _modifyBootstrap(string $plugin): bool
     {
         $finder = "@\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n@";
 
@@ -124,7 +125,7 @@ class UnloadTask extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 

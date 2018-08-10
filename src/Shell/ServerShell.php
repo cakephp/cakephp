@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@
 
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 
@@ -23,20 +25,19 @@ use Cake\Core\Configure;
  */
 class ServerShell extends Shell
 {
-
     /**
      * Default ServerHost
      *
      * @var string
      */
-    const DEFAULT_HOST = 'localhost';
+    public const DEFAULT_HOST = 'localhost';
 
     /**
      * Default ListenPort
      *
      * @var int
      */
-    const DEFAULT_PORT = 8765;
+    public const DEFAULT_PORT = 8765;
 
     /**
      * server host
@@ -76,7 +77,7 @@ class ServerShell extends Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#hook-methods
      */
-    public function startup()
+    public function startup(): void
     {
         if ($this->param('host')) {
             $this->_host = $this->param('host');
@@ -112,7 +113,7 @@ class ServerShell extends Shell
      *
      * @return void
      */
-    protected function _welcome()
+    protected function _welcome(): void
     {
         $this->out();
         $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
@@ -129,7 +130,7 @@ class ServerShell extends Shell
      *
      * @return void
      */
-    public function main()
+    public function main(): void
     {
         $command = sprintf(
             'php -S %s:%d -t %s',
@@ -155,7 +156,7 @@ class ServerShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 
@@ -164,16 +165,16 @@ class ServerShell extends Shell
             '<warning>[WARN] Don\'t use this in a production environment</warning>',
         ])->addOption('host', [
             'short' => 'H',
-            'help' => 'ServerHost'
+            'help' => 'ServerHost',
         ])->addOption('port', [
             'short' => 'p',
-            'help' => 'ListenPort'
+            'help' => 'ListenPort',
         ])->addOption('ini_path', [
             'short' => 'I',
-            'help' => 'php.ini path'
+            'help' => 'php.ini path',
         ])->addOption('document_root', [
             'short' => 'd',
-            'help' => 'DocumentRoot'
+            'help' => 'DocumentRoot',
         ]);
 
         return $parser;

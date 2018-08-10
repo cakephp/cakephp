@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class SocketTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -60,7 +60,7 @@ class SocketTest extends TestCase
             'host' => 'localhost',
             'protocol' => 'tcp',
             'port' => 80,
-            'timeout' => 30
+            'timeout' => 30,
         ]);
 
         $this->Socket->reset();
@@ -113,7 +113,7 @@ class SocketTest extends TestCase
     {
         return [
             [['host' => 'invalid.host', 'port' => 9999, 'timeout' => 1]],
-            [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]]
+            [['host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1]],
         ];
     }
 
@@ -200,14 +200,14 @@ class SocketTest extends TestCase
      */
     public function testTimeOutConnection()
     {
-        $config = ['host' => '127.0.0.1', 'timeout' => 0.5];
+        $config = ['host' => '127.0.0.1', 'timeout' => 1];
         $this->Socket = new Socket($config);
         try {
             $this->assertTrue($this->Socket->connect());
 
-            $config = ['host' => '127.0.0.1', 'timeout' => 0.00001];
+            $config = ['host' => '127.0.0.1', 'timeout' => 1];
             $this->Socket = new Socket($config);
-            $this->assertFalse($this->Socket->read(1024 * 1024));
+            $this->assertNull($this->Socket->read(1024 * 1024));
             $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
@@ -238,7 +238,7 @@ class SocketTest extends TestCase
             'host' => '127.0.0.1',
             'protocol' => 'udp',
             'port' => 80,
-            'timeout' => 20
+            'timeout' => 20,
         ];
         $anotherSocket = new Socket($config);
         $anotherSocket->reset();
@@ -248,7 +248,7 @@ class SocketTest extends TestCase
             'host' => 'localhost',
             'protocol' => 'tcp',
             'port' => 80,
-            'timeout' => 30
+            'timeout' => 30,
         ];
         $this->assertEquals(
             $expected,
@@ -265,7 +265,7 @@ class SocketTest extends TestCase
     public function testEnableCryptoSocketExceptionNoSsl()
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
-        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
+        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 1];
 
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
@@ -293,7 +293,7 @@ class SocketTest extends TestCase
      */
     public function testEnableCryptoSocketExceptionNoTls()
     {
-        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 0.1];
+        $configNoSslOrTls = ['host' => 'localhost', 'port' => 80, 'timeout' => 1];
 
         // testing exception on no ssl socket server for ssl and tls methods
         $this->Socket = new Socket($configNoSslOrTls);
@@ -441,8 +441,8 @@ class SocketTest extends TestCase
             'port' => 465,
             'timeout' => 5,
             'context' => [
-                'ssl' => ['capture_peer' => true]
-            ]
+                'ssl' => ['capture_peer' => true],
+            ],
         ];
         try {
             $this->Socket = new Socket($config);

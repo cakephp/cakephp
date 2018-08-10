@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,6 @@ use Exception;
  */
 class TestFixture implements FixtureInterface, TableSchemaAwareInterface
 {
-
     use LocatorAwareTrait;
 
     /**
@@ -115,7 +115,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function connection()
+    public function connection(): string
     {
         return $this->connection;
     }
@@ -123,7 +123,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function sourceName()
+    public function sourceName(): string
     {
         return $this->table;
     }
@@ -134,7 +134,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * @return void
      * @throws \Cake\ORM\Exception\MissingTableClassException When importing from a table that does not exist.
      */
-    public function init()
+    public function init(): void
     {
         if ($this->table === null) {
             $this->table = $this->_tableFromClass();
@@ -158,7 +158,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      *
      * @return string
      */
-    protected function _tableFromClass()
+    protected function _tableFromClass(): string
     {
         list(, $class) = namespaceSplit(get_class($this));
         preg_match('/^(.*)Fixture$/', $class, $matches);
@@ -176,7 +176,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      *
      * @return void
      */
-    protected function _schemaFromFields()
+    protected function _schemaFromFields(): void
     {
         $connection = ConnectionManager::get($this->connection());
         $this->_schema = new TableSchema($this->table);
@@ -211,7 +211,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * @return void
      * @throws \Cake\Core\Exception\Exception when trying to import from an empty table.
      */
-    protected function _schemaFromImport()
+    protected function _schemaFromImport(): void
     {
         if (!is_array($this->import)) {
             return;
@@ -243,7 +243,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * @return void
      * @throws \Cake\Core\Exception\Exception when trying to reflect a table that does not exist
      */
-    protected function _schemaFromReflection()
+    protected function _schemaFromReflection(): void
     {
         $db = ConnectionManager::get($this->connection());
         $schemaCollection = $db->getSchemaCollection();
@@ -265,7 +265,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function create(ConnectionInterface $db)
+    public function create(ConnectionInterface $db): bool
     {
         if (empty($this->_schema)) {
             return false;
@@ -300,7 +300,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function drop(ConnectionInterface $db)
+    public function drop(ConnectionInterface $db): bool
     {
         if (empty($this->_schema)) {
             return false;
@@ -348,7 +348,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function createConstraints(ConnectionInterface $db)
+    public function createConstraints(ConnectionInterface $db): bool
     {
         if (empty($this->_constraints)) {
             return true;
@@ -374,7 +374,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function dropConstraints(ConnectionInterface $db)
+    public function dropConstraints(ConnectionInterface $db): bool
     {
         if (empty($this->_constraints)) {
             return true;
@@ -402,7 +402,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      *
      * @return array
      */
-    protected function _getRecords()
+    protected function _getRecords(): array
     {
         $fields = $values = $types = [];
         $columns = $this->_schema->columns();
@@ -424,7 +424,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function truncate(ConnectionInterface $db)
+    public function truncate(ConnectionInterface $db): bool
     {
         $sql = $this->_schema->truncateSql($db);
         foreach ($sql as $stmt) {
@@ -437,7 +437,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function getTableSchema()
+    public function getTableSchema(): TableSchemaInterface
     {
         return $this->_schema;
     }

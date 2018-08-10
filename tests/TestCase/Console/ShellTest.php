@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -46,7 +47,6 @@ class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Shell\Task\TestBananaTask')
  */
 class ShellTest extends TestCase
 {
-
     /**
      * Fixtures used in this test case
      *
@@ -59,7 +59,7 @@ class ShellTest extends TestCase
         'core.comments',
         'core.posts',
         'core.tags',
-        'core.users'
+        'core.users',
     ];
 
     /** @var \Cake\Console\Shell */
@@ -110,7 +110,7 @@ class ShellTest extends TestCase
     {
         static::setAppNamespace();
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->Shell->tasks = ['Extract' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
@@ -122,6 +122,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
+        Plugin::unload();
     }
 
     /**
@@ -140,7 +141,7 @@ class ShellTest extends TestCase
         );
         $this->assertEquals('Articles', $Shell->modelClass);
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
             'TestPlugin\Model\Table\TestPluginCommentsTable',
@@ -150,6 +151,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
+        Plugin::unload();
     }
 
     /**
@@ -620,7 +622,7 @@ class ShellTest extends TestCase
         $files = [
             $path . DS . 'file1.php' => 'My first content',
             $path . DS . 'file2.php' => 'My second content',
-            $path . DS . 'file3.php' => 'My third content'
+            $path . DS . 'file3.php' => 'My third content',
         ];
 
         new Folder($path, true);
@@ -805,13 +807,13 @@ class ShellTest extends TestCase
 
         // Shell::dispatchShell(['command' => 'schema create DbAcl']);
         $result = $Shell->parseDispatchArguments([[
-            'command' => 'schema create DbAcl'
+            'command' => 'schema create DbAcl',
         ]]);
         $this->assertEquals($expected, $result);
 
         // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl']]);
         $result = $Shell->parseDispatchArguments([[
-            'command' => ['schema', 'create', 'DbAcl']
+            'command' => ['schema', 'create', 'DbAcl'],
         ]]);
         $this->assertEquals($expected, $result);
 
@@ -819,14 +821,14 @@ class ShellTest extends TestCase
         // Shell::dispatchShell(['command' => 'schema create DbAcl', 'extra' => ['param' => 'value']]);
         $result = $Shell->parseDispatchArguments([[
             'command' => 'schema create DbAcl',
-            'extra' => ['param' => 'value']
+            'extra' => ['param' => 'value'],
         ]]);
         $this->assertEquals($expected, $result);
 
         // Shell::dispatchShell(['command' => ['schema', 'create', 'DbAcl'], 'extra' => ['param' => 'value']]);
         $result = $Shell->parseDispatchArguments([[
             'command' => ['schema', 'create', 'DbAcl'],
-            'extra' => ['param' => 'value']
+            'extra' => ['param' => 'value'],
         ]]);
         $this->assertEquals($expected, $result);
     }
@@ -1042,8 +1044,10 @@ TEXT;
         $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
             ->disableOriginalConstructor()
             ->getMock();
-
         $parser->expects($this->once())->method('help');
+        $parser->method('parse')
+            ->will($this->returnValue([[], []]));
+
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->expects($this->never())->method('hr');
@@ -1071,8 +1075,10 @@ TEXT;
         $parser = $this->getMockBuilder('Cake\Console\ConsoleOptionParser')
             ->disableOriginalConstructor()
             ->getMock();
-
         $parser->expects($this->once())->method('help');
+        $parser->method('parse')
+            ->will($this->returnValue([[], []]));
+
         $shell->expects($this->once())->method('getOptionParser')
             ->will($this->returnValue($parser));
         $shell->_io->expects($this->exactly(2))->method('err');
@@ -1295,7 +1301,7 @@ TEXT;
             'key' => 'value',
             'help' => false,
             'emptykey' => '',
-            'truthy' => true
+            'truthy' => true,
         ];
         $this->assertSame($expected, $this->Shell->param($toRead));
     }
@@ -1327,7 +1333,7 @@ TEXT;
             [
                 'does_not_exist',
                 null,
-            ]
+            ],
         ];
     }
 
@@ -1408,7 +1414,7 @@ TEXT;
             'tasks' => [],
             'params' => [],
             'args' => [],
-            'interactive' => true
+            'interactive' => true,
         ];
         $result = $this->Shell->__debugInfo();
         $this->assertEquals($expected, $result);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) <https://book.cakephp.org/3.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class LogTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -44,13 +44,13 @@ class LogTest extends TestCase
     public function testImportingLoggers()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         Log::setConfig('libtest', [
-            'engine' => 'TestApp'
+            'engine' => 'TestApp',
         ]);
         Log::setConfig('plugintest', [
-            'engine' => 'TestPlugin.TestPlugin'
+            'engine' => 'TestPlugin.TestPlugin',
         ]);
 
         $result = Log::engine('libtest');
@@ -112,7 +112,7 @@ class LogTest extends TestCase
     {
         Log::setConfig('file', [
             'engine' => 'File',
-            'path' => LOGS
+            'path' => LOGS,
         ]);
         $result = Log::configured();
         $this->assertContains('file', $result);
@@ -219,7 +219,7 @@ class LogTest extends TestCase
     {
         $config = [
             'engine' => 'File',
-            'path' => LOGS
+            'path' => LOGS,
         ];
         Log::setConfig('tests', $config);
 
@@ -454,7 +454,7 @@ class LogTest extends TestCase
             'path' => LOGS,
             'levels' => ['notice', 'info', 'debug'],
             'file' => 'debug',
-            'scopes' => false
+            'scopes' => false,
         ]);
         Log::setConfig('shops', [
             'engine' => 'File',

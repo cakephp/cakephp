@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class TaskRegistryTest extends TestCase
 {
-
     /**
      * setUp
      *
@@ -88,7 +88,7 @@ class TaskRegistryTest extends TestCase
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->disableOriginalConstructor()
             ->getMock();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->Tasks = new TaskRegistry($shell, $dispatcher);
 
         $result = $this->Tasks->load('TestPlugin.OtherTask');
@@ -104,7 +104,7 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Tasks->load('CommandAliased', ['className' => 'Command']);
         $this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);
@@ -119,5 +119,6 @@ class TaskRegistryTest extends TestCase
 
         $result = $this->Tasks->loaded();
         $this->assertEquals(['CommandAliased', 'SomeTask'], $result, 'loaded() results are wrong.');
+        Plugin::unload();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class SubjectFilterDecoratorTest extends TestCase
 {
-
     /**
      * testCanTrigger
      *
@@ -38,14 +38,14 @@ class SubjectFilterDecoratorTest extends TestCase
         };
 
         $decorator = new SubjectFilterDecorator($callable, [
-            'allowedSubject' => self::class
+            'allowedSubject' => self::class,
         ]);
 
         $this->assertTrue($decorator->canTrigger($event));
         $this->assertEquals('success', $decorator($event));
 
         $decorator = new SubjectFilterDecorator($callable, [
-            'allowedSubject' => '\Some\Other\Class'
+            'allowedSubject' => '\Some\Other\Class',
         ]);
 
         $this->assertFalse($decorator->canTrigger($event));

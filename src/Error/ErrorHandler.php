@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ErrorHandler class
  *
@@ -110,7 +111,7 @@ class ErrorHandler extends BaseErrorHandler
      * @param bool $debug Whether or not the app is in debug mode.
      * @return void
      */
-    protected function _displayError($error, $debug)
+    protected function _displayError(array $error, bool $debug): void
     {
         if (!$debug) {
             return;
@@ -125,7 +126,7 @@ class ErrorHandler extends BaseErrorHandler
      * @return void
      * @throws \Exception When the chosen exception renderer is invalid.
      */
-    protected function _displayException($exception)
+    protected function _displayException(Throwable $exception): void
     {
         $rendererClassName = App::className($this->_options['exceptionRenderer'], 'Error');
         try {
@@ -139,8 +140,6 @@ class ErrorHandler extends BaseErrorHandler
             $this->_sendResponse($response);
         } catch (Throwable $exception) {
             $this->_logInternalError($exception);
-        } catch (Exception $exception) {
-            $this->_logInternalError($exception);
         }
     }
 
@@ -151,7 +150,7 @@ class ErrorHandler extends BaseErrorHandler
      *
      * @return void
      */
-    protected function _clearOutput()
+    protected function _clearOutput(): void
     {
         while (ob_get_level()) {
             ob_end_clean();
@@ -159,15 +158,12 @@ class ErrorHandler extends BaseErrorHandler
     }
 
     /**
-     * Logs both PHP5 and PHP7 errors.
+     * Log internal errors.
      *
-     * The PHP5 part will be removed with 4.0.
-     *
-     * @param \Throwable|\Exception $exception Exception.
-     *
+     * @param \Throwable $exception Exception.
      * @return void
      */
-    protected function _logInternalError($exception)
+    protected function _logInternalError(Throwable $exception): void
     {
         // Disable trace for internal errors.
         $this->_options['trace'] = false;
@@ -186,7 +182,7 @@ class ErrorHandler extends BaseErrorHandler
      * @param string|\Cake\Http\Response $response Either the message or response object.
      * @return void
      */
-    protected function _sendResponse($response)
+    protected function _sendResponse($response): void
     {
         if (is_string($response)) {
             echo $response;

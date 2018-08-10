@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Test\TestCase\Error\Middleware;
 
+use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
@@ -44,7 +46,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         Log::reset();
         Log::setConfig('error_test', [
-            'engine' => $this->logger
+            'engine' => $this->logger,
         ]);
     }
 
@@ -110,7 +112,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
             $response = new Response;
-            $mock = $this->getMockBuilder('StdClass')
+            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->setMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())
@@ -206,7 +208,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
-            'HTTP_REFERER' => '/other/path'
+            'HTTP_REFERER' => '/other/path',
         ]);
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
@@ -232,7 +234,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, [
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException']
+            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
         $next = function ($req, $res) {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
@@ -284,7 +286,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $response = new Response();
 
         $factory = function ($exception) {
-            $mock = $this->getMockBuilder('StdClass')
+            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->setMethods(['render'])
                 ->getMock();
             $mock->expects($this->once())

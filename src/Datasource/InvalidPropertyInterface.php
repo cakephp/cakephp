@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,13 +21,12 @@ namespace Cake\Datasource;
  */
 interface InvalidPropertyInterface
 {
-
     /**
      * Get a list of invalid fields and their data for errors upon validation/patching
      *
      * @return array
      */
-    public function getInvalid();
+    public function getInvalid(): array;
 
     /**
      * Set fields as invalid and not patchable into the entity.
@@ -39,7 +39,7 @@ interface InvalidPropertyInterface
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.
      * @return $this
      */
-    public function setInvalid(array $fields, $overwrite = false);
+    public function setInvalid(array $fields, bool $overwrite = false);
 
     /**
      * Get a single value of an invalid field. Returns null if not set.
@@ -47,7 +47,7 @@ interface InvalidPropertyInterface
      * @param string $field The name of the field.
      * @return mixed
      */
-    public function getInvalidField($field);
+    public function getInvalidField(string $field);
 
     /**
      * Sets a field as invalid and not patchable into the entity.
@@ -56,5 +56,5 @@ interface InvalidPropertyInterface
      * @param mixed $value The invalid value to be set for $field.
      * @return $this
      */
-    public function setInvalidField($field, $value);
+    public function setInvalidField(string $field, $value);
 }

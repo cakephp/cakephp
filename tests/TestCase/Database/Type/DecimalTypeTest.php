@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,8 +15,8 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\TypeFactory;
 use Cake\Database\Type\DecimalType;
+use Cake\Database\TypeFactory;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;

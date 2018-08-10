@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,10 @@ class CallbackStream extends BaseCallbackStream
     public function getContents()
     {
         $callback = $this->detach();
-        $result = $callback ? $callback() : '';
+        $result = '';
+        if (is_callable($callback)) {
+            $result = $callback();
+        }
         if (!is_string($result)) {
             return '';
         }

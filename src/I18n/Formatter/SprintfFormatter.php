@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Aura\Intl\FormatterInterface;
  */
 class SprintfFormatter implements FormatterInterface
 {
-
     /**
      * Returns a string with all passed variables interpolated into the original
      * message. Variables are interpolated using the sprintf format.
@@ -32,7 +32,7 @@ class SprintfFormatter implements FormatterInterface
      * @param array $vars The list of values to interpolate in the message
      * @return string The formatted message
      */
-    public function format($locale, $message, array $vars)
+    public function format($locale, $message, array $vars): string
     {
         unset($vars['_singular']);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class MoFileParserTest extends TestCase
 {
-
     /**
      * Tests parsing a file with plurals and message context
      *
@@ -38,9 +38,9 @@ class MoFileParserTest extends TestCase
             '%d = 1 (from core)' => '%d = 1 (from core translated)',
             '%d = 0 or > 1 (from core)' => [
                 '%d = 1 (from core translated)',
-                '%d = 0 or > 1 (from core translated)'
+                '%d = 0 or > 1 (from core translated)',
             ],
-            'Plural Rule 1 (from core)' => 'Plural Rule 1 (from core translated)'
+            'Plural Rule 1 (from core)' => 'Plural Rule 1 (from core translated)',
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -82,9 +82,9 @@ class MoFileParserTest extends TestCase
             '%d = 0 or > 1 (from core)' => [
                 '%d is 1 (from core translated)',
                 '%d ends in 2-4, not 12-14 (from core translated)',
-                '%d everything else (from core translated)'
+                '%d everything else (from core translated)',
             ],
-            'Plural Rule 1 (from core)' => 'Plural Rule 9 (from core translated)'
+            'Plural Rule 1 (from core)' => 'Plural Rule 9 (from core translated)',
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -105,22 +105,22 @@ class MoFileParserTest extends TestCase
             '%d = 1' => [
                 '_context' => [
                     'This is the context' => 'First Context trasnlation',
-                    'Another Context' => '%d = 1 (translated)'
-                ]
+                    'Another Context' => '%d = 1 (translated)',
+                ],
             ],
             '%d = 0 or > 1' => [
                 '_context' => [
                     'Another Context' => [
                         0 => '%d = 1 (translated)',
-                        1 => '%d = 0 or > 1 (translated)'
-                    ]
-                ]
+                        1 => '%d = 0 or > 1 (translated)',
+                    ],
+                ],
             ],
             '%-5d = 1' => '%-5d = 1 (translated)',
             '%-5d = 0 or > 1' => [
                 '%-5d = 1 (translated)',
-                '%-5d = 0 or > 1 (translated)'
-            ]
+                '%-5d = 0 or > 1 (translated)',
+            ],
         ];
         $this->assertEquals($expected, $messages);
     }

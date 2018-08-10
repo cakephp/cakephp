@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
@@ -26,7 +27,6 @@ use Exception;
  */
 class ArticlesFixture extends TestFixture
 {
-
     /**
      * Table property
      *
@@ -44,8 +44,8 @@ class ArticlesFixture extends TestFixture
         'name' => ['type' => 'string', 'length' => '255'],
         'created' => ['type' => 'datetime'],
         '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']]
-        ]
+            'primary' => ['type' => 'primary', 'columns' => ['id']],
+        ],
     ];
 
     /**
@@ -56,7 +56,7 @@ class ArticlesFixture extends TestFixture
     public $records = [
         ['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
         ['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
-        ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00']
+        ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00'],
     ];
 }
 
@@ -65,7 +65,6 @@ class ArticlesFixture extends TestFixture
  */
 class StringsTestsFixture extends TestFixture
 {
-
     /**
      * Table property
      *
@@ -82,7 +81,7 @@ class StringsTestsFixture extends TestFixture
         'id' => ['type' => 'integer'],
         'name' => ['type' => 'string', 'length' => '255'],
         'email' => ['type' => 'string', 'length' => '255'],
-        'age' => ['type' => 'integer', 'default' => 10]
+        'age' => ['type' => 'integer', 'default' => 10],
     ];
 
     /**
@@ -93,7 +92,7 @@ class StringsTestsFixture extends TestFixture
     public $records = [
         ['name' => 'Mark Doe', 'email' => 'mark.doe@email.com'],
         ['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
-        ['email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30]
+        ['email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30],
     ];
 }
 
@@ -102,7 +101,6 @@ class StringsTestsFixture extends TestFixture
  */
 class ImportsFixture extends TestFixture
 {
-
     /**
      * Import property
      *
@@ -116,7 +114,7 @@ class ImportsFixture extends TestFixture
      * @var array
      */
     public $records = [
-        ['title' => 'Hello!', 'body' => 'Hello world!']
+        ['title' => 'Hello!', 'body' => 'Hello world!'],
     ];
 }
 
@@ -126,7 +124,6 @@ class ImportsFixture extends TestFixture
  */
 class LettersFixture extends TestFixture
 {
-
     /**
      * records property
      *
@@ -135,7 +132,7 @@ class LettersFixture extends TestFixture
     public $records = [
         ['letter' => 'a'],
         ['letter' => 'b'],
-        ['letter' => 'c']
+        ['letter' => 'c'],
     ];
 }
 
@@ -144,7 +141,6 @@ class LettersFixture extends TestFixture
  */
 class TestFixtureTest extends TestCase
 {
-
     /**
      * Fixtures for this test.
      *
@@ -277,7 +273,7 @@ class TestFixtureTest extends TestCase
         $db = ConnectionManager::get('test');
         $table = new TableSchema('letters', [
             'id' => ['type' => 'integer'],
-            'letter' => ['type' => 'string', 'length' => 1]
+            'letter' => ['type' => 'string', 'length' => 1],
         ]);
         $table->addConstraint('primary', ['type' => 'primary', 'columns' => ['id']]);
         $sql = $table->createSql($db);
@@ -326,11 +322,10 @@ class TestFixtureTest extends TestCase
             ->will($this->returnValue(['sql', 'sql']));
         $fixture->setTableSchema($table);
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['execute', 'closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->atLeastOnce())->method('closeCursor');
         $statement->expects($this->atLeastOnce())->method('execute');
+
         $db->expects($this->exactly(2))
             ->method('prepare')
             ->will($this->returnValue($statement));
@@ -393,7 +388,7 @@ class TestFixtureTest extends TestCase
         $expected = [
             ['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
             ['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
-            ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00']
+            ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00'],
         ];
         $query->expects($this->at(2))
             ->method('values')
@@ -408,10 +403,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[2])
             ->will($this->returnSelf());
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $query->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($statement));
@@ -456,10 +450,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[0])
             ->will($this->returnSelf());
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $query->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($statement));
@@ -514,10 +507,9 @@ class TestFixtureTest extends TestCase
             ->with($expected[2])
             ->will($this->returnSelf());
 
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $query->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($statement));
@@ -537,9 +529,7 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
         $db->expects($this->once())->method('execute')
             ->with('sql')
@@ -569,10 +559,9 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['closeCursor'])
-            ->getMock();
+        $statement = $this->createMock(StatementInterface::class);
         $statement->expects($this->once())->method('closeCursor');
+
         $db->expects($this->once())->method('execute')
             ->with('sql')
             ->will($this->returnValue($statement));

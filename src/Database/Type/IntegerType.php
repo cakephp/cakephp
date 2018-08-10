@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -26,7 +26,6 @@ use PDO;
  */
 class IntegerType extends BaseType implements BatchCastingInterface
 {
-
     /**
      * Convert integer data into the database format.
      *
@@ -34,7 +33,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?int
     {
         if ($value === null || $value === '') {
             return null;
@@ -57,7 +56,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, Driver $driver): ?int
     {
         if ($value === null) {
             return $value;
@@ -71,7 +70,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -90,7 +89,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_INT;
     }
@@ -101,7 +100,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return int|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?int
     {
         if ($value === null || $value === '') {
             return null;

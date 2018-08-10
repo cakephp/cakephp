@@ -21,7 +21,6 @@ use Cake\Core\Exception\Exception;
  */
 class MissingExtensionException extends Exception
 {
-
     /**
      * {@inheritDoc}
      */

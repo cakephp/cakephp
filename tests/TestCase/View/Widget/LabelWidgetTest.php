@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\View\Widget\LabelWidget;
  */
 class LabelWidgetTest extends TestCase
 {
-
     /**
      * setup method.
      *
@@ -54,7 +54,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => [],
             'My text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -76,7 +76,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => ['for' => 'Some > value'],
             'My > text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -99,7 +99,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => ['id' => 'some-id', 'data-foo' => 'value', 'for' => 'some-id'],
             'My &gt; text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -124,7 +124,7 @@ class LabelWidgetTest extends TestCase
         $expected = [
             'label' => ['custom' => 'value'],
             'Label Text',
-            '/label'
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }

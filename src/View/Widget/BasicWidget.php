@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@
 namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
+use Cake\View\StringTemplate;
 
 /**
  * Basic input class.
@@ -25,7 +27,6 @@ use Cake\View\Form\ContextInterface;
  */
 class BasicWidget implements WidgetInterface
 {
-
     /**
      * StringTemplate instance.
      *
@@ -38,7 +39,7 @@ class BasicWidget implements WidgetInterface
      *
      * @param \Cake\View\StringTemplate $templates Templates list.
      */
-    public function __construct($templates)
+    public function __construct(StringTemplate $templates)
     {
         $this->_templates = $templates;
     }
@@ -58,14 +59,14 @@ class BasicWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $data += [
             'name' => '',
             'val' => null,
             'type' => 'text',
             'escape' => true,
-            'templateVars' => []
+            'templateVars' => [],
         ];
         $data['value'] = $data['val'];
         unset($data['val']);
@@ -84,7 +85,7 @@ class BasicWidget implements WidgetInterface
     /**
      * {@inheritDoc}
      */
-    public function secureFields(array $data)
+    public function secureFields(array $data): array
     {
         if (!isset($data['name']) || $data['name'] === '') {
             return [];

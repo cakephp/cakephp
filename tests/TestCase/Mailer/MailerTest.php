@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -68,10 +69,10 @@ class MailerTest extends TestCase
         $email->expects($this->once())
             ->method('setAttachments')
             ->with([
-                ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
+                ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
             ]);
         $result = (new TestMailer($email))->setAttachments([
-            ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
+            ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'],
         ]);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use SplFileInfo;
  */
 class FileTest extends TestCase
 {
-
     /**
      * File property
      *
@@ -80,7 +80,7 @@ class FileTest extends TestCase
             'basename' => basename($file),
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
-            'mime' => 'text/plain'
+            'mime' => 'text/plain',
         ];
         if (!function_exists('finfo_open') &&
             (!function_exists('mime_content_type') ||
@@ -160,8 +160,10 @@ class FileTest extends TestCase
         // Check name()
         $splInfo = new SplFileInfo($path);
         $File->name = ltrim($splInfo->getFilename(), '/\\');
+        $File->path = $path;
+
         if ($suffix === null) {
-            $File->info();//to set and unset 'extension' in bellow
+            $File->info(); // to set and unset 'extension' in bellow
             unset($File->info['extension']);
 
             $this->assertEquals(basename($path), $File->name());
@@ -507,7 +509,8 @@ class FileTest extends TestCase
      */
     public function testWrite()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (file_exists($tmpFile)) {
@@ -537,7 +540,8 @@ class FileTest extends TestCase
      */
     public function testAppend()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (file_exists($tmpFile)) {
@@ -574,7 +578,8 @@ class FileTest extends TestCase
      */
     public function testDelete()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
 
@@ -600,7 +605,8 @@ class FileTest extends TestCase
      */
     public function testDeleteAfterRead()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
+        $tmpFile = $this->_getTmpFile();
+        if (!$tmpFile) {
             return false;
         }
         if (!file_exists($tmpFile)) {

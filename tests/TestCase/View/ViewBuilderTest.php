@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -245,7 +246,7 @@ class ViewBuilderTest extends TestCase
             '_layout' => 'test',
             '_helpers' => ['Html'],
             '_className' => 'JsonView',
-            '_autoLayout' => true
+            '_autoLayout' => true,
         ];
         $this->assertEquals($expected, $result);
 

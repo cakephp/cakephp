@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Query;
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
 use PDO;
@@ -62,7 +63,7 @@ abstract class Driver implements DriverInterface
      * @param array $config The configuration for the driver.
      * @throws \InvalidArgumentException
      */
-    public function __construct($config = [])
+    public function __construct(array $config = [])
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
@@ -83,7 +84,7 @@ abstract class Driver implements DriverInterface
      * @param array $config configuration to be used for creating connection
      * @return bool true on success
      */
-    protected function _connect($dsn, array $config)
+    protected function _connect(string $dsn, array $config): bool
     {
         $connection = new PDO(
             $dsn,
@@ -99,12 +100,12 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function connect();
+    abstract public function connect(): bool;
 
     /**
      * {@inheritDoc}
      */
-    public function disconnect()
+    public function disconnect(): void
     {
         $this->_connection = null;
     }
@@ -135,12 +136,12 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function enabled();
+    abstract public function enabled(): bool;
 
     /**
      * {@inheritDoc}
      */
-    public function prepare($query)
+    public function prepare($query): StatementInterface
     {
         $this->connect();
         $isObject = $query instanceof Query;
@@ -152,7 +153,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         $this->connect();
         if ($this->_connection->inTransaction()) {
@@ -165,7 +166,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function commitTransaction()
+    public function commitTransaction(): bool
     {
         $this->connect();
         if (!$this->_connection->inTransaction()) {
@@ -178,7 +179,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function rollbackTransaction()
+    public function rollbackTransaction(): bool
     {
         $this->connect();
         if (!$this->_connection->inTransaction()) {
@@ -191,37 +192,37 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function releaseSavePointSQL($name);
+    abstract public function releaseSavePointSQL($name): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function savePointSQL($name);
+    abstract public function savePointSQL($name): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function rollbackSavePointSQL($name);
+    abstract public function rollbackSavePointSQL($name): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function disableForeignKeySQL();
+    abstract public function disableForeignKeySQL(): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function enableForeignKeySQL();
+    abstract public function enableForeignKeySQL(): string;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function supportsDynamicConstraints();
+    abstract public function supportsDynamicConstraints(): bool;
 
     /**
      * {@inheritDoc}
      */
-    public function supportsSavePoints()
+    public function supportsSavePoints(): bool
     {
         return true;
     }
@@ -229,7 +230,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function quote($value, $type)
+    public function quote($value, $type): string
     {
         $this->connect();
 
@@ -241,7 +242,7 @@ abstract class Driver implements DriverInterface
      *
      * @return bool
      */
-    public function supportsQuoting()
+    public function supportsQuoting(): bool
     {
         $this->connect();
 
@@ -251,22 +252,22 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function queryTranslator($type);
+    abstract public function queryTranslator(string $type): callable;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function schemaDialect();
+    abstract public function schemaDialect(): BaseSchema;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function quoteIdentifier($identifier);
+    abstract public function quoteIdentifier(string $identifier): string;
 
     /**
      * {@inheritDoc}
      */
-    public function schemaValue($value)
+    public function schemaValue($value): string
     {
         if ($value === null) {
             return 'NULL';
@@ -293,7 +294,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function schema()
+    public function schema(): string
     {
         return $this->_config['schema'];
     }
@@ -301,7 +302,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function lastInsertId($table = null, $column = null)
+    public function lastInsertId(?string $table = null, ?string $column = null)
     {
         $this->connect();
 
@@ -315,7 +316,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         if ($this->_connection === null) {
             $connected = false;
@@ -333,7 +334,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function enableAutoQuoting($enable = true)
+    public function enableAutoQuoting(bool $enable = true): DriverInterface
     {
         $this->_autoQuoting = (bool)$enable;
 
@@ -343,7 +344,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function isAutoQuotingEnabled()
+    public function isAutoQuotingEnabled(): bool
     {
         return $this->_autoQuoting;
     }
@@ -351,7 +352,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function compileQuery(Query $query, ValueBinder $generator)
+    public function compileQuery(Query $query, ValueBinder $generator): array
     {
         $processor = $this->newCompiler();
         $translator = $this->queryTranslator($query->type());
@@ -363,7 +364,7 @@ abstract class Driver implements DriverInterface
     /**
      * {@inheritDoc}
      */
-    public function newCompiler()
+    public function newCompiler(): QueryCompiler
     {
         return new QueryCompiler();
     }
@@ -382,10 +383,10 @@ abstract class Driver implements DriverInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
-            'connected' => $this->_connection !== null
+            'connected' => $this->_connection !== null,
         ];
     }
 }

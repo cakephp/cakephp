@@ -22,7 +22,6 @@ namespace Cake\Database\Log;
  */
 class LoggedQuery
 {
-
     /**
      * Query string that was executed
      *
@@ -63,7 +62,7 @@ class LoggedQuery
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return "duration={$this->took} rows={$this->numRows} {$this->query}";
     }

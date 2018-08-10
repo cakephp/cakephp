@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Send mail using mail() function
  *
@@ -25,14 +26,13 @@ use Cake\Network\Exception\SocketException;
  */
 class MailTransport extends AbstractTransport
 {
-
     /**
      * Send mail
      *
      * @param \Cake\Mailer\Email $email Cake Email
      * @return array
      */
-    public function send(Email $email)
+    public function send(Email $email): array
     {
         $eol = PHP_EOL;
         if (isset($this->_config['eol'])) {
@@ -50,7 +50,7 @@ class MailTransport extends AbstractTransport
 
         $message = implode($eol, $email->message());
 
-        $params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
+        $params = $this->_config['additionalParameters'] ?? null;
         $this->_mail($to, $subject, $message, $headers, $params);
 
         $headers .= $eol . 'To: ' . $to;
@@ -70,7 +70,7 @@ class MailTransport extends AbstractTransport
      * @throws \Cake\Network\Exception\SocketException if mail could not be sent
      * @return void
      */
-    protected function _mail($to, $subject, $message, $headers, $params = null)
+    protected function _mail(string $to, string $subject, string $message, string $headers, ?string $params = null): void
     {
         //@codingStandardsIgnoreStart
         if (!@mail($to, $subject, $message, $headers, $params)) {

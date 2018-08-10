@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,7 +14,6 @@
  */
 namespace Cake\Http\Client;
 
-use Cake\Core\Exception\Exception;
 use Psr\Http\Message\RequestInterface;
 use Zend\Diactoros\RequestTrait;
 use Zend\Diactoros\Stream;
@@ -38,14 +38,14 @@ class Request extends Message implements RequestInterface
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
      */
-    public function __construct($url = '', $method = self::METHOD_GET, array $headers = [], $data = null)
+    public function __construct(string $url = '', string $method = self::METHOD_GET, array $headers = [], $data = null)
     {
         $this->validateMethod($method);
         $this->method = $method;
         $this->uri = $this->createUri($url);
         $headers += [
             'Connection' => 'close',
-            'User-Agent' => 'CakePHP'
+            'User-Agent' => 'CakePHP',
         ];
         $this->addHeaders($headers);
         $this->body($data);
@@ -57,7 +57,7 @@ class Request extends Message implements RequestInterface
      * @param array $headers The headers to add.
      * @return void
      */
-    protected function addHeaders(array $headers)
+    protected function addHeaders(array $headers): void
     {
         foreach ($headers as $key => $val) {
             $normalized = strtolower($key);

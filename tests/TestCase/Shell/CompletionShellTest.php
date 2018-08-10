@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,30 +16,15 @@
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOutput;
 use Cake\Core\Plugin;
+use Cake\TestSuite\Stub\ConsoleOutput as StubOutput;
 use Cake\TestSuite\TestCase;
-
-/**
- * TestCompletionStringOutput
- */
-class TestCompletionStringOutput extends ConsoleOutput
-{
-
-    public $output = '';
-
-    protected function _write($message)
-    {
-        $this->output .= $message;
-    }
-}
 
 /**
  * CompletionShellTest
  */
 class CompletionShellTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -48,9 +34,9 @@ class CompletionShellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Plugin::load(['TestPlugin', 'TestPluginTwo']);
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
-        $this->out = new TestCompletionStringOutput();
+        $this->out = new StubOutput();
         $io = new ConsoleIo($this->out);
 
         $this->Shell = $this->getMockBuilder('Cake\Shell\CompletionShell')
@@ -85,7 +71,7 @@ class CompletionShellTest extends TestCase
     public function testStartup()
     {
         $this->Shell->runCommand(['main']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $needle = 'Welcome to CakePHP';
         $this->assertTextNotContains($needle, $output);
@@ -99,7 +85,7 @@ class CompletionShellTest extends TestCase
     public function testMain()
     {
         $this->Shell->runCommand(['main']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $expected = '/This command is not intended to be called manually/';
         $this->assertRegExp($expected, $output);
@@ -113,11 +99,11 @@ class CompletionShellTest extends TestCase
     public function testCommands()
     {
         $this->Shell->runCommand(['commands']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
             'cache help i18n plugin routes schema_cache server version ' .
-            "abort demo i18m integration merge sample shell_test testing_dispatch\n";
+            "abort demo i18m integration merge sample shell_test testing_dispatch";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -129,7 +115,7 @@ class CompletionShellTest extends TestCase
     public function testOptionsNoArguments()
     {
         $this->Shell->runCommand(['options']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $expected = '';
         $this->assertTextEquals($expected, $output);
@@ -143,7 +129,7 @@ class CompletionShellTest extends TestCase
     public function testOptionsNonExistingCommand()
     {
         $this->Shell->runCommand(['options', 'foo']);
-        $output = $this->out->output;
+        $output = $this->out->output();
         $expected = '';
         $this->assertTextEquals($expected, $output);
     }
@@ -156,9 +142,9 @@ class CompletionShellTest extends TestCase
     public function testOptions()
     {
         $this->Shell->runCommand(['options', 'schema_cache']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "--connection -c --help -h --quiet -q --verbose -v\n";
+        $expected = "--connection -c --help -h --quiet -q --verbose -v";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -170,9 +156,9 @@ class CompletionShellTest extends TestCase
     public function testOptionsTask()
     {
         $this->Shell->runCommand(['options', 'sample', 'sample']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "--help -h --quiet -q --sample -s --verbose -v\n";
+        $expected = "--help -h --quiet -q --sample -s --verbose -v";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -184,9 +170,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsCorePlugin()
     {
         $this->Shell->runCommand(['subcommands', 'CORE.schema_cache']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "build clear\n";
+        $expected = "build clear";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -198,9 +184,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsAppPlugin()
     {
         $this->Shell->runCommand(['subcommands', 'app.sample']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "derp load returnValue sample withAbort\n";
+        $expected = "derp load returnValue sample withAbort";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -213,9 +199,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsPlugin()
     {
         $this->Shell->runCommand(['subcommands', 'welcome']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "say_hello\n";
+        $expected = "say_hello";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -227,9 +213,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsPluginDotNotationBackwardCompatibility()
     {
         $this->Shell->runCommand(['subcommands', 'TestPluginTwo.welcome']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "say_hello\n";
+        $expected = "say_hello";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -241,9 +227,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsPluginDotNotation()
     {
         $this->Shell->runCommand(['subcommands', 'TestPluginTwo.example']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "say_hello\n";
+        $expected = "say_hello";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -256,9 +242,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsAppDuplicatePluginNoDot()
     {
         $this->Shell->runCommand(['subcommands', 'sample']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "derp load returnValue sample withAbort\n";
+        $expected = "derp load returnValue sample withAbort";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -270,9 +256,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsPluginDuplicateApp()
     {
         $this->Shell->runCommand(['subcommands', 'TestPlugin.sample']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "example\n";
+        $expected = "example";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -284,7 +270,7 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsNoArguments()
     {
         $this->Shell->runCommand(['subcommands']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $expected = '';
         $this->assertEquals($expected, $output);
@@ -298,7 +284,7 @@ class CompletionShellTest extends TestCase
     public function testSubCommandsNonExistingCommand()
     {
         $this->Shell->runCommand(['subcommands', 'foo']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $expected = '';
         $this->assertEquals($expected, $output);
@@ -312,9 +298,9 @@ class CompletionShellTest extends TestCase
     public function testSubCommands()
     {
         $this->Shell->runCommand(['subcommands', 'schema_cache']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
-        $expected = "build clear\n";
+        $expected = "build clear";
         $this->assertTextEquals($expected, $output);
     }
 
@@ -326,7 +312,7 @@ class CompletionShellTest extends TestCase
     public function testFuzzy()
     {
         $this->Shell->runCommand(['fuzzy']);
-        $output = $this->out->output;
+        $output = $this->out->output();
 
         $expected = '';
         $this->assertEquals($expected, $output);

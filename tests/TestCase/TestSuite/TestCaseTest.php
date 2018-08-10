@@ -21,20 +21,19 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
-use Cake\Test\Fixture\FixturizedTestCase;
 
 /**
  * Testing stub.
  */
 class SecondaryPostsTable extends Table
 {
-
     /**
      * @return string
      */
-    public static function defaultConnectionName()
+    public static function defaultConnectionName(): string
     {
         return 'secondary';
     }
@@ -45,7 +44,6 @@ class SecondaryPostsTable extends Table
  */
 class TestCaseTest extends TestCase
 {
-
     /**
      * tests trying to assertEventFired without configuring an event list
      *
@@ -80,7 +78,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'some' => 'data'
+            'some' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'some', 'data');
@@ -90,7 +88,7 @@ class TestCaseTest extends TestCase
         $manager->trackEvents(true);
 
         $event = new Event('my.event', $this, [
-            'other' => 'data'
+            'other' => 'data',
         ]);
         $manager->dispatch($event);
         $this->assertEventFiredWith('my.event', 'other', 'data', $manager);
@@ -363,7 +361,7 @@ class TestCaseTest extends TestCase
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
         $this->assertNull($Posts->save($entity));
-        $this->assertNull($Posts->getTable());
+        $this->assertSame('', $Posts->getTable());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->at(0))
@@ -401,7 +399,7 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelWithPlugin()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
         $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
@@ -426,6 +424,7 @@ class TestCaseTest extends TestCase
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
+        Plugin::unload();
     }
 
     /**
@@ -438,7 +437,7 @@ class TestCaseTest extends TestCase
         $Mock = $this->getMockForModel(
             'Table',
             ['save'],
-            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+            ['alias' => 'Comments', 'className' => 'Cake\ORM\Table']
         );
 
         $result = $this->getTableLocator()->get('Comments');

@@ -31,7 +31,6 @@ use Cake\View\View;
  */
 class TextHelper extends Helper
 {
-
     /**
      * helpers
      *
@@ -45,7 +44,7 @@ class TextHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'engine' => 'Cake\Utility\Text'
+        'engine' => 'Cake\Utility\Text',
     ];
 
     /**
@@ -113,7 +112,7 @@ class TextHelper extends Helper
      * @return string The text with links
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#linking-urls
      */
-    public function autoLinkUrls($text, array $options = [])
+    public function autoLinkUrls(string $text, array $options = []): string
     {
         $this->_placeholders = [];
         $options += ['escape' => true];
@@ -157,7 +156,7 @@ class TextHelper extends Helper
      * @param array $matches An array of regexp matches.
      * @return string Replaced values.
      */
-    protected function _insertPlaceHolder($matches)
+    protected function _insertPlaceHolder(array $matches): string
     {
         $match = $matches[0];
         $envelope = ['', ''];
@@ -171,7 +170,7 @@ class TextHelper extends Helper
         $key = hash_hmac('sha1', $match, Security::getSalt());
         $this->_placeholders[$key] = [
             'content' => $match,
-            'envelope' => $envelope
+            'envelope' => $envelope,
         ];
 
         return $key;
@@ -184,7 +183,7 @@ class TextHelper extends Helper
      * @param array $htmlOptions The options for the generated links.
      * @return string The text with links inserted.
      */
-    protected function _linkUrls($text, $htmlOptions)
+    protected function _linkUrls(string $text, array $htmlOptions): string
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
@@ -207,7 +206,7 @@ class TextHelper extends Helper
      * @return string
      * @see \Cake\View\Helper\TextHelper::autoLinkEmails()
      */
-    protected function _linkEmails($text, $options)
+    protected function _linkEmails(string $text, array $options): string
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
@@ -231,7 +230,7 @@ class TextHelper extends Helper
      * @return string The text with links
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#linking-email-addresses
      */
-    public function autoLinkEmails($text, array $options = [])
+    public function autoLinkEmails(string $text, array $options = []): string
     {
         $options += ['escape' => true];
         $this->_placeholders = [];
@@ -261,7 +260,7 @@ class TextHelper extends Helper
      * @return string The text with links
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#linking-both-urls-and-email-addresses
      */
-    public function autoLink($text, array $options = [])
+    public function autoLink(string $text, array $options = []): string
     {
         $text = $this->autoLinkUrls($text, $options);
 
@@ -279,7 +278,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\Text::highlight()
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#highlighting-substrings
      */
-    public function highlight($text, $phrase, array $options = [])
+    public function highlight(string $text, string $phrase, array $options = []): string
     {
         return $this->_engine->highlight($text, $phrase, $options);
     }
@@ -293,7 +292,7 @@ class TextHelper extends Helper
      * @return string The text with proper <p> and <br /> tags
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#converting-text-into-paragraphs
      */
-    public function autoParagraph($text)
+    public function autoParagraph(string $text): string
     {
         if (trim($text) !== '') {
             $text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
@@ -328,7 +327,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\Text::truncate()
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#truncating-text
      */
-    public function truncate($text, $length = 100, array $options = [])
+    public function truncate(string $text, int $length = 100, array $options = []): string
     {
         return $this->_engine->truncate($text, $length, $options);
     }
@@ -351,7 +350,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\Text::tail()
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#truncating-the-tail-of-a-string
      */
-    public function tail($text, $length = 100, array $options = [])
+    public function tail(string $text, int $length = 100, array $options = []): string
     {
         return $this->_engine->tail($text, $length, $options);
     }
@@ -368,7 +367,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\Text::excerpt()
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#extracting-an-excerpt
      */
-    public function excerpt($text, $phrase, $radius = 100, $ending = '...')
+    public function excerpt(string $text, string $phrase, int $radius = 100, string $ending = '...'): string
     {
         return $this->_engine->excerpt($text, $phrase, $radius, $ending);
     }
@@ -383,7 +382,7 @@ class TextHelper extends Helper
      * @see \Cake\Utility\Text::toList()
      * @link https://book.cakephp.org/3.0/en/views/helpers/text.html#converting-an-array-to-sentence-form
      */
-    public function toList($list, $and = null, $separator = ', ')
+    public function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
         return $this->_engine->toList($list, $and, $separator);
     }
@@ -393,7 +392,7 @@ class TextHelper extends Helper
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ namespace Cake\Database;
  */
 trait TypeMapTrait
 {
-
     /**
      * @var \Cake\Database\TypeMap
      */
@@ -46,7 +46,7 @@ trait TypeMapTrait
      *
      * @return \Cake\Database\TypeMap
      */
-    public function getTypeMap()
+    public function getTypeMap(): TypeMap
     {
         if ($this->_typeMap === null) {
             $this->_typeMap = new TypeMap();
@@ -73,7 +73,7 @@ trait TypeMapTrait
      *
      * @return array
      */
-    public function getDefaultTypes()
+    public function getDefaultTypes(): array
     {
         return $this->getTypeMap()->getDefaults();
     }

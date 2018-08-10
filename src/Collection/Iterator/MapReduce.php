@@ -27,7 +27,6 @@ use Traversable;
  */
 class MapReduce implements IteratorAggregate
 {
-
     /**
      * Holds the shuffled results that were emitted from the map
      * phase
@@ -114,7 +113,7 @@ class MapReduce implements IteratorAggregate
      * of the bucket that was created during the mapping phase and third one is an
      * instance of this class.
      */
-    public function __construct(Traversable $data, callable $mapper, callable $reducer = null)
+    public function __construct(Traversable $data, callable $mapper, ?callable $reducer = null)
     {
         $this->_data = $data;
         $this->_mapper = $mapper;

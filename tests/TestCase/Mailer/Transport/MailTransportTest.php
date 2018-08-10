@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * MailTransportTest file
  *
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class MailTransportTest extends TestCase
 {
-
     /**
      * Setup
      *

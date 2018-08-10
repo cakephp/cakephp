@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -122,10 +123,10 @@ class DateTypeTest extends TestCase
             [false, null],
             [true, null],
             ['', null],
-            ['derpy', 'derpy'],
-            ['2013-nope!', '2013-nope!'],
-            ['14-02-14', '14-02-14'],
-            ['2014-02-14 13:14:15', '2014-02-14 13:14:15'],
+            ['derpy', null],
+            ['2013-nope!', null],
+            ['14-02-14', null],
+            ['2014-02-14 13:14:15', null],
 
             // valid string types
             ['1392387900', $date],
@@ -139,46 +140,46 @@ class DateTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am'
+                    'meridian' => 'am',
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm'
+                    'meridian' => 'pm',
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
 
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Date(date('Y-m-d'))
+                new Date(date('Y-m-d')),
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Date(date('Y-m-d'))
+                new Date(date('Y-m-d')),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts'
+                    'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new Date('2014-02-14')
+                new Date('2014-02-14'),
             ],
         ];
     }

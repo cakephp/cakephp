@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,7 @@ interface EventInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Returns the subject of this event.
@@ -40,14 +41,14 @@ interface EventInterface
      *
      * @return void
      */
-    public function stopPropagation();
+    public function stopPropagation(): void;
 
     /**
      * Checks if the event is stopped.
      *
      * @return bool True if the event is stopped
      */
-    public function isStopped();
+    public function isStopped(): bool;
 
     /**
      * The result value of the event listeners.
@@ -71,7 +72,7 @@ interface EventInterface
      * @return array|mixed|null The data payload if $key is null, or the data value for the given $key. If the $key does not
      * exist a null value is returned.
      */
-    public function getData($key = null);
+    public function getData(?string $key = null);
 
     /**
      * Assigns a value to the data/payload of this event.

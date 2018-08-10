@@ -50,7 +50,6 @@ use Cake\TestSuite\Constraint\Email\NoMailSent;
  */
 trait EmailTrait
 {
-
     /**
      * Asserts an expected number of emails were sent
      *

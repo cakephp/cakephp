@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class SyslogLogTest extends TestCase
 {
-
     /**
      * Tests that the connection to the logger is open with the right arguments
      *
@@ -42,7 +42,7 @@ class SyslogLogTest extends TestCase
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
-            'format' => '%s: %s'
+            'format' => '%s: %s',
         ]);
         $log->expects($this->once())->method('_open')
             ->with('thing', LOG_NDELAY, LOG_MAIL);
@@ -95,7 +95,7 @@ class SyslogLogTest extends TestCase
             ['warning', LOG_WARNING],
             ['notice', LOG_NOTICE],
             ['info', LOG_INFO],
-            ['debug', LOG_DEBUG]
+            ['debug', LOG_DEBUG],
         ];
     }
 }

@@ -16,14 +16,13 @@ namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
 use Cake\Http\Cookie\Cookie;
-use Cake\Utility\Security;
 
 /**
  * PostsController class
  */
 class PostsController extends AppController
 {
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('Flash');
         $this->loadComponent('RequestHandler');
@@ -33,7 +32,7 @@ class PostsController extends AppController
     /**
      * beforeFilter
      *
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
     public function beforeFilter(EventInterface $event)
     {
@@ -106,7 +105,7 @@ class PostsController extends AppController
     public function secretCookie()
     {
         return $this->response
-            ->withCookie('secrets', 'name')
+            ->withCookie(new Cookie('secrets', 'name'))
             ->withStringBody('ok');
     }
 

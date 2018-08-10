@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -58,7 +59,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams([
             'plain' => 'always plain',
-            'secret' => $this->_encrypt('decoded', 'aes')
+            'secret' => $this->_encrypt('decoded', 'aes'),
         ]);
         $this->assertNotEquals('decoded', $request->getCookie('decoded'));
 

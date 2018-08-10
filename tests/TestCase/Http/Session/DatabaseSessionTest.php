@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * DatabaseSessionTest file
  *
@@ -26,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class DatabaseSessionTest extends TestCase
 {
-
     /**
      * fixtures
      *

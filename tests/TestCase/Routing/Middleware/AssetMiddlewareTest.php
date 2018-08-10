@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,8 +34,18 @@ class AssetMiddlewareTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        Plugin::unload();
+        parent::tearDown();
     }
 
     /**
@@ -47,7 +58,7 @@ class AssetMiddlewareTest extends TestCase
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/test_plugin/root.js',
-            'HTTP_IF_MODIFIED_SINCE' => date('D, j M Y G:i:s \G\M\T', $modified)
+            'HTTP_IF_MODIFIED_SINCE' => date('D, j M Y G:i:s \G\M\T', $modified),
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -93,22 +104,22 @@ class AssetMiddlewareTest extends TestCase
             // In plugin root.
             [
                 '/test_plugin/root.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/root.js'
+                TEST_APP . 'Plugin/TestPlugin/webroot/root.js',
             ],
             // Subdirectory
             [
                 '/test_plugin/js/alert.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/js/alert.js'
+                TEST_APP . 'Plugin/TestPlugin/webroot/js/alert.js',
             ],
             // In path that matches the plugin name
             [
                 '/test_plugin/js/test_plugin/test.js',
-                TEST_APP . 'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+                TEST_APP . 'Plugin/TestPlugin/webroot/js/test_plugin/test.js',
             ],
             // In vendored plugin
             [
                 '/company/test_plugin_three/css/company.css',
-                TEST_APP . 'Plugin/Company/TestPluginThree/webroot/css/company.css'
+                TEST_APP . 'Plugin/Company/TestPluginThree/webroot/css/company.css',
             ],
         ];
     }

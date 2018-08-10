@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,8 +18,9 @@ namespace Cake\View;
 use BadMethodCallException;
 use Cake\Cache\Cache;
 use Cake\Datasource\ModelAwareTrait;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -33,9 +35,8 @@ use ReflectionMethod;
 /**
  * Cell base.
  */
-abstract class Cell
+abstract class Cell implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
     use LocatorAwareTrait;
     use ModelAwareTrait;
@@ -86,7 +87,7 @@ abstract class Cell
      * @see \Cake\View\View
      */
     protected $_validViewOptions = [
-        'viewPath'
+        'viewPath',
     ];
 
     /**
@@ -110,13 +111,13 @@ abstract class Cell
      *
      * @param \Cake\Http\ServerRequest|null $request The request to use in the cell.
      * @param \Cake\Http\Response|null $response The response to use in the cell.
-     * @param \Cake\Event\EventManager|null $eventManager The eventManager to bind events to.
+     * @param \Cake\Event\EventManagerInterface|null $eventManager The eventManager to bind events to.
      * @param array $cellOptions Cell options to apply.
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManagerInterface $eventManager = null,
         array $cellOptions = []
     ) {
         if ($eventManager !== null) {
@@ -147,7 +148,7 @@ abstract class Cell
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
     }
 
@@ -159,7 +160,7 @@ abstract class Cell
      * @return string The rendered cell.
      * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
      */
-    public function render($template = null)
+    public function render(?string $template = null): string
     {
         $cache = [];
         if ($this->_cache) {
@@ -222,7 +223,7 @@ abstract class Cell
      * @param string|null $template The name of the template to be rendered.
      * @return array The cache configuration.
      */
-    protected function _cacheConfig($action, $template = null)
+    protected function _cacheConfig(string $action, ?string $template = null): array
     {
         if (empty($this->_cache)) {
             return [];
@@ -232,7 +233,7 @@ abstract class Cell
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',
-            'key' => $key
+            'key' => $key,
         ];
         if ($this->_cache === true) {
             return $default;
@@ -263,90 +264,6 @@ abstract class Cell
         } catch (Error $e) {
             throw new Error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()));
         }
-    }
-
-    /**
-     * Magic accessor for removed properties.
-     *
-     * @param string $name Property name
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        $deprecated = [
-            'template' => 'getTemplate',
-            'plugin' => 'getPlugin',
-            'helpers' => 'getHelpers',
-        ];
-        if (isset($deprecated[$name])) {
-            $method = $deprecated[$name];
-            deprecationWarning(sprintf(
-                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
-                $name,
-                $method
-            ));
-
-            return $this->viewBuilder()->{$method}();
-        }
-
-        $protected = [
-            'action',
-            'args',
-            'request',
-            'response',
-            'View',
-        ];
-        if (in_array($name, $protected, true)) {
-            deprecationWarning(sprintf(
-                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
-                $name
-            ));
-        }
-
-        return $this->{$name};
-    }
-
-    /**
-     * Magic setter for removed properties.
-     *
-     * @param string $name Property name.
-     * @param mixed $value Value to set.
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        $deprecated = [
-            'template' => 'setTemplate',
-            'plugin' => 'setPlugin',
-            'helpers' => 'setHelpers',
-        ];
-        if (isset($deprecated[$name])) {
-            $method = $deprecated[$name];
-            deprecationWarning(sprintf(
-                'Cell::$%s is deprecated. Use $cell->viewBuilder()->%s() instead.',
-                $name,
-                $method
-            ));
-            $this->viewBuilder()->{$method}($value);
-
-            return;
-        }
-
-        $protected = [
-            'action',
-            'args',
-            'request',
-            'response',
-            'View',
-        ];
-        if (in_array($name, $protected, true)) {
-            deprecationWarning(sprintf(
-                'Cell::$%s is now protected and shouldn\'t be accessed from outside a child class.',
-                $name
-            ));
-        }
-
-        $this->{$name} = $value;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use PDO;
  */
 class SqlserverTest extends TestCase
 {
-
     /**
      * Set up
      *
@@ -103,7 +103,7 @@ class SqlserverTest extends TestCase
 
                 return true;
             }))
-            ->will($this->returnValue([]));
+            ->will($this->returnValue(true));
         $driver->connect();
     }
 
@@ -135,7 +135,7 @@ class SqlserverTest extends TestCase
         $expected['flags'] += [
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::SQLSRV_ATTR_ENCODING => 'a-language'
+            PDO::SQLSRV_ATTR_ENCODING => 'a-language',
         ];
         $expected['attributes'] = [];
         $expected['app'] = null;
@@ -197,7 +197,7 @@ class SqlserverTest extends TestCase
         $expected['flags'] = [
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::SQLSRV_ATTR_ENCODING => 'a-language'
+            PDO::SQLSRV_ATTR_ENCODING => 'a-language',
         ];
         $expected['attributes'] = [];
         $expected['settings'] = [];
@@ -248,19 +248,17 @@ class SqlserverTest extends TestCase
     public function testSelectLimitVersion12()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', '_version'])
+            ->setMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
-            ->method('_version')
+        $driver->method('version')
             ->will($this->returnValue(12));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
-        $connection->expects($this->any())
-            ->method('getDriver')
+        $connection->method('getDriver')
             ->will($this->returnValue($driver));
 
         $query = new Query($connection);
@@ -299,14 +297,14 @@ class SqlserverTest extends TestCase
     public function testSelectLimitOldServer()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'getConnection', '_version'])
+            ->setMethods(['_connect', 'getConnection', 'version'])
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->expects($this->any())
-            ->method('_version')
+            ->method('version')
             ->will($this->returnValue(8));
 
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();
@@ -364,7 +362,7 @@ class SqlserverTest extends TestCase
             ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $connection = $this->getMockBuilder('\Cake\Database\Connection')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
             ->setConstructorArgs([['log' => false]])
             ->getMock();

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,6 @@ use Cake\View\View;
  */
 class FlashHelperTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -48,8 +48,8 @@ class FlashHelperTest extends TestCase
                         'key' => 'flash',
                         'message' => 'This is a calling',
                         'element' => 'Flash/default',
-                        'params' => []
-                    ]
+                        'params' => [],
+                    ],
                 ],
                 'notification' => [
                     [
@@ -58,24 +58,24 @@ class FlashHelperTest extends TestCase
                         'element' => 'flash_helper',
                         'params' => [
                             'title' => 'Notice!',
-                            'name' => 'Alert!'
-                        ]
-                    ]
+                            'name' => 'Alert!',
+                        ],
+                    ],
                 ],
                 'classy' => [
                     [
                         'key' => 'classy',
                         'message' => 'Recorded',
                         'element' => 'flash_classy',
-                        'params' => []
-                    ]
+                        'params' => [],
+                    ],
                 ],
                 'stack' => [
                     [
                         'key' => 'flash',
                         'message' => 'This is a calling',
                         'element' => 'Flash/default',
-                        'params' => []
+                        'params' => [],
                     ],
                     [
                         'key' => 'notification',
@@ -83,17 +83,17 @@ class FlashHelperTest extends TestCase
                         'element' => 'flash_helper',
                         'params' => [
                             'title' => 'Notice!',
-                            'name' => 'Alert!'
-                        ]
+                            'name' => 'Alert!',
+                        ],
                     ],
                     [
                         'key' => 'classy',
                         'message' => 'Recorded',
                         'element' => 'flash_classy',
-                        'params' => []
-                    ]
-                ]
-            ]
+                        'params' => [],
+                    ],
+                ],
+            ],
         ]);
     }
 
@@ -106,6 +106,7 @@ class FlashHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->View, $this->Flash);
+        Plugin::unload();
     }
 
     /**
@@ -129,7 +130,7 @@ class FlashHelperTest extends TestCase
             '<h1', 'Alert!', '/h1',
             '<h3', 'Notice!', '/h3',
             '<p', 'This is a test of the emergency broadcasting system', '/p',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
         $this->assertNull($this->Flash->render('non-existent'));
@@ -155,7 +156,7 @@ class FlashHelperTest extends TestCase
     {
         $result = $this->Flash->render('notification', [
             'element' => 'flash_helper',
-            'params' => ['title' => 'Notice!', 'name' => 'Alert!']
+            'params' => ['title' => 'Notice!', 'name' => 'Alert!'],
         ]);
 
         $expected = [
@@ -163,7 +164,7 @@ class FlashHelperTest extends TestCase
             '<h1', 'Alert!', '/h1',
             '<h3', 'Notice!', '/h3',
             '<p', 'This is a test of the emergency broadcasting system', '/p',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -175,7 +176,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPluginElement()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
         $expected = 'this is the plugin element';
@@ -189,7 +190,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithTheme()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
 
         $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');
@@ -213,7 +214,7 @@ class FlashHelperTest extends TestCase
             '<h3', 'Notice!', '/h3',
             '<p', 'This is a test of the emergency broadcasting system', '/p',
             '/div',
-            ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
+            ['div' => ['id' => 'classy-message']], 'Recorded', '/div',
         ];
         $this->assertHtml($expected, $result);
         $this->assertNull($this->View->getRequest()->getSession()->read('Flash.stack'));

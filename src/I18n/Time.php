@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -100,7 +101,7 @@ class Time extends MutableDateTime implements JsonSerializable
      *
      * @var string
      */
-    const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
+    public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
      * {@inheritDoc}
@@ -129,7 +130,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
      * @return string Formatted date string
      */
-    public function nice($timezone = null, $locale = null)
+    public function nice($timezone = null, $locale = null): string
     {
         return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
@@ -139,9 +140,9 @@ class Time extends MutableDateTime implements JsonSerializable
      *
      * @return bool
      */
-    public function isThisWeek()
+    public function isThisWeek(): bool
     {
-        return static::now($this->getTimezone())->format('W o') == $this->format('W o');
+        return static::now($this->getTimezone())->format('W o') === $this->format('W o');
     }
 
     /**
@@ -149,9 +150,9 @@ class Time extends MutableDateTime implements JsonSerializable
      *
      * @return bool
      */
-    public function isThisMonth()
+    public function isThisMonth(): bool
     {
-        return static::now($this->getTimezone())->format('m Y') == $this->format('m Y');
+        return static::now($this->getTimezone())->format('m Y') === $this->format('m Y');
     }
 
     /**
@@ -159,9 +160,9 @@ class Time extends MutableDateTime implements JsonSerializable
      *
      * @return bool
      */
-    public function isThisYear()
+    public function isThisYear(): bool
     {
-        return static::now($this->getTimezone())->format('Y') == $this->format('Y');
+        return static::now($this->getTimezone())->format('Y') === $this->format('Y');
     }
 
     /**
@@ -195,7 +196,7 @@ class Time extends MutableDateTime implements JsonSerializable
      *
      * @return string UNIX timestamp
      */
-    public function toUnixString()
+    public function toUnixString(): string
     {
         return $this->format('U');
     }
@@ -237,7 +238,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * @param array $options Array of options.
      * @return string Relative time string.
      */
-    public function timeAgoInWords(array $options = [])
+    public function timeAgoInWords(array $options = []): string
     {
         return static::diffFormatter()->timeAgoInWords($this, $options);
     }
@@ -257,7 +258,7 @@ class Time extends MutableDateTime implements JsonSerializable
      * @return array List of timezone identifiers
      * @since 2.2
      */
-    public static function listTimezones($filter = null, $country = null, $options = [])
+    public static function listTimezones($filter = null, ?string $country = null, $options = []): array
     {
         if (is_bool($options)) {
             $options = [
@@ -281,7 +282,7 @@ class Time extends MutableDateTime implements JsonSerializable
         if ($filter === null) {
             $filter = DateTimeZone::ALL;
         }
-        $identifiers = DateTimeZone::listIdentifiers($filter, $country);
+        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country);
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {

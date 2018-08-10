@@ -19,7 +19,6 @@ namespace TestApp\Mailer;
  */
 class TestUserMailer extends TestMailer
 {
-
     public function invite($email)
     {
         $this->_email
@@ -32,7 +31,7 @@ class TestUserMailer extends TestMailer
             ->addBcc('antograssiot@cakephp.org')
             ->setAttachments([
                 dirname(__FILE__) . DS . 'TestMailer.php',
-                dirname(__FILE__) . DS . 'TestUserMailer.php'
+                dirname(__FILE__) . DS . 'TestUserMailer.php',
             ])
             ->send('Hello ' . $email);
     }

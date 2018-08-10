@@ -26,7 +26,6 @@ use Traversable;
  */
 interface CollectionInterface extends Iterator, JsonSerializable
 {
-
     /**
      * Executes the passed callable for each of the elements in this collection
      * and passes both the value and key for them on each step.
@@ -71,7 +70,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *   If left null, a callback that filters out falsey values will be used.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function filter(callable $c = null): CollectionInterface;
+    public function filter(?callable $c = null): CollectionInterface;
 
     /**
      * Looks through each value in the collection, and returns another collection with
@@ -625,7 +624,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * Returns a new collection as the result of concatenating the list of elements
      * in this collection with the passed list of elements
      *
-     * @param array|\Traversable $items Items list.
+     * @param iterable $items Items list.
      * @return \Cake\Collection\CollectionInterface
      */
     public function append($items): CollectionInterface;
@@ -931,7 +930,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * the items in the collection and should return an array or Traversable object
      * @return \Cake\Collection\CollectionInterface
      */
-    public function unfold(callable $transformer = null): CollectionInterface;
+    public function unfold(?callable $transformer = null): CollectionInterface;
 
     /**
      * Passes this collection through a callable as its first argument.
@@ -963,10 +962,10 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $collection->zip([3, 4], [5, 6])->toList(); // returns [[1, 3, 5], [2, 4, 6]]
      * ```
      *
-     * @param array|\Traversable ...$items The collections to zip.
+     * @param iterable ...$items The collections to zip.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function zip($items): CollectionInterface;
+    public function zip(iterable $items): CollectionInterface;
 
     /**
      * Combines the elements of this collection with each of the elements of the
@@ -984,11 +983,11 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $zipped->toList(); // returns [9, 12]; [(1 + 3 + 5), (2 + 4 + 6)]
      * ```
      *
-     * @param array|\Traversable ...$items The collections to zip.
+     * @param iterable ...$items The collections to zip.
      * @param callable $callable The function to use for zipping the elements together.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function zipWith($items, $callable): CollectionInterface;
+    public function zipWith(iterable $items, $callable): CollectionInterface;
 
     /**
      * Breaks the collection into smaller arrays of the given size.
@@ -1156,5 +1155,5 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *   of the final results.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function cartesianProduct(callable $operation = null, callable $filter = null): CollectionInterface;
+    public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface;
 }

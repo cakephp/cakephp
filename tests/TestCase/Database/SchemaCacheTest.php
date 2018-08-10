@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,8 +17,8 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
-use Cake\Database\SchemaCache;
 use Cake\Database\Schema\CachedCollection;
+use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -26,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class SchemaCacheTest extends TestCase
 {
-
     /**
      * Fixtures.
      *

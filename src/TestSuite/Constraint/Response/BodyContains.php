@@ -22,7 +22,6 @@ use Cake\Http\Response;
  */
 class BodyContains extends ResponseBase
 {
-
     /**
      * @var bool
      */
@@ -31,7 +30,7 @@ class BodyContains extends ResponseBase
     /**
      * Constructor.
      *
-     * @param Response $response Response
+     * @param \Cake\Http\Response $response A response instance.
      * @param bool $ignoreCase Ignore case
      */
     public function __construct(Response $response, $ignoreCase = false)

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,9 @@
 namespace Cake\Http;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use LogicException;
 
@@ -26,7 +29,7 @@ use LogicException;
  * Long term this should just be the controller dispatcher, but
  * for now it will do a bit more than that.
  */
-class ActionDispatcher
+class ActionDispatcher implements EventDispatcherInterface
 {
     use EventDispatcherTrait;
 
@@ -50,7 +53,7 @@ class ActionDispatcher
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
      */
-    public function __construct($factory = null, $eventManager = null)
+    public function __construct(?ControllerFactory $factory = null, ?EventManager $eventManager = null)
     {
         if ($eventManager) {
             $this->setEventManager($eventManager);
@@ -66,7 +69,7 @@ class ActionDispatcher
      * @return \Cake\Http\Response A modified/replaced response.
      * @throws \ReflectionException
      */
-    public function dispatch(ServerRequest $request, Response $response)
+    public function dispatch(ServerRequest $request, Response $response): Response
     {
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
@@ -103,7 +106,7 @@ class ActionDispatcher
      * @return \Cake\Http\Response The response
      * @throws \LogicException If the controller action returns a non-response value.
      */
-    protected function _invoke(Controller $controller)
+    protected function _invoke(Controller $controller): Response
     {
         $this->dispatchEvent('Dispatcher.invokeController', ['controller' => $controller]);
 
@@ -137,7 +140,7 @@ class ActionDispatcher
      *
      * @return array
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->filters;
     }

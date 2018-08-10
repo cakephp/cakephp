@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class FormDataTest extends TestCase
 {
-
     /**
      * Test getting the boundary.
      *
@@ -82,7 +82,7 @@ class FormDataTest extends TestCase
             'key' => 'value',
             'empty' => '',
             'int' => '1',
-            'float' => '2.3'
+            'float' => '2.3',
         ];
         $data->addMany($array);
         $this->assertCount(4, $data);
@@ -132,7 +132,7 @@ class FormDataTest extends TestCase
         $data->add('Article', [
             'title' => 'first post',
             'published' => 'Y',
-            'tags' => ['blog', 'cakephp']
+            'tags' => ['blog', 'cakephp'],
         ]);
         $result = (string)$data;
         $expected = 'Article%5Btitle%5D=first+post&Article%5Bpublished%5D=Y&' .
@@ -163,7 +163,7 @@ class FormDataTest extends TestCase
             $contents,
             '--' . $boundary . '--',
             '',
-            ''
+            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
@@ -194,7 +194,7 @@ class FormDataTest extends TestCase
             $contents,
             '--' . $boundary . '--',
             '',
-            ''
+            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }

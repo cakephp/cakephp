@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConditionDecoratorTest extends TestCase
 {
-
     /**
      * testCanTriggerIf
      *
@@ -40,7 +40,7 @@ class ConditionDecoratorTest extends TestCase
         $decorator = new ConditionDecorator($callable, [
             'if' => function (EventInterface $event) {
                 return $event->getData('canTrigger');
-            }
+            },
         ]);
 
         $event = new Event('decorator.test', $this);
@@ -72,7 +72,7 @@ class ConditionDecoratorTest extends TestCase
         $listener1 = new ConditionDecorator($callable, [
             'if' => function (EventInterface $event) {
                 return false;
-            }
+            },
         ]);
 
         $listener2 = function (EventInterface $event) {
@@ -85,7 +85,7 @@ class ConditionDecoratorTest extends TestCase
         EventManager::instance()->on('decorator.test2', $listener2);
 
         $event = new Event('decorator.test2', $this, [
-            'counter' => 1
+            'counter' => 1,
         ]);
 
         EventManager::instance()->dispatch($event);
@@ -105,7 +105,7 @@ class ConditionDecoratorTest extends TestCase
         };
 
         $decorator = new ConditionDecorator($callable, [
-            'if' => 'not a callable'
+            'if' => 'not a callable',
         ]);
 
         $event = new Event('decorator.test', $this, []);

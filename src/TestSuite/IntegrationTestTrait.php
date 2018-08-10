@@ -54,7 +54,7 @@ use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
 use Exception;
 use LogicException;
-use PHPUnit\Exception as PhpunitException;
+use PHPUnit\Exception as PhpUnitException;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -608,7 +608,7 @@ trait IntegrationTestTrait
         $props = [
             'url' => $url,
             'session' => $session,
-            'query' => $queryData
+            'query' => $queryData,
         ];
         if (is_string($data)) {
             $props['input'] = $data;
@@ -687,7 +687,7 @@ trait IntegrationTestTrait
             }
 
             if (is_array($value)) {
-                $looksLikeFile = isset($value['error']) && isset($value['tmp_name']) && isset($value['size']);
+                $looksLikeFile = isset($value['error'], $value['tmp_name'], $value['size']);
                 if ($looksLikeFile) {
                     continue;
                 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\Datasource\EntityInterface;
  */
 trait TranslateTrait
 {
-
     /**
      * Returns the entity containing the translated fields for this object and for
      * the specified language. If the translation for the passed language is not
@@ -32,7 +32,7 @@ trait TranslateTrait
      * @param string $language Language to return entity for.
      * @return $this|\Cake\Datasource\EntityInterface
      */
-    public function translation($language)
+    public function translation(string $language)
     {
         if ($language === $this->get('_locale')) {
             return $this;

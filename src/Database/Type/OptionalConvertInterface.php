@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,12 +21,11 @@ namespace Cake\Database\Type;
  */
 interface OptionalConvertInterface
 {
-
     /**
      * Returns whether the cast to PHP is required to be invoked, since
      * it is not a identity function.
      *
      * @return bool
      */
-    public function requiresToPhpCast();
+    public function requiresToPhpCast(): bool;
 }

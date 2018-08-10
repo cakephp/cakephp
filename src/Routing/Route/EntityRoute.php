@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,9 +38,9 @@ class EntityRoute extends Route
      * @param array $context An array of the current request context.
      *   Contains information such as the current host, scheme, port, and base
      *   directory.
-     * @return bool|string Either false or a string URL.
+     * @return string|null Either a string URL or null.
      */
-    public function match(array $url, array $context = [])
+    public function match(array $url, array $context = []): ?string
     {
         if (isset($url['_entity'])) {
             $entity = $url['_entity'];
@@ -64,7 +65,7 @@ class EntityRoute extends Route
      * @param \ArrayAccess|array $entity Entity value from the URL options
      * @return void
      */
-    protected function _checkEntity($entity)
+    protected function _checkEntity($entity): void
     {
         if (!$entity instanceof ArrayAccess && !is_array($entity)) {
             throw new RuntimeException(sprintf(

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\View\View;
  */
 class TimeHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\TimeHelper
      */
@@ -73,15 +73,15 @@ class TimeHelperTest extends TestCase
         $timestamp = strtotime('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => 'span'
+            'element' => 'span',
         ]);
         $expected = [
             'span' => [
                 'title' => $timestamp,
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             'on ' . date('n/j/y', $timestamp),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
 
@@ -89,17 +89,17 @@ class TimeHelperTest extends TestCase
             'end' => '1 years',
             'element' => [
                 'title' => 'testing',
-                'rel' => 'test'
-            ]
+                'rel' => 'test',
+            ],
         ]);
         $expected = [
             'span' => [
                 'title' => 'testing',
                 'class' => 'time-ago-in-words',
-                'rel' => 'test'
+                'rel' => 'test',
             ],
             'on ' . date('n/j/y', $timestamp),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
 
@@ -111,10 +111,10 @@ class TimeHelperTest extends TestCase
         $expected = [
             'div' => [
                 'title' => $timestamp,
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             '2 weeks',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -130,7 +130,7 @@ class TimeHelperTest extends TestCase
         $timestamp = new Time('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => 'span'
+            'element' => 'span',
         ]);
         $vancouver = clone $timestamp;
         $vancouver->timezone('America/Vancouver');
@@ -138,10 +138,10 @@ class TimeHelperTest extends TestCase
         $expected = [
             'span' => [
                 'title' => $vancouver->__toString(),
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             'on ' . $vancouver->format('n/j/y'),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -330,7 +330,7 @@ class TimeHelperTest extends TestCase
         $map = [
             'Mon' => [-1, 7], 'Tue' => [-2, 6], 'Wed' => [-3, 5],
             'Thu' => [-4, 4], 'Fri' => [-5, 3], 'Sat' => [-6, 2],
-            'Sun' => [-7, 1]
+            'Sun' => [-7, 1],
         ];
         $days = $map[date('D')];
 
@@ -350,11 +350,11 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isThisMonth('+0 day');
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y')));
+        $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
         $this->assertFalse($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
         $this->assertFalse($result);
     }
 
@@ -367,7 +367,7 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isThisYear('+0 day');
         $this->assertTrue($result);
-        $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
+        $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
     }
 

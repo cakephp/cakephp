@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\ORM\TableRegistry;
  */
 trait LocatorAwareTrait
 {
-
     /**
      * Table locator instance
      *
@@ -47,7 +47,7 @@ trait LocatorAwareTrait
      *
      * @return \Cake\ORM\Locator\LocatorInterface
      */
-    public function getTableLocator()
+    public function getTableLocator(): LocatorInterface
     {
         if (!$this->_tableLocator) {
             $this->_tableLocator = TableRegistry::getTableLocator();

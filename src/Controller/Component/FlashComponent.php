@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,6 @@ use Exception;
  */
 class FlashComponent extends Component
 {
-
     /**
      * The Session object instance
      *
@@ -48,7 +48,7 @@ class FlashComponent extends Component
         'element' => 'default',
         'params' => [],
         'clear' => false,
-        'duplicate' => true
+        'duplicate' => true,
     ];
 
     /**
@@ -84,7 +84,7 @@ class FlashComponent extends Component
      * @param array $options An array of options
      * @return void
      */
-    public function set($message, array $options = [])
+    public function set($message, array $options = []): void
     {
         $options += $this->getConfig();
 
@@ -124,7 +124,7 @@ class FlashComponent extends Component
             'message' => $message,
             'key' => $options['key'],
             'element' => $options['element'],
-            'params' => $options['params']
+            'params' => $options['params'],
         ];
 
         $this->_session->write('Flash.' . $options['key'], $messages);
@@ -152,7 +152,7 @@ class FlashComponent extends Component
      * @return void
      * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
-    public function __call($name, $args)
+    public function __call(string $name, array $args): void
     {
         $element = Inflector::underscore($name);
 

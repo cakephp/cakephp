@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,6 @@
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
-use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
@@ -26,7 +26,6 @@ use Cake\Validation\Validator;
  */
 class MyUsersTable extends Table
 {
-
     /**
      * Overrides default table name
      *
@@ -40,7 +39,6 @@ class MyUsersTable extends Table
  */
 class TableLocatorTest extends TestCase
 {
-
     /**
      * TableLocator instance.
      *
@@ -89,7 +87,7 @@ class TableLocatorTest extends TestCase
      */
     public function testConfigPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $data = [
             'connection' => 'testing',
@@ -229,7 +227,7 @@ class TableLocatorTest extends TestCase
     {
         ConnectionManager::alias('test', 'testing');
         $result = $this->_locator->get('Articles', [
-            'connectionName' => 'testing'
+            'connectionName' => 'testing',
         ]);
         $this->assertEquals('articles', $result->getTable());
         $this->assertEquals('test', $result->getConnection()->configName());
@@ -243,10 +241,10 @@ class TableLocatorTest extends TestCase
     public function testGetWithConfigClassName()
     {
         $this->_locator->setConfig('MyUsersTableAlias', [
-            'className' => '\Cake\Test\TestCase\ORM\Locator\MyUsersTable',
+            'className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable',
         ]);
         $result = $this->_locator->get('MyUsersTableAlias');
-        $this->assertInstanceOf('\Cake\Test\TestCase\ORM\Locator\MyUsersTable', $result, 'Should use getConfig() data className option.');
+        $this->assertInstanceOf('Cake\Test\TestCase\ORM\Locator\MyUsersTable', $result, 'Should use getConfig() data className option.');
     }
 
     /**
@@ -301,7 +299,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('TestPlugin.TestPluginComments');
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
@@ -327,8 +325,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetMultiplePlugins()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
@@ -354,7 +351,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithClassNameOption()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
         ]);
@@ -375,7 +372,7 @@ class TableLocatorTest extends TestCase
      */
     public function testGetPluginWithFullNamespaceName()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
         $table = $this->_locator->get('Comments', [
             'className' => $class,
@@ -460,7 +457,7 @@ class TableLocatorTest extends TestCase
                 'default' => $validator1,
                 'secondary' => $validator2,
                 'tertiary' => $validator3,
-            ]
+            ],
         ]);
         $table = $this->_locator->get('users');
 
@@ -488,7 +485,7 @@ class TableLocatorTest extends TestCase
      */
     public function testSetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $mock = $this->getMockBuilder('TestPlugin\Model\Table\CommentsTable')->getMock();
 
@@ -542,8 +539,7 @@ class TableLocatorTest extends TestCase
      */
     public function testRemovePlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $app = $this->_locator->get('Comments');
         $this->_locator->get('TestPlugin.Comments');

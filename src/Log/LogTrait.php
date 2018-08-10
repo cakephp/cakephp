@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Psr\Log\LogLevel;
  */
 trait LogTrait
 {
-
     /**
      * Convenience method to write a message to Log. See Log::write()
      * for more information on writing to logs.
@@ -31,7 +31,7 @@ trait LogTrait
      * @param string|array $context Additional log data relevant to this message.
      * @return bool Success of log write.
      */
-    public function log($msg, $level = LogLevel::ERROR, $context = [])
+    public function log($msg, $level = LogLevel::ERROR, $context = []): bool
     {
         return Log::write($level, $msg, $context);
     }

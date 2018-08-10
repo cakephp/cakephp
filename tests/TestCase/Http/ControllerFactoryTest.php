@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -48,7 +49,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'controller' => 'Cakes',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf('TestApp\Controller\CakesController', $result);
@@ -69,7 +70,7 @@ class ControllerFactoryTest extends TestCase
                 'prefix' => 'admin',
                 'controller' => 'Posts',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf(
@@ -93,7 +94,7 @@ class ControllerFactoryTest extends TestCase
                 'prefix' => 'admin/sub',
                 'controller' => 'Posts',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf(
@@ -117,7 +118,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => 'TestPlugin',
                 'controller' => 'TestPlugin',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf(
@@ -141,7 +142,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => 'Company/TestPluginThree',
                 'controller' => 'Ovens',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf(
@@ -166,7 +167,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => 'TestPlugin',
                 'controller' => 'Comments',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->create($request, $this->response);
         $this->assertInstanceOf(
@@ -189,7 +190,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'controller' => 'Abstract',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $this->factory->create($request, $this->response);
     }
@@ -206,7 +207,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'controller' => 'Interface',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $this->factory->create($request, $this->response);
     }
@@ -223,7 +224,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'controller' => 'Invisible',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $this->factory->create($request, $this->response);
     }
@@ -240,7 +241,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'controller' => 'Admin/Posts',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $this->factory->create($request, $this->response);
     }
@@ -257,7 +258,7 @@ class ControllerFactoryTest extends TestCase
             'params' => [
                 'controller' => 'TestApp\Controller\CakesController',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $this->factory->create($request, $this->response);
     }
@@ -275,7 +276,7 @@ class ControllerFactoryTest extends TestCase
                 'plugin' => 'Company/TestPluginThree',
                 'controller' => 'Ovens',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $result = $this->factory->getControllerClass($request);
         $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);

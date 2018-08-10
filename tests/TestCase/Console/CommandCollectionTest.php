@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -43,7 +44,7 @@ class CommandCollectionTest extends TestCase
     {
         $collection = new CommandCollection([
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class
+            'routes' => RoutesShell::class,
         ]);
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
@@ -61,7 +62,7 @@ class CommandCollectionTest extends TestCase
         $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\' it is not a subclass of Cake\Console\Shell');
         new CommandCollection([
             'i18n' => I18nShell::class,
-            'nope' => stdClass::class
+            'nope' => stdClass::class,
         ]);
     }
 
@@ -182,7 +183,7 @@ class CommandCollectionTest extends TestCase
     {
         $in = [
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class
+            'routes' => RoutesShell::class,
         ];
         $collection = new CommandCollection($in);
         $out = [];
@@ -256,8 +257,7 @@ class CommandCollectionTest extends TestCase
      */
     public function testDiscoverPlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $collection = new CommandCollection();
         // Add a dupe to test de-duping
@@ -297,5 +297,6 @@ class CommandCollectionTest extends TestCase
             'Long names are stored as well'
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
+        Plugin::unload();
     }
 }

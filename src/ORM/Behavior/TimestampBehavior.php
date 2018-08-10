@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,13 +15,13 @@
  */
 namespace Cake\ORM\Behavior;
 
-use Cake\Database\TypeFactory;
 use Cake\Database\Type\DateTimeType;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
-use DateTime;
+use DateTimeInterface;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -29,7 +30,6 @@ use UnexpectedValueException;
  */
 class TimestampBehavior extends Behavior
 {
-
     /**
      * Default config
      *
@@ -49,21 +49,21 @@ class TimestampBehavior extends Behavior
         'implementedFinders' => [],
         'implementedMethods' => [
             'timestamp' => 'timestamp',
-            'touch' => 'touch'
+            'touch' => 'touch',
         ],
         'events' => [
             'Model.beforeSave' => [
                 'created' => 'new',
-                'modified' => 'always'
-            ]
+                'modified' => 'always',
+            ],
         ],
-        'refreshTimestamp' => true
+        'refreshTimestamp' => true,
     ];
 
     /**
      * Current timestamp
      *
-     * @var \DateTime
+     * @var \DateTimeInterface
      */
     protected $_ts;
 
@@ -76,7 +76,7 @@ class TimestampBehavior extends Behavior
      * @param array $config The config for this behavior.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         if (isset($config['events'])) {
             $this->setConfig('events', $config['events'], false);
@@ -92,7 +92,7 @@ class TimestampBehavior extends Behavior
      * @return bool Returns true irrespective of the behavior logic, the save will not be prevented.
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
-    public function handleEvent(EventInterface $event, EntityInterface $entity)
+    public function handleEvent(EventInterface $event, EntityInterface $entity): bool
     {
         $eventName = $event->getName();
         $events = $this->_config['events'];
@@ -124,7 +124,7 @@ class TimestampBehavior extends Behavior
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return array_fill_keys(array_keys($this->_config['events']), 'handleEvent');
     }
@@ -136,11 +136,11 @@ class TimestampBehavior extends Behavior
      * If an explicit date time is passed, the config option `refreshTimestamp` is
      * automatically set to false.
      *
-     * @param \DateTime|null $ts Timestamp
+     * @param \DateTimeInterface|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \DateTime
+     * @return \Cake\I18n\Time
      */
-    public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
+    public function timestamp(?DateTimeInterface $ts = null, bool $refreshTimestamp = false): DateTimeInterface
     {
         if ($ts) {
             if ($this->_config['refreshTimestamp']) {
@@ -165,7 +165,7 @@ class TimestampBehavior extends Behavior
      * @param string $eventName Event name.
      * @return bool true if a field is updated, false if no action performed
      */
-    public function touch(EntityInterface $entity, $eventName = 'Model.beforeSave')
+    public function touch(EntityInterface $entity, string $eventName = 'Model.beforeSave'): bool
     {
         $events = $this->_config['events'];
         if (empty($events[$eventName])) {
@@ -194,7 +194,7 @@ class TimestampBehavior extends Behavior
      * @param bool $refreshTimestamp Whether to refresh timestamp.
      * @return void
      */
-    protected function _updateField($entity, $field, $refreshTimestamp)
+    protected function _updateField(EntityInterface $entity, string $field, bool $refreshTimestamp): void
     {
         if ($entity->isDirty($field)) {
             return;

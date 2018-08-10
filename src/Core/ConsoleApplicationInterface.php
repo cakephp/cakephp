@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,6 +14,8 @@
  */
 namespace Cake\Core;
 
+use Cake\Console\CommandCollection;
+
 /**
  * An interface defining the methods that the
  * console runner depend on.
@@ -26,7 +29,7 @@ interface ConsoleApplicationInterface
      *
      * @return void
      */
-    public function bootstrap();
+    public function bootstrap(): void;
 
     /**
      * Define the console commands for an application.
@@ -34,5 +37,5 @@ interface ConsoleApplicationInterface
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
-    public function console($commands);
+    public function console(CommandCollection $commands): CommandCollection;
 }

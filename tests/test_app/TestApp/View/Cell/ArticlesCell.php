@@ -18,7 +18,6 @@ namespace TestApp\View\Cell;
  */
 class ArticlesCell extends \Cake\View\Cell
 {
-
     /**
      * valid cell options.
      *
@@ -55,17 +54,6 @@ class ArticlesCell extends \Cake\View\Cell
             ['title' => 'Topis semper blandit eu non', 'body' => 'alvinar diam convallis non. Nullam pu'],
             ['title' => 'Suspendisse gravida neque', 'body' => 'pellentesque sed scelerisque libero'],
         ]);
-    }
-
-    /**
-     * Renders a view using a different template than the action name
-     * The template is set using the ``Cell::$template`` property
-     *
-     * @return void
-     */
-    public function customTemplate()
-    {
-        $this->template = 'alternate_teaser_list';
     }
 
     /**

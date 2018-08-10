@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,12 +16,12 @@
 namespace Cake\Test\TestCase\Routing;
 
 use Cake\Core\Plugin;
-use Cake\Routing\RouteBuilder;
-use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
+use Cake\Routing\RouteBuilder;
+use Cake\Routing\RouteCollection;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
 
@@ -29,7 +30,6 @@ use RuntimeException;
  */
 class RouteBuilderTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -49,7 +49,7 @@ class RouteBuilderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestPlugin');
+        Plugin::unload();
     }
 
     /**
@@ -211,7 +211,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'view',
             'plugin' => null,
-            '_matchedRoute' => '/my-articles/view'
+            '_matchedRoute' => '/my-articles/view',
         ];
         $this->assertEquals($expected, $this->collection->parse('/my-articles/view'));
 
@@ -235,7 +235,7 @@ class RouteBuilderTest extends TestCase
             'prefix' => 'admin',
             'controller' => 'Bookmarks',
             'action' => 'index',
-            '_matchedRoute' => '/admin/bookmarks'
+            '_matchedRoute' => '/admin/bookmarks',
         ];
         $this->assertEquals($expected, $this->collection->parse('/admin/bookmarks'));
 
@@ -258,7 +258,7 @@ class RouteBuilderTest extends TestCase
             'plugin' => 'Blog',
             'controller' => 'Articles',
             'action' => 'view',
-            '_matchedRoute' => '/blog/articles/view'
+            '_matchedRoute' => '/blog/articles/view',
         ];
         $this->assertEquals($expected, $this->collection->parse('/blog/articles/view'));
 
@@ -282,7 +282,7 @@ class RouteBuilderTest extends TestCase
             'prefix' => 'management/admin',
             'controller' => 'Articles',
             'action' => 'view',
-            '_matchedRoute' => '/admin/blog/articles/view'
+            '_matchedRoute' => '/admin/blog/articles/view',
         ];
         $this->assertEquals($expected, $this->collection->parse('/admin/blog/articles/view'));
 
@@ -687,7 +687,7 @@ class RouteBuilderTest extends TestCase
             'map' => [
                 'delete_all' => ['action' => 'deleteAll', 'method' => 'DELETE'],
                 'update_many' => ['action' => 'updateAll', 'method' => 'DELETE', 'path' => '/updateAll'],
-            ]
+            ],
         ]);
 
         $all = $this->collection->routes();
@@ -726,7 +726,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'edit',
             '_method' => 'PUT',
-            'id' => 99
+            'id' => 99,
         ]);
         $this->assertEquals('/api/articles/99', $url);
 
@@ -736,7 +736,7 @@ class RouteBuilderTest extends TestCase
             'action' => 'edit',
             '_method' => 'PUT',
             '_ext' => 'json',
-            'id' => 99
+            'id' => 99,
         ]);
         $this->assertEquals('/api/articles/99.json', $url);
     }
@@ -823,7 +823,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->resources('Articles', [
             'only' => ['index', 'delete'],
-            'actions' => ['index' => 'showList']
+            'actions' => ['index' => 'showList'],
         ]);
 
         $result = $this->collection->routes();
@@ -1174,30 +1174,19 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test loading routes from a missing file
-     *
-     * @return void
-     */
-    public function testLoadPluginBadFile()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot load routes for the plugin named TestPlugin.');
-        Plugin::load('TestPlugin');
-        $routes = new RouteBuilder($this->collection, '/');
-        $routes->loadPlugin('TestPlugin', 'nope.php');
-    }
-
-    /**
      * Test loading routes with success
      *
      * @return void
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());
         $this->assertNotEmpty($this->collection->parse('/test_plugin', 'GET'));
+
+        $plugin = Plugin::getCollection()->get('TestPlugin');
+        $this->assertFalse($plugin->isEnabled('routes'), 'Hook should be disabled preventing duplicate routes');
     }
 }

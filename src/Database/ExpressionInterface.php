@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,14 +20,13 @@ namespace Cake\Database;
  */
 interface ExpressionInterface
 {
-
     /**
      * Converts the Node into a SQL string fragment.
      *
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator);
+    public function sql(ValueBinder $generator): string;
 
     /**
      * Iterates over each part of the expression recursively for every
@@ -35,7 +35,7 @@ interface ExpressionInterface
      * being iterated.
      *
      * @param callable $visitor The callable to apply to all nodes.
-     * @return void
+     * @return $this
      */
     public function traverse(callable $visitor);
 }

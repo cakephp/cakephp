@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
@@ -24,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class IdentifierExpressionTest extends TestCase
 {
-
     /**
      * Tests getting and setting the field
      *

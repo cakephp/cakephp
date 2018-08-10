@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
@@ -24,20 +26,19 @@ use Cake\Routing\Router;
  */
 class RoutesShell extends Shell
 {
-
     /**
      * Override main() to handle action
      * Displays all routes in an application.
      *
      * @return void
      */
-    public function main()
+    public function main(): void
     {
         $output = [
-            ['Route name', 'URI template', 'Defaults']
+            ['Route name', 'URI template', 'Defaults'],
         ];
         foreach (Router::routes() as $route) {
-            $name = isset($route->options['_name']) ? $route->options['_name'] : $route->getName();
+            $name = $route->options['_name'] ?? $route->getName();
             ksort($route->defaults);
             $output[] = [$name, $route->template, json_encode($route->defaults)];
         }
@@ -51,7 +52,7 @@ class RoutesShell extends Shell
      * @param string $url The URL to parse
      * @return bool Success
      */
-    public function check($url)
+    public function check(string $url): bool
     {
         try {
             $request = new ServerRequest(['url' => $url]);
@@ -59,7 +60,7 @@ class RoutesShell extends Shell
             $name = null;
             foreach (Router::routes() as $r) {
                 if ($r->match($route)) {
-                    $name = isset($r->options['_name']) ? $r->options['_name'] : $r->getName();
+                    $name = $r->options['_name'] ?? $r->getName();
                     break;
                 }
             }
@@ -69,7 +70,7 @@ class RoutesShell extends Shell
 
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
-                [$name, $url, json_encode($route)]
+                [$name, $url, json_encode($route)],
             ];
             $this->helper('table')->output($output);
             $this->out();
@@ -89,7 +90,7 @@ class RoutesShell extends Shell
      * Takes variadic arguments of key/value pairs.
      * @return bool Success
      */
-    public function generate()
+    public function generate(): bool
     {
         try {
             $args = $this->_splitArgs($this->args);
@@ -111,7 +112,7 @@ class RoutesShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->setDescription(
@@ -119,12 +120,12 @@ class RoutesShell extends Shell
             'This tool also lets you test URL generation and URL parsing.'
         )->addSubcommand('check', [
             'help' => 'Check a URL string against the routes. ' .
-                'Will output the routing parameters the route resolves to.'
+                'Will output the routing parameters the route resolves to.',
         ])->addSubcommand('generate', [
             'help' => 'Check a routing array against the routes. ' .
                 "Will output the URL if there is a match.\n\n" .
                 'Routing parameters should be supplied in a key:value format. ' .
-                'For example `controller:Articles action:view 2`'
+                'For example `controller:Articles action:view 2`',
         ]);
 
         return $parser;
@@ -136,7 +137,7 @@ class RoutesShell extends Shell
      * @param array $args The arguments to split.
      * @return array
      */
-    protected function _splitArgs($args)
+    protected function _splitArgs(array $args): array
     {
         $out = [];
         foreach ($args as $arg) {

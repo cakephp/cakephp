@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
@@ -26,7 +28,6 @@ use DirectoryIterator;
  */
 class I18nShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *
@@ -47,7 +48,7 @@ class I18nShell extends Shell
      * @throws \Cake\Core\Exception\MissingPluginException
      * @throws \Cake\Console\Exception\StopException
      */
-    public function main()
+    public function main(): void
     {
         $this->out('<info>I18n Shell</info>');
         $this->hr();
@@ -85,7 +86,7 @@ class I18nShell extends Shell
      * @return void
      * @throws \Cake\Console\Exception\StopException
      */
-    public function init($language = null)
+    public function init(?string $language = null): void
     {
         if (!$language) {
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
@@ -130,37 +131,37 @@ class I18nShell extends Shell
      * @return \Cake\Console\ConsoleOptionParser
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $initParser = [
             'options' => [
                 'plugin' => [
                     'help' => 'Plugin name.',
-                    'short' => 'p'
+                    'short' => 'p',
                 ],
                 'force' => [
                     'help' => 'Force overwriting.',
                     'short' => 'f',
-                    'boolean' => true
-                ]
+                    'boolean' => true,
+                ],
             ],
             'arguments' => [
                 'language' => [
-                    'help' => 'Two-letter language code.'
-                ]
-            ]
+                    'help' => 'Two-letter language code.',
+                ],
+            ],
         ];
 
         $parser->setDescription(
             'I18n Shell generates .pot files(s) with translations.'
         )->addSubcommand('extract', [
             'help' => 'Extract the po translations from your application',
-            'parser' => $this->Extract->getOptionParser()
+            'parser' => $this->Extract->getOptionParser(),
         ])
         ->addSubcommand('init', [
             'help' => 'Init PO language file from POT file',
-            'parser' => $initParser
+            'parser' => $initParser,
         ]);
 
         return $parser;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -40,7 +41,7 @@ class UrlHelper extends Helper
      * @param array $options Array of options.
      * @return string Full translated URL with base path.
      */
-    public function build($url = null, array $options = [])
+    public function build($url = null, array $options = []): string
     {
         $defaults = [
             'fullBase' => false,
@@ -75,7 +76,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function image($path, array $options = [])
+    public function image($path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
@@ -100,7 +101,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function css($path, array $options = [])
+    public function css($path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
@@ -126,7 +127,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function script($path, array $options = [])
+    public function script($path, array $options = []): string
     {
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
@@ -152,7 +153,7 @@ class UrlHelper extends Helper
      *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
-    public function assetUrl($path, array $options = [])
+    public function assetUrl($path, array $options = []): string
     {
         if (is_array($path)) {
             return $this->build($path, $options);
@@ -204,7 +205,7 @@ class UrlHelper extends Helper
      * @param string $url The URL to encode.
      * @return string The URL encoded for both URL & HTML contexts.
      */
-    protected function _encodeUrl($url)
+    protected function _encodeUrl(string $url): string
     {
         $path = parse_url($url, PHP_URL_PATH);
         $parts = array_map('rawurldecode', explode('/', $path));
@@ -226,7 +227,7 @@ class UrlHelper extends Helper
      * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public function assetTimestamp($path, $timestamp = null)
+    public function assetTimestamp(string $path, $timestamp = null): string
     {
         if ($timestamp === null) {
             $timestamp = Configure::read('Asset.timestamp');
@@ -244,7 +245,7 @@ class UrlHelper extends Helper
             }
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
-            if (Plugin::loaded($plugin)) {
+            if (Plugin::isLoaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
                 if (file_exists($pluginPath)) {
@@ -262,7 +263,7 @@ class UrlHelper extends Helper
      * @param string $file The file to create a webroot path to.
      * @return string Web accessible path to file.
      */
-    public function webroot($file)
+    public function webroot(string $file): string
     {
         $request = $this->_View->getRequest();
 
@@ -302,7 +303,7 @@ class UrlHelper extends Helper
      * @param string $name Name of the theme which should be inflected.
      * @return string Inflected name of the theme
      */
-    protected function _inflectThemeName($name)
+    protected function _inflectThemeName(string $name): string
     {
         return Inflector::underscore($name);
     }
@@ -312,7 +313,7 @@ class UrlHelper extends Helper
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

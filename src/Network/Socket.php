@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,6 @@ use InvalidArgumentException;
  */
 class Socket
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -49,7 +49,7 @@ class Socket
         'host' => 'localhost',
         'protocol' => 'tcp',
         'port' => 80,
-        'timeout' => 30
+        'timeout' => 30,
     ];
 
     /**
@@ -126,7 +126,7 @@ class Socket
      * @return bool Success
      * @throws \Cake\Network\Exception\SocketException
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->connection) {
             $this->disconnect();
@@ -188,7 +188,7 @@ class Socket
      * @param string $host The host name being connected to.
      * @return void
      */
-    protected function _setSslContext($host)
+    protected function _setSslContext(string $host): void
     {
         foreach ($this->_config as $key => $value) {
             if (substr($key, 0, 4) !== 'ssl_') {
@@ -227,7 +227,7 @@ class Socket
      * @param string $message Message.
      * @return void
      */
-    protected function _connectionErrorHandler($code, $message)
+    protected function _connectionErrorHandler(int $code, string $message): void
     {
         $this->_connectionErrors[] = $message;
     }
@@ -237,7 +237,7 @@ class Socket
      *
      * @return null|array Null when there is no connection, an array when there is.
      */
-    public function context()
+    public function context(): ?array
     {
         if (!$this->connection) {
             return null;
@@ -251,7 +251,7 @@ class Socket
      *
      * @return string Host name
      */
-    public function host()
+    public function host(): string
     {
         if (Validation::ip($this->_config['host'])) {
             return gethostbyaddr($this->_config['host']);
@@ -265,7 +265,7 @@ class Socket
      *
      * @return string IP address
      */
-    public function address()
+    public function address(): string
     {
         if (Validation::ip($this->_config['host'])) {
             return $this->_config['host'];
@@ -279,7 +279,7 @@ class Socket
      *
      * @return array IP addresses
      */
-    public function addresses()
+    public function addresses(): array
     {
         if (Validation::ip($this->_config['host'])) {
             return [$this->_config['host']];
@@ -293,7 +293,7 @@ class Socket
      *
      * @return string|null Last error
      */
-    public function lastError()
+    public function lastError(): ?string
     {
         if (!empty($this->lastError)) {
             return $this->lastError['num'] . ': ' . $this->lastError['str'];
@@ -309,7 +309,7 @@ class Socket
      * @param string $errStr Error string
      * @return void
      */
-    public function setLastError($errNum, $errStr)
+    public function setLastError(?int $errNum, string $errStr): void
     {
         $this->lastError = ['num' => $errNum, 'str' => $errStr];
     }
@@ -320,7 +320,7 @@ class Socket
      * @param string $data The data to write to the socket.
      * @return int Bytes written.
      */
-    public function write($data)
+    public function write(string $data): int
     {
         if (!$this->connected && !$this->connect()) {
             return 0;
@@ -345,7 +345,7 @@ class Socket
      * @param int $length Optional buffer length to read; defaults to 1024
      * @return string|null Socket data
      */
-    public function read($length = 1024)
+    public function read(int $length = 1024): ?string
     {
         if (!$this->connected && !$this->connect()) {
             return null;
@@ -371,7 +371,7 @@ class Socket
      *
      * @return bool Success
      */
-    public function disconnect()
+    public function disconnect(): bool
     {
         if (!is_resource($this->connection)) {
             $this->connected = false;
@@ -401,7 +401,7 @@ class Socket
      * @param array|null $state Array with key and values to reset
      * @return bool True on success
      */
-    public function reset($state = null)
+    public function reset(?array $state = null): bool
     {
         if (empty($state)) {
             static $initalState = [];
@@ -429,7 +429,7 @@ class Socket
      * @throws \Cake\Network\Exception\SocketException When attempting to enable SSL/TLS fails
      * @see stream_socket_enable_crypto
      */
-    public function enableCrypto($type, $clientOrServer = 'client', $enable = true)
+    public function enableCrypto(string $type, string $clientOrServer = 'client', bool $enable = true): bool
     {
         if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
             throw new InvalidArgumentException('Invalid encryption scheme chosen');
@@ -441,12 +441,12 @@ class Socket
         //
         // See https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
         if (version_compare(PHP_VERSION, '5.6.7', '>=')) {
-            if ($method == STREAM_CRYPTO_METHOD_TLS_CLIENT) {
+            if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
                 // @codingStandardsIgnoreStart
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
                 // @codingStandardsIgnoreEnd
             }
-            if ($method == STREAM_CRYPTO_METHOD_TLS_SERVER) {
+            if ($method === STREAM_CRYPTO_METHOD_TLS_SERVER) {
                 // @codingStandardsIgnoreStart
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
                 // @codingStandardsIgnoreEnd

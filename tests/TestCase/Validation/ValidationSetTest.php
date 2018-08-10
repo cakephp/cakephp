@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ValidationSetTest file
  *
@@ -25,7 +26,6 @@ use Cake\Validation\ValidationSet;
  */
 class ValidationSetTest extends TestCase
 {
-
     /**
      * testGetRule method
      *

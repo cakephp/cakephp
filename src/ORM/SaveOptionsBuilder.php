@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -27,7 +28,6 @@ use RuntimeException;
  */
 class SaveOptionsBuilder extends ArrayObject
 {
-
     use AssociationsNormalizerTrait;
 
     /**
@@ -67,7 +67,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param array $array Options array.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function parseArrayOptions($array)
+    public function parseArrayOptions(array $array): SaveOptionsBuilder
     {
         foreach ($array as $key => $value) {
             $this->{$key}($value);
@@ -82,7 +82,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param string|array $associated String or array of associations.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function associated($associated)
+    public function associated($associated): SaveOptionsBuilder
     {
         $associated = $this->_normalizeAssociations($associated);
         $this->_associated($this->_table, $associated);
@@ -98,7 +98,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param array $associations An associations array.
      * @return void
      */
-    protected function _associated(Table $table, array $associations)
+    protected function _associated(Table $table, array $associations): void
     {
         foreach ($associations as $key => $associated) {
             if (is_int($key)) {
@@ -121,7 +121,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param string $association Association name.
      * @return void
      */
-    protected function _checkAssociation(Table $table, $association)
+    protected function _checkAssociation(Table $table, string $association): void
     {
         if (!$table->associations()->has($association)) {
             throw new RuntimeException(sprintf('Table `%s` is not associated with `%s`', get_class($table), $association));
@@ -134,7 +134,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param bool $guard Guard the properties or not.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function guard($guard)
+    public function guard(bool $guard): SaveOptionsBuilder
     {
         $this->_options['guard'] = (bool)$guard;
 
@@ -147,7 +147,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param string $validate Name of the validation rule set to use.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function validate($validate)
+    public function validate(string $validate): SaveOptionsBuilder
     {
         $this->_table->getValidator($validate);
         $this->_options['validate'] = $validate;
@@ -161,7 +161,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param bool $checkExisting Guard the properties or not.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function checkExisting($checkExisting)
+    public function checkExisting(bool $checkExisting): SaveOptionsBuilder
     {
         $this->_options['checkExisting'] = (bool)$checkExisting;
 
@@ -174,7 +174,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param bool $checkRules Check the rules or not.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function checkRules($checkRules)
+    public function checkRules(bool $checkRules): SaveOptionsBuilder
     {
         $this->_options['checkRules'] = (bool)$checkRules;
 
@@ -187,7 +187,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param bool $atomic Atomic or not.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function atomic($atomic)
+    public function atomic(bool $atomic): SaveOptionsBuilder
     {
         $this->_options['atomic'] = (bool)$atomic;
 
@@ -197,7 +197,7 @@ class SaveOptionsBuilder extends ArrayObject
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->_options;
     }
@@ -209,7 +209,7 @@ class SaveOptionsBuilder extends ArrayObject
      * @param mixed $value Option value.
      * @return \Cake\ORM\SaveOptionsBuilder
      */
-    public function set($option, $value)
+    public function set(string $option, $value): SaveOptionsBuilder
     {
         if (method_exists($this, $option)) {
             return $this->{$option}($value);

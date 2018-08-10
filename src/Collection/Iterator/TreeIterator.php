@@ -26,7 +26,6 @@ use RecursiveIteratorIterator;
  */
 class TreeIterator extends RecursiveIteratorIterator implements CollectionInterface
 {
-
     use CollectionTrait;
 
     /**

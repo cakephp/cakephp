@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 
 /**
@@ -23,7 +25,6 @@ use Cake\Console\Shell;
  */
 class CompletionShell extends Shell
 {
-
     /**
      * Contains tasks to load and instantiate
      *
@@ -36,7 +37,7 @@ class CompletionShell extends Shell
      *
      * @return void
      */
-    public function startup()
+    public function startup(): void
     {
     }
 
@@ -113,7 +114,7 @@ class CompletionShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 
@@ -123,7 +124,7 @@ class CompletionShell extends Shell
             'help' => 'Output a list of available commands',
             'parser' => [
                 'description' => 'List all available',
-            ]
+            ],
         ])->addSubcommand('subcommands', [
             'help' => 'Output a list of available subcommands',
             'parser' => [
@@ -132,9 +133,9 @@ class CompletionShell extends Shell
                     'command' => [
                         'help' => 'The command name',
                         'required' => false,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ])->addSubcommand('options', [
             'help' => 'Output a list of available options',
             'parser' => [
@@ -147,11 +148,11 @@ class CompletionShell extends Shell
                     'subcommand' => [
                         'help' => 'The subcommand name',
                         'required' => false,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ])->addSubcommand('fuzzy', [
-            'help' => 'Guess autocomplete'
+            'help' => 'Guess autocomplete',
         ])->setEpilog([
             'This command is not intended to be called manually',
         ]);
@@ -165,7 +166,7 @@ class CompletionShell extends Shell
      * @param array $options The options to output
      * @return int|bool|null Returns the number of bytes returned from writing to stdout.
      */
-    protected function _output($options = [])
+    protected function _output(array $options = [])
     {
         if ($options) {
             return $this->out(implode($options, ' '));

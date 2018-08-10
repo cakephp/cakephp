@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use PDO;
  */
 class StringType extends BaseType implements OptionalConvertInterface
 {
-
     /**
      * Convert string data into the database format.
      *
@@ -33,7 +33,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -60,7 +60,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, Driver $driver): ?string
     {
         if ($value === null) {
             return null;
@@ -76,7 +76,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }
@@ -87,7 +87,7 @@ class StringType extends BaseType implements OptionalConvertInterface
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?string
     {
         if ($value === null) {
             return null;
@@ -102,9 +102,9 @@ class StringType extends BaseType implements OptionalConvertInterface
     /**
      * {@inheritDoc}
      *
-     * @return boolean False as database results are returned already as strings
+     * @return bool False as database results are returned already as strings
      */
-    public function requiresToPhpCast()
+    public function requiresToPhpCast(): bool
     {
         return false;
     }

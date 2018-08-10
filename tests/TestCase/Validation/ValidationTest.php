@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,6 @@ require_once __DIR__ . '/stubs.php';
  */
 class ValidationTest extends TestCase
 {
-
     /**
      * @var string
      */
@@ -840,7 +840,6 @@ class ValidationTest extends TestCase
      */
     public function testComparison()
     {
-        $this->assertFalse(Validation::comparison(7, null, 6));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER, 6));
         $this->assertTrue(Validation::comparison(6, Validation::COMPARE_LESS, 7));
         $this->assertTrue(Validation::comparison(7, Validation::COMPARE_GREATER_OR_EQUAL, 7));
@@ -1466,7 +1465,7 @@ class ValidationTest extends TestCase
             'hour' => '12',
             'minute' => '14',
             'second' => '15',
-            'meridian' => 'pm'
+            'meridian' => 'pm',
         ];
         $this->assertTrue(Validation::datetime($date));
 
@@ -1476,14 +1475,14 @@ class ValidationTest extends TestCase
         $date = [
             'year' => 2014, 'month' => 2, 'day' => 14,
             'hour' => 1, 'minute' => 14, 'second' => 15,
-            'meridian' => 'am'
+            'meridian' => 'am',
         ];
         $this->assertTrue(Validation::datetime($date));
         $this->assertTrue(Validation::datetime($date, 'mdy'));
 
         $date = [
             'year' => '2014', 'month' => '02', 'day' => '14',
-            'hour' => 'farts', 'minute' => 'farts'
+            'hour' => 'farts', 'minute' => 'farts',
         ];
         $this->assertFalse(Validation::datetime($date));
     }
@@ -1535,18 +1534,18 @@ class ValidationTest extends TestCase
 
         $date = [
             'hour' => 1, 'minute' => 14, 'second' => 15,
-            'meridian' => 'am'
+            'meridian' => 'am',
         ];
         $this->assertTrue(Validation::time($date));
 
         $date = [
             'hour' => 12, 'minute' => 14, 'second' => 15,
-            'meridian' => 'pm'
+            'meridian' => 'pm',
         ];
         $this->assertTrue(Validation::time($date));
 
         $date = [
-            'hour' => 'farts', 'minute' => 'farts'
+            'hour' => 'farts', 'minute' => 'farts',
         ];
         $this->assertFalse(Validation::time($date));
 
@@ -1579,13 +1578,13 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime()
     {
-        $locale = I18N::getLocale();
+        $locale = I18n::getLocale();
 
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
 
         // English (US)
-        I18N::setLocale('en_US');
+        I18n::setLocale('en_US');
         $this->assertTrue(Validation::localizedTime('12/31/2006', 'date'));
         $this->assertTrue(Validation::localizedTime('6.40pm', 'time'));
         $this->assertTrue(Validation::localizedTime('12/31/2006 6.40pm', 'datetime'));
@@ -1595,7 +1594,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('18:40', 'time')); // non-US format
 
         // German
-        I18N::setLocale('de_DE');
+        I18n::setLocale('de_DE');
         $this->assertTrue(Validation::localizedTime('31.12.2006', 'date'));
         $this->assertTrue(Validation::localizedTime('31. Dezember 2006', 'date'));
         $this->assertTrue(Validation::localizedTime('18:40', 'time'));
@@ -1603,12 +1602,12 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-German format
 
         // Russian
-        I18N::setLocale('ru_RU');
+        I18n::setLocale('ru_RU');
         $this->assertTrue(Validation::localizedTime('31 декабря 2006', 'date'));
 
         $this->assertFalse(Validation::localizedTime('December 31, 2006', 'date')); // non-Russian format
 
-        I18N::setLocale($locale);
+        I18n::setLocale($locale);
     }
 
     /**
@@ -1749,7 +1748,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::decimal('-1234', null));
         $this->assertTrue(Validation::decimal('+1234', null));
         $this->assertTrue(Validation::decimal((float)1234, null));
-        $this->assertTrue(Validation::decimal((double)1234, null));
+        $this->assertTrue(Validation::decimal((float)1234, null));
         $this->assertTrue(Validation::decimal((int)1234, null));
 
         $this->assertFalse(Validation::decimal('', null));
@@ -1780,7 +1779,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::decimal(.01, true));
         $this->assertTrue(Validation::decimal('.01', true));
         $this->assertTrue(Validation::decimal((float)1234, true));
-        $this->assertTrue(Validation::decimal((double)1234, true));
+        $this->assertTrue(Validation::decimal((float)1234, true));
 
         $this->assertFalse(Validation::decimal('', true));
         $this->assertFalse(Validation::decimal('string', true));
@@ -1821,7 +1820,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::decimal(.0, 1));
         $this->assertFalse(Validation::decimal(.00, 2));
         $this->assertFalse(Validation::decimal((float)1234, 1));
-        $this->assertFalse(Validation::decimal((double)1234, 1));
+        $this->assertFalse(Validation::decimal((float)1234, 1));
         $this->assertFalse(Validation::decimal((int)1234, 1));
         $this->assertFalse(Validation::decimal('1234.5678', '3'));
         $this->assertFalse(Validation::decimal(1234.5678, 3));
@@ -2291,7 +2290,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::extension([
             'file1' => ['name' => 'file.jpg'],
             'file2' => ['name' => 'file.jpg'],
-            'file3' => ['name' => 'file.jpg']
+            'file3' => ['name' => 'file.jpg'],
         ]));
         $this->assertFalse(Validation::extension(
             [
@@ -2310,13 +2309,27 @@ class ValidationTest extends TestCase
 
         $file = [
             'tmp_name' => '/var/private/secret-file',
-            'name' => 'cats.gif'
+            'name' => 'cats.gif',
         ];
         $this->assertTrue(Validation::extension($file), 'Uses filename if available.');
         $this->assertTrue(Validation::extension(['file' => $file]), 'Walks through arrays.');
 
         $this->assertFalse(Validation::extension(['noextension', 'extension.JPG']));
         $this->assertFalse(Validation::extension(['extension.pdf', 'extension.JPG']));
+    }
+
+    /**
+     * Test extension with a PSR7 object
+     */
+    public function testExtensionPsr7()
+    {
+        $file = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+
+        $upload = new UploadedFile($file, 5308, UPLOAD_ERR_OK, 'extension.jpeg', 'image/jpeg');
+        $this->assertTrue(Validation::extension($upload));
+
+        $upload = new UploadedFile($file, 163, UPLOAD_ERR_OK, 'no_php_extension', 'text/plain');
+        $this->assertFalse(Validation::extension($upload));
     }
 
     /**
@@ -2619,7 +2632,7 @@ class ValidationTest extends TestCase
     {
         $this->assertFalse(Validation::uploadedFile('derp'));
         $invalid = [
-            'name' => 'testing'
+            'name' => 'testing',
         ];
         $this->assertFalse(Validation::uploadedFile($invalid));
 
@@ -2628,7 +2641,7 @@ class ValidationTest extends TestCase
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'error' => UPLOAD_ERR_OK,
             'type' => 'image/gif',
-            'size' => 201
+            'size' => 201,
         ];
         $this->assertTrue(Validation::uploadedFile($file));
 
@@ -2649,7 +2662,7 @@ class ValidationTest extends TestCase
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'error' => UPLOAD_ERR_OK,
             'type' => 'text/plain',
-            'size' => 201
+            'size' => 201,
         ];
         $this->assertSame($expected, Validation::uploadedFile($file, $options));
     }
@@ -2666,17 +2679,17 @@ class ValidationTest extends TestCase
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'error' => UPLOAD_ERR_NO_FILE,
             'type' => '',
-            'size' => 0
+            'size' => 0,
         ];
         $options = [
             'optional' => true,
             'minSize' => 500,
-            'types' => ['image/gif', 'image/png']
+            'types' => ['image/gif', 'image/png'],
         ];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'No file should be ok.');
 
         $options = [
-            'optional' => false
+            'optional' => false,
         ];
         $this->assertFalse(Validation::uploadedFile($file, $options), 'File is required.');
     }
@@ -2693,7 +2706,7 @@ class ValidationTest extends TestCase
             'error' => UPLOAD_ERR_OK,
             'tmp_name' => TEST_APP . 'webroot/img/cake.power.gif',
             'type' => 'text/plain',
-            'size' => 201
+            'size' => 201,
         ];
         $options = [];
         $this->assertTrue(Validation::uploadedFile($file, $options), 'Wrong order');
@@ -2740,15 +2753,15 @@ class ValidationTest extends TestCase
     {
         $context = [
             'data' => [
-                'other' => 'a value'
-            ]
+                'other' => 'a value',
+            ],
         ];
         $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
         $context = [
             'data' => [
-                'other' => 'different'
-            ]
+                'other' => 'different',
+            ],
         ];
         $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_EQUAL, $context));
 
@@ -2765,15 +2778,15 @@ class ValidationTest extends TestCase
     {
         $context = [
             'data' => [
-                'other' => 'different'
-            ]
+                'other' => 'different',
+            ],
         ];
         $this->assertTrue(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
 
         $context = [
             'data' => [
-                'other' => 'a value'
-            ]
+                'other' => 'a value',
+            ],
         ];
         $this->assertFalse(Validation::compareFields('a value', 'other', Validation::COMPARE_NOT_EQUAL, $context));
 
@@ -3061,7 +3074,7 @@ class ValidationTest extends TestCase
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
-            'tmp_name' => $image
+            'tmp_name' => $image,
         ];
 
         $this->assertTrue(Validation::imageSize($upload, [
@@ -3101,6 +3114,22 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Test imageSize with a PSR7 object
+     *
+     * @return void
+     */
+    public function testImageSizePsr7()
+    {
+        $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
+        $upload = new UploadedFile($image, 5308, UPLOAD_ERR_OK, 'test.jpg', 'image/jpeg');
+
+        $this->assertTrue(Validation::imageSize($upload, [
+            'width' => [Validation::COMPARE_GREATER, 100],
+            'height' => [Validation::COMPARE_GREATER, 100],
+        ]));
+    }
+
+    /**
      * Test imageHeight
      *
      * @return void
@@ -3109,7 +3138,7 @@ class ValidationTest extends TestCase
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
-            'tmp_name' => $image
+            'tmp_name' => $image,
         ];
 
         $this->assertTrue(Validation::imageHeight($upload, Validation::COMPARE_GREATER, 100));
@@ -3130,7 +3159,7 @@ class ValidationTest extends TestCase
     {
         $image = WWW_ROOT . 'test_theme' . DS . 'img' . DS . 'test.jpg';
         $upload = [
-            'tmp_name' => $image
+            'tmp_name' => $image,
         ];
 
         $this->assertTrue(Validation::imageWidth($upload, Validation::COMPARE_GREATER, 100));

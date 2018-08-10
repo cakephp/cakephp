@@ -41,7 +41,6 @@ use Traversable;
  */
 class SortIterator extends Collection
 {
-
     /**
      * Wraps this iterator around the passed items so when iterated they are returned
      * in order.
@@ -51,7 +50,7 @@ class SortIterator extends Collection
      * element. Please note that the callback function could be called more than once
      * per element.
      *
-     * @param array|\Traversable $items The values to sort
+     * @param iterable $items The values to sort
      * @param callable|string $callback A function used to return the actual value to
      * be compared. It can also be a string representing the path to use to fetch a
      * column or property in each element
@@ -59,7 +58,7 @@ class SortIterator extends Collection
      * @param int $type the type of comparison to perform, either SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      */
-    public function __construct($items, $callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC)
+    public function __construct(iterable $items, $callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC)
     {
         if (!is_array($items)) {
             $items = iterator_to_array((new Collection($items))->unwrap(), false);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -184,9 +185,9 @@ class DateTimeTypeTest extends TestCase
             [false, null],
             [true, null],
             ['', null],
-            ['derpy', 'derpy'],
-            ['2013-nope!', '2013-nope!'],
-            ['13-06-26', '13-06-26'],
+            ['derpy', null],
+            ['2013-nope!', null],
+            ['13-06-26', null],
 
             // valid string types
             ['1392387900', new Time('@1392387900')],
@@ -198,69 +199,69 @@ class DateTimeTypeTest extends TestCase
             // valid array types
             [
                 ['year' => '', 'month' => '', 'day' => '', 'hour' => '', 'minute' => '', 'second' => ''],
-                null
+                null,
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 13:14:15')
+                new Time('2014-02-14 13:14:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am'
+                    'meridian' => 'am',
                 ],
-                new Time('2014-02-14 01:14:15')
+                new Time('2014-02-14 01:14:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 12, 'minute' => 04, 'second' => 15,
-                    'meridian' => 'pm'
+                    'meridian' => 'pm',
                 ],
-                new Time('2014-02-14 12:04:15')
+                new Time('2014-02-14 12:04:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm'
+                    'meridian' => 'pm',
                 ],
-                new Time('2014-02-14 13:14:15')
+                new Time('2014-02-14 13:14:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Time('2014-02-14 00:00:00'),
             ],
             [
                 [
-                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris'
+                    'year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 12, 'minute' => 30, 'timezone' => 'Europe/Paris',
                 ],
-                new Time('2014-02-14 11:30:00', 'UTC')
+                new Time('2014-02-14 11:30:00', 'UTC'),
             ],
 
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Time(date('Y-m-d 00:00:00'))
+                new Time(date('Y-m-d 00:00:00')),
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Time(date('Y-m-d 00:00:00'))
+                new Time(date('Y-m-d 00:00:00')),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'farts', 'minute' => 'farts'
+                    'hour' => 'farts', 'minute' => 'farts',
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Time('2014-02-14 00:00:00'),
             ],
             [
                 Time::now(),
-                Time::now()
-            ]
+                Time::now(),
+            ],
         ];
     }
 

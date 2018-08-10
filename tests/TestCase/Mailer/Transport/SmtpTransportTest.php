@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class SmtpTestTransport extends SmtpTransport
 {
-
     /**
      * Helper to change the socket
      *
@@ -42,7 +42,7 @@ class SmtpTestTransport extends SmtpTransport
      *
      * @return void
      */
-    protected function _generateSocket()
+    protected function _generateSocket(): void
     {
     }
 
@@ -50,7 +50,7 @@ class SmtpTestTransport extends SmtpTransport
      * Magic function to call protected methods
      *
      * @param string $method
-     * @param string $args
+     * @param array $args
      * @return mixed
      */
     public function __call($method, $args)
@@ -66,6 +66,15 @@ class SmtpTestTransport extends SmtpTransport
  */
 class SmtpTransportTest extends TestCase
 {
+    /**
+     * @var \Cake\Test\TestCase\Mailer\Transport\SmtpTestTransport
+     */
+    protected $SmtpTransport;
+
+    /**
+     * @var \Cake\Network\Socket|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $socket;
 
     /**
      * Setup
@@ -384,6 +393,7 @@ class SmtpTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
+        /** @var \Cake\Mailer\Email $email */
         $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $email->setReturnPath('pleasereply@cakephp.org', 'CakePHP Return');
         $email->setTo('cake@cakephp.org', 'CakePHP');
@@ -443,7 +453,7 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->setConfig([
             'client' => 'myhost.com',
-            'port' => 666
+            'port' => 666,
         ]);
         $expected = $this->SmtpTransport->getConfig();
 
@@ -492,7 +502,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'AUTH=PLAIN LOGIN'],
             ['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
             ['code' => '250', 'message' => '8BITMIME'],
-            ['code' => '250', 'message' => 'DSN']
+            ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);
@@ -546,7 +556,7 @@ class SmtpTransportTest extends TestCase
             ['code' => '250', 'message' => 'PIPELINING'],
             ['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
             ['code' => '250', 'message' => '8BITMIME'],
-            ['code' => '250', 'message' => 'DSN']
+            ['code' => '250', 'message' => 'DSN'],
         ];
         $result = $this->SmtpTransport->getLastResponse();
         $this->assertEquals($expected, $result);
@@ -638,6 +648,8 @@ class SmtpTransportTest extends TestCase
 
         $callback = function ($arg) {
             $this->assertNotEquals("QUIT\r\n", $arg);
+
+            return 1;
         };
         $this->socket->expects($this->any())->method('write')->will($this->returnCallback($callback));
         $this->socket->expects($this->never())->method('disconnect');

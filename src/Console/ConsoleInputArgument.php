@@ -25,7 +25,6 @@ use SimpleXMLElement;
  */
 class ConsoleInputArgument
 {
-
     /**
      * Name of the argument.
      *
@@ -81,7 +80,7 @@ class ConsoleInputArgument
      *
      * @return string Value of this->_name.
      */
-    public function name()
+    public function name(): string
     {
         return $this->_name;
     }
@@ -92,7 +91,7 @@ class ConsoleInputArgument
      * @param \Cake\Console\ConsoleInputArgument $argument ConsoleInputArgument to compare to.
      * @return bool
      */
-    public function isEqualTo(ConsoleInputArgument $argument)
+    public function isEqualTo(ConsoleInputArgument $argument): bool
     {
         return $this->usage() === $argument->usage();
     }
@@ -103,7 +102,7 @@ class ConsoleInputArgument
      * @param int $width The width to make the name of the option.
      * @return string
      */
-    public function help($width = 0)
+    public function help(int $width = 0): string
     {
         $name = $this->_name;
         if (strlen($name) < $width) {
@@ -125,7 +124,7 @@ class ConsoleInputArgument
      *
      * @return string
      */
-    public function usage()
+    public function usage(): string
     {
         $name = $this->_name;
         if ($this->_choices) {
@@ -144,7 +143,7 @@ class ConsoleInputArgument
      *
      * @return bool
      */
-    public function isRequired()
+    public function isRequired(): bool
     {
         return (bool)$this->_required;
     }
@@ -156,7 +155,7 @@ class ConsoleInputArgument
      * @return bool
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function validChoice($value)
+    public function validChoice(string $value): bool
     {
         if (empty($this->_choices)) {
             return true;
@@ -181,7 +180,7 @@ class ConsoleInputArgument
      * @param \SimpleXMLElement $parent The parent element.
      * @return \SimpleXMLElement The parent with this argument appended.
      */
-    public function xml(SimpleXMLElement $parent)
+    public function xml(SimpleXMLElement $parent): SimpleXMLElement
     {
         $option = $parent->addChild('argument');
         $option->addAttribute('name', $this->_name);

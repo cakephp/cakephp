@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,13 +23,12 @@ use Cake\TestSuite\TestCase;
  */
 class SecurityExceptionTest extends TestCase
 {
-
     /**
      * setUp method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->securityException = new SecurityException;
@@ -39,7 +39,7 @@ class SecurityExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testGetType()
+    public function testGetType(): void
     {
         $this->assertEquals(
             'secure',
@@ -53,7 +53,7 @@ class SecurityExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testSetMessage()
+    public function testSetMessage(): void
     {
         $sampleMessage = 'foo';
         $this->securityException->setMessage($sampleMessage);
@@ -69,7 +69,7 @@ class SecurityExceptionTest extends TestCase
      *
      * @return void
      */
-    public function testSetGetReason()
+    public function testSetGetReason(): void
     {
         $sampleReason = 'canary';
         $this->securityException->setReason($sampleReason);

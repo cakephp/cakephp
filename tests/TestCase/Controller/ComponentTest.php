@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,30 +14,29 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
-use TestApp\Controller\ComponentTestController;
 use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\OrangeComponent;
 use TestApp\Controller\Component\SomethingWithFlashComponent;
+use TestApp\Controller\ComponentTestController;
 
 /**
  * ComponentTest class
  */
 class ComponentTest extends TestCase
 {
-
     /**
      * setUp method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -47,7 +47,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInnerComponentConstruction()
+    public function testInnerComponentConstruction(): void
     {
         $Collection = new ComponentRegistry();
         $Component = new AppleComponent($Collection);
@@ -60,7 +60,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testNestedComponentLoading()
+    public function testNestedComponentLoading(): void
     {
         $Collection = new ComponentRegistry();
         $Apple = new AppleComponent($Collection);
@@ -76,7 +76,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testInnerComponentsAreNotEnabled()
+    public function testInnerComponentsAreNotEnabled(): void
     {
         $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $controller = new Controller();
@@ -97,7 +97,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMultipleComponentInitialize()
+    public function testMultipleComponentInitialize(): void
     {
         $Collection = new ComponentRegistry();
         $Banana = $Collection->load('Banana');
@@ -114,14 +114,14 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testDuplicateComponentInitialize()
+    public function testDuplicateComponentInitialize(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('The "Banana" alias has already been loaded with the following config:');
         $Collection = new ComponentRegistry();
-        $Collection->load('Banana', ['property' => ['closure' => function () {
+        $Collection->load('Banana', ['property' => ['closure' => function (): void {
         }]]);
-        $Collection->load('Banana', ['property' => ['closure' => function () {
+        $Collection->load('Banana', ['property' => ['closure' => function (): void {
         }]]);
 
         $this->assertInstanceOf(BananaComponent::class, $Collection->Banana, 'class is wrong');
@@ -134,7 +134,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testSomethingReferencingFlashComponent()
+    public function testSomethingReferencingFlashComponent(): void
     {
         $Controller = new ComponentTestController();
         $Controller->loadComponent('SomethingWithFlash');
@@ -149,19 +149,19 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testDebugInfo()
+    public function testDebugInfo(): void
     {
         $Collection = new ComponentRegistry();
         $Component = new AppleComponent($Collection);
 
         $expected = [
             'components' => [
-                'Orange'
+                'Orange',
             ],
             'implementedEvents' => [
-                'Controller.startup' => 'startup'
+                'Controller.startup' => 'startup',
             ],
-            '_config' => []
+            '_config' => [],
         ];
         $result = $Component->__debugInfo();
         $this->assertEquals($expected, $result);
@@ -172,7 +172,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testMagicReturnsNull()
+    public function testMagicReturnsNull(): void
     {
         $Component = new AppleComponent(new ComponentRegistry());
         $this->assertNull($Component->ShouldBeNull);
@@ -183,7 +183,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testConfigViaConstructor()
+    public function testConfigViaConstructor(): void
     {
         $Component = new ConfiguredComponent(new ComponentRegistry(), ['chicken' => 'soup']);
         $this->assertEquals(['chicken' => 'soup'], $Component->configCopy);
@@ -195,7 +195,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testLazyLoading()
+    public function testLazyLoading(): void
     {
         $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['Apple', 'Banana', 'Orange']);
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
@@ -208,7 +208,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testLazyLoadingDoesNotExists()
+    public function testLazyLoadingDoesNotExists(): void
     {
         $this->expectException(\Cake\Controller\Exception\MissingComponentException::class);
         $this->expectExceptionMessage('Component class YouHaveNoBananasComponent could not be found.');
@@ -221,7 +221,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testConfiguringInnerComponent()
+    public function testConfiguringInnerComponent(): void
     {
         $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['Configured' => ['foo' => 'bar']]);
         $this->assertInstanceOf(ConfiguredComponent::class, $Component->Configured, 'class is wrong');
@@ -234,7 +234,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testEventsInnerComponent()
+    public function testEventsInnerComponent(): void
     {
         $eventManager = $this->getMockBuilder(EventManager::class)->getMock();
         $eventManager->expects($this->once())
@@ -255,7 +255,7 @@ class ComponentTest extends TestCase
      *
      * @return void
      */
-    public function testNoEventsInnerComponent()
+    public function testNoEventsInnerComponent(): void
     {
         $eventManager = $this->getMockBuilder(EventManager::class)->getMock();
         $eventManager->expects($this->never())->method('on');

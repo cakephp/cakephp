@@ -22,7 +22,6 @@ use Cake\Controller\Component;
  */
 class ParamTestComponent extends Component
 {
-
     /**
      * components property
      *

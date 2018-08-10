@@ -17,8 +17,7 @@ use Cake\Database\Driver\Sqlite;
 
 class TestDriver extends Sqlite
 {
-
-    public function enabled()
+    public function enabled(): bool
     {
         return true;
     }

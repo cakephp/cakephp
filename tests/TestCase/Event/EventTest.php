@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * EventTest file
  *
@@ -27,7 +28,6 @@ use Cake\TestSuite\TestCase;
  */
 class EventTest extends TestCase
 {
-
     /**
      * Tests the name() method
      *

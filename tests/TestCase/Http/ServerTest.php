@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,9 +24,6 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use RuntimeException;
-use TestApp\Http\BadResponseApplication;
-use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -168,20 +166,6 @@ class ServerTest extends TestCase
     }
 
     /**
-     * Test an application failing to build middleware properly
-     *
-     * @return void
-     */
-    public function testRunWithApplicationNotMakingMiddleware()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The application `middleware` method');
-        $app = new InvalidMiddlewareApplication($this->config);
-        $server = new Server($app);
-        $server->run();
-    }
-
-    /**
      * Test middleware being invoked.
      *
      * @return void
@@ -193,20 +177,6 @@ class ServerTest extends TestCase
         $res = $server->run();
         $this->assertSame('first', $res->getHeaderLine('X-First'));
         $this->assertSame('second', $res->getHeaderLine('X-Second'));
-    }
-
-    /**
-     * Test middleware not creating a response.
-     *
-     * @return void
-     */
-    public function testRunMiddlewareNoResponse()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Application did not create a response. Got "Not a response" instead.');
-        $app = new BadResponseApplication($this->config);
-        $server = new Server($app);
-        $server->run();
     }
 
     /**

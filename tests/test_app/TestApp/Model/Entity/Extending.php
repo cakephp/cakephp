@@ -9,5 +9,4 @@ use Cake\ORM\Entity;
  */
 class Extending extends Entity
 {
-
 }

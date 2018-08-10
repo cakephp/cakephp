@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -15,6 +16,7 @@
 namespace Cake\Http\Middleware;
 
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
 use Psr\Http\Message\ResponseInterface;
@@ -82,7 +84,7 @@ class BodyParserMiddleware
      * @param array $methods The methods to parse data on.
      * @return $this
      */
-    public function setMethods(array $methods)
+    public function setMethods(array $methods): self
     {
         $this->methods = $methods;
 
@@ -109,7 +111,7 @@ class BodyParserMiddleware
      *   into the request.
      * @return $this
      */
-    public function addParser(array $types, callable $parser)
+    public function addParser(array $types, callable $parser): self
     {
         foreach ($types as $type) {
             $type = strtolower($type);
@@ -129,7 +131,7 @@ class BodyParserMiddleware
      * @param callable $next Callback to invoke the next middleware.
      * @return \Cake\Http\Response A response
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): Response
     {
         if (!in_array($request->getMethod(), $this->methods)) {
             return $next($request, $response);
@@ -154,9 +156,9 @@ class BodyParserMiddleware
      * Decode JSON into an array.
      *
      * @param string $body The request body to decode
-     * @return array
+     * @return mixed
      */
-    protected function decodeJson($body)
+    protected function decodeJson(string $body)
     {
         return json_decode($body, true);
     }
@@ -167,7 +169,7 @@ class BodyParserMiddleware
      * @param string $body The request body to decode
      * @return array
      */
-    protected function decodeXml($body)
+    protected function decodeXml(string $body): array
     {
         try {
             $xml = Xml::build($body, ['return' => 'domdocument', 'readFile' => false]);

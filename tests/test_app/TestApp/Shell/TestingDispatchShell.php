@@ -24,13 +24,12 @@ use Cake\TestSuite\TestCase;
  */
 class TestingDispatchShell extends Shell
 {
-
     protected function _welcome()
     {
         $this->out('<info>Welcome to CakePHP Console</info>');
     }
 
-    public function out($message = null, $newlines = 1, $level = Shell::NORMAL)
+    public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL)
     {
         echo $message . "\n";
     }
@@ -70,8 +69,8 @@ class TestingDispatchShell extends Shell
         $this->dispatchShell([
             'command' => ['testing_dispatch', 'dispatch_test_task_param'],
             'extra' => [
-                'foo' => 'bar'
-            ]
+                'foo' => 'bar',
+            ],
         ]);
     }
 
@@ -83,8 +82,8 @@ class TestingDispatchShell extends Shell
             'command' => 'testing_dispatch dispatch_test_task_params',
             'extra' => [
                 'foo' => 'bar',
-                'fooz' => 'baz'
-            ]
+                'fooz' => 'baz',
+            ],
         ]);
     }
 
@@ -95,8 +94,8 @@ class TestingDispatchShell extends Shell
         $this->dispatchShell([
             'command' => ['testing_dispatch', 'dispatch_test_task'],
             'extra' => [
-                'requested' => false
-            ]
+                'requested' => false,
+            ],
         ]);
     }
 

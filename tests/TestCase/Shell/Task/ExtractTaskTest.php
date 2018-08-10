@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ExtractTaskTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -268,6 +268,7 @@ class ExtractTaskTest extends TestCase
     public function testExtractPlugin()
     {
         static::setAppNamespace();
+        $this->loadPlugins(['TestPlugin']);
 
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
@@ -292,6 +293,7 @@ class ExtractTaskTest extends TestCase
     public function testExtractVendoredPlugin()
     {
         static::setAppNamespace();
+        $this->loadPlugins(['Company/TestPluginThree']);
 
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])

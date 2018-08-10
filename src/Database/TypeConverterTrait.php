@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ namespace Cake\Database;
  */
 trait TypeConverterTrait
 {
-
     /**
      * Converts a give value to a suitable database value based on type
      * and return relevant internal statement type
@@ -28,7 +28,7 @@ trait TypeConverterTrait
      * @param \Cake\Database\Type|string $type The type name or type instance to use.
      * @return array list containing converted value and internal type
      */
-    public function cast($value, $type)
+    public function cast($value, $type): array
     {
         if (is_string($type)) {
             $type = TypeFactory::build($type);
@@ -51,7 +51,7 @@ trait TypeConverterTrait
      * @param array $types list or associative array of types
      * @return array
      */
-    public function matchTypes($columns, $types)
+    public function matchTypes(array $columns, array $types): array
     {
         if (!is_int(key($types))) {
             $positions = array_intersect_key(array_flip($columns), $types);

@@ -22,6 +22,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\TranslateStrategyInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 
@@ -384,7 +385,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * {@inheritDoc}
      */
-    public function buildMarshalMap($marshaller, $map, $options)
+    public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {
         $this->translatedFields();
 

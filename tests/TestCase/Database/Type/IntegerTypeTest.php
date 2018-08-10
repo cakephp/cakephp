@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -79,14 +80,14 @@ class IntegerTypeTest extends TestCase
             'b' => '2.3',
             'c' => '15',
             'c' => '0.0',
-            'd' => 10
+            'd' => 10,
         ];
         $expected = [
             'a' => null,
             'b' => 2,
             'c' => 15,
             'c' => 0,
-            'd' => 10
+            'd' => 10,
         ];
         $this->assertEquals(
             $expected,

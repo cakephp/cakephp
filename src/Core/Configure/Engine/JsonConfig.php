@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -38,7 +39,6 @@ use Cake\Core\Exception\Exception;
  */
 class JsonConfig implements ConfigEngineInterface
 {
-
     use FileConfigTrait;
 
     /**
@@ -53,7 +53,7 @@ class JsonConfig implements ConfigEngineInterface
      *
      * @param string|null $path The path to read config files from. Defaults to CONFIG.
      */
-    public function __construct($path = null)
+    public function __construct(?string $path = null)
     {
         if ($path === null) {
             $path = CONFIG;
@@ -74,7 +74,7 @@ class JsonConfig implements ConfigEngineInterface
      *   files contain '..' (as this could lead to abusive reads) or when there
      *   is an error parsing the JSON string.
      */
-    public function read($key)
+    public function read(string $key): array
     {
         $file = $this->_getFilePath($key, true);
 
@@ -105,7 +105,7 @@ class JsonConfig implements ConfigEngineInterface
      * @param array $data Data to dump.
      * @return bool Success
      */
-    public function dump($key, array $data)
+    public function dump(string $key, array $data): bool
     {
         $filename = $this->_getFilePath($key);
 

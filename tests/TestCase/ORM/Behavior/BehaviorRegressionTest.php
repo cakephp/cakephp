@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class NumberTree extends Entity
 {
-
     use TranslateTrait;
 }
 
@@ -39,7 +39,7 @@ class BehaviorRegressionTest extends TestCase
      */
     public $fixtures = [
         'core.number_trees',
-        'core.translates'
+        'core.translates',
     ];
 
     /**

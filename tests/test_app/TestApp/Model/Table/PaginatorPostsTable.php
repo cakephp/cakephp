@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc.
@@ -21,17 +22,16 @@ use Cake\ORM\Table;
  */
 class PaginatorPostsTable extends Table
 {
-
     /**
      * initialize method
      *
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
         $this->setTable('posts');
         $this->belongsTo('PaginatorAuthor', [
-            'foreignKey' => 'author_id'
+            'foreignKey' => 'author_id',
         ]);
     }
 

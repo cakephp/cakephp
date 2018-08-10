@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -18,135 +19,136 @@ use Cake\Datasource\SchemaInterface;
 
 /**
  * An interface used by database TableSchema objects.
+ *
+ * Deprecated 3.5.0: Use Cake\Database\TableSchemaAwareInterface instead.
  */
 interface TableSchemaInterface extends SchemaInterface
 {
-
     /**
      * Binary column type
      *
      * @var string
      */
-    const TYPE_BINARY = 'binary';
+    public const TYPE_BINARY = 'binary';
 
     /**
      * Binary UUID column type
      *
      * @var string
      */
-    const TYPE_BINARY_UUID = 'binaryuuid';
+    public const TYPE_BINARY_UUID = 'binaryuuid';
 
     /**
      * Date column type
      *
      * @var string
      */
-    const TYPE_DATE = 'date';
+    public const TYPE_DATE = 'date';
 
     /**
      * Datetime column type
      *
      * @var string
      */
-    const TYPE_DATETIME = 'datetime';
+    public const TYPE_DATETIME = 'datetime';
 
     /**
      * Time column type
      *
      * @var string
      */
-    const TYPE_TIME = 'time';
+    public const TYPE_TIME = 'time';
 
     /**
      * Timestamp column type
      *
      * @var string
      */
-    const TYPE_TIMESTAMP = 'timestamp';
+    public const TYPE_TIMESTAMP = 'timestamp';
 
     /**
      * JSON column type
      *
      * @var string
      */
-    const TYPE_JSON = 'json';
+    public const TYPE_JSON = 'json';
 
     /**
      * String column type
      *
      * @var string
      */
-    const TYPE_STRING = 'string';
+    public const TYPE_STRING = 'string';
 
     /**
      * Text column type
      *
      * @var string
      */
-    const TYPE_TEXT = 'text';
+    public const TYPE_TEXT = 'text';
 
     /**
      * Tiny Integer column type
      *
      * @var string
      */
-    const TYPE_TINYINTEGER = 'tinyinteger';
+    public const TYPE_TINYINTEGER = 'tinyinteger';
 
     /**
      * Small Integer column type
      *
      * @var string
      */
-    const TYPE_SMALLINTEGER = 'smallinteger';
+    public const TYPE_SMALLINTEGER = 'smallinteger';
 
     /**
      * Integer column type
      *
      * @var string
      */
-    const TYPE_INTEGER = 'integer';
+    public const TYPE_INTEGER = 'integer';
 
     /**
      * Big Integer column type
      *
      * @var string
      */
-    const TYPE_BIGINTEGER = 'biginteger';
+    public const TYPE_BIGINTEGER = 'biginteger';
 
     /**
      * Float column type
      *
      * @var string
      */
-    const TYPE_FLOAT = 'float';
+    public const TYPE_FLOAT = 'float';
 
     /**
      * Decimal column type
      *
      * @var string
      */
-    const TYPE_DECIMAL = 'decimal';
+    public const TYPE_DECIMAL = 'decimal';
 
     /**
      * Boolean column type
      *
      * @var string
      */
-    const TYPE_BOOLEAN = 'boolean';
+    public const TYPE_BOOLEAN = 'boolean';
 
     /**
      * UUID column type
      *
      * @var string
      */
-    const TYPE_UUID = 'uuid';
+    public const TYPE_UUID = 'uuid';
 
     /**
      * Check whether or not a table has an autoIncrement column defined.
      *
      * @return bool
      */
-    public function hasAutoincrement();
+    public function hasAutoincrement(): bool;
 
     /**
      * Sets whether the table is temporary in the database.
@@ -154,14 +156,14 @@ interface TableSchemaInterface extends SchemaInterface
      * @param bool $temporary Whether or not the table is to be temporary.
      * @return $this
      */
-    public function setTemporary($temporary);
+    public function setTemporary(bool $temporary): self;
 
     /**
      * Gets whether the table is temporary in the database.
      *
      * @return bool The current temporary setting.
      */
-    public function isTemporary();
+    public function isTemporary(): bool;
 
     /**
      * Get the column(s) used for the primary key.
@@ -169,7 +171,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @return array Column name(s) for the primary key. An
      *   empty list will be returned when the table has no primary key.
      */
-    public function primaryKey();
+    public function primaryKey(): array;
 
     /**
      * Add an index.
@@ -186,7 +188,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @param array $attrs The attributes for the index.
      * @return $this
      */
-    public function addIndex($name, $attrs);
+    public function addIndex(string $name, array $attrs);
 
     /**
      * Read information about an index based on name.
@@ -194,14 +196,14 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name The name of the index.
      * @return array|null Array of index data, or null
      */
-    public function getIndex($name);
+    public function getIndex(string $name): ?array;
 
     /**
      * Get the names of all the indexes in the table.
      *
      * @return array
      */
-    public function indexes();
+    public function indexes(): array;
 
     /**
      * Add a constraint.
@@ -223,7 +225,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @param array $attrs The attributes for the constraint.
      * @return $this
      */
-    public function addConstraint($name, $attrs);
+    public function addConstraint(string $name, array $attrs);
 
     /**
      * Read information about a constraint based on name.
@@ -231,7 +233,7 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name The name of the constraint.
      * @return array|null Array of constraint data, or null
      */
-    public function getConstraint($name);
+    public function getConstraint(string $name): ?array;
 
     /**
      * Remove a constraint.
@@ -239,12 +241,12 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name Name of the constraint to remove
      * @return $this
      */
-    public function dropConstraint($name);
+    public function dropConstraint(string $name);
 
     /**
      * Get the names of all the constraints in the table.
      *
      * @return array
      */
-    public function constraints();
+    public function constraints(): array;
 }

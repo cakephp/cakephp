@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
+use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
@@ -24,9 +26,8 @@ use Cake\Http\Exception\HttpException;
  *
  * This approach and implementation is partly inspired by Aura.Http
  */
-class Stream
+class Stream implements AdapterInterface
 {
-
     /**
      * Context resource used by the stream API.
      *
@@ -63,13 +64,9 @@ class Stream
     protected $_connectionErrors = [];
 
     /**
-     * Send a request and get a response back.
-     *
-     * @param \Cake\Http\Client\Request $request The request object to send.
-     * @param array $options Array of options for the stream.
-     * @return array Array of populated Response objects
+     * {@inheritDoc}
      */
-    public function send(Request $request, array $options)
+    public function send(Request $request, array $options): array
     {
         $this->_stream = null;
         $this->_context = null;
@@ -92,7 +89,7 @@ class Stream
      * @param string $content The response content.
      * @return \Cake\Http\Client\Response[] The list of responses from the request(s)
      */
-    public function createResponses($headers, $content)
+    public function createResponses(array $headers, string $content): array
     {
         $indexes = $responses = [];
         foreach ($headers as $i => $header) {
@@ -104,7 +101,7 @@ class Stream
         foreach ($indexes as $i => $start) {
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
             $headerSlice = array_slice($headers, $start, $end);
-            $body = $i == $last ? $content : '';
+            $body = $i === $last ? $content : '';
             $responses[] = $this->_buildResponse($headerSlice, $body);
         }
 
@@ -118,14 +115,14 @@ class Stream
      * @param array $options Additional request options.
      * @return void
      */
-    protected function _buildContext(Request $request, $options)
+    protected function _buildContext(Request $request, array $options): void
     {
         $this->_buildContent($request, $options);
         $this->_buildHeaders($request, $options);
         $this->_buildOptions($request, $options);
 
         $url = $request->getUri();
-        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $scheme = parse_url((string)$url, PHP_URL_SCHEME);
         if ($scheme === 'https') {
             $this->_buildSslContext($request, $options);
         }
@@ -144,7 +141,7 @@ class Stream
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildHeaders(Request $request, $options)
+    protected function _buildHeaders(Request $request, array $options): void
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $values) {
@@ -163,7 +160,7 @@ class Stream
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildContent(Request $request, $options)
+    protected function _buildContent(Request $request, array $options): void
     {
         $body = $request->getBody();
         if (empty($body)) {
@@ -182,7 +179,7 @@ class Stream
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildOptions(Request $request, $options)
+    protected function _buildOptions(Request $request, array $options): void
     {
         $this->_contextOptions['method'] = $request->getMethod();
         $this->_contextOptions['protocol_version'] = $request->getProtocolVersion();
@@ -207,7 +204,7 @@ class Stream
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildSslContext(Request $request, $options)
+    protected function _buildSslContext(Request $request, array $options): void
     {
         $sslOptions = [
             'ssl_verify_peer',
@@ -223,7 +220,7 @@ class Stream
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->getUri();
-            $host = parse_url($url, PHP_URL_HOST);
+            $host = parse_url((string)$url, PHP_URL_HOST);
             $this->_sslContextOptions['peer_name'] = $host;
         }
         foreach ($sslOptions as $key) {
@@ -241,7 +238,7 @@ class Stream
      * @return array Array of populated Response objects
      * @throws \Cake\Http\Exception\HttpException
      */
-    protected function _send(Request $request)
+    protected function _send(Request $request): array
     {
         $deadline = false;
         if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {
@@ -249,7 +246,7 @@ class Stream
         }
 
         $url = $request->getUri();
-        $this->_open($url);
+        $this->_open((string)$url);
         $content = '';
         $timedOut = false;
 
@@ -289,7 +286,7 @@ class Stream
      *
      * @return \Cake\Http\Client\Response
      */
-    protected function _buildResponse($headers, $body)
+    protected function _buildResponse(array $headers, string $body): Response
     {
         return new Response($headers, $body);
     }
@@ -301,7 +298,7 @@ class Stream
      * @return void
      * @throws \Cake\Core\Exception\Exception
      */
-    protected function _open($url)
+    protected function _open(string $url): void
     {
         set_error_handler(function ($code, $message) {
             $this->_connectionErrors[] = $message;
@@ -324,7 +321,7 @@ class Stream
      *
      * @return array
      */
-    public function contextOptions()
+    public function contextOptions(): array
     {
         return array_merge($this->_contextOptions, $this->_sslContextOptions);
     }

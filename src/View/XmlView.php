@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -57,7 +58,6 @@ use Cake\Utility\Xml;
  */
 class XmlView extends SerializedView
 {
-
     /**
      * XML layouts are located in the xml sub directory of `Layouts/`
      *
@@ -96,9 +96,9 @@ class XmlView extends SerializedView
      * @param array|string|true $serialize The name(s) of the view variable(s) that need(s) to be serialized
      * @return string The serialized data
      */
-    protected function _serialize($serialize)
+    protected function _serialize($serialize): string
     {
-        $rootNode = isset($this->viewVars['_rootNode']) ? $this->viewVars['_rootNode'] : 'response';
+        $rootNode = $this->viewVars['_rootNode'] ?? 'response';
 
         if ($serialize === true) {
             $serialize = array_diff(
@@ -124,7 +124,7 @@ class XmlView extends SerializedView
                 }
             }
         } else {
-            $data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+            $data = $this->viewVars[$serialize] ?? null;
             if (is_array($data) && Hash::numeric(array_keys($data))) {
                 $data = [$rootNode => [$serialize => $data]];
             }

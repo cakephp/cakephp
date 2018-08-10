@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class WincacheEngineTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -59,7 +58,7 @@ class WincacheEngineTest extends TestCase
     {
         $defaults = [
             'className' => 'Wincache',
-            'prefix' => 'cake_'
+            'prefix' => 'cake_',
         ];
         Cache::drop('wincache');
         Cache::setConfig('wincache', array_merge($defaults, $config));
@@ -218,7 +217,7 @@ class WincacheEngineTest extends TestCase
             'engine' => 'Wincache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
@@ -245,7 +244,7 @@ class WincacheEngineTest extends TestCase
             'engine' => 'Wincache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
@@ -265,7 +264,7 @@ class WincacheEngineTest extends TestCase
             'engine' => 'Wincache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
-            'prefix' => 'test_'
+            'prefix' => 'test_',
         ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));

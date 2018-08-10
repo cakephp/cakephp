@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 
@@ -26,7 +28,6 @@ use Cake\Core\Plugin;
  */
 class PluginShell extends Shell
 {
-
     /**
      * Tasks to load
      *
@@ -43,7 +44,7 @@ class PluginShell extends Shell
      *
      * @return void
      */
-    public function loaded()
+    public function loaded(): void
     {
         $loaded = Plugin::loaded();
         $this->out($loaded);
@@ -54,14 +55,14 @@ class PluginShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 
         $parser->setDescription('Plugin Shell perform various tasks related to plugin.')
             ->addSubcommand('assets', [
                 'help' => 'Symlink / copy plugin assets to app\'s webroot',
-                'parser' => $this->Assets->getOptionParser()
+                'parser' => $this->Assets->getOptionParser(),
             ])
             ->addSubcommand('loaded', [
                 'help' => 'Lists all loaded plugins',

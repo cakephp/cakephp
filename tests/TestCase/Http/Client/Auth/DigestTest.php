@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class DigestTest extends TestCase
 {
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Cake\Http\Client
      */
@@ -66,7 +66,7 @@ class DigestTest extends TestCase
     public function testRealmAndNonceFromExtraRequest()
     {
         $headers = [
-            'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51"'
+            'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51"',
         ];
 
         $response = new Response($headers, '');
@@ -96,7 +96,7 @@ class DigestTest extends TestCase
     public function testQop()
     {
         $headers = [
-            'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51",qop="auth"'
+            'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51",qop="auth"',
         ];
 
         $response = new Response($headers, '');
@@ -122,7 +122,7 @@ class DigestTest extends TestCase
     public function testOpaque()
     {
         $headers = [
-            'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51",opaque="d8ea7aa61a1693024c4cc3a516f49b3c"'
+            'WWW-Authenticate: Digest realm="The batcave",nonce="4cded326c6c51",opaque="d8ea7aa61a1693024c4cc3a516f49b3c"',
         ];
 
         $response = new Response($headers, '');

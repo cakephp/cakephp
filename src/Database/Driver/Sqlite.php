@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,6 +20,7 @@ use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
+use Cake\Database\StatementInterface;
 use PDO;
 
 /**
@@ -26,7 +28,6 @@ use PDO;
  */
 class Sqlite extends Driver
 {
-
     use SqliteDialectTrait;
 
     /**
@@ -52,7 +53,7 @@ class Sqlite extends Driver
      *
      * @return bool true on success
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->_connection) {
             return true;
@@ -61,7 +62,7 @@ class Sqlite extends Driver
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         $databaseExists = file_exists($config['database']);
@@ -69,7 +70,7 @@ class Sqlite extends Driver
         $dsn = "sqlite:{$config['database']}";
         $this->_connect($dsn, $config);
 
-        if (!$databaseExists && $config['database'] != ':memory:') {
+        if (!$databaseExists && $config['database'] !== ':memory:') {
             //@codingStandardsIgnoreStart
             @chmod($config['database'], $config['mask']);
             //@codingStandardsIgnoreEnd
@@ -89,7 +90,7 @@ class Sqlite extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
-    public function enabled()
+    public function enabled(): bool
     {
         return in_array('sqlite', PDO::getAvailableDrivers());
     }
@@ -100,7 +101,7 @@ class Sqlite extends Driver
      * @param string|\Cake\Database\Query $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query)
+    public function prepare($query): StatementInterface
     {
         $this->connect();
         $isObject = $query instanceof Query;
@@ -116,7 +117,7 @@ class Sqlite extends Driver
     /**
      * {@inheritDoc}
      */
-    public function supportsDynamicConstraints()
+    public function supportsDynamicConstraints(): bool
     {
         return false;
     }

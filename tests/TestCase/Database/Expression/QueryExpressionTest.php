@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -48,7 +49,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls()
     {
         $expr = new QueryExpression();
-        $expected = '\Cake\Database\Expression\QueryExpression';
+        $expected = 'Cake\Database\Expression\QueryExpression';
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
@@ -84,7 +85,7 @@ class QueryExpressionTest extends TestCase
             ],
             [
                 'Users.username' => 'string',
-                'Users.active' => 'boolean'
+                'Users.active' => 'boolean',
             ]
         );
 
@@ -159,7 +160,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn']
+            ['notLike'], ['in'], ['notIn'],
         ];
     }
 

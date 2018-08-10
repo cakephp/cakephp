@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -24,7 +25,6 @@ use Zend\Diactoros\Response;
  */
 class SecurityHeadersMiddlewareTest extends TestCase
 {
-
     /**
      * Test adding the security headers
      *
@@ -55,7 +55,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
             'referrer-policy' => ['same-origin'],
             'x-frame-options' => ['sameorigin'],
             'x-download-options' => ['noopen'],
-            'x-content-type-options' => ['nosniff']
+            'x-content-type-options' => ['nosniff'],
         ];
 
         $result = $middleware($request, $response, $next);

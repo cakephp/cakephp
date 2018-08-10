@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -40,7 +41,6 @@ use Cake\Event\EventListenerInterface;
  */
 class Helper implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -63,22 +63,6 @@ class Helper implements EventListenerInterface
      * @var array
      */
     protected $_helperMap = [];
-
-    /**
-     * Unused.
-     *
-     * @var array
-     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
-     */
-    public $fieldset = [];
-
-    /**
-     * Unused.
-     *
-     * @var array
-     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
-     */
-    public $tags = [];
 
     /**
      * The View instance this helper is attached to
@@ -131,81 +115,6 @@ class Helper implements EventListenerInterface
 
             return $this->{$name};
         }
-
-        $removed = [
-            'theme' => 'getTheme',
-            'plugin' => 'getPlugin',
-        ];
-        if (isset($removed[$name])) {
-            $method = $removed[$name];
-            deprecationWarning(sprintf(
-                'Helper::$%s is removed. Use $view->%s() instead.',
-                $name,
-                $method
-            ));
-
-            return $this->_View->{$method}();
-        }
-
-        if ($name === 'request') {
-            deprecationWarning(
-                'Helper::$%s is removed. Use $view->%s() instead. Use $helper->getView()->getRequest() instead.'
-            );
-
-            return $this->_View->getRequest();
-        }
-
-        if ($name === 'helpers') {
-            deprecationWarning(
-                'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
-            );
-
-            return $this->helpers;
-        }
-    }
-
-    /**
-     * Magic setter for removed properties.
-     *
-     * @param string $name Property name.
-     * @param mixed $value Value to set.
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        $removed = [
-            'theme' => 'setTheme',
-            'plugin' => 'setPlugin',
-        ];
-        if (isset($removed[$name])) {
-            $method = $removed[$name];
-            deprecationWarning(sprintf(
-                'Helper::$%s is removed. Use $view->%s() instead.',
-                $name,
-                $method
-            ));
-            $this->_View->{$method}($value);
-
-            return;
-        }
-
-        if ($name === 'request') {
-            deprecationWarning(
-                'Helper::$%s is removed. Use $view->%s() instead. Use $helper->getView()->setRequest() instead.'
-            );
-
-            $this->_View->setRequest($value);
-
-            return;
-        }
-
-        if ($name === 'helpers') {
-            deprecationWarning(
-                'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
-            );
-        }
-
-        $this->{$name} = $value;
     }
 
     /**
@@ -213,7 +122,7 @@ class Helper implements EventListenerInterface
      *
      * @return \Cake\View\View The bound view instance.
      */
-    public function getView()
+    public function getView(): View
     {
         return $this->_View;
     }
@@ -227,7 +136,7 @@ class Helper implements EventListenerInterface
      * @param array $options Array of options
      * @return string onclick JS code
      */
-    protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
+    protected function _confirm(string $message, string $okCode, string $cancelCode = '', array $options = []): string
     {
         $message = $this->_cleanConfirmMessage($message);
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
@@ -244,11 +153,15 @@ class Helper implements EventListenerInterface
     /**
      * Returns a string read to be used in confirm()
      *
-     * @param string $message The message to clean
-     * @return mixed
+     * @param string|null $message The message to clean
+     * @return string
      */
-    protected function _cleanConfirmMessage($message)
+    protected function _cleanConfirmMessage(?string $message): string
     {
+        if ($message === null) {
+            return '';
+        }
+
         return str_replace('\\\n', '\n', json_encode($message));
     }
 
@@ -260,7 +173,7 @@ class Helper implements EventListenerInterface
      * @param string $key the key to use for class.
      * @return array Array of options with $key set.
      */
-    public function addClass(array $options = [], $class = null, $key = 'class')
+    public function addClass(array $options = [], ?string $class = null, string $key = 'class'): array
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
@@ -284,7 +197,7 @@ class Helper implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'View.beforeRenderFile' => 'beforeRenderFile',
@@ -292,7 +205,7 @@ class Helper implements EventListenerInterface
             'View.beforeRender' => 'beforeRender',
             'View.afterRender' => 'afterRender',
             'View.beforeLayout' => 'beforeLayout',
-            'View.afterLayout' => 'afterLayout'
+            'View.afterLayout' => 'afterLayout',
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
@@ -312,7 +225,7 @@ class Helper implements EventListenerInterface
      * @param array $config The configuration settings provided to this helper.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
     }
 

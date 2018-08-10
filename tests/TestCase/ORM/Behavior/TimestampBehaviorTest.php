@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,6 @@ use RuntimeException;
  */
 class TimestampBehaviorTest extends TestCase
 {
-
     /**
      * autoFixtures
      *
@@ -45,7 +45,7 @@ class TimestampBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users'
+        'core.users',
     ];
 
     /**
@@ -55,11 +55,11 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsDefault()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $table = $this->getTable();
         $this->Behavior = new TimestampBehavior($table);
 
         $expected = [
-            'Model.beforeSave' => 'handleEvent'
+            'Model.beforeSave' => 'handleEvent',
         ];
         $this->assertEquals($expected, $this->Behavior->implementedEvents());
     }
@@ -73,12 +73,12 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testImplementedEventsCustom()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')->getMock();
+        $table = $this->getTable();
         $settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
         $this->Behavior = new TimestampBehavior($table, $settings);
 
         $expected = [
-            'Something.special' => 'handleEvent'
+            'Something.special' => 'handleEvent',
         ];
         $this->assertEquals($expected, $this->Behavior->implementedEvents());
     }
@@ -260,7 +260,7 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'timestamp_str' => 'always',
-                ]
+                ],
             ],
         ]);
 
@@ -406,8 +406,8 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'created' => 'new',
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->Behavior = new TimestampBehavior($table, $config);
@@ -459,9 +459,9 @@ class TimestampBehaviorTest extends TestCase
             'events' => [
                 'Model.beforeSave' => [
                     'created' => 'new',
-                    'updated' => 'always'
-                ]
-            ]
+                    'updated' => 'always',
+                ],
+            ],
         ]);
 
         $entity = new Entity(['username' => 'timestamp test']);
@@ -488,8 +488,10 @@ class TimestampBehaviorTest extends TestCase
             'date_specialed' => ['type' => 'datetime'],
             'timestamp_str' => ['type' => 'string'],
         ];
-        $table = new Table(['schema' => $schema]);
 
-        return $table;
+        return new Table([
+            'alias' => 'Articles',
+            'schema' => $schema,
+        ]);
     }
 }

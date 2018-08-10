@@ -22,23 +22,28 @@ use Cake\Mailer\Email;
  *
  * Set this as the email transport to capture emails for later assertions
  *
- * @see Cake\TestSuite\EmailTrait
+ * @see \Cake\TestSuite\EmailTrait
  */
 class TestEmailTransport extends AbstractTransport
 {
+    /**
+     * @var array
+     */
     private static $emails = [];
 
     /**
      * Stores email for later assertions
      *
-     * @param Email $email Email
-     * @return bool
+     * @param \Cake\Mailer\Email $email Email
+     * @return array
      */
-    public function send(Email $email)
+    public function send(Email $email): array
     {
         static::$emails[] = $email;
 
-        return true;
+        return [
+            'result' => 'Success',
+        ];
     }
 
     /**

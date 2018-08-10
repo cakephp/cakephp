@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,13 +24,12 @@ use Cake\Event\EventInterface;
  */
 class ErrorController extends Controller
 {
-
     /**
      * Initialization hook method.
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('RequestHandler');
     }
@@ -38,7 +38,7 @@ class ErrorController extends Controller
      * beforeRender callback.
      *
      * @param \Cake\Event\EventInterface $event Event.
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
     public function beforeRender(EventInterface $event)
     {

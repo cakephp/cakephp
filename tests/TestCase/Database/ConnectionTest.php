@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\Database\Exception\NestedTransactionRollbackException;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
-use Cake\Database\Statement\BufferedStatement;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -35,7 +35,6 @@ use ReflectionProperty;
  */
 class ConnectionTest extends TestCase
 {
-
     public $fixtures = ['core.things'];
 
     /**
@@ -891,29 +890,29 @@ class ConnectionTest extends TestCase
     public function testLoggerDecorator()
     {
         $logger = new QueryLogger;
-        $this->connection->logQueries(true);
+        $this->connection->enableQueryLogging(true);
         $this->connection->setLogger($logger);
         $st = $this->connection->prepare('SELECT 1');
         $this->assertInstanceOf(LoggingStatement::class, $st);
         $this->assertSame($logger, $st->getLogger());
 
-        $this->connection->logQueries(false);
+        $this->connection->enableQueryLogging(false);
         $st = $this->connection->prepare('SELECT 1');
-        $this->assertNotInstanceOf('\Cake\Database\Log\LoggingStatement', $st);
+        $this->assertNotInstanceOf('Cake\Database\Log\LoggingStatement', $st);
     }
 
     /**
-     * test logQueries method
+     * test enableQueryLogging method
      *
      * @return void
      */
-    public function testLogQueries()
+    public function testEnableQueryLogging()
     {
-        $this->connection->logQueries(true);
-        $this->assertTrue($this->connection->logQueries());
+        $this->connection->enableQueryLogging(true);
+        $this->assertTrue($this->connection->isQueryLoggingEnabled());
 
-        $this->connection->logQueries(false);
-        $this->assertFalse($this->connection->logQueries());
+        $this->connection->enableQueryLogging(false);
+        $this->assertFalse($this->connection->isQueryLoggingEnabled());
     }
 
     /**
@@ -927,7 +926,7 @@ class ConnectionTest extends TestCase
         $this->connection->setLogger($logger);
         $logger->expects($this->once())->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'SELECT 1')
             ));
         $this->connection->log('SELECT 1');
@@ -945,7 +944,7 @@ class ConnectionTest extends TestCase
             ->setMethods(['connect'])
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->logQueries(true);
+        $connection->enableQueryLogging(true);
 
         $driver = $this->getMockFormDriver();
         $connection->setDriver($driver);
@@ -954,12 +953,12 @@ class ConnectionTest extends TestCase
         $connection->setLogger($logger);
         $logger->expects($this->at(0))->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'BEGIN')
             ));
         $logger->expects($this->at(1))->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'ROLLBACK')
             ));
 
@@ -986,10 +985,10 @@ class ConnectionTest extends TestCase
 
         $logger->expects($this->at(1))->method('log')
             ->with($this->logicalAnd(
-                $this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
+                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
                 $this->attributeEqualTo('query', 'COMMIT')
             ));
-        $connection->logQueries(true);
+        $connection->enableQueryLogging(true);
         $connection->begin();
         $connection->commit();
     }

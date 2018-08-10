@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ namespace Cake\Database;
  */
 trait TypedResultTrait
 {
-
     /**
      * The type name this expression will return when executed
      *
@@ -32,7 +32,7 @@ trait TypedResultTrait
      *
      * @return string
      */
-    public function getReturnType()
+    public function getReturnType(): string
     {
         return $this->_returnType;
     }
@@ -43,7 +43,7 @@ trait TypedResultTrait
      * @param string $type The name of the type that is to be returned
      * @return $this
      */
-    public function setReturnType($type)
+    public function setReturnType(string $type)
     {
         $this->_returnType = $type;
 

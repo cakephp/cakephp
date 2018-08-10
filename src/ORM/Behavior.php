@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -113,7 +114,6 @@ use ReflectionMethod;
  */
 class Behavior implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -176,7 +176,7 @@ class Behavior implements EventListenerInterface
      * @param array $config The configuration settings provided to this behavior.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
     }
 
@@ -185,7 +185,7 @@ class Behavior implements EventListenerInterface
      *
      * @return \Cake\ORM\Table The bound table instance.
      */
-    public function getTable()
+    public function getTable(): Table
     {
         return $this->_table;
     }
@@ -198,7 +198,7 @@ class Behavior implements EventListenerInterface
      * @param array $config The customized method mappings.
      * @return array A de-duped list of config data.
      */
-    protected function _resolveMethodAliases($key, $defaults, $config)
+    protected function _resolveMethodAliases(string $key, array $defaults, array $config): array
     {
         if (!isset($defaults[$key], $config[$key])) {
             return $config;
@@ -231,7 +231,7 @@ class Behavior implements EventListenerInterface
      * @return void
      * @throws \Cake\Core\Exception\Exception if config are invalid
      */
-    public function verifyConfig()
+    public function verifyConfig(): void
     {
         $keys = ['implementedFinders', 'implementedMethods'];
         foreach ($keys as $key) {
@@ -258,7 +258,7 @@ class Behavior implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'Model.beforeMarshal' => 'beforeMarshal',
@@ -275,7 +275,7 @@ class Behavior implements EventListenerInterface
             'Model.afterRules' => 'afterRules',
         ];
         $config = $this->getConfig();
-        $priority = isset($config['priority']) ? $config['priority'] : null;
+        $priority = $config['priority'] ?? null;
         $events = [];
 
         foreach ($eventMap as $event => $method) {
@@ -287,7 +287,7 @@ class Behavior implements EventListenerInterface
             } else {
                 $events[$event] = [
                     'callable' => $method,
-                    'priority' => $priority
+                    'priority' => $priority,
                 ];
             }
         }
@@ -317,7 +317,7 @@ class Behavior implements EventListenerInterface
      * @return array
      * @throws \ReflectionException
      */
-    public function implementedFinders()
+    public function implementedFinders(): array
     {
         $methods = $this->getConfig('implementedFinders');
         if (isset($methods)) {
@@ -349,7 +349,7 @@ class Behavior implements EventListenerInterface
      * @return array
      * @throws \ReflectionException
      */
-    public function implementedMethods()
+    public function implementedMethods(): array
     {
         $methods = $this->getConfig('implementedMethods');
         if (isset($methods)) {
@@ -369,7 +369,7 @@ class Behavior implements EventListenerInterface
      * @return array
      * @throws \ReflectionException
      */
-    protected function _reflectionCache()
+    protected function _reflectionCache(): array
     {
         $class = get_class($this);
         if (isset(self::$_reflectionCache[$class])) {
@@ -397,7 +397,7 @@ class Behavior implements EventListenerInterface
 
         $return = [
             'finders' => [],
-            'methods' => []
+            'methods' => [],
         ];
 
         $reflection = new ReflectionClass($class);

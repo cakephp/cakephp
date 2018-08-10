@@ -8,7 +8,6 @@ parameters:
         - '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
         - '#Access to undefined constant PDO::SQLSRV_ATTR_ENCODING#'
         - '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
-        - '#Call to an undefined method Psr\\Http\\Message\\ResponseInterface::getCookies\(\)#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$webroot#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
         - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
@@ -17,10 +16,16 @@ parameters:
         - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
         - '#Call to an undefined method DateTimeInterface::i18nFormat\(\)#'
-        - '#Call to an undefined method object::__toString\(\)#'
-        - '#Call to an undefined method object::toArray\(\)#'
-        - '#Call to an undefined method object::__debugInfo\(\)#'
         - '#Cannot call method lastInsertId\(\) on null#'
+        - '#Access to an undefined property Cake\\Mailer\\Email::\$request#'
+        - '#Access to an undefined property Cake\\Mailer\\Email::\$response#'
+        - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
+        - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
+        - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
+        - '#Call to an undefined method Traversable::getInnerIterator\(\)#'
+        - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
+        - '#Binary operation "\+=" between \(array\&hasOffset\(.*\)\) and array results in an error#'
+        - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject#'
     earlyTerminatingMethodCalls:
         Cake\Shell\Shell:
             - abort

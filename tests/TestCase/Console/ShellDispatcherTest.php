@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use PHPUnit\Framework\Error\Warning;
  */
 class ShellDispatcherTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -34,7 +34,7 @@ class ShellDispatcherTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
         static::setAppNamespace();
         $this->dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
             ->setMethods(['_stop'])
@@ -50,6 +50,7 @@ class ShellDispatcherTest extends TestCase
     {
         parent::tearDown();
         ShellDispatcher::resetAliases();
+        Plugin::unload();
     }
 
     /**
@@ -105,7 +106,7 @@ class ShellDispatcherTest extends TestCase
     {
         $expected = [
             'Company' => 'Company/TestPluginThree.company',
-            'Example' => 'TestPlugin.example'
+            'Example' => 'TestPlugin.example',
         ];
         $result = $this->dispatcher->addShortPluginAliases();
         $this->assertSame($expected, $result, 'Should return the list of aliased plugin shells');
@@ -113,7 +114,7 @@ class ShellDispatcherTest extends TestCase
         ShellDispatcher::alias('Example', 'SomeOther.PluginsShell');
         $expected = [
             'Company' => 'Company/TestPluginThree.company',
-            'Example' => 'SomeOther.PluginsShell'
+            'Example' => 'SomeOther.PluginsShell',
         ];
         $result = $this->dispatcher->addShortPluginAliases();
         $this->assertSame($expected, $result, 'Should not overwrite existing aliases');

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -102,7 +103,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      *
      * @var string
      */
-    const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
+    public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
      * {@inheritDoc}
@@ -158,7 +159,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      * @param array $options Array of options.
      * @return string Relative time string.
      */
-    public function timeAgoInWords(array $options = [])
+    public function timeAgoInWords(array $options = []): string
     {
         return static::diffFormatter()->timeAgoInWords($this, $options);
     }
@@ -178,7 +179,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      * @return array List of timezone identifiers
      * @since 2.2
      */
-    public static function listTimezones($filter = null, $country = null, $options = [])
+    public static function listTimezones($filter = null, ?string $country = null, $options = []): array
     {
         if (is_bool($options)) {
             $options = [
@@ -202,7 +203,7 @@ class FrozenTime extends Chronos implements JsonSerializable
         if ($filter === null) {
             $filter = DateTimeZone::ALL;
         }
-        $identifiers = DateTimeZone::listIdentifiers($filter, $country);
+        $identifiers = DateTimeZone::listIdentifiers($filter, (string)$country);
 
         if ($regex) {
             foreach ($identifiers as $key => $tz) {

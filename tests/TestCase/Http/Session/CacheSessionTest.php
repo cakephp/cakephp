@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CacheSessionTest
  *
@@ -25,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class CacheSessionTest extends TestCase
 {
-
     protected static $_sessionBackup;
 
     /**
