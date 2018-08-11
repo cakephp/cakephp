@@ -185,6 +185,29 @@ class Validation
     }
 
     /**
+     * Backwards compatibility wrapper for Validation::creditCard().
+     *
+     * @param string $check credit card number to validate
+     * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
+     *    if an array is used only the values of the array are checked.
+     *    Example: ['amex', 'bankcard', 'maestro']
+     * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
+     * @param string|null $regex A custom regex can also be passed, this will be used instead of the defined regex values
+     * @return bool Success
+     * @deprecated 3.7.0 Use Validation::creditCard() instead.
+     * @see \Cake\Validation\Validation::creditCard()
+     */
+    public static function cc($check, $type = 'fast', $deep = false, $regex = null)
+    {
+        deprecationWarning(
+            'Validation::cc() is deprecated. ' .
+            'Use Validation::creditCard() instead.'
+        );
+
+        return static::creditCard($check, $type, $deep, $regex);
+    }
+
+    /**
      * Validation of credit card numbers.
      * Returns true if $check is in the proper credit card format.
      *
@@ -197,7 +220,7 @@ class Validation
      * @return bool Success
      * @see \Cake\Validation\Validation::luhn()
      */
-    public static function cc($check, $type = 'fast', $deep = false, $regex = null)
+    public static function creditCard($check, $type = 'fast', $deep = false, $regex = null)
     {
         if (!is_scalar($check)) {
             return false;
