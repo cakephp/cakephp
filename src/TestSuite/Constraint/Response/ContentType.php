@@ -27,7 +27,7 @@ class ContentType extends ResponseBase
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $alias = $this->response->getMimeType($other);
         if ($alias !== false) {
@@ -42,7 +42,7 @@ class ContentType extends ResponseBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'was set as the Content-Type';
     }

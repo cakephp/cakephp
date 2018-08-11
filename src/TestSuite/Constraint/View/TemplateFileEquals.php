@@ -33,7 +33,7 @@ class TemplateFileEquals extends Constraint
      *
      * @param string $filename Template file name
      */
-    public function __construct($filename)
+    public function __construct(string $filename)
     {
         parent::__construct();
 
@@ -46,7 +46,7 @@ class TemplateFileEquals extends Constraint
      * @param mixed $other Expected filename
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return strpos($this->filename, $other) !== false;
     }
@@ -56,7 +56,7 @@ class TemplateFileEquals extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('equals template file %s', $this->filename);
     }

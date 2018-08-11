@@ -31,7 +31,7 @@ class MailContainsText extends MailContains
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         if ($this->at) {
             return sprintf('is in the text message of email #%d', $this->at);

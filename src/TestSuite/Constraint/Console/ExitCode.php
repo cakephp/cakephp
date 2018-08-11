@@ -33,7 +33,7 @@ class ExitCode extends Constraint
      *
      * @param int $exitCode Exit code
      */
-    public function __construct($exitCode)
+    public function __construct(int $exitCode)
     {
         parent::__construct();
 
@@ -46,7 +46,7 @@ class ExitCode extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $other === $this->exitCode;
     }
@@ -56,7 +56,7 @@ class ExitCode extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('matches exit code %d', $this->exitCode);
     }

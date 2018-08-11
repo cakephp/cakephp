@@ -35,7 +35,7 @@ class MailContains extends MailConstraintBase
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $emails = $this->getEmails();
         foreach ($emails as $email) {
@@ -54,7 +54,7 @@ class MailContains extends MailConstraintBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         if ($this->at) {
             return sprintf('is in email #%d', $this->at);

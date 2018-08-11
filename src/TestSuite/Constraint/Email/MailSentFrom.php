@@ -29,7 +29,7 @@ class MailSentFrom extends MailSentWith
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         if ($this->at) {
             return sprintf('sent email #%d', $this->at);

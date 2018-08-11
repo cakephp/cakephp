@@ -34,7 +34,7 @@ class HeaderEquals extends ResponseBase
      * @param \Cake\Http\Response $response A response instance.
      * @param string $headerName Header name
      */
-    public function __construct(Response $response, $headerName)
+    public function __construct(Response $response, string $headerName)
     {
         parent::__construct($response);
 
@@ -47,7 +47,7 @@ class HeaderEquals extends ResponseBase
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $this->response->getHeaderLine($this->headerName) === $other;
     }
@@ -57,7 +57,7 @@ class HeaderEquals extends ResponseBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('equals content in header \'%s\'', $this->headerName);
     }

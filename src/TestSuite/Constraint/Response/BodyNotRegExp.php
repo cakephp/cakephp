@@ -27,7 +27,7 @@ class BodyNotRegExp extends BodyRegExp
      * @param mixed $other Expected pattern
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return parent::matches($other) === false;
     }
@@ -37,7 +37,7 @@ class BodyNotRegExp extends BodyRegExp
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'PCRE pattern not found in response body';
     }

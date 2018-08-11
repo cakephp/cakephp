@@ -27,7 +27,7 @@ class BodyRegExp extends ResponseBase
      * @param mixed $other Expected pattern
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return preg_match($other, $this->_getBodyAsString()) > 0;
     }
@@ -37,7 +37,7 @@ class BodyRegExp extends ResponseBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'PCRE pattern found in response body';
     }
@@ -46,7 +46,7 @@ class BodyRegExp extends ResponseBase
      * @param mixed $other Expected
      * @return string
      */
-    public function failureDescription($other)
+    public function failureDescription($other): string
     {
         return $other . ' ' . $this->toString();
     }

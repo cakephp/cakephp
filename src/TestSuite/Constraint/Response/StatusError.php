@@ -28,7 +28,7 @@ class StatusError extends StatusCodeBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('%d is between 400 and 429', $this->response->getStatusCode());
     }

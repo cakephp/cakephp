@@ -27,7 +27,7 @@ class BodyEmpty extends ResponseBase
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return empty($this->_getBodyAsString());
     }
@@ -37,7 +37,7 @@ class BodyEmpty extends ResponseBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'response body is empty';
     }
@@ -48,7 +48,7 @@ class BodyEmpty extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other)
+    protected function failureDescription($other): string
     {
         return $this->toString();
     }

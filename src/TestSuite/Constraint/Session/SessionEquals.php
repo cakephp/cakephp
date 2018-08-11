@@ -45,7 +45,7 @@ class SessionEquals extends Constraint
      * @param \Cake\Http\Session $session Session
      * @param string $path Session Path
      */
-    public function __construct($session, $path)
+    public function __construct(\Cake\Http\Session $session, string $path)
     {
         parent::__construct();
 
@@ -63,7 +63,7 @@ class SessionEquals extends Constraint
      * @param mixed $other Value to compare with
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $this->session->read($this->path) === $other;
     }
@@ -73,7 +73,7 @@ class SessionEquals extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('is in session path \'%s\'', $this->path);
     }

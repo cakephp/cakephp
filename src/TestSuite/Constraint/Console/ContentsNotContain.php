@@ -27,7 +27,7 @@ class ContentsNotContain extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return mb_strpos($this->contents, $other) === false;
     }
@@ -37,7 +37,7 @@ class ContentsNotContain extends ContentsBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('is not in %s', $this->output);
     }

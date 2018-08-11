@@ -27,7 +27,7 @@ class CookieNotSet extends CookieSet
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return parent::matches($other) === false;
     }
@@ -37,7 +37,7 @@ class CookieNotSet extends CookieSet
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'cookie was not set';
     }

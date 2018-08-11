@@ -27,7 +27,7 @@ class BodyNotEmpty extends BodyEmpty
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return parent::matches($other) === false;
     }
@@ -37,7 +37,7 @@ class BodyNotEmpty extends BodyEmpty
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'response body is not empty';
     }

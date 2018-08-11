@@ -44,7 +44,7 @@ class CookieEncryptedEquals extends CookieEquals
      * @param string $mode Mode
      * @param string $key Key
      */
-    public function __construct(Response $response, $cookieName, $mode, $key)
+    public function __construct(Response $response, string $cookieName, string $mode, string $key)
     {
         parent::__construct($response, $cookieName);
 
@@ -58,7 +58,7 @@ class CookieEncryptedEquals extends CookieEquals
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $cookie = $this->response->getCookie($this->cookieName);
 
@@ -70,7 +70,7 @@ class CookieEncryptedEquals extends CookieEquals
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('was encrypted in cookie \'%s\'', $this->cookieName);
     }
@@ -80,7 +80,7 @@ class CookieEncryptedEquals extends CookieEquals
      *
      * @return string
      */
-    protected function _getCookieEncryptionKey()
+    protected function _getCookieEncryptionKey(): string
     {
         return $this->key;
     }
