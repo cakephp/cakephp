@@ -375,7 +375,7 @@ class ShellDispatcher
      * @param string $shortName The plugin-prefixed shell name
      * @return \Cake\Console\Shell A shell instance.
      */
-    protected function _createShell($className, $shortName)
+    protected function _createShell(string $className, string $shortName): Shell
     {
         list($plugin) = pluginSplit($shortName);
         $instance = new $className();

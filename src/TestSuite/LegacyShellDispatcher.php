@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -13,6 +14,8 @@
  */
 namespace Cake\TestSuite;
 
+use Cake\Console\ConsoleIo;
+use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
 
 /**
@@ -32,7 +35,7 @@ class LegacyShellDispatcher extends ShellDispatcher
      * @param bool $bootstrap Initialize environment
      * @param \Cake\Console\ConsoleIo $io ConsoleIo
      */
-    public function __construct($args = [], $bootstrap = true, $io = null)
+    public function __construct(array $args = [], bool $bootstrap = true, ?ConsoleIo $io = null)
     {
         $this->_io = $io;
         parent::__construct($args, $bootstrap);
@@ -45,11 +48,13 @@ class LegacyShellDispatcher extends ShellDispatcher
      * @param string $shortName Short name
      * @return \Cake\Console\Shell
      */
-    protected function _createShell($className, $shortName)
+    protected function _createShell(string $className, string $shortName): Shell
     {
         list($plugin) = pluginSplit($shortName);
         $instance = new $className($this->_io);
-        $instance->plugin = trim($plugin, '.');
+        if ($plugin) {
+            $instance->plugin = trim($plugin, '.');
+        }
 
         return $instance;
     }

@@ -254,7 +254,7 @@ class UrlHelperTest extends TestCase
 
         $data = 'data:image/png;base64,<evil>';
         $result = $this->Helper->assetUrl($data);
-        $this->assertHtml(h($data), $result);
+        $this->assertSame(h($data), $result);
     }
 
     /**
