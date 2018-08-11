@@ -858,7 +858,7 @@ class ConnectionTest extends TestCase
         $result = $connection->quoteIdentifier('Model.name as y');
         $expected = '"Model"."name" AS "y"';
         $this->assertEquals($expected, $result);
-        
+
         $result = $connection->quoteIdentifier('nämé');
         $expected = '"nämé"';
         $this->assertEquals($expected, $result);
