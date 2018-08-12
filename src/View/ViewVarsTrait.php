@@ -157,6 +157,7 @@ trait ViewVarsTrait
      * @param bool $merge Whether to merge with or override existing valid View options.
      *   Defaults to `true`.
      * @return array The updated view options as an array.
+     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     public function viewOptions($options = null, $merge = true)
     {
