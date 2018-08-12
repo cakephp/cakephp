@@ -264,9 +264,10 @@ class ViewBuilderTest extends TestCase
             ->setHelpers(['Form', 'Html'])
             ->setLayoutPath('Admin/')
             ->setTheme('TestTheme')
-            ->setPlugin('TestPlugin');
+            ->setPlugin('TestPlugin')
+            ->setVars(['foo' => 'bar', 'x' => 'old']);
         $view = $builder->build(
-            ['one' => 'value'],
+            ['one' => 'value', 'x' => 'new'],
             $request,
             $response,
             $events
@@ -281,7 +282,10 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($request, $view->getRequest());
         $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
-        $this->assertSame(['one' => 'value'], $view->viewVars);
+        $this->assertEquals(
+            ['one' => 'value', 'foo' => 'bar', 'x' => 'new'],
+            $view->viewVars
+        );
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
     }

@@ -693,7 +693,7 @@ class ViewBuilder implements JsonSerializable, Serializable
             'autoLayout' => $this->_autoLayout,
             'layoutPath' => $this->_layoutPath,
             'helpers' => $this->_helpers,
-            'viewVars' => $vars,
+            'viewVars' => $vars + $this->_vars,
         ];
         $data += $this->_options;
 
