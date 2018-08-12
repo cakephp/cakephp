@@ -39,7 +39,7 @@ class DatabaseSuite extends TestSuite
         return $suite;
     }
 
-    public function count($preferCache = false)
+    public function count($preferCache = false): int
     {
         return parent::count($preferCache) * 2;
     }
