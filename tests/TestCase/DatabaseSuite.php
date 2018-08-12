@@ -39,7 +39,7 @@ class DatabaseSuite extends TestSuite
         return $suite;
     }
 
-    public function count($preferCache = false)
+    public function count($preferCache = false): int
     {
         return parent::count($preferCache) * 2;
     }
@@ -50,7 +50,7 @@ class DatabaseSuite extends TestSuite
      * @param \PHPUnit\Framework\TestResult $result
      * @return \PHPUnit\Framework\TestResult
      */
-    public function run(?TestResult $result = null)
+    public function run(?TestResult $result = null): TestResult
     {
         $permutations = [
             'Identifier Quoting' => function () {
