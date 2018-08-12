@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Constraint;
 
 use Cake\Event\EventInterface;
-use Cake\Event\EventManagerInterface;
+use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -38,11 +38,11 @@ class EventFiredWith extends Constraint
     /**
      * Constructor
      *
-     * @param \Cake\Event\EventManagerInterface $eventManager Event manager to check
+     * @param \Cake\Event\EventManager $eventManager Event manager to check
      * @param string $dataKey Data key
      * @param string|null $dataValue Data value
      */
-    public function __construct(EventManagerInterface $eventManager, string $dataKey, ?string $dataValue)
+    public function __construct(EventManager $eventManager, string $dataKey, ?string $dataValue)
     {
         parent::__construct();
         $this->_eventManager = $eventManager;
