@@ -369,7 +369,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity): void
+    public function afterSave(EventInterface $event, EntityInterface $entity)
     {
         $entity->unsetProperty('_i18n');
     }

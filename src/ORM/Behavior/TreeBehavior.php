@@ -162,7 +162,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity): void
+    public function afterSave(EventInterface $event, EntityInterface $entity)
     {
         if (!$this->_config['level'] || $entity->isNew()) {
             return;
