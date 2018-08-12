@@ -26,7 +26,7 @@ class ContentsRegExp extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return preg_match($other, $this->contents) > 0;
     }
@@ -36,7 +36,7 @@ class ContentsRegExp extends ContentsBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('PCRE pattern found in %s', $this->output);
     }

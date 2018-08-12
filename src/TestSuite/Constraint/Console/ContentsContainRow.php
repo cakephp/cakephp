@@ -26,7 +26,7 @@ class ContentsContainRow extends ContentsRegExp
      * @param array $other Row
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $row = array_map(function ($cell) {
             return preg_quote($cell, '/');
@@ -42,7 +42,7 @@ class ContentsContainRow extends ContentsRegExp
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('row was in %s', $this->output);
     }
@@ -51,7 +51,7 @@ class ContentsContainRow extends ContentsRegExp
      * @param mixed $other Expected content
      * @return string
      */
-    public function failureDescription($other)
+    public function failureDescription($other): string
     {
         return $this->exporter->shortenedExport($other) . ' ' . $this->toString();
     }

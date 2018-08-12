@@ -26,7 +26,7 @@ class ContentsEmpty extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $this->contents === '';
     }
@@ -36,7 +36,7 @@ class ContentsEmpty extends ContentsBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('%s is empty', $this->output);
     }
@@ -47,7 +47,7 @@ class ContentsEmpty extends ContentsBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other)
+    protected function failureDescription($other): string
     {
         return $this->toString();
     }
