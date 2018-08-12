@@ -2992,4 +2992,28 @@ XML;
             );
         }
     }
+
+    /**
+     * Test deprecated methods
+     *
+     * @return void
+     */
+    public function testDeprecatedMethods()
+    {
+        $this->deprecated(function () {
+            $this->Email
+                ->setTemplate('foo')
+                ->setLayout('bar')
+                ->setTheme('baz')
+                ->setHelpers(['A', 'B']);
+
+            $this->assertSame('foo', $this->Email->getTemplate());
+            $this->assertSame('bar', $this->Email->getLayout());
+            $this->assertSame('baz', $this->Email->getTheme());
+            $this->assertSame(['A', 'B'], $this->Email->getHelpers());
+
+            $this->Email->setLayout('');
+            $this->assertFalse($this->Email->getLayout());
+        });
+    }
 }
