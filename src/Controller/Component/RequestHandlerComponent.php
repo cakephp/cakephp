@@ -243,7 +243,7 @@ class RequestHandlerComponent extends Component
      * @param \Cake\Event\EventInterface $event The Controller.beforeRender event.
      * @return void
      */
-    public function beforeRender(EventInterface $event): void
+    public function beforeRender(EventInterface $event)
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();

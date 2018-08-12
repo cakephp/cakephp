@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -69,7 +70,7 @@ class MiddlewareDispatcher
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
      */
-    public function __construct($test, $class = null, $constructorArgs = null)
+    public function __construct(\Cake\TestSuite\IntegrationTestCase $test, ?string $class = null, ?array $constructorArgs = null)
     {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
@@ -89,7 +90,7 @@ class MiddlewareDispatcher
      * @param array|string $url The URL array/string to resolve.
      * @return string
      */
-    public function resolveUrl($url)
+    public function resolveUrl($url): string
     {
         // If we need to resolve a Route URL but there are no routes, load routes.
         if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
@@ -105,7 +106,7 @@ class MiddlewareDispatcher
      * @param array $url The url to resolve
      * @return string
      */
-    protected function resolveRoute(array $url)
+    protected function resolveRoute(array $url): string
     {
         // Simulate application bootstrap and route loading.
         // We need both to ensure plugins are loaded.
@@ -134,7 +135,7 @@ class MiddlewareDispatcher
      * @param array $spec The request spec.
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function _createRequest($spec)
+    protected function _createRequest(array $spec): \Psr\Http\Message\ServerRequestInterface
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];
@@ -167,7 +168,7 @@ class MiddlewareDispatcher
      * @param array $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
-    public function execute($requestSpec)
+    public function execute(array $requestSpec): \Psr\Http\Message\ResponseInterface
     {
         try {
             $reflect = new ReflectionClass($this->_class);

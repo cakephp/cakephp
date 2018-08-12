@@ -1868,9 +1868,6 @@ class HtmlHelperTest extends TestCase
      */
     public function testTag()
     {
-        $result = $this->Html->tag('div');
-        $this->assertHtml('<div', $result);
-
         $result = $this->Html->tag('div', 'text');
         $this->assertHtml(['<div', 'text', '/div'], $result);
 

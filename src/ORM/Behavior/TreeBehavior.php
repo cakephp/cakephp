@@ -94,7 +94,7 @@ class TreeBehavior extends Behavior
      * @return void
      * @throws \RuntimeException if the parent to set for the node is invalid
      */
-    public function beforeSave(EventInterface $event, EntityInterface $entity): void
+    public function beforeSave(EventInterface $event, EntityInterface $entity)
     {
         $isNew = $entity->isNew();
         $config = $this->getConfig();
@@ -162,7 +162,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity the entity that is going to be saved
      * @return void
      */
-    public function afterSave(EventInterface $event, EntityInterface $entity): void
+    public function afterSave(EventInterface $event, EntityInterface $entity)
     {
         if (!$this->_config['level'] || $entity->isNew()) {
             return;
@@ -215,7 +215,7 @@ class TreeBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity The entity that is going to be saved
      * @return void
      */
-    public function beforeDelete(EventInterface $event, EntityInterface $entity): void
+    public function beforeDelete(EventInterface $event, EntityInterface $entity)
     {
         $config = $this->getConfig();
         $this->_ensureFields($entity);

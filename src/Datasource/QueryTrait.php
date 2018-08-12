@@ -62,7 +62,7 @@ trait QueryTrait
     /**
      * A query cacher instance if this query has caching enabled.
      *
-     * @var \Cake\Datasource\QueryCacher
+     * @var \Cake\Datasource\QueryCacher|null
      */
     protected $_cache;
 

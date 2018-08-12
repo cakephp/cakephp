@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -49,7 +50,7 @@ trait StringCompareTrait
      * @param string $result test result as a string
      * @return void
      */
-    public function assertSameAsFile($path, $result)
+    public function assertSameAsFile(string $path, string $result): void
     {
         if (!file_exists($path)) {
             $path = $this->_compareBasePath . $path;
