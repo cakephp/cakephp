@@ -45,7 +45,7 @@ class ExitCode extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $other === $this->exitCode;
     }
