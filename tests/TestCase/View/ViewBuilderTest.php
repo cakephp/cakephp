@@ -24,6 +24,37 @@ use Cake\View\ViewBuilder;
  */
 class ViewBuilderTest extends TestCase
 {
+    public function testSetVar()
+    {
+        $builder = new ViewBuilder();
+
+        $builder->setVar('testing', 'value');
+        $this->assertSame('value', $builder->getVar('testing'));
+    }
+
+    public function testSetVars()
+    {
+        $builder = new ViewBuilder();
+
+        $data = ['test' => 'val', 'foo' => 'bar'];
+        $builder->setVars($data);
+        $this->assertEquals($data, $builder->getVars());
+
+        $update = ['test' => 'updated'];
+        $builder->setVars($update);
+        $this->assertEquals(
+            ['test' => 'val', 'foo' => 'bar', 'test' => 'updated'],
+            $builder->getVars()
+        );
+
+        $update = ['overwrite' => 'yes'];
+        $builder->setVars($update, false);
+        $this->assertEquals(
+            ['overwrite' => 'yes'],
+            $builder->getVars()
+        );
+    }
+
     /**
      * data provider for string properties.
      *

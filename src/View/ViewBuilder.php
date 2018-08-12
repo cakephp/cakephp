@@ -114,6 +114,66 @@ class ViewBuilder implements JsonSerializable, Serializable
     protected $_helpers = [];
 
     /**
+     * View vars
+     *
+     * @var array
+     */
+    protected $_vars = [];
+
+    /**
+     * Saves a variable for use inside a template.
+     *
+     * @param string $name A string or an array of data.
+     * @param mixed $value Value.
+     * @return $this
+     */
+    public function setVar($name, $value = null)
+    {
+        $this->_vars[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Saves view vars for use inside templates.
+     *
+     * @param array $data Array of data.
+     * @param bool $merge Whether to merge with existing vars, default true.
+     * @return $this
+     */
+    public function setVars($data, $merge = true)
+    {
+        if ($merge) {
+            $this->_vars = $data + $this->_vars;
+        } else {
+            $this->_vars = $data;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get view var
+     *
+     * @param string $name Var name
+     * @return mixed The var value or null if unset.
+     */
+    public function getVar($name)
+    {
+        return isset($this->_vars[$name]) ? $this->_vars[$name] : null;
+    }
+
+    /**
+     * Get all view vars.
+     *
+     * @return array
+     */
+    public function getVars()
+    {
+        return $this->_vars;
+    }
+
+    /**
      * Sets path for template files.
      *
      * @param string $path Path for view files.
