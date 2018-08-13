@@ -418,4 +418,18 @@ abstract class ControllerTestCase extends CakeTestCase {
 		return $this->controller;
 	}
 
+/**
+ * Unsets some properties to free memory.
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		unset($this->contents);
+		unset($this->controller);
+		unset($this->headers);
+		unset($this->result);
+		unset($this->view);
+		unset($this->vars);
+	}
 }
