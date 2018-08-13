@@ -237,7 +237,7 @@ table td.actions a {
 /** Scaffold View **/
 dl {
     line-height: 2em;
-    margin: 0em 0em;
+    margin: 0 0;
     width: 60%;
 }
 dl dd:nth-child(4n+2),
