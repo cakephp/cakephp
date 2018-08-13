@@ -379,9 +379,9 @@ form .error {
     font-weight: normal;
 }
 form .error-message {
-    -moz-border-radius: none;
-    -webkit-border-radius: none;
-    border-radius: none;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
     border: none;
     background: none;
     margin: 0;
