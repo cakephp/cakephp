@@ -85,7 +85,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		if (!empty($this->fixtureManager)) {
 			$this->fixtureManager->unload($this);
 			unset($this->fixtureManager);
-			unset($this->fixtures);
 			unset($this->db);
 		}
 
