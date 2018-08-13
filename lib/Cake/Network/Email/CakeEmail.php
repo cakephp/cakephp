@@ -589,7 +589,7 @@ class CakeEmail {
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			$this->_validateEmail($email);
+			$this->_validateEmail($email, $varName);
 			if ($name === null) {
 				$name = $email;
 			}
@@ -601,7 +601,7 @@ class CakeEmail {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			$this->_validateEmail($key);
+			$this->_validateEmail($key, $varName);
 			$list[$key] = $value;
 		}
 		$this->{$varName} = $list;
@@ -611,11 +611,12 @@ class CakeEmail {
 /**
  * Validate email address
  *
- * @param string $email Email
+ * @param string $email Email address to validate
+ * @param string $context Which property was set
  * @return void
  * @throws SocketException If email address does not validate
  */
-	protected function _validateEmail($email) {
+	protected function _validateEmail($email, $context) {
 		if ($this->_emailPattern === null) {
 			if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				return;
@@ -623,7 +624,10 @@ class CakeEmail {
 		} elseif (preg_match($this->_emailPattern, $email)) {
 			return;
 		}
-		throw new SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
+		if ($email == '') {
+			throw new SocketException(__d('cake_dev', 'The email set for "%s" is empty.', $context));
+		}
+		throw new SocketException(__d('cake_dev', 'Invalid email set for "%s". You passed "%s".', $context, $email));
 	}
 
 /**
@@ -659,7 +663,7 @@ class CakeEmail {
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			$this->_validateEmail($email);
+			$this->_validateEmail($email, $varName);
 			if ($name === null) {
 				$name = $email;
 			}
@@ -671,7 +675,7 @@ class CakeEmail {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			$this->_validateEmail($key);
+			$this->_validateEmail($key, $varName);
 			$list[$key] = $value;
 		}
 		$this->{$varName} = array_merge($this->{$varName}, $list);
@@ -788,7 +792,7 @@ class CakeEmail {
 		}
 		if ($this->_messageId !== false) {
 			if ($this->_messageId === true) {
-				$headers['Message-ID'] = '<' . str_replace('-', '', CakeText::UUID()) . '@' . $this->_domain . '>';
+				$headers['Message-ID'] = '<' . str_replace('-', '', CakeText::uuid()) . '@' . $this->_domain . '>';
 			} else {
 				$headers['Message-ID'] = $this->_messageId;
 			}

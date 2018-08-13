@@ -2007,6 +2007,9 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertTrue(isset($Validator['other']));
 		$this->assertFalse(isset($Validator['other']['numeric']));
 		$this->assertTrue(isset($Validator['other']['between']));
+
+		$Validator->remove('other');
+		$Validator->remove('other', 'between');
 	}
 
 /**

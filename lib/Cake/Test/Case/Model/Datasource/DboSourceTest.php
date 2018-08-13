@@ -1655,6 +1655,42 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return void
  */
+	public function testConditionKeysToStringVirtualFieldExpression() {
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'extra' => $Article->getDataSource()->expression('something virtual')
+		);
+		$conn = $this->getMock('MockPDO', array('quote'));
+		$db = new DboTestSource();
+		$db->setConnection($conn);
+
+		$conn->expects($this->at(0))
+			->method('quote')
+			->will($this->returnValue('just text'));
+
+		$conditions = array('Article.extra' => 'just text');
+		$result = $db->conditionKeysToString($conditions, true, $Article);
+		$expected = "(" . $Article->virtualFields['extra']->value . ") = just text";
+		$this->assertEquals($expected, $result[0]);
+
+		$conn->expects($this->at(0))
+			->method('quote')
+			->will($this->returnValue('just text'));
+		$conn->expects($this->at(1))
+			->method('quote')
+			->will($this->returnValue('other text'));
+
+		$conditions = array('Article.extra' => array('just text', 'other text'));
+		$result = $db->conditionKeysToString($conditions, true, $Article);
+		$expected = "(" . $Article->virtualFields['extra']->value . ") IN (just text, other text)";
+		$this->assertEquals($expected, $result[0]);
+	}
+
+/**
+ * Test conditionKeysToString() with virtual field
+ *
+ * @return void
+ */
 	public function testConditionKeysToStringVirtualField() {
 		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(

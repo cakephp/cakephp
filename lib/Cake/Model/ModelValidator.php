@@ -594,7 +594,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 		$this->_parseRules();
 		if ($rule === null) {
 			unset($this->_fields[$field]);
-		} else {
+		} elseif (array_key_exists($field, $this->_fields)) {
 			$this->_fields[$field]->removeRule($rule);
 		}
 		return $this;

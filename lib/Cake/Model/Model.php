@@ -1648,7 +1648,7 @@ class Model extends CakeObject implements CakeEventListener {
  *
  * @param string $name The name of the field to get.
  * @param array $conditions SQL conditions (defaults to NULL).
- * @param string $order SQL ORDER BY fragment.
+ * @param string|array $order SQL ORDER BY fragment.
  * @return string|false Field content, or false if not found.
  * @link https://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-field
  */

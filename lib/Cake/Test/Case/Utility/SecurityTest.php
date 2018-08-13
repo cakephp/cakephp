@@ -30,6 +30,26 @@ class SecurityTest extends CakeTestCase {
 	public $sut = null;
 
 /**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::delete('Security.useOpenSsl');
+	}
+
+/**
+ * tearDown method
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		Configure::delete('Security.useOpenSsl');
+	}
+
+/**
  * testInactiveMins method
  *
  * @return void
@@ -335,6 +355,54 @@ class SecurityTest extends CakeTestCase {
 		$this->assertNotEquals($txt, $result, 'Should be encrypted.');
 		$this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
 		$this->assertEquals($txt, Security::decrypt($result, $key));
+	}
+
+/**
+ * Tests that encrypted strings are compatible between the mcrypt and openssl engine.
+ *
+ * @dataProvider plainTextProvider
+ * @param string $txt Plain text to be encrypted.
+ * @return void
+ */
+	public function testEncryptDecryptCompatibility($txt) {
+		$this->skipIf(!extension_loaded('mcrypt'), 'This test requires mcrypt to be installed');
+		$this->skipIf(!extension_loaded('openssl'), 'This test requires openssl to be installed');
+		$this->skipIf(version_compare(PHP_VERSION, '5.3.3', '<'), 'This test requires PHP 5.3.3 or greater');
+
+		$key = '12345678901234567890123456789012';
+
+		Configure::write('Security.useOpenSsl', false);
+		$mcrypt = Security::encrypt($txt, $key);
+
+		Configure::write('Security.useOpenSsl', true);
+		$openssl = Security::encrypt($txt, $key);
+
+		$this->assertEquals(strlen($mcrypt), strlen($openssl));
+
+		Configure::write('Security.useOpenSsl', false);
+		$this->assertEquals($txt, Security::decrypt($mcrypt, $key));
+		$this->assertEquals($txt, Security::decrypt($openssl, $key));
+
+		Configure::write('Security.useOpenSsl', true);
+		$this->assertEquals($txt, Security::decrypt($mcrypt, $key));
+		$this->assertEquals($txt, Security::decrypt($openssl, $key));
+	}
+
+/**
+ * Data provider for testEncryptDecryptCompatibility
+ *
+ * @return array
+ */
+	public function plainTextProvider() {
+		return array(
+			array(''),
+			array('abcdefg'),
+			array('1234567890123456'),
+			array('The quick brown fox'),
+			array('12345678901234567890123456789012'),
+			array('The quick brown fox jumped over the lazy dog.'),
+			array('何らかのマルチバイト文字列'),
+		);
 	}
 
 /**

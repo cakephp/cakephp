@@ -45,9 +45,9 @@ class SessionComponent extends Component {
  *
  * In your controller: $this->Session->write('Controller.sessKey', 'session value');
  *
- * @param string $name The name of the key your are setting in the session.
+ * @param string|array $name The name of the key your are setting in the session.
  * 							This should be in a Controller.key format for better organizing
- * @param string $value The value you want to store in a session.
+ * @param string|array $value The value you want to store in a session.
  * @return bool Success
  * @link https://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::write
  */
