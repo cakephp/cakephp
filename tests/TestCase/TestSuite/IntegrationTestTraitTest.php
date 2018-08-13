@@ -1019,6 +1019,19 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test the header not contains assertion.
+     *
+     * @return void
+     */
+    public function testAssertHeaderNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withHeader('Etag', 'abc123');
+
+        $this->assertHeaderNotContains('Etag', 'xyz');
+    }
+
+    /**
      * Test the content type assertion.
      *
      * @return void

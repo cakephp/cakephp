@@ -909,6 +909,20 @@ trait IntegrationTestTrait
     }
 
     /**
+     * Asserts response header does not contain a string
+     *
+     * @param string $header The header to check
+     * @param string $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertHeaderNotContains($header, $content, $message = '')
+    {
+        $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
+        $this->assertThat($content, new HeaderNotContains($this->_response, $header), $message);
+    }
+
+    /**
      * Asserts content type
      *
      * @param string $type The content-type to check for.
