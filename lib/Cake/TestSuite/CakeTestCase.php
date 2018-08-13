@@ -84,6 +84,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		$result = parent::run($result);
 		if (!empty($this->fixtureManager)) {
 			$this->fixtureManager->unload($this);
+			unset($this->fixtureManager);
+			unset($this->fixtures);
 		}
 
 		for ($i = ob_get_level(); $i < $level; ++$i) {
@@ -165,8 +167,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 			ob_flush();
 		}
 		unset($this->db);
-		unset($this->fixtureManager);
-		unset($this->fixtures);
 		unset($this->_configure);
 		unset($this->_pathRestore);
 	}
