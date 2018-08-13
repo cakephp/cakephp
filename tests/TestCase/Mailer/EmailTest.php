@@ -19,7 +19,6 @@ use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
 use Cake\Mailer\Transport\DebugTransport;
-use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
 use SimpleXmlElement;
