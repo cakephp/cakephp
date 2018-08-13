@@ -35,6 +35,7 @@ use Cake\TestSuite\Constraint\Response\FileSent;
 use Cake\TestSuite\Constraint\Response\FileSentAs;
 use Cake\TestSuite\Constraint\Response\HeaderContains;
 use Cake\TestSuite\Constraint\Response\HeaderEquals;
+use Cake\TestSuite\Constraint\Response\HeaderNotContains;
 use Cake\TestSuite\Constraint\Response\HeaderNotSet;
 use Cake\TestSuite\Constraint\Response\HeaderSet;
 use Cake\TestSuite\Constraint\Response\StatusCode;
@@ -864,14 +865,8 @@ trait IntegrationTestTrait
      */
     public function assertRedirectNotContains($url, $message = '')
     {
-        if (!$this->_response) {
-            $this->fail('No response set, cannot assert location header. ' . $message);
-        }
-        $result = $this->_response->header();
-        if (empty($result['Location'])) {
-            $this->fail('No location header set. ' . $message);
-        }
-        $this->assertNotContains($url, $result['Location'], $message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
+        $this->assertThat(null, new HeaderNotContains($this->_response, 'Location'), $message);
     }
 
     /**

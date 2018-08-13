@@ -949,7 +949,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     public function testAssertRedirectNotContains()
     {
         $this->_response = new Response();
-        $this->_response->header('Location', 'http://localhost/tasks/index');
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
         $this->assertRedirectNotContains('test');
     }
 
