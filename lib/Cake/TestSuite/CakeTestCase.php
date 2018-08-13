@@ -166,7 +166,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 		unset($this->db);
 		unset($this->fixtureManager);
-		unset($this->fixtures);		
+		unset($this->fixtures);
 		unset($this->_configure);
 		unset($this->_pathRestore);
 	}
