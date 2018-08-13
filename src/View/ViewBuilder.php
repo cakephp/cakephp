@@ -153,6 +153,17 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Check if view var is set.
+     *
+     * @param string $name Var name
+     * @return bool
+     */
+    public function hasVar($name)
+    {
+        return array_key_exists($name, $this->_vars);
+    }
+
+    /**
      * Get view var
      *
      * @param string $name Var name

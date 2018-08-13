@@ -55,6 +55,19 @@ class ViewBuilderTest extends TestCase
         );
     }
 
+    public function testHasVar()
+    {
+        $builder = new ViewBuilder();
+
+        $this->assertFalse($builder->hasVar('foo'));
+
+        $builder->setVar('foo', 'value');
+        $this->assertTrue($builder->hasVar('foo'));
+
+        $builder->setVar('bar', null);
+        $this->assertTrue($builder->hasVar('bar'));
+    }
+
     /**
      * data provider for string properties.
      *
