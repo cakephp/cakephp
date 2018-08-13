@@ -424,7 +424,6 @@ p.error,
     background-image: -webkit-linear-gradient(top, #ffcc00, #E6B800);
     background-image: -o-linear-gradient(top, #ffcc00, #E6B800);
     background-image: linear-gradient(top, #ffcc00, #E6B800);
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(0, 0, 0, 0.2);
     margin-bottom: 18px;
     padding: 7px 14px;
@@ -657,7 +656,6 @@ pre {
     font-family: monospace;
     border: 1px solid #bbb;
     -moz-border-radius: 4px;
-    -wekbkit-border-radius: 4px;
     border-radius: 4px;
     background: #dcdcdc;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#dcdcdc));
