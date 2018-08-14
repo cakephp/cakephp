@@ -425,11 +425,13 @@ abstract class ControllerTestCase extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->contents);
-		unset($this->controller);
-		unset($this->headers);
-		unset($this->result);
-		unset($this->view);
-		unset($this->vars);
+		unset(
+			$this->contents,
+			$this->controller,
+			$this->headers,
+			$this->result,
+			$this->view,
+			$this->vars
+		);
 	}
 }
