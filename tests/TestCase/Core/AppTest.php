@@ -114,7 +114,7 @@ class AppTest extends TestCase
      *  existsInBase (Base meaning App or plugin namespace)
      *  expected return value
      *
-     * @return void
+     * @return array
      */
     public function classnameProvider()
     {
@@ -169,7 +169,7 @@ class AppTest extends TestCase
      *  suffix
      *  expected return value
      *
-     * @return void
+     * @return array
      */
     public function shortNameProvider()
     {
