@@ -111,7 +111,7 @@ class QueryTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderHasMany()
     {
@@ -121,7 +121,7 @@ class QueryTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsTo implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderBelongsTo()
     {
@@ -131,7 +131,7 @@ class QueryTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderBelongsToMany()
     {

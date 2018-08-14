@@ -503,7 +503,7 @@ class FileTest extends TestCase
     /**
      * testWrite method
      *
-     * @return void
+     * @return bool|void
      */
     public function testWrite()
     {
@@ -533,7 +533,7 @@ class FileTest extends TestCase
     /**
      * testAppend method
      *
-     * @return void
+     * @return boolean|void
      */
     public function testAppend()
     {

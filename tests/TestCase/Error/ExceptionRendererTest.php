@@ -102,7 +102,7 @@ class TestErrorController extends Controller
     /**
      * index method
      *
-     * @return void
+     * @return array
      */
     public function index()
     {
@@ -121,7 +121,7 @@ class MyCustomExceptionRenderer extends ExceptionRenderer
     /**
      * custom error message type.
      *
-     * @return void
+     * @return string
      */
     public function missingWidgetThing()
     {
