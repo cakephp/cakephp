@@ -43,9 +43,8 @@ class TransportRegistry extends ObjectRegistry
         if (!$className) {
             $className = App::className($class, 'Network/Email', 'Transport');
             if ($className) {
-                trigger_error(
-                    'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
-                    E_USER_DEPRECATED
+                deprecationWarning(
+                    'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.'
                 );
             }
         }
