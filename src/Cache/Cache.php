@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -163,7 +164,7 @@ class Cache
             }
 
             if ($config['fallback'] === $name) {
-                throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), null, $e);
+                throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), 0, $e);
             }
 
             $fallbackEngine = clone static::engine($config['fallback']);

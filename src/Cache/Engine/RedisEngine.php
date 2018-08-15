@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -104,7 +105,12 @@ class RedisEngine extends CacheEngine
                 $return = $this->_Redis->connect($this->_config['server'], $this->_config['port'], $this->_config['timeout']);
             } else {
                 $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
-                $return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
+                $return = $this->_Redis->pconnect(
+                    $this->_config['server'],
+                    (int)$this->_config['port'],
+                    (int)$this->_config['timeout'],
+                    $persistentId
+                );
             }
         } catch (RedisException $e) {
             return false;
@@ -113,7 +119,7 @@ class RedisEngine extends CacheEngine
             $return = $this->_Redis->auth($this->_config['password']);
         }
         if ($return) {
-            $return = $this->_Redis->select($this->_config['database']);
+            $return = $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;
@@ -153,10 +159,11 @@ class RedisEngine extends CacheEngine
         $key = $this->_key($key);
 
         $value = $this->_Redis->get($key);
-        if (preg_match('/^[-]?\d+$/', $value)) {
+        $isString = is_string($value);
+        if ($isString && preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
         }
-        if ($value !== false && is_string($value)) {
+        if ($value !== false && $isString) {
             return unserialize($value);
         }
 
