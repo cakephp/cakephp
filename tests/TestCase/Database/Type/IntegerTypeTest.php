@@ -159,7 +159,10 @@ class IntegerTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
-        $this->assertSame(1, $result);
+        $this->assertNull($result);
+
+        $result = $this->type->marshal('+0123.45e2');
+        $this->assertSame(12345, $result);
     }
 
     /**
