@@ -39,7 +39,7 @@ class ApcuEngine extends CacheEngine
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
-    public function init(array $config = [])
+    public function init(array $config = []): bool
     {
         if (!extension_loaded('apcu')) {
             return false;
@@ -56,7 +56,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function write($key, $value)
+    public function write(string $key, $value): bool
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
@@ -72,7 +72,7 @@ class ApcuEngine extends CacheEngine
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
-    public function read($key)
+    public function read(string $key)
     {
         $key = $this->_key($key);
 
@@ -87,7 +87,7 @@ class ApcuEngine extends CacheEngine
      * @return bool|int New incremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
         $key = $this->_key($key);
 
@@ -102,7 +102,7 @@ class ApcuEngine extends CacheEngine
      * @return bool|int New decremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-dec.php
      */
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
         $key = $this->_key($key);
 
@@ -116,7 +116,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
@@ -132,7 +132,7 @@ class ApcuEngine extends CacheEngine
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function clear($check)
+    public function clear(bool $check): bool
     {
         if ($check) {
             return true;
@@ -166,7 +166,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-add.php
      */
-    public function add($key, $value)
+    public function add(string $key, $value): bool
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
@@ -183,7 +183,7 @@ class ApcuEngine extends CacheEngine
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function groups()
+    public function groups(): array
     {
         if (empty($this->_compiledGroupNames)) {
             foreach ($this->_config['groups'] as $group) {
@@ -225,7 +225,7 @@ class ApcuEngine extends CacheEngine
      * @return bool success
      * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         $success = false;
         apcu_inc($this->_config['prefix'] . $group, 1, $success);
