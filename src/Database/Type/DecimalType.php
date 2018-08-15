@@ -157,11 +157,8 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
         if (is_numeric($value)) {
             return (float)$value;
         }
-        if (!is_scalar($value)) {
-            return null;
-        }
 
-        return $value;
+        return null;
     }
 
     /**

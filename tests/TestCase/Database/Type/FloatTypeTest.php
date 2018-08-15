@@ -148,7 +148,7 @@ class FloatTypeTest extends TestCase
     public function testMarshal()
     {
         $result = $this->type->marshal('some data');
-        $this->assertSame('some data', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal('');
         $this->assertNull($result);
@@ -157,7 +157,7 @@ class FloatTypeTest extends TestCase
         $this->assertSame(2.51, $result);
 
         $result = $this->type->marshal('3.5 bears');
-        $this->assertSame('3.5 bears', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
         $this->assertNull($result);

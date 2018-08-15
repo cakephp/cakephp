@@ -140,17 +140,14 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value)) {
-            return (float)$value;
-        }
         if (is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
-        if (!is_scalar($value)) {
-            return null;
+        if (is_numeric($value)) {
+            return (float)$value;
         }
 
-        return $value;
+        return null;
     }
 
     /**
