@@ -162,7 +162,7 @@ class Validation
      * @return bool Success
      * @see \Cake\Validation\Validation::luhn()
      */
-    public static function cc($check, $type = 'fast', $deep = false, $regex = null): bool
+    public static function creditCard($check, $type = 'fast', bool $deep = false, ?string $regex = null): bool
     {
         if (!is_scalar($check)) {
             return false;
