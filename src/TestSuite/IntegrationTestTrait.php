@@ -866,7 +866,7 @@ trait IntegrationTestTrait
     public function assertRedirectNotContains($url, $message = '')
     {
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
-        $this->assertThat(null, new HeaderNotContains($this->_response, 'Location'), $message);
+        $this->assertThat($url, new HeaderNotContains($this->_response, 'Location'), $message);
     }
 
     /**
