@@ -105,6 +105,12 @@ class ExtractTask extends Shell
     protected $_extractCore = false;
 
     /**
+     * Does not display marker error
+     * @var bool
+     */
+    protected $markerError = true;
+
+    /**
      * No welcome message.
      *
      * @return void
@@ -232,6 +238,8 @@ class ExtractTask extends Shell
             $this->_merge = strtolower($response) === 'y';
         }
 
+        $this->markerError = !$this->param('no-marker-error');
+
         if (empty($this->_files)) {
             $this->_searchFiles();
         }
@@ -352,6 +360,10 @@ class ExtractTask extends Shell
             'boolean' => true,
             'default' => false,
             'help' => 'Do not write file locations for each extracted message.',
+        ])->addOption('no-marker-error', [
+            'boolean' => true,
+            'default' => false,
+            'help' => 'Do not display marker error.',
         ]);
 
         return $parser;
@@ -674,6 +686,10 @@ class ExtractTask extends Shell
      */
     protected function _markerError($file, $line, $marker, $count)
     {
+        if (!$this->markerError) {
+            return;
+        }
+
         $this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
         $tokenCount = count($this->_tokens);
