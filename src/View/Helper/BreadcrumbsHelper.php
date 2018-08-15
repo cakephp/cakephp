@@ -316,6 +316,28 @@ class BreadcrumbsHelper extends Helper
     }
 
     /**
+     * Renders the breadcrumbs trail with javascript.
+     *
+     * @param array $attributes Array of attributes applied to the `wrapper` template. Accepts the `templateVars` key to
+     * allow the insertion of custom template variable in the template.
+     * @param array $separator Array of attributes for the `separator` template.
+     * Possible properties are :
+     * - *separator* The string to be displayed as a separator
+     * - *templateVars* Allows the insertion of custom template variable in the template
+     * - *innerAttrs* To provide attributes in case your separator is divided in two elements.
+     * All other properties will be converted as HTML attributes and will replace the *attrs* key in the template.
+     * If you use the default for this option (empty), it will not render a separator.
+     * @return null This will run a javascript code.
+     */
+    public function ajaxRender(array $attributes = [], array $separator = [])
+    {
+        $breadcrumbClass = !empty($attributes['class'])?$attributes['class']:'breadcrumb';
+        echo "<script type='text/javascript'>var el = document.getElementsByClassName('{$breadcrumbClass}');el[0].outerHTML = '{$this->render($attributes,$separator)}'</script>";
+
+        return null;
+    }
+
+    /**
      * Search a crumb in the current stack which title matches the one provided as argument.
      * If found, the index of the matching crumb will be returned.
      *
