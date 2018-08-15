@@ -162,7 +162,11 @@ class IntegerTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->marshal('+0123.45e2');
-        $this->assertSame(12345, $result);
+        if (version_compare(PHP_VERSION, '7.1', '<')) {
+            $this->assertSame(123, $result);
+        } else {
+            $this->assertSame(12345, $result);
+        }
     }
 
     /**
