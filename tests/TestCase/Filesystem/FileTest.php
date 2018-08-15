@@ -503,7 +503,7 @@ class FileTest extends TestCase
     /**
      * testWrite method
      *
-     * @return bool|void
+     * @return void
      */
     public function testWrite()
     {
