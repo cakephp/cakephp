@@ -80,7 +80,7 @@ trait ViewVarsTrait
             $builder->setClassName($viewClass);
         }
 
-        $validViewOptions = $this->viewOptions();
+        $validViewOptions = isset($this->_validViewOptions) ? $this->_validViewOptions : [];
         $viewOptions = [];
         foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {
@@ -161,6 +161,10 @@ trait ViewVarsTrait
      */
     public function viewOptions($options = null, $merge = true)
     {
+        deprecationWarning(
+            'ViewVarsTrait::viewOptions() is deprecated, used ViewBuilder::setOptions() instead.'
+        );
+
         if (!isset($this->_validViewOptions)) {
             $this->_validViewOptions = [];
         }
