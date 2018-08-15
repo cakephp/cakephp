@@ -848,6 +848,8 @@ class FormHelper extends Helper
      * - `for` - Set the for attribute, if its not defined the for attribute
      *   will be generated from the $fieldName parameter using
      *   FormHelper::_domId().
+     * - `escape` - Set to `false` to turn off escaping of label text.
+     *   Defaults to `true`.
      *
      * Examples:
      *
