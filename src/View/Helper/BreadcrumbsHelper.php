@@ -329,10 +329,11 @@ class BreadcrumbsHelper extends Helper
      * If you use the default for this option (empty), it will not render a separator.
      * @return null This will run a javascript code.
      */
-
-    public function ajaxRender(array $attributes = [], array $separator = []){
+    public function ajaxRender(array $attributes = [], array $separator = [])
+    {
         $breadcrumbClass = !empty($attributes['class'])?$attributes['class']:'breadcrumb';
         echo "<script type='text/javascript'>var el = document.getElementsByClassName('{$breadcrumbClass}');el[0].outerHTML = '{$this->render($attributes,$separator)}'</script>";
+
         return null;
     }
 
