@@ -84,6 +84,7 @@ abstract class Cell
      *
      * @var array
      * @see \Cake\View\View
+     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     protected $_validViewOptions = [
         'viewPath'
