@@ -375,7 +375,7 @@ class MemcachedEngineTest extends TestCase
         foreach ($servers as $server) {
             list($host, $port) = explode(':', $server);
             //@codingStandardsIgnoreStart
-            if (!$Memcached->addServer($host, $port)) {
+            if (!$Memcached->addServer($host, (int)$port)) {
                 $available = false;
             }
             //@codingStandardsIgnoreEnd
