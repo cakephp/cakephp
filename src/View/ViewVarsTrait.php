@@ -38,6 +38,7 @@ trait ViewVarsTrait
      * Variables for the view
      *
      * @var array
+     * @deprecated 3.7.0 Use `$this->viewBuilder()->setVar()/getVar()` instead.
      */
     public $viewVars = [];
 
