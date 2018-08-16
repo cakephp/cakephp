@@ -1463,7 +1463,7 @@ class ValidatorTest extends TestCase
     public function testCreditCard()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'cc');
+        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'creditCard');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
     }
 

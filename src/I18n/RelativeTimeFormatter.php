@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,7 @@ class RelativeTimeFormatter
      * @return string The difference between the two days in a human readable format
      * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
-    public function diffForHumans(ChronosInterface $date, ?ChronosInterface $other = null, $absolute = false)
+    public function diffForHumans(ChronosInterface $date, ?ChronosInterface $other = null, bool $absolute = false): string
     {
         $isNow = $other === null;
         if ($isNow) {
@@ -91,7 +92,7 @@ class RelativeTimeFormatter
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(DateTimeInterface $time, array $options = [])
+    public function timeAgoInWords(DateTimeInterface $time, array $options = []): string
     {
         $options = $this->_options($options, FrozenTime::class);
         if ($options['timezone'] && $time instanceof ChronosInterface) {
@@ -186,9 +187,11 @@ class RelativeTimeFormatter
      * @param array $options An array of options.
      * @return array An array of values.
      */
-    protected function _diffData($futureTime, $pastTime, $backwards, $options)
+    protected function _diffData($futureTime, $pastTime, $backwards, $options): array
     {
-        $diff = (int)$futureTime - (int)$pastTime;
+        $futureTime = (int)$futureTime;
+        $pastTime = (int)$pastTime;
+        $diff = $futureTime - $pastTime;
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
@@ -212,7 +215,7 @@ class RelativeTimeFormatter
                 $days = $future['d'] - $past['d'];
             } else {
                 $daysInPastMonth = date('t', $pastTime);
-                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
+                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, (int)$future['Y']));
 
                 if (!$backwards) {
                     $days = ($daysInPastMonth - $past['d']) + $future['d'];
@@ -295,7 +298,7 @@ class RelativeTimeFormatter
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(DateTimeInterface $date, array $options = [])
+    public function dateAgoInWords(DateTimeInterface $date, array $options = []): string
     {
         $options = $this->_options($options, FrozenDate::class);
         if ($options['timezone'] && $date instanceof ChronosInterface) {
@@ -373,7 +376,7 @@ class RelativeTimeFormatter
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
      */
-    protected function _options($options, $class)
+    protected function _options(array $options, string $class): array
     {
         $options += [
             'from' => $class::now(),

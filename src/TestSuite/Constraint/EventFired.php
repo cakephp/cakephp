@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Cake\TestSuite\Constraint;
 
 use PHPUnit\Framework\AssertionFailedError;
@@ -23,7 +24,7 @@ class EventFired extends Constraint
      *
      * @param \Cake\Event\EventManager $eventManager Event manager to check
      */
-    public function __construct($eventManager)
+    public function __construct(\Cake\Event\EventManager $eventManager)
     {
         parent::__construct();
         $this->_eventManager = $eventManager;
@@ -39,7 +40,7 @@ class EventFired extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $this->_eventManager->getEventList()->hasEvent($other);
     }
@@ -49,7 +50,7 @@ class EventFired extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'was fired';
     }

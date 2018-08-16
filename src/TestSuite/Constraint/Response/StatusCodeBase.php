@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -31,7 +32,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @param int|array $other Array of min/max status codes, or a single code
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         if (!$other) {
             $other = $this->code;
@@ -51,7 +52,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @param int $max Max status code (inclusive)
      * @return bool
      */
-    protected function statusCodeBetween($min, $max)
+    protected function statusCodeBetween(int $min, int $max): bool
     {
         return $this->response->getStatusCode() >= $min && $this->response->getStatusCode() <= $max;
     }
@@ -62,7 +63,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
-    protected function failureDescription($other)
+    protected function failureDescription($other): string
     {
         return $this->toString();
     }

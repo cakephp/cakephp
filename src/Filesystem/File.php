@@ -602,7 +602,7 @@ class File
             $finfo = new finfo(FILEINFO_MIME);
             $type = $finfo->file($this->pwd());
             if (!$type) {
-                return null;
+                return false;
             }
             list($type) = explode(';', $type);
 

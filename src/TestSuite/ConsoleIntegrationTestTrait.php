@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -74,7 +75,7 @@ trait ConsoleIntegrationTestTrait
      * @param array $input Input values to pass to an interactive shell
      * @return void
      */
-    public function exec($command, array $input = [])
+    public function exec(string $command, array $input = []): void
     {
         $runner = $this->makeRunner();
 
@@ -125,7 +126,7 @@ trait ConsoleIntegrationTestTrait
      *
      * @return void
      */
-    public function useCommandRunner()
+    public function useCommandRunner(): void
     {
         $this->useCommandRunner = true;
     }
@@ -137,7 +138,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertExitCode($expected, $message = '')
+    public function assertExitCode(int $expected, string $message = ''): void
     {
         $this->assertThat($expected, new ExitCode($this->exitCode), $message);
     }
@@ -148,7 +149,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message The message to output when the assertion fails.
      * @return void
      */
-    public function assertOutputEmpty($message = '')
+    public function assertOutputEmpty(string $message = ''): void
     {
         $this->assertThat(null, new ContentsEmpty($this->out->messages(), 'output'), $message);
     }
@@ -160,7 +161,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertOutputContains($expected, $message = '')
+    public function assertOutputContains(string $expected, string $message = ''): void
     {
         $this->assertThat($expected, new ContentsContain($this->out->messages(), 'output'), $message);
     }
@@ -171,7 +172,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertOutputNotContains($expected, $message = '')
+    public function assertOutputNotContains(string $expected, string $message = ''): void
     {
         $this->assertThat($expected, new ContentsNotContain($this->out->messages(), 'output'), $message);
     }
@@ -183,7 +184,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertOutputRegExp($pattern, $message = '')
+    public function assertOutputRegExp(string $pattern, string $message = ''): void
     {
         $this->assertThat($pattern, new ContentsRegExp($this->out->messages(), 'output'), $message);
     }
@@ -195,7 +196,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message.
      * @return void
      */
-    protected function assertOutputContainsRow(array $row, $message = '')
+    protected function assertOutputContainsRow(array $row, string $message = ''): void
     {
         $this->assertThat($row, new ContentsContainRow($this->out->messages(), 'output'), $message);
     }
@@ -207,7 +208,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertErrorContains($expected, $message = '')
+    public function assertErrorContains(string $expected, string $message = ''): void
     {
         $this->assertThat($expected, new ContentsContain($this->err->messages(), 'error output'), $message);
     }
@@ -219,7 +220,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message Failure message
      * @return void
      */
-    public function assertErrorRegExp($pattern, $message = '')
+    public function assertErrorRegExp(string $pattern, string $message = ''): void
     {
         $this->assertThat($pattern, new ContentsRegExp($this->err->messages(), 'error output'), $message);
     }
@@ -230,7 +231,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $message The message to output when the assertion fails.
      * @return void
      */
-    public function assertErrorEmpty($message = '')
+    public function assertErrorEmpty(string $message = ''): void
     {
         $this->assertThat(null, new ContentsEmpty($this->err->messages(), 'error output'), $message);
     }
@@ -257,7 +258,7 @@ trait ConsoleIntegrationTestTrait
      * @param string $command Command string
      * @return array
      */
-    protected function commandStringToArgs($command)
+    protected function commandStringToArgs(string $command): array
     {
         $charCount = strlen($command);
         $argv = [];

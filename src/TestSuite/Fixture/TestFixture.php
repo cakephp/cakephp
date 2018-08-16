@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -133,7 +134,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * @return void
      * @throws \Cake\ORM\Exception\MissingTableClassException When importing from a table that does not exist.
      */
-    public function init()
+    public function init(): void
     {
         if ($this->table === null) {
             $this->table = $this->_tableFromClass();
@@ -157,7 +158,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      *
      * @return string
      */
-    protected function _tableFromClass()
+    protected function _tableFromClass(): string
     {
         list(, $class) = namespaceSplit(get_class($this));
         preg_match('/^(.*)Fixture$/', $class, $matches);
@@ -175,7 +176,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      *
      * @return void
      */
-    protected function _schemaFromFields()
+    protected function _schemaFromFields(): void
     {
         $connection = ConnectionManager::get($this->connection());
         $this->_schema = new TableSchema($this->table);
@@ -210,7 +211,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * @return void
      * @throws \Cake\Core\Exception\Exception when trying to import from an empty table.
      */
-    protected function _schemaFromImport()
+    protected function _schemaFromImport(): void
     {
         if (!is_array($this->import)) {
             return;
@@ -242,7 +243,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * @return void
      * @throws \Cake\Core\Exception\Exception when trying to reflect a table that does not exist
      */
-    protected function _schemaFromReflection()
+    protected function _schemaFromReflection(): void
     {
         $db = ConnectionManager::get($this->connection());
         $schemaCollection = $db->getSchemaCollection();
@@ -401,7 +402,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      *
      * @return array
      */
-    protected function _getRecords()
+    protected function _getRecords(): array
     {
         $fields = $values = $types = [];
         $columns = $this->_schema->columns();

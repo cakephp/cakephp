@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -13,6 +14,7 @@
  */
 namespace Cake\TestSuite\Constraint\Session;
 
+use Cake\Http\Session;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -46,12 +48,12 @@ class FlashParamEquals extends Constraint
     /**
      * Constructor
      *
-     * @param \Cake\Http\Session $session Session
+     * @param \Cake\Http\Session|null $session Session
      * @param string $key Flash key
      * @param string $param Param to check
-     * @param int $at Expected index
+     * @param int|null $at Expected index
      */
-    public function __construct($session, $key, $param, $at = null)
+    public function __construct(?Session $session, string $key, string $param, ?int $at = null)
     {
         parent::__construct();
 
@@ -73,7 +75,7 @@ class FlashParamEquals extends Constraint
      * @param mixed $other Value to compare with
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $messages = (array)$this->session->read('Flash.' . $this->key);
         if ($this->at) {
@@ -97,7 +99,7 @@ class FlashParamEquals extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         if ($this->at !== null) {
             return sprintf('was in \'%s\' %s #%d', $this->key, $this->param, $this->at);

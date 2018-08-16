@@ -100,7 +100,7 @@ interface PluginInterface
      * Disables the named hook
      *
      * @param string $hook The hook to disable
-     * @return $this
+     * @return \Cake\Core\PluginInterface
      */
     public function disable(string $hook): PluginInterface;
 
@@ -108,7 +108,7 @@ interface PluginInterface
      * Enables the named hook
      *
      * @param string $hook The hook to disable
-     * @return $this
+     * @return \Cake\Core\PluginInterface
      */
     public function enable(string $hook): PluginInterface;
 

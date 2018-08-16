@@ -823,7 +823,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::cc()
+     * @see \Cake\Validation\Validation::creditCard()
      * @return $this
      */
     public function creditCard(string $field, string $type = 'all', ?string $message = null, $when = null)
@@ -831,7 +831,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'creditCard', $extra + [
-            'rule' => ['cc', $type, true],
+            'rule' => ['creditCard', $type, true],
         ]);
     }
 

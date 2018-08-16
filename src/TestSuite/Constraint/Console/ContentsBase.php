@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -35,10 +36,10 @@ abstract class ContentsBase extends Constraint
     /**
      * Constructor
      *
-     * @param int $contents Contents
+     * @param array $contents Contents
      * @param string $output Output type
      */
-    public function __construct($contents, $output)
+    public function __construct(array $contents, string $output)
     {
         parent::__construct();
 

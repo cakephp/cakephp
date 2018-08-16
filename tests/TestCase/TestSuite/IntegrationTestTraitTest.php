@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -449,7 +450,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     public function testPostDataHttpServer()
     {
         $this->post('/request_action/post_pass', ['title' => 'value']);
-        $data = json_decode($this->_response->getBody());
+        $data = json_decode('' . $this->_response->getBody());
         $this->assertEquals('value', $data->title);
         $this->assertHeader('X-Middleware', 'true');
     }
