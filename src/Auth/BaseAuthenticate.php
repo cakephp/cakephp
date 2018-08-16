@@ -122,7 +122,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
             // null passwords as authentication systems
             // like digest auth don't use passwords
             // and hashing *could* create a timing side-channel.
-            if (strlen($password) > 0) {
+            if ($password !== null) {
                 $hasher = $this->passwordHasher();
                 $hasher->hash($password);
             }
