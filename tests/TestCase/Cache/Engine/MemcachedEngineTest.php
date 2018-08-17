@@ -267,7 +267,7 @@ class MemcachedEngineTest extends TestCase
     public function testJsonSerializerThrowException()
     {
         $this->skipIf(
-            Memcached::HAVE_JSON,
+            (bool)Memcached::HAVE_JSON,
             'Memcached extension is compiled with json support'
         );
 
@@ -317,7 +317,7 @@ class MemcachedEngineTest extends TestCase
     public function testIgbinarySerializerThrowException()
     {
         $this->skipIf(
-            Memcached::HAVE_IGBINARY,
+            (bool)Memcached::HAVE_IGBINARY,
             'Memcached extension is compiled with igbinary support'
         );
 
