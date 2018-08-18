@@ -942,6 +942,18 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test the location header assertion string not contains
+     *
+     * @return void
+     */
+    public function testAssertRedirectNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
+        $this->assertRedirectNotContains('test');
+    }
+
+    /**
      * Test the location header assertion.
      *
      * @return void
@@ -1004,6 +1016,19 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->_response = $this->_response->withHeader('Etag', 'abc123');
 
         $this->assertHeaderContains('Etag', 'abc');
+    }
+
+    /**
+     * Test the header not contains assertion.
+     *
+     * @return void
+     */
+    public function testAssertHeaderNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withHeader('Etag', 'abc123');
+
+        $this->assertHeaderNotContains('Etag', 'xyz');
     }
 
     /**

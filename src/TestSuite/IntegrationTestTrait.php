@@ -35,6 +35,7 @@ use Cake\TestSuite\Constraint\Response\FileSent;
 use Cake\TestSuite\Constraint\Response\FileSentAs;
 use Cake\TestSuite\Constraint\Response\HeaderContains;
 use Cake\TestSuite\Constraint\Response\HeaderEquals;
+use Cake\TestSuite\Constraint\Response\HeaderNotContains;
 use Cake\TestSuite\Constraint\Response\HeaderNotSet;
 use Cake\TestSuite\Constraint\Response\HeaderSet;
 use Cake\TestSuite\Constraint\Response\StatusCode;
@@ -856,6 +857,19 @@ trait IntegrationTestTrait
     }
 
     /**
+     * Asserts that the Location header does not contain a substring
+     *
+     * @param string $url The URL you expected the client to go to.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectNotContains($url, $message = '')
+    {
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
+        $this->assertThat($url, new HeaderNotContains($this->_response, 'Location'), $message);
+    }
+
+    /**
      * Asserts that the Location header is not set.
      *
      * @param string $message The failure message that will be appended to the generated message.
@@ -892,6 +906,20 @@ trait IntegrationTestTrait
     {
         $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
         $this->assertThat($content, new HeaderContains($this->_response, $header), $message);
+    }
+
+    /**
+     * Asserts response header does not contain a string
+     *
+     * @param string $header The header to check
+     * @param string $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertHeaderNotContains($header, $content, $message = '')
+    {
+        $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
+        $this->assertThat($content, new HeaderNotContains($this->_response, $header), $message);
     }
 
     /**
