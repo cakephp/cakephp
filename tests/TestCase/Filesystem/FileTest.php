@@ -533,7 +533,7 @@ class FileTest extends TestCase
     /**
      * testAppend method
      *
-     * @return void
+     * @return boolean|void
      */
     public function testAppend()
     {

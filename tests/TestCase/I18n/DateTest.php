@@ -58,7 +58,7 @@ class DateTest extends TestCase
     /**
      * Provider for ensuring that Date and FrozenDate work the same way.
      *
-     * @return void
+     * @return array
      */
     public static function classNameProvider()
     {
@@ -268,7 +268,7 @@ class DateTest extends TestCase
     /**
      * provider for timeAgo with an end date.
      *
-     * @return void
+     * @return array
      */
     public function timeAgoEndProvider()
     {

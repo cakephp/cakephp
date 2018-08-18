@@ -474,7 +474,7 @@ class ControllerTest extends TestCase
     /**
      * Generates status codes for redirect test.
      *
-     * @return void
+     * @return array
      */
     public static function statusCodeProvider()
     {
