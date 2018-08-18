@@ -114,9 +114,13 @@ class SchemaCacheTest extends TestCase
     public function testBuildNoArgs()
     {
         $ds = ConnectionManager::get('test');
+        $this->cache->method('write')
+            ->will($this->returnValue(true));
+
         $this->cache->expects($this->at(3))
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
 
         $ormCache = new SchemaCache($ds);
         $ormCache->build();
@@ -133,7 +137,8 @@ class SchemaCacheTest extends TestCase
 
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('delete');
 
@@ -152,7 +157,8 @@ class SchemaCacheTest extends TestCase
 
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('read');
         $this->cache->expects($this->never())
