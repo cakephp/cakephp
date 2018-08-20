@@ -105,10 +105,16 @@ class ExtractTask extends Shell
     protected $_extractCore = false;
 
     /**
-     * Does not display marker error
+     * Displays marker error(s) if true
      * @var bool
      */
-    protected $markerError = true;
+    protected $_markerError;
+
+    /**
+     * Count number of marker errors found
+     * @var bool
+     */
+    protected $_countMarkerError = 0;
 
     /**
      * No welcome message.
@@ -238,7 +244,7 @@ class ExtractTask extends Shell
             $this->_merge = strtolower($response) === 'y';
         }
 
-        $this->markerError = !$this->param('no-marker-error');
+        $this->_markerError = $this->param('marker-error');
 
         if (empty($this->_files)) {
             $this->_searchFiles();
@@ -308,6 +314,11 @@ class ExtractTask extends Shell
         $this->_paths = $this->_files = $this->_storage = [];
         $this->_translations = $this->_tokens = [];
         $this->out();
+        if ($this->_countMarkerError) {
+            $this->err("{$this->_countMarkerError} marker error(s) detected.");
+            $this->err(" => Activate marker-error option to list errors.");
+        }
+
         $this->out('Done.');
     }
 
@@ -360,7 +371,7 @@ class ExtractTask extends Shell
             'boolean' => true,
             'default' => false,
             'help' => 'Do not write file locations for each extracted message.',
-        ])->addOption('no-marker-error', [
+        ])->addOption('marker-error', [
             'boolean' => true,
             'default' => false,
             'help' => 'Do not display marker error.',
@@ -465,7 +476,7 @@ class ExtractTask extends Shell
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
-                } elseif (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+                } else {
                     $this->_markerError($this->_file, $line, $functionName, $count);
                 }
             }
@@ -686,7 +697,11 @@ class ExtractTask extends Shell
      */
     protected function _markerError($file, $line, $marker, $count)
     {
-        if (!$this->markerError) {
+        if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+            $this->_countMarkerError++;
+        }
+
+        if (!$this->_markerError) {
             return;
         }
 
