@@ -40,12 +40,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
+     * When an empty string given, it will be recognized as empty.
+     *
      * @var int
      */
     const EMPTY_STRING = 1;
 
     /**
      * A flag for allowEmptyByFlags()
+     *
+     * When an empty array given, it will be recognized as empty.
      *
      * @var int
      */
@@ -54,6 +58,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
+     * When an array given, if it has the four keys - 'name', 'type', 'tmp_name' and 'error' at
+     * least, and the value of 'error' equals to UPLOAD_ERR_NO_FILE, it will be recognized as
+     * empty.
+     *
      * @var int
      */
     const EMPTY_FILE = 4;
@@ -61,12 +69,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
+     * When an array given, if it has the 'year' key at least, and contains only empty strings
+     * and nulls, it will be recognized as empty.
+     *
      * @var int
      */
     const EMPTY_DATE = 8;
 
     /**
      * A flag for allowEmptyByFlags()
+     *
+     * When an array given, if it has the 'hour' key at least, and contains only empty strings
+     * and nulls, it will be recognized as empty.
      *
      * @var int
      */
