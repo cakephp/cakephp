@@ -2865,6 +2865,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
         $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
         $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+        $this->assertFalse(Validation::geoCoordinate([]));
     }
 
     /**
