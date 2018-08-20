@@ -26,7 +26,8 @@ use PHPUnit\Framework\MockObject\MockObject;
  * @property \Cake\Console\ConsoleIo|MockObject $io
  * @property string $path
  */
-class ExtractTaskTest extends TestCase {
+class ExtractTaskTest extends TestCase
+{
 
     /**
      * setUp method
@@ -386,7 +387,7 @@ class ExtractTaskTest extends TestCase {
      * @param string $val
      * @param int $nbLines
      */
-    public function echoTest( $val = '', $nbLines = 1)
+    public function echoTest($val = '', $nbLines = 1)
     {
         echo $val . str_repeat(PHP_EOL, $nbLines);
     }

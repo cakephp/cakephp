@@ -316,7 +316,7 @@ class ExtractTask extends Shell
         $this->out();
         if ($this->_countMarkerError) {
             $this->err("{$this->_countMarkerError} marker error(s) detected.");
-            $this->err(" => Activate marker-error option to list errors.");
+            $this->err(" => Use the --marker-error option to display errors.");
         }
 
         $this->out('Done.');
