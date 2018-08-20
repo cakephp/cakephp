@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
-use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
 use RuntimeException;
