@@ -507,8 +507,9 @@ class SqliteSchema extends BaseSchema
      */
     public function hasSequences()
     {
-        $result = $this->_driver
-            ->prepare('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"');
+        $result = $this->_driver->prepare(
+            'SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"'
+        );
         $result->execute();
         $this->_hasSequences = (bool)$result->rowCount();
         $result->closeCursor();

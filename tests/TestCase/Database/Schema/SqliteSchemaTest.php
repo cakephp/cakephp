@@ -1024,15 +1024,15 @@ SQL;
             ->will($this->returnValue($driver));
 
         $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
+            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
             ->getMock();
-        $driver->getConnection()->expects($this->once())->method('prepare')
+        $driver->getConnection()->expects($this->once())
+            ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
-        $statement->expects($this->at(0))->method('fetch')
+        $statement->expects($this->once())
+            ->method('fetchAll')
             ->will($this->returnValue(['1']));
-        $statement->expects($this->at(2))->method('fetch')
-            ->will($this->returnValue(false));
 
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
@@ -1056,12 +1056,15 @@ SQL;
             ->will($this->returnValue($driver));
 
         $statement = $this->getMockBuilder('\PDOStatement')
-            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetch'])
+            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
             ->getMock();
-        $driver->getConnection()->expects($this->once())->method('prepare')
+        $driver->getConnection()
+            ->expects($this->once())
+            ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
-        $statement->expects($this->once())->method('fetch')
+        $statement->expects($this->once())
+            ->method('fetchAll')
             ->will($this->returnValue(false));
 
         $table = new TableSchema('articles');

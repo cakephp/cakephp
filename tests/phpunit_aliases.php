@@ -5,6 +5,7 @@ if (class_exists('PHPUnit_Runner_Version')) {
     }
 
     if (!class_exists('PHPUnit_Framework_Test') && class_exists('PHPUnit_Framework_TestCase')) {
+        class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
         class_alias('PHPUnit_Framework_Test', 'PHPUnit\Framework\Test');
         class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
         class_alias('PHPUnit_Framework_TestSuite', 'PHPUnit\Framework\TestSuite');

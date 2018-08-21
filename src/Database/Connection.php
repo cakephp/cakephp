@@ -120,7 +120,7 @@ class Connection implements ConnectionInterface
         $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
-            $this->logQueries($config['log']);
+            $this->enableQueryLogging($config['log']);
         }
     }
 
@@ -847,13 +847,42 @@ class Connection implements ConnectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated 3.7.0 Use enableQueryLogging() and isQueryLoggingEnabled() instead.
      */
     public function logQueries($enable = null)
     {
+        deprecationWarning(
+            'Connection::logQueries() is deprecated. ' .
+            'Use enableQueryLogging() and isQueryLoggingEnabled() instead.'
+        );
         if ($enable === null) {
             return $this->_logQueries;
         }
         $this->_logQueries = $enable;
+    }
+
+    /**
+     * Enable/disable query logging
+     *
+     * @param bool $value Enable/disable query logging
+     * @return $this
+     */
+    public function enableQueryLogging($value)
+    {
+        $this->_logQueries = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Check if query logging is enabled.
+     *
+     * @return bool
+     */
+    public function isQueryLoggingEnabled()
+    {
+        return $this->_logQueries;
     }
 
     /**

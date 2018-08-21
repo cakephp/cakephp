@@ -94,6 +94,11 @@ class FormContext implements ContextInterface
             return $val;
         }
 
+        $val = $this->_form->getData($field);
+        if ($val !== null) {
+            return $val;
+        }
+
         if ($options['default'] !== null || !$options['schemaDefault']) {
             return $options['default'];
         }
@@ -132,6 +137,34 @@ class FormContext implements ContextInterface
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_form->getValidator();
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
     }
 
     /**

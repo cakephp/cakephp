@@ -1732,6 +1732,57 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Tests that merging data to a hasMany association with _ids works.
+     *
+     * @return void
+     */
+    public function testMergeHasManyEntitiesFromIds()
+    {
+        $entity = $this->articles->get(1, ['contain' => ['Comments']]);
+        $this->assertNotEmpty($entity->comments);
+
+        $marshall = new Marshaller($this->articles);
+        $data = ['comments' => ['_ids' => [1, 2, 3]]];
+        $result = $marshall->merge($entity, $data, ['associated' => ['Comments']]);
+
+        $this->assertCount(3, $result->comments);
+        $this->assertTrue($result->isDirty('comments'), 'Updated prop should be dirty');
+        $this->assertInstanceOf(Entity::class, $result->comments[0]);
+        $this->assertEquals(1, $result->comments[0]->id);
+        $this->assertInstanceOf(Entity::class, $result->comments[1]);
+        $this->assertEquals(2, $result->comments[1]->id);
+        $this->assertInstanceOf(Entity::class, $result->comments[2]);
+        $this->assertEquals(3, $result->comments[2]->id);
+    }
+
+    /**
+     * Tests that merging data to a hasMany association using onlyIds restricts operations.
+     *
+     * @return void
+     */
+    public function testMergeHasManyEntitiesFromIdsOnlyIds()
+    {
+        $entity = $this->articles->get(1, ['contain' => ['Comments']]);
+        $this->assertNotEmpty($entity->comments);
+
+        $marshall = new Marshaller($this->articles);
+        $data = [
+            'comments' => [
+                '_ids' => [1],
+                [
+                    'comment' => 'Nope'
+                ]
+            ]
+        ];
+        $result = $marshall->merge($entity, $data, ['associated' => ['Comments' => ['onlyIds' => true]]]);
+
+        $this->assertCount(1, $result->comments);
+        $this->assertTrue($result->isDirty('comments'), 'Updated prop should be dirty');
+        $this->assertInstanceOf(Entity::class, $result->comments[0]);
+        $this->assertNotEquals('Nope', $result->comments[0]);
+    }
+
+    /**
      * Tests that merging data to an entity containing belongsToMany and _ids
      * will just overwrite the data
      *

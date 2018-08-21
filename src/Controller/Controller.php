@@ -205,6 +205,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var array
      * @see \Cake\View\View
+     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     protected $_validViewOptions = [
         'passedArgs'
@@ -775,7 +776,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         $this->View = $this->createView();
         $contents = $this->View->render($view, $layout);
-        $this->response = $this->View->response->withStringBody($contents);
+        $this->setResponse($this->View->getResponse()->withStringBody($contents));
 
         return $this->response;
     }

@@ -299,8 +299,8 @@ class ConfigureTest extends TestCase
         try {
             Configure::load('non_existing_configuration_file');
         } catch (\Exception $e) {
-            $result = Configure::configured('default');
-            $this->assertTrue($result);
+            $this->assertTrue(Configure::isConfigured('default'));
+            $this->assertFalse(Configure::isConfigured('non_existing_configuration_file'));
         }
     }
 
@@ -394,7 +394,7 @@ class ConfigureTest extends TestCase
     public function testLoadPlugin()
     {
         Configure::config('test', new PhpConfig());
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = Configure::load('TestPlugin.load', 'test');
         $this->assertTrue($result);
         $expected = '/test_app/Plugin/TestPlugin/Config/load.php';
@@ -485,11 +485,30 @@ class ConfigureTest extends TestCase
 
         $this->assertContains('test', $configured);
 
-        $this->assertTrue(Configure::configured('test'));
-        $this->assertFalse(Configure::configured('fake_garbage'));
+        $this->assertTrue(Configure::isConfigured('test'));
+        $this->assertFalse(Configure::isConfigured('fake_garbage'));
 
         $this->assertTrue(Configure::drop('test'));
         $this->assertFalse(Configure::drop('test'), 'dropping things that do not exist should return false.');
+    }
+
+    /**
+     * test deprecated behavior of configured
+     *
+     * @deprecated
+     * @return void
+     */
+    public function testConfigured()
+    {
+        $this->deprecated(function () {
+            $engine = new PhpConfig();
+            Configure::config('test', $engine);
+
+            $configured = Configure::configured();
+            $this->assertContains('test', $configured);
+            $this->assertTrue(Configure::configured('test'));
+            $this->assertTrue(Configure::configured('default'));
+        });
     }
 
     /**

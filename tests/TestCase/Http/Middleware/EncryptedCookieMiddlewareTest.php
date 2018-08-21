@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Http\Middleware;
 
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;
 use Cake\Http\Response;
@@ -110,9 +111,9 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $response = new Response();
         $next = function ($req, $res) {
-            return $res->withCookie('secret', 'be quiet')
-                ->withCookie('plain', 'in clear')
-                ->withCookie('ninja', 'shuriken');
+            return $res->withCookie(new Cookie('secret', 'be quiet'))
+                ->withCookie(new Cookie('plain', 'in clear'))
+                ->withCookie(new Cookie('ninja', 'shuriken'));
         };
         $middleware = $this->middleware;
         $response = $middleware($request, $response, $next);

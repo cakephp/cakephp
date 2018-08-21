@@ -16,6 +16,7 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
@@ -47,6 +48,13 @@ class ExtractTask extends Shell
      * @var bool
      */
     protected $_merge = false;
+
+    /**
+     * Use relative paths in the pot files rather than full path
+     *
+     * @var bool
+     */
+    protected $_relativePaths = false;
 
     /**
      * Current file being processed
@@ -180,8 +188,8 @@ class ExtractTask extends Shell
             $this->_paths = explode(',', $this->params['paths']);
         } elseif (isset($this->params['plugin'])) {
             $plugin = Inflector::camelize($this->params['plugin']);
-            if (!Plugin::loaded($plugin)) {
-                Plugin::load($plugin);
+            if (!Plugin::isLoaded($plugin)) {
+                throw new MissingPluginException(['plugin' => $plugin]);
             }
             $this->_paths = [Plugin::classPath($plugin)];
             $this->params['plugin'] = $plugin;
@@ -245,6 +253,7 @@ class ExtractTask extends Shell
         }
 
         $this->_markerError = $this->param('marker-error');
+        $this->_relativePaths = $this->param('relative-paths');
 
         if (empty($this->_files)) {
             $this->_searchFiles();
@@ -339,6 +348,10 @@ class ExtractTask extends Shell
         ])->addOption('merge', [
             'help' => 'Merge all domain strings into the default.po file.',
             'choices' => ['yes', 'no']
+        ])->addOption('relative-paths', [
+            'help' => 'Use relative paths in the .pot file',
+            'boolean' => true,
+            'default' => false,
         ])->addOption('output', [
             'help' => 'Full path to output directory.'
         ])->addOption('files', [
@@ -469,6 +482,9 @@ class ExtractTask extends Shell
                         'file' => $this->_file,
                         'line' => $line,
                     ];
+                    if ($this->_relativePaths) {
+                        $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
+                    }
                     if (isset($plural)) {
                         $details['msgid_plural'] = $plural;
                     }

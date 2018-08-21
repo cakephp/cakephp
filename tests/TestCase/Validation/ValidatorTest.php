@@ -27,6 +27,53 @@ class ValidatorTest extends TestCase
 {
 
     /**
+     * tests getRequiredMessage
+     *
+     * @return void
+     */
+    public function testGetRequiredMessage()
+    {
+        $validator = new Validator();
+        $this->assertNull($validator->getRequiredMessage('field'));
+
+        $validator = new Validator();
+        $validator->requirePresence('field');
+        $this->assertSame('This field is required', $validator->getRequiredMessage('field'));
+
+        $validator = new Validator();
+        $validator->requirePresence('field', true, 'Custom message');
+        $this->assertSame('Custom message', $validator->getRequiredMessage('field'));
+    }
+
+    /**
+     * tests getNotEmptyMessage
+     *
+     * @return void
+     */
+    public function testGetNotEmptyMessage()
+    {
+        $validator = new Validator();
+        $this->assertNull($validator->getNotEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->requirePresence('field');
+        $this->assertSame('This field cannot be left empty', $validator->getNotEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->notEmpty('field', 'Custom message');
+        $this->assertSame('Custom message', $validator->getNotEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->notBlank('field', 'Cannot be blank');
+        $this->assertSame('Cannot be blank', $validator->getNotEmptyMessage('field'));
+
+        $validator = new Validator();
+        $validator->notEmpty('field', 'Cannot be empty');
+        $validator->notBlank('field', 'Cannot be blank');
+        $this->assertSame('Cannot be blank', $validator->getNotEmptyMessage('field'));
+    }
+
+    /**
      * Testing you can dynamically add rules to a field
      *
      * @return void
@@ -1416,7 +1463,7 @@ class ValidatorTest extends TestCase
     public function testCreditCard()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'cc');
+        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'creditCard');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
     }
 

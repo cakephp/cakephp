@@ -1700,6 +1700,26 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that RAND() returns correct results.
+     *
+     * @return void
+     */
+    public function testSelectRandom()
+    {
+        $table = $this->getTableLocator()->get('articles');
+        $query = $table
+            ->query();
+
+        $query->select(['s' => $query->func()->rand()]);
+        $result = $query
+            ->extract('s')
+            ->first();
+
+        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertLessThan(1, $result);
+    }
+
+    /**
      * Test update method.
      *
      * @return void

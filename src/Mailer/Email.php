@@ -2739,9 +2739,9 @@ class Email implements JsonSerializable, Serializable
         list($templatePlugin) = pluginSplit($View->getTemplate());
         list($layoutPlugin) = pluginSplit($View->getLayout());
         if ($templatePlugin) {
-            $View->plugin = $templatePlugin;
+            $View->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {
-            $View->plugin = $layoutPlugin;
+            $View->setPlugin($layoutPlugin);
         }
 
         if ($View->get('content') === null) {

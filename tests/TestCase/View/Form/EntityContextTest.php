@@ -67,6 +67,25 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * tests getRequiredMessage
+     *
+     * @return void
+     */
+    public function testGetRequiredMessage()
+    {
+        $this->_setupTables();
+
+        $context = new EntityContext($this->request, [
+            'entity' => new Article(),
+            'table' => 'Articles',
+            'validator' => 'create',
+        ]);
+
+        $this->assertNull($context->getRequiredMessage('body'));
+        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+    }
+
+    /**
      * Test getting entity back from context.
      *
      * @return void
@@ -701,6 +720,53 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test getting association default value from table schema.
+     *
+     * @return void
+     */
+    public function testValAssociatedSchemaDefault()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $associatedTable = $table->hasMany('Comments')->getTarget();
+        $column = $associatedTable->getSchema()->getColumn('comment');
+        $associatedTable->getSchema()->addColumn('comment', ['default' => 'default comment'] + $column);
+        $row = $table->newEntity();
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $result = $context->val('comments.0.comment');
+        $this->assertEquals('default comment', $result);
+    }
+
+    /**
+     * Test getting association join table default value from table schema.
+     *
+     * @return void
+     */
+    public function testValAssociatedJoinTableSchemaDefault()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $joinTable = $table
+            ->belongsToMany('Tags')
+            ->setThrough('ArticlesTags')
+            ->junction();
+        $joinTable->getSchema()->addColumn('column', [
+            'default' => 'default join table column value',
+            'type' => 'text'
+        ]);
+        $row = $table->newEntity();
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $result = $context->val('tags.0._joinData.column');
+        $this->assertEquals('default join table column value', $result);
+    }
+
+    /**
      * Test validator for boolean fields.
      *
      * @return void
@@ -1283,6 +1349,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
+        $validator->requirePresence('title', true, 'Don\'t forget a title!');
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10]
         ])

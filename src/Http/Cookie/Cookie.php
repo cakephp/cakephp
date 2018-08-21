@@ -81,7 +81,7 @@ class Cookie implements CookieInterface
      *
      * @var string
      */
-    protected $path = '';
+    protected $path = '/';
 
     /**
      * Domain
@@ -124,7 +124,7 @@ class Cookie implements CookieInterface
         $name,
         $value = '',
         $expiresAt = null,
-        $path = '',
+        $path = '/',
         $domain = '',
         $secure = false,
         $httpOnly = false

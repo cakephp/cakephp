@@ -166,7 +166,7 @@ class CookieComponentTest extends TestCase
     public function testReadInvalidCipher()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid encryption cipher. Must be one of aes, rijndael.');
+        $this->expectExceptionMessage('Invalid encryption cipher. Must be one of aes, rijndael or false.');
         $this->Controller->request = $this->request->withCookieParams([
             'Test' => $this->_encrypt('value'),
         ]);
@@ -249,7 +249,7 @@ class CookieComponentTest extends TestCase
     public function testWriteInvalidCipher()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Invalid encryption cipher. Must be one of aes, rijndael.');
+        $this->expectExceptionMessage('Invalid encryption cipher. Must be one of aes, rijndael or false.');
         $this->Cookie->setConfig('encryption', 'derp');
         $this->Cookie->write('Test', 'nope');
     }
@@ -439,7 +439,7 @@ class CookieComponentTest extends TestCase
         $expected = [
             'name' => 'Testing',
             'value' => '',
-            'expire' => (new Time('now'))->format('U') - 42000,
+            'expire' => '1',
             'path' => '/',
             'domain' => '',
             'secure' => false,

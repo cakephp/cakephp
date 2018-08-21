@@ -754,6 +754,17 @@ class Marshaller
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
 
+        if ($assoc->type() === Association::ONE_TO_MANY) {
+            $hasIds = array_key_exists('_ids', $value);
+            $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
+            if ($hasIds && is_array($value['_ids'])) {
+                return $this->_loadAssociatedByIds($assoc, $value['_ids']);
+            }
+            if ($hasIds || $onlyIds) {
+                return [];
+            }
+        }
+
         return $marshaller->mergeMany($original, $value, (array)$options);
     }
 

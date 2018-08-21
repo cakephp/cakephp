@@ -38,6 +38,7 @@
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
+        "ext-curl": "To enable more efficient network calls in Http\\Client.",
         "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
     },
     "require-dev": {

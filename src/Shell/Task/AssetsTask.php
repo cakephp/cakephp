@@ -88,7 +88,7 @@ class AssetsTask extends Shell
         if ($name === null) {
             $pluginsList = Plugin::loaded();
         } else {
-            if (!Plugin::loaded($name)) {
+            if (!Plugin::isLoaded($name)) {
                 $this->err(sprintf('Plugin %s is not loaded.', $name));
 
                 return [];

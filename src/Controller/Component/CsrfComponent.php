@@ -16,6 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Event\Event;
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -134,13 +135,18 @@ class CsrfComponent extends Component
         $value = hash('sha512', Security::randomBytes(16), false);
 
         $request = $request->withParam('_csrfToken', $value);
-        $response = $response->withCookie($this->_config['cookieName'], [
-            'value' => $value,
-            'expire' => $expiry->format('U'),
-            'path' => $request->getAttribute('webroot'),
-            'secure' => $this->_config['secure'],
-            'httpOnly' => $this->_config['httpOnly'],
-        ]);
+
+        $cookie = new Cookie(
+            $this->_config['cookieName'],
+            $value,
+            $expiry,
+            $request->getAttribute('webroot'),
+            '',
+            (bool)$this->_config['secure'],
+            (bool)$this->_config['httpOnly']
+        );
+
+        $response = $response->withCookie($cookie);
 
         return [$request, $response];
     }

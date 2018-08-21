@@ -436,7 +436,7 @@ class AssociationTest extends TestCase
      */
     public function testTargetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $config = [
             'className' => 'TestPlugin.Comments',
             'foreignKey' => 'a_key',
@@ -470,6 +470,7 @@ class AssociationTest extends TestCase
         $this->assertSame('TestPlugin.ThisAssociationName', $table->getRegistryAlias());
         $this->assertSame('comments', $table->getTable());
         $this->assertSame('ThisAssociationName', $table->getAlias());
+        Plugin::unload();
     }
 
     /**
