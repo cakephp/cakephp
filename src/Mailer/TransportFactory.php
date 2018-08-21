@@ -14,7 +14,6 @@
  */
 namespace Cake\Mailer;
 
-use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
 
@@ -28,7 +27,7 @@ class TransportFactory
     /**
      * Transport Registry used for creating and using transport instances.
      *
-     * @var \Cake\Core\ObjectRegistry
+     * @var \Cake\Mailer\TransportRegistry
      */
     protected static $_registry;
 
@@ -46,7 +45,7 @@ class TransportFactory
     /**
      * Returns the Transport Registry used for creating and using transport instances.
      *
-     * @return \Cake\Core\ObjectRegistry
+     * @return \Cake\Mailer\TransportRegistry
      */
     public static function getRegistry()
     {
@@ -62,10 +61,10 @@ class TransportFactory
      *
      * Also allows for injecting of a new registry instance.
      *
-     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
+     * @param \Cake\Mailer\TransportRegistry $registry Injectable registry object.
      * @return void
      */
-    public static function setRegistry(ObjectRegistry $registry)
+    public static function setRegistry(TransportRegistry $registry)
     {
         static::$_registry = $registry;
     }
