@@ -165,10 +165,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::lengthBetween('abcdefg', 1, 7));
         $this->assertTrue(Validation::lengthBetween('', 0, 7));
         $this->assertTrue(Validation::lengthBetween('אกあアꀀ豈', 1, 7));
+        $this->assertTrue(Validation::lengthBetween(1, 1, 3));
 
         $this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
         $this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
-        $this->assertFalse(Validation::lengthBetween(1, 1, 3));
     }
 
     /**
@@ -598,6 +598,7 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::creditCard('4916845885268360', ['visa']));
         $this->assertTrue(Validation::creditCard('4394514669078434', ['visa']));
         $this->assertTrue(Validation::creditCard('4485611378115042', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485-6113-7811-5042', ['visa']));
         // Visa Electron
         $this->assertTrue(Validation::creditCard('4175003346287100', ['electron']));
         $this->assertTrue(Validation::creditCard('4913042516577228', ['electron']));
@@ -2864,6 +2865,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
         $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
         $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+        $this->assertFalse(Validation::geoCoordinate([]));
     }
 
     /**
