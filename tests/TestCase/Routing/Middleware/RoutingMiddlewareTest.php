@@ -502,6 +502,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testCacheNotUsedIfCacheDisabled()
     {
         $cacheConfigName = '_cake_router_';
+        Cache::drop($cacheConfigName);
         Cache::disable();
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
@@ -532,7 +533,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testCacheConfigNotFound()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "notfound" cache configuration does not exist');
+        $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
 
         Cache::setConfig('_cake_router_', [
             'engine' => 'File',

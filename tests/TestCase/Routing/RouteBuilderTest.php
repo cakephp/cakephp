@@ -726,7 +726,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'edit',
             '_method' => 'PUT',
-            'id' => 99,
+            'id' => '99',
         ]);
         $this->assertEquals('/api/articles/99', $url);
 
@@ -736,7 +736,7 @@ class RouteBuilderTest extends TestCase
             'action' => 'edit',
             '_method' => 'PUT',
             '_ext' => 'json',
-            'id' => 99,
+            'id' => '99',
         ]);
         $this->assertEquals('/api/articles/99.json', $url);
     }

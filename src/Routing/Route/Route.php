@@ -617,7 +617,9 @@ class Route
         ) {
             $hostOptions += $context;
 
-            if (getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']) {
+            if ($hostOptions['_scheme'] &&
+                getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']
+            ) {
                 unset($hostOptions['_port']);
             }
         }

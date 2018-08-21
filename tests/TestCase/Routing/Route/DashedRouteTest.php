@@ -130,7 +130,7 @@ class DashedRouteTest extends TestCase
         $result = $route->match([
             'controller' => 'MyPosts',
             'action' => 'myView',
-            'id' => 1,
+            'id' => '1',
             'slug' => 'the-slug',
         ]);
         $this->assertEquals('/my-posts/my-view/the-slug-1', $result);

@@ -234,7 +234,7 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'view',
             '_method' => 'GET',
-            'id' => 10,
+            'id' => '10',
         ]);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
@@ -243,15 +243,25 @@ class RouterTest extends TestCase
         $expected = '/posts';
         $this->assertEquals($expected, $result);
 
-        $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PUT', 'id' => 10]);
+        $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PUT', 'id' => '10']);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
 
-        $result = Router::url(['controller' => 'Posts', 'action' => 'delete', '_method' => 'DELETE', 'id' => 10]);
+        $result = Router::url([
+            'controller' => 'Posts',
+            'action' => 'delete',
+            '_method' => 'DELETE',
+            'id' => '10'
+        ]);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
 
-        $result = Router::url(['controller' => 'Posts', 'action' => 'edit', '_method' => 'PATCH', 'id' => 10]);
+        $result = Router::url([
+            'controller' => 'Posts',
+            'action' => 'edit',
+            '_method' => 'PATCH',
+            'id' => '10'
+        ]);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
     }
@@ -630,8 +640,8 @@ class RouterTest extends TestCase
             'plugin' => 'shows',
             'controller' => 'shows',
             'action' => 'calendar',
-            'month' => 10,
-            'year' => 2007,
+            'month' => '10',
+            'year' => '2007',
             'min-forestilling',
         ]);
         $expected = '/forestillinger/10/2007/min-forestilling';
@@ -653,8 +663,8 @@ class RouterTest extends TestCase
             'plugin' => 'shows',
             'controller' => 'shows',
             'action' => 'calendar',
-            'year' => 2007,
-            'month' => 10,
+            'year' => '2007',
+            'month' => '10',
             'min-forestilling',
         ]);
         $expected = '/kalender/10/2007/min-forestilling';
@@ -1625,7 +1635,7 @@ class RouterTest extends TestCase
             'controller' => 'Articles',
             'action' => 'edit',
             '_method' => 'PUT',
-            'id' => 99,
+            'id' => '99',
         ]);
         $this->assertEquals('/api/articles/99', $url);
 
@@ -1635,7 +1645,7 @@ class RouterTest extends TestCase
             'action' => 'edit',
             '_method' => 'PUT',
             '_ext' => 'json',
-            'id' => 99,
+            'id' => '99',
         ]);
         $this->assertEquals('/api/articles/99.json', $url);
     }
