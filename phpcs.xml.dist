@@ -37,6 +37,7 @@
             <property name="spacesCountAroundEqualsSign" value="0" />
             <property name="newlinesCountBetweenOpenTagAndDeclare" value="1" />
         </properties>
+        <exclude-pattern>*/config/*</exclude-pattern>
         <exclude-pattern>*/Templates/*</exclude-pattern>
         <exclude-pattern>*/tests/Fixture/*</exclude-pattern>
     </rule>
