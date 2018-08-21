@@ -292,6 +292,15 @@ class Email implements JsonSerializable, Serializable
     protected $_priority;
 
     /**
+     * An array mapping url schemes to fully qualified Transport class names.
+     * Unsed.
+     *
+     * @var array
+     * @deprecated 3.7.0 This property is unsed and will be removed in 4.0.0.
+     */
+    protected static $_dsnClassMap = [];
+
+    /**
      * A copy of the configuration profile for this
      * instance. This copy can be modified with Email::profile().
      *
