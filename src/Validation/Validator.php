@@ -40,7 +40,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
-     * When an empty string given, it will be recognized as empty.
+     * When an empty string is given, it will be recognized as empty.
      *
      * @var int
      */
@@ -49,7 +49,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
-     * When an empty array given, it will be recognized as empty.
+     * When an empty array is given, it will be recognized as empty.
      *
      * @var int
      */
@@ -58,8 +58,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
-     * When an array given, if it has the four keys - 'name', 'type', 'tmp_name' and 'error' at
-     * least, and the value of 'error' equals to UPLOAD_ERR_NO_FILE, it will be recognized as
+     * When an array is given, if it has at least the `name`, `type`, `tmp_name` and `error` keys,
+     * and the value of `error` is equal to `UPLOAD_ERR_NO_FILE`, the value will be recognized as
      * empty.
      *
      * @var int
@@ -69,8 +69,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
-     * When an array given, if it has the 'year' key at least, and contains only empty strings
-     * and nulls, it will be recognized as empty.
+     * When an array is given, if it contains the `year` key, and only empty strings
+     * or null values, it will be recognized as empty.
      *
      * @var int
      */
@@ -79,8 +79,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * A flag for allowEmptyByFlags()
      *
-     * When an array given, if it has the 'hour' key at least, and contains only empty strings
-     * and nulls, it will be recognized as empty.
+     * When an array is given, if it contains the `hour` key, and only empty strings
+     * or null values, it will be recognized as empty.
      *
      * @var int
      */
@@ -699,12 +699,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Allows a field to be empty. You can also pass array.
+     * Indicate that a field can be empty.
+     *
      * Using an array will let you provide the following keys:
      *
      * - `flags` individual flags for field
      * - `when` individual when condition for field
-     * - 'message' individual message for field
+     * - `message` individual message for field
      *
      * You can also set flags, when and message for all passed fields, the individual
      * setting takes precedence over group settings.
@@ -781,7 +782,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $settingsDefault = [
             'flags' => $flags,
             'when' => $when,
-            'message' => $message
+            'message' => $message,
         ];
 
         if (!is_array($field)) {
