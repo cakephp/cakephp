@@ -913,7 +913,7 @@ class DboSource extends DataSource {
 				)
 			);
 		}
-		if (preg_match('/^[\w-_\s]*[\w-_]+/', $data)) {
+		if (preg_match('/^[\w\-_\s]*[\w\-_]+/', $data)) {
 			return $this->cacheMethod(__FUNCTION__, $cacheKey, $this->startQuote . $data . $this->endQuote);
 		}
 		return $this->cacheMethod(__FUNCTION__, $cacheKey, $data);

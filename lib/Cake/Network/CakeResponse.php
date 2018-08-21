@@ -1164,9 +1164,13 @@ class CakeResponse {
 		$modifiedSince = $request->header('If-Modified-Since');
 		if ($responseTag = $this->etag()) {
 			$etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
+		} else {
+			$etagMatches = false;
 		}
 		if ($modifiedSince) {
 			$timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
+		} else {
+			$timeMatches = false;
 		}
 		$checks = compact('etagMatches', 'timeMatches');
 		if (empty($checks)) {

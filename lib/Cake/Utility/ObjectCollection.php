@@ -95,6 +95,7 @@ abstract class ObjectCollection {
 		if (empty($this->_enabled)) {
 			return true;
 		}
+		$subject = null;
 		if ($callback instanceof CakeEvent) {
 			$event = $callback;
 			if (is_array($event->data)) {
