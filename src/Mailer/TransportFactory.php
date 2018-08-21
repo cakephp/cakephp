@@ -14,6 +14,7 @@
  */
 namespace Cake\Mailer;
 
+use Cake\Core\ObjectRegistry;
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
 
@@ -97,7 +98,7 @@ class TransportFactory
      * Get transport instance.
      *
      * @param string $name Config name.
-     * @return \Cake\Email\AbstractTransport
+     * @return \Cake\Mailer\AbstractTransport
      */
     public static function get($name)
     {
