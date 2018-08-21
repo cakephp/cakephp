@@ -116,7 +116,8 @@ trait ValidatorAwareTrait
             throw new RuntimeException($message);
         }
 
-        $validator = new $this()->_validatorClass();
+        // @codingStandardsIgnoreLine
+        $validator = new $this->_validatorClass();
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
             $event = defined(self::class . '::BUILD_VALIDATOR_EVENT') ? self::BUILD_VALIDATOR_EVENT : 'Model.buildValidator';
