@@ -113,6 +113,18 @@ class ExtractTask extends Shell
     protected $_extractCore = false;
 
     /**
+     * Displays marker error(s) if true
+     * @var bool
+     */
+    protected $_markerError;
+
+    /**
+     * Count number of marker errors found
+     * @var bool
+     */
+    protected $_countMarkerError = 0;
+
+    /**
      * No welcome message.
      *
      * @return void
@@ -240,6 +252,7 @@ class ExtractTask extends Shell
             $this->_merge = strtolower($response) === 'y';
         }
 
+        $this->_markerError = $this->param('marker-error');
         $this->_relativePaths = $this->param('relative-paths');
 
         if (empty($this->_files)) {
@@ -310,6 +323,11 @@ class ExtractTask extends Shell
         $this->_paths = $this->_files = $this->_storage = [];
         $this->_translations = $this->_tokens = [];
         $this->out();
+        if ($this->_countMarkerError) {
+            $this->err("{$this->_countMarkerError} marker error(s) detected.");
+            $this->err(" => Use the --marker-error option to display errors.");
+        }
+
         $this->out('Done.');
     }
 
@@ -366,6 +384,10 @@ class ExtractTask extends Shell
             'boolean' => true,
             'default' => false,
             'help' => 'Do not write file locations for each extracted message.',
+        ])->addOption('marker-error', [
+            'boolean' => true,
+            'default' => false,
+            'help' => 'Do not display marker error.',
         ]);
 
         return $parser;
@@ -470,7 +492,7 @@ class ExtractTask extends Shell
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
-                } elseif (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+                } else {
                     $this->_markerError($this->_file, $line, $functionName, $count);
                 }
             }
@@ -691,6 +713,14 @@ class ExtractTask extends Shell
      */
     protected function _markerError($file, $line, $marker, $count)
     {
+        if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+            $this->_countMarkerError++;
+        }
+
+        if (!$this->_markerError) {
+            return;
+        }
+
         $this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
         $tokenCount = count($this->_tokens);

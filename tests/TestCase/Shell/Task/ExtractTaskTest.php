@@ -17,9 +17,14 @@ namespace Cake\Test\TestCase\Shell\Task;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * ExtractTaskTest class
+ *
+ * @property \Cake\Shell\Task\ExtractTask|MockObject $Task
+ * @property \Cake\Console\ConsoleIo|MockObject $io
+ * @property string $path
  */
 class ExtractTaskTest extends TestCase
 {
@@ -358,6 +363,36 @@ class ExtractTaskTest extends TestCase
 
         $pattern = '/#: Test\//';
         $this->assertNotRegExp($pattern, $result);
+    }
+
+    /**
+     * Test when marker-error option is set
+     * When marker-error is unset, it's already test
+     * with other functions like testExecute that not detects error because err never called
+     */
+    public function testMarkerErrorSets()
+    {
+        $this->Task->method('err')
+            ->will($this->returnCallback([$this, 'echoTest']));
+
+        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'no';
+        $this->Task->params['marker-error'] = true;
+
+        $this->expectOutputRegex('/.*Invalid marker content in .*extract\.ctp.*/');
+        $this->Task->main();
+    }
+
+    /**
+     * A useful function to mock/replace err or out function that allows to use expectOutput
+     * @param string $val
+     * @param int $nbLines
+     */
+    public function echoTest($val = '', $nbLines = 1)
+    {
+        echo $val . str_repeat(PHP_EOL, $nbLines);
     }
 
     /**
