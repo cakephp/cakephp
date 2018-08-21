@@ -24,31 +24,31 @@ use Cake\Cache\CacheEngine;
 
 class TestPluginCacheEngine extends CacheEngine
 {
-    public function write($key, $value)
+    public function write(string $key, $value): bool
     {
     }
 
-    public function read($key)
+    public function read(string $key)
     {
     }
 
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
     }
 
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
     }
 
-    public function delete($key)
+    public function delete(string $key): bool
     {
     }
 
-    public function clear($check)
+    public function clear(bool $check): bool
     {
     }
 
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
     }
 }

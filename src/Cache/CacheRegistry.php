@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,8 +32,8 @@ class CacheRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct classname or null.
+     * @param string|object $class Partial classname to resolve.
+     * @return string|object|null Either the correct classname or null.
      */
     protected function _resolveClassName($class)
     {
@@ -69,7 +70,7 @@ class CacheRegistry extends ObjectRegistry
      * @return \Cake\Cache\CacheEngine The constructed CacheEngine class.
      * @throws \RuntimeException when an object doesn't implement the correct interface.
      */
-    protected function _create($class, string $alias, array $config): CacheEngine
+    protected function _create($class, string $alias, array $config)
     {
         if (is_object($class)) {
             $instance = $class;

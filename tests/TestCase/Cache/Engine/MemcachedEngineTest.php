@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -266,7 +267,7 @@ class MemcachedEngineTest extends TestCase
     public function testJsonSerializerThrowException()
     {
         $this->skipIf(
-            Memcached::HAVE_JSON,
+            (bool)Memcached::HAVE_JSON,
             'Memcached extension is compiled with json support'
         );
 
@@ -316,7 +317,7 @@ class MemcachedEngineTest extends TestCase
     public function testIgbinarySerializerThrowException()
     {
         $this->skipIf(
-            Memcached::HAVE_IGBINARY,
+            (bool)Memcached::HAVE_IGBINARY,
             'Memcached extension is compiled with igbinary support'
         );
 
@@ -374,7 +375,7 @@ class MemcachedEngineTest extends TestCase
         foreach ($servers as $server) {
             list($host, $port) = explode(':', $server);
             //@codingStandardsIgnoreStart
-            if (!$Memcached->addServer($host, $port)) {
+            if (!$Memcached->addServer($host, (int)$port)) {
                 $available = false;
             }
             //@codingStandardsIgnoreEnd
