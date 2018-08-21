@@ -251,7 +251,7 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'delete',
             '_method' => 'DELETE',
-            'id' => '10'
+            'id' => '10',
         ]);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
@@ -260,7 +260,7 @@ class RouterTest extends TestCase
             'controller' => 'Posts',
             'action' => 'edit',
             '_method' => 'PATCH',
-            'id' => '10'
+            'id' => '10',
         ]);
         $expected = '/posts/10';
         $this->assertEquals($expected, $result);
