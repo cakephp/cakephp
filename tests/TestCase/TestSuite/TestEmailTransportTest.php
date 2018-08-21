@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
+use Cake\Mailer\TransportFactory;
 use Cake\Network\Email\DebugTransport;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
@@ -32,13 +33,13 @@ class TestEmailTransportTest extends TestCase
 
         Email::drop('default');
         Email::drop('alternate');
-        Email::dropTransport('transport_default');
-        Email::dropTransport('transport_alternate');
+        TransportFactory::drop('transport_default');
+        TransportFactory::drop('transport_alternate');
 
-        Email::setConfigTransport('transport_default', [
+        TransportFactory::setConfig('transport_default', [
             'className' => DebugTransport::class
         ]);
-        Email::setConfigTransport('transport_alternate', [
+        TransportFactory::setConfig('transport_alternate', [
             'className' => DebugTransport::class
         ]);
 
@@ -63,8 +64,8 @@ class TestEmailTransportTest extends TestCase
 
         Email::drop('default');
         Email::drop('alternate');
-        Email::dropTransport('transport_default');
-        Email::dropTransport('transport_alternate');
+        TransportFactory::drop('transport_default');
+        TransportFactory::drop('transport_alternate');
     }
 
     /**
@@ -76,10 +77,10 @@ class TestEmailTransportTest extends TestCase
     {
         TestEmailTransport::replaceAllTransports();
 
-        $config = Email::getConfigTransport('transport_default');
+        $config = TransportFactory::getConfig('transport_default');
         $this->assertSame(TestEmailTransport::class, $config['className']);
 
-        $config = Email::getConfigTransport('transport_alternate');
+        $config = TransportFactory::getConfig('transport_alternate');
         $this->assertSame(TestEmailTransport::class, $config['className']);
     }
 
