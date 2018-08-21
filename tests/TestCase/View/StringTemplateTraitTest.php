@@ -53,7 +53,7 @@ class StringTemplateTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->Template = new TestStringTemplate;
+        $this->Template = new TestStringTemplate();
     }
 
     /**

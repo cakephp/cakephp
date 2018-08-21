@@ -31,7 +31,7 @@ class SecurityExceptionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->securityException = new SecurityException;
+        $this->securityException = new SecurityException();
     }
 
     /**

@@ -2964,7 +2964,7 @@ XML;
      */
     public function testGetSession()
     {
-        $session = new Session;
+        $session = new Session();
         $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->getSession());
 

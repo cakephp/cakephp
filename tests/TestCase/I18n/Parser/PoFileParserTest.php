@@ -59,7 +59,7 @@ class PoFileParserTest extends TestCase
      */
     public function testParse()
     {
-        $parser = new PoFileParser;
+        $parser = new PoFileParser();
         $file = APP . 'Locale' . DS . 'rule_1_po' . DS . 'default.po';
         $messages = $parser->parse($file);
         $this->assertCount(8, $messages);
@@ -131,7 +131,7 @@ class PoFileParserTest extends TestCase
      */
     public function testParseMultiLine()
     {
-        $parser = new PoFileParser;
+        $parser = new PoFileParser();
         $file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
         $messages = $parser->parse($file);
         $this->assertCount(12, $messages);
@@ -145,7 +145,7 @@ class PoFileParserTest extends TestCase
      */
     public function testQuotedString()
     {
-        $parser = new PoFileParser;
+        $parser = new PoFileParser();
         $file = APP . 'Locale' . DS . 'en' . DS . 'default.po';
         $messages = $parser->parse($file);
 

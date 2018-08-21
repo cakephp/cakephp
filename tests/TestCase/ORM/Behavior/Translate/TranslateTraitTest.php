@@ -36,7 +36,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationCreate()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->translation('eng')->set('title', 'My Title');
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
 
@@ -54,7 +54,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationModify()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
             'spa' => new Entity(['title' => 'Titulo']),
@@ -70,7 +70,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationEmpty()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
             'spa' => new Entity(['title' => 'Titulo']),
@@ -88,7 +88,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationDirty()
     {
-        $entity = new TestEntity;
+        $entity = new TestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
             'spa' => new Entity(['title' => 'Titulo']),

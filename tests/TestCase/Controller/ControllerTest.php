@@ -406,7 +406,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderCallbackChangingViewClass(): void
     {
-        $Controller = new Controller(new ServerRequest, new Response());
+        $Controller = new Controller(new ServerRequest(), new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
             $controller = $event->getSubject();
@@ -431,7 +431,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderEventCancelsRender(): void
     {
-        $Controller = new Controller(new ServerRequest, new Response());
+        $Controller = new Controller(new ServerRequest(), new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
             return false;
@@ -524,7 +524,7 @@ class ControllerTest extends TestCase
             ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $newResponse = new Response;
+        $newResponse = new Response();
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
@@ -1125,7 +1125,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
         $this->assertInstanceOf(Response::class, $controller->getResponse());
 
-        $response = new Response;
+        $response = new Response();
         $this->assertSame($controller, $controller->setResponse($response));
         $this->assertSame($response, $controller->getResponse());
     }

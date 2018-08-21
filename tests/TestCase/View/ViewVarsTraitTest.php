@@ -36,7 +36,7 @@ class ViewVarsTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = new Controller;
+        $this->subject = new Controller();
     }
 
     /**
