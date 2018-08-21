@@ -352,7 +352,8 @@ class DateTimeType extends BaseType
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this()->_className();
+        // @codingStandardsIgnoreLine
+        $this->_datetimeInstance = new $this->_className();
     }
 
     /**
