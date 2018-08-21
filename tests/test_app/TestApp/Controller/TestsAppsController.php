@@ -34,7 +34,7 @@ class TestsAppsController extends AppController
 
     public function some_method()
     {
-        return $this->response->withStringBody(5);
+        return $this->response->withStringBody('5');
     }
 
     public function set_action()
