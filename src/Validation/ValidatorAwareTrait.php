@@ -116,7 +116,6 @@ trait ValidatorAwareTrait
             throw new RuntimeException($message);
         }
 
-        // @codingStandardsIgnoreLine
         $validator = new $this->_validatorClass();
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {

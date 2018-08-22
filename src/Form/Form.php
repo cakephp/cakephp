@@ -139,7 +139,6 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function schema(?Schema $schema = null): Schema
     {
         if ($schema === null && empty($this->_schema)) {
-            // @codingStandardsIgnoreLine
             $schema = $this->_buildSchema(new $this->_schemaClass());
         }
         if ($schema) {
