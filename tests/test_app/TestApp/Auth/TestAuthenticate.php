@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -53,7 +54,7 @@ class TestAuthenticate extends BaseAuthenticate
     public function afterIdentify(EventInterface $event, array $user)
     {
         $this->callStack[] = __FUNCTION__;
-        $this->authenticationProvider = $event->getData(1);
+        $this->authenticationProvider = $event->getData('1');
 
         if (!empty($this->modifiedUser)) {
             return $user + ['extra' => 'foo'];

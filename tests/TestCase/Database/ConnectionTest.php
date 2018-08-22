@@ -910,7 +910,7 @@ class ConnectionTest extends TestCase
      */
     public function testLoggerDecorator()
     {
-        $logger = new QueryLogger;
+        $logger = new QueryLogger();
         $this->connection->enableQueryLogging(true);
         $this->connection->setLogger($logger);
         $st = $this->connection->prepare('SELECT 1');
@@ -1081,7 +1081,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->never())->method('commit');
         $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
-            throw new \InvalidArgumentException;
+            throw new \InvalidArgumentException();
         });
     }
 

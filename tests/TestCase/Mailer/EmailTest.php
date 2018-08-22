@@ -1863,7 +1863,7 @@ class EmailTest extends TestCase
         $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->Email->send();
-        $dateTime = new \DateTime;
+        $dateTime = new \DateTime();
         $dateTime->setTimestamp($timestamp);
         $this->assertContains('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 

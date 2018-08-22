@@ -512,7 +512,7 @@ class SessionTest extends TestCase
     public function testEngineWithPreMadeInstance()
     {
         static::setAppNamespace();
-        $engine = new \TestApp\Http\Session\TestAppLibSession;
+        $engine = new \TestApp\Http\Session\TestAppLibSession();
         $session = new Session(['handler' => ['engine' => $engine]]);
         $this->assertSame($engine, $session->engine());
 

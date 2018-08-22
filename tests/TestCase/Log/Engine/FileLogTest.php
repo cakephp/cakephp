@@ -86,13 +86,13 @@ class FileLogTest extends TestCase
         $result = file_get_contents(LOGS . 'random.log');
         $this->assertRegExp('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Random: Test warning/', $result);
 
-        $object = new StringObject;
+        $object = new StringObject();
         $log->log('debug', $object);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
         $this->assertContains('Debug: Hey!', $result);
 
-        $object = new JsonObject;
+        $object = new JsonObject();
         $log->log('debug', $object);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');

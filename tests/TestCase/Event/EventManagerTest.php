@@ -316,7 +316,7 @@ class EventManagerTest extends TestCase
     public function testDispatchWithKeyName()
     {
         $manager = new EventManager();
-        $listener = new EventTestListener;
+        $listener = new EventTestListener();
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $event = 'fake.event';
         $manager->dispatch($event);
@@ -333,7 +333,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchReturnValue()
     {
-        $manager = new EventManager;
+        $manager = new EventManager();
         $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
             ->getMock();
         $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
@@ -387,7 +387,7 @@ class EventManagerTest extends TestCase
     public function testDispatchPrioritized()
     {
         $manager = new EventManager();
-        $listener = new EventTestListener;
+        $listener = new EventTestListener();
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', ['priority' => 5], [$listener, 'secondListenerFunction']);
         $event = new Event('fake.event');
