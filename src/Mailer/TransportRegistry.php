@@ -20,7 +20,7 @@ use Cake\Core\ObjectRegistry;
 use RuntimeException;
 
 /**
- * An object registry for maieler transports.
+ * An object registry for mailer transports.
  */
 class TransportRegistry extends ObjectRegistry
 {
