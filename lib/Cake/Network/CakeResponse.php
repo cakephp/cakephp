@@ -1170,7 +1170,7 @@ class CakeResponse {
 			$timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
 		}
 		$checks = compact('etagMatches', 'timeMatches');
-		if (empty($checks)) {
+		if (empty(array_filter($checks))) {
 			return false;
 		}
 		$notModified = !in_array(false, $checks, true);
