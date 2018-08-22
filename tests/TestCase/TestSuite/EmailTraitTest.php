@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
+use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\EmailTrait;
 use Cake\TestSuite\TestCase;
 use Cake\TestSuite\TestEmailTransport;
@@ -47,7 +48,7 @@ class EmailTraitTest extends TestCase
             'transport' => 'test_tools',
             'from' => 'alternate@example.com',
         ]);
-        Email::setConfigTransport('test_tools', [
+        TransportFactory::setConfig('test_tools', [
             'className' => TestEmailTransport::class
         ]);
 
@@ -65,7 +66,7 @@ class EmailTraitTest extends TestCase
 
         Email::drop('default');
         Email::drop('alternate');
-        Email::dropTransport('test_tools');
+        TransportFactory::drop('test_tools');
 
         TestEmailTransport::clearEmails();
     }
