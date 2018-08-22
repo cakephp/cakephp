@@ -137,7 +137,10 @@ class EmailTest extends TestCase
                 'className' => 'TestFalse',
             ],
         ];
-        Email::setConfigTransport($this->transports);
+
+        $this->deprecated(function () {
+            Email::setConfigTransport($this->transports);
+        });
     }
 
     /**
@@ -150,9 +153,11 @@ class EmailTest extends TestCase
         parent::tearDown();
         Log::drop('email');
         Email::drop('test');
-        Email::dropTransport('debug');
-        Email::dropTransport('badClassName');
-        Email::dropTransport('test_smtp');
+        $this->deprecated(function () {
+            Email::dropTransport('debug');
+            Email::dropTransport('badClassName');
+            Email::dropTransport('test_smtp');
+        });
     }
 
     /**
@@ -410,8 +415,8 @@ class EmailTest extends TestCase
      */
     public function testClassNameException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport class "TestFalse" not found.');
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Mailer transport TestFalse is not available.');
         $email = new Email();
         $email->setTransport('badClassName');
     }
@@ -937,7 +942,7 @@ class EmailTest extends TestCase
     public function testTransportInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport config "Invalid" is missing.');
+        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
         $this->Email->setTransport('Invalid');
     }
 
@@ -970,8 +975,10 @@ class EmailTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Transport config "debug" is invalid, the required `className` option is missing');
-        Email::dropTransport('debug');
-        Email::setConfigTransport('debug', []);
+        $this->deprecated(function () {
+            Email::dropTransport('debug');
+            Email::setConfigTransport('debug', []);
+        });
 
         $this->Email->setTransport('debug');
     }
@@ -983,15 +990,18 @@ class EmailTest extends TestCase
      */
     public function testConfigTransport()
     {
-        Email::dropTransport('debug');
         $settings = [
             'className' => 'Debug',
             'log' => true,
         ];
-        Email::setConfigTransport('debug', $settings);
+        $this->deprecated(function () use ($settings) {
+            Email::dropTransport('debug');
+            $result = Email::setConfigTransport('debug', $settings);
+            $this->assertNull($result, 'No return.');
 
-        $result = Email::getConfigTransport('debug');
-        $this->assertEquals($settings, $result);
+            $result = Email::getConfigTransport('debug');
+            $this->assertEquals($settings, $result);
+        });
     }
 
     /**
@@ -999,7 +1009,6 @@ class EmailTest extends TestCase
      */
     public function testConfigTransportMultiple()
     {
-        Email::dropTransport('debug');
         $settings = [
             'debug' => [
                 'className' => 'Debug',
@@ -1012,9 +1021,12 @@ class EmailTest extends TestCase
                 'host' => 'example.com',
             ],
         ];
-        Email::setConfigTransport($settings);
-        $this->assertEquals($settings['debug'], Email::getConfigTransport('debug'));
-        $this->assertEquals($settings['test_smtp'], Email::getConfigTransport('test_smtp'));
+        $this->deprecated(function () use ($settings) {
+            Email::dropTransport('debug');
+            Email::setConfigTransport($settings);
+            $this->assertEquals($settings['debug'], Email::getConfigTransport('debug'));
+            $this->assertEquals($settings['test_smtp'], Email::getConfigTransport('test_smtp'));
+        });
     }
 
     /**
@@ -1024,13 +1036,15 @@ class EmailTest extends TestCase
     public function testConfigTransportErrorOnDuplicate()
     {
         $this->expectException(\BadMethodCallException::class);
-        Email::dropTransport('debug');
         $settings = [
             'className' => 'Debug',
             'log' => true,
         ];
-        Email::setConfigTransport('debug', $settings);
-        Email::setConfigTransport('debug', $settings);
+        $this->deprecated(function () use ($settings) {
+            Email::setConfigTransport('debug', $settings);
+            Email::setConfigTransport('debug', $settings);
+            Email::dropTransport('debug');
+        });
     }
 
     /**
@@ -1040,10 +1054,12 @@ class EmailTest extends TestCase
      */
     public function testConfigTransportInstance()
     {
-        Email::dropTransport('debug');
-        $instance = new DebugTransport();
-        Email::setConfigTransport('debug', $instance);
-        $this->assertEquals(['className' => $instance], Email::getConfigTransport('debug'));
+        $this->deprecated(function () {
+            Email::dropTransport('debug');
+            $instance = new DebugTransport();
+            Email::setConfigTransport('debug', $instance);
+            $this->assertEquals(['className' => $instance], Email::getConfigTransport('debug'));
+        });
     }
 
     /**
@@ -1053,13 +1069,15 @@ class EmailTest extends TestCase
      */
     public function testConfiguredTransport()
     {
-        $result = Email::configuredTransport();
-        $this->assertInternalType('array', $result, 'Should have config keys');
-        $this->assertEquals(
-            array_keys($this->transports),
-            $result,
-            'Loaded transports should be present in enumeration.'
-        );
+        $this->deprecated(function () {
+            $result = Email::configuredTransport();
+            $this->assertInternalType('array', $result, 'Should have config keys');
+            $this->assertEquals(
+                array_keys($this->transports),
+                $result,
+                'Loaded transports should be present in enumeration.'
+            );
+        });
     }
 
     /**
@@ -1069,10 +1087,12 @@ class EmailTest extends TestCase
      */
     public function testDropTransport()
     {
-        $result = Email::getConfigTransport('debug');
-        $this->assertInternalType('array', $result, 'Should have config data');
-        Email::dropTransport('debug');
-        $this->assertNull(Email::getConfigTransport('debug'), 'Should not exist.');
+        $this->deprecated(function () {
+            $result = Email::getConfigTransport('debug');
+            $this->assertInternalType('array', $result, 'Should have config data');
+            Email::dropTransport('debug');
+            $this->assertNull(Email::getConfigTransport('debug'), 'Should not exist.');
+        });
     }
 
     /**
@@ -2047,8 +2067,10 @@ class EmailTest extends TestCase
      */
     public function testDeliver()
     {
-        Email::dropTransport('default');
-        Email::setConfigTransport('default', ['className' => 'Debug']);
+        $this->deprecated(function () {
+            Email::dropTransport('default');
+            Email::setConfigTransport('default', ['className' => 'Debug']);
+        });
 
         $instance = Email::deliver('all@cakephp.org', 'About', 'Everything ok', ['from' => 'root@cakephp.org'], false);
         $this->assertInstanceOf('Cake\Mailer\Email', $instance);
@@ -2840,13 +2862,17 @@ HTML;
      */
     public function testMockTransport()
     {
-        Email::dropTransport('default');
+        $this->deprecated(function () {
+            Email::dropTransport('default');
+        });
 
         $mock = $this->getMockBuilder('Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::setConfig('default', $config);
-        Email::setConfigTransport('default', $mock);
+        $this->deprecated(function () use ($mock) {
+            Email::setConfigTransport('default', $mock);
+        });
 
         $em = new Email('default');
 

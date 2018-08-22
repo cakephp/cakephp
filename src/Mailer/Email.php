@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use BadMethodCallException;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Filesystem\File;
@@ -293,22 +292,13 @@ class Email implements JsonSerializable, Serializable
     protected $_priority;
 
     /**
-     * An array mapping url schemes to fully qualified Transport class names
+     * An array mapping url schemes to fully qualified Transport class names.
+     * Unused.
      *
      * @var array
+     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
-    protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
-    ];
-
-    /**
-     * Configuration profiles for transports.
-     *
-     * @var array
-     */
-    protected static $_transportConfig = [];
+    protected static $_dsnClassMap = [];
 
     /**
      * A copy of the configuration profile for this
@@ -1203,7 +1193,7 @@ class Email implements JsonSerializable, Serializable
     public function setTransport($name): self
     {
         if (is_string($name)) {
-            $transport = $this->_constructTransport($name);
+            $transport = TransportFactory::get($name);
         } elseif (is_object($name)) {
             $transport = $name;
         } else {
@@ -1231,45 +1221,27 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Build a transport instance from configuration data.
+     * Get/set the transport.
      *
-     * @param string $name The transport configuration name to build.
-     * @return \Cake\Mailer\AbstractTransport
-     * @throws \InvalidArgumentException When transport configuration is missing or invalid.
+     * When setting the transport you can either use the name
+     * of a configured transport or supply a constructed transport.
+     *
+     * @deprecated 3.4.0 Use setTransport()/getTransport() instead.
+     * @param string|\Cake\Mailer\AbstractTransport|null $name Either the name of a configured
+     *   transport, or a transport instance.
+     * @return \Cake\Mailer\AbstractTransport|$this
+     * @throws \LogicException When the chosen transport lacks a send method.
+     * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
-    protected function _constructTransport($name)
+    public function transport($name = null)
     {
-        if (!isset(static::$_transportConfig[$name])) {
-            throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
+        deprecationWarning('Email::transport() is deprecated. Use Email::setTransport() or Email::getTransport() instead.');
+
+        if ($name === null) {
+            return $this->getTransport();
         }
 
-        if (!isset(static::$_transportConfig[$name]['className'])) {
-            throw new InvalidArgumentException(
-                sprintf('Transport config "%s" is invalid, the required `className` option is missing', $name)
-            );
-        }
-
-        $config = static::$_transportConfig[$name];
-
-        if (is_object($config['className'])) {
-            if (!$config['className'] instanceof AbstractTransport) {
-                throw new InvalidArgumentException(sprintf(
-                    'Transport object must be of type "AbstractTransport". Found invalid type: "%s".',
-                    get_class($config['className'])
-                ));
-            }
-
-            return $config['className'];
-        }
-
-        $className = App::className($config['className'], 'Mailer/Transport', 'Transport');
-        if (!$className) {
-            throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
-        }
-
-        unset($config['className']);
-
-        return new $className($config);
+        return $this->setTransport($name);
     }
 
     /**
@@ -1502,33 +1474,13 @@ class Email implements JsonSerializable, Serializable
      * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance. Null when using key as array.
      * @return void
-     * @throws \BadMethodCallException When modifying an existing configuration.
+     * @deprecated 3.7.0 Use TransportFactory::setConfig() instead.
      */
     public static function setConfigTransport($key, $config = null): void
     {
-        if (is_array($key)) {
-            foreach ($key as $name => $settings) {
-                static::setConfigTransport($name, $settings);
-            }
+        deprecationWarning('Email::setConfigTransport() is deprecated. Use TransportFactory::setConfig() instead.');
 
-            return;
-        }
-
-        if (isset(static::$_transportConfig[$key])) {
-            throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
-        }
-
-        if (is_object($config)) {
-            $config = ['className' => $config];
-        }
-
-        if (isset($config['url'])) {
-            $parsed = static::parseDsn($config['url']);
-            unset($config['url']);
-            $config = $parsed + $config;
-        }
-
-        static::$_transportConfig[$key] = $config;
+        TransportFactory::setConfig($key, $config);
     }
 
     /**
@@ -1536,20 +1488,64 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string $key The configuration name to read.
      * @return array|null Transport config.
+     * @deprecated 3.7.0 Use TransportFactory::getConfig() instead.
      */
     public static function getConfigTransport(string $key): ?array
     {
-        return static::$_transportConfig[$key] ?? null;
+        deprecationWarning('Email::getConfigTransport() is deprecated. Use TransportFactory::getConfig() instead.');
+
+        return TransportFactory::getConfig($key);
+    }
+
+    /**
+     * Add or read transport configuration.
+     *
+     * Use this method to define transports to use in delivery profiles.
+     * Once defined you cannot edit the configurations, and must use
+     * Email::dropTransport() to flush the configuration first.
+     *
+     * When using an array of configuration data a new transport
+     * will be constructed for each message sent. When using a Closure, the
+     * closure will be evaluated for each message.
+     *
+     * The `className` is used to define the class to use for a transport.
+     * It can either be a short name, or a fully qualified classname
+     *
+     * @deprecated 3.4.0 Use TransportFactory::setConfig()/getConfig() instead.
+     * @param string|array $key The configuration name to read/write. Or
+     *   an array of multiple transports to set.
+     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
+     *   data, or a transport instance.
+     * @return array|null Either null when setting or an array of data when reading.
+     * @throws \BadMethodCallException When modifying an existing configuration.
+     */
+    public static function configTransport($key, $config = null)
+    {
+        deprecationWarning('Email::configTransport() is deprecated. Use TransportFactory::setConfig() or TransportFactory::getConfig() instead.');
+
+        if ($config === null && is_string($key)) {
+            return TransportFactory::getConfig($key);
+        }
+        if ($config === null && is_array($key)) {
+            TransportFactory::setConfig($key);
+
+            return null;
+        }
+
+        TransportFactory::setConfig($key, $config);
     }
 
     /**
      * Returns an array containing the named transport configurations
      *
      * @return array Array of configurations.
+     * @deprecated 3.7.0 Use TransportFactory::configured() instead.
      */
     public static function configuredTransport(): array
     {
-        return array_keys(static::$_transportConfig);
+        deprecationWarning('Email::configuredTransport() is deprecated. Use TransportFactory::configured().');
+
+        return TransportFactory::configured();
     }
 
     /**
@@ -1557,10 +1553,13 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string $key The transport name to remove.
      * @return void
+     * @deprecated 3.7.0 Use TransportFactory::drop() instead.
      */
     public static function dropTransport($key): void
     {
-        unset(static::$_transportConfig[$key]);
+        deprecationWarning('Email::dropTransport() is deprecated. Use TransportFactory::drop().');
+
+        TransportFactory::drop($key);
     }
 
     /**

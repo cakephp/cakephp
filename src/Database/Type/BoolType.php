@@ -136,6 +136,9 @@ class BoolType extends BaseType implements BatchCastingInterface
         if ($value === 'false') {
             return false;
         }
+        if (!is_scalar($value)) {
+            return null;
+        }
 
         return !empty($value);
     }

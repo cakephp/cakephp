@@ -115,14 +115,11 @@ class FloatType extends BaseType implements BatchCastingInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value)) {
-            return (float)$value;
-        }
         if (is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
-        if (is_array($value)) {
-            return 1.0;
+        if (is_numeric($value)) {
+            return (float)$value;
         }
 
         return null;
