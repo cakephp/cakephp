@@ -1149,7 +1149,15 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->order($expression)->order(['title' => 'ASC']);
      * ```
      *
-     * Will become:
+     * and
+     *
+     * ```
+     * $query->order(function ($exp, $query) {
+     *     return [$exp->add(['id % 2 = 0']), 'title' => 'ASC'];
+     * });
+     * ```
+     *
+     * Will both become:
      *
      * `ORDER BY (id %2 = 0), title ASC`
      *
@@ -1160,7 +1168,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * If you need to set complex expressions as order conditions, you
      * should use `orderAsc()` or `orderDesc()`.
      *
-     * @param array|\Cake\Database\ExpressionInterface|string $fields fields to be added to the list
+     * @param array|\Cake\Database\ExpressionInterface|callable|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
      * @return $this
      */
