@@ -54,9 +54,9 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
-use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpUnitException;
+use Throwable;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -103,7 +103,7 @@ trait IntegrationTestTrait
     /**
      * The exception being thrown if the case.
      *
-     * @var \Exception|null
+     * @var \Throwable|null
      */
     protected $_exception;
 
@@ -382,7 +382,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function get($url): void
     {
@@ -399,7 +399,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function post($url, $data = []): void
     {
@@ -416,7 +416,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function patch($url, $data = []): void
     {
@@ -433,7 +433,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function put($url, $data = []): void
     {
@@ -449,7 +449,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function delete($url): void
     {
@@ -465,7 +465,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function head($url): void
     {
@@ -481,7 +481,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function options($url): void
     {
@@ -497,7 +497,7 @@ trait IntegrationTestTrait
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     protected function _sendRequest($url, $method, $data = []): void
     {
@@ -518,7 +518,7 @@ trait IntegrationTestTrait
             throw $e;
         } catch (LogicException $e) {
             throw $e;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->_exception = $e;
             // Simulate the global exception handler being invoked.
             $this->_handleError($e);
@@ -569,11 +569,10 @@ trait IntegrationTestTrait
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
      *
-     * @param \Exception $exception Exception to handle.
+     * @param \Throwable $exception Exception to handle.
      * @return void
-     * @throws \Exception
      */
-    protected function _handleError(\Exception $exception): void
+    protected function _handleError(Throwable $exception): void
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
@@ -748,14 +747,7 @@ trait IntegrationTestTrait
      */
     public function viewVariable(string $name)
     {
-        if (empty($this->_controller->viewVars)) {
-            $this->fail('There are no view variables, perhaps you need to run a request?');
-        }
-        if (isset($this->_controller->viewVars[$name])) {
-            return $this->_controller->viewVars[$name];
-        }
-
-        return null;
+        return $this->_controller->viewBuilder()->getVar($name);
     }
 
     /**

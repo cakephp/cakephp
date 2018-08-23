@@ -162,7 +162,6 @@ class ServerRequestTest extends TestCase
     /**
      * Test constructing with a string url.
      *
-     * @deprecated
      * @return void
      */
     public function testConstructStringUrlIgnoreServer()

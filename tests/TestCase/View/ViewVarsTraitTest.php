@@ -48,11 +48,11 @@ class ViewVarsTraitTest extends TestCase
     {
         $data = ['test' => 'val', 'foo' => 'bar'];
         $this->subject->set($data);
-        $this->assertEquals($data, $this->subject->viewVars);
+        $this->assertEquals($data, $this->subject->viewBuilder()->getVars());
 
         $update = ['test' => 'updated'];
         $this->subject->set($update);
-        $this->assertEquals('updated', $this->subject->viewVars['test']);
+        $this->assertEquals('updated', $this->subject->viewBuilder()->getVar('test'));
     }
 
     /**
@@ -63,7 +63,7 @@ class ViewVarsTraitTest extends TestCase
     public function testSetTwoParam()
     {
         $this->subject->set('testing', 'value');
-        $this->assertEquals(['testing' => 'value'], $this->subject->viewVars);
+        $this->assertEquals(['testing' => 'value'], $this->subject->viewBuilder()->getVars());
     }
 
     /**
@@ -76,7 +76,7 @@ class ViewVarsTraitTest extends TestCase
         $result = $this->subject->set('testing', 'value')
             ->set('foo', 'bar');
         $this->assertSame($this->subject, $result);
-        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewVars);
+        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewBuilder()->getVars());
     }
 
     /**
@@ -91,87 +91,8 @@ class ViewVarsTraitTest extends TestCase
         $this->subject->set($keys, $vals);
 
         $expected = ['one' => 'two', 'key' => 'val'];
-        $this->assertEquals($expected, $this->subject->viewVars);
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
     }
-
-    /**
-     * test viewOptions() with 1 string param, merge true
-     *
-     * @return void
-     */
-    public function testAddOneViewOption()
-    {
-        $this->deprecated(function () {
-            $option = 'newOption';
-            $this->subject->viewOptions($option);
-
-            $this->assertContains($option, $this->subject->viewOptions());
-        });
-    }
-
-    /**
-     * test viewOptions() with 2 strings in array, merge true.
-     *
-     * @return void
-     */
-    public function testAddTwoViewOption()
-    {
-        $this->deprecated(function () {
-            $this->subject->viewOptions(['oldOption'], false);
-            $option = ['newOption', 'anotherOption'];
-            $result = $this->subject->viewOptions($option);
-            $expects = ['oldOption', 'newOption', 'anotherOption'];
-
-            $this->assertContainsOnly('string', $result);
-            $this->assertEquals($expects, $result);
-        });
-    }
-
-    /**
-     * test empty params reads _viewOptions.
-     *
-     * @return void
-     */
-    public function testReadingViewOptions()
-    {
-        $this->deprecated(function () {
-            $expected = $this->subject->viewOptions(['one', 'two', 'three'], false);
-            $result = $this->subject->viewOptions();
-
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
-     * test setting $merge `false` overrides correct options.
-     *
-     * @return void
-     */
-    public function testMergeFalseViewOptions()
-    {
-        $this->deprecated(function () {
-            $this->subject->viewOptions(['one', 'two', 'three'], false);
-            $expected = ['four', 'five', 'six'];
-            $result = $this->subject->viewOptions($expected, false);
-
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
-     * test _viewOptions is undefined and $opts is null, an empty array is returned.
-     *
-     * @return void
-     */
-    public function testUndefinedValidViewOptions()
-    {
-        $this->deprecated(function () {
-            $result = $this->subject->viewOptions([], false);
-            $this->assertInternalType('array', $result);
-            $this->assertEmpty($result);
-        });
-    }
-
     /**
      * test that createView() updates viewVars of View instance on each call.
      *
@@ -181,11 +102,11 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->createView()->viewVars);
+        $this->assertEquals('one', $this->subject->createView()->get('one'));
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->createView()->viewVars);
+        $this->assertEquals('two', $this->subject->createView()->get('two'));
     }
 
     /**

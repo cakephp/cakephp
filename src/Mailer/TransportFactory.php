@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -47,7 +48,7 @@ class TransportFactory
      *
      * @return \Cake\Mailer\TransportRegistry
      */
-    public static function getRegistry()
+    public static function getRegistry(): TransportRegistry
     {
         if (!static::$_registry) {
             static::$_registry = new TransportRegistry();
@@ -76,7 +77,7 @@ class TransportFactory
      * @return void
      * @throws \InvalidArgumentException When a tranport cannot be created.
      */
-    protected static function _buildTransport($name)
+    protected static function _buildTransport($name): void
     {
         if (!isset(static::$_config[$name])) {
             throw new InvalidArgumentException(
@@ -99,7 +100,7 @@ class TransportFactory
      * @param string $name Config name.
      * @return \Cake\Mailer\AbstractTransport
      */
-    public static function get($name)
+    public static function get($name): AbstractTransport
     {
         $registry = static::getRegistry();
 
