@@ -224,10 +224,9 @@ class ViewBuilderTest extends TestCase
         $this->assertSame($request, $view->getRequest());
         $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
-        $this->assertEquals(
-            ['one' => 'value', 'foo' => 'bar', 'x' => 'new'],
-            $view->viewVars
-        );
+        $this->assertSame(['one', 'x', 'foo'], $view->getVars());
+        $this->assertSame('value', $view->get('one'));
+        $this->assertSame('bar', $view->get('foo'));
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
     }
@@ -326,5 +325,78 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('test', $builder->getLayout());
         $this->assertEquals(['Html'], $builder->getHelpers());
         $this->assertEquals('JsonView', $builder->getClassName());
+    }
+
+    /**
+     * test setOptions() with 1 string param, merge true
+     *
+     * @return void
+     */
+    public function testSetOptionsOne()
+    {
+        $builder = new ViewBuilder();
+        $this->assertSame($builder, $builder->setOptions(['newOption']));
+        $this->assertContains('newOption', $builder->getOptions());
+    }
+
+    /**
+     * test setOptions() with 2 strings in array, merge true.
+     *
+     * @return void
+     */
+    public function testSetOptionsMultiple()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions(['oldOption'], false);
+
+        $option = ['newOption', 'anotherOption'];
+        $builder->setOptions($option);
+        $expects = ['oldOption', 'newOption', 'anotherOption'];
+
+        $result = $builder->getOptions();
+        $this->assertContainsOnly('string', $result);
+        $this->assertEquals($expects, $result);
+    }
+
+    /**
+     * test empty params reads _viewOptions.
+     *
+     * @return void
+     */
+    public function testReadingViewOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions(['one', 'two', 'three'], false);
+
+        $this->assertEquals(['one', 'two', 'three'], $builder->getOptions());
+    }
+
+    /**
+     * test setting $merge `false` overrides correct options.
+     *
+     * @return void
+     */
+    public function testMergeFalseViewOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions(['one', 'two', 'three'], false);
+
+        $expected = ['four', 'five', 'six'];
+        $builder->setOptions($expected, false);
+        $this->assertEquals($expected, $builder->getOptions());
+    }
+
+    /**
+     * test _viewOptions is undefined and $opts is null, an empty array is returned.
+     *
+     * @return void
+     */
+    public function testUndefinedValidViewOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions([], false);
+        $result = $builder->getOptions();
+        $this->assertInternalType('array', $result);
+        $this->assertEmpty($result);
     }
 }

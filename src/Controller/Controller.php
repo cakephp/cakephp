@@ -151,16 +151,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected $_components;
 
     /**
-     * These Controller properties will be passed from the Controller to the View as options.
-     *
-     * @var array
-     * @see \Cake\View\View
-     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
-     */
-    protected $_validViewOptions = [
-    ];
-
-    /**
      * Automatically set to the name of a plugin.
      *
      * @var string|null

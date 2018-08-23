@@ -97,7 +97,6 @@ class EventManagerTest extends TestCase
     /**
      * Test attach() with a listener interface.
      *
-     * @group deprecated
      * @return void
      */
     public function testAttachListener()

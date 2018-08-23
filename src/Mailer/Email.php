@@ -25,13 +25,9 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\ViewVarsTrait;
-use Closure;
-use Exception;
 use InvalidArgumentException;
 use JsonSerializable;
 use LogicException;
-use PDO;
-use RuntimeException;
 use Serializable;
 use SimpleXMLElement;
 
@@ -290,15 +286,6 @@ class Email implements JsonSerializable, Serializable
      * @var int|null
      */
     protected $_priority;
-
-    /**
-     * An array mapping url schemes to fully qualified Transport class names.
-     * Unused.
-     *
-     * @var array
-     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
-     */
-    protected static $_dsnClassMap = [];
 
     /**
      * A copy of the configuration profile for this
@@ -1102,7 +1089,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getViewVars(): array
     {
-        return $this->viewVars;
+        return $this->viewBuilder()->getVars();
     }
 
     /**
@@ -1218,30 +1205,6 @@ class Email implements JsonSerializable, Serializable
     public function getTransport(): ?AbstractTransport
     {
         return $this->_transport;
-    }
-
-    /**
-     * Get/set the transport.
-     *
-     * When setting the transport you can either use the name
-     * of a configured transport or supply a constructed transport.
-     *
-     * @deprecated 3.4.0 Use setTransport()/getTransport() instead.
-     * @param string|\Cake\Mailer\AbstractTransport|null $name Either the name of a configured
-     *   transport, or a transport instance.
-     * @return \Cake\Mailer\AbstractTransport|$this
-     * @throws \LogicException When the chosen transport lacks a send method.
-     * @throws \InvalidArgumentException When $name is neither a string nor an object.
-     */
-    public function transport($name = null)
-    {
-        deprecationWarning('Email::transport() is deprecated. Use Email::setTransport() or Email::getTransport() instead.');
-
-        if ($name === null) {
-            return $this->getTransport();
-        }
-
-        return $this->setTransport($name);
     }
 
     /**
@@ -1453,113 +1416,6 @@ class Email implements JsonSerializable, Serializable
     public function getPriority(): ?int
     {
         return $this->_priority;
-    }
-
-    /**
-     * Sets transport configuration.
-     *
-     * Use this method to define transports to use in delivery profiles.
-     * Once defined you cannot edit the configurations, and must use
-     * Email::dropTransport() to flush the configuration first.
-     *
-     * When using an array of configuration data a new transport
-     * will be constructed for each message sent. When using a Closure, the
-     * closure will be evaluated for each message.
-     *
-     * The `className` is used to define the class to use for a transport.
-     * It can either be a short name, or a fully qualified class name
-     *
-     * @param string|array $key The configuration name to write. Or
-     *   an array of multiple transports to set.
-     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
-     *   data, or a transport instance. Null when using key as array.
-     * @return void
-     * @deprecated 3.7.0 Use TransportFactory::setConfig() instead.
-     */
-    public static function setConfigTransport($key, $config = null): void
-    {
-        deprecationWarning('Email::setConfigTransport() is deprecated. Use TransportFactory::setConfig() instead.');
-
-        TransportFactory::setConfig($key, $config);
-    }
-
-    /**
-     * Gets current transport configuration.
-     *
-     * @param string $key The configuration name to read.
-     * @return array|null Transport config.
-     * @deprecated 3.7.0 Use TransportFactory::getConfig() instead.
-     */
-    public static function getConfigTransport(string $key): ?array
-    {
-        deprecationWarning('Email::getConfigTransport() is deprecated. Use TransportFactory::getConfig() instead.');
-
-        return TransportFactory::getConfig($key);
-    }
-
-    /**
-     * Add or read transport configuration.
-     *
-     * Use this method to define transports to use in delivery profiles.
-     * Once defined you cannot edit the configurations, and must use
-     * Email::dropTransport() to flush the configuration first.
-     *
-     * When using an array of configuration data a new transport
-     * will be constructed for each message sent. When using a Closure, the
-     * closure will be evaluated for each message.
-     *
-     * The `className` is used to define the class to use for a transport.
-     * It can either be a short name, or a fully qualified classname
-     *
-     * @deprecated 3.4.0 Use TransportFactory::setConfig()/getConfig() instead.
-     * @param string|array $key The configuration name to read/write. Or
-     *   an array of multiple transports to set.
-     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
-     *   data, or a transport instance.
-     * @return array|null Either null when setting or an array of data when reading.
-     * @throws \BadMethodCallException When modifying an existing configuration.
-     */
-    public static function configTransport($key, $config = null)
-    {
-        deprecationWarning('Email::configTransport() is deprecated. Use TransportFactory::setConfig() or TransportFactory::getConfig() instead.');
-
-        if ($config === null && is_string($key)) {
-            return TransportFactory::getConfig($key);
-        }
-        if ($config === null && is_array($key)) {
-            TransportFactory::setConfig($key);
-
-            return null;
-        }
-
-        TransportFactory::setConfig($key, $config);
-    }
-
-    /**
-     * Returns an array containing the named transport configurations
-     *
-     * @return array Array of configurations.
-     * @deprecated 3.7.0 Use TransportFactory::configured() instead.
-     */
-    public static function configuredTransport(): array
-    {
-        deprecationWarning('Email::configuredTransport() is deprecated. Use TransportFactory::configured().');
-
-        return TransportFactory::configured();
-    }
-
-    /**
-     * Delete transport configuration.
-     *
-     * @param string $key The transport name to remove.
-     * @return void
-     * @deprecated 3.7.0 Use TransportFactory::drop() instead.
-     */
-    public static function dropTransport($key): void
-    {
-        deprecationWarning('Email::dropTransport() is deprecated. Use TransportFactory::drop().');
-
-        TransportFactory::drop($key);
     }
 
     /**
@@ -1791,12 +1647,13 @@ class Email implements JsonSerializable, Serializable
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
 
-        $this->viewBuilder()->setLayout('default');
-        $this->viewBuilder()->setTemplate('');
-        $this->viewBuilder()->setClassName('Cake\View\View');
-        $this->viewVars = [];
-        $this->viewBuilder()->setTheme(null);
-        $this->viewBuilder()->setHelpers(['Html'], false);
+        $this->viewBuilder()
+            ->setLayout('default')
+            ->setTemplate('')
+            ->setClassName('Cake\View\View')
+            ->setTheme(null)
+            ->setHelpers(['Html'], false)
+            ->setVars([], false);
 
         return $this;
     }
@@ -2258,13 +2115,6 @@ class Email implements JsonSerializable, Serializable
      * Serializes the email object to a value that can be natively serialized and re-used
      * to clone this email instance.
      *
-     * It has certain limitations for viewVars that are good to know:
-     *
-     *    - ORM\Query executed and stored as resultset
-     *    - SimpleXMLElements stored as associative array
-     *    - Exceptions stored as strings
-     *    - Resources, \Closure and \PDO are not supported.
-     *
      * @return array Serializable array of configuration properties.
      * @throws \Exception When a view var object can not be properly serialized.
      */
@@ -2273,7 +2123,7 @@ class Email implements JsonSerializable, Serializable
         $properties = [
             '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject',
             '_returnPath', '_readReceipt', '_emailFormat', '_emailPattern', '_domain',
-            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset',
+            '_attachments', '_messageId', '_headers', '_appCharset', 'charset', 'headerCharset',
         ];
 
         $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];
@@ -2289,38 +2139,9 @@ class Email implements JsonSerializable, Serializable
             }
         });
 
-        array_walk_recursive($array['viewVars'], [$this, '_checkViewVars']);
-
         return array_filter($array, function ($i) {
             return !is_array($i) && strlen($i) || !empty($i);
         });
-    }
-
-    /**
-     * Iterates through hash to clean up and normalize.
-     *
-     * @param mixed $item Reference to the view var value.
-     * @param string $key View var key.
-     * @return void
-     * @throws \RuntimeException
-     */
-    protected function _checkViewVars(&$item, $key)
-    {
-        if ($item instanceof Exception) {
-            $item = (string)$item;
-        }
-
-        if (is_resource($item) ||
-            $item instanceof Closure ||
-            $item instanceof PDO
-        ) {
-            throw new RuntimeException(sprintf(
-                'Failed serializing the `%s` %s in the `%s` view var',
-                is_resource($item) ? get_resource_type($item) : get_class($item),
-                is_resource($item) ? 'resource' : 'object',
-                $key
-            ));
-        }
     }
 
     /**

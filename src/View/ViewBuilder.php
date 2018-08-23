@@ -20,7 +20,11 @@ use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\View\Exception\MissingViewException;
+use Closure;
+use Exception;
 use JsonSerializable;
+use PDO;
+use RuntimeException;
 use Serializable;
 
 /**
@@ -127,7 +131,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param mixed $value Value.
      * @return $this
      */
-    public function setVar($name, $value = null)
+    public function setVar(string $name, $value = null): self
     {
         $this->_vars[$name] = $value;
 
@@ -141,7 +145,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param bool $merge Whether to merge with existing vars, default true.
      * @return $this
      */
-    public function setVars($data, $merge = true)
+    public function setVars(array $data, bool $merge = true): self
     {
         if ($merge) {
             $this->_vars = $data + $this->_vars;
@@ -158,7 +162,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string $name Var name
      * @return bool
      */
-    public function hasVar($name)
+    public function hasVar(string $name): bool
     {
         return array_key_exists($name, $this->_vars);
     }
@@ -169,7 +173,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string $name Var name
      * @return mixed The var value or null if unset.
      */
-    public function getVar($name)
+    public function getVar(string $name)
     {
         return $this->_vars[$name] ?? null;
     }
@@ -179,7 +183,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      *
      * @return array
      */
-    public function getVars()
+    public function getVars(): array
     {
         return $this->_vars;
     }
@@ -508,13 +512,20 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Serializes the view builder object to a value that can be natively
      * serialized and re-used to clone this builder instance.
      *
+     * There are  limitations for viewVars that are good to know:
+     *
+     * - ORM\Query executed and stored as resultset
+     * - SimpleXMLElements stored as associative array
+     * - Exceptions stored as strings
+     * - Resources, \Closure and \PDO are not supported.
+     *
      * @return array Serializable array of configuration properties.
      */
     public function jsonSerialize(): array
     {
         $properties = [
             '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
-            '_layoutPath', '_name', '_className', '_options', '_helpers',
+            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars',
         ];
 
         $array = [];
@@ -523,9 +534,38 @@ class ViewBuilder implements JsonSerializable, Serializable
             $array[$property] = $this->{$property};
         }
 
+        array_walk_recursive($array['_vars'], [$this, '_checkViewVars']);
+
         return array_filter($array, function ($i) {
             return !is_array($i) && strlen((string)$i) || !empty($i);
         });
+    }
+
+    /**
+     * Iterates through hash to clean up and normalize.
+     *
+     * @param mixed $item Reference to the view var value.
+     * @param string $key View var key.
+     * @return void
+     * @throws \RuntimeException
+     */
+    protected function _checkViewVars(&$item, $key)
+    {
+        if ($item instanceof Exception) {
+            $item = (string)$item;
+        }
+
+        if (is_resource($item) ||
+            $item instanceof Closure ||
+            $item instanceof PDO
+        ) {
+            throw new RuntimeException(sprintf(
+                'Failed serializing the `%s` %s in the `%s` view var',
+                is_resource($item) ? get_resource_type($item) : get_class($item),
+                is_resource($item) ? 'resource' : 'object',
+                $key
+            ));
+        }
     }
 
     /**

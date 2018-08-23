@@ -1058,7 +1058,7 @@ class ControllerTest extends TestCase
         $controller->dispatchEvent('Controller.beforeRender');
         $view = $controller->createView();
 
-        $this->assertArrayHasKey('testVariable', $view->viewVars);
+        $this->assertNotEmpty('testVariable', $view->get('testVariable'));
     }
 
     /**
