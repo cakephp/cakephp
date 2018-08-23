@@ -1,5 +1,4 @@
 build: false
-shallow_clone: false
 platform: 'x64'
 clone_folder: c:\projects\cakephp
 
@@ -14,6 +13,7 @@ branches:
   only:
     - master
     - 3.next
+    - 4.x
 environment:
   global:
     PHP: "C:/PHP"
