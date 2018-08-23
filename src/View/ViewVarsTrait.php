@@ -69,7 +69,7 @@ trait ViewVarsTrait
             $builder->setClassName($viewClass);
         }
 
-        $validViewOptions = isset($this->_validViewOptions) ? $this->_validViewOptions : [];
+        $validViewOptions = $this->_validViewOptions ?? [];
         $viewOptions = [];
         foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {

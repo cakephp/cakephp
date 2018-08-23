@@ -171,7 +171,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function getVar($name)
     {
-        return isset($this->_vars[$name]) ? $this->_vars[$name] : null;
+        return $this->_vars[$name] ?? null;
     }
 
     /**
