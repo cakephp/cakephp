@@ -748,14 +748,7 @@ trait IntegrationTestTrait
      */
     public function viewVariable(string $name)
     {
-        if (empty($this->_controller->viewVars)) {
-            $this->fail('There are no view variables, perhaps you need to run a request?');
-        }
-        if (isset($this->_controller->viewVars[$name])) {
-            return $this->_controller->viewVars[$name];
-        }
-
-        return null;
+        return $this->_controller->viewBuilder()->getVar($name);
     }
 
     /**
