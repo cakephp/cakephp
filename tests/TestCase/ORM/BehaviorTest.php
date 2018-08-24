@@ -143,7 +143,7 @@ class Test3Behavior extends Behavior
      *
      * This class does pretend to implement beforeFind
      *
-     * @return void
+     * @return array
      */
     public function implementedEvents()
     {

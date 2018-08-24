@@ -36,7 +36,7 @@ class BindingKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsTo and HasOne implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderJoinable()
     {
@@ -46,7 +46,7 @@ class BindingKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany and BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderExternal()
     {

@@ -1597,7 +1597,7 @@ class EntityTest extends TestCase
     /**
      * Provides empty values
      *
-     * @return void
+     * @return array
      */
     public function emptyNamesProvider()
     {

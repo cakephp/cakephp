@@ -74,7 +74,7 @@ class TypeTest extends TestCase
     /**
      * provides a basics type list to be used as data provided for a test
      *
-     * @return void
+     * @return array
      */
     public function basicTypesProvider()
     {

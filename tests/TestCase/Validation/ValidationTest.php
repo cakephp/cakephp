@@ -2733,7 +2733,7 @@ class ValidationTest extends TestCase
     /**
      * Provider for uploaded file tests.
      *
-     * @return void
+     * @return array
      */
     public function uploadedFileProvider()
     {

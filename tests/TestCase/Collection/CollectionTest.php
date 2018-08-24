@@ -1667,7 +1667,7 @@ class CollectionTest extends TestCase
     /**
      * Provider for testing each of the directions for listNested
      *
-     * @return void
+     * @return array
      */
     public function nestedListProvider()
     {
