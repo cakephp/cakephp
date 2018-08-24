@@ -73,7 +73,7 @@ class TupleComparison extends Comparison
      * @param \Cake\Database\ValueBinder $generator The value binder to convert expressions with.
      * @return string
      */
-    protected function _stringifyValues(\Cake\Database\ValueBinder $generator): string
+    protected function _stringifyValues(ValueBinder $generator): string
     {
         $values = [];
         $parts = $this->getValue();

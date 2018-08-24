@@ -199,7 +199,7 @@ abstract class TestCase extends BaseTestCase
      * @param array $plugins list of Plugins to load
      * @return \Cake\Http\BaseApplication
      */
-    public function loadPlugins(array $plugins = []): \Cake\Http\BaseApplication
+    public function loadPlugins(array $plugins = []): BaseApplication
     {
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,

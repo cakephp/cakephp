@@ -15,6 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Database\Driver;
+use Cake\Database\StatementInterface;
+
 /**
  * Wraps a statement in a callback that allows row results
  * to be modified when being fetched.
@@ -37,7 +40,7 @@ class CallbackStatement extends StatementDecorator
      * @param \Cake\Database\Driver $driver The driver instance used by the statement.
      * @param callable $callback The callback to apply to results before they are returned.
      */
-    public function __construct(\Cake\Database\StatementInterface $statement, \Cake\Database\Driver $driver, callable $callback)
+    public function __construct(StatementInterface $statement, Driver $driver, callable $callback)
     {
         parent::__construct($statement, $driver);
         $this->_callback = $callback;

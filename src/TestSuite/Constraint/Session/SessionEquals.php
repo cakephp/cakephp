@@ -14,6 +14,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Session;
 
+use Cake\Http\Session;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -45,7 +46,7 @@ class SessionEquals extends Constraint
      * @param \Cake\Http\Session $session Session
      * @param string $path Session Path
      */
-    public function __construct(\Cake\Http\Session $session, string $path)
+    public function __construct(Session $session, string $path)
     {
         parent::__construct();
 
