@@ -23,17 +23,20 @@ use Cake\Http\Response;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Error\Deprecated;
 use Zend\Diactoros\UploadedFile;
 
 /**
- * Self test of the IntegrationTestCase
+ * Self test of the IntegrationTestTrait
  */
-class IntegrationTestTraitTest extends IntegrationTestCase
+class IntegrationTestTraitTest extends TestCase
 {
+    use IntegrationTestTrait;
+
     /**
      * stub encryption key.
      *
