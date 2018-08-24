@@ -41,7 +41,7 @@ class CakesController extends Controller
     /**
      * invalid method
      *
-     * @return \Cake\Http\Response
+     * @return string
      */
     public function invalid()
     {

@@ -45,7 +45,7 @@ class JsonObject implements JsonSerializable
     /**
      * String representation of the object
      *
-     * @return string
+     * @return array
      */
     public function jsonSerialize()
     {
