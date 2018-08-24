@@ -14,8 +14,10 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
+use Cake\Event\EventInterface;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
@@ -530,7 +532,7 @@ trait IntegrationTestTrait
      *
      * @return \Cake\TestSuite\MiddlewareDispatcher A dispatcher instance
      */
-    protected function _makeDispatcher(): \Cake\TestSuite\MiddlewareDispatcher
+    protected function _makeDispatcher(): MiddlewareDispatcher
     {
         return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
     }
@@ -542,7 +544,7 @@ trait IntegrationTestTrait
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @return void
      */
-    public function controllerSpy(\Cake\Event\EventInterface $event, ?\Cake\Controller\Controller $controller = null): void
+    public function controllerSpy(EventInterface $event, ?Controller $controller = null): void
     {
         if (!$controller) {
             /** @var \Cake\Controller\Controller $controller */

@@ -1984,7 +1984,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $context A key value list of data containing the validation context.
      * @return bool
      */
-    protected function _checkPresence(\Cake\Validation\ValidationSet $field, array $context): bool
+    protected function _checkPresence(ValidationSet $field, array $context): bool
     {
         $required = $field->isPresenceRequired();
 
@@ -2008,7 +2008,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $context a key value list of data containing the validation context.
      * @return bool
      */
-    protected function _canBeEmpty(\Cake\Validation\ValidationSet $field, array $context): bool
+    protected function _canBeEmpty(ValidationSet $field, array $context): bool
     {
         $allowed = $field->isEmptyAllowed();
 

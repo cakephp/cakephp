@@ -808,7 +808,7 @@ abstract class Association
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query
      */
-    public function find($type = null, array $options = []): \Cake\ORM\Query
+    public function find($type = null, array $options = []): Query
     {
         $type = $type ?: $this->getFinder();
         list($type, $opts) = $this->_extractFinder($type);

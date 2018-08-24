@@ -116,7 +116,7 @@ class Collection
      * @return void
      * @throws \Cake\Database\Exception on query failure.
      */
-    protected function _reflect(string $stage, string $name, array $config, \Cake\Database\Schema\TableSchema $schema): void
+    protected function _reflect(string $stage, string $name, array $config, TableSchema $schema): void
     {
         $describeMethod = "describe{$stage}Sql";
         $convertMethod = "convert{$stage}Description";
