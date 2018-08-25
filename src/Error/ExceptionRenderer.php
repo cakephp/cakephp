@@ -331,17 +331,18 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
-     * Get an error code value within range 400 to 506
+     * Get HTTP status code.
      *
      * @param \Exception $exception Exception.
-     * @return int Error code value within range 400 to 506
+     * @return int A valid HTTP error status code.
      */
     protected function _code(Exception $exception)
     {
         $code = 500;
+
         $exception = $this->_unwrap($exception);
         $errorCode = $exception->getCode();
-        if ($errorCode >= 400 && $errorCode < 506) {
+        if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 
