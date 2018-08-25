@@ -248,6 +248,13 @@ class DboSource extends DataSource {
 	protected $_methodCacheChange = false;
 
 /**
+ * Map of the columns contained in a result.
+ *
+ * @var array
+ */
+	public $map;
+
+/**
  * Constructor
  *
  * @param array $config Array of configuration information for the Datasource.

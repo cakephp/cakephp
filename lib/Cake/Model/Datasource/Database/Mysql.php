@@ -142,13 +142,6 @@ class Mysql extends DboSource {
 	protected $_charsets = array();
 
 /**
- * Map of the columns contained in a result.
- *
- * @var array
- */
-	public $map;
-
-/**
  * Connects to the database using options in the given configuration array.
  *
  * MySQL supports a few additional options that other drivers do not:
