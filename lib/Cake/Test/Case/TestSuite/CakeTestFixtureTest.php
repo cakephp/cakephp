@@ -231,7 +231,6 @@ class CakeTestFixtureTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		$methods = array_diff(get_class_methods('DboSource'), array('enabled'));
-		$methods[] = 'connect';
 
 		$this->criticDb = $this->getMock('DboSource', $methods);
 		$this->criticDb->fullDebug = true;
