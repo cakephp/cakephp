@@ -107,6 +107,13 @@ class Sqlserver extends DboSource {
 	);
 
 /**
+ * Map of the columns contained in a result.
+ *
+ * @var array
+ */
+	public $map;
+
+/**
  * Magic column name used to provide pagination support for SQLServer 2008
  * which lacks proper limit/offset support.
  *

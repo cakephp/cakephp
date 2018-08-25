@@ -103,6 +103,13 @@ class Sqlite extends DboSource {
 	);
 
 /**
+ * Map of the columns contained in a result.
+ *
+ * @var array
+ */
+	public $map;
+
+/**
  * Connects to the database using config['database'] as a filename.
  *
  * @return bool

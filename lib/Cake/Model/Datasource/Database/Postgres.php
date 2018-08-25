@@ -105,6 +105,13 @@ class Postgres extends DboSource {
 	protected $_sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', '~', '~\*', '\!~', '\!~\*', 'similar to');
 
 /**
+ * Map of the columns contained in a result.
+ *
+ * @var array
+ */
+	public $map;
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return bool True if successfully connected.
