@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 
 /**
@@ -42,6 +43,8 @@ class ErrorController extends Controller
      */
     public function beforeRender(EventInterface $event)
     {
-        $this->viewBuilder()->setTemplatePath('Error');
+        if (Configure::read('debug')) {
+            $this->viewBuilder()->setTemplatePath('Error');
+        }
     }
 }

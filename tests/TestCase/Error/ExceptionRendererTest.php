@@ -194,17 +194,18 @@ class ExceptionRendererTest extends TestCase
     {
         $namespace = Configure::read('App.namespace');
         Configure::write('App.namespace', 'TestApp');
+        Configure::write('debug', false);
 
         $exception = new NotFoundException('Page not found');
         $request = new ServerRequest();
         $request = $request->withParam('prefix', 'admin');
 
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
+        $ExceptionRenderer->render();
 
-        $this->assertInstanceOf(
-            ErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
-        );
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertInstanceOf(ErrorController::class, $controller);
+        $this->assertEquals('Admin/Error', $controller->viewBuilder()->getTemplatePath());
 
         Configure::write('App.namespace', $namespace);
     }

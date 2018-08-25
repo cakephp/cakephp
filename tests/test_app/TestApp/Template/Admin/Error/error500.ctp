@@ -1,26 +1,27 @@
 <?php
-declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.7.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace TestApp\Controller\Admin;
-
-use Cake\Controller\ErrorController as CoreErrorController;
-
-/**
- * Error Handling Controller
- *
- * Controller used by ErrorHandler to render error views.
- */
-class ErrorController extends CoreErrorController
-{
-}
+use Cake\Core\Configure;
+?>
+<h2><?= __d('cake', 'An Internal Error Has Occurred.') ?></h2>
+<p class="error">
+    <strong><?= __d('cake', 'Error') ?>: </strong>
+    <?= h($message) ?>
+</p>
+<?php
+if (Configure::read('debug')):
+    echo $this->element('auto_table_warning');
+    echo $this->element('exception_stack_trace');
+endif;
+?>
