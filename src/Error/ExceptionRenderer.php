@@ -191,10 +191,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $template = $this->_template($exception, $method, $code);
         $unwrapped = $this->_unwrap($exception);
 
-        $isDebug = Configure::read('debug');
-        if (($isDebug || $exception instanceof HttpException) &&
-            method_exists($this, $method)
-        ) {
+        if (method_exists($this, $method)) {
             return $this->_customMethod($method, $unwrapped);
         }
 
@@ -216,6 +213,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'code' => $code,
             '_serialize' => ['message', 'url', 'code']
         ];
+
+        $isDebug = Configure::read('debug');
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($unwrapped->getTrace(), [
                 'format' => 'array',
