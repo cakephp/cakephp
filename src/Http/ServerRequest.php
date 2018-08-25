@@ -565,9 +565,9 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param bool $local Attempt to return a local address.
      *   Local addresses do not contain hostnames.
-     * @return string The referring address for this request.
+     * @return string|null The referring address for this request or null.
      */
-    public function referer(bool $local = false): string
+    public function referer(bool $local = false): ?string
     {
         $ref = $this->getEnv('HTTP_REFERER');
 
@@ -589,7 +589,7 @@ class ServerRequest implements ServerRequestInterface
             }
         }
 
-        return '/';
+        return null;
     }
 
     /**
