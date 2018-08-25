@@ -983,7 +983,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     {
         $urlToRedirectBackTo = $this->getController()->getRequest()->getRequestTarget();
         if (!$this->getController()->getRequest()->is('get')) {
-            $urlToRedirectBackTo = $this->getController()->getRequest()->referer(true);
+            $urlToRedirectBackTo = $this->getController()->referer();
         }
 
         return $urlToRedirectBackTo;

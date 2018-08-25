@@ -575,8 +575,8 @@ class ControllerTest extends TestCase
         $this->assertEquals('http://localhost/posts/index', $result);
 
         $Controller = new Controller(null);
-        $result = $Controller->referer(null, false);
-        $this->assertEquals('/', $result);
+        $result = $Controller->referer('/', false);
+        $this->assertEquals('http://localhost/', $result);
     }
 
     /**
@@ -595,7 +595,7 @@ class ControllerTest extends TestCase
         Router::pushRequest($request);
 
         $request->expects($this->any())->method('referer')
-            ->will($this->returnValue('/'));
+            ->will($this->returnValue(null));
 
         $controller = new Controller($request);
         $result = $controller->referer('/', true);
