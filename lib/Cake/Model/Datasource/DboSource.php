@@ -632,7 +632,7 @@ class DboSource extends DataSource {
 /**
  * Builds a map of the columns contained in a result
  *
- * @param array|PDOStatement $results The results to format.
+ * @param PDOStatement $results The results to format.
  * @return void
  */
 	public function resultSet($results) {

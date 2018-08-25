@@ -765,10 +765,10 @@ class Postgres extends DboSource {
 /**
  * resultSet method
  *
- * @param array &$results The results
+ * @param PDOStatement $results The results
  * @return void
  */
-	public function resultSet(&$results) {
+	public function resultSet($results) {
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
