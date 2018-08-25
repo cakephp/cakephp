@@ -28,7 +28,7 @@ parameters:
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
     earlyTerminatingMethodCalls:
-        Cake\Shell\Shell:
+        Cake\Console\Shell:
             - abort
 
 services:
