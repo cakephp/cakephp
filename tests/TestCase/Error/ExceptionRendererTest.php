@@ -27,6 +27,7 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\NotFoundException;
@@ -694,7 +695,12 @@ class ExceptionRendererTest extends TestCase
                 new CakeException('base class'),
                 ['/Internal Error/'],
                 500
-            ]
+            ],
+            [
+                new HttpException('Network Authentication Required', 511),
+                ['/Network Authentication Required/'],
+                511
+            ],
         ];
     }
 
