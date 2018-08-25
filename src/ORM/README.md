@@ -177,8 +177,8 @@ store these classes. For example, you could use the `Data` folder for this:
 // in src/Data/Table/ArticlesTable.php
 namespace Acme\Data\Table;
 
-use Acme\Data\Entity\Article.php;
-use Acme\Data\Table\UsersTable.php;
+use Acme\Data\Entity\Article;
+use Acme\Data\Table\UsersTable;
 use Cake\ORM\Table;
 
 class ArticlesTable extends Table
