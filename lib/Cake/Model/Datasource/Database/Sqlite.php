@@ -299,7 +299,7 @@ class Sqlite extends DboSource {
 /**
  * Generate ResultSet
  *
- * @param mixed $results The results to modify.
+ * @param PDOStatement $results The results to modify.
  * @return void
  */
 	public function resultSet($results) {
