@@ -273,6 +273,16 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Connects to the database.
+ *
+ * @return bool
+ */
+	public function connect() {
+		// This method is implemented in subclasses
+		return $this->connected;
+	}
+
+/**
  * Reconnects to database server with optional new settings
  *
  * @param array $config An array defining the new configuration settings
@@ -617,6 +627,16 @@ class DboSource extends DataSource {
 			}
 			return $this->fetchAll($args[0], $args[1], array('cache' => $cache));
 		}
+	}
+
+/**
+ * Builds a map of the columns contained in a result
+ *
+ * @param PDOStatement $results The results to format.
+ * @return void
+ */
+	public function resultSet($results) {
+		// This method is implemented in subclasses
 	}
 
 /**
