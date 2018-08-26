@@ -161,6 +161,7 @@ $cacheConfig = [
    'prefix'    => 'orm_',
 ],
 Cache::setConfig('_cake_model_', $cacheConfig);
+```
 
 ## Creating Custom Table and Entity Classes
 
