@@ -186,7 +186,7 @@ class ArticlesTable extends Table
     public function initialize()
     {
         $this->setEntityClass(Article::class);
-	    $this->belongsTo('Users', ['className' => UsersTable::class]);
+        $this->belongsTo('Users', ['className' => UsersTable::class]);
     }
 }
 ```
