@@ -165,7 +165,7 @@ Cache::setConfig('_cake_model_', $cacheConfig);
 ## Creating Custom Table and Entity Classes
 
 By default, the Cake ORM uses the `\Cake\ORM\Table` and `\Cake\ORM\Entity` classes to
-intercat with the database. While using the default classes makes sense for
+interact with the database. While using the default classes makes sense for
 quick scripts and small applications, you will often want to use your own
 classes for adding your custom logic.
 
@@ -186,7 +186,7 @@ class ArticlesTable extends Table
     public function initialize()
     {
         $this->setEntityClass(Article::class);
-	$this->belongsTo('Users', ['className' => UsersTable::class]);
+	    $this->belongsTo('Users', ['className' => UsersTable::class]);
     }
 }
 ```
