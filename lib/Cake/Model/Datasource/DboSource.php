@@ -252,7 +252,7 @@ class DboSource extends DataSource {
  *
  * @var array
  */
-	public $map;
+	public $map = array();
 
 /**
  * Constructor
