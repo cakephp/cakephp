@@ -25,26 +25,26 @@ use Cake\Utility\Security;
  *
  * ### Using Digest auth
  *
- * In your controller's components array, add auth + the required config
+ * Load `AuthComponent` in your controller's `initialize()` and add 'Digest' in 'authenticate' key
+ *
  * ```
- *  public $components = [
- *      'Auth' => [
- *          'authenticate' => ['Digest']
- *      ]
- *  ];
+ *  $this->loadComponent('Auth', [
+ *      'authenticate' => ['Digest'],
+ *      'storage' => 'Memory',
+ *      'unauthorizedRedirect' => false,
+ *  ]);
  * ```
  *
- * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
- * beforeFilter() to prevent CakePHP from sending a session cookie to the client.
+ * You should set `storage` to `Memory` to prevent CakePHP from sending a
+ * session cookie to the client.
  *
- * Since HTTP Digest Authentication is stateless you don't need a login() action
+ * You should set `unauthorizedRedirect` to `false`. This causes `AuthComponent` to
+ * throw a `ForbiddenException` exception instead of redirecting to another page.
+ *
+ * Since HTTP Digest Authentication is stateless you don't need call `setUser()`
  * in your controller. The user credentials will be checked on each request. If
  * valid credentials are not provided, required authentication headers will be sent
  * by this authentication provider which triggers the login dialog in the browser/client.
- *
- * You may also want to use `$this->Auth->unauthorizedRedirect = false;`.
- * This causes AuthComponent to throw a ForbiddenException exception instead of
- * redirecting to another page.
  *
  * ### Generating passwords compatible with Digest authentication.
  *
@@ -60,6 +60,8 @@ use Cake\Utility\Security;
  * example `User.digest_pass` could be used for a digest password, while
  * `User.password` would store the password hash for use with other methods like
  * Basic or Form.
+ *
+ * @see https://book.cakephp.org/3.0/en/controllers/components/authentication.html
  */
 class DigestAuthenticate extends BasicAuthenticate
 {
