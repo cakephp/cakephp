@@ -369,7 +369,7 @@ class Session
     }
 
     /**
-     * Write datas and close the session
+     * Write data and close the session
      *
      * @return bool True if session was started
      */
