@@ -19,6 +19,7 @@ use Cake\Http\Session;
 use Cake\Http\Session\CacheSession;
 use Cake\Http\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * TestCacheSession
@@ -302,6 +303,25 @@ class SessionTest extends TestCase
         $this->assertFalse($session->started());
         $this->assertTrue($session->start());
         $this->assertTrue($session->started());
+    }
+
+    /**
+     * test close method
+     *
+     * @return void
+     */
+    public function testCloseFailure()
+    {
+        $session = new Session();
+        $session->started();
+        $this->assertTrue($session->start());
+        try {
+            $session->close();
+        } catch (RuntimeException $e) {
+            // closing the session in CLI should raise an error
+            // and won't close the session.
+            $this->assertTrue($session->started());
+        }
     }
 
     /**
