@@ -665,7 +665,7 @@ class View implements EventDispatcherInterface
      * - `beforeLayout`
      * - `afterLayout`
      *
-     * If View::$autoRender is false and no `$layout` is provided, the template will be returned bare.
+     * If View::$autoLayout is false or $layout is set to `false`, the template will be returned bare.
      *
      * Template and layout names can point to plugin templates/layouts. Using the `Plugin.template` syntax
      * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
