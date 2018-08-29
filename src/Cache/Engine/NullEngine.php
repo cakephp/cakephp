@@ -35,13 +35,6 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function gc(?int $expires = null): void
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function write(string $key, $value): bool
     {
         return true;

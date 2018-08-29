@@ -51,8 +51,6 @@ class MemcachedEngine extends CacheEngine
      *    the same persistent value will share a single underlying connection.
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
-     *    cache::gc from ever being called automatically.
      * - `serialize` The serializer engine used to serialize data. Available engines are php,
      *    igbinary and json. Beside php, the memcached extension must be compiled with the
      *    appropriate serializer support.
@@ -73,7 +71,6 @@ class MemcachedEngine extends CacheEngine
         'persistent' => false,
         'port' => null,
         'prefix' => 'cake_',
-        'probability' => 100,
         'serialize' => 'php',
         'servers' => ['127.0.0.1'],
         'options' => [],

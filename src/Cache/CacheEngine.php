@@ -36,8 +36,6 @@ abstract class CacheEngine
      *    handy for deleting a complete group from cache.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
-     *    cache::gc from ever being called automatically.
      * - `warnOnWriteFailures` Some engines, such as ApcuEngine, may raise warnings on
      *    write failures.
      *
@@ -47,7 +45,6 @@ abstract class CacheEngine
         'duration' => 3600,
         'groups' => [],
         'prefix' => 'cake_',
-        'probability' => 100,
         'warnOnWriteFailures' => true,
     ];
 
@@ -81,18 +78,6 @@ abstract class CacheEngine
         }
 
         return true;
-    }
-
-    /**
-     * Garbage collection
-     *
-     * Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return void
-     */
-    public function gc(?int $expires = null): void
-    {
     }
 
     /**

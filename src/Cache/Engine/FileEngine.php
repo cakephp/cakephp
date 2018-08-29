@@ -52,7 +52,6 @@ class FileEngine extends CacheEngine
      * - `path` Path to where cachefiles should be saved. Defaults to system's temp dir.
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
      *    cache::gc from ever being called automatically.
      * - `serialize` Should cache objects be serialized first.
      *
@@ -66,7 +65,6 @@ class FileEngine extends CacheEngine
         'mask' => 0664,
         'path' => null,
         'prefix' => 'cake_',
-        'probability' => 100,
         'serialize' => true,
     ];
 
@@ -103,17 +101,6 @@ class FileEngine extends CacheEngine
         }
 
         return $this->_active();
-    }
-
-    /**
-     * Garbage collection. Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return void
-     */
-    public function gc(?int $expires = null): void
-    {
-        $this->clear(true);
     }
 
     /**
