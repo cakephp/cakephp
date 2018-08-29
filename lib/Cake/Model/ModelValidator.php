@@ -280,7 +280,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * why the rule failed
  *
  * @param string $field The name of the field to invalidate
- * @param string $message Validation message explaining why the rule failed, defaults to true.
+ * @param string|bool $message Validation message explaining why the rule failed, defaults to true.
  * @return void
  */
 	public function invalidate($field, $message = true) {

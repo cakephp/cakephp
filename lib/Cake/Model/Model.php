@@ -58,7 +58,7 @@ class Model extends CakeObject implements CakeEventListener {
 /**
  * Custom database table name, or null/false if no table association is desired.
  *
- * @var string
+ * @var string|false
  * @link https://book.cakephp.org/2.0/en/models/model-attributes.html#usetable
  */
 	public $useTable = null;
@@ -68,7 +68,7 @@ class Model extends CakeObject implements CakeEventListener {
  *
  * This field is also used in `find('list')` when called with no extra parameters in the fields list
  *
- * @var string
+ * @var string|false
  * @link https://book.cakephp.org/2.0/en/models/model-attributes.html#displayfield
  */
 	public $displayField = null;
@@ -84,7 +84,7 @@ class Model extends CakeObject implements CakeEventListener {
 /**
  * Container for the data that this model gets from persistent storage (usually, a database).
  *
- * @var array
+ * @var array|false
  * @link https://book.cakephp.org/2.0/en/models/model-attributes.html#data
  */
 	public $data = array();
@@ -632,7 +632,7 @@ class Model extends CakeObject implements CakeEventListener {
 /**
  * The ID of the model record that was last inserted.
  *
- * @var int
+ * @var int|string
  */
 	protected $_insertID = null;
 
@@ -699,7 +699,7 @@ class Model extends CakeObject implements CakeEventListener {
  *
  * @param bool|int|string|array $id Set this ID for this model on startup,
  * can also be an array of options, see above.
- * @param string $table Name of database table to use.
+ * @param string|false $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
 	public function __construct($id = false, $table = null, $ds = null) {
@@ -1196,7 +1196,7 @@ class Model extends CakeObject implements CakeEventListener {
  * a one-item, two-dimensional array using $one for a key and $two as its value.)
  *
  * @param string|array|SimpleXmlElement|DomNode $one Array or string of data
- * @param string $two Value string for the alternative indata method
+ * @param string|false $two Value string for the alternative indata method
  * @return array|null Data with all of $one's keys and values, otherwise null.
  * @link https://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
@@ -1614,7 +1614,7 @@ class Model extends CakeObject implements CakeEventListener {
  *
  * @param string|array $fields String of single field name, or an array of field names.
  * @param int|string $id The ID of the record to read
- * @return array Array of database fields, or false if not found
+ * @return array|false Array of database fields, or false if not found
  * @link https://book.cakephp.org/2.0/en/models/retrieving-your-data.html#model-read
  */
 	public function read($fields = null, $id = null) {
@@ -3151,7 +3151,7 @@ class Model extends CakeObject implements CakeEventListener {
  * @param string $state Either "before" or "after"
  * @param array $query Query.
  * @param array $results Results.
- * @return int The number of records found, or false
+ * @return int|false The number of records found, or false
  * @see Model::find()
  */
 	protected function _findCount($state, $query, $results = array()) {
@@ -3495,7 +3495,7 @@ class Model extends CakeObject implements CakeEventListener {
  * Additionally it populates the validationErrors property of the model with the same array.
  *
  * @param array|string $options An optional array of custom options to be made available in the beforeValidate callback
- * @return array Array of invalid fields and their error messages
+ * @return array|bool Array of invalid fields and their error messages
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {
