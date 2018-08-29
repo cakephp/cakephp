@@ -85,7 +85,6 @@ class RedisEngineTest extends TestCase
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
-            'probability' => 100,
             'groups' => [],
             'server' => '127.0.0.1',
             'port' => 6379,
@@ -114,7 +113,6 @@ class RedisEngineTest extends TestCase
         $expecting = [
             'prefix' => 'redis_',
             'duration' => 3600,
-            'probability' => 100,
             'groups' => [],
             'server' => 'localhost',
             'port' => 6379,
