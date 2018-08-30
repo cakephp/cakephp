@@ -55,6 +55,7 @@ class ControllerAuthorizeTest extends TestCase
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->auth->controller(new Controller());
+        $this->auth->authorize([], new ServerRequest());
     }
 
     /**
