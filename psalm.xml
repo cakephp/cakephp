@@ -150,6 +150,7 @@
             <errorLevel type="suppress">
                 <file name="src/View/Form/EntityContext.php" />
                 <file name="src/Filesystem/Folder.php" />
+                <file name="src/Core/Configure/Engine/IniConfig.php" />
             </errorLevel>
         </LoopInvalidation>
 
@@ -184,6 +185,7 @@
         <PossiblyUndefinedMethod>
             <errorLevel type="suppress">
                 <file name="src/ORM/LazyEagerLoader.php" />
+                <file name="src/View/XmlView.php" />
             </errorLevel>
         </PossiblyUndefinedMethod>
 
