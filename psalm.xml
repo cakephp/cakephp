@@ -138,5 +138,24 @@
         <OverriddenMethodAccess errorLevel="info" />
         <InaccessibleProperty errorLevel="info" />
 
+        <!-- CakePHP Specific -->
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/View/XmlView.php" />
+            </errorLevel>
+        </PossiblyUndefinedMethod>
+
+        <LoopInvalidation>
+            <errorLevel type="suppress">
+                <file name="src/View/Form/EntityContext.php" />
+            </errorLevel>
+        </LoopInvalidation>
+
+        <UndefinedConstant>
+            <errorLevel type="suppress">
+                <file name="src/View/Helper/UrlHelper.php" />
+            </errorLevel>
+        </UndefinedConstant>
+
     </issueHandlers>
 </psalm>

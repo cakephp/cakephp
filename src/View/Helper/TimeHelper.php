@@ -260,11 +260,6 @@ class TimeHelper extends Helper
             'element' => null,
             'timezone' => null,
         ];
-        $options['timezone'] = $this->_getTimezone($options['timezone']);
-        if ($options['timezone']) {
-            $dateTime = $dateTime->timezone($options['timezone']);
-            unset($options['timezone']);
-        }
 
         if (!empty($options['element'])) {
             $element = [
@@ -280,7 +275,16 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
+
+        $dateTime = new Time($dateTime);
+
+        $options['timezone'] = $this->_getTimezone($options['timezone']);
+        if ($options['timezone']) {
+            $dateTime = $dateTime->timezone($options['timezone']);
+            unset($options['timezone']);
+        }
+
+        $relativeDate = $dateTime->timeAgoInWords($options);
 
         if ($element) {
             $relativeDate = sprintf(

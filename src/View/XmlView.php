@@ -142,6 +142,7 @@ class XmlView extends SerializedView
             return Xml::fromArray($data, $options)->saveXML();
         }
 
+        /** @var \SimpleXMLElement */
         return Xml::fromArray($data, $options)->asXML();
     }
 }

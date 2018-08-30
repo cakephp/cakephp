@@ -25,6 +25,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use DateTime;
 use RuntimeException;
@@ -2759,7 +2760,11 @@ class FormHelper extends Helper
         }
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
-        if (isset($data['name']) && $secure !== null && $secure !== self::SECURE_SKIP) {
+        if (isset($data['name']) &&
+            $secure !== null &&
+            $secure !== self::SECURE_SKIP &&
+            $widget instanceof WidgetInterface
+        ) {
             foreach ($widget->secureFields($data) as $field) {
                 $this->_secure($secure, $this->_secureFieldName($field));
             }
