@@ -155,6 +155,8 @@
             <errorLevel type="suppress">
                 <file name="src/View/Helper/UrlHelper.php" />
                 <file name="src/Cache/Engine/MemcachedEngine.php" />
+                <file name="src/Console/ShellDispatcher.php" />
+                <file name="src/Console/Shell.php" />
             </errorLevel>
         </UndefinedConstant>
 
@@ -164,6 +166,12 @@
                 <file name="src/Cache/Engine/RedisEngine.php" />
             </errorLevel>
         </UndefinedClass>
+
+        <UndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/Console/Shell.php" />
+            </errorLevel>
+        </UndefinedMethod>
 
     </issueHandlers>
 </psalm>
