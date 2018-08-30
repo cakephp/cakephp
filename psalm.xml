@@ -148,6 +148,7 @@
         <LoopInvalidation>
             <errorLevel type="suppress">
                 <file name="src/View/Form/EntityContext.php" />
+                <file name="src/Filesystem/Folder.php" />
             </errorLevel>
         </LoopInvalidation>
 
@@ -157,6 +158,7 @@
                 <file name="src/Cache/Engine/MemcachedEngine.php" />
                 <file name="src/Console/ShellDispatcher.php" />
                 <file name="src/Console/Shell.php" />
+                <file name="src/Filesystem/Folder.php" />
             </errorLevel>
         </UndefinedConstant>
 
