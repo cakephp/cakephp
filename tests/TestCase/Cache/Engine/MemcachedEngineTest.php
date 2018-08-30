@@ -90,7 +90,6 @@ class MemcachedEngineTest extends TestCase
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
-            'probability' => 100,
             'servers' => ['127.0.0.1'],
             'persistent' => false,
             'compress' => false,

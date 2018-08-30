@@ -44,8 +44,6 @@ class RedisEngine extends CacheEngine
      * - `port` port number to the Redis server.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
-     *    cache::gc from ever being called automatically.
      * - `server` URL or ip to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
@@ -60,7 +58,6 @@ class RedisEngine extends CacheEngine
         'persistent' => true,
         'port' => 6379,
         'prefix' => 'cake_',
-        'probability' => 100,
         'host' => null,
         'server' => '127.0.0.1',
         'timeout' => 0,

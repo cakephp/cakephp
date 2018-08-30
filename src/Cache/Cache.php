@@ -215,21 +215,6 @@ class Cache
     }
 
     /**
-     * Garbage collection
-     *
-     * Permanently remove all expired and deleted data
-     *
-     * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
-     * @param int|null $expires [optional] An expires timestamp. Defaults to NULL
-     * @return void
-     */
-    public static function gc(string $config = 'default', ?int $expires = null): void
-    {
-        $engine = static::engine($config);
-        $engine->gc($expires);
-    }
-
-    /**
      * Write data for key into cache.
      *
      * ### Usage:
