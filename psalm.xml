@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<psalm
+    totallyTyped="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <!-- Remove this when psalm 2.0.11 is released -->
+            <file name="src/Command/HelpCommand.php" />
+            <file name="src/Core/functions.php" />
+            <file name="src/I18n/functions.php" />
+            <file name="src/Collection/functions.php" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <LessSpecificReturnType errorLevel="info" />
+
+        <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
+
+        <DeprecatedMethod errorLevel="info" />
+        <DeprecatedProperty errorLevel="info" />
+        <DeprecatedClass errorLevel="info" />
+        <DeprecatedConstant errorLevel="info" />
+        <DeprecatedInterface errorLevel="info" />
+        <DeprecatedTrait errorLevel="info" />
+
+        <MissingClosureReturnType errorLevel="info" />
+        <MissingReturnType errorLevel="info" />
+        <MissingPropertyType errorLevel="info" />
+        <InvalidDocblock errorLevel="info" />
+        <MisplacedRequiredParam errorLevel="info" />
+
+        <PropertyNotSetInConstructor errorLevel="info" />
+        <MissingConstructor errorLevel="info" />
+        <MissingClosureParamType errorLevel="info" />
+        <MissingParamType errorLevel="info" />
+
+        <RedundantCondition errorLevel="info" />
+
+        <DocblockTypeContradiction errorLevel="info" />
+        <RedundantConditionGivenDocblockType errorLevel="info" />
+
+        <UnresolvableInclude errorLevel="info" />
+
+        <RawObjectIteration errorLevel="info" />
+
+        <!-- level 4 issues - points to possible deficiencies in logic, higher false-positives -->
+
+        <MoreSpecificReturnType errorLevel="info" />
+        <LessSpecificReturnStatement errorLevel="info" />
+        <TypeCoercion errorLevel="info" />
+
+        <PossiblyFalseArgument errorLevel="info" />
+        <PossiblyFalseIterator errorLevel="info" />
+        <PossiblyFalseOperand errorLevel="info" />
+        <PossiblyFalsePropertyAssignmentValue errorLevel="info" />
+        <PossiblyFalseReference errorLevel="info" />
+        <PossiblyInvalidArgument errorLevel="info" />
+        <PossiblyInvalidArrayAccess errorLevel="info" />
+        <PossiblyInvalidArrayAssignment errorLevel="info" />
+        <PossiblyInvalidArrayOffset errorLevel="info" />
+        <PossiblyInvalidFunctionCall errorLevel="info" />
+        <PossiblyInvalidIterator errorLevel="info" />
+        <PossiblyInvalidMethodCall errorLevel="info" />
+        <PossiblyInvalidOperand errorLevel="info" />
+        <PossiblyInvalidPropertyAssignment errorLevel="info" />
+        <PossiblyInvalidPropertyAssignmentValue errorLevel="info" />
+        <PossiblyInvalidPropertyFetch errorLevel="info" />
+        <PossiblyNullArgument errorLevel="info" />
+        <PossiblyNullArrayAccess errorLevel="info" />
+        <PossiblyNullArrayAssignment errorLevel="info" />
+        <PossiblyNullArrayOffset errorLevel="info" />
+        <PossiblyNullFunctionCall errorLevel="info" />
+        <PossiblyNullIterator errorLevel="info" />
+        <PossiblyNullOperand errorLevel="info" />
+        <PossiblyNullPropertyAssignment errorLevel="info" />
+        <PossiblyNullPropertyAssignmentValue errorLevel="info" />
+        <PossiblyNullPropertyFetch errorLevel="info" />
+        <PossiblyNullReference errorLevel="info" />
+        <PossiblyUndefinedGlobalVariable errorLevel="info" />
+        <PossiblyUndefinedVariable errorLevel="info" />
+        <PossiblyUndefinedArrayOffset errorLevel="info" />
+        <PossiblyUndefinedMethod errorLevel="info" />
+
+        <!-- level 5 issues - should be avoided at mosts costs... -->
+
+        <ForbiddenCode errorLevel="info" />
+        <ImplicitToStringCast errorLevel="info" />
+        <InvalidScalarArgument errorLevel="info" />
+        <InvalidToString errorLevel="info" />
+        <InvalidOperand errorLevel="info" />
+        <NoInterfaceProperties errorLevel="info" />
+        <TooManyArguments errorLevel="info" />
+        <TypeDoesNotContainType errorLevel="info" />
+        <TypeDoesNotContainNull errorLevel="info" />
+        <MissingDocblockType errorLevel="info" />
+        <ImplementedReturnTypeMismatch errorLevel="info" />
+
+        <!-- level 6 issues - really bad things -->
+
+        <InvalidNullableReturnType errorLevel="info" />
+        <NullableReturnStatement errorLevel="info" />
+        <InvalidFalsableReturnType errorLevel="info" />
+        <FalsableReturnStatement errorLevel="info" />
+
+        <MoreSpecificImplementedParamType errorLevel="info" />
+        <LessSpecificImplementedReturnType errorLevel="info" />
+
+        <InvalidReturnStatement errorLevel="info" />
+        <InvalidReturnType errorLevel="info" />
+        <UndefinedThisPropertyAssignment errorLevel="info" />
+
+        <!-- level 7 issues - even worse -->
+
+        <UndefinedThisPropertyAssignment errorLevel="info" />
+        <UndefinedPropertyAssignment errorLevel="info" />
+        <UndefinedThisPropertyFetch errorLevel="info" />
+        <UndefinedPropertyFetch errorLevel="info" />
+
+        <InvalidReturnStatement errorLevel="info" />
+        <InvalidReturnType errorLevel="info" />
+        <InvalidArgument errorLevel="info" />
+        <InvalidPropertyAssignmentValue errorLevel="info" />
+        <InvalidArrayOffset errorLevel="info" />
+        <InvalidArrayAssignment errorLevel="info" />
+        <InvalidArrayAccess errorLevel="info" />
+        <InvalidClone errorLevel="info" />
+
+        <!-- level 8 issues - some fatal errors in PHP -->
+
+        <ReservedWord errorLevel="info" />
+        <MethodSignatureMismatch errorLevel="info" />
+        <OverriddenMethodAccess errorLevel="info" />
+        <InaccessibleProperty errorLevel="info" />
+
+    </issueHandlers>
+</psalm>
