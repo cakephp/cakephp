@@ -154,6 +154,7 @@
         </LoopInvalidation>
 
         <UndefinedConstant errorLevel="suppress" />
+        <EmptyArrayAccess errorLevel="suppress" />
 
         <UndefinedClass>
             <errorLevel type="suppress">
@@ -168,6 +169,12 @@
                 <file name="src/Controller/Component/AuthComponent.php" />
             </errorLevel>
         </UndefinedMethod>
+
+        <NullReference>
+            <errorLevel type="suppress">
+                <file name="src/Database/Driver.php" />
+            </errorLevel>
+        </NullReference>
 
     </issueHandlers>
 </psalm>

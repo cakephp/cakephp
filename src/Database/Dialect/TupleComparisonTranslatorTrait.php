@@ -81,8 +81,8 @@ trait TupleComparisonTranslatorTrait
         $conditions = ['OR' => []];
         foreach ($value as $tuple) {
             $item = [];
-            foreach (array_values($tuple) as $i => $value) {
-                $item[] = [$fields[$i] => $value];
+            foreach (array_values($tuple) as $i => $value2) {
+                $item[] = [$fields[$i] => $value2];
             }
             $conditions['OR'][] = $item;
         }
