@@ -64,17 +64,10 @@ class ControllerAuthorize extends BaseAuthorize
      *
      * @param \Cake\Controller\Controller|null $controller null to get, a controller to set.
      * @return \Cake\Controller\Controller
-     * @throws \Cake\Core\Exception\Exception If controller does not have method `isAuthorized()`.
      */
     public function controller(?Controller $controller = null): Controller
     {
         if ($controller) {
-            if (!method_exists($controller, 'isAuthorized')) {
-                throw new Exception(sprintf(
-                    '%s does not implement an isAuthorized() method.',
-                    get_class($controller)
-                ));
-            }
             $this->_Controller = $controller;
         }
 
@@ -86,10 +79,18 @@ class ControllerAuthorize extends BaseAuthorize
      *
      * @param array|\ArrayAccess $user Active user data
      * @param \Cake\Http\ServerRequest $request Request instance.
+     * @throws \Cake\Core\Exception\Exception If controller does not have method `isAuthorized()`.
      * @return bool
      */
     public function authorize($user, ServerRequest $request): bool
     {
+        if (!method_exists($this->_Controller, 'isAuthorized')) {
+            throw new Exception(sprintf(
+                '%s does not implement an isAuthorized() method.',
+                get_class($this->_Controller)
+            ));
+        }
+
         return (bool)$this->_Controller->isAuthorized($user);
     }
 }
