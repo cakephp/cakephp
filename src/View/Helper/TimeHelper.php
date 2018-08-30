@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\View\Helper;
 
+use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
@@ -248,7 +249,7 @@ class TimeHelper extends Helper
      *   - `class` - The class name to use, defaults to `time-ago-in-words`.
      *   - `title` - Defaults to the $dateTime input.
      *
-     * @param int|string|\DateTime|\Cake\Chronos\ChronosInterface $dateTime UNIX timestamp, strtotime() valid string or DateTime object
+     * @param int|string|\DateTime|\Cake\I18n\Time|\Cake\I18n\FrozenTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
      * @param array $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
@@ -260,6 +261,13 @@ class TimeHelper extends Helper
             'element' => null,
             'timezone' => null,
         ];
+        $options['timezone'] = $this->_getTimezone($options['timezone']);
+        if ($options['timezone'] &&
+            ($dateTime instanceof Time || $dateTime instanceof FrozenTime)
+        ) {
+            $dateTime = $dateTime->timezone($options['timezone']);
+            unset($options['timezone']);
+        }
 
         if (!empty($options['element'])) {
             $element = [
@@ -275,16 +283,7 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-
-        $dateTime = new Time($dateTime);
-
-        $options['timezone'] = $this->_getTimezone($options['timezone']);
-        if ($options['timezone']) {
-            $dateTime = $dateTime->timezone($options['timezone']);
-            unset($options['timezone']);
-        }
-
-        $relativeDate = $dateTime->timeAgoInWords($options);
+        $relativeDate = (new Time($dateTime))->timeAgoInWords($options);
 
         if ($element) {
             $relativeDate = sprintf(
