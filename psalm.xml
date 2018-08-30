@@ -9,6 +9,7 @@
         <directory name="src" />
         <ignoreFiles>
             <directory name="vendor" />
+            <directory name="src/TestSuite" />
             <!-- Remove this when psalm 2.0.11 is released -->
             <file name="src/Command/HelpCommand.php" />
             <file name="src/Core/functions.php" />
