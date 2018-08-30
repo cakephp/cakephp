@@ -74,7 +74,7 @@ class CookieTest extends TestCase
         $result = $cookie->toHeaderValue();
         $this->assertEquals('cakephp=cakephp-rocks; path=/', $result);
 
-        $date = Chronos::createFromFormat('m/d/Y h:m:s', '12/1/2027 12:00:00');
+        $date = Chronos::createFromFormat('m/d/Y h:i:s', '12/1/2027 12:00:00');
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie = $cookie->withDomain('cakephp.org')
@@ -83,7 +83,7 @@ class CookieTest extends TestCase
             ->withSecure(true);
         $result = $cookie->toHeaderValue();
 
-        $expected = 'cakephp=cakephp-rocks; expires=Tue, 01-Dec-2026 12:00:00 GMT; path=/; domain=cakephp.org; secure; httponly';
+        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; secure; httponly';
         $this->assertEquals($expected, $result);
     }
 

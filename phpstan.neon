@@ -26,7 +26,7 @@ parameters:
         - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
     earlyTerminatingMethodCalls:
-        Cake\Shell\Shell:
+        Cake\Console\Shell:
             - abort
 
 services:

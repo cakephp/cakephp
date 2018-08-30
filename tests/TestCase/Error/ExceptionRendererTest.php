@@ -28,6 +28,7 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
+use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\NotFoundException;
@@ -695,6 +696,11 @@ class ExceptionRendererTest extends TestCase
                 ['/Internal Error/'],
                 500,
             ],
+            [
+                new HttpException('Network Authentication Required', 511),
+                ['/Network Authentication Required/'],
+                511,
+            ],
         ];
     }
 
@@ -723,6 +729,13 @@ class ExceptionRendererTest extends TestCase
      */
     public function testExceptionNameMangling()
     {
+        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertContains('widget thing is missing', $result);
+
+        // Custom method should be called even when debug is off.
+        Configure::write('debug', false);
         $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
         $result = (string)$exceptionRenderer->render()->getBody();
