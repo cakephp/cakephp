@@ -1059,7 +1059,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _execute(): ResultSetInterface
+    protected function _execute()
     {
         $this->triggerBeforeFind();
         if ($this->_results) {
