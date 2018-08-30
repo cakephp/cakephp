@@ -170,6 +170,7 @@
         <UndefinedMethod>
             <errorLevel type="suppress">
                 <file name="src/Console/Shell.php" />
+                <file name="src/Controller/Component/AuthComponent.php" />
             </errorLevel>
         </UndefinedMethod>
 
