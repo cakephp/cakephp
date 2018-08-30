@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * SimpleCacheEngine class
@@ -59,7 +60,8 @@ class SimpleCacheEngineTest extends TestCase
 
     public function testGetInvalidKey()
     {
-        $this->markTestIncomplete();
+        $this->expectException(InvalidArgumentException::class);
+        $this->cache->get('');
     }
 
     public function testSetNoTtl()
@@ -76,12 +78,13 @@ class SimpleCacheEngineTest extends TestCase
         sleep(1);
         $this->assertSame('a value', $this->cache->get('key'));
         $this->assertNull($this->cache->get('expired'));
-        $this->assertNotEquals(0, $this->inner->getConfig('duration'));
+        $this->assertSame(5, $this->inner->getConfig('duration'));
     }
 
     public function testSetInvalidKey()
     {
-        $this->markTestIncomplete();
+        $this->expectException(InvalidArgumentException::class);
+        $this->cache->set('', 'some data');
     }
 
     public function testDelete()
@@ -93,7 +96,8 @@ class SimpleCacheEngineTest extends TestCase
 
     public function testDeleteInvalidKey()
     {
-        $this->markTestIncomplete();
+        $this->expectException(InvalidArgumentException::class);
+        $this->cache->delete('');
     }
 
     public function testClear()
@@ -158,6 +162,43 @@ class SimpleCacheEngineTest extends TestCase
         $results = $this->cache->getMultiple(array_keys($data));
         $this->assertNull($results['key']);
         $this->assertNull($results['key2']);
-        $this->assertGreaterThan(1, $this->inner->getConfig('duration'));
+        $this->assertSame(5, $this->inner->getConfig('duration'));
+    }
+
+    public function testDeleteMultiple()
+    {
+        $data = [
+            'key' => 'a value',
+            'key2' => 'other value',
+            'key3' => 'more data',
+        ];
+        $this->cache->setMultiple($data);
+        $this->assertTrue($this->cache->deleteMultiple(['key', 'key3']));
+        $this->assertNull($this->cache->get('key'));
+        $this->assertNull($this->cache->get('key3'));
+        $this->assertSame('other value', $this->cache->get('key2'));
+    }
+
+    public function testDeleteMultipleSomeMisses()
+    {
+        $data = [
+            'key' => 'a value',
+        ];
+        $this->cache->setMultiple($data);
+        $this->assertFalse($this->cache->deleteMultiple(['key', 'key3']));
+    }
+
+    public function testHas()
+    {
+        $this->assertFalse($this->cache->has('key'));
+
+        $this->cache->set('key', 'value');
+        $this->assertTrue($this->cache->has('key'));
+    }
+
+    public function testHasInvalidKey()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->cache->has('');
     }
 }

@@ -2,8 +2,8 @@
 namespace Cake\Cache;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\InvalidArgumentException;
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * Wrapper for Cake engines that allow them to support
@@ -24,6 +24,20 @@ class SimpleCacheEngine implements CacheInterface
     }
 
     /**
+     * Check key for validity.
+     *
+     * @param string $key Key to check.
+     * @return void
+     * @throws \Psr\SimpleCache\InvalidArgumentException when key is not valid.
+     */
+    protected function checkKey($key)
+    {
+        if (!is_string($key) || strlen($key) === 0) {
+            throw new InvalidArgumentException('Cache keys must be non-empty strings.');
+        }
+    }
+
+    /**
      * Fetches a value from the cache.
      *
      * @param string $key The unique key of this item in the cache.
@@ -34,6 +48,7 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function get($key, $default = null)
     {
+        $this->checkKey($key);
         $result = $this->inner->read($key);
         if ($result === false) {
             return $default;
@@ -56,6 +71,7 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function set($key, $value, $ttl = null)
     {
+        $this->checkKey($key);
         if ($ttl !== null) {
             $restore = $this->inner->getConfig('duration');
             $this->inner->setConfig('duration', $ttl);
@@ -81,6 +97,8 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function delete($key)
     {
+        $this->checkKey($key);
+
         return $this->inner->delete($key);
     }
 
@@ -154,6 +172,14 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function deleteMultiple($keys)
     {
+        $result = $this->inner->deleteMany($keys);
+        foreach ($result as $key => $success) {
+            if ($success === false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -171,5 +197,6 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function has($key)
     {
+        return $this->get($key) !== null;
     }
 }
