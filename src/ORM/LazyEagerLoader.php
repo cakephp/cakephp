@@ -140,7 +140,6 @@ class LazyEagerLoader
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);
         $primaryKey = (array)$source->getPrimaryKey();
-        /** @param \Cake\Collection\CollectionInterface */
         $results = $results
             ->indexBy(function ($e) use ($primaryKey) {
                 return implode(';', $e->extract($primaryKey));

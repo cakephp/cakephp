@@ -75,13 +75,10 @@ class CacheRegistry extends ObjectRegistry
         $instance = null;
         if (is_object($class)) {
             $instance = $class;
-        }
-
-        unset($config['className']);
-        if ($instance === null) {
-            /** @var string $class */
+        } else {
             $instance = new $class($config);
         }
+        unset($config['className']);
 
         if (!($instance instanceof CacheEngine)) {
             throw new RuntimeException(
