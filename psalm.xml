@@ -152,15 +152,7 @@
             </errorLevel>
         </LoopInvalidation>
 
-        <UndefinedConstant>
-            <errorLevel type="suppress">
-                <file name="src/View/Helper/UrlHelper.php" />
-                <file name="src/Cache/Engine/MemcachedEngine.php" />
-                <file name="src/Console/ShellDispatcher.php" />
-                <file name="src/Console/Shell.php" />
-                <file name="src/Filesystem/Folder.php" />
-            </errorLevel>
-        </UndefinedConstant>
+        <UndefinedConstant errorLevel="suppress" />
 
         <UndefinedClass>
             <errorLevel type="suppress">
