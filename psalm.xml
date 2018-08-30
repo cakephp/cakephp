@@ -189,5 +189,11 @@
             </errorLevel>
         </PossiblyUndefinedMethod>
 
+        <InvalidPassByReference>
+            <errorLevel type="suppress">
+                <file name="src/Console/ConsoleInput.php" />
+            </errorLevel>
+        </InvalidPassByReference>
+
     </issueHandlers>
 </psalm>

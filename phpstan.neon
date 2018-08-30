@@ -15,7 +15,6 @@ parameters:
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
-        - '#Call to an undefined method DateTimeInterface::i18nFormat\(\)#'
         - '#Cannot call method lastInsertId\(\) on null#'
         - '#Access to an undefined property Cake\\Mailer\\Email::\$request#'
         - '#Access to an undefined property Cake\\Mailer\\Email::\$response#'
