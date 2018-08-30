@@ -160,6 +160,7 @@
             <errorLevel type="suppress">
                 <file name="src/Cache/Engine/MemcachedEngine.php" />
                 <file name="src/Cache/Engine/RedisEngine.php" />
+                <file name="src/ORM/Behavior/TranslateBehavior.php" />
             </errorLevel>
         </UndefinedClass>
 
@@ -169,6 +170,8 @@
                 <file name="src/Controller/Component/AuthComponent.php" />
                 <file name="src/Datasource/Paginator.php" />
                 <file name="src/Datasource/ResultSetDecorator.php" />
+                <file name="src/ORM/Association.php" />
+                <file name="src/ORM/Association/BelongsToMany.php" />
             </errorLevel>
         </UndefinedMethod>
 
@@ -177,6 +180,12 @@
                 <file name="src/Database/Driver.php" />
             </errorLevel>
         </NullReference>
+
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/ORM/LazyEagerLoader.php" />
+            </errorLevel>
+        </PossiblyUndefinedMethod>
 
     </issueHandlers>
 </psalm>
