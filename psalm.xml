@@ -127,12 +127,24 @@
         <InvalidReturnType errorLevel="info" />
         <InvalidArgument errorLevel="info" />
         <InvalidPropertyAssignmentValue errorLevel="info" />
-        <InvalidArrayOffset errorLevel="info" />
-        <InvalidArrayAssignment errorLevel="info" />
-        <InvalidArrayAccess errorLevel="info" />
-        <InvalidClone errorLevel="info" />
 
         <!-- CakePHP Specific -->
+        <UndefinedConstant errorLevel="suppress" />
+
+        <EmptyArrayAccess>
+            <errorLevel type="suppress">
+                <file name="src/Database/Dialect/SqlserverDialectTrait.php" />
+            </errorLevel>
+        </EmptyArrayAccess>
+
+        <InvalidArrayOffset>
+            <errorLevel type="suppress">
+                <file name="src/I18n/Parser/MoFileParser.php" />
+                <file name="src/I18n/Parser/PoFileParser.php" />
+                <file name="src/View/Widget/RadioWidget.php" />
+            </errorLevel>
+        </InvalidArrayOffset>
+
         <PossiblyUndefinedMethod>
             <errorLevel type="suppress">
                 <file name="src/View/XmlView.php" />
@@ -146,9 +158,6 @@
                 <file name="src/Core/Configure/Engine/IniConfig.php" />
             </errorLevel>
         </LoopInvalidation>
-
-        <UndefinedConstant errorLevel="suppress" />
-        <EmptyArrayAccess errorLevel="suppress" />
 
         <UndefinedClass>
             <errorLevel type="suppress">
