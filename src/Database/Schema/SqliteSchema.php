@@ -102,8 +102,8 @@ class SqliteSchema extends BaseSchema
         if ($col === 'binary' && $length === 16) {
             return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
         }
-        if (in_array($col, ['blob', 'clob'])) {
-            return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
+        if (in_array($col, ['blob', 'clob', 'binary'])) {
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
         if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
             return ['type' => $col, 'length' => null];
