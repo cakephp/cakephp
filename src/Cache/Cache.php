@@ -235,6 +235,17 @@ class Cache
     }
 
     /**
+     * Get a SimpleCacheEngine object for the named cache pool.
+     *
+     * @param string $pool The name of the configured cache backend.
+     * @return \Cake\Cache\SimpleCacheEngine
+     */
+    public static function pool($config)
+    {
+        return new SimpleCacheEngine(static::engine($config));
+    }
+
+    /**
      * Garbage collection
      *
      * Permanently remove all expired and deleted data
