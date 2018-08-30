@@ -154,8 +154,16 @@
         <UndefinedConstant>
             <errorLevel type="suppress">
                 <file name="src/View/Helper/UrlHelper.php" />
+                <file name="src/Cache/Engine/MemcachedEngine.php" />
             </errorLevel>
         </UndefinedConstant>
+
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <file name="src/Cache/Engine/MemcachedEngine.php" />
+                <file name="src/Cache/Engine/RedisEngine.php" />
+            </errorLevel>
+        </UndefinedClass>
 
     </issueHandlers>
 </psalm>
