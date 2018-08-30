@@ -29,7 +29,7 @@ parameters:
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
         - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject#'
     earlyTerminatingMethodCalls:
-        Cake\Shell\Shell:
+        Cake\Console\Shell:
             - abort
 
 services:
