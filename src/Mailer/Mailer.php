@@ -225,7 +225,9 @@ abstract class Mailer implements EventListenerInterface
      */
     public function layout($layout)
     {
-        deprecationWarning('Mailer::layout() is deprecated. Use setLayout() which sets the layout on the email class instead.');
+        deprecationWarning(
+            'Mailer::layout() is deprecated. Use $mailer->viewBuilder()->setLayout() instead.'
+        );
 
         $this->_email->viewBuilder()->setLayout($layout);
 
