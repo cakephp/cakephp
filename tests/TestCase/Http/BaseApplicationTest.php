@@ -110,7 +110,7 @@ class BaseApplicationTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('does not implement');
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $app->addPlugin(__CLASS__);
+        $app->addPlugin(new \stdClass());
     }
 
     public function testAddPluginValidShortName()
