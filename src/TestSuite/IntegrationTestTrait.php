@@ -758,7 +758,7 @@ trait IntegrationTestTrait
      * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseOk(?string $message = null): void
+    public function assertResponseOk(string $message = ''): void
     {
         $this->assertThat(null, new StatusOk($this->_response), $message);
     }
@@ -769,7 +769,7 @@ trait IntegrationTestTrait
      * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseSuccess(?string $message = null): void
+    public function assertResponseSuccess(string $message = ''): void
     {
         $this->assertThat(null, new StatusSuccess($this->_response), $message);
     }
@@ -780,7 +780,7 @@ trait IntegrationTestTrait
      * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseError(?string $message = null): void
+    public function assertResponseError(string $message = ''): void
     {
         $this->assertThat(null, new StatusError($this->_response), $message);
     }
@@ -791,7 +791,7 @@ trait IntegrationTestTrait
      * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseFailure(?string $message = null): void
+    public function assertResponseFailure(string $message = ''): void
     {
         $this->assertThat(null, new StatusFailure($this->_response), $message);
     }
@@ -803,7 +803,7 @@ trait IntegrationTestTrait
      * @param string $message Custom message for failure.
      * @return void
      */
-    public function assertResponseCode(int $code, ?string $message = null): void
+    public function assertResponseCode(int $code, string $message = ''): void
     {
         $this->assertThat($code, new StatusCode($this->_response), $message);
     }
