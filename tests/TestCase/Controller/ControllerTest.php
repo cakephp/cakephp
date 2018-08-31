@@ -1078,9 +1078,14 @@ class ControllerTest extends TestCase
                 'default',
                 $event->getSubject()->viewBuilder()->getLayout()
             );
+
+            $event->getSubject()->viewBuilder()
+                ->setTemplatePath('Posts')
+                ->setTemplate('index');
         });
 
-        $Controller->render('/Element/test_element', 'default');
+        $result = $Controller->render('/Element/test_element', 'default');
+        $this->assertRegExp('/posts index/', (string)$result);
     }
 
     /**
