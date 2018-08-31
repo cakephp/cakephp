@@ -8,14 +8,6 @@
     backupGlobals="true"
     >
 
-    <php>
-        <ini name="memory_limit" value="-1"/>
-        <ini name="apc.enable_cli" value="1"/>
-        <!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
-        <!-- E_ALL (32767) -->
-        <ini name="error_reporting" value="32767"/>
-    </php>
-
     <testsuites>
         <testsuite name="cakephp">
             <directory>./tests/TestCase/</directory>
@@ -44,6 +36,12 @@
     </filter>
 
     <php>
+        <ini name="memory_limit" value="-1"/>
+        <ini name="apc.enable_cli" value="1"/>
+        <!-- E_ALL & ~E_USER_DEPRECATED (16383)-->
+        <!-- E_ALL (32767) -->
+        <ini name="error_reporting" value="32767"/>
+
         <!-- SQLite
         <env name="db_dsn" value="sqlite:///:memory:"/>
         -->
