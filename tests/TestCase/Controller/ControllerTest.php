@@ -1062,6 +1062,28 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * Test that render()'s arguments are available in beforeRender() through view builder.
+     *
+     * @return void
+     */
+    public function testBeforeRenderTemplateAndLayout()
+    {
+        $Controller = new Controller(new ServerRequest(), new Response());
+        $Controller->getEventManager()->on('Controller.beforeRender', function ($event) {
+            $this->assertEquals(
+                '/Element/test_element',
+                $event->getSubject()->viewBuilder()->getTemplate()
+            );
+            $this->assertEquals(
+                'default',
+                $event->getSubject()->viewBuilder()->getLayout()
+            );
+        });
+
+        $Controller->render('/Element/test_element', 'default');
+    }
+
+    /**
      * Test name getter and setter.
      *
      * @return void

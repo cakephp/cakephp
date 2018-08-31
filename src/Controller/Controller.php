@@ -626,6 +626,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         $this->autoRender = false;
 
+        if ($template !== null) {
+            $builder->setTemplate($template);
+        }
+
+        if ($layout !== null) {
+            $builder->setLayout($layout);
+        }
+
         $event = $this->dispatchEvent('Controller.beforeRender');
         if ($event->getResult() instanceof Response) {
             return $event->getResult();
