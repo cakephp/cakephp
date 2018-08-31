@@ -455,7 +455,7 @@ class File
     public function perms()
     {
         if ($this->exists()) {
-            return substr(sprintf('%o', fileperms($this->path)), -4);
+            return substr(sprintf('%o', fileperms($this->path)), -3);
         }
 
         return false;
