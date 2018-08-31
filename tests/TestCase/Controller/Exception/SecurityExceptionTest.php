@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +31,7 @@ class SecurityExceptionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->securityException = new SecurityException;
+        $this->securityException = new SecurityException();
     }
 
     /**

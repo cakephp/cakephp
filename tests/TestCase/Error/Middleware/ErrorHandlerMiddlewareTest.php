@@ -111,7 +111,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
-            $response = new Response;
+            $response = new Response();
             $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
                 ->setMethods(['render'])
                 ->getMock();

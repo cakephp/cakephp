@@ -266,7 +266,7 @@ class ValidatorTest extends TestCase
     public function testFieldSetter()
     {
         $validator = new Validator();
-        $validationSet = new ValidationSet;
+        $validationSet = new ValidationSet();
         $validator->field('thing', $validationSet);
         $this->assertSame($validationSet, $validator->field('thing'));
     }
@@ -1048,16 +1048,16 @@ class ValidatorTest extends TestCase
     public function testProvider()
     {
         $validator = new Validator();
-        $object = new \stdClass;
+        $object = new \stdClass();
         $this->assertSame($validator, $validator->setProvider('foo', $object));
         $this->assertSame($object, $validator->getProvider('foo'));
         $this->assertNull($validator->getProvider('bar'));
 
-        $another = new \stdClass;
+        $another = new \stdClass();
         $this->assertSame($validator, $validator->setProvider('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new \Cake\Validation\RulesProvider, $validator->getProvider('default'));
+        $this->assertEquals(new \Cake\Validation\RulesProvider(), $validator->getProvider('default'));
     }
 
     /**
@@ -1103,7 +1103,7 @@ class ValidatorTest extends TestCase
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
                 $this->assertEquals('bar', $data);
                 $expected = [
-                    'default' => new \Cake\Validation\RulesProvider,
+                    'default' => new \Cake\Validation\RulesProvider(),
                     'thing' => $thing,
                 ];
                 $expected = [
@@ -1151,7 +1151,7 @@ class ValidatorTest extends TestCase
                 $this->assertEquals('and', $a);
                 $this->assertEquals('awesome', $b);
                 $expected = [
-                    'default' => new \Cake\Validation\RulesProvider,
+                    'default' => new \Cake\Validation\RulesProvider(),
                     'thing' => $thing,
                 ];
                 $expected = [
@@ -1463,7 +1463,7 @@ class ValidatorTest extends TestCase
     public function testCreditCard()
     {
         $validator = new Validator();
-        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'cc');
+        $this->assertProxyMethod($validator, 'creditCard', 'all', ['all', true], 'creditCard');
         $this->assertNotEmpty($validator->errors(['username' => 'foo']));
     }
 

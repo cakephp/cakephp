@@ -122,7 +122,7 @@ trait InstanceConfigTrait
 
         $return = $this->_configRead($key);
 
-        return $return === null ? $default : $return;
+        return $return ?? $default;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ class WincacheEngine extends CacheEngine
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
-    public function init(array $config = [])
+    public function init(array $config = []): bool
     {
         if (!extension_loaded('wincache')) {
             return false;
@@ -57,7 +58,7 @@ class WincacheEngine extends CacheEngine
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function write($key, $value)
+    public function write(string $key, $value): bool
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
@@ -72,7 +73,7 @@ class WincacheEngine extends CacheEngine
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      */
-    public function read($key)
+    public function read(string $key)
     {
         $key = $this->_key($key);
 
@@ -86,7 +87,7 @@ class WincacheEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
      */
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
         $key = $this->_key($key);
 
@@ -100,7 +101,7 @@ class WincacheEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
      */
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
         $key = $this->_key($key);
 
@@ -113,7 +114,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
@@ -128,7 +129,7 @@ class WincacheEngine extends CacheEngine
      *   naturally expire in wincache..
      * @return bool True Returns true.
      */
-    public function clear($check)
+    public function clear(bool $check): bool
     {
         if ($check) {
             return true;
@@ -152,7 +153,7 @@ class WincacheEngine extends CacheEngine
      *
      * @return array
      */
-    public function groups()
+    public function groups(): array
     {
         if (empty($this->_compiledGroupNames)) {
             foreach ($this->_config['groups'] as $group) {
@@ -187,7 +188,7 @@ class WincacheEngine extends CacheEngine
      * @param string $group The group to clear.
      * @return bool success
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         $success = false;
         wincache_ucache_inc($this->_config['prefix'] . $group, 1, $success);

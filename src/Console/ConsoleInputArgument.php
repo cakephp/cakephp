@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -185,7 +186,7 @@ class ConsoleInputArgument
         $option = $parent->addChild('argument');
         $option->addAttribute('name', $this->_name);
         $option->addAttribute('help', $this->_help);
-        $option->addAttribute('required', (int)$this->isRequired());
+        $option->addAttribute('required', (string)(int)$this->isRequired());
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);

@@ -22,6 +22,8 @@ use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionException;
 use Zend\Diactoros\Stream;
@@ -37,7 +39,7 @@ class MiddlewareDispatcher
     /**
      * The test case being run.
      *
-     * @var \Cake\TestSuite\IntegrationTestCase
+     * @var \Cake\TestSuite\TestCase
      */
     protected $_test;
 
@@ -65,12 +67,12 @@ class MiddlewareDispatcher
     /**
      * Constructor
      *
-     * @param \Cake\TestSuite\IntegrationTestCase $test The test case to run.
+     * @param \Cake\TestSuite\TestCase $test The test case to run.
      * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
      */
-    public function __construct(\Cake\TestSuite\IntegrationTestCase $test, ?string $class = null, ?array $constructorArgs = null)
+    public function __construct(TestCase $test, ?string $class = null, ?array $constructorArgs = null)
     {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
@@ -135,7 +137,7 @@ class MiddlewareDispatcher
      * @param array $spec The request spec.
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function _createRequest(array $spec): \Psr\Http\Message\ServerRequestInterface
+    protected function _createRequest(array $spec): ServerRequestInterface
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];
@@ -168,7 +170,7 @@ class MiddlewareDispatcher
      * @param array $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
-    public function execute(array $requestSpec): \Psr\Http\Message\ResponseInterface
+    public function execute(array $requestSpec): ResponseInterface
     {
         try {
             $reflect = new ReflectionClass($this->_class);

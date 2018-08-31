@@ -67,7 +67,7 @@ class CompositeKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies HasOne implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderHasOne()
     {
@@ -77,7 +77,7 @@ class CompositeKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderHasMany()
     {
@@ -87,7 +87,7 @@ class CompositeKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsTo implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderBelongsTo()
     {
@@ -97,7 +97,7 @@ class CompositeKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderBelongsToMany()
     {

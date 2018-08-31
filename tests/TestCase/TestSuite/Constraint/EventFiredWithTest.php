@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite\Constraint;
 
 use Cake\Event\Event;

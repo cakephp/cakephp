@@ -28,6 +28,7 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
+use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\NotFoundException;
@@ -104,7 +105,7 @@ class TestErrorController extends Controller
     /**
      * index method
      *
-     * @return void
+     * @return array
      */
     public function index()
     {
@@ -127,7 +128,7 @@ class MyCustomExceptionRenderer extends ExceptionRenderer
     /**
      * custom error message type.
      *
-     * @return void
+     * @return string
      */
     public function missingWidgetThing()
     {
@@ -695,6 +696,11 @@ class ExceptionRendererTest extends TestCase
                 ['/Internal Error/'],
                 500,
             ],
+            [
+                new HttpException('Network Authentication Required', 511),
+                ['/Network Authentication Required/'],
+                511,
+            ],
         ];
     }
 
@@ -727,6 +733,13 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$exceptionRenderer->render()->getBody();
         $this->assertContains('widget thing is missing', $result);
+
+        // Custom method should be called even when debug is off.
+        Configure::write('debug', false);
+        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertContains('widget thing is missing', $result);
     }
 
     /**
@@ -743,7 +756,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->request = new ServerRequest;
+        $controller->request = new ServerRequest();
         $controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
@@ -771,7 +784,7 @@ class ExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
-        $controller->request = new ServerRequest;
+        $controller->request = new ServerRequest();
         $controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
@@ -802,7 +815,7 @@ class ExceptionRendererTest extends TestCase
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
             }
         );
-        $controller->setRequest(new ServerRequest);
+        $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();

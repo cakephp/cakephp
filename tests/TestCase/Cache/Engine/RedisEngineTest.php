@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -84,7 +85,6 @@ class RedisEngineTest extends TestCase
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
-            'probability' => 100,
             'groups' => [],
             'server' => '127.0.0.1',
             'port' => 6379,
@@ -113,7 +113,6 @@ class RedisEngineTest extends TestCase
         $expecting = [
             'prefix' => 'redis_',
             'duration' => 3600,
-            'probability' => 100,
             'groups' => [],
             'server' => 'localhost',
             'port' => 6379,

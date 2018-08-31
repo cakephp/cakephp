@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Statement\StatementDecorator;
@@ -1849,6 +1850,96 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that order() works with an associative array which contains extra values.
+     *
+     * @return void
+     */
+    public function testSelectOrderByAssociativeArrayContainingExtraExpressions()
+    {
+        $this->deprecated(function () {
+            $this->loadFixtures('Articles');
+            $query = new Query($this->connection);
+            $query->select(['id'])
+                ->from('articles')
+                ->order([
+                    'id' => 'desc -- Comment',
+                ]);
+            $result = $query->execute();
+            $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+            $result->closeCursor();
+        });
+    }
+
+    /**
+     * Tests that order() works with closures.
+     *
+     * @return void
+     */
+    public function testSelectOrderByClosure()
+    {
+        $query = new Query($this->connection);
+        $query
+            ->select('*')
+            ->from('articles')
+            ->order(function ($exp, $q) use ($query) {
+                $this->assertInstanceOf(QueryExpression::class, $exp);
+                $this->assertSame($query, $q);
+
+                return ['id' => 'ASC'];
+            });
+
+        $this->assertQuotedQuery(
+            'SELECT \* FROM <articles> ORDER BY <id> ASC',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $query
+            ->select('*')
+            ->from('articles')
+            ->order(function ($exp) {
+                return [$exp->add(['id % 2 = 0']), 'title' => 'ASC'];
+            });
+
+        $this->assertQuotedQuery(
+            'SELECT \* FROM <articles> ORDER BY id % 2 = 0, <title> ASC',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $query
+            ->select('*')
+            ->from('articles')
+            ->order(function ($exp) {
+                return $exp->add('a + b');
+            });
+
+        $this->assertQuotedQuery(
+            'SELECT \* FROM <articles> ORDER BY a \+ b',
+            $query->sql(),
+            !$this->autoQuote
+        );
+
+        $query = new Query($this->connection);
+        $query
+            ->select('*')
+            ->from('articles')
+            ->order(function ($exp, $q) {
+                return $q->func()->sum('a');
+            });
+
+        $this->assertQuotedQuery(
+            'SELECT \* FROM <articles> ORDER BY SUM\(a\)',
+            $query->sql(),
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Test orderAsc() and its input types.
      *
      * @return void
@@ -2909,7 +3000,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $date = new \DateTime;
+        $date = new \DateTime();
         $query->update('comments')
             ->set(['comment' => 'mark', 'created' => $date], ['created' => 'date'])
             ->where(['id' => 1]);
@@ -2940,7 +3031,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
-        $date = new \DateTime;
+        $date = new \DateTime();
         $query->update('comments')
             ->set(function ($exp) use ($date) {
                 return $exp

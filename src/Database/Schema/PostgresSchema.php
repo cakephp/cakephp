@@ -273,7 +273,7 @@ class PostgresSchema extends BaseSchema
      * @param array $row The metadata record to update with.
      * @return void
      */
-    protected function _convertConstraint(\Cake\Database\Schema\TableSchema $schema, string $name, string $type, array $row): void
+    protected function _convertConstraint(TableSchema $schema, string $name, string $type, array $row): void
     {
         $constraint = $schema->getConstraint($name);
         if (!$constraint) {

@@ -3694,7 +3694,7 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertHtml($expected, $result);
 
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $this->View->setRequest(
             $this->View->getRequest()->withData('Model', ['user_id' => 'value'])
         );
@@ -3719,7 +3719,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $this->View->setRequest(
             $this->View->getRequest()->withData('Thing', ['user_id' => null])
         );
@@ -3744,7 +3744,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $this->View->setRequest(
             $this->View->getRequest()->withData('Thing', ['user_id' => 'value'])
         );
@@ -3840,7 +3840,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlOverridingMagicSelectType()
     {
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user_id', ['type' => 'text']);
         $expected = [
             'div' => ['class' => 'input text'],
@@ -3851,7 +3851,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         //Check that magic types still work for plural/singular vars
-        $this->View->viewVars['types'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('types', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.type');
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3874,7 +3874,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlMagicTypeDoesNotOverride()
     {
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user', ['type' => 'checkbox']);
         $expected = [
             'div' => ['class' => 'input checkbox'],
@@ -3948,7 +3948,7 @@ class FormHelperTest extends TestCase
         ]);
         $entity = new Entity(['balance' => 1]);
         $this->Form->create($entity, ['context' => ['table' => 'ValidateUsers']]);
-        $this->View->viewVars['balances'] = [0 => 'nothing', 1 => 'some', 100 => 'a lot'];
+        $this->View->set('balances', [0 => 'nothing', 1 => 'some', 100 => 'a lot']);
         $result = $this->Form->control('balance');
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3994,7 +3994,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlMagicSelectChangeToRadio()
     {
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user_id', ['type' => 'radio']);
         $this->assertContains('input type="radio"', $result);
     }
@@ -5376,7 +5376,7 @@ class FormHelperTest extends TestCase
             1 => 'Orion',
             2 => 'Helios',
         ];
-        $this->View->viewVars['spacecraft'] = $spacecraft;
+        $this->View->set('spacecraft', $spacecraft);
         $this->Form->create();
         $result = $this->Form->control('spacecraft._ids');
         $expected = [
@@ -5415,7 +5415,7 @@ class FormHelperTest extends TestCase
             1 => 'Orion',
             2 => 'Helios',
         ];
-        $this->View->viewVars['spacecraft'] = $spacecraft;
+        $this->View->set('spacecraft', $spacecraft);
 
         $article = new Article();
         $article->setError('spacecraft', ['Invalid']);

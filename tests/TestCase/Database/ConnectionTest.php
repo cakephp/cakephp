@@ -852,9 +852,30 @@ class ConnectionTest extends TestCase
 
         $result = $connection->quoteIdentifier('Team.G/G');
         $expected = '"Team"."G/G"';
+        $this->assertEquals($expected, $result);
 
         $result = $connection->quoteIdentifier('Model.name as y');
         $expected = '"Model"."name" AS "y"';
+        $this->assertEquals($expected, $result);
+
+        $result = $connection->quoteIdentifier('nämé');
+        $expected = '"nämé"';
+        $this->assertEquals($expected, $result);
+
+        $result = $connection->quoteIdentifier('aßa.nämé');
+        $expected = '"aßa"."nämé"';
+        $this->assertEquals($expected, $result);
+
+        $result = $connection->quoteIdentifier('aßa.*');
+        $expected = '"aßa".*';
+        $this->assertEquals($expected, $result);
+
+        $result = $connection->quoteIdentifier('Modeß.nämé as y');
+        $expected = '"Modeß"."nämé" AS "y"';
+        $this->assertEquals($expected, $result);
+
+        $result = $connection->quoteIdentifier('Model.näme Datum as y');
+        $expected = '"Model"."näme Datum" AS "y"';
         $this->assertEquals($expected, $result);
     }
 
@@ -889,7 +910,7 @@ class ConnectionTest extends TestCase
      */
     public function testLoggerDecorator()
     {
-        $logger = new QueryLogger;
+        $logger = new QueryLogger();
         $this->connection->enableQueryLogging(true);
         $this->connection->setLogger($logger);
         $st = $this->connection->prepare('SELECT 1');
@@ -1060,7 +1081,7 @@ class ConnectionTest extends TestCase
         $connection->expects($this->never())->method('commit');
         $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
-            throw new \InvalidArgumentException;
+            throw new \InvalidArgumentException();
         });
     }
 

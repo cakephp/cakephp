@@ -50,7 +50,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        TypeFactory::set('test', new TestType);
+        TypeFactory::set('test', new TestType());
     }
 
     /**
@@ -62,7 +62,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function testComparisonSimple()
     {
         $comparison = new Comparison('field', 'the thing', 'test', '=');
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $sql = $comparison->sql($binder);
         $this->assertEquals('field = (CONCAT(:param0, :param1))', $sql);
         $this->assertEquals('the thing', $binder->bindings()[':param0']['value']);
@@ -83,7 +83,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function testComparisonMultiple()
     {
         $comparison = new Comparison('field', ['2', '3'], 'test[]', 'IN');
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $sql = $comparison->sql($binder);
         $this->assertEquals('field IN (CONCAT(:param0, :param1),CONCAT(:param2, :param3))', $sql);
         $this->assertEquals('2', $binder->bindings()[':param0']['value']);
@@ -104,7 +104,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function testBetween()
     {
         $between = new BetweenExpression('field', 'from', 'to', 'test');
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $sql = $between->sql($binder);
         $this->assertEquals('field BETWEEN CONCAT(:param0, :param1) AND CONCAT(:param2, :param3)', $sql);
         $this->assertEquals('from', $binder->bindings()[':param0']['value']);
@@ -132,7 +132,7 @@ class ExpressionTypeCastingTest extends TestCase
             ['test', 'test']
         );
 
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $sql = $case->sql($binder);
         $this->assertEquals('CASE WHEN foo = :c0 THEN CONCAT(:param1, :param2) ELSE CONCAT(:param3, :param4) END', $sql);
 
@@ -157,7 +157,7 @@ class ExpressionTypeCastingTest extends TestCase
     public function testFunctionExpression()
     {
         $function = new FunctionExpression('DATE', ['2016-01'], ['test']);
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $sql = $function->sql($binder);
         $this->assertEquals('DATE(CONCAT(:param0, :param1))', $sql);
         $this->assertEquals('2016-01', $binder->bindings()[':param0']['value']);
@@ -182,7 +182,7 @@ class ExpressionTypeCastingTest extends TestCase
         $values->add(['title' => 'foo']);
         $values->add(['title' => 'bar']);
 
-        $binder = new ValueBinder;
+        $binder = new ValueBinder();
         $sql = $values->sql($binder);
         $this->assertEquals(
             ' VALUES ((CONCAT(:param0, :param1))), ((CONCAT(:param2, :param3)))',

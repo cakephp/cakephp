@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -25,7 +26,7 @@ class StatusCode extends StatusCodeBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('matches response status code %d', $this->response->getStatusCode());
     }
@@ -36,7 +37,7 @@ class StatusCode extends StatusCodeBase
      * @param mixed $other Expected code
      * @return string
      */
-    public function failureDescription($other)
+    public function failureDescription($other): string
     {
         return $other . ' ' . $this->toString();
     }

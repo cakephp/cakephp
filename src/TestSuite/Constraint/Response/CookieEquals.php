@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -33,7 +34,7 @@ class CookieEquals extends ResponseBase
      * @param \Cake\Http\Response $response A response instance.
      * @param string $cookieName Cookie name
      */
-    public function __construct(Response $response, $cookieName)
+    public function __construct(Response $response, string $cookieName)
     {
         parent::__construct($response);
 
@@ -46,7 +47,7 @@ class CookieEquals extends ResponseBase
      * @param mixed $other Expected content
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $cookie = $this->response->getCookie($this->cookieName);
 
@@ -58,7 +59,7 @@ class CookieEquals extends ResponseBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return sprintf('was in cookie \'%s\'', $this->cookieName);
     }

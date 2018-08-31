@@ -121,15 +121,13 @@ class CacheSession implements SessionHandlerInterface
     }
 
     /**
-     * Helper function called on gc for cache sessions.
+     * No-op method. Always returns true since cache engine don't have garbage collection.
      *
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return bool Always true.
      */
     public function gc($maxlifetime)
     {
-        Cache::gc($this->_options['config'], time() - $maxlifetime);
-
         return true;
     }
 }

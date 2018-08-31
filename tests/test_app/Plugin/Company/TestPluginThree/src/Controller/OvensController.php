@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Company\TestPluginThree\Controller;
 
 use Cake\Controller\Controller;

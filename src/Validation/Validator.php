@@ -823,7 +823,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|null $message The error message when the rule fails.
      * @param string|callable|null $when Either 'create' or 'update' or a callable that returns
      *   true when the validation rule should be applied.
-     * @see \Cake\Validation\Validation::cc()
+     * @see \Cake\Validation\Validation::creditCard()
      * @return $this
      */
     public function creditCard(string $field, string $type = 'all', ?string $message = null, $when = null)
@@ -831,7 +831,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $extra = array_filter(['on' => $when, 'message' => $message]);
 
         return $this->add($field, 'creditCard', $extra + [
-            'rule' => ['cc', $type, true],
+            'rule' => ['creditCard', $type, true],
         ]);
     }
 
@@ -1984,7 +1984,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $context A key value list of data containing the validation context.
      * @return bool
      */
-    protected function _checkPresence(\Cake\Validation\ValidationSet $field, array $context): bool
+    protected function _checkPresence(ValidationSet $field, array $context): bool
     {
         $required = $field->isPresenceRequired();
 
@@ -2008,7 +2008,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array $context a key value list of data containing the validation context.
      * @return bool
      */
-    protected function _canBeEmpty(\Cake\Validation\ValidationSet $field, array $context): bool
+    protected function _canBeEmpty(ValidationSet $field, array $context): bool
     {
         $allowed = $field->isEmptyAllowed();
 

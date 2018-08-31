@@ -135,9 +135,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Fighters',
             'action' => 'move',
-            'id' => 123,
-            'x' => 8,
-            'y' => 42,
+            'id' => '123',
+            'x' => '8',
+            'y' => '42',
         ]);
         $this->assertEquals('/fighters/123/move/8/42', $result);
     }
@@ -159,9 +159,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Fighters',
             'action' => 'move',
-            'id' => 123,
-            'x' => 8,
-            'y' => 42,
+            'id' => '123',
+            'x' => '8',
+            'y' => '42',
         ]);
         $this->assertEquals('/fighters/123/move/8/42', $result);
 
@@ -174,9 +174,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Images',
             'action' => 'view',
-            'id' => 123,
-            'x' => 8,
-            'y' => 42,
+            'id' => '123',
+            'x' => '8',
+            'y' => '42',
         ]);
         $this->assertEquals('/images/123/8x42', $result);
     }
@@ -256,9 +256,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Fighters',
             'action' => 'move',
-            'id' => 123,
-            'x' => 8,
-            'y' => 9,
+            'id' => '123',
+            'x' => '8',
+            'y' => '9',
         ]);
         $this->assertEquals('/fighters/123/move/8/:y?y=9', $result);
     }

@@ -179,10 +179,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
 
-        $isDebug = Configure::read('debug');
-        if (($isDebug || $exception instanceof HttpException) &&
-            method_exists($this, $method)
-        ) {
+        if (method_exists($this, $method)) {
             return $this->_customMethod($method, $exception);
         }
 
@@ -204,6 +201,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'code' => $code,
             '_serialize' => ['message', 'url', 'code'],
         ];
+
+        $isDebug = Configure::read('debug');
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
@@ -316,16 +315,16 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
-     * Get an error code value within range 400 to 506
+     * Get HTTP status code.
      *
      * @param \Throwable $exception Exception.
-     * @return int Error code value within range 400 to 506
+     * @return int A valid HTTP error status code.
      */
     protected function _code(Throwable $exception): int
     {
         $code = 500;
         $errorCode = $exception->getCode();
-        if ($errorCode >= 400 && $errorCode < 506) {
+        if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 

@@ -19,7 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
-use Cake\Mailer\Transport\DebugTransport;
+use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
 use SimpleXmlElement;
@@ -137,7 +137,8 @@ class EmailTest extends TestCase
                 'className' => 'TestFalse',
             ],
         ];
-        Email::setConfigTransport($this->transports);
+
+        TransportFactory::setConfig($this->transports);
     }
 
     /**
@@ -150,9 +151,9 @@ class EmailTest extends TestCase
         parent::tearDown();
         Log::drop('email');
         Email::drop('test');
-        Email::dropTransport('debug');
-        Email::dropTransport('badClassName');
-        Email::dropTransport('test_smtp');
+        TransportFactory::drop('debug');
+        TransportFactory::drop('badClassName');
+        TransportFactory::drop('test_smtp');
     }
 
     /**
@@ -410,8 +411,8 @@ class EmailTest extends TestCase
      */
     public function testClassNameException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport class "TestFalse" not found.');
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Mailer transport TestFalse is not available.');
         $email = new Email();
         $email->setTransport('badClassName');
     }
@@ -937,7 +938,7 @@ class EmailTest extends TestCase
     public function testTransportInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport config "Invalid" is missing.');
+        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
         $this->Email->setTransport('Invalid');
     }
 
@@ -961,120 +962,6 @@ class EmailTest extends TestCase
         $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
         $this->Email->setTransport(123);
     }
-
-    /**
-     * Test that using misconfigured transports fails.
-     *
-     */
-    public function testTransportMissingClassName()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport config "debug" is invalid, the required `className` option is missing');
-        Email::dropTransport('debug');
-        Email::setConfigTransport('debug', []);
-
-        $this->Email->setTransport('debug');
-    }
-
-    /**
-     * Test configuring a transport.
-     *
-     * @return void
-     */
-    public function testConfigTransport()
-    {
-        Email::dropTransport('debug');
-        $settings = [
-            'className' => 'Debug',
-            'log' => true,
-        ];
-        Email::setConfigTransport('debug', $settings);
-
-        $result = Email::getConfigTransport('debug');
-        $this->assertEquals($settings, $result);
-    }
-
-    /**
-     * Test configuring multiple transports.
-     */
-    public function testConfigTransportMultiple()
-    {
-        Email::dropTransport('debug');
-        $settings = [
-            'debug' => [
-                'className' => 'Debug',
-                'log' => true,
-            ],
-            'test_smtp' => [
-                'className' => 'Smtp',
-                'username' => 'mark',
-                'password' => 'password',
-                'host' => 'example.com',
-            ],
-        ];
-        Email::setConfigTransport($settings);
-        $this->assertEquals($settings['debug'], Email::getConfigTransport('debug'));
-        $this->assertEquals($settings['test_smtp'], Email::getConfigTransport('test_smtp'));
-    }
-
-    /**
-     * Test that exceptions are raised when duplicate transports are configured.
-     *
-     */
-    public function testConfigTransportErrorOnDuplicate()
-    {
-        $this->expectException(\BadMethodCallException::class);
-        Email::dropTransport('debug');
-        $settings = [
-            'className' => 'Debug',
-            'log' => true,
-        ];
-        Email::setConfigTransport('debug', $settings);
-        Email::setConfigTransport('debug', $settings);
-    }
-
-    /**
-     * Test configTransport with an instance.
-     *
-     * @return void
-     */
-    public function testConfigTransportInstance()
-    {
-        Email::dropTransport('debug');
-        $instance = new DebugTransport();
-        Email::setConfigTransport('debug', $instance);
-        $this->assertEquals(['className' => $instance], Email::getConfigTransport('debug'));
-    }
-
-    /**
-     * Test enumerating all transport configurations
-     *
-     * @return void
-     */
-    public function testConfiguredTransport()
-    {
-        $result = Email::configuredTransport();
-        $this->assertInternalType('array', $result, 'Should have config keys');
-        $this->assertEquals(
-            array_keys($this->transports),
-            $result,
-            'Loaded transports should be present in enumeration.'
-        );
-    }
-
-    /**
-     * Test dropping a transport configuration
-     *
-     * @return void
-     */
-    public function testDropTransport()
-    {
-        $result = Email::getConfigTransport('debug');
-        $this->assertInternalType('array', $result, 'Should have config data');
-        Email::dropTransport('debug');
-        $this->assertNull(Email::getConfigTransport('debug'), 'Should not exist.');
-    }
-
     /**
      * Test reading/writing configuration profiles.
      *
@@ -1863,7 +1750,7 @@ class EmailTest extends TestCase
         $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->Email->send();
-        $dateTime = new \DateTime;
+        $dateTime = new \DateTime();
         $dateTime->setTimestamp($timestamp);
         $this->assertContains('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 
@@ -2047,8 +1934,8 @@ class EmailTest extends TestCase
      */
     public function testDeliver()
     {
-        Email::dropTransport('default');
-        Email::setConfigTransport('default', ['className' => 'Debug']);
+        TransportFactory::drop('default');
+        TransportFactory::setConfig('default', ['className' => 'Debug']);
 
         $instance = Email::deliver('all@cakephp.org', 'About', 'Everything ok', ['from' => 'root@cakephp.org'], false);
         $this->assertInstanceOf('Cake\Mailer\Email', $instance);
@@ -2840,13 +2727,13 @@ HTML;
      */
     public function testMockTransport()
     {
-        Email::dropTransport('default');
+        TransportFactory::drop('default');
 
         $mock = $this->getMockBuilder('Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::setConfig('default', $config);
-        Email::setConfigTransport('default', $mock);
+        TransportFactory::setConfig('default', $mock);
 
         $em = new Email('default');
 
@@ -2914,8 +2801,8 @@ XML;
             ->setLayout('test');
 
         $result = json_decode(json_encode($this->Email), true);
-        $this->assertContains('test', $result['viewVars']['exception']);
-        unset($result['viewVars']['exception']);
+        $this->assertContains('test', $result['viewConfig']['_vars']['exception']);
+        unset($result['viewConfig']['_vars']['exception']);
 
         $encode = function ($path) {
             return chunk_split(base64_encode(file_get_contents($path)), 76, "\r\n");
@@ -2940,15 +2827,15 @@ XML;
                 '_helpers' => ['Html'],
                 '_className' => 'Cake\View\View',
                 '_autoLayout' => true,
-            ],
-            'viewVars' => [
-                'users' => [
-                    'id' => 1,
-                    'username' => 'mariano',
-                ],
-                'xml' => [
-                    'name' => 'CakePHP',
-                    'url' => 'http://cakephp.org',
+                '_vars' => [
+                    'users' => [
+                        'id' => 1,
+                        'username' => 'mariano',
+                    ],
+                    'xml' => [
+                        'name' => 'CakePHP',
+                        'url' => 'http://cakephp.org',
+                    ],
                 ],
             ],
             '_attachments' => [
@@ -2966,8 +2853,8 @@ XML;
         $this->assertEquals($expected, $result);
 
         $result = json_decode(json_encode(unserialize(serialize($this->Email))), true);
-        $this->assertContains('test', $result['viewVars']['exception']);
-        unset($result['viewVars']['exception']);
+        $this->assertContains('test', $result['viewConfig']['_vars']['exception']);
+        unset($result['viewConfig']['_vars']['exception']);
         $this->assertEquals($expected, $result);
     }
 

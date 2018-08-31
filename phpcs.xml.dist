@@ -2,10 +2,7 @@
 <ruleset name="CakePHP Core">
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer,../../slevomat/coding-standard" />
 
-    <rule ref="PSR12" >
-        <!-- This exclude can be removed once phcs 3.3.1 is released -->
-        <exclude name="PSR12.Classes.ClassInstantiation.MissingParenthesis" />
-    </rule>
+    <rule ref="PSR12" />
 
     <rule ref="CakePHP" >
         <exclude name="CakePHP.Formatting.UseInAlphabeticalOrder.UseInAlphabeticalOrder" />
@@ -34,14 +31,16 @@
     <rule ref="SlevomatCodingStandard.Namespaces.UseDoesNotStartWithBackslash" />
     <rule ref="SlevomatCodingStandard.Namespaces.UseFromSameNamespace" />
     <rule ref="SlevomatCodingStandard.PHP.TypeCast" />
-    <!-- Enable after proper type hints have been added to all classes. -->
-    <!-- <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes" >
+    <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes" >
         <properties>
+            <property name="newlinesCountAfterDeclare" value="1" />
             <property name="spacesCountAroundEqualsSign" value="0" />
             <property name="newlinesCountBetweenOpenTagAndDeclare" value="1" />
         </properties>
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule> -->
+        <exclude-pattern>*/config/*</exclude-pattern>
+        <exclude-pattern>*/Templates/*</exclude-pattern>
+        <exclude-pattern>*/tests/Fixture/*</exclude-pattern>
+    </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints" />
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing" />
     <rule ref="SlevomatCodingStandard.TypeHints.NullableTypeForNullDefaultValue" />
