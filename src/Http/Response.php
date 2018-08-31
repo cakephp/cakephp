@@ -17,6 +17,7 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
+use Cake\Http\Cookie\CookieCollectionInterface;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
 use DateTime;
@@ -1317,11 +1318,25 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Sets the CookieCollection to the response
+     *
+     * @return \Cake\Http\Cookie\CookieCollection
+     * @return static
+     */
+    public function withCookieCollection(CookieCollectionInterface $cookieCollection): CookieCollectionInterface
+    {
+        $new = clone $this;
+        $new->_cookies = $cookieCollection;
+
+        return $new;
+    }
+
+    /**
      * Get the CookieCollection from the response
      *
      * @return \Cake\Http\Cookie\CookieCollection
      */
-    public function getCookieCollection(): CookieCollection
+    public function getCookieCollection(): CookieCollectionInterface
     {
         return $this->_cookies;
     }

@@ -15,12 +15,10 @@ declare(strict_types=1);
 namespace Cake\Http\Cookie;
 
 use ArrayIterator;
-use Countable;
 use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
-use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,7 +29,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Provides an immutable collection of cookies objects. Adding or removing
  * to a collection returns a *new* collection that you must retain.
  */
-class CookieCollection implements IteratorAggregate, Countable
+class CookieCollection implements CookieCollectionInterface
 {
     /**
      * Cookie objects
