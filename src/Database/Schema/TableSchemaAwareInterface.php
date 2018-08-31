@@ -25,7 +25,7 @@ interface TableSchemaAwareInterface
      *
      * @return \Cake\Database\Schema\TableSchemaInterface|null
      */
-    public function getTableSchema(): ?\Cake\Database\Schema\TableSchemaInterface;
+    public function getTableSchema(): ?TableSchemaInterface;
 
     /**
      * Get and set the schema for this fixture.

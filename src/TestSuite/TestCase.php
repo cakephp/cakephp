@@ -228,7 +228,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message Assertion failure message
      * @return void
      */
-    public function assertEventFired(string $name, ?\Cake\Event\EventManager $eventManager = null, string $message = ''): void
+    public function assertEventFired(string $name, ?EventManager $eventManager = null, string $message = ''): void
     {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
@@ -248,7 +248,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message Assertion failure message
      * @return void
      */
-    public function assertEventFiredWith(string $name, string $dataKey, string $dataValue, ?\Cake\Event\EventManager $eventManager = null, string $message = ''): void
+    public function assertEventFiredWith(string $name, string $dataKey, string $dataValue, ?EventManager $eventManager = null, string $message = ''): void
     {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
