@@ -131,12 +131,10 @@ class CommandRunner implements EventDispatcherInterface
             'help' => HelpCommand::class,
         ]);
         $commands = $this->app->console($commands);
-        $this->checkCollection($commands, 'console');
 
         if ($this->app instanceof PluginApplicationInterface) {
             $commands = $this->app->pluginConsole($commands);
         }
-        $this->checkCollection($commands, 'pluginConsole');
         $this->dispatchEvent('Console.buildCommands', ['commands' => $commands]);
         $this->loadRoutes();
 
@@ -182,26 +180,6 @@ class CommandRunner implements EventDispatcherInterface
         $this->app->bootstrap();
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginBootstrap();
-        }
-    }
-
-    /**
-     * Check the created CommandCollection
-     *
-     * @param mixed $commands The CommandCollection to check, could be anything though.
-     * @param string $method The method that was used.
-     * @return void
-     * @throws \RuntimeException
-     * @deprecated 3.6.0 This method should be replaced with return types in 4.x
-     */
-    protected function checkCollection($commands, $method)
-    {
-        if (!($commands instanceof CommandCollection)) {
-            $type = getTypeName($commands);
-            throw new RuntimeException(
-                "The application's `{$method}` method did not return a CommandCollection." .
-                " Got '{$type}' instead."
-            );
         }
     }
 
