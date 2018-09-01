@@ -650,6 +650,33 @@ class CookieComponentTest extends TestCase
     }
 
     /**
+     * testReadingMalformedEncryptedCookies
+     *
+     * @return void
+     */
+    public function testReadingMalformedEncryptedCookies()
+    {
+        $this->Cookie->configKey('Encrypted_empty', 'encryption', 'aes');
+        $this->Cookie->configKey('Encrypted_too_short', 'encryption', 'aes');
+        $this->Cookie->configKey('Encrypted_altered', 'encryption', 'aes');
+
+        $this->Controller->request = $this->request->withCookieParams([
+            'Encrypted_empty' => '',
+            'Encrypted_too_short' => 'Q2FrZQ',
+            'Encrypted_altered' => 'Q2FrZQ==.ModifiedBase64Data==',
+        ]);
+
+        $data = $this->Cookie->read('Encrypted_empty');
+        $this->assertEquals('', $data);
+
+        $data = $this->Cookie->read('Encrypted_too_short');
+        $this->assertEquals('', $data);
+
+        $data = $this->Cookie->read('Encrypted_altered');
+        $this->assertEquals('', $data);
+    }
+
+    /**
      * Test Reading legacy cookie values.
      *
      * @return void

@@ -129,6 +129,11 @@ trait CookieCryptTrait
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $value = base64_decode(substr($value, strlen($prefix)));
+
+        if ($value === '') {
+            return '';
+        }
+
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
         }

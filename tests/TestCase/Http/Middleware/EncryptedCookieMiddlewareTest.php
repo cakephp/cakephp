@@ -74,6 +74,37 @@ class EncryptedCookieMiddlewareTest extends TestCase
     }
 
     /**
+     * Test decoding malformed cookies
+     *
+     * @return void
+     */
+    public function testDecodeMalformedCookies()
+    {
+        $request = new ServerRequest(['url' => '/cookies/nom']);
+        $request = $request->withCookieParams([
+            'secret_empty' => '',
+            'secret_too_short' => 'Q2FrZQ',
+            'secret_altered' => 'Q2FrZQ==.ModifiedBase64Data==',
+        ]);
+        $this->assertNotEquals('decoded', $request->getCookie('decoded'));
+
+        $response = new Response();
+        $next = function ($req, $res) {
+            $this->assertSame('', $req->getCookie('secret_empty'));
+            $this->assertSame('', $req->getCookie('secret_too_short'));
+            $this->assertSame('', $req->getCookie('secret_altered'));
+
+            return $res;
+        };
+        $middleware = new EncryptedCookieMiddleware(
+            ['secret_empty', 'secret_too_short', 'secret_altered'],
+            $this->_getCookieEncryptionKey(),
+            'aes'
+        );
+        $response = $middleware($request, $response, $next);
+    }
+
+    /**
      * Test encoding cookies in the set-cookie header.
      *
      * @return void
