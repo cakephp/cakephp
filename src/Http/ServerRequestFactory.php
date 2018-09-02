@@ -79,7 +79,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * Build a UriInterface object.
      *
      * Add in some CakePHP specific logic/properties that help
-     * perserve backwards compatibility.
+     * preserve backwards compatibility.
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
