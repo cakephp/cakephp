@@ -6541,7 +6541,7 @@ class TableTest extends TestCase
 
     /**
      * Tests that passing a coned entity that was marked as new to save() will
-     * actaully save it as a new entity
+     * actually save it as a new entity
      *
      * @group save
      * @return void
