@@ -401,55 +401,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
-     * Magic accessor for properties made protected.
-     *
-     * @param string $name Name of the attribute to get.
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        $protected = [
-            'error',
-            'controller',
-            'template',
-            'method',
-        ];
-        if (in_array($name, $protected, true)) {
-            deprecationWarning(sprintf(
-                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
-                $name
-            ));
-        }
-
-        return $this->{$name};
-    }
-
-    /**
-     * Magic setter for properties made protected.
-     *
-     * @param string $name Name to property.
-     * @param mixed $value Value for property.
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        $protected = [
-            'error',
-            'controller',
-            'template',
-            'method',
-        ];
-        if (in_array($name, $protected, true)) {
-            deprecationWarning(sprintf(
-                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
-                $name
-            ));
-        }
-
-        $this->{$name} = $value;
-    }
-
-    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *

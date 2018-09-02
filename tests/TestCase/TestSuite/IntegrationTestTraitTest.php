@@ -70,15 +70,6 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
-     * Check for a deprecation warning
-     */
-    public function testUseHttpServerWarning()
-    {
-        $this->expectException(Deprecated::class);
-        $this->useHttpServer(false);
-    }
-
-    /**
      * Tests that all data that used by the request is cast to strings
      *
      * @return void
