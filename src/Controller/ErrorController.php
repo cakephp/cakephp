@@ -43,8 +43,10 @@ class ErrorController extends Controller
      */
     public function beforeRender(EventInterface $event)
     {
-        if (Configure::read('debug')) {
-            $this->viewBuilder()->setTemplatePath('Error');
+        $builder = $this->viewBuilder();
+
+        if (!in_array($builder->getTemplate(), ['error400', 'error500'], true)) {
+            $builder->setTemplatePath('Error');
         }
     }
 }

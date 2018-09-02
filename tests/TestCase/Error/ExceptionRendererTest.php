@@ -194,20 +194,45 @@ class ExceptionRendererTest extends TestCase
     {
         $namespace = Configure::read('App.namespace');
         Configure::write('App.namespace', 'TestApp');
-        Configure::write('debug', false);
 
         $exception = new NotFoundException('Page not found');
         $request = new ServerRequest();
         $request = $request->withParam('prefix', 'admin');
 
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
-        $ExceptionRenderer->render();
 
-        $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertInstanceOf(ErrorController::class, $controller);
-        $this->assertEquals('Admin/Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertInstanceOf(
+            ErrorController::class,
+            $ExceptionRenderer->__debugInfo()['controller']
+        );
 
         Configure::write('App.namespace', $namespace);
+    }
+
+    /**
+     * testTemplatePath
+     *
+     * @return void
+     */
+    public function testTemplatePath()
+    {
+        $request = (new ServerRequest())->withParam('prefix', 'admin');
+        $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
+
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('missingAction', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+
+        Configure::write('debug', false);
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Admin/Error', $controller->viewBuilder()->getTemplatePath());
     }
 
     /**
