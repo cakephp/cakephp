@@ -45,7 +45,7 @@ class EncryptedCookieMiddleware
     protected $cookieNames;
 
     /**
-     * Encrpytion key to use.
+     * Encryption key to use.
      *
      * @var string
      */
