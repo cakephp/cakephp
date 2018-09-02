@@ -626,6 +626,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
         $this->autoRender = false;
 
+        if ($template !== null) {
+            $builder->setTemplate($template);
+        }
+
+        if ($layout !== null) {
+            $builder->setLayout($layout);
+        }
+
         $event = $this->dispatchEvent('Controller.beforeRender');
         if ($event->getResult() instanceof Response) {
             return $event->getResult();
@@ -634,12 +642,12 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->response;
         }
 
-        if ($builder->getTemplate() === null && $this->request->getParam('action')) {
+        if ($builder->getTemplate() === null) {
             $builder->setTemplate($this->request->getParam('action'));
         }
 
         $view = $this->createView();
-        $contents = $view->render($template, $layout);
+        $contents = $view->render();
         $this->setResponse($view->getResponse()->withStringBody($contents));
 
         return $this->response;
