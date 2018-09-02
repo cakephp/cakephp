@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\Cache;
 
-use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
@@ -25,6 +24,11 @@ use Psr\SimpleCache\InvalidArgumentException;
  */
 class SimpleCacheEngineTest extends TestCase
 {
+    /**
+     * setup
+     *
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
@@ -38,6 +42,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->cache = new SimpleCacheEngine($this->inner);
     }
 
+    /**
+     * tear down
+     *
+     * @return void
+     */
     public function tearDown()
     {
         parent::tearDown();
@@ -45,6 +54,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->inner->clear(false);
     }
 
+    /**
+     * test getting keys
+     *
+     * @return void
+     */
     public function testGetSuccess()
     {
         $this->inner->write('key_one', 'Some Value');
@@ -52,24 +66,45 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame('Some Value', $this->cache->get('key_one', 'default'));
     }
 
+    /**
+     * test get on missing keys
+     *
+     * @return void
+     */
     public function testGetNoKey()
     {
         $this->assertSame('default', $this->cache->get('no', 'default'));
         $this->assertNull($this->cache->get('no'));
     }
 
+    /**
+     * test get on invalid keys. The PSR spec outlines that an exception
+     * must be raised.
+     *
+     * @return void
+     */
     public function testGetInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->cache->get('');
     }
 
+    /**
+     * test set() inheriting the default TTL
+     *
+     * @return void
+     */
     public function testSetNoTtl()
     {
         $this->assertTrue($this->cache->set('key', 'a value'));
         $this->assertSame('a value', $this->cache->get('key'));
     }
 
+    /**
+     * test the TTL parameter of set()
+     *
+     * @return void
+     */
     public function testSetWithTtl()
     {
         $this->assertTrue($this->cache->set('key', 'a value'));
@@ -81,12 +116,22 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame(5, $this->inner->getConfig('duration'));
     }
 
+    /**
+     * test set() with an invalid key.
+     *
+     * @return void
+     */
     public function testSetInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->cache->set('', 'some data');
     }
 
+    /**
+     * test delete on known and unknown keys
+     *
+     * @return void
+     */
     public function testDelete()
     {
         $this->cache->set('key', 'a value');
@@ -94,12 +139,22 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertFalse($this->cache->delete('undefined'));
     }
 
+    /**
+     * test delete on an invalid key
+     *
+     * @return void
+     */
     public function testDeleteInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->cache->delete('');
     }
 
+    /**
+     * test clearing cache data
+     *
+     * @return void
+     */
     public function testClear()
     {
         $this->cache->set('key', 'a value');
@@ -110,6 +165,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertNull($this->cache->get('key2'));
     }
 
+    /**
+     * test getMultiple
+     *
+     * @return void
+     */
     public function testGetMultiple()
     {
         $this->cache->set('key', 'a value');
@@ -124,6 +184,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame($expected, $results);
     }
 
+    /**
+     * test getMultiple adding defaults in.
+     *
+     * @return void
+     */
     public function testGetMultipleDefault()
     {
         $this->cache->set('key', 'a value');
@@ -138,11 +203,16 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame($expected, $results);
     }
 
+    /**
+     * test setMultiple
+     *
+     * @return void
+     */
     public function testSetMultiple()
     {
         $data = [
             'key' => 'a value',
-            'key2' => 'other value'
+            'key2' => 'other value',
         ];
         $this->cache->setMultiple($data);
 
@@ -150,11 +220,16 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame($data, $results);
     }
 
+    /**
+     * test setMultiple with ttl parameter
+     *
+     * @return void
+     */
     public function testSetMultipleWithTtl()
     {
         $data = [
             'key' => 'a value',
-            'key2' => 'other value'
+            'key2' => 'other value',
         ];
         $this->cache->setMultiple($data, 0);
 
@@ -165,6 +240,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame(5, $this->inner->getConfig('duration'));
     }
 
+    /**
+     * test deleting multiple keys
+     *
+     * @return void
+     */
     public function testDeleteMultiple()
     {
         $data = [
@@ -179,6 +259,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertSame('other value', $this->cache->get('key2'));
     }
 
+    /**
+     * test partial success with deleteMultiple
+     *
+     * @return void
+     */
     public function testDeleteMultipleSomeMisses()
     {
         $data = [
@@ -188,6 +273,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertFalse($this->cache->deleteMultiple(['key', 'key3']));
     }
 
+    /**
+     * test has
+     *
+     * @return void
+     */
     public function testHas()
     {
         $this->assertFalse($this->cache->has('key'));
@@ -196,6 +286,11 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertTrue($this->cache->has('key'));
     }
 
+    /**
+     * test has with invalid key
+     *
+     * @return void
+     */
     public function testHasInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
