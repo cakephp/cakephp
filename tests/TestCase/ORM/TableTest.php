@@ -4985,7 +4985,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successfull
+     * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successful
      *
      * @return void
      */
@@ -5027,7 +5027,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successfull.
+     * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successful.
      * Replace operation should prevent considering 0 changed records an error when they are not found in the table
      *
      * @return void
@@ -6541,7 +6541,7 @@ class TableTest extends TestCase
 
     /**
      * Tests that passing a coned entity that was marked as new to save() will
-     * actaully save it as a new entity
+     * actually save it as a new entity
      *
      * @group save
      * @return void

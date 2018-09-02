@@ -468,7 +468,7 @@ TEXT;
     }
 
     /**
-     * test wrapBlock() indentical to wrap()
+     * test wrapBlock() identical to wrap()
      *
      * @return void
      */

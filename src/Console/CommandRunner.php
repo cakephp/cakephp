@@ -298,7 +298,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * Resolve the command name into a name that exists in the collection.
      *
-     * Apply backwards compatibile inflections and aliases.
+     * Apply backwards compatible inflections and aliases.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to check.
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.

@@ -266,7 +266,7 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Tests the __() functions with explict null params
+     * Tests the __() functions with explicit null params
      *
      * @return void
      */
