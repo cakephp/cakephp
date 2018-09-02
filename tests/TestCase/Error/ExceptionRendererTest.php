@@ -216,7 +216,18 @@ class ExceptionRendererTest extends TestCase
      */
     public function testTemplatePath()
     {
-        $request = (new ServerRequest())->withParam('prefix', 'admin');
+        $request = (new ServerRequest())
+            ->withParam('controller', 'Foo')
+            ->withParam('action', 'bar');
+        $exception = new NotFoundException();
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+
+        $request = $request->withParam('prefix', 'admin');
         $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
 
         $ExceptionRenderer = new ExceptionRenderer($exception, $request);
