@@ -498,7 +498,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Disbale automatic action rendering.
+     * Disable automatic action rendering.
      *
      * @return $this
      * @since 3.6.0
