@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
-use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 
 /**
