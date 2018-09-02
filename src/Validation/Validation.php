@@ -1350,7 +1350,7 @@ class Validation
      * Validates the image width.
      *
      * @param array $file The uploaded file data from PHP.
-     * @param string $operator Comparision operator.
+     * @param string $operator Comparison operator.
      * @param int $width Min or max width.
      * @return bool
      */
@@ -1368,7 +1368,7 @@ class Validation
      * Validates the image width.
      *
      * @param array $file The uploaded file data from PHP.
-     * @param string $operator Comparision operator.
+     * @param string $operator Comparison operator.
      * @param int $height Min or max width.
      * @return bool
      */
