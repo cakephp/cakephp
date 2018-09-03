@@ -981,7 +981,7 @@ trait EntityTrait
 
             // String messages are appended to the list,
             // while more complex error structures need their
-            // keys perserved for nested validator.
+            // keys preserved for nested validator.
             if (is_string($error)) {
                 $this->_errors[$f][] = $error;
             } else {

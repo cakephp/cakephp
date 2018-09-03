@@ -1189,7 +1189,7 @@ class HashTest extends TestCase
     }
 
     /**
-     * Test the attribute presense selector.
+     * Test the attribute presence selector.
      *
      * @dataProvider articleDataSets
      * @return void

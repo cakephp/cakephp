@@ -139,7 +139,7 @@ class MysqlSchema extends BaseSchema
         }
         if (strpos($col, 'blob') !== false || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
-            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
+            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : $length;
 
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }

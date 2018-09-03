@@ -124,6 +124,10 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'binaryuuid', 'length' => null]
             ],
             [
+                'BINARY(1)',
+                ['type' => 'binary', 'length' => 1]
+            ],
+            [
                 'TEXT',
                 ['type' => 'text', 'length' => null]
             ],

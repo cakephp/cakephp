@@ -842,7 +842,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * Returns data sets of:
      *  * the name of the field being sorted on
-     *  * url paramters to pass to paginator sort
+     *  * url parameters to pass to paginator sort
      *  * expected result as a string
      *
      * @return array
