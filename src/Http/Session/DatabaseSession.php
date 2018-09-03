@@ -139,7 +139,7 @@ class DatabaseSession implements SessionHandlerInterface
      * Helper function called on write for database sessions.
      *
      * @param string $id ID that uniquely identifies session in database.
-     * @param mixed $data The data to be saved.
+     * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
     public function write($id, $data)
