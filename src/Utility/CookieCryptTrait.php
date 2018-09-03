@@ -136,7 +136,7 @@ trait CookieCryptTrait
 
         $value = base64_decode(substr($value, $prefixLength), true);
 
-        if ($value === false ||$value === '') {
+        if ($value === false || $value === '') {
             return '';
         }
 
