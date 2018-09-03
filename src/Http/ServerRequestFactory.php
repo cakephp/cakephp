@@ -130,7 +130,7 @@ abstract class ServerRequestFactory extends BaseFactory
         if (empty($path) || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
-        $endsWithIndex = '/webroot/index.php';
+        $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
         $endsWithLength = strlen($endsWithIndex);
         if (strlen($path) >= $endsWithLength &&
             substr($path, -$endsWithLength) === $endsWithIndex
