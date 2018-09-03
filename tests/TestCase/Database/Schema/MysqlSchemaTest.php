@@ -125,7 +125,7 @@ class MysqlSchemaTest extends TestCase
             ],
             [
                 'BINARY(1)',
-                ['type' => 'binary', 'length' => 1]
+                ['type' => 'binary', 'length' => 1],
             ],
             [
                 'TEXT',
