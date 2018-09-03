@@ -2151,6 +2151,78 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the lastN() method
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testLastN($data)
+    {
+        $collection = new Collection($data);
+        $result = $collection->lastN(3)->toArray();
+        $expected = ['b' => 2, 'c' => 3, 'd' => 4];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the lastN() method with overflow
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testLasNtWithOverflow($data)
+    {
+        $collection = new Collection($data);
+        $result = $collection->lastN(10)->toArray();
+        $expected = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the lastN() with and odd numbers collection
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testLasNtWithOddData($data)
+    {
+        $collection = new Collection($data);
+        $result = $collection->take(3)->lastN(2)->toArray();
+        $expected = ['b' => 2, 'c' => 3];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the lastN() with countable collection
+     *
+     * @return void
+     */
+    public function testLasNtWithCountable()
+    {
+        $collection = new Collection(new ArrayObject([1, 2, 3, 4, 5]));
+        $result = $collection->lastN(2)->toArray();
+        $this->assertEquals([4, 5], $result);
+
+        $result = $collection->lastN(1)->toArray();
+        $this->assertEquals([5], $result);
+    }
+
+    /**
+     * Tests the lastN() with countable collection
+     *
+     * @dataProvider simpleProvider
+     * @return void
+     */
+    public function testLasNtWithNegative($data)
+    {
+        $collection = new Collection($data);
+        $this->expectException(\InvalidArgumentException::class);
+        $result = $collection->lastN(-1)->toArray();
+        $expected = [];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests sumOf with no parameters
      *
      * @return void

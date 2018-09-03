@@ -620,6 +620,25 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function last();
 
     /**
+     * Returns the last N elements of a collection
+     *
+     * ### Examples:
+     *
+     * ```
+     * $items = [1, 2, 3, 4, 5];
+     *
+     * $last = (new Collection($items))->last(3);
+     *
+     * // Result will look like this when converted to array
+     * [3, 4, 5];
+     * ```
+     *
+     * @param int $howMany The number of elements at the end of the collection
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function lastN($howMany);
+
+    /**
      * Returns a new collection as the result of concatenating the list of elements
      * in this collection with the passed list of elements
      *

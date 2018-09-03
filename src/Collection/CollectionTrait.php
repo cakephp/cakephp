@@ -402,6 +402,65 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
+    public function lastN($howMany)
+    {
+        if ($howMany < 1) {
+            throw new \InvalidArgumentException("lastN requires a number greater than 0");
+        }
+
+        $iterator = $this->optimizeUnwrap();
+        if (is_array($iterator)) {
+            return new Collection(array_slice($iterator, $howMany * -1));
+        }
+
+        if ($iterator instanceof Countable) {
+            $count = count($iterator);
+            if ($count === 0) {
+                return null;
+            }
+            $iterator = new LimitIterator($iterator, max(0, $count - $howMany), $howMany);
+
+            return new Collection($iterator);
+        }
+
+        $generator = function ($iterator, $howMany) {
+            $result = [];
+            $bucket = 0;
+            $offset = 0;
+            $toggleOffset = false;
+
+            foreach ($iterator as $k => $item) {
+                if ($bucket === 0) {
+                    $toggleOffset = !$toggleOffset;
+                }
+
+                $result[$bucket] = [$k, $item];
+                $bucket = (++$bucket) % $howMany;
+
+                if ($toggleOffset) {
+                    $offset++;
+                }
+            }
+
+            $offset = $offset % $howMany;
+            $head = array_slice($result, $offset);
+            $tail = array_slice($result, 0, $offset);
+
+            foreach ($head as $v) {
+                yield $v[0] => $v[1];
+            }
+
+            foreach ($tail as $v) {
+                yield $v[0] => $v[1];
+            }
+        };
+
+        return new Collection($generator($iterator, $howMany));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function append($items)
     {
         $list = new AppendIterator();
