@@ -2757,9 +2757,13 @@ class FormHelper extends Helper
             $secure = $data['secure'];
             unset($data['secure']);
         }
+        /** @var \Cake\View\Widget\WidgetInterface $widget */
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
-        if (isset($data['name']) && $secure !== null && $secure !== self::SECURE_SKIP) {
+        if (isset($data['name']) &&
+            $secure !== null &&
+            $secure !== self::SECURE_SKIP
+        ) {
             foreach ($widget->secureFields($data) as $field) {
                 $this->_secure($secure, $this->_secureFieldName($field));
             }

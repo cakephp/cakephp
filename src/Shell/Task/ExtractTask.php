@@ -121,7 +121,7 @@ class ExtractTask extends Shell
 
     /**
      * Count number of marker errors found
-     * @var bool
+     * @var int
      */
     protected $_countMarkerError = 0;
 

@@ -91,7 +91,7 @@ class BasicAuthenticate extends BaseAuthenticate
      * @return void
      * @throws \Cake\Http\Exception\UnauthorizedException
      */
-    public function unauthenticated(ServerRequest $request, Response $response): void
+    public function unauthenticated(ServerRequest $request, Response $response)
     {
         $Exception = new UnauthorizedException();
         $Exception->responseHeader($this->loginHeaders($request));
