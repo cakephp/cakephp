@@ -243,7 +243,10 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
         $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
-        $this->assertEquals('Admin/Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertEquals(
+            'Admin' . DIRECTORY_SEPARATOR . 'Error',
+            $controller->viewBuilder()->getTemplatePath()
+        );
     }
 
     /**
