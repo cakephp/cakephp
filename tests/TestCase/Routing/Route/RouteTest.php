@@ -565,7 +565,7 @@ class RouteTest extends TestCase
         $this->assertRegExp($result, '/source/view');
         $this->assertRegExp($result, '/source/view/other/params');
         $this->assertNotRegExp($result, '/chaw_test/wiki');
-        $this->assertNotRegExp($result, '/source/wierd_action');
+        $this->assertNotRegExp($result, '/source/weird_action');
     }
 
     /**

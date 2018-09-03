@@ -1056,6 +1056,25 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test that applyMiddleware() uses unique middleware set
+     *
+     * @return void
+     */
+    public function testApplyMiddlewareUnique()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+
+        $routes->applyMiddleware('test', 'test2');
+        $routes->applyMiddleware('test2', 'test');
+
+        $this->assertAttributeEquals(['test', 'test2'], 'middleware', $routes);
+    }
+
+    /**
      * Test applying middleware results in middleware attached to the route.
      *
      * @return void

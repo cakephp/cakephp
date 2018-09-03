@@ -88,6 +88,10 @@ class SqliteSchemaTest extends TestCase
                 ['type' => 'binaryuuid', 'length' => null],
             ],
             [
+                'BINARY(1)',
+                ['type' => 'binary', 'length' => 1]
+            ],
+            [
                 'BLOB',
                 ['type' => 'binary', 'length' => null],
             ],

@@ -998,7 +998,7 @@ class RouteBuilder
                 throw new RuntimeException($message);
             }
         }
-        $this->middleware = array_merge($this->middleware, $names);
+        $this->middleware = array_unique(array_merge($this->middleware, $names));
 
         return $this;
     }

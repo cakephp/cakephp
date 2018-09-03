@@ -199,7 +199,7 @@ SQL;
                 50,
                 null,
                 null,
-                // Sqlserver returns double lenghts for unicode columns
+                // Sqlserver returns double lengths for unicode columns
                 ['type' => 'string', 'length' => 25],
             ],
             [

@@ -85,7 +85,7 @@ class MailerTest extends TestCase
     public function testGetSetProxies()
     {
         $mailer = new TestMailer();
-        $result = $mailer->setLayout('custom')
+        $result = $mailer
             ->setTo('test@example.com')
             ->setCc('cc@example.com');
         $this->assertSame($result, $mailer);

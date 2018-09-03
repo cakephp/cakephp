@@ -172,7 +172,7 @@ class TranslateBehaviorTest extends TestCase
 
     /**
      * Tests that fields from a translated model use the I18n class locale
-     * and that it propogates to associated models
+     * and that it propagates to associated models
      *
      * @return void
      */

@@ -1008,6 +1008,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTemplate(?string $template): self
     {
+        deprecationWarning(
+            'Email::setTemplate() is deprecated. Use $email->viewBuilder()->setTemplate() instead.'
+        );
+
         $this->viewBuilder()->setTemplate($template ?: '');
 
         return $this;
@@ -1020,6 +1024,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getTemplate(): string
     {
+        deprecationWarning(
+            'Email::getTemplate() is deprecated. Use $email->viewBuilder()->getTemplate() instead.'
+        );
+
         return $this->viewBuilder()->getTemplate();
     }
 
@@ -1031,6 +1039,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setLayout(?string $layout): self
     {
+        deprecationWarning(
+            'Email::setLayout() is deprecated. Use $email->viewBuilder()->setLayout() instead.'
+        );
+
         $this->viewBuilder()->setLayout($layout ?: false);
 
         return $this;
@@ -1039,10 +1051,14 @@ class Email implements JsonSerializable, Serializable
     /**
      * Gets layout.
      *
-     * @return string
+     * @return string|null|false
      */
-    public function getLayout(): string
+    public function getLayout()
     {
+        deprecationWarning(
+            'Email::getLayout() is deprecated. Use $email->viewBuilder()->getLayout() instead.'
+        );
+
         return $this->viewBuilder()->getLayout();
     }
 
@@ -1100,6 +1116,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTheme(?string $theme): self
     {
+        deprecationWarning(
+            'Email::setTheme() is deprecated. Use $email->viewBuilder()->setTheme() instead.'
+        );
+
         $this->viewBuilder()->setTheme($theme);
 
         return $this;
@@ -1112,6 +1132,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getTheme(): ?string
     {
+        deprecationWarning(
+            'Email::getTheme() is deprecated. Use $email->viewBuilder()->getTheme() instead.'
+        );
+
         return $this->viewBuilder()->getTheme();
     }
 
@@ -1123,6 +1147,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setHelpers(array $helpers): self
     {
+        deprecationWarning(
+            'Email::setHelpers() is deprecated. Use $email->viewBuilder()->setHelpers() instead.'
+        );
+
         $this->viewBuilder()->setHelpers($helpers, false);
 
         return $this;
@@ -1135,6 +1163,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getHelpers(): array
     {
+        deprecationWarning(
+            'Email::getHelpers() is deprecated. Use $email->viewBuilder()->getHelpers() instead.'
+        );
+
         return $this->viewBuilder()->getHelpers();
     }
 

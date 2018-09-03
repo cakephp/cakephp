@@ -1914,7 +1914,7 @@ TEXT;
     }
 
     /**
-     * Test extend() preceeded by an element()
+     * Test extend() preceded by an element()
      *
      * @return void
      */
@@ -1931,7 +1931,7 @@ TEXT;
     }
 
     /**
-     * Test extend() preceeded by an element()
+     * Test extend() preceded by an element()
      *
      * @return void
      */
