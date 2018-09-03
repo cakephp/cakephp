@@ -657,22 +657,29 @@ class CookieComponentTest extends TestCase
     public function testReadingMalformedEncryptedCookies()
     {
         $this->Cookie->configKey('Encrypted_empty', 'encryption', 'aes');
-        $this->Cookie->configKey('Encrypted_too_short', 'encryption', 'aes');
+        $this->Cookie->configKey('Encrypted_wrong_prefix', 'encryption', 'aes');
         $this->Cookie->configKey('Encrypted_altered', 'encryption', 'aes');
+        $this->Cookie->configKey('Encrypted_invalid_chars', 'encryption', 'aes');
+
+        $encrypted = $this->_encrypt('secret data', 'aes');
 
         $this->Controller->request = $this->request->withCookieParams([
             'Encrypted_empty' => '',
-            'Encrypted_too_short' => 'Q2FrZQ',
-            'Encrypted_altered' => 'Q2FrZQ==.ModifiedBase64Data==',
+            'Encrypted_wrong_prefix' => substr_replace($encrypted, 'foo', 0, 3),
+            'Encrypted_altered' => str_replace('M', 'A', $encrypted),
+            'Encrypted_invalid_chars' => str_replace('M', 'M#', $encrypted),
         ]);
 
         $data = $this->Cookie->read('Encrypted_empty');
         $this->assertEquals('', $data);
 
-        $data = $this->Cookie->read('Encrypted_too_short');
+        $data = $this->Cookie->read('Encrypted_wrong_prefix');
         $this->assertEquals('', $data);
 
         $data = $this->Cookie->read('Encrypted_altered');
+        $this->assertEquals('', $data);
+
+        $data = $this->Cookie->read('Encrypted_invalid_chars');
         $this->assertEquals('', $data);
     }
 
