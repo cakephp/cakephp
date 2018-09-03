@@ -27,7 +27,6 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Error\Deprecated;
 use Zend\Diactoros\UploadedFile;
 
 /**
