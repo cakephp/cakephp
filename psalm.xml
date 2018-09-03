@@ -10,11 +10,6 @@
         <ignoreFiles>
             <directory name="vendor" />
             <directory name="src/TestSuite" />
-            <!-- Remove this when psalm 2.0.11 is released -->
-            <file name="src/Command/HelpCommand.php" />
-            <file name="src/Core/functions.php" />
-            <file name="src/I18n/functions.php" />
-            <file name="src/Collection/functions.php" />
         </ignoreFiles>
     </projectFiles>
 
@@ -202,6 +197,12 @@
                 <file name="src/Console/ConsoleInput.php" />
             </errorLevel>
         </InvalidPassByReference>
+
+        <InvalidCast>
+            <errorLevel type="suppress">
+                <file name="src/Core/functions.php" />
+            </errorLevel>
+        </InvalidCast>
 
     </issueHandlers>
 </psalm>
