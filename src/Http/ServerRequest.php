@@ -267,7 +267,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * - `files` Uploaded file data formatted like $_FILES.
      * - `cookies` Cookies for this request.
      * - `environment` $_SERVER and $_ENV data.
-     * - ~~`url`~~ The URL without the base path for the request. This option is deprecated and will be removed in 4.0.0
+     * - `url` The URL without the base path for the request.
      * - `uri` The PSR7 UriInterface object. If null, one will be created.
      * - `base` The base URL for the request.
      * - `webroot` The webroot directory for the request.
