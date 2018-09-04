@@ -123,9 +123,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $controller = null;
 
         try {
-            $namespace = 'Controller';
+            $class = null;
+
             $prefix = $request->getParam('prefix');
             if ($prefix) {
+                $namespace = 'Controller';
                 if (strpos($prefix, '/') === false) {
                     $namespace .= '/' . Inflector::camelize($prefix);
                 } else {
@@ -135,14 +137,16 @@ class ExceptionRenderer implements ExceptionRendererInterface
                     );
                     $namespace .= '/' . implode('/', $prefixes);
                 }
+
+                $class = App::className('Error', $namespace, 'Controller');
             }
 
-            $class = App::className('Error', $namespace, 'Controller');
-            if (!$class && $namespace !== 'Controller') {
+            if (!$class) {
+                /** @var string $class */
                 $class = App::className('Error', 'Controller', 'Controller');
             }
 
-            /** @var string $class */
+            /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
