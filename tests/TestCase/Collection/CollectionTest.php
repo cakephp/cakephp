@@ -63,6 +63,24 @@ class TestIterator extends ArrayIterator
     }
 }
 
+class CountableIterator extends \IteratorIterator implements \Countable
+{
+    public function __construct($items)
+    {
+        $f = function () use ($items) {
+            foreach ($items as $e) {
+                yield $e;
+            }
+        };
+        parent::__construct($f());
+    }
+
+    public function count()
+    {
+        return 6;
+    }
+}
+
 /**
  * CollectionTest
  */
@@ -2199,11 +2217,12 @@ class CollectionTest extends TestCase
      */
     public function testLasNtWithCountable()
     {
-        $collection = new Collection(new ArrayObject([1, 2, 3, 4, 5]));
-        $result = $collection->lastN(2)->toArray();
+        $collection = new Collection(new CountableIterator(range(0, 5)));
+        $result = $collection->lastN(2)->toList();
         $this->assertEquals([4, 5], $result);
 
-        $result = $collection->lastN(1)->toArray();
+        $collection = new Collection(new CountableIterator(range(0, 5)));
+        $result = $collection->lastN(1)->toList();
         $this->assertEquals([5], $result);
     }
 

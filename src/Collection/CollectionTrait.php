@@ -415,9 +415,11 @@ trait CollectionTrait
 
         if ($iterator instanceof Countable) {
             $count = count($iterator);
+
             if ($count === 0) {
-                return null;
+                return new Collection([]);
             }
+
             $iterator = new LimitIterator($iterator, max(0, $count - $howMany), $howMany);
 
             return new Collection($iterator);
