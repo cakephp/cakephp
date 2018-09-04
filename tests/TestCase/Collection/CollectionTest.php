@@ -2218,8 +2218,6 @@ class CollectionTest extends TestCase
         $collection = new Collection($data);
         $this->expectException(\InvalidArgumentException::class);
         $result = $collection->lastN(-1)->toArray();
-        $expected = [];
-        $this->assertEquals($expected, $result);
     }
 
     /**
