@@ -206,8 +206,7 @@ class SimpleCacheEngine implements CacheInterface
      *
      * @param string $key The cache item key.
      * @return bool
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *   MUST be thrown if the $key string is not a legal value.
+     * @throws \Psr\SimpleCache\InvalidArgumentException If the $key string is not a legal value.
      */
     public function has($key)
     {
