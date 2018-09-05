@@ -181,8 +181,7 @@ class SimpleCacheEngine implements CacheInterface
      *
      * @param iterable $keys A list of string-based keys to be deleted.
      * @return bool True if the items were successfully removed. False if there was an error.
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *   MUST be thrown if $keys is neither an array nor a Traversable,
+     * @throws \Psr\SimpleCache\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
     public function deleteMultiple($keys)
