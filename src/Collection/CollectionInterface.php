@@ -565,7 +565,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * ```
      * $items = [1, 2, 3, 4, 5];
      *
-     * $last = (new Collection($items))->lastN(3);
+     * $last = (new Collection($items))->takeLast(3);
      *
      * // Result will look like this when converted to array
      * [3, 4, 5];
