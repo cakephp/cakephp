@@ -158,8 +158,7 @@ class SimpleCacheEngine implements CacheInterface
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *   MUST be thrown if $values is neither an array nor a Traversable,
+     * @throws \Psr\SimpleCache\InvalidArgumentException If $values is neither an array nor a Traversable,
      *   or if any of the $values are not a legal value.
      */
     public function setMultiple($values, $ttl = null)
