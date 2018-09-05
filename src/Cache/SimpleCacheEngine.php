@@ -21,6 +21,7 @@ use Psr\SimpleCache\CacheInterface;
  * the PSR16 Simple Cache Interface
  *
  * @since 3.7.0
+ * @link https://www.php-fig.org/psr/psr-16/
  */
 class SimpleCacheEngine implements CacheInterface
 {
