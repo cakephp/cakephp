@@ -405,7 +405,7 @@ trait CollectionTrait
     public function takeLast($howMany)
     {
         if ($howMany < 1) {
-            throw new \InvalidArgumentException("lastN requires a number greater than 0");
+            throw new \InvalidArgumentException("takeLast requires a number greater than 0");
         }
 
         $iterator = $this->optimizeUnwrap();
