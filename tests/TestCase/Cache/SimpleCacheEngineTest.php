@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Cache;
 
+use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
@@ -26,6 +27,20 @@ use Psr\SimpleCache\InvalidArgumentException;
  */
 class SimpleCacheEngineTest extends TestCase
 {
+    /**
+     * The inner cache engine
+     *
+     * @var CacheEngine
+     */
+    protected $inner;
+
+    /**
+     * The simple cache engine under test
+     *
+     * @var SimpleCacheEngine
+     */
+    protected $cache;
+
     /**
      * Setup
      *
