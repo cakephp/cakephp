@@ -47,7 +47,7 @@ class SimpleCacheEngine implements CacheInterface
      *
      * @param string $key Key to check.
      * @return void
-     * @throws \Psr\SimpleCache\InvalidArgumentException when key is not valid.
+     * @throws \Psr\SimpleCache\InvalidArgumentException When key is not valid.
      */
     protected function checkKey($key)
     {
