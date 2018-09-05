@@ -185,6 +185,32 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
+     * test getting multiple keys with an invalid key
+     *
+     * @return void
+     */
+    public function testGetMultipleInvalidKey()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
+        $withInvalidKey = [''];
+        $this->cache->getMultiple($withInvalidKey);
+    }
+
+    /**
+     * test getting multiple keys with an invalid keys parameter
+     *
+     * @return void
+     */
+    public function testGetMultipleInvalidKeys()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
+        $notAnArray = 'neither an array nor a Traversable';
+        $this->cache->getMultiple($notAnArray);
+    }
+
+    /**
      * test getMultiple adding defaults in.
      *
      * @return void
@@ -218,6 +244,21 @@ class SimpleCacheEngineTest extends TestCase
 
         $results = $this->cache->getMultiple(array_keys($data));
         $this->assertSame($data, $results);
+    }
+
+    /**
+     * test setMultiple with an invalid key
+     *
+     * @return void
+     */
+    public function testSetMultipleInvalidKey()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
+        $data = [
+            '' => 'a value wuth an invalid key',
+        ];
+        $this->cache->setMultiple($data);
     }
 
     /**
@@ -257,6 +298,32 @@ class SimpleCacheEngineTest extends TestCase
         $this->assertNull($this->cache->get('key'));
         $this->assertNull($this->cache->get('key3'));
         $this->assertSame('other value', $this->cache->get('key2'));
+    }
+
+    /**
+     * test deleting multiple keys with an invalid key
+     *
+     * @return void
+     */
+    public function testDeleteMultipleInvalidKey()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
+        $withInvalidKey = [''];
+        $this->cache->deleteMultiple($withInvalidKey);
+    }
+
+    /**
+     * test deleting multiple keys with an invalid keys parameter
+     *
+     * @return void
+     */
+    public function testDeleteMultipleInvalidKeys()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
+        $notAnArray = 'neither an array nor a Traversable';
+        $this->cache->deleteMultiple($notAnArray);
     }
 
     /**

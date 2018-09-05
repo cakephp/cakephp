@@ -43,7 +43,7 @@ class SimpleCacheEngine implements CacheInterface
     }
 
     /**
-     * Ensure the validity of the cache key.
+     * Ensure the validity of the given cache key.
      *
      * @param string $key Key to check.
      * @return void
@@ -53,6 +53,24 @@ class SimpleCacheEngine implements CacheInterface
     {
         if (!is_string($key) || strlen($key) === 0) {
             throw new InvalidArgumentException('A cache key must be a non-empty string.');
+        }
+    }
+
+    /**
+     * Ensure the validity of the given cache keys.
+     *
+     * @param mixed $keys The keys to check.
+     * @return void
+     * @throws \Psr\SimpleCache\InvalidArgumentException When the keys are not valid.
+     */
+    protected function ensureValidKeys($keys)
+    {
+        if (!is_array($keys) && !($keys instanceOf \Traversable)) {
+            throw new InvalidArgumentException('A cache key set must be either an array or a Traversable.');
+        }
+
+        foreach ($keys as $key) {
+            $this->ensureValidKey($key);
         }
     }
 
@@ -140,6 +158,8 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function getMultiple($keys, $default = null)
     {
+        $this->ensureValidKeys($keys);
+
         $results = $this->innerEngine->readMany($keys);
         foreach ($results as $key => $value) {
             if ($value === false) {
@@ -163,6 +183,8 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function setMultiple($values, $ttl = null)
     {
+        $this->ensureValidKeys(array_keys($values));
+
         if ($ttl !== null) {
             $restore = $this->innerEngine->getConfig('duration');
             $this->innerEngine->setConfig('duration', $ttl);
@@ -186,6 +208,8 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function deleteMultiple($keys)
     {
+        $this->ensureValidKeys($keys);
+
         $result = $this->innerEngine->deleteMany($keys);
         foreach ($result as $key => $success) {
             if ($success === false) {
