@@ -445,7 +445,7 @@ trait CollectionTrait
              * 5) 9 6 7 8
              *
              *  We can see that at the end of the iterations, the buffer contains all
-             *  the last for elements, just in the wrong order. How do we keep the
+             *  the last four elements, just in the wrong order. How do we keep the
              *  original order? Well, it turns out that the number of iteration also
              *  give us a clue on what's going on, Let's add a marker for it now:
              *
