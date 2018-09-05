@@ -94,6 +94,7 @@ class SimpleCacheEngineTest extends TestCase
     public function testGetInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
         $this->cache->get('');
     }
 
@@ -137,6 +138,7 @@ class SimpleCacheEngineTest extends TestCase
     public function testSetInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
         $this->cache->set('', 'some data');
     }
 
@@ -163,6 +165,7 @@ class SimpleCacheEngineTest extends TestCase
     public function testDeleteInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
         $this->cache->delete('');
     }
 
@@ -401,6 +404,7 @@ class SimpleCacheEngineTest extends TestCase
     public function testHasInvalidKey()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string.');
         $this->cache->has('');
     }
 }
