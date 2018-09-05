@@ -21,6 +21,8 @@ use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * SimpleCacheEngine class
+ *
+ * @coversDefaultClass \Cake\Cache\SimpleCacheEngine
  */
 class SimpleCacheEngineTest extends TestCase
 {
@@ -58,6 +60,9 @@ class SimpleCacheEngineTest extends TestCase
      * test getting keys
      *
      * @return void
+     * @covers ::get
+     * @covers ::__construct
+     * @covers ::ensureValidKey
      */
     public function testGetSuccess()
     {
@@ -70,6 +75,7 @@ class SimpleCacheEngineTest extends TestCase
      * test get on missing keys
      *
      * @return void
+     * @covers ::get
      */
     public function testGetNoKey()
     {
@@ -82,6 +88,8 @@ class SimpleCacheEngineTest extends TestCase
      * must be raised.
      *
      * @return void
+     * @covers ::get
+     * @covers ::ensureValidKey
      */
     public function testGetInvalidKey()
     {
@@ -93,6 +101,8 @@ class SimpleCacheEngineTest extends TestCase
      * test set() inheriting the default TTL
      *
      * @return void
+     * @covers ::set
+     * @covers ::__construct
      */
     public function testSetNoTtl()
     {
@@ -104,6 +114,7 @@ class SimpleCacheEngineTest extends TestCase
      * test the TTL parameter of set()
      *
      * @return void
+     * @covers ::set
      */
     public function testSetWithTtl()
     {
@@ -120,6 +131,8 @@ class SimpleCacheEngineTest extends TestCase
      * test set() with an invalid key.
      *
      * @return void
+     * @covers ::set
+     * @covers ::ensureValidKey
      */
     public function testSetInvalidKey()
     {
@@ -131,6 +144,7 @@ class SimpleCacheEngineTest extends TestCase
      * test delete on known and unknown keys
      *
      * @return void
+     * @covers ::delete
      */
     public function testDelete()
     {
@@ -143,6 +157,8 @@ class SimpleCacheEngineTest extends TestCase
      * test delete on an invalid key
      *
      * @return void
+     * @covers ::delete
+     * @covers ::ensureValidKey
      */
     public function testDeleteInvalidKey()
     {
@@ -154,6 +170,7 @@ class SimpleCacheEngineTest extends TestCase
      * test clearing cache data
      *
      * @return void
+     * @covers ::clear
      */
     public function testClear()
     {
@@ -169,6 +186,7 @@ class SimpleCacheEngineTest extends TestCase
      * test getMultiple
      *
      * @return void
+     * @covers ::getMultiple
      */
     public function testGetMultiple()
     {
@@ -188,6 +206,9 @@ class SimpleCacheEngineTest extends TestCase
      * test getting multiple keys with an invalid key
      *
      * @return void
+     * @covers ::getMultiple
+     * @covers ::ensureValidKeys
+     * @covers ::ensureValidKey
      */
     public function testGetMultipleInvalidKey()
     {
@@ -201,6 +222,8 @@ class SimpleCacheEngineTest extends TestCase
      * test getting multiple keys with an invalid keys parameter
      *
      * @return void
+     * @covers ::getMultiple
+     * @covers ::ensureValidKeys
      */
     public function testGetMultipleInvalidKeys()
     {
@@ -214,6 +237,7 @@ class SimpleCacheEngineTest extends TestCase
      * test getMultiple adding defaults in.
      *
      * @return void
+     * @covers ::getMultiple
      */
     public function testGetMultipleDefault()
     {
@@ -233,6 +257,7 @@ class SimpleCacheEngineTest extends TestCase
      * test setMultiple
      *
      * @return void
+     * @covers ::setMultiple
      */
     public function testSetMultiple()
     {
@@ -250,6 +275,9 @@ class SimpleCacheEngineTest extends TestCase
      * test setMultiple with an invalid key
      *
      * @return void
+     * @covers ::setMultiple
+     * @covers ::ensureValidKeys
+     * @covers ::ensureValidKey
      */
     public function testSetMultipleInvalidKey()
     {
@@ -265,6 +293,8 @@ class SimpleCacheEngineTest extends TestCase
      * test setMultiple with ttl parameter
      *
      * @return void
+     * @covers ::setMultiple
+     * @covers ::ensureValidKeys
      */
     public function testSetMultipleWithTtl()
     {
@@ -285,6 +315,7 @@ class SimpleCacheEngineTest extends TestCase
      * test deleting multiple keys
      *
      * @return void
+     * @covers ::deleteMultiple
      */
     public function testDeleteMultiple()
     {
@@ -304,6 +335,9 @@ class SimpleCacheEngineTest extends TestCase
      * test deleting multiple keys with an invalid key
      *
      * @return void
+     * @covers ::deleteMultiple
+     * @covers ::ensureValidKeys
+     * @covers ::ensureValidKey
      */
     public function testDeleteMultipleInvalidKey()
     {
@@ -317,6 +351,8 @@ class SimpleCacheEngineTest extends TestCase
      * test deleting multiple keys with an invalid keys parameter
      *
      * @return void
+     * @covers ::deleteMultiple
+     * @covers ::ensureValidKeys
      */
     public function testDeleteMultipleInvalidKeys()
     {
@@ -330,6 +366,7 @@ class SimpleCacheEngineTest extends TestCase
      * test partial success with deleteMultiple
      *
      * @return void
+     * @covers ::deleteMultiple
      */
     public function testDeleteMultipleSomeMisses()
     {
@@ -344,6 +381,7 @@ class SimpleCacheEngineTest extends TestCase
      * test has
      *
      * @return void
+     * @covers ::has
      */
     public function testHas()
     {
@@ -357,6 +395,8 @@ class SimpleCacheEngineTest extends TestCase
      * test has with invalid key
      *
      * @return void
+     * @covers ::has
+     * @covers ::ensureValidKey
      */
     public function testHasInvalidKey()
     {
