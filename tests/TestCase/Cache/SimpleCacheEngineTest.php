@@ -275,6 +275,9 @@ class SimpleCacheEngineTest extends TestCase
     /**
      * Test setMultiple
      *
+     * We should not assert for array equality, as the PSR-16 specs
+     * do not make any guarantees on key order.
+     *
      * @return void
      * @covers ::setMultiple
      */
@@ -284,10 +287,14 @@ class SimpleCacheEngineTest extends TestCase
             'key' => 'a value',
             'key2' => 'other value',
         ];
+        $expected = [
+            'key2' => 'other value',
+            'key' => 'a value',
+        ];
         $this->cache->setMultiple($data);
 
         $results = $this->cache->getMultiple(array_keys($data));
-        $this->assertSame($data, $results);
+        $this->assertEquals($expected, $results);
     }
 
     /**
