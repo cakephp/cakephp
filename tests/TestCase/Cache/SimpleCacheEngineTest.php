@@ -316,7 +316,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * Test setMultiple with ttl parameter
+     * Test setMultiple with TTL parameter
      *
      * @return void
      * @covers ::setMultiple
