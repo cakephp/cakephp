@@ -402,7 +402,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function lastN($howMany)
+    public function takeLast($howMany)
     {
         if ($howMany < 1) {
             throw new \InvalidArgumentException("lastN requires a number greater than 0");

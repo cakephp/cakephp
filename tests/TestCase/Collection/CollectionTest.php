@@ -2169,7 +2169,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests the lastN() method
+     * Tests the takeLast() method
      *
      * @dataProvider simpleProvider
      * @return void
@@ -2177,13 +2177,13 @@ class CollectionTest extends TestCase
     public function testLastN($data)
     {
         $collection = new Collection($data);
-        $result = $collection->lastN(3)->toArray();
+        $result = $collection->takeLast(3)->toArray();
         $expected = ['b' => 2, 'c' => 3, 'd' => 4];
         $this->assertEquals($expected, $result);
     }
 
     /**
-     * Tests the lastN() method with overflow
+     * Tests the takeLast() method with overflow
      *
      * @dataProvider simpleProvider
      * @return void
@@ -2191,13 +2191,13 @@ class CollectionTest extends TestCase
     public function testLasNtWithOverflow($data)
     {
         $collection = new Collection($data);
-        $result = $collection->lastN(10)->toArray();
+        $result = $collection->takeLast(10)->toArray();
         $expected = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
         $this->assertEquals($expected, $result);
     }
 
     /**
-     * Tests the lastN() with and odd numbers collection
+     * Tests the takeLast() with and odd numbers collection
      *
      * @dataProvider simpleProvider
      * @return void
@@ -2205,29 +2205,29 @@ class CollectionTest extends TestCase
     public function testLasNtWithOddData($data)
     {
         $collection = new Collection($data);
-        $result = $collection->take(3)->lastN(2)->toArray();
+        $result = $collection->take(3)->takeLast(2)->toArray();
         $expected = ['b' => 2, 'c' => 3];
         $this->assertEquals($expected, $result);
     }
 
     /**
-     * Tests the lastN() with countable collection
+     * Tests the takeLast() with countable collection
      *
      * @return void
      */
     public function testLasNtWithCountable()
     {
         $collection = new Collection(new CountableIterator(range(0, 5)));
-        $result = $collection->lastN(2)->toList();
+        $result = $collection->takeLast(2)->toList();
         $this->assertEquals([4, 5], $result);
 
         $collection = new Collection(new CountableIterator(range(0, 5)));
-        $result = $collection->lastN(1)->toList();
+        $result = $collection->takeLast(1)->toList();
         $this->assertEquals([5], $result);
     }
 
     /**
-     * Tests the lastN() with countable collection
+     * Tests the takeLast() with countable collection
      *
      * @dataProvider simpleProvider
      * @return void
@@ -2236,7 +2236,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($data);
         $this->expectException(\InvalidArgumentException::class);
-        $result = $collection->lastN(-1)->toArray();
+        $collection->takeLast(-1)->toArray();
     }
 
     /**
