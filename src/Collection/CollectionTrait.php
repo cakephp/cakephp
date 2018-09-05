@@ -429,19 +429,57 @@ trait CollectionTrait
             $result = [];
             $bucket = 0;
             $offset = 0;
-            $toggleOffset = false;
+
+            /**
+             * Consider the collection of elements [1, 2, 3, 4, 5, 6, 7, 8, 9], in order
+             * to get the last 4 elements, we can keep a buffer of 4 elements and
+             * fill it circularly using modulo logic, we use the $bucket variable
+             * to track the position to fill next in the buffer. This how the buffer
+             * looks like after 4 iterations:
+             *
+             * 0) 1 2 3 4 -- $bucket now goes back to 0, we have filled 4 elementes
+             * 1) 5 2 3 4 -- 5th iteration
+             * 2) 5 6 3 4 -- 6th iteration
+             * 3) 5 6 7 4 -- 7th iteration
+             * 4) 5 6 7 8 -- 8th iteration
+             * 5) 9 6 7 8
+             *
+             *  We can see that at the end of the iterations, the buffer contains all
+             *  the last for elements, just in the wrong order. How do we keep the
+             *  original order? Well, it turns out that the number of iteration also
+             *  give us a clue on what's going on, Let's add a marker for it now:
+             *
+             * 0) 1 2 3 4
+             *    ^ -- The 0) above now becomes the $offset variable
+             * 1) 5 2 3 4
+             *      ^ -- $offset = 1
+             * 2) 5 6 3 4
+             *        ^ -- $offset = 2
+             * 3) 5 6 7 4
+             *          ^ -- $offset = 3
+             * 4) 5 6 7 8
+             *    ^  -- We use module logic for $offset too
+             *          and as you can see each time $offset is 0, then the buffer
+             *          is sorted exactly as we need.
+             * 5) 9 6 7 8
+             *      ^ -- $offset = 1
+             *
+             * The $offset variable is a marker for splitting the buffer in two,
+             * elements to the right for the marker are the head of the final result,
+             * whereas the elements at the left are the tail. For example consider step 5)
+             * which has an offset of 1:
+             *
+             * - $head = elements to the right = [6, 7, 8]
+             * - $tail = elements to the left =  [9]
+             * - $result = $head + $tail = [6, 7, 8, 9]
+             *
+             * The logic above applies to collections of any size.
+             */
 
             foreach ($iterator as $k => $item) {
-                if ($bucket === 0) {
-                    $toggleOffset = !$toggleOffset;
-                }
-
                 $result[$bucket] = [$k, $item];
                 $bucket = (++$bucket) % $howMany;
-
-                if ($toggleOffset) {
-                    $offset++;
-                }
+                $offset++;
             }
 
             $offset = $offset % $howMany;
