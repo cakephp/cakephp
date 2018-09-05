@@ -32,7 +32,7 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @var CacheEngine
      */
-    protected $inner;
+    protected $innerEngine;
 
     /**
      * The simple cache engine under test
@@ -50,13 +50,13 @@ class SimpleCacheEngineTest extends TestCase
     {
         parent::setUp();
 
-        $this->inner = new FileEngine();
-        $this->inner->init([
+        $this->innerEngine = new FileEngine();
+        $this->innerEngine->init([
             'prefix' => '',
             'path' => TMP . 'tests',
             'duration' => 5,
         ]);
-        $this->cache = new SimpleCacheEngine($this->inner);
+        $this->cache = new SimpleCacheEngine($this->innerEngine);
     }
 
     /**
@@ -68,7 +68,7 @@ class SimpleCacheEngineTest extends TestCase
     {
         parent::tearDown();
 
-        $this->inner->clear(false);
+        $this->innerEngine->clear(false);
     }
 
     /**
@@ -81,7 +81,7 @@ class SimpleCacheEngineTest extends TestCase
      */
     public function testGetSuccess()
     {
-        $this->inner->write('key_one', 'Some Value');
+        $this->innerEngine->write('key_one', 'Some Value');
         $this->assertSame('Some Value', $this->cache->get('key_one'));
         $this->assertSame('Some Value', $this->cache->get('key_one', 'default'));
     }
@@ -140,7 +140,7 @@ class SimpleCacheEngineTest extends TestCase
         sleep(1);
         $this->assertSame('a value', $this->cache->get('key'));
         $this->assertNull($this->cache->get('expired'));
-        $this->assertSame(5, $this->inner->getConfig('duration'));
+        $this->assertSame(5, $this->innerEngine->getConfig('duration'));
     }
 
     /**
@@ -326,7 +326,7 @@ class SimpleCacheEngineTest extends TestCase
         $results = $this->cache->getMultiple(array_keys($data));
         $this->assertNull($results['key']);
         $this->assertNull($results['key2']);
-        $this->assertSame(5, $this->inner->getConfig('duration'));
+        $this->assertSame(5, $this->innerEngine->getConfig('duration'));
     }
 
     /**
