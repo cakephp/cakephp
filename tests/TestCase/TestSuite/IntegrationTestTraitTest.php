@@ -27,7 +27,6 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Error\Deprecated;
 use Zend\Diactoros\UploadedFile;
 
 /**
@@ -67,15 +66,6 @@ class IntegrationTestTraitTest extends TestCase
         });
 
         $this->configApplication(Configure::read('App.namespace') . '\Application', null);
-    }
-
-    /**
-     * Check for a deprecation warning
-     */
-    public function testUseHttpServerWarning()
-    {
-        $this->expectException(Deprecated::class);
-        $this->useHttpServer(false);
     }
 
     /**

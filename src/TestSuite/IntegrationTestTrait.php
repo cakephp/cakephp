@@ -224,23 +224,7 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Toggle whether or not you want to use the HTTP Server stack.
-     *
-     * @param bool $enable Enable/disable the usage of the HTTP Stack.
-     * @return void
-     */
-    public function useHttpServer(bool $enable): void
-    {
-        if ($enable === false) {
-            deprecationWarning('Calling `useHttpServer(false)` does nothing, and will be removed.');
-        }
-    }
-
-    /**
      * Configure the application class to use in integration tests.
-     *
-     * Combined with `useHttpServer()` to customize the class name and constructor arguments
-     * of your application class.
      *
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.

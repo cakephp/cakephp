@@ -29,4 +29,14 @@ namespace Cake\TestSuite;
 abstract class IntegrationTestCase extends TestCase
 {
     use IntegrationTestTrait;
+
+    /**
+     * No-op method.
+     *
+     * @param bool $enable Unused.
+     * @return void
+     */
+    public function useHttpServer($enable)
+    {
+    }
 }

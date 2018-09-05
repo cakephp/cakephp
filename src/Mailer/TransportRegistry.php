@@ -31,7 +31,7 @@ class TransportRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string|\Cake\Mailer\AbstractTransport $class Partial classname to resolve or transport instance.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct classname or null.
      */
     protected function _resolveClassName($class)
     {
@@ -39,18 +39,7 @@ class TransportRegistry extends ObjectRegistry
             return $class;
         }
 
-        $className = App::className($class, 'Mailer/Transport', 'Transport');
-
-        if (!$className) {
-            $className = App::className($class, 'Network/Email', 'Transport');
-            if ($className) {
-                deprecationWarning(
-                    'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.'
-                );
-            }
-        }
-
-        return $className;
+        return App::className($class, 'Mailer/Transport', 'Transport');
     }
 
     /**
