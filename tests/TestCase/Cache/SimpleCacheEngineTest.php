@@ -135,7 +135,8 @@ class SimpleCacheEngineTest extends TestCase
     public function testSetWithTtl()
     {
         $this->assertTrue($this->cache->set('key', 'a value'));
-        $this->assertTrue($this->cache->set('expired', 'a value', 0));
+        $ttl = 0;
+        $this->assertTrue($this->cache->set('expired', 'a value', $ttl));
 
         sleep(1);
         $this->assertSame('a value', $this->cache->get('key'));
