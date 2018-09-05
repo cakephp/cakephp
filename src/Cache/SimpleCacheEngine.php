@@ -62,8 +62,7 @@ class SimpleCacheEngine implements CacheInterface
      * @param string $key The unique key of this item in the cache.
      * @param mixed $default Default value to return if the key does not exist.
      * @return mixed The value of the item from the cache, or $default in case of cache miss.
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     *   MUST be thrown if the $key string is not a legal value.
+     * @throws \Psr\SimpleCache\InvalidArgumentException If the $key string is not a legal value.
      */
     public function get($key, $default = null)
     {
