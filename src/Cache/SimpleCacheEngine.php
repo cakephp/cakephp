@@ -52,7 +52,7 @@ class SimpleCacheEngine implements CacheInterface
     protected function ensureValidKey($key)
     {
         if (!is_string($key) || strlen($key) === 0) {
-            throw new InvalidArgumentException('Cache keys must be non-empty strings.');
+            throw new InvalidArgumentException('A cache key must be a non-empty string.');
         }
     }
 
