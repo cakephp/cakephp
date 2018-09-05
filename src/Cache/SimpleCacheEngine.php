@@ -43,13 +43,13 @@ class SimpleCacheEngine implements CacheInterface
     }
 
     /**
-     * Check key for validity.
+     * Ensure the validity of the cache key.
      *
      * @param string $key Key to check.
      * @return void
-     * @throws \Psr\SimpleCache\InvalidArgumentException When key is not valid.
+     * @throws \Psr\SimpleCache\InvalidArgumentException When the key is not valid.
      */
-    protected function checkKey($key)
+    protected function ensureValidKey($key)
     {
         if (!is_string($key) || strlen($key) === 0) {
             throw new InvalidArgumentException('Cache keys must be non-empty strings.');
@@ -67,7 +67,7 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function get($key, $default = null)
     {
-        $this->checkKey($key);
+        $this->ensureValidKey($key);
         $result = $this->innerEngine->read($key);
         if ($result === false) {
             return $default;
@@ -90,7 +90,7 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function set($key, $value, $ttl = null)
     {
-        $this->checkKey($key);
+        $this->ensureValidKey($key);
         if ($ttl !== null) {
             $restore = $this->innerEngine->getConfig('duration');
             $this->innerEngine->setConfig('duration', $ttl);
@@ -116,7 +116,7 @@ class SimpleCacheEngine implements CacheInterface
      */
     public function delete($key)
     {
-        $this->checkKey($key);
+        $this->ensureValidKey($key);
 
         return $this->innerEngine->delete($key);
     }
