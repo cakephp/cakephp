@@ -27,7 +27,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 class SimpleCacheEngineTest extends TestCase
 {
     /**
-     * setup
+     * Setup
      *
      * @return void
      */
@@ -45,7 +45,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * tear down
+     * Tear down
      *
      * @return void
      */
@@ -57,7 +57,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test getting keys
+     * Test getting keys
      *
      * @return void
      * @covers ::get
@@ -72,7 +72,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test get on missing keys
+     * Test get on missing keys
      *
      * @return void
      * @covers ::get
@@ -84,7 +84,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test get on invalid keys. The PSR spec outlines that an exception
+     * Test get on invalid keys. The PSR spec outlines that an exception
      * must be raised.
      *
      * @return void
@@ -98,7 +98,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test set() inheriting the default TTL
+     * Test set() inheriting the default TTL
      *
      * @return void
      * @covers ::set
@@ -111,7 +111,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test the TTL parameter of set()
+     * Test the TTL parameter of set()
      *
      * @return void
      * @covers ::set
@@ -128,7 +128,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test set() with an invalid key.
+     * Test set() with an invalid key.
      *
      * @return void
      * @covers ::set
@@ -141,7 +141,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test delete on known and unknown keys
+     * Test delete on known and unknown keys
      *
      * @return void
      * @covers ::delete
@@ -154,7 +154,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test delete on an invalid key
+     * Test delete on an invalid key
      *
      * @return void
      * @covers ::delete
@@ -167,7 +167,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test clearing cache data
+     * Test clearing cache data
      *
      * @return void
      * @covers ::clear
@@ -183,7 +183,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test getMultiple
+     * Test getMultiple
      *
      * @return void
      * @covers ::getMultiple
@@ -203,7 +203,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test getting multiple keys with an invalid key
+     * Test getting multiple keys with an invalid key
      *
      * @return void
      * @covers ::getMultiple
@@ -219,7 +219,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test getting multiple keys with an invalid keys parameter
+     * Test getting multiple keys with an invalid keys parameter
      *
      * @return void
      * @covers ::getMultiple
@@ -234,7 +234,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test getMultiple adding defaults in.
+     * Test getMultiple adding defaults in.
      *
      * @return void
      * @covers ::getMultiple
@@ -254,7 +254,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test setMultiple
+     * Test setMultiple
      *
      * @return void
      * @covers ::setMultiple
@@ -272,7 +272,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test setMultiple with an invalid key
+     * Test setMultiple with an invalid key
      *
      * @return void
      * @covers ::setMultiple
@@ -290,7 +290,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test setMultiple with ttl parameter
+     * Test setMultiple with ttl parameter
      *
      * @return void
      * @covers ::setMultiple
@@ -312,7 +312,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test deleting multiple keys
+     * Test deleting multiple keys
      *
      * @return void
      * @covers ::deleteMultiple
@@ -332,7 +332,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test deleting multiple keys with an invalid key
+     * Test deleting multiple keys with an invalid key
      *
      * @return void
      * @covers ::deleteMultiple
@@ -348,7 +348,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test deleting multiple keys with an invalid keys parameter
+     * Test deleting multiple keys with an invalid keys parameter
      *
      * @return void
      * @covers ::deleteMultiple
@@ -363,7 +363,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test partial success with deleteMultiple
+     * Test partial success with deleteMultiple
      *
      * @return void
      * @covers ::deleteMultiple
@@ -378,7 +378,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test has
+     * Test has
      *
      * @return void
      * @covers ::has
@@ -392,7 +392,7 @@ class SimpleCacheEngineTest extends TestCase
     }
 
     /**
-     * test has with invalid key
+     * Test has with invalid key
      *
      * @return void
      * @covers ::has
