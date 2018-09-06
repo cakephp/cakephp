@@ -2203,7 +2203,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests the takeLast() with and odd numbers collection
+     * Tests the takeLast() with an odd numbers collection
      *
      * @dataProvider simpleProvider
      * @param array $data The data to test with.
