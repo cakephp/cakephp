@@ -560,7 +560,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
     /**
      * Returns the last N elements of a collection
      *
-     * ### Examples:
+     * ### Example:
      *
      * ```
      * $items = [1, 2, 3, 4, 5];
