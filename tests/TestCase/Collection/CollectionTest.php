@@ -82,7 +82,9 @@ class CountableIterator extends \IteratorIterator implements \Countable
 }
 
 /**
- * CollectionTest
+ * Collection Test
+ *
+ * @coversDefaultClass \Cake\Collection\Collection
  */
 class CollectionTest extends TestCase
 {
@@ -2173,6 +2175,7 @@ class CollectionTest extends TestCase
      *
      * @dataProvider simpleProvider
      * @return void
+     * @covers ::takeLast
      */
     public function testLastN($data)
     {
@@ -2187,6 +2190,7 @@ class CollectionTest extends TestCase
      *
      * @dataProvider simpleProvider
      * @return void
+     * @covers ::takeLast
      */
     public function testLasNtWithOverflow($data)
     {
@@ -2201,6 +2205,7 @@ class CollectionTest extends TestCase
      *
      * @dataProvider simpleProvider
      * @return void
+     * @covers ::takeLast
      */
     public function testLasNtWithOddData($data)
     {
@@ -2214,6 +2219,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() with countable collection
      *
      * @return void
+     * @covers ::takeLast
      */
     public function testLasNtWithCountable()
     {
@@ -2231,6 +2237,7 @@ class CollectionTest extends TestCase
      *
      * @dataProvider simpleProvider
      * @return void
+     * @covers ::takeLast
      */
     public function testLasNtWithNegative($data)
     {
