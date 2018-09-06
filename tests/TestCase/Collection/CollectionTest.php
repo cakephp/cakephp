@@ -2192,7 +2192,7 @@ class CollectionTest extends TestCase
      * @return void
      * @covers ::takeLast
      */
-    public function testLasNtWithOverflow($data)
+    public function testLastNtWithOverflow($data)
     {
         $collection = new Collection($data);
         $result = $collection->takeLast(10)->toArray();
@@ -2207,7 +2207,7 @@ class CollectionTest extends TestCase
      * @return void
      * @covers ::takeLast
      */
-    public function testLasNtWithOddData($data)
+    public function testLastNtWithOddData($data)
     {
         $collection = new Collection($data);
         $result = $collection->take(3)->takeLast(2)->toArray();
@@ -2221,7 +2221,7 @@ class CollectionTest extends TestCase
      * @return void
      * @covers ::takeLast
      */
-    public function testLasNtWithCountable()
+    public function testLastNtWithCountable()
     {
         $collection = new Collection(new CountableIterator(range(0, 5)));
         $result = $collection->takeLast(2)->toList();
@@ -2239,7 +2239,7 @@ class CollectionTest extends TestCase
      * @return void
      * @covers ::takeLast
      */
-    public function testLasNtWithNegative($data)
+    public function testLastNtWithNegative($data)
     {
         $collection = new Collection($data);
         $this->expectException(\InvalidArgumentException::class);
