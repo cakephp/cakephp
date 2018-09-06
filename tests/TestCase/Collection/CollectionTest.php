@@ -2226,11 +2226,13 @@ class CollectionTest extends TestCase
      */
     public function testLastNtWithCountable()
     {
-        $collection = new Collection(new CountableIterator(range(0, 5)));
+        $rangeZeroToFive = range(0, 5);
+
+        $collection = new Collection(new CountableIterator($rangeZeroToFive));
         $result = $collection->takeLast(2)->toList();
         $this->assertEquals([4, 5], $result);
 
-        $collection = new Collection(new CountableIterator(range(0, 5)));
+        $collection = new Collection(new CountableIterator($rangeZeroToFive));
         $result = $collection->takeLast(1)->toList();
         $this->assertEquals([5], $result);
     }
