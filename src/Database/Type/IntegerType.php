@@ -64,7 +64,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             return null;
         }
 
-        if (!is_scalar($value)) {
+        if (!is_numeric($value)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot convert value of type `%s` to integer',
                 getTypeName($value)
@@ -98,7 +98,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
         foreach ($fields as $field) {
-            if (!isset($values[$field])) {
+            if (!isset($values[$field]) || !is_numeric($values[$field])) {
                 continue;
             }
             $values[$field] = (int)$values[$field];
