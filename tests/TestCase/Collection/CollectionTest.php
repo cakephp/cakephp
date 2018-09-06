@@ -2247,6 +2247,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($data);
         $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The takeLast method requires a number greater than 0.');
         $collection->takeLast(-1)->toArray();
     }
 
