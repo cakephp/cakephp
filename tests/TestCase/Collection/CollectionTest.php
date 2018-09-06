@@ -2174,6 +2174,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() method
      *
      * @dataProvider simpleProvider
+     * @param array $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2189,6 +2190,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() method with overflow
      *
      * @dataProvider simpleProvider
+     * @param array $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2204,6 +2206,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() with and odd numbers collection
      *
      * @dataProvider simpleProvider
+     * @param array $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
@@ -2236,6 +2239,7 @@ class CollectionTest extends TestCase
      * Tests the takeLast() with countable collection
      *
      * @dataProvider simpleProvider
+     * @param array $data The data to test with.
      * @return void
      * @covers ::takeLast
      */
