@@ -210,6 +210,46 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
+     * testTemplatePath
+     *
+     * @return void
+     */
+    public function testTemplatePath()
+    {
+        $request = (new ServerRequest())
+            ->withParam('controller', 'Foo')
+            ->withParam('action', 'bar');
+        $exception = new NotFoundException();
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+
+        $request = $request->withParam('prefix', 'admin');
+        $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
+
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('missingAction', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+
+        Configure::write('debug', false);
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals(
+            'Admin' . DIRECTORY_SEPARATOR . 'Error',
+            $controller->viewBuilder()->getTemplatePath()
+        );
+    }
+
+    /**
      * test that methods declared in an ExceptionRenderer subclass are not converted
      * into error400 when debug > 0
      *

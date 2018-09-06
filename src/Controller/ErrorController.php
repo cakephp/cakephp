@@ -42,6 +42,16 @@ class ErrorController extends Controller
      */
     public function beforeRender(EventInterface $event)
     {
-        $this->viewBuilder()->setTemplatePath('Error');
+        $builder = $this->viewBuilder();
+        $templatePath = 'Error';
+
+        if ($this->request->getParam('prefix') &&
+            in_array($builder->getTemplate(), ['error400', 'error500'], true)
+        ) {
+            $parts = explode(DIRECTORY_SEPARATOR, $builder->getTemplatePath(), -1);
+            $templatePath = implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR . 'Error';
+        }
+
+        $builder->setTemplatePath($templatePath);
     }
 }

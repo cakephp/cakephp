@@ -618,7 +618,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $builder = $this->viewBuilder();
         if (!$builder->getTemplatePath()) {
-            $builder->setTemplatePath($this->_viewPath());
+            $builder->setTemplatePath($this->_templatePath());
         }
 
         if ($this->request->getParam('bare')) {
@@ -654,22 +654,22 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Get the viewPath based on controller name and request prefix.
+     * Get the templatePath based on controller name and request prefix.
      *
      * @return string
      */
-    protected function _viewPath(): string
+    protected function _templatePath(): string
     {
-        $viewPath = $this->name;
+        $templatePath = $this->name;
         if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
                 explode('/', $this->request->getParam('prefix'))
             );
-            $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
+            $templatePath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $templatePath;
         }
 
-        return $viewPath;
+        return $templatePath;
     }
 
     /**
