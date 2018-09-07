@@ -45,6 +45,20 @@ class UpgradeCommand extends Command
     protected $path = '';
 
     /**
+     * Arguments
+     *
+     * @var \Cake\Console\Arguments
+     */
+    protected $args;
+
+    /**
+     * Console IO
+     *
+     * @var \Cake\Console\ConsoleIo
+     */
+    protected $io;
+
+    /**
      * Execute.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
