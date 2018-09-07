@@ -49,7 +49,7 @@ class UpgradeCommand extends Command
         $this->io = $io;
         $this->args = $args;
 
-        $path = $this->args->getOption('path');
+        $path = $args->getOption('path');
         if ($path) {
             $this->path = rtrim($path, '/') . DIRECTORY_SEPARATOR;
         } else {
@@ -58,7 +58,9 @@ class UpgradeCommand extends Command
 
         $this->git = is_dir($this->path . '.git');
 
-        $this->processTemplates();
+        if ($args->hasArgument('templates')) {
+            $this->processTemplates();
+        }
     }
 
     /**
@@ -156,6 +158,9 @@ class UpgradeCommand extends Command
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser
+            ->addArgument('templates', [
+                'help' => 'Move templates to new location and change extension.',
+            ])
             ->addOption('path', [
                 'help' => 'App/plugin path',
             ])

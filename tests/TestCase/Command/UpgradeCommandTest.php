@@ -83,7 +83,7 @@ class UpgradeCommandTest extends TestCase
      */
     public function testExecute()
     {
-        $this->exec('upgrade --path ' . $this->fs->url());
+        $this->exec('upgrade templates --path ' . $this->fs->url());
 
         $this->assertTrue($this->fs->hasChild('templates/Pages/home.php'));
         $this->assertTrue($this->fs->hasChild('plugins/TestPlugin/templates/Element/foo.php'));
