@@ -536,7 +536,7 @@ class ViewTest extends TestCase
             $pluginPath . 'templates' . DS,
             TEST_APP . 'templates' . DS,
             TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS,
-            CORE_PATH . 'templates' . DS
+            CORE_PATH . 'templates' . DS,
         ];
         $this->assertPathEquals($expected, $paths);
     }
