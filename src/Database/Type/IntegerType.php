@@ -98,9 +98,17 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     public function manyToPHP(array $values, array $fields, Driver $driver)
     {
         foreach ($fields as $field) {
-            if (!isset($values[$field]) || !is_numeric($values[$field])) {
+            if (!isset($values[$field])) {
                 continue;
             }
+
+            if ($values[$field] !== null && $values[$field] !== '' && !is_numeric($values[$field])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot convert value of type `%s` to integer',
+                    getTypeName($values[$field])
+                ));
+            }
+
             $values[$field] = (int)$values[$field];
         }
 
