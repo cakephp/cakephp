@@ -19,7 +19,6 @@ use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\visitor\vfsStreamPrintVisitor;
 
 /**
  * UpgradeCommand test.
@@ -45,8 +44,8 @@ class UpgradeCommandTest extends TestCase
                 'Template' => [
                     'Pages' => [
                         'home.ctp' => '',
-                    ]
-                ]
+                    ],
+                ],
             ],
             'plugins' => [
                 'TestPlugin' => [

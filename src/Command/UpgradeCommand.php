@@ -73,7 +73,7 @@ class UpgradeCommand extends Command
             $this->changeExt($this->path . 'templates');
         }
 
-        foreach((array)Configure::read('App.paths.plugins') as $path) {
+        foreach ((array)Configure::read('App.paths.plugins') as $path) {
             $this->moveDir($path);
             $this->changeExt($path);
         }
