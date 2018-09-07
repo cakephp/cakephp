@@ -121,6 +121,10 @@ class Curl implements AdapterInterface
         if (isset($options['proxy']['proxy'])) {
             $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
         }
+        if (isset($options['proxy']['username'])) {
+            $password = !empty($options['proxy']['password']) ? $options['proxy']['password'] : '';
+            $out[CURLOPT_PROXYUSERPWD] = $options['proxy']['username'] . ':' . $password;
+        }
         if (isset($options['curl']) && is_array($options['curl'])) {
             // Can't use array_merge() because keys will be re-ordered.
             foreach ($options['curl'] as $key => $value) {
