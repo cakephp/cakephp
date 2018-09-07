@@ -35,6 +35,13 @@ class UpgradeCommandTest extends TestCase
     protected $pluginPaths = [];
 
     /**
+     * Namespace
+     *
+     * @var string
+     */
+    protected $namespace = '';
+
+    /**
      * setup method
      *
      * @return void
@@ -43,7 +50,6 @@ class UpgradeCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->setAppNamespace();
         $this->useCommandRunner(true);
 
         $ds = [
@@ -71,6 +77,9 @@ class UpgradeCommandTest extends TestCase
 
         $this->pluginPaths = Configure::read('App.paths.plugins');
         Configure::write('App.paths.plugins', [$this->fs->url() . '/plugins'], true);
+
+        $this->namespace = Configure::read('App.namespace');
+        Configure::write('App.namespace', $appNamespace);
     }
 
     /**
@@ -81,6 +90,7 @@ class UpgradeCommandTest extends TestCase
     public function tearDown()
     {
         Configure::write('App.paths.plugins', $this->pluginPaths);
+        Configure::write('App.namespace', $this->namespace);
     }
 
     /**
