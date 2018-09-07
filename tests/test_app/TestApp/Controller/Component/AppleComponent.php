@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 
 /**
  * AppleComponent class
@@ -23,7 +24,6 @@ use Cake\Event\Event;
  */
 class AppleComponent extends Component
 {
-
     /**
      * components property
      *
@@ -34,10 +34,10 @@ class AppleComponent extends Component
     /**
      * startup method
      *
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
-    public function startup(Event $event)
+    public function startup(EventInterface $event)
     {
     }
 }

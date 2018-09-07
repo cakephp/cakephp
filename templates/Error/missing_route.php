@@ -26,7 +26,7 @@ $attributes = $error->getAttributes();
 $this->start('subheading');
 ?>
     <strong>Error: </strong>
-    <?= $error->getMessage(); ?>
+    <?= h($error->getMessage()); ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
@@ -36,7 +36,7 @@ Add a matching route to <?= 'config' . DIRECTORY_SEPARATOR . 'routes.php' ?></p>
 <?php if (!empty($attributes['context'])): ?>
 <p>The passed context was:</p>
 <pre>
-<?=  Debugger::exportVar($attributes['context']); ?>
+<?= h(Debugger::exportVar($attributes['context'])); ?>
 </pre>
 <?php endif; ?>
 
@@ -48,9 +48,9 @@ foreach (Router::routes() as $route):
     echo '<tr>';
     printf(
         '<td width="25%%">%s</td><td>%s</td><td width="20%%">%s</td>',
-        $route->template,
-        Debugger::exportVar($route->defaults),
-        Debugger::exportVar($route->options)
+        h($route->template),
+        h(Debugger::exportVar($route->defaults)),
+        h(Debugger::exportVar($route->options))
     );
     echo '</tr>';
 endforeach;

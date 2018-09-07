@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -21,14 +22,13 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
-use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
+use Cake\Routing\Router;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\DemoCommand;
-use TestApp\Http\EventApplication;
 use TestApp\Shell\SampleShell;
 
 /**
@@ -100,57 +100,6 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * test deprecated method defined in interface
-     *
-     * @return void
-     */
-    public function testEventManagerCompat()
-    {
-        $this->deprecated(function () {
-            $app = $this->createMock(ConsoleApplicationInterface::class);
-
-            $runner = new CommandRunner($app);
-            $this->assertSame(EventManager::instance(), $runner->eventManager());
-        });
-    }
-
-    /**
-     * Test that the console hook not returning a command collection
-     * raises an error.
-     *
-     * @return void
-     */
-    public function testRunConsoleHookFailure()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The application\'s `console` method did not return a CommandCollection.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['console', 'middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $runner = new CommandRunner($app);
-        $runner->run(['cake', '-h']);
-    }
-
-    /**
-     * Test that the console hook not returning a command collection
-     * raises an error.
-     *
-     * @return void
-     */
-    public function testRunPluginConsoleHookFailure()
-    {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('The application\'s `pluginConsole` method did not return a CommandCollection.');
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['pluginConsole', 'middleware', 'bootstrap'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-        $runner = new CommandRunner($app);
-        $runner->run(['cake', '-h']);
-    }
-
-    /**
      * Test that running with empty argv fails
      *
      * @return void
@@ -160,7 +109,7 @@ class CommandRunnerTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot run any commands. No arguments received.');
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -178,7 +127,7 @@ class CommandRunnerTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unknown command `cake nope`. Run `cake --help` to get the list of valid commands.');
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -194,7 +143,7 @@ class CommandRunnerTest extends TestCase
     public function testRunHelpLongOption()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -216,7 +165,7 @@ class CommandRunnerTest extends TestCase
     public function testRunHelpShortOption()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -237,7 +186,7 @@ class CommandRunnerTest extends TestCase
     public function testRunNoCommand()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -260,7 +209,7 @@ class CommandRunnerTest extends TestCase
     public function testRunVersionAlias()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -278,7 +227,7 @@ class CommandRunnerTest extends TestCase
     public function testRunValidCommand()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -301,14 +250,14 @@ class CommandRunnerTest extends TestCase
     public function testRunValidCommandInflection()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
         $output = new ConsoleOutput();
 
         $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', 'OrmCache', 'build'], $this->getMockIo($output));
+        $result = $runner->run(['cake', 'SchemaCache', 'build'], $this->getMockIo($output));
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());
@@ -432,7 +381,7 @@ class CommandRunnerTest extends TestCase
     public function testRunTriggersBuildCommandsEvent()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap'])
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -454,7 +403,10 @@ class CommandRunnerTest extends TestCase
     public function testRunCallsPluginHookMethods()
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'pluginBootstrap', 'pluginEvents', 'pluginConsole'])
+            ->setMethods([
+                'middleware', 'bootstrap', 'routes',
+                'pluginBootstrap', 'pluginConsole', 'pluginRoutes',
+            ])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -468,6 +420,8 @@ class CommandRunnerTest extends TestCase
             ->will($this->returnCallback(function ($commands) {
                 return $commands;
             }));
+        $app->expects($this->at(3))->method('routes');
+        $app->expects($this->at(4))->method('pluginRoutes');
 
         $output = new ConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
@@ -475,10 +429,28 @@ class CommandRunnerTest extends TestCase
         $this->assertContains(Configure::version(), $output->messages()[0]);
     }
 
+    /**
+     * Test that run() loads routing.
+     *
+     * @return void
+     */
+    public function testRunLoadsRoutes()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap'])
+            ->setConstructorArgs([TEST_APP . 'config' . DS])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app, 'cake');
+        $runner->run(['cake', '--version'], $this->getMockIo($output));
+        $this->assertGreaterThan(2, count(Router::getRouteCollection()->routes()));
+    }
+
     protected function makeAppWithCommands($commands)
     {
         $app = $this->getMockBuilder(BaseApplication::class)
-            ->setMethods(['middleware', 'bootstrap', 'console'])
+            ->setMethods(['middleware', 'bootstrap', 'console', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
         $collection = new CommandCollection($commands);

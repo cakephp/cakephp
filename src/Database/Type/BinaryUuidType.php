@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,9 +17,6 @@ namespace Cake\Database\Type;
 
 use Cake\Core\Exception\Exception;
 use Cake\Database\Driver;
-use Cake\Database\Driver\Sqlserver;
-use Cake\Database\Type;
-use Cake\Database\TypeInterface;
 use Cake\Utility\Text;
 use PDO;
 
@@ -27,31 +25,8 @@ use PDO;
  *
  * Use to convert binary uuid data between PHP and the database types.
  */
-class BinaryUuidType extends Type implements TypeInterface
+class BinaryUuidType extends BaseType
 {
-    /**
-     * Identifier name for this type.
-     *
-     * (This property is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @var string|null
-     */
-    protected $_name;
-
-    /**
-     * Constructor.
-     *
-     * (This method is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @param string|null $name The name identifying this type
-     */
-    public function __construct($name = null)
-    {
-        $this->_name = $name;
-    }
-
     /**
      * Convert binary uuid data into the database format.
      *
@@ -76,7 +51,7 @@ class BinaryUuidType extends Type implements TypeInterface
      *
      * @return string A new primary key value.
      */
-    public function newId()
+    public function newId(): string
     {
         return Text::uuid();
     }
@@ -111,7 +86,7 @@ class BinaryUuidType extends Type implements TypeInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_LOB;
     }
@@ -139,7 +114,7 @@ class BinaryUuidType extends Type implements TypeInterface
      *
      * @return string Converted value.
      */
-    protected function convertBinaryUuidToString($binary)
+    protected function convertBinaryUuidToString($binary): string
     {
         $string = unpack("H*", $binary);
 

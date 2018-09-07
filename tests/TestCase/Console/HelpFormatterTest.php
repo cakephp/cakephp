@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * HelpFormatterTest file
  *
@@ -25,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class HelpFormatterTest extends TestCase
 {
-
     /**
      * test that the console max width is respected when generating help.
      *
@@ -83,7 +83,7 @@ txt;
             ->addArgument('type', [
                 'help' => 'Resource type.',
                 'choices' => ['aco', 'aro'],
-                'required' => true
+                'required' => true,
             ])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
@@ -191,7 +191,7 @@ txt;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addOption('connection', [
-                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default'
+                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default',
             ]);
 
         $formatter = new HelpFormatter($parser);
@@ -309,20 +309,6 @@ xml;
     }
 
     /**
-     * Tests that setting a none string help alias triggers an exception
-     *
-     * @return void
-     */
-    public function testWithNoneStringHelpAlias()
-    {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
-        $this->expectExceptionMessage('Alias must be of type string.');
-        $parser = new ConsoleOptionParser('mycommand', false);
-        $formatter = new HelpFormatter($parser);
-        $formatter->setAlias(['foo']);
-    }
-
-    /**
      * test help() with options and arguments that have choices.
      *
      * @return void
@@ -334,7 +320,7 @@ xml;
             ->addArgument('type', [
                 'help' => 'Resource type.',
                 'choices' => ['aco', 'aro'],
-                'required' => true
+                'required' => true,
             ])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
@@ -466,7 +452,7 @@ xml;
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
             ->addOption('connection', [
-                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default'
+                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default',
             ]);
 
         $formatter = new HelpFormatter($parser);

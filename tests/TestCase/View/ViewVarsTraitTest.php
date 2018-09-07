@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class ViewVarsTraitTest extends TestCase
 {
-
     /**
      * @var \Cake\Controller\Controller;
      */
@@ -36,7 +36,7 @@ class ViewVarsTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = new Controller;
+        $this->subject = new Controller();
     }
 
     /**
@@ -48,11 +48,11 @@ class ViewVarsTraitTest extends TestCase
     {
         $data = ['test' => 'val', 'foo' => 'bar'];
         $this->subject->set($data);
-        $this->assertEquals($data, $this->subject->viewVars);
+        $this->assertEquals($data, $this->subject->viewBuilder()->getVars());
 
         $update = ['test' => 'updated'];
         $this->subject->set($update);
-        $this->assertEquals('updated', $this->subject->viewVars['test']);
+        $this->assertEquals('updated', $this->subject->viewBuilder()->getVar('test'));
     }
 
     /**
@@ -63,7 +63,7 @@ class ViewVarsTraitTest extends TestCase
     public function testSetTwoParam()
     {
         $this->subject->set('testing', 'value');
-        $this->assertEquals(['testing' => 'value'], $this->subject->viewVars);
+        $this->assertEquals(['testing' => 'value'], $this->subject->viewBuilder()->getVars());
     }
 
     /**
@@ -76,7 +76,7 @@ class ViewVarsTraitTest extends TestCase
         $result = $this->subject->set('testing', 'value')
             ->set('foo', 'bar');
         $this->assertSame($this->subject, $result);
-        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewVars);
+        $this->assertEquals(['testing' => 'value', 'foo' => 'bar'], $this->subject->viewBuilder()->getVars());
     }
 
     /**
@@ -91,78 +91,8 @@ class ViewVarsTraitTest extends TestCase
         $this->subject->set($keys, $vals);
 
         $expected = ['one' => 'two', 'key' => 'val'];
-        $this->assertEquals($expected, $this->subject->viewVars);
+        $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
     }
-
-    /**
-     * test viewOptions() with 1 string param, merge true
-     *
-     * @return void
-     */
-    public function testAddOneViewOption()
-    {
-        $option = 'newOption';
-        $this->subject->viewOptions($option);
-
-        $this->assertContains($option, $this->subject->viewOptions());
-    }
-
-    /**
-     * test viewOptions() with 2 strings in array, merge true.
-     *
-     * @return void
-     */
-    public function testAddTwoViewOption()
-    {
-        $this->subject->viewOptions(['oldOption'], false);
-        $option = ['newOption', 'anotherOption'];
-        $result = $this->subject->viewOptions($option);
-        $expects = ['oldOption', 'newOption', 'anotherOption'];
-
-        $this->assertContainsOnly('string', $result);
-        $this->assertEquals($expects, $result);
-    }
-
-    /**
-     * test empty params reads _viewOptions.
-     *
-     * @return void
-     */
-    public function testReadingViewOptions()
-    {
-        $expected = $this->subject->viewOptions(['one', 'two', 'three'], false);
-        $result = $this->subject->viewOptions();
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * test setting $merge `false` overrides correct options.
-     *
-     * @return void
-     */
-    public function testMergeFalseViewOptions()
-    {
-        $this->subject->viewOptions(['one', 'two', 'three'], false);
-        $expected = ['four', 'five', 'six'];
-        $result = $this->subject->viewOptions($expected, false);
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * test _viewOptions is undefined and $opts is null, an empty array is returned.
-     *
-     * @return void
-     */
-    public function testUndefinedValidViewOptions()
-    {
-        $result = $this->subject->viewOptions([], false);
-
-        $this->assertInternalType('array', $result);
-        $this->assertEmpty($result);
-    }
-
     /**
      * test that createView() updates viewVars of View instance on each call.
      *
@@ -172,49 +102,11 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->createView()->viewVars);
+        $this->assertEquals('one', $this->subject->createView()->get('one'));
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->assertEquals($expected, $this->subject->createView()->viewVars);
-    }
-
-    /**
-     * test that options are passed to the view builder when using createView().
-     *
-     * @return void
-     */
-    public function testViewOptionsGetsToBuilder()
-    {
-        $this->subject->passedArgs = 'test';
-        $this->subject->createView();
-        $result = $this->subject->viewBuilder()->getOptions();
-        $this->assertEquals(['passedArgs' => 'test'], $result);
-    }
-
-    /**
-     * test that viewClass is used to create the view
-     *
-     * @return void
-     */
-    public function testCreateViewViewClass()
-    {
-        $this->subject->viewClass = 'Json';
-        $view = $this->subject->createView();
-        $this->assertInstanceOf('Cake\View\JsonView', $view);
-    }
-
-    /**
-     * test that viewBuilder settings override viewClass
-     *
-     * @return void
-     */
-    public function testCreateViewViewBuilder()
-    {
-        $this->subject->viewBuilder()->setClassName('Xml');
-        $this->subject->viewClass = 'Json';
-        $view = $this->subject->createView();
-        $this->assertInstanceOf('Cake\View\XmlView', $view);
+        $this->assertEquals('two', $this->subject->createView()->get('two'));
     }
 
     /**
@@ -225,7 +117,6 @@ class ViewVarsTraitTest extends TestCase
     public function testCreateViewParameter()
     {
         $this->subject->viewBuilder()->setClassName('View');
-        $this->subject->viewClass = 'Json';
         $view = $this->subject->createView('Xml');
         $this->assertInstanceOf('Cake\View\XmlView', $view);
     }

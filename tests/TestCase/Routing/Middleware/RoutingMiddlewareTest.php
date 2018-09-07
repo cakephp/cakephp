@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,6 @@
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Cache\Cache;
-use Cake\Core\Configure;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -106,9 +106,11 @@ class RoutingMiddlewareTest extends TestCase
                 'action' => 'index',
                 'plugin' => null,
                 'pass' => [],
-                '_matchedRoute' => '/articles'
+                '_matchedRoute' => '/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -131,9 +133,11 @@ class RoutingMiddlewareTest extends TestCase
                 'plugin' => null,
                 'pass' => [],
                 '_matchedRoute' => '/articles',
-                '_csrfToken' => 'i-am-groot'
+                '_csrfToken' => 'i-am-groot',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -147,7 +151,6 @@ class RoutingMiddlewareTest extends TestCase
     public function testRoutesHookInvokedOnApp()
     {
         Router::reload();
-        $this->assertFalse(Router::$initialized, 'Router precondition failed');
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
         $response = new Response();
@@ -157,12 +160,13 @@ class RoutingMiddlewareTest extends TestCase
                 'action' => 'index',
                 'plugin' => null,
                 'pass' => [],
-                '_matchedRoute' => '/app/articles'
+                '_matchedRoute' => '/app/articles',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
-            $this->assertTrue(Router::$initialized, 'Router state should indicate routes loaded');
             $this->assertNotEmpty(Router::routes());
             $this->assertEquals('/app/articles', Router::routes()[0]->template);
+
+            return $res;
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
@@ -177,7 +181,6 @@ class RoutingMiddlewareTest extends TestCase
     public function testRoutesHookCallsPluginHook()
     {
         Router::reload();
-        $this->assertFalse(Router::$initialized, 'Router precondition failed');
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
         $response = new Response();
@@ -207,6 +210,8 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals(['controller' => 'Articles'], $req->getAttribute('params'));
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -222,6 +227,7 @@ class RoutingMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
         $response = new Response();
         $next = function ($req, $res) {
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -237,12 +243,12 @@ class RoutingMiddlewareTest extends TestCase
         Router::connect('/articles-patch', [
             'controller' => 'Articles',
             'action' => 'index',
-            '_method' => 'PATCH'
+            '_method' => 'PATCH',
         ]);
         $request = ServerRequestFactory::fromGlobals(
             [
                 'REQUEST_METHOD' => 'POST',
-                'REQUEST_URI' => '/articles-patch'
+                'REQUEST_URI' => '/articles-patch',
             ],
             null,
             ['_method' => 'PATCH']
@@ -255,10 +261,12 @@ class RoutingMiddlewareTest extends TestCase
                 '_method' => 'PATCH',
                 'plugin' => null,
                 'pass' => [],
-                '_matchedRoute' => '/articles-patch'
+                '_matchedRoute' => '/articles-patch',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertEquals('PATCH', $req->getMethod());
+
+            return $res;
         };
         $middleware = new RoutingMiddleware();
         $middleware($request, $response, $next);
@@ -292,7 +300,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/api/ping'
+            'REQUEST_URI' => '/api/ping',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -339,7 +347,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/api/articles'
+            'REQUEST_URI' => '/api/articles',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -382,7 +390,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/'
+            'REQUEST_URI' => '/',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -431,7 +439,7 @@ class RoutingMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => $url
+            'REQUEST_URI' => $url,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
@@ -470,7 +478,6 @@ class RoutingMiddlewareTest extends TestCase
             'engine' => 'File',
             'path' => TMP,
         ]);
-        Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) use ($cacheConfigName) {
@@ -495,12 +502,12 @@ class RoutingMiddlewareTest extends TestCase
     public function testCacheNotUsedIfCacheDisabled()
     {
         $cacheConfigName = '_cake_router_';
+        Cache::drop($cacheConfigName);
         Cache::disable();
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
             'path' => TMP,
         ]);
-        Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) use ($cacheConfigName) {
@@ -526,13 +533,12 @@ class RoutingMiddlewareTest extends TestCase
     public function testCacheConfigNotFound()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The "notfound" cache configuration does not exist');
+        $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
 
         Cache::setConfig('_cake_router_', [
             'engine' => 'File',
             'path' => TMP,
         ]);
-        Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) {

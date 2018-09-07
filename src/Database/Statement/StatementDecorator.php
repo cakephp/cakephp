@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,29 +33,7 @@ use IteratorAggregate;
  */
 class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
-
     use TypeConverterTrait;
-
-    /**
-     * Used to designate that numeric indexes be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_NUM = 'num';
-
-    /**
-     * Used to designate that an associated array be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_ASSOC = 'assoc';
-
-    /**
-     * Used to designate that a stdClass object be returned in a result when calling fetch methods
-     *
-     * @var string
-     */
-    const FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Statement instance implementation, such as PDOStatement
@@ -96,7 +75,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string $property internal property to get
      * @return mixed
      */
-    public function __get($property)
+    public function __get(string $property)
     {
         if ($property === 'queryString') {
             return $this->_statement->queryString;
@@ -123,7 +102,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string $type name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string')
+    public function bindValue($column, $value, $type = 'string'): void
     {
         $this->_statement->bindValue($column, $value, $type);
     }
@@ -135,7 +114,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return void
      */
-    public function closeCursor()
+    public function closeCursor(): void
     {
         $this->_statement->closeCursor();
     }
@@ -153,7 +132,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return int
      */
-    public function columnCount()
+    public function columnCount(): int
     {
         return $this->_statement->columnCount();
     }
@@ -174,7 +153,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return array
      */
-    public function errorInfo()
+    public function errorInfo(): array
     {
         return $this->_statement->errorInfo();
     }
@@ -188,7 +167,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param array|null $params list of values to be bound to query
      * @return bool true on success, false otherwise
      */
-    public function execute($params = null)
+    public function execute(?array $params = null): bool
     {
         $this->_hasExecuted = true;
 
@@ -208,7 +187,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
      * ```
      *
-     * @param string $type 'num' for positional columns, assoc for named columns
+     * @param string|int $type 'num' for positional columns, assoc for named columns
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
@@ -221,11 +200,13 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Returns the next row in a result set as an associative array. Calling this function is the same as calling
      * $statement->fetch(StatementDecorator::FETCH_TYPE_ASSOC). If no results are found false is returned.
      *
-     * @return array|false Result array containing columns and values an an associative array or false if no results
+     * @return array Result array containing columns and values an an associative array or an empty array if no results
      */
-    public function fetchAssoc()
+    public function fetchAssoc(): array
     {
-        return $this->fetch(static::FETCH_TYPE_ASSOC);
+        $result = $this->fetch(static::FETCH_TYPE_ASSOC);
+
+        return $result ?: [];
     }
 
     /**
@@ -234,12 +215,12 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param int $position The numeric position of the column to retrieve in the result
      * @return mixed|false Returns the specific value of the column designated at $position
      */
-    public function fetchColumn($position)
+    public function fetchColumn(int $position)
     {
         $result = $this->fetch(static::FETCH_TYPE_NUM);
         if (isset($result[$position])) {
             return $result[$position];
-        };
+        }
 
         return false;
     }
@@ -255,8 +236,8 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array List of all results from database for this statement
+     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
+     * @return array|false List of all results from database for this statement. False on failure.
      */
     public function fetchAll($type = self::FETCH_TYPE_NUM)
     {
@@ -276,7 +257,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return int
      */
-    public function rowCount()
+    public function rowCount(): int
     {
         return $this->_statement->rowCount();
     }
@@ -311,7 +292,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->rowCount();
     }
@@ -323,7 +304,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param array $types list of types to be used, keys should match those in $params
      * @return void
      */
-    public function bind($params, $types)
+    public function bind(array $params, array $types): void
     {
         if (empty($params)) {
             return;
@@ -350,7 +331,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string|null $column the name of the column representing the primary key
      * @return string|int
      */
-    public function lastInsertId($table = null, $column = null)
+    public function lastInsertId(?string $table = null, ?string $column = null)
     {
         $row = null;
         if ($column && $this->columnCount()) {

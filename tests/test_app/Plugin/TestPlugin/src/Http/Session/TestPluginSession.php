@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace TestPlugin\Http\Session;
 
 use SessionHandlerInterface;
@@ -8,7 +9,6 @@ use SessionHandlerInterface;
  */
 class TestPluginSession implements SessionHandlerInterface
 {
-
     public function open($savePath, $name)
     {
         return true;

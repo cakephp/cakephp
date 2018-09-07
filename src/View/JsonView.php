@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -55,20 +56,19 @@ use Cake\Core\Configure;
  */
 class JsonView extends SerializedView
 {
-
     /**
      * JSON layouts are located in the json sub directory of `Layouts/`
      *
      * @var string
      */
-    public $layoutPath = 'json';
+    protected $layoutPath = 'json';
 
     /**
      * JSON views are located in the 'json' sub directory for controllers' views.
      *
      * @var string
      */
-    public $subDir = 'json';
+    protected $subDir = 'json';
 
     /**
      * Response type.
@@ -102,7 +102,7 @@ class JsonView extends SerializedView
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
      */
-    public function render($view = null, $layout = null)
+    public function render($view = null, $layout = null): ?string
     {
         $return = parent::render($view, $layout);
 
@@ -189,6 +189,6 @@ class JsonView extends SerializedView
             return !empty($data) ? $data : null;
         }
 
-        return isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
+        return $this->viewVars[$serialize] ?? null;
     }
 }

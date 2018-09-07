@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -41,7 +42,7 @@ class BoolTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('boolean');
+        $this->type = TypeFactory::build('boolean');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
@@ -157,7 +158,7 @@ class BoolTypeTest extends TestCase
         $this->assertFalse($this->type->marshal(0));
         $this->assertFalse($this->type->marshal(''));
         $this->assertTrue($this->type->marshal('not empty'));
-        $this->assertTrue($this->type->marshal(['2', '3']));
+        $this->assertNull($this->type->marshal(['2', '3']));
     }
 
     /**

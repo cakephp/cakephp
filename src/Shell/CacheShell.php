@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,7 @@ namespace Cake\Shell;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
 use Cake\Cache\Engine\WincacheEngine;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use InvalidArgumentException;
 
@@ -29,13 +31,12 @@ use InvalidArgumentException;
  */
 class CacheShell extends Shell
 {
-
     /**
      * Get the option parser for this shell.
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->addSubcommand('list_prefixes', [
@@ -50,15 +51,15 @@ class CacheShell extends Shell
                 'description' => [
                     'Clear the cache for a particular prefix.',
                     'For example, `cake cache clear _cake_model_` will clear the model cache',
-                    'Use `cake cache list_prefixes` to list available prefixes'
+                    'Use `cake cache list_prefixes` to list available prefixes',
                 ],
                 'arguments' => [
                     'prefix' => [
                         'help' => 'The cache prefix to be cleared.',
-                        'required' => true
-                    ]
-                ]
-            ]
+                        'required' => true,
+                    ],
+                ],
+            ],
         ]);
 
         return $parser;
@@ -71,7 +72,7 @@ class CacheShell extends Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    public function clear($prefix = null)
+    public function clear(?string $prefix = null): void
     {
         try {
             $engine = Cache::engine($prefix);
@@ -95,7 +96,7 @@ class CacheShell extends Shell
      *
      * @return void
      */
-    public function clearAll()
+    public function clearAll(): void
     {
         $prefixes = Cache::configured();
         foreach ($prefixes as $prefix) {
@@ -108,7 +109,7 @@ class CacheShell extends Shell
      *
      * @return void
      */
-    public function listPrefixes()
+    public function listPrefixes(): void
     {
         $prefixes = Cache::configured();
         foreach ($prefixes as $prefix) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,6 @@ use Cake\View\Exception\MissingHelperException;
  */
 class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
 {
-
     use EventDispatcherTrait;
 
     /**
@@ -66,8 +66,8 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         try {
             $this->load($helper);
         } catch (Exception\MissingHelperException $exception) {
-            if ($this->_View->plugin) {
-                $this->load($this->_View->plugin . '.' . $helper);
+            if ($this->_View->getPlugin()) {
+                $this->load($this->_View->getPlugin() . '.' . $helper);
 
                 return true;
             }
@@ -104,7 +104,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|false Either the correct classname or false.
+     * @return string|null Either the correct class name or null.
      */
     protected function _resolveClassName($class)
     {
@@ -118,15 +118,15 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
-     * @param string $plugin The plugin the helper is missing in.
+     * @param string|null $plugin The plugin the helper is missing in.
      * @return void
      * @throws \Cake\View\Exception\MissingHelperException
      */
-    protected function _throwMissingClassError($class, $plugin)
+    protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingHelperException([
             'class' => $class . 'Helper',
-            'plugin' => $plugin
+            'plugin' => $plugin,
         ]);
     }
 
@@ -139,16 +139,13 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $class The class to create.
      * @param string $alias The alias of the loaded helper.
      * @param array $settings An array of settings to use for the helper.
-     * @return \Cake\Controller\Component The constructed helper class.
+     * @return \Cake\View\Helper The constructed helper class.
      */
-    protected function _create($class, $alias, $settings)
+    protected function _create($class, string $alias, array $settings): Helper
     {
         $instance = new $class($this->_View, $settings);
-        $vars = ['request', 'theme', 'plugin'];
-        foreach ($vars as $var) {
-            $instance->{$var} = $this->_View->{$var};
-        }
-        $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
+
+        $enable = $settings['enabled'] ?? true;
         if ($enable) {
             $this->getEventManager()->on($instance);
         }

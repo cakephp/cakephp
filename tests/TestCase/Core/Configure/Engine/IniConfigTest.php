@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class IniConfigTest extends TestCase
 {
-
     /**
      * Test data to serialize and unserialize.
      *
@@ -33,14 +33,14 @@ class IniConfigTest extends TestCase
         'One' => [
             'two' => 'value',
             'three' => [
-                'four' => 'value four'
+                'four' => 'value four',
             ],
             'is_null' => null,
             'bool_false' => false,
             'bool_true' => true,
         ],
         'Asset' => [
-            'timestamp' => 'force'
+            'timestamp' => 'force',
         ],
     ];
 
@@ -111,7 +111,7 @@ class IniConfigTest extends TestCase
 
         $expected = [
             'some_key' => 'some_value',
-            'bool_key' => true
+            'bool_key' => true,
         ];
         $this->assertEquals($expected, $config);
     }
@@ -210,7 +210,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadPluginValue()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $engine = new IniConfig($this->path);
         $result = $engine->read('TestPlugin.nested');
 

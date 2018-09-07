@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Exception;
  */
 class LoggingStatement extends StatementDecorator
 {
-
     /**
      * Logger instance responsible for actually doing the logging task
      *
@@ -47,7 +47,7 @@ class LoggingStatement extends StatementDecorator
      * @return bool True on success, false otherwise
      * @throws \Exception Re-throws any exception raised during query execution.
      */
-    public function execute($params = null)
+    public function execute(?array $params = null): bool
     {
         $t = microtime(true);
         $query = new LoggedQuery();
@@ -72,11 +72,11 @@ class LoggingStatement extends StatementDecorator
      * to the logging system.
      *
      * @param \Cake\Database\Log\LoggedQuery $query The query to log.
-     * @param array $params List of values to be bound to query.
+     * @param array|null $params List of values to be bound to query.
      * @param float $startTime The microtime when the query was executed.
      * @return void
      */
-    protected function _log($query, $params, $startTime)
+    protected function _log(LoggedQuery $query, ?array $params, float $startTime): void
     {
         $query->took = round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
@@ -93,7 +93,7 @@ class LoggingStatement extends StatementDecorator
      * @param string|int|null $type PDO type or name of configured Type class
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string')
+    public function bindValue($column, $value, $type = 'string'): void
     {
         parent::bindValue($column, $value, $type);
         if ($type === null) {
@@ -106,33 +106,12 @@ class LoggingStatement extends StatementDecorator
     }
 
     /**
-     * Sets the logger object instance. When called with no arguments
-     * it returns the currently setup logger instance
-     *
-     * @deprecated 3.5.0 Use getLogger() and setLogger() instead.
-     * @param \Cake\Database\Log\QueryLogger|null $instance Logger object instance.
-     * @return \Cake\Database\Log\QueryLogger|null Logger instance
-     */
-    public function logger($instance = null)
-    {
-        deprecationWarning(
-            'LoggingStatement::logger() is deprecated. ' .
-            'Use LoggingStatement::setLogger()/getLogger() instead.'
-        );
-        if ($instance === null) {
-            return $this->getLogger();
-        }
-
-        return $this->_logger = $instance;
-    }
-
-    /**
      * Sets a logger
      *
      * @param \Cake\Database\Log\QueryLogger $logger Logger object
      * @return void
      */
-    public function setLogger($logger)
+    public function setLogger(QueryLogger $logger): void
     {
         $this->_logger = $logger;
     }
@@ -140,9 +119,9 @@ class LoggingStatement extends StatementDecorator
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Cake\Database\Log\QueryLogger|null logger instance
      */
-    public function getLogger()
+    public function getLogger(): ?QueryLogger
     {
         return $this->_logger;
     }

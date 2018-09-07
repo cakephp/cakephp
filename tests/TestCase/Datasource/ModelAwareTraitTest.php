@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class Stub
 {
-
     use ModelAwareTrait;
 
     public function setProps($name)
@@ -36,7 +36,6 @@ class Stub
  */
 class ModelAwareTraitTest extends TestCase
 {
-
     /**
      * Test set modelClass
      *
@@ -115,33 +114,6 @@ class ModelAwareTraitTest extends TestCase
         $this->assertInstanceOf('\StdClass', $result);
         $this->assertInstanceOf('\StdClass', $stub->Magic);
         $this->assertEquals('Magic', $stub->Magic->name);
-    }
-
-    /**
-     * test alternate default model type.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testModelType()
-    {
-        $this->deprecated(function () {
-            $stub = new Stub();
-            $stub->setProps('Articles');
-
-            FactoryLocator::add('Test', function ($name) {
-                $mock = new \StdClass();
-                $mock->name = $name;
-
-                return $mock;
-            });
-            $stub->modelType('Test');
-
-            $result = $stub->loadModel('Magic');
-            $this->assertInstanceOf('\StdClass', $result);
-            $this->assertInstanceOf('\StdClass', $stub->Magic);
-            $this->assertEquals('Magic', $stub->Magic->name);
-        });
     }
 
     /**

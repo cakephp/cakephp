@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,8 +18,7 @@ use Cake\Database\Driver\Sqlite;
 
 class TestDriver extends Sqlite
 {
-
-    public function enabled()
+    public function enabled(): bool
     {
         return true;
     }

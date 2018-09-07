@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\Database\Expression\Comparison;
  */
 trait SqlDialectTrait
 {
-
     /**
      * Quotes a database identifier (a column name, table name, etc..) to
      * be used safely in queries without the risk of using reserved words
@@ -29,46 +29,50 @@ trait SqlDialectTrait
      * @param string $identifier The identifier to quote.
      * @return string
      */
-    public function quoteIdentifier($identifier)
+    public function quoteIdentifier(string $identifier): string
     {
         $identifier = trim($identifier);
 
-        if ($identifier === '*') {
-            return '*';
-        }
-
-        if ($identifier === '') {
-            return '';
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
         }
 
         // string
-        if (preg_match('/^[\w-]+$/', $identifier)) {
+        if (preg_match('/^[\w-]+$/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.[^ \*]*$/', $identifier)) {
-// string.string
+        // string.string
+        if (preg_match('/^[\w-]+\.[^ \*]*$/u', $identifier)) {
             $items = explode('.', $identifier);
 
             return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.\*$/', $identifier)) {
-// string.*
+        // string.*
+        if (preg_match('/^[\w-]+\.\*$/u', $identifier)) {
             return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
         }
 
+        // Functions
         if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
-// Functions
             return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
         }
 
         // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+(\.[\w-\s]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
         }
 
-        if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s\-]*[\w])(.*)/u', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
+
+            return $this->_startQuote . $field . $this->_endQuote . $matches[2];
+        }
+
+        if (preg_match('/^[\w-_\s]*[\w-_]+/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
@@ -84,7 +88,7 @@ trait SqlDialectTrait
      * (select, insert, update, delete)
      * @return callable
      */
-    public function queryTranslator($type)
+    public function queryTranslator(string $type): callable
     {
         return function ($query) use ($type) {
             if ($this->isAutoQuotingEnabled()) {
@@ -117,7 +121,7 @@ trait SqlDialectTrait
      *
      * @return array
      */
-    protected function _expressionTranslators()
+    protected function _expressionTranslators(): array
     {
         return [];
     }
@@ -128,7 +132,7 @@ trait SqlDialectTrait
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
      */
-    protected function _selectQueryTranslator($query)
+    protected function _selectQueryTranslator(Query $query): Query
     {
         return $this->_transformDistinct($query);
     }
@@ -140,7 +144,7 @@ trait SqlDialectTrait
      * @param \Cake\Database\Query $query The query to be transformed
      * @return \Cake\Database\Query
      */
-    protected function _transformDistinct($query)
+    protected function _transformDistinct(Query $query): Query
     {
         if (is_array($query->clause('distinct'))) {
             $query->group($query->clause('distinct'), true);
@@ -162,7 +166,7 @@ trait SqlDialectTrait
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
      */
-    protected function _deleteQueryTranslator($query)
+    protected function _deleteQueryTranslator(Query $query): Query
     {
         $hadAlias = false;
         $tables = [];
@@ -194,7 +198,7 @@ trait SqlDialectTrait
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
      */
-    protected function _updateQueryTranslator($query)
+    protected function _updateQueryTranslator(Query $query): Query
     {
         return $this->_removeAliasesFromConditions($query);
     }
@@ -207,7 +211,7 @@ trait SqlDialectTrait
      * @throws \RuntimeException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
      */
-    protected function _removeAliasesFromConditions($query)
+    protected function _removeAliasesFromConditions(Query $query): Query
     {
         if ($query->clause('join')) {
             throw new \RuntimeException(
@@ -244,7 +248,7 @@ trait SqlDialectTrait
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
      */
-    protected function _insertQueryTranslator($query)
+    protected function _insertQueryTranslator(Query $query): Query
     {
         return $query;
     }
@@ -252,10 +256,10 @@ trait SqlDialectTrait
     /**
      * Returns a SQL snippet for creating a new transaction savepoint
      *
-     * @param string $name save point name
+     * @param string|int $name save point name
      * @return string
      */
-    public function savePointSQL($name)
+    public function savePointSQL($name): string
     {
         return 'SAVEPOINT LEVEL' . $name;
     }
@@ -263,10 +267,10 @@ trait SqlDialectTrait
     /**
      * Returns a SQL snippet for releasing a previously created save point
      *
-     * @param string $name save point name
+     * @param string|int $name save point name
      * @return string
      */
-    public function releaseSavePointSQL($name)
+    public function releaseSavePointSQL($name): string
     {
         return 'RELEASE SAVEPOINT LEVEL' . $name;
     }
@@ -274,10 +278,10 @@ trait SqlDialectTrait
     /**
      * Returns a SQL snippet for rollbacking a previously created save point
      *
-     * @param string $name save point name
+     * @param string|int $name save point name
      * @return string
      */
-    public function rollbackSavePointSQL($name)
+    public function rollbackSavePointSQL($name): string
     {
         return 'ROLLBACK TO SAVEPOINT LEVEL' . $name;
     }

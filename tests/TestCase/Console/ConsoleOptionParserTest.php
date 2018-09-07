@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,24 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConsoleOptionParserTest extends TestCase
 {
-
-    /**
-     * test setting the console description
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testDescriptionDeprecated()
-    {
-        $this->deprecated(function () {
-            $parser = new ConsoleOptionParser('test', false);
-            $result = $parser->description('A test');
-
-            $this->assertEquals($parser, $result, 'Setting description is not chainable');
-            $this->assertEquals('A test', $parser->description(), 'getting value is wrong.');
-        });
-    }
-
     /**
      * test setting the console description
      *
@@ -61,24 +44,7 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test setting the console description
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testEplilogDeprecated()
-    {
-        $this->deprecated(function () {
-            $parser = new ConsoleOptionParser('test', false);
-            $result = $parser->epilog('A test');
-
-            $this->assertEquals($parser, $result, 'Setting epilog is not chainable');
-            $this->assertEquals('A test', $parser->epilog(), 'getting value is wrong.');
-        });
-    }
-
-    /**
-     * test setting the console epilog
+     * test setting and getting the console epilog
      *
      * @return void
      */
@@ -130,7 +96,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('test', [
-            'short' => 't'
+            'short' => 't',
         ]);
         $result = $parser->parse(['--test', 'value']);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Long parameter did not parse out');
@@ -171,7 +137,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('test', [
-            'short' => 't'
+            'short' => 't',
         ]);
         $result = $parser->parse(['--test=value']);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Long parameter did not parse out');
@@ -208,7 +174,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('test', [
-            'short' => 't'
+            'short' => 't',
         ]);
         $result = $parser->parse(['-t', 'value']);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Short parameter did not parse out');
@@ -224,13 +190,13 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('source', [
             'multiple' => true,
-            'short' => 's'
+            'short' => 's',
         ]);
         $result = $parser->parse(['-s', 'mysql', '-s', 'postgres']);
         $this->assertEquals(
             [
                 'source' => ['mysql', 'postgres'],
-                'help' => false
+                'help' => false,
             ],
             $result[0],
             'Short parameter did not parse out'
@@ -322,9 +288,9 @@ class ConsoleOptionParserTest extends TestCase
         $expected = [
             'source' => [
                 'mysql',
-                'postgres'
+                'postgres',
             ],
-            'help' => false
+            'help' => false,
         ];
         $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
     }
@@ -347,10 +313,10 @@ class ConsoleOptionParserTest extends TestCase
             'export' => true,
             'source' => [
                 'mysql',
-                'postgres'
+                'postgres',
             ],
             'name' => 'annual-report',
-            'help' => false
+            'help' => false,
         ];
         $this->assertEquals($expected, $result[0], 'options with multiple values did not parse');
     }
@@ -365,7 +331,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('something', false);
         $result = $parser->addOptions([
             'name' => ['help' => 'The name'],
-            'other' => ['help' => 'The other arg']
+            'other' => ['help' => 'The other arg'],
         ]);
         $this->assertEquals($parser, $result, 'addOptions is not chainable.');
 
@@ -613,7 +579,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $result = $parser->addArguments([
             'name' => ['help' => 'The name'],
-            'other' => ['help' => 'The other arg']
+            'other' => ['help' => 'The other arg'],
         ]);
         $this->assertEquals($parser, $result, 'addArguments is not chainable.');
 
@@ -630,7 +596,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $result = $parser->addSubcommand('initdb', [
-            'help' => 'Initialize the database'
+            'help' => 'Initialize the database',
         ]);
         $this->assertEquals($parser, $result, 'Adding a subcommand is not chainable');
     }
@@ -644,7 +610,7 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $result = $parser->addSubcommand('initMyDb', [
-            'help' => 'Initialize the database'
+            'help' => 'Initialize the database',
         ]);
 
         $subcommands = array_keys($result->subcommands());
@@ -661,10 +627,10 @@ class ConsoleOptionParserTest extends TestCase
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addSubcommand('build', [
-            'help' => 'Build things'
+            'help' => 'Build things',
         ])->addOption('connection', [
             'short' => 'c',
-            'default' => 'default'
+            'default' => 'default',
         ])->addArgument('name', ['required' => false]);
 
         $result = $parser->parse(['build']);
@@ -672,7 +638,7 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->subcommands();
         $this->assertArrayHasKey('build', $result);
-        $this->assertFalse($result['build']->parser(), 'No parser should be created');
+        $this->assertNull($result['build']->parser(), 'No parser should be created');
     }
 
     /**
@@ -732,7 +698,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $result = $parser->addSubcommands([
             'initdb' => ['help' => 'Initialize the database'],
-            'create' => ['help' => 'Create something']
+            'create' => ['help' => 'Create something'],
         ]);
         $this->assertEquals($parser, $result, 'Adding a subcommands is not chainable');
         $result = $parser->subcommands();
@@ -768,7 +734,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
                 'help' => 'This is another command',
-                'parser' => $subParser
+                'parser' => $subParser,
             ])
             ->addOption('test', ['help' => 'A test option.']);
 
@@ -790,6 +756,46 @@ TEXT;
     }
 
     /**
+     * Test addSubcommand inherits options as no
+     * parser is created.
+     *
+     * @return void
+     */
+    public function testHelpSubcommandInheritOptions()
+    {
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('build', [
+            'help' => 'Build things.',
+        ])->addSubcommand('destroy', [
+            'help' => 'Destroy things.',
+        ])->addOption('connection', [
+            'help' => 'Db connection.',
+            'short' => 'c',
+        ])->addArgument('name', ['required' => false]);
+
+        $result = $parser->help('build');
+        $expected = <<<TEXT
+Build things.
+
+<info>Usage:</info>
+cake mycommand build [-c] [-h] [-q] [-v] [<name>]
+
+<info>Options:</info>
+
+--connection, -c  Db connection.
+--help, -h        Display this help.
+--quiet, -q       Enable quiet output.
+--verbose, -v     Enable verbose output.
+
+<info>Arguments:</info>
+
+name   <comment>(optional)</comment>
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
      * test that help() with a command param shows the help for a subcommand
      *
      * @return void
@@ -802,14 +808,14 @@ TEXT;
                     'short' => 'f',
                     'help' => 'Foo.',
                     'boolean' => true,
-                ]
+                ],
             ],
         ];
 
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addSubcommand('method', [
                 'help' => 'This is a subcommand',
-                'parser' => $subParser
+                'parser' => $subParser,
             ])
             ->setRootName('tool')
             ->addOption('test', ['help' => 'A test option.']);
@@ -827,6 +833,41 @@ tool mycommand method [-f] [-h] [-q] [-v]
 --help, -h     Display this help.
 --quiet, -q    Enable quiet output.
 --verbose, -v  Enable verbose output.
+
+TEXT;
+        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+    }
+
+    /**
+     * test that help() with a command param shows the help for a subcommand
+     *
+     * @return void
+     */
+    public function testHelpSubcommandInheritParser()
+    {
+        $subParser = new ConsoleOptionParser('method', false);
+        $subParser->addOption('connection', ['help' => 'Db connection.']);
+        $subParser->addOption('zero', ['short' => '0', 'help' => 'Zero.']);
+
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $parser->addSubcommand('method', [
+                'help' => 'This is another command',
+                'parser' => $subParser,
+            ])
+            ->addOption('test', ['help' => 'A test option.']);
+
+        $result = $parser->help('method');
+        $expected = <<<TEXT
+This is another command
+
+<info>Usage:</info>
+cake mycommand method [--connection] [-h] [-0]
+
+<info>Options:</info>
+
+--connection      Db connection.
+--help, -h        Display this help.
+--zero, -0        Zero.
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
@@ -873,7 +914,7 @@ TEXT;
                     'short' => 'f',
                     'help' => 'Foo.',
                     'boolean' => true,
-                ]
+                ],
             ],
         ];
 
@@ -881,7 +922,7 @@ TEXT;
         $parser
             ->addSubcommand('method', [
                 'help' => 'This is a subcommand',
-                'parser' => $subParser
+                'parser' => $subParser,
             ])
             ->addOption('test', ['help' => 'A test option.'])
             ->addSubcommand('unstash');
@@ -911,17 +952,17 @@ TEXT;
             'command' => 'test',
             'arguments' => [
                 'name' => ['help' => 'The name'],
-                'other' => ['help' => 'The other arg']
+                'other' => ['help' => 'The other arg'],
             ],
             'options' => [
                 'name' => ['help' => 'The name'],
-                'other' => ['help' => 'The other arg']
+                'other' => ['help' => 'The other arg'],
             ],
             'subcommands' => [
-                'initdb' => ['help' => 'make database']
+                'initdb' => ['help' => 'make database'],
             ],
             'description' => 'description text',
-            'epilog' => 'epilog text'
+            'epilog' => 'epilog text',
         ];
         $parser = ConsoleOptionParser::buildFromArray($spec);
 
@@ -952,7 +993,7 @@ TEXT;
     }
 
     /**
-     * test that command() inflects the command name.
+     * test that getCommand() inflects the command name.
      *
      * @return void
      */
@@ -978,12 +1019,12 @@ TEXT;
                 'parser' => [
                     'options' => [
                         'secondary' => ['boolean' => true],
-                        'fourth' => ['help' => 'fourth option']
+                        'fourth' => ['help' => 'fourth option'],
                     ],
                     'arguments' => [
-                        'sub_arg' => ['choices' => ['c', 'd']]
-                    ]
-                ]
+                        'sub_arg' => ['choices' => ['c', 'd']],
+                    ],
+                ],
             ]);
 
         $result = $parser->parse(['sub', '--secondary', '--fourth', '4', 'c']);
@@ -1007,17 +1048,17 @@ TEXT;
             'command' => 'test',
             'arguments' => [
                 'name' => ['help' => 'The name'],
-                'other' => ['help' => 'The other arg']
+                'other' => ['help' => 'The other arg'],
             ],
             'options' => [
                 'name' => ['help' => 'The name'],
-                'other' => ['help' => 'The other arg']
+                'other' => ['help' => 'The other arg'],
             ],
             'subcommands' => [
-                'initdb' => ['help' => 'make database']
+                'initdb' => ['help' => 'make database'],
             ],
             'description' => 'description text',
-            'epilog' => 'epilog text'
+            'epilog' => 'epilog text',
         ];
         $parser = ConsoleOptionParser::buildFromArray($spec);
         $result = $parser->toArray();

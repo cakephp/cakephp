@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,13 +15,11 @@
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
-use Cake\Routing\DispatcherFactory;
-use Cake\Routing\Filter\ControllerFactoryFilter;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -43,17 +42,6 @@ class ActionDispatcherTest extends TestCase
     }
 
     /**
-     * Teardown
-     *
-     * @return void
-     */
-    public function tearDown()
-    {
-        parent::tearDown();
-        DispatcherFactory::clear();
-    }
-
-    /**
      * Ensure the constructor args end up on the right protected properties.
      *
      * @return void
@@ -66,51 +54,6 @@ class ActionDispatcherTest extends TestCase
 
         $this->assertAttributeSame($events, '_eventManager', $dispatcher);
         $this->assertAttributeSame($factory, 'factory', $dispatcher);
-    }
-
-    /**
-     * Ensure that filters connected to the DispatcherFactory are
-     * also applied
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testDispatcherFactoryCompat()
-    {
-        $this->deprecated(function () {
-            $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-                ->setMethods(['beforeDispatch', 'afterDispatch'])
-                ->getMock();
-            DispatcherFactory::add($filter);
-            $dispatcher = new ActionDispatcher(null, null, DispatcherFactory::filters());
-            $this->assertCount(1, $dispatcher->getFilters());
-            $this->assertSame($filter, $dispatcher->getFilters()[0]);
-        });
-    }
-
-    /**
-     * Test adding routing filters
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAddFilter()
-    {
-        $this->deprecated(function () {
-            $this->assertCount(0, $this->dispatcher->getFilters());
-            $events = $this->dispatcher->getEventManager();
-            $this->assertCount(0, $events->listeners('Dispatcher.beforeDispatch'));
-            $this->assertCount(0, $events->listeners('Dispatcher.afterDispatch'));
-
-            $filter = $this->getMockBuilder('Cake\Routing\DispatcherFilter')
-                ->setMethods(['beforeDispatch', 'afterDispatch'])
-                ->getMock();
-            $this->dispatcher->addFilter($filter);
-
-            $this->assertCount(1, $this->dispatcher->getFilters());
-            $this->assertCount(1, $events->listeners('Dispatcher.beforeDispatch'));
-            $this->assertCount(1, $events->listeners('Dispatcher.afterDispatch'));
-        });
     }
 
     /**
@@ -147,10 +90,10 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'pass' => [],
             ],
-            'session' => new Session
+            'session' => new Session(),
         ]);
         $res = new Response();
-        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (Event $event) {
+        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (EventInterface $event) {
             $response = $event->getData('response');
             $event->setData('response', $response->withStringBody('Filter body'));
         });
@@ -242,7 +185,7 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'Posts',
                 'action' => 'index',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
@@ -263,7 +206,7 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'Cakes',
                 'action' => 'noRender',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
@@ -285,7 +228,7 @@ class ActionDispatcherTest extends TestCase
             'params' => [
                 'controller' => 'SomeController',
                 'action' => 'home',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -305,7 +248,7 @@ class ActionDispatcherTest extends TestCase
             'params' => [
                 'controller' => 'Interface',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -325,7 +268,7 @@ class ActionDispatcherTest extends TestCase
             'params' => [
                 'controller' => 'Abstract',
                 'action' => 'index',
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -350,7 +293,7 @@ class ActionDispatcherTest extends TestCase
                 'controller' => 'somepages',
                 'action' => 'display',
                 'pass' => ['home'],
-            ]
+            ],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->dispatcher->dispatch($request, $response);
@@ -371,7 +314,7 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'stop' => 'startup',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
@@ -393,7 +336,7 @@ class ActionDispatcherTest extends TestCase
                 'action' => 'index',
                 'stop' => 'shutdown',
                 'pass' => [],
-            ]
+            ],
         ]);
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,13 +15,11 @@
  */
 namespace Cake\Form;
 
-use Cake\Event\Event;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
-use Cake\Form\Schema;
-use Cake\Validation\Validator;
+use Cake\Utility\Hash;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
 
@@ -32,17 +31,17 @@ use Cake\Validation\ValidatorAwareTrait;
  * ### Building a form
  *
  * This class is most useful when subclassed. In a subclass you
- * should define the `_buildSchema`, `_buildValidator` and optionally,
+ * should define the `_buildSchema`, `validationDefault` and optionally,
  * the `_execute` methods. These allow you to declare your form's
  * fields, validation and primary action respectively.
- *
- * You can also define the validation and schema by chaining method
- * calls off of `$form->schema()` and `$form->validator()`.
  *
  * Forms are conventionally placed in the `App\Form` namespace.
  */
 class Form implements EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
 {
+    use EventDispatcherTrait;
+    use ValidatorAwareTrait;
+
     /**
      * Schema class.
      *
@@ -50,22 +49,19 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     protected $_schemaClass = Schema::class;
 
-    use EventDispatcherTrait;
-    use ValidatorAwareTrait;
-
     /**
      * The alias this object is assigned to validators as.
      *
      * @var string
      */
-    const VALIDATOR_PROVIDER_NAME = 'form';
+    public const VALIDATOR_PROVIDER_NAME = 'form';
 
     /**
      * The name of the event dispatched when a validator has been built.
      *
      * @var string
      */
-    const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
+    public const BUILD_VALIDATOR_EVENT = 'Form.buildValidator';
 
     /**
      * The schema used by this form.
@@ -89,12 +85,19 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     protected $_validator;
 
     /**
+     * Form's data.
+     *
+     * @var array
+     */
+    protected $_data = [];
+
+    /**
      * Constructor
      *
      * @param \Cake\Event\EventManager|null $eventManager The event manager.
      *  Defaults to a new instance.
      */
-    public function __construct(EventManager $eventManager = null)
+    public function __construct(?EventManager $eventManager = null)
     {
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -112,11 +115,15 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
-        return [
-            'Form.buildValidator' => 'buildValidator',
-        ];
+        if (method_exists($this, 'buildValidator')) {
+            return [
+                self::BUILD_VALIDATOR_EVENT => 'buildValidator',
+            ];
+        }
+
+        return [];
     }
 
     /**
@@ -129,10 +136,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Form\Schema|null $schema The schema to set, or null.
      * @return \Cake\Form\Schema the schema instance.
      */
-    public function schema(Schema $schema = null)
+    public function schema(?Schema $schema = null): Schema
     {
         if ($schema === null && empty($this->_schema)) {
-            $schema = $this->_buildSchema(new $this->_schemaClass);
+            $schema = $this->_buildSchema(new $this->_schemaClass());
         }
         if ($schema) {
             $this->_schema = $schema;
@@ -151,67 +158,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Form\Schema $schema The schema to customize.
      * @return \Cake\Form\Schema The schema to use.
      */
-    protected function _buildSchema(Schema $schema)
+    protected function _buildSchema(Schema $schema): Schema
     {
         return $schema;
-    }
-
-    /**
-     * Get/Set the validator for this form.
-     *
-     * This method will call `_buildValidator()` when the validator
-     * is first built. This hook method lets you configure the
-     * validator or load a pre-defined one.
-     *
-     * @param \Cake\Validation\Validator|null $validator The validator to set, or null.
-     * @return \Cake\Validation\Validator the validator instance.
-     * @deprecated 3.6.0 Use Form::getValidator()/setValidator() instead.
-     */
-    public function validator(Validator $validator = null)
-    {
-        deprecationWarning(
-            'Form::validator() is deprecated. ' .
-            'Use Form::getValidator()/setValidator() instead.'
-        );
-
-        if ($validator === null && empty($this->_validator)) {
-            $validator = $this->_buildValidator(new $this->_validatorClass);
-        }
-        if ($validator) {
-            $this->_validator = $validator;
-            $this->setValidator('default', $validator);
-        }
-
-        return $this->getValidator();
-    }
-
-    /**
-     * A hook method intended to be implemented by subclasses.
-     *
-     * You can use this method to define the validator using
-     * the methods on Cake\Validation\Validator or loads a pre-defined
-     * validator from a concrete class.
-     *
-     * @param \Cake\Validation\Validator $validator The validator to customize.
-     * @return \Cake\Validation\Validator The validator to use.
-     * @deprecated 3.6.0 Use Form::getValidator()/setValidator() and buildValidator() instead.
-     */
-    protected function _buildValidator(Validator $validator)
-    {
-        return $validator;
-    }
-
-    /**
-     * Callback method for Form.buildValidator event.
-     *
-     * @param \Cake\Event\Event $event The Form.buildValidator event instance.
-     * @param \Cake\Validation\Validator $validator The validator to customize.
-     * @param string $name Validator name
-     * @return void
-     */
-    public function buildValidator(Event $event, Validator $validator, $name)
-    {
-        $this->_buildValidator($validator);
     }
 
     /**
@@ -220,12 +169,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $data The data to check.
      * @return bool Whether or not the data is valid.
      */
-    public function validate(array $data)
+    public function validate(array $data): bool
     {
         $validator = $this->getValidator();
-        if (!$validator->count()) {
-            $validator = $this->validator();
-        }
         $this->_errors = $validator->errors($data);
 
         return count($this->_errors) === 0;
@@ -239,7 +185,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array Last set validation errors.
      */
-    public function errors()
+    public function errors(): array
     {
         return $this->_errors;
     }
@@ -255,11 +201,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * $form->setErrors($errors);
      * ```
      *
-     * @since 3.5.1
      * @param array $errors Errors list.
      * @return $this
      */
-    public function setErrors(array $errors)
+    public function setErrors(array $errors): self
     {
         $this->_errors = $errors;
 
@@ -278,7 +223,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @return bool False on validation failure, otherwise returns the
      *   result of the `_execute()` method.
      */
-    public function execute(array $data)
+    public function execute(array $data): bool
     {
         if (!$this->validate($data)) {
             return false;
@@ -295,9 +240,38 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $data Form data.
      * @return bool
      */
-    protected function _execute(array $data)
+    protected function _execute(array $data): bool
     {
         return true;
+    }
+
+    /**
+     * Get field data.
+     *
+     * @param string|null $field The field name or null to get data array with
+     *   all fields.
+     * @return mixed
+     */
+    public function getData(?string $field = null)
+    {
+        if ($field === null) {
+            return $this->_data;
+        }
+
+        return Hash::get($this->_data, $field);
+    }
+
+    /**
+     * Set form data.
+     *
+     * @param array $data Data array.
+     * @return $this
+     */
+    public function setData(array $data): self
+    {
+        $this->_data = $data;
+
+        return $this;
     }
 
     /**
@@ -305,12 +279,12 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
             '_errors' => $this->errors(),
-            '_validator' => $this->getValidator()->__debugInfo()
+            '_validator' => $this->getValidator()->__debugInfo(),
         ];
 
         return $special + get_object_vars($this);

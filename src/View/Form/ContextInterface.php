@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,13 +20,12 @@ namespace Cake\View\Form;
  */
 interface ContextInterface
 {
-
     /**
      * Get the fields used in the context as a primary key.
      *
      * @return array
      */
-    public function primaryKey();
+    public function primaryKey(): array;
 
     /**
      * Returns true if the passed field name is part of the primary key for this context
@@ -34,14 +34,14 @@ interface ContextInterface
      *   is needed for.
      * @return bool
      */
-    public function isPrimaryKey($field);
+    public function isPrimaryKey(string $field): bool;
 
     /**
      * Returns whether or not this form is for a create operation.
      *
      * @return bool
      */
-    public function isCreate();
+    public function isCreate(): bool;
 
     /**
      * Get the current value for a given field.
@@ -58,7 +58,7 @@ interface ContextInterface
      *   is needed for.
      * @return mixed
      */
-    public function val($field);
+    public function val(string $field);
 
     /**
      * Check if a given field is 'required'.
@@ -68,14 +68,22 @@ interface ContextInterface
      * @param string $field A dot separated path to check required-ness for.
      * @return bool
      */
-    public function isRequired($field);
+    public function isRequired(string $field): bool;
+
+    /**
+     * Gets the default "required" error message for a field
+     *
+     * @param string $field A dot separated path to the field name
+     * @return string|null
+     */
+    public function getRequiredMessage(string $field): ?string;
 
     /**
      * Get the fieldnames of the top level object in this context.
      *
      * @return array A list of the field names in the context.
      */
-    public function fieldNames();
+    public function fieldNames(): array;
 
     /**
      * Get the abstract field type for a given field name.
@@ -84,7 +92,7 @@ interface ContextInterface
      * @return null|string An abstract data type or null.
      * @see \Cake\Database\Type
      */
-    public function type($field);
+    public function type(string $field): ?string;
 
     /**
      * Get an associative array of other attributes for a field name.
@@ -92,7 +100,7 @@ interface ContextInterface
      * @param string $field A dot separated path to get additional data on.
      * @return array An array of data describing the additional attributes on a field.
      */
-    public function attributes($field);
+    public function attributes(string $field): array;
 
     /**
      * Check whether or not a field has an error attached to it
@@ -100,7 +108,7 @@ interface ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
      */
-    public function hasError($field);
+    public function hasError(string $field): bool;
 
     /**
      * Get the errors for a given field
@@ -109,5 +117,5 @@ interface ContextInterface
      * @return array An array of errors, an empty array will be returned when the
      *    context has no errors.
      */
-    public function error($field);
+    public function error(string $field): array;
 }

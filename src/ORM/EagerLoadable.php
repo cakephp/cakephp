@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ namespace Cake\ORM;
  */
 class EagerLoadable
 {
-
     /**
      * The name of the association to load.
      *
@@ -127,12 +127,12 @@ class EagerLoadable
      * @param string $name The Association name.
      * @param array $config The list of properties to set.
      */
-    public function __construct($name, array $config = [])
+    public function __construct(string $name, array $config = [])
     {
         $this->_name = $name;
         $allowed = [
             'associations', 'instance', 'config', 'canBeJoined',
-            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty'
+            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty',
         ];
         foreach ($allowed as $property) {
             if (isset($config[$property])) {
@@ -148,7 +148,7 @@ class EagerLoadable
      * @param \Cake\ORM\EagerLoadable $association The association to load.
      * @return void
      */
-    public function addAssociation($name, EagerLoadable $association)
+    public function addAssociation(string $name, EagerLoadable $association): void
     {
         $this->_associations[$name] = $association;
     }
@@ -158,7 +158,7 @@ class EagerLoadable
      *
      * @return array
      */
-    public function associations()
+    public function associations(): array
     {
         return $this->_associations;
     }
@@ -168,7 +168,7 @@ class EagerLoadable
      *
      * @return \Cake\ORM\Association|null
      */
-    public function instance()
+    public function instance(): ?Association
     {
         return $this->_instance;
     }
@@ -179,7 +179,7 @@ class EagerLoadable
      *
      * @return string|null
      */
-    public function aliasPath()
+    public function aliasPath(): ?string
     {
         return $this->_aliasPath;
     }
@@ -198,7 +198,7 @@ class EagerLoadable
      *
      * @return string|null
      */
-    public function propertyPath()
+    public function propertyPath(): ?string
     {
         return $this->_propertyPath;
     }
@@ -209,7 +209,7 @@ class EagerLoadable
      * @param bool $possible The value to set.
      * @return $this
      */
-    public function setCanBeJoined($possible)
+    public function setCanBeJoined(bool $possible): self
     {
         $this->_canBeJoined = (bool)$possible;
 
@@ -219,22 +219,10 @@ class EagerLoadable
     /**
      * Gets whether or not this level can be fetched using a join.
      *
-     * If called with arguments it sets the value.
-     * As of 3.4.0 the setter part is deprecated, use setCanBeJoined() instead.
-     *
-     * @param bool|null $possible The value to set.
      * @return bool
      */
-    public function canBeJoined($possible = null)
+    public function canBeJoined(): bool
     {
-        if ($possible !== null) {
-            deprecationWarning(
-                'Using EagerLoadable::canBeJoined() as a setter is deprecated. ' .
-                'Use setCanBeJoined() instead.'
-            );
-            $this->setCanBeJoined($possible);
-        }
-
         return $this->_canBeJoined;
     }
 
@@ -245,7 +233,7 @@ class EagerLoadable
      * @param array $config The value to set.
      * @return $this
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): self
     {
         $this->_config = $config;
 
@@ -258,33 +246,9 @@ class EagerLoadable
      *
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->_config;
-    }
-
-    /**
-     * Sets the list of options to pass to the association object for loading
-     * the records.
-     *
-     * If called with no arguments it returns the current
-     * value.
-     *
-     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
-     * @param array|null $config The value to set.
-     * @return array
-     */
-    public function config(array $config = null)
-    {
-        deprecationWarning(
-            'EagerLoadable::config() is deprecated. ' .
-            'Use setConfig()/getConfig() instead.'
-        );
-        if ($config !== null) {
-            $this->setConfig($config);
-        }
-
-        return $this->getConfig();
     }
 
     /**
@@ -293,7 +257,7 @@ class EagerLoadable
      *
      * @return bool|null
      */
-    public function forMatching()
+    public function forMatching(): ?bool
     {
         return $this->_forMatching;
     }
@@ -312,7 +276,7 @@ class EagerLoadable
      *
      * @return string|null
      */
-    public function targetProperty()
+    public function targetProperty(): ?string
     {
         return $this->_targetProperty;
     }
@@ -323,7 +287,7 @@ class EagerLoadable
      *
      * @return array
      */
-    public function asContainArray()
+    public function asContainArray(): array
     {
         $associations = [];
         foreach ($this->_associations as $assoc) {
@@ -337,8 +301,8 @@ class EagerLoadable
         return [
             $this->_name => [
                 'associations' => $associations,
-                'config' => $config
-            ]
+                'config' => $config,
+            ],
         ];
     }
 }

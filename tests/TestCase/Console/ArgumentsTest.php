@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -106,7 +107,7 @@ class ArgumentsTest extends TestCase
         $options = [
             'verbose' => true,
             'off' => false,
-            'empty' => ''
+            'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertSame($options, $args->getOptions());
@@ -123,7 +124,7 @@ class ArgumentsTest extends TestCase
             'verbose' => true,
             'off' => false,
             'zero' => 0,
-            'empty' => ''
+            'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertTrue($args->hasOption('verbose'));
@@ -144,7 +145,7 @@ class ArgumentsTest extends TestCase
             'verbose' => true,
             'off' => false,
             'zero' => 0,
-            'empty' => ''
+            'empty' => '',
         ];
         $args = new Arguments([], $options, []);
         $this->assertTrue($args->getOption('verbose'));

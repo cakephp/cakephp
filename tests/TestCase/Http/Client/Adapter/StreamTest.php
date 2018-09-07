@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class CakeStreamWrapper implements \ArrayAccess
 {
-
     private $_stream;
 
     private $_query = [];
@@ -35,6 +35,10 @@ class CakeStreamWrapper implements \ArrayAccess
 
     public function stream_open($path, $mode, $options, &$openedPath)
     {
+        if ($path === 'http://throw_exception/') {
+            throw new \Exception();
+        }
+
         $query = parse_url($path, PHP_URL_QUERY);
         if ($query) {
             parse_str($query, $this->_query);
@@ -97,7 +101,6 @@ class CakeStreamWrapper implements \ArrayAccess
  */
 class StreamTest extends TestCase
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -124,7 +127,7 @@ class StreamTest extends TestCase
         $stream = new Stream();
         $request = new Request('http://localhost', 'GET', [
             'User-Agent' => 'CakePHP TestSuite',
-            'Cookie' => 'testing=value'
+            'Cookie' => 'testing=value',
         ]);
 
         try {
@@ -152,6 +155,32 @@ class StreamTest extends TestCase
     }
 
     /**
+     * Test stream error_handler cleanup when wrapper throws exception
+     *
+     * @return void
+     */
+    public function testSendWrapperException()
+    {
+        $stream = new Stream();
+        $request = new Request('http://throw_exception/');
+
+        $currentHandler = set_error_handler(function () {
+        });
+        restore_error_handler();
+
+        try {
+            $stream->send($request, []);
+        } catch (\Exception $e) {
+        }
+
+        $newHandler = set_error_handler(function () {
+        });
+        restore_error_handler();
+
+        $this->assertEquals($currentHandler, $newHandler);
+    }
+
+    /**
      * Test building the context headers
      *
      * @return void
@@ -164,7 +193,7 @@ class StreamTest extends TestCase
             [
                 'User-Agent' => 'CakePHP TestSuite',
                 'Content-Type' => 'application/json',
-                'Cookie' => 'a=b; c=do%20it'
+                'Cookie' => 'a=b; c=do%20it',
             ]
         );
 
@@ -200,7 +229,7 @@ class StreamTest extends TestCase
         );
 
         $options = [
-            'redirect' => 20
+            'redirect' => 20,
         ];
         $this->stream->send($request, $options);
         $result = $this->stream->contextOptions();
@@ -224,7 +253,7 @@ class StreamTest extends TestCase
             'http://localhost',
             'GET',
             [
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
             ],
             ['a' => 'my value']
         );
@@ -279,8 +308,8 @@ class StreamTest extends TestCase
             'ssl_verify_depth' => 9000,
             'ssl_allow_self_signed' => false,
             'proxy' => [
-                'proxy' => '127.0.0.1:8080'
-            ]
+                'proxy' => '127.0.0.1:8080',
+            ],
         ];
 
         $this->stream->send($request, $options);
@@ -314,8 +343,8 @@ class StreamTest extends TestCase
             'ssl_verify_depth' => 9000,
             'ssl_allow_self_signed' => false,
             'proxy' => [
-                'proxy' => '127.0.0.1:8080'
-            ]
+                'proxy' => '127.0.0.1:8080',
+            ],
         ];
 
         $this->stream->send($request, $options);

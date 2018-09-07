@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,6 @@ use RecursiveIterator;
  */
 class UnfoldIterator extends IteratorIterator implements RecursiveIterator
 {
-
     /**
      * A function that is passed each element in this iterator and
      * must return an array or Traversable object.
@@ -46,12 +46,12 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      * Creates the iterator that will generate child iterators from each of the
      * elements it was constructed with.
      *
-     * @param array|\Traversable $items The list of values to iterate
+     * @param iterable $items The list of values to iterate
      * @param callable $unfolder A callable function that will receive the
      * current item and key. It must return an array or Traversable object
      * out of which the nested iterators will be yielded.
      */
-    public function __construct($items, callable $unfolder)
+    public function __construct(iterable $items, callable $unfolder)
     {
         $this->_unfolder = $unfolder;
         parent::__construct($items);

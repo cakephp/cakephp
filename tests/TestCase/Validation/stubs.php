@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -12,17 +13,16 @@
  * @since         3.2.5
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Validation {
+namespace Cake\Validation;
 
-    /**
-     * Use namespace injection to overwrite is_uploaded_file()
-     * during tests.
-     *
-     * @param string $filename The file to check.
-     * @return bool Whether or not the file exists.
-     */
-    function is_uploaded_file($filename)
-    {
-        return file_exists($filename);
-    }
+/**
+ * Use namespace injection to overwrite is_uploaded_file()
+ * during tests.
+ *
+ * @param string $filename The file to check.
+ * @return bool Whether or not the file exists.
+ */
+function is_uploaded_file($filename)
+{
+    return file_exists($filename);
 }

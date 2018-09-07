@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,6 @@ use RuntimeException;
  */
 class ProgressHelper extends Helper
 {
-
     /**
      * The current progress.
      *
@@ -68,7 +68,7 @@ class ProgressHelper extends Helper
      * @param array $args The arguments/options to use when outputing the progress bar.
      * @return void
      */
-    public function output($args)
+    public function output(array $args): void
     {
         $args += ['callback' => null];
         if (isset($args[0])) {
@@ -99,7 +99,7 @@ class ProgressHelper extends Helper
      * @param array $args The initialization data.
      * @return $this
      */
-    public function init(array $args = [])
+    public function init(array $args = []): self
     {
         $args += ['total' => 100, 'width' => 80];
         $this->_progress = 0;
@@ -115,7 +115,7 @@ class ProgressHelper extends Helper
      * @param int $num The amount of progress to advance by.
      * @return $this
      */
-    public function increment($num = 1)
+    public function increment($num = 1): self
     {
         $this->_progress = min(max(0, $this->_progress + $num), $this->_total);
 
@@ -127,19 +127,19 @@ class ProgressHelper extends Helper
      *
      * @return $this
      */
-    public function draw()
+    public function draw(): self
     {
         $numberLen = strlen(' 100%');
         $complete = round($this->_progress / $this->_total, 2);
         $barLen = ($this->_width - $numberLen) * ($this->_progress / $this->_total);
         $bar = '';
         if ($barLen > 1) {
-            $bar = str_repeat('=', $barLen - 1) . '>';
+            $bar = str_repeat('=', (int)$barLen - 1) . '>';
         }
 
         $pad = ceil($this->_width - $numberLen - $barLen);
         if ($pad > 0) {
-            $bar .= str_repeat(' ', $pad);
+            $bar .= str_repeat(' ', (int)$pad);
         }
         $percent = ($complete * 100) . '%';
         $bar .= str_pad($percent, $numberLen, ' ', STR_PAD_LEFT);

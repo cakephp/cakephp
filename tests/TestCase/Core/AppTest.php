@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use TestApp\Core\TestApp;
  */
 class AppTest extends TestCase
 {
-
     /**
      * tearDown method
      *
@@ -64,7 +64,7 @@ class AppTest extends TestCase
             return false;
         };
         $return = TestApp::classname($class, $type, $suffix);
-        $this->assertSame($expected, $return);
+        $this->assertSame($expected === false ? null : $expected, $return);
     }
 
     /**
@@ -114,7 +114,7 @@ class AppTest extends TestCase
      *  existsInBase (Base meaning App or plugin namespace)
      *  expected return value
      *
-     * @return void
+     * @return array
      */
     public function classnameProvider()
     {
@@ -169,7 +169,7 @@ class AppTest extends TestCase
      *  suffix
      *  expected return value
      *
-     * @return void
+     * @return array
      */
     public function shortNameProvider()
     {
@@ -218,12 +218,11 @@ class AppTest extends TestCase
     public function testPathWithPlugins()
     {
         $basepath = TEST_APP . 'Plugin' . DS;
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $result = App::path('Controller', 'TestPlugin');
         $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
 
-        Plugin::load('Company/TestPluginThree');
         $result = App::path('Controller', 'Company/TestPluginThree');
         $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Controller' . DS;
         $this->assertPathEquals($expected, $result[0]);

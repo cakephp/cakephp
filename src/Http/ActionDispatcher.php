@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,8 +16,9 @@
 namespace Cake\Http;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventListenerInterface;
+use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use LogicException;
 
@@ -27,7 +29,7 @@ use LogicException;
  * Long term this should just be the controller dispatcher, but
  * for now it will do a bit more than that.
  */
-class ActionDispatcher
+class ActionDispatcher implements EventDispatcherInterface
 {
     use EventDispatcherTrait;
 
@@ -50,15 +52,11 @@ class ActionDispatcher
      *
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
      * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
-     * @param \Cake\Event\EventListenerInterface[] $filters The list of filters to include.
      */
-    public function __construct($factory = null, $eventManager = null, array $filters = [])
+    public function __construct(?ControllerFactory $factory = null, ?EventManager $eventManager = null)
     {
         if ($eventManager) {
             $this->setEventManager($eventManager);
-        }
-        foreach ($filters as $filter) {
-            $this->addFilter($filter);
         }
         $this->factory = $factory ?: new ControllerFactory();
     }
@@ -69,8 +67,9 @@ class ActionDispatcher
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Cake\Http\Response A modified/replaced response.
+     * @throws \ReflectionException
      */
-    public function dispatch(ServerRequest $request, Response $response)
+    public function dispatch(ServerRequest $request, Response $response): Response
     {
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
@@ -107,7 +106,7 @@ class ActionDispatcher
      * @return \Cake\Http\Response The response
      * @throws \LogicException If the controller action returns a non-response value.
      */
-    protected function _invoke(Controller $controller)
+    protected function _invoke(Controller $controller): Response
     {
         $this->dispatchEvent('Dispatcher.invokeController', ['controller' => $controller]);
 
@@ -130,32 +129,10 @@ class ActionDispatcher
             return $result;
         }
         if (!$response) {
-            $response = $controller->response;
+            $response = $controller->getResponse();
         }
 
         return $response;
-    }
-
-    /**
-     * Add a filter to this dispatcher.
-     *
-     * The added filter will be attached to the event manager used
-     * by this dispatcher.
-     *
-     * @param \Cake\Event\EventListenerInterface $filter The filter to connect. Can be
-     *   any EventListenerInterface. Typically an instance of \Cake\Routing\DispatcherFilter.
-     * @return void
-     * @deprecated This is only available for backwards compatibility with DispatchFilters
-     */
-    public function addFilter(EventListenerInterface $filter)
-    {
-        deprecationWarning(
-            'ActionDispatcher::addFilter() is deprecated. ' .
-            'This is only available for backwards compatibility with DispatchFilters'
-        );
-
-        $this->filters[] = $filter;
-        $this->getEventManager()->on($filter);
     }
 
     /**
@@ -163,7 +140,7 @@ class ActionDispatcher
      *
      * @return array
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return $this->filters;
     }

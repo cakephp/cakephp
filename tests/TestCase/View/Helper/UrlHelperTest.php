@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -27,7 +28,6 @@ use Cake\View\View;
  */
 class UrlHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\UrlHelper
      */
@@ -43,12 +43,14 @@ class UrlHelperTest extends TestCase
         parent::setUp();
 
         Router::reload();
-        $this->View = new View();
+        $this->View = new View(new ServerRequest());
         $this->Helper = new UrlHelper($this->View);
-        $this->Helper->request = new ServerRequest();
 
         static::setAppNamespace();
-        Plugin::load(['TestTheme']);
+        $this->loadPlugins(['TestTheme']);
+        Router::scope('/', function ($routes) {
+            $routes->fallbacks();
+        });
     }
 
     /**
@@ -59,7 +61,6 @@ class UrlHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Configure::delete('Asset');
 
         Plugin::unload();
         unset($this->Helper, $this->View);
@@ -70,7 +71,7 @@ class UrlHelperTest extends TestCase
      *
      * @return void
      */
-    public function testUrlConversion()
+    public function testBuildUrlConversion()
     {
         Router::connect('/:controller/:action/*');
 
@@ -81,7 +82,7 @@ class UrlHelperTest extends TestCase
         $this->assertEquals('/controller/action/1?one=1&amp;two=2', $result);
 
         $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"']);
-        $this->assertEquals('/posts/index?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
+        $this->assertEquals('/posts?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
         $this->assertEquals('/controller/action/1/param:this+one+more', $result);
@@ -93,21 +94,48 @@ class UrlHelperTest extends TestCase
         $this->assertEquals('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'
+            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
         ]);
-        $this->assertEquals('/posts/index?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
+        $this->assertEquals('/posts?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index', 'page' => '1',
-            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple']
+            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple'],
         ]);
-        $this->assertEquals('/posts/index?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
+        $this->assertEquals('/posts?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
+    }
+
+    /**
+     * ensure that build factors in base paths.
+     *
+     * @return void
+     */
+    public function testBuildBasePath()
+    {
+        Router::connect('/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'action' => 'index',
+                'plugin' => null,
+                'controller' => 'subscribe',
+            ],
+            'url' => '/subscribe',
+            'base' => '/magazine',
+            'webroot' => '/magazine/',
+        ]);
+        Router::pushRequest($request);
+
+        $this->assertEquals('/magazine/subscribe', $this->Helper->build());
+        $this->assertEquals(
+            '/magazine/articles/add',
+            $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
+        );
     }
 
     /**
      * @return void
      */
-    public function testUrlConversionUnescaped()
+    public function testBuildUrlConversionUnescaped()
     {
         $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
         $this->assertEquals('/controller/action/1?one=1&two=2', $result);
@@ -118,8 +146,8 @@ class UrlHelperTest extends TestCase
             'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             '?' => [
                 'k' => 'v',
-                '1' => '2'
-            ]
+                '1' => '2',
+            ],
         ], ['escape' => false]);
         $this->assertEquals('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
     }
@@ -158,7 +186,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam');
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css?someparam', $result);
 
-        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/some/dir/');
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/some/dir/'));
         $result = $this->Helper->assetTimestamp('/some/dir/' . Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
     }
@@ -177,7 +205,7 @@ class UrlHelperTest extends TestCase
             [
                 'controller' => 'js',
                 'action' => 'post',
-                '_ext' => 'js'
+                '_ext' => 'js',
             ],
             ['fullBase' => true]
         );
@@ -206,16 +234,40 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Test assetUrl and data uris
+     *
+     * @return void
+     */
+    public function testAssetUrlDataUri()
+    {
+        $request = $this->View->getRequest()
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+
+        $this->View->setRequest($request);
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertSame($data, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Helper->assetUrl($data);
+        $this->assertSame(h($data), $result);
+    }
+
+    /**
      * Test assetUrl with no rewriting.
      *
      * @return void
      */
     public function testAssetUrlNoRewrite()
     {
-        $this->Helper->request = $this->Helper->request
+        $this->View->setRequest($this->View->getRequest()
             ->withAttribute('base', '/cake_dev/index.php')
             ->withAttribute('webroot', '/cake_dev/app/webroot/')
-            ->withRequestTarget('/cake_dev/index.php/tasks');
+            ->withRequestTarget('/cake_dev/index.php/tasks'));
         $result = $this->Helper->assetUrl('img/cake.icon.png', ['fullBase' => true]);
         $expected = Configure::read('App.fullBaseUrl') . '/cake_dev/app/webroot/img/cake.icon.png';
         $this->assertEquals($expected, $result);
@@ -229,7 +281,7 @@ class UrlHelperTest extends TestCase
     public function testAssetUrlPlugin()
     {
         $this->Helper->webroot = '';
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
         $this->assertEquals('test_plugin/style.css', $result);
@@ -277,7 +329,7 @@ class UrlHelperTest extends TestCase
     public function testAssetTimestampPluginsAndThemes()
     {
         Configure::write('Asset.timestamp', 'force');
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertRegExp('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
@@ -306,7 +358,7 @@ class UrlHelperTest extends TestCase
             [
                 'controller' => 'js',
                 'action' => 'post',
-                '_ext' => 'js'
+                '_ext' => 'js',
             ],
             ['fullBase' => true]
         );
@@ -442,12 +494,14 @@ class UrlHelperTest extends TestCase
      */
     public function testWebrootPaths()
     {
-        $this->Helper->request = $this->Helper->request->withAttribute('webroot', '/');
+        $this->View->setRequest(
+            $this->View->getRequest()->withAttribute('webroot', '/')
+        );
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/img/cake.power.gif';
         $this->assertEquals($expected, $result);
 
-        $this->Helper->theme = 'TestTheme';
+        $this->Helper->getView()->setTheme('TestTheme');
 
         $result = $this->Helper->webroot('/img/cake.power.gif');
         $expected = '/test_theme/img/cake.power.gif';

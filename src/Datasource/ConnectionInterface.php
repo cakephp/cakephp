@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,8 +19,6 @@ namespace Cake\Datasource;
  * This interface defines the methods you can depend on in
  * a connection.
  *
- * @method object getLogger() Get the current logger instance
- * @method $this setLogger($logger) Set the current logger.
  * @method bool supportsDynamicConstraints()
  * @method \Cake\Database\Schema\Collection getSchemaCollection()
  * @method \Cake\Database\Query newQuery()
@@ -30,18 +29,33 @@ namespace Cake\Datasource;
 interface ConnectionInterface
 {
     /**
+     * Set a logger, or clear the current logger.
+     *
+     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
+     * @return $this
+     */
+    public function setLogger($logger);
+
+    /**
+     * Gets the current logger object.
+     *
+     * @return \Cake\Database\Log\QueryLogger logger instance
+     */
+    public function getLogger();
+
+    /**
      * Get the configuration name for this connection.
      *
      * @return string
      */
-    public function configName();
+    public function configName(): string;
 
     /**
      * Get the configuration data used to create the connection.
      *
      * @return array
      */
-    public function config();
+    public function config(): array;
 
     /**
      * Executes a callable function inside a transaction, if any exception occurs
@@ -72,21 +86,17 @@ interface ConnectionInterface
     public function disableConstraints(callable $operation);
 
     /**
-     * Enables or disables query logging for this connection.
+     * Enable/disable query logging
      *
-     * @param bool|null $enable whether to turn logging on or disable it.
-     *   Use null to read current value.
-     * @return bool
+     * @param bool $value Enable/disable query logging
+     * @return $this
      */
-    public function logQueries($enable = null);
+    public function enableQueryLogging(bool $value);
 
     /**
-     * Sets the logger object instance. When called with no arguments
-     * it returns the currently setup logger instance.
+     * Check if query logging is enabled.
      *
-     * @param object|null $instance logger object instance
-     * @return object logger instance
-     * @deprecated 3.5.0 Will be replaced by getLogger()/setLogger()
+     * @return bool
      */
-    public function logger($instance = null);
+    public function isQueryLoggingEnabled(): bool;
 }

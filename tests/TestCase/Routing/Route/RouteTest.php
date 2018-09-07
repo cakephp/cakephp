@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,8 +17,8 @@ namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
-use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -40,7 +41,6 @@ class RouteProtected extends Route
  */
 class RouteTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -135,9 +135,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Fighters',
             'action' => 'move',
-            'id' => 123,
-            'x' => 8,
-            'y' => 42
+            'id' => '123',
+            'x' => '8',
+            'y' => '42',
         ]);
         $this->assertEquals('/fighters/123/move/8/42', $result);
     }
@@ -159,9 +159,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Fighters',
             'action' => 'move',
-            'id' => 123,
-            'x' => 8,
-            'y' => 42
+            'id' => '123',
+            'x' => '8',
+            'y' => '42',
         ]);
         $this->assertEquals('/fighters/123/move/8/42', $result);
 
@@ -174,9 +174,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Images',
             'action' => 'view',
-            'id' => 123,
-            'x' => 8,
-            'y' => 42
+            'id' => '123',
+            'x' => '8',
+            'y' => '42',
         ]);
         $this->assertEquals('/images/123/8x42', $result);
     }
@@ -256,9 +256,9 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'Fighters',
             'action' => 'move',
-            'id' => 123,
-            'x' => 8,
-            'y' => 9
+            'id' => '123',
+            'x' => '8',
+            'y' => '9',
         ]);
         $this->assertEquals('/fighters/123/move/8/:y?y=9', $result);
     }
@@ -338,7 +338,7 @@ class RouteTest extends TestCase
             ['/foo/bar.xml.zip', ['xml']],
             ['/foo/bar.', ['xml']],
             ['/foo/bar.xml', []],
-            ['/foo/bar...xml...zip...', ['xml']]
+            ['/foo/bar...xml...zip...', ['xml']],
         ];
     }
 
@@ -356,23 +356,6 @@ class RouteTest extends TestCase
         list($outUrl, $outExt) = $route->parseExtension($url);
         $this->assertEquals($url, $outUrl);
         $this->assertNull($outExt);
-    }
-
-    /**
-     * Expects extensions to be set
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testExtensions()
-    {
-        $this->deprecated(function () {
-            $route = new RouteProtected('/:controller/:action/*', []);
-            $this->assertEquals([], $route->extensions());
-            $route->extensions(['xml']);
-
-            $this->assertEquals(['xml'], $route->extensions());
-        });
     }
 
     /**
@@ -505,7 +488,7 @@ class RouteTest extends TestCase
      *
      * @return void
      */
-    public function testRouteCompilingWithUnicodePatterns()
+    public function testCompileWithUnicodePatterns()
     {
         $route = new Route(
             '/test/:slug',
@@ -563,7 +546,7 @@ class RouteTest extends TestCase
         $this->assertEquals(['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view', '_ext' => []], $route->options);
         $expected = [
             'controller' => 'pages',
-            'action' => 'view'
+            'action' => 'view',
         ];
         $this->assertEquals($expected, $route->defaults);
 
@@ -572,17 +555,17 @@ class RouteTest extends TestCase
             ['project' => false],
             [
                 'controller' => 'source|wiki|commits|tickets|comments|view',
-                'action' => 'branches|history|branch|logs|view|start|add|edit|modify'
+                'action' => 'branches|history|branch|logs|view|start|add|edit|modify',
             ]
         );
-        $this->assertFalse($route->parse('/chaw_test/wiki', 'GET'));
+        $this->assertNull($route->parse('/chaw_test/wiki', 'GET'));
 
         $result = $route->compile();
         $this->assertNotRegExp($result, '/some_project/source');
         $this->assertRegExp($result, '/source/view');
         $this->assertRegExp($result, '/source/view/other/params');
         $this->assertNotRegExp($result, '/chaw_test/wiki');
-        $this->assertNotRegExp($result, '/source/wierd_action');
+        $this->assertNotRegExp($result, '/source/weird_action');
     }
 
     /**
@@ -594,10 +577,10 @@ class RouteTest extends TestCase
     {
         $route = new Route('/:controller/:action/:id', ['plugin' => null]);
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'plugin' => null]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 0]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 1]);
         $this->assertEquals('/posts/view/1', $result);
@@ -607,7 +590,7 @@ class RouteTest extends TestCase
         $this->assertEquals('/', $result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 'about']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new Route('/pages/*', ['controller' => 'pages', 'action' => 'display']);
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 'home']);
@@ -624,10 +607,10 @@ class RouteTest extends TestCase
         $this->assertEquals('/blog/view?id=2', $result);
 
         $result = $route->match(['controller' => 'nodes', 'action' => 'view']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 1]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new Route('/foo/:controller/:action', ['action' => 'index']);
         $result = $route->match(['controller' => 'posts', 'action' => 'view']);
@@ -641,13 +624,13 @@ class RouteTest extends TestCase
         $this->assertEquals('/fo/1/0', $result);
 
         $result = $route->match(['plugin' => 'fo', 'controller' => 'nodes', 'action' => 'view', 'id' => 1]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['plugin' => 'fo', 'controller' => 'posts', 'action' => 'edit', 'id' => 1]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new Route('/admin/subscriptions/:action/*', [
-            'controller' => 'subscribe', 'prefix' => 'admin'
+            'controller' => 'subscribe', 'prefix' => 'admin',
         ]);
 
         $url = ['controller' => 'subscribe', 'prefix' => 'admin', 'action' => 'edit', 1];
@@ -659,7 +642,7 @@ class RouteTest extends TestCase
             'controller' => 'subscribe',
             'prefix' => 'admin',
             'action' => 'edit_admin_e',
-            1
+            1,
         ];
         $result = $route->match($url);
         $expected = '/admin/subscriptions/edit_admin_e/1';
@@ -674,7 +657,7 @@ class RouteTest extends TestCase
     public function testMatchWithPersistOption()
     {
         $context = [
-            'params' => ['lang' => 'en']
+            'params' => ['lang' => 'en'],
         ];
         $route = new Route('/:lang/:controller/:action', [], ['persist' => ['lang']]);
         $result = $route->match(
@@ -695,7 +678,7 @@ class RouteTest extends TestCase
             '_host' => 'foo.com',
             '_scheme' => 'http',
             '_port' => 80,
-            '_base' => ''
+            '_base' => '',
         ];
         $route = new Route('/:controller/:action');
         $result = $route->match(
@@ -731,7 +714,7 @@ class RouteTest extends TestCase
                 '_port' => '8080',
                 '_host' => 'example.com',
                 '_scheme' => 'https',
-                '_base' => '/dir'
+                '_base' => '/dir',
             ],
             $context
         );
@@ -741,7 +724,7 @@ class RouteTest extends TestCase
             '_host' => 'foo.com',
             '_scheme' => 'http',
             '_port' => 8080,
-            '_base' => ''
+            '_base' => '',
         ];
         $result = $route->match(
             [
@@ -750,7 +733,7 @@ class RouteTest extends TestCase
                 '_port' => '8080',
                 '_host' => 'example.com',
                 '_scheme' => 'https',
-                '_base' => '/dir'
+                '_base' => '/dir',
             ],
             $context
         );
@@ -772,7 +755,7 @@ class RouteTest extends TestCase
         );
         $result = $route->match([
             'controller' => 'Articles',
-            'action' => 'index'
+            'action' => 'index',
         ]);
         $this->assertSame('http://www.example.com/fallback', $result);
     }
@@ -791,27 +774,27 @@ class RouteTest extends TestCase
         );
         $result = $route->match([
             'controller' => 'Articles',
-            'action' => 'index'
+            'action' => 'index',
         ]);
-        $this->assertFalse($result, 'No request context means no match');
+        $this->assertNull($result, 'No request context means no match');
 
         $result = $route->match([
             'controller' => 'Articles',
             'action' => 'index',
         ], ['_host' => 'wrong.com']);
-        $this->assertFalse($result, 'Request context has bad host');
+        $this->assertNull($result, 'Request context has bad host');
 
         $result = $route->match([
             'controller' => 'Articles',
             'action' => 'index',
-            '_host' => 'wrong.com'
+            '_host' => 'wrong.com',
         ]);
-        $this->assertFalse($result, 'Url param is wrong');
+        $this->assertNull($result, 'Url param is wrong');
 
         $result = $route->match([
             'controller' => 'Articles',
             'action' => 'index',
-            '_host' => 'foo.example.com'
+            '_host' => 'foo.example.com',
         ]);
         $this->assertSame('http://foo.example.com/fallback', $result);
 
@@ -819,7 +802,7 @@ class RouteTest extends TestCase
             'controller' => 'Articles',
             'action' => 'index',
         ], [
-            '_host' => 'foo.example.com'
+            '_host' => 'foo.example.com',
         ]);
         $this->assertSame('http://foo.example.com/fallback', $result);
 
@@ -829,7 +812,7 @@ class RouteTest extends TestCase
         ], [
             '_scheme' => 'https',
             '_host' => 'foo.example.com',
-            '_port' => 8080
+            '_port' => 8080,
         ]);
         // When the port and scheme in the context are not present in the original url, they should be added
         $this->assertSame('https://foo.example.com:8080/fallback', $result);
@@ -844,11 +827,11 @@ class RouteTest extends TestCase
     {
         $route = new Route('/:controller/:action', ['plugin' => null]);
         $result = $route->match(['controller' => 'posts', 'action' => 'view', '0']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $route = new Route('/:controller/:action', ['plugin' => null]);
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'test']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -860,7 +843,7 @@ class RouteTest extends TestCase
     {
         $route = new Route('/:controller/:action/*', ['plugin' => null]);
         $result = $route->match([
-            'controller' => 'posts', 'action' => 'index', 'plugin' => null, 'admin' => false
+            'controller' => 'posts', 'action' => 'index', 'plugin' => null, 'admin' => false,
         ]);
         $this->assertEquals('/posts/index/', $result);
     }
@@ -888,13 +871,13 @@ class RouteTest extends TestCase
 
         $route = new Route('/test2/*', ['controller' => 'pages', 'action' => 'display', 2]);
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 1]);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 2, 'something']);
         $this->assertEquals('/test2/something', $result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 5, 'something']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -914,15 +897,7 @@ class RouteTest extends TestCase
             'controller' => 'Blog',
             'action' => 'view',
             'id' => 1,
-            'slug' => 'second'
-        ]);
-        $this->assertEquals('/blog/1-second', $result);
-
-        $result = $route->match([
-            'controller' => 'Blog',
-            'action' => 'view',
-            1,
-            'second'
+            'slug' => 'second',
         ]);
         $this->assertEquals('/blog/1-second', $result);
 
@@ -931,7 +906,15 @@ class RouteTest extends TestCase
             'action' => 'view',
             1,
             'second',
-            'query' => 'string'
+        ]);
+        $this->assertEquals('/blog/1-second', $result);
+
+        $result = $route->match([
+            'controller' => 'Blog',
+            'action' => 'view',
+            1,
+            'second',
+            'query' => 'string',
         ]);
         $this->assertEquals('/blog/1-second?query=string', $result);
 
@@ -939,9 +922,9 @@ class RouteTest extends TestCase
             'controller' => 'Blog',
             'action' => 'view',
             1 => 2,
-            2 => 'second'
+            2 => 'second',
         ]);
-        $this->assertFalse($result, 'Positional args must match exactly.');
+        $this->assertNull($result, 'Positional args must match exactly.');
     }
 
     /**
@@ -963,7 +946,7 @@ class RouteTest extends TestCase
             'slug' => 'second',
             'third',
             'fourth',
-            'query' => 'string'
+            'query' => 'string',
         ]);
         $this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
 
@@ -974,7 +957,7 @@ class RouteTest extends TestCase
             'second',
             'third',
             'fourth',
-            'query' => 'string'
+            'query' => 'string',
         ]);
         $this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
     }
@@ -990,7 +973,7 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'posts',
             'action' => 'index',
-            '_ext' => 'json'
+            '_ext' => 'json',
         ]);
         $this->assertEquals('/posts/index.json', $result);
 
@@ -1016,7 +999,7 @@ class RouteTest extends TestCase
             1,
             '_ext' => 'json',
             'id' => 'b',
-            'c' => 'd'
+            'c' => 'd',
         ]);
         $this->assertEquals('/posts/view/1.json?id=b&c=d', $result);
 
@@ -1037,7 +1020,7 @@ class RouteTest extends TestCase
     {
         $route = new Route('/:controller/:action/:id', ['plugin' => null], ['id' => '[0-9]+']);
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'id' => 'foo']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '9']);
         $this->assertEquals('/posts/view/9', $result);
@@ -1046,40 +1029,27 @@ class RouteTest extends TestCase
         $this->assertEquals('/posts/view/922', $result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 'a99']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
-     * Test that match() pulls out extra arguments as query string params.
+     * Test that match() with multibyte pattern
      *
      * @return void
      */
-    public function testMatchExtractQueryStringArgs()
+    public function testMatchWithMultibytePattern()
     {
-        $route = new Route('/:controller/:action/*');
+        $route = new Route(
+            '/articles/:action/:id',
+            ['controller' => 'Articles'],
+            ['multibytePattern' => true, 'id' => '\pL+']
+        );
         $result = $route->match([
-            'controller' => 'posts',
-            'action' => 'index',
-            'page' => 1
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => "\xC4\x81",
         ]);
-        $this->assertEquals('/posts/index?page=1', $result);
-
-        $result = $route->match([
-            'controller' => 'posts',
-            'action' => 'index',
-            'page' => 0
-        ]);
-        $this->assertEquals('/posts/index?page=0', $result);
-
-        $result = $route->match([
-            'controller' => 'posts',
-            'action' => 'index',
-            1,
-            'page' => 1,
-            'dir' => 'desc',
-            'order' => 'title'
-        ]);
-        $this->assertEquals('/posts/index/1?page=1&dir=desc&order=title', $result);
+        $this->assertEquals("/articles/view/\xC4\x81", $result);
     }
 
     /**
@@ -1100,7 +1070,7 @@ class RouteTest extends TestCase
             0,
             'test' => 'var',
             'var2' => 'test2',
-            'more' => 'test data'
+            'more' => 'test data',
         ]);
         $expected = '/posts/index/0?test=var&amp;var2=test2&amp;more=test+data';
         $this->assertEquals($expected, $result);
@@ -1115,6 +1085,7 @@ class RouteTest extends TestCase
      */
     public function testParseRequestDelegates()
     {
+        /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
         $route = $this->getMockBuilder('Cake\Routing\Route\Route')
             ->setMethods(['parse'])
             ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
@@ -1123,15 +1094,16 @@ class RouteTest extends TestCase
         $route->expects($this->once())
             ->method('parse')
             ->with('/forward', 'GET')
-            ->will($this->returnValue('works!'));
+            ->will($this->returnValue(['works!']));
 
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'GET',
-                'PATH_INFO' => '/forward'
-            ]
+                'PATH_INFO' => '/forward',
+            ],
         ]);
         $result = $route->parseRequest($request);
+        $this->assertNotEmpty($result);
     }
 
     /**
@@ -1150,23 +1122,23 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
         $result = $route->parseRequest($request);
         $expected = [
             'controller' => 'Articles',
             'action' => 'index',
             'pass' => [],
-            '_matchedRoute' => '/fallback'
+            '_matchedRoute' => '/fallback',
         ];
         $this->assertEquals($expected, $result, 'Should match, domain is correct');
 
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'foo.bar.example.com',
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
         $result = $route->parseRequest($request);
         $this->assertEquals($expected, $result, 'Should match, domain is a matching subdomain');
@@ -1174,10 +1146,10 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'example.test.com',
-                'PATH_INFO' => '/fallback'
-            ]
+                'PATH_INFO' => '/fallback',
+            ],
         ]);
-        $this->assertFalse($route->parseRequest($request));
+        $this->assertNull($route->parseRequest($request));
     }
 
     /**
@@ -1204,7 +1176,7 @@ class RouteTest extends TestCase
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->parse('/admin/posts', 'GET');
         $this->assertEquals('posts', $result['controller']);
@@ -1261,7 +1233,7 @@ class RouteTest extends TestCase
             'controller' => 'posts',
             'action' => 'display',
             'pass' => ['home'],
-            '_matchedRoute' => '/:controller'
+            '_matchedRoute' => '/:controller',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1294,14 +1266,14 @@ class RouteTest extends TestCase
     public function testParseWithHttpHeaderConditions()
     {
         $route = new Route('/sample', ['controller' => 'posts', 'action' => 'index', '_method' => 'POST']);
-        $this->assertFalse($route->parse('/sample', 'GET'));
+        $this->assertNull($route->parse('/sample', 'GET'));
 
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
             'pass' => [],
             '_method' => 'POST',
-            '_matchedRoute' => '/sample'
+            '_matchedRoute' => '/sample',
         ];
         $this->assertEquals($expected, $route->parse('/sample', 'POST'));
     }
@@ -1316,47 +1288,18 @@ class RouteTest extends TestCase
         $route = new Route('/sample', [
             'controller' => 'posts',
             'action' => 'index',
-            '_method' => ['PUT', 'POST']
+            '_method' => ['PUT', 'POST'],
         ]);
-        $this->assertFalse($route->parse('/sample', 'GET'));
+        $this->assertNull($route->parse('/sample', 'GET'));
 
         $expected = [
             'controller' => 'posts',
             'action' => 'index',
             'pass' => [],
             '_method' => ['PUT', 'POST'],
-            '_matchedRoute' => '/sample'
+            '_matchedRoute' => '/sample',
         ];
         $this->assertEquals($expected, $route->parse('/sample', 'POST'));
-    }
-
-    /**
-     * Test deprecated globals reading for method matching
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testParseWithMultipleHttpMethodDeprecated()
-    {
-        $this->deprecated(function () {
-            $_SERVER['REQUEST_METHOD'] = 'GET';
-            $route = new Route('/sample', [
-                'controller' => 'posts',
-                'action' => 'index',
-                '_method' => ['PUT', 'POST']
-            ]);
-            $this->assertFalse($route->parse('/sample'));
-
-            $_SERVER['REQUEST_METHOD'] = 'POST';
-            $expected = [
-                'controller' => 'posts',
-                'action' => 'index',
-                'pass' => [],
-                '_method' => ['PUT', 'POST'],
-                '_matchedRoute' => '/sample'
-            ];
-            $this->assertEquals($expected, $route->parse('/sample'));
-        });
     }
 
     /**
@@ -1369,20 +1312,20 @@ class RouteTest extends TestCase
         $route = new Route('/sample', [
             'controller' => 'posts',
             'action' => 'index',
-            '_method' => ['PUT', 'POST']
+            '_method' => ['PUT', 'POST'],
         ]);
         $url = [
             'controller' => 'posts',
             'action' => 'index',
         ];
-        $this->assertFalse($route->match($url));
+        $this->assertNull($route->match($url));
 
         $url = [
             'controller' => 'posts',
             'action' => 'index',
             '_method' => 'GET',
         ];
-        $this->assertFalse($route->match($url));
+        $this->assertNull($route->match($url));
 
         $url = [
             'controller' => 'posts',
@@ -1407,37 +1350,6 @@ class RouteTest extends TestCase
     }
 
     /**
-     * Check [method] compatibility.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testMethodCompatibility()
-    {
-        $this->deprecated(function () {
-            $_SERVER['REQUEST_METHOD'] = 'POST';
-            $route = new Route('/sample', [
-                'controller' => 'Articles',
-                'action' => 'index',
-                '[method]' => 'POST',
-            ]);
-            $url = [
-                'controller' => 'Articles',
-                'action' => 'index',
-                '_method' => 'POST',
-            ];
-            $this->assertEquals('/sample', $route->match($url));
-
-            $url = [
-                'controller' => 'Articles',
-                'action' => 'index',
-                '[method]' => 'POST',
-            ];
-            $this->assertEquals('/sample', $route->match($url));
-        });
-    }
-
-    /**
      * Test that patterns work for :action
      *
      * @return void
@@ -1450,7 +1362,7 @@ class RouteTest extends TestCase
             ['action' => 'other|actions']
         );
         $result = $route->match(['controller' => 'blog_posts', 'action' => 'foo']);
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = $route->match(['controller' => 'blog_posts', 'action' => 'actions']);
         $this->assertNotEmpty($result);
@@ -1460,12 +1372,12 @@ class RouteTest extends TestCase
             'controller' => 'blog_posts',
             'action' => 'other',
             'pass' => [],
-            '_matchedRoute' => '/blog/:action/*'
+            '_matchedRoute' => '/blog/:action/*',
         ];
         $this->assertEquals($expected, $result);
 
         $result = $route->parse('/blog/foobar', 'GET');
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1481,7 +1393,7 @@ class RouteTest extends TestCase
             'controller' => 'posts',
             'action' => 'edit',
             'pass' => ['1', '2', '0'],
-            '_matchedRoute' => '/:controller/:action/*'
+            '_matchedRoute' => '/:controller/:action/*',
         ];
         $this->assertEquals($expected, $result);
     }
@@ -1517,7 +1429,7 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'pages',
             'action' => 'display',
-            $id
+            $id,
         ]);
         $expected = '/pages/test/%20spaces/%E6%BC%A2%E5%AD%97/la%E2%80%A0%C3%AEn';
         $this->assertEquals($expected, $result);
@@ -1531,7 +1443,7 @@ class RouteTest extends TestCase
     public function testPassArgRestructure()
     {
         $route = new Route('/:controller/:action/:slug', [], [
-            'pass' => ['slug']
+            'pass' => ['slug'],
         ]);
         $result = $route->parse('/posts/view/my-title', 'GET');
         $expected = [
@@ -1539,7 +1451,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             'slug' => 'my-title',
             'pass' => ['my-title'],
-            '_matchedRoute' => '/:controller/:action/:slug'
+            '_matchedRoute' => '/:controller/:action/:slug',
         ];
         $this->assertEquals($expected, $result, 'Slug should have moved');
     }
@@ -1682,7 +1594,7 @@ class RouteTest extends TestCase
             ['plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index'],
             [
                 'persist' => ['section'],
-                'section' => 'آموزش|weblog'
+                'section' => 'آموزش|weblog',
             ]
         );
 
@@ -1728,6 +1640,26 @@ class RouteTest extends TestCase
         $route = new Route('/:controller/:action/*');
         $this->assertEquals('/', $route->staticPath());
 
+        $route = new Route('/api/{/:action/*');
+        $this->assertEquals('/api/{/', $route->staticPath());
+
+        $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
+        $this->assertEquals('/books/reviews', $route->staticPath());
+    }
+
+    /**
+     * Test getting the static path for a route.
+     *
+     * @return void
+     */
+    public function testStaticPathBrace()
+    {
+        $route = new Route('/pages/{id}/*', ['controller' => 'Pages', 'action' => 'display']);
+        $this->assertEquals('/pages/', $route->staticPath());
+
+        $route = new Route('/{controller}/{action}/*');
+        $this->assertEquals('/', $route->staticPath());
+
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
         $this->assertEquals('/books/reviews', $route->staticPath());
     }
@@ -1753,7 +1685,7 @@ class RouteTest extends TestCase
         ]);
         $this->assertInstanceOf('Cake\Routing\Route\Route', $route);
         $this->assertSame('/', $route->match(['controller' => 'pages', 'action' => 'display', 'home']));
-        $this->assertFalse($route->match(['controller' => 'pages', 'action' => 'display', 'about']));
+        $this->assertNull($route->match(['controller' => 'pages', 'action' => 'display', 'about']));
         $expected = [
             'controller' => 'pages',
             'action' => 'display',
@@ -1803,7 +1735,7 @@ class RouteTest extends TestCase
         $route = new Route('/reviews/:date/:id', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPatterns([
             'date' => '\d+\-\d+\-\d+',
-            'id' => '[a-z]+'
+            'id' => '[a-z]+',
         ]);
         $this->assertSame($result, $route, 'Should return this');
         $this->assertArrayHasKey('id', $route->options);
@@ -1811,8 +1743,8 @@ class RouteTest extends TestCase
         $this->assertSame('[a-z]+', $route->options['id']);
         $this->assertArrayNotHasKey('multibytePattern', $route->options);
 
-        $this->assertFalse($route->parse('/reviews/a-b-c/xyz'));
-        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz'));
+        $this->assertNull($route->parse('/reviews/a-b-c/xyz', 'GET'));
+        $this->assertNotEmpty($route->parse('/reviews/2016-05-12/xyz', 'GET'));
     }
 
     /**
@@ -1825,11 +1757,11 @@ class RouteTest extends TestCase
         $route = new Route('/reviews/:accountid/:slug', ['controller' => 'Reviews', 'action' => 'view']);
         $result = $route->setPatterns([
             'date' => '[A-zА-я\-\ ]+',
-            'accountid' => '[a-z]+'
+            'accountid' => '[a-z]+',
         ]);
         $this->assertArrayHasKey('multibytePattern', $route->options);
 
-        $this->assertNotEmpty($route->parse('/reviews/abcs/bla-blan-тест'));
+        $this->assertNotEmpty($route->parse('/reviews/abcs/bla-blan-тест', 'GET'));
     }
 
     /**
@@ -1846,10 +1778,10 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/reviews'
-            ]
+                'PATH_INFO' => '/reviews',
+            ],
         ]);
-        $this->assertFalse($route->parseRequest($request));
+        $this->assertNull($route->parseRequest($request));
 
         $uri = $request->getUri();
         $request = $request->withUri($uri->withHost('blog.example.com'));

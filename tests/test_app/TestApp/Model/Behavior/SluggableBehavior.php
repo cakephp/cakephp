@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Behavior for binding management.
  *
@@ -18,15 +19,14 @@
  */
 namespace TestApp\Model\Behavior;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
 use Cake\Utility\Text;
 
 class SluggableBehavior extends Behavior
 {
-
-    public function beforeFind(Event $event, Query $query, $options = [])
+    public function beforeFind(EventInterface $event, Query $query, $options = [])
     {
         $query->where(['slug' => 'test']);
 

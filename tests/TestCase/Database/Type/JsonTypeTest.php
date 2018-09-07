@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -41,7 +42,7 @@ class JsonTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('json');
+        $this->type = TypeFactory::build('json');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
@@ -68,13 +69,13 @@ class JsonTypeTest extends TestCase
             'a' => null,
             'b' => json_encode([1, 2, 3]),
             'c' => json_encode('123'),
-            'c' => json_encode(2.3),
+            'd' => json_encode(2.3),
         ];
         $expected = [
             'a' => null,
             'b' => [1, 2, 3],
             'c' => 123,
-            'c' => 2.3,
+            'd' => 2.3,
         ];
         $this->assertEquals(
             $expected,

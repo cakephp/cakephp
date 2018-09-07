@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\Helper\IdGeneratorTrait;
+use Cake\View\StringTemplate;
 use Traversable;
 
 /**
@@ -26,7 +28,6 @@ use Traversable;
  */
 class RadioWidget implements WidgetInterface
 {
-
     use IdGeneratorTrait;
 
     /**
@@ -57,7 +58,7 @@ class RadioWidget implements WidgetInterface
      * @param \Cake\View\StringTemplate $templates Templates list.
      * @param \Cake\View\Widget\LabelWidget $label Label widget instance.
      */
-    public function __construct($templates, $label)
+    public function __construct(StringTemplate $templates, LabelWidget $label)
     {
         $this->_templates = $templates;
         $this->_label = $label;
@@ -83,7 +84,7 @@ class RadioWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string
      */
-    public function render(array $data, ContextInterface $context)
+    public function render(array $data, ContextInterface $context): string
     {
         $data += [
             'name' => '',
@@ -125,7 +126,7 @@ class RadioWidget implements WidgetInterface
      * @param array|null|true $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled($radio, $disabled)
+    protected function _isDisabled(array $radio, $disabled): bool
     {
         if (!$disabled) {
             return false;
@@ -135,7 +136,7 @@ class RadioWidget implements WidgetInterface
         }
         $isNumeric = is_numeric($radio['value']);
 
-        return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
+        return !is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric);
     }
 
     /**
@@ -147,7 +148,7 @@ class RadioWidget implements WidgetInterface
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
      */
-    protected function _renderInput($val, $text, $data, $context)
+    protected function _renderInput($val, $text, $data, $context): string
     {
         $escape = $data['escape'];
         if (is_int($val) && isset($text['text'], $text['value'])) {
@@ -165,7 +166,7 @@ class RadioWidget implements WidgetInterface
         }
 
         if (empty($radio['id'])) {
-            $radio['id'] = $this->_id($radio['name'], $radio['value']);
+            $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
         }
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
@@ -228,7 +229,7 @@ class RadioWidget implements WidgetInterface
      * @param bool $escape Whether or not to HTML escape the label.
      * @return string|bool Generated label.
      */
-    protected function _renderLabel($radio, $label, $input, $context, $escape)
+    protected function _renderLabel(array $radio, $label, $input, $context, $escape)
     {
         if ($label === false) {
             return false;
@@ -248,7 +249,7 @@ class RadioWidget implements WidgetInterface
     /**
      * {@inheritDoc}
      */
-    public function secureFields(array $data)
+    public function secureFields(array $data): array
     {
         return [$data['name']];
     }

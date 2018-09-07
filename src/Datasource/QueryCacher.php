@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,11 +25,11 @@ use Traversable;
  *
  * Used by Cake\Datasource\QueryTrait internally.
  *
+ * @internal
  * @see \Cake\Datasource\QueryTrait::cache() for the public interface.
  */
 class QueryCacher
 {
-
     /**
      * The key or function to generate a key.
      *
@@ -67,7 +68,7 @@ class QueryCacher
      * Load the cached results from the cache or run the query.
      *
      * @param object $query The query the cache read is for.
-     * @return \Cake\ORM\ResultSet|null Either the cached results or null.
+     * @return \Cake\Datasource\ResultSetInterface|null Either the cached results or null.
      */
     public function fetch($query)
     {
@@ -88,12 +89,12 @@ class QueryCacher
      * @param \Traversable $results The result set to store.
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function store($query, Traversable $results)
+    public function store($query, Traversable $results): bool
     {
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
 
-        return $storage->write($key, $results);
+        return (bool)$storage->write($key, $results);
     }
 
     /**
@@ -103,7 +104,7 @@ class QueryCacher
      * @return string
      * @throws \RuntimeException
      */
-    protected function _resolveKey($query)
+    protected function _resolveKey($query): string
     {
         if (is_string($this->_key)) {
             return $this->_key;

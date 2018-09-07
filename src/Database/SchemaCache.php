@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,10 +16,6 @@
 namespace Cake\Database;
 
 use Cake\Cache\Cache;
-use Cake\Database\Connection;
-use Cake\Datasource\ConnectionManager;
-use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Schema Cache.
@@ -30,7 +27,6 @@ use RuntimeException;
  */
 class SchemaCache
 {
-
     /**
      * Schema
      *
@@ -54,7 +50,7 @@ class SchemaCache
      * @param string|null $name The name of the table to build cache data for.
      * @return array Returns a list build table caches
      */
-    public function build($name = null)
+    public function build(?string $name = null): array
     {
         $tables = [$name];
         if (empty($name)) {
@@ -74,7 +70,7 @@ class SchemaCache
      * @param string|null $name The name of the table to clear cache data for.
      * @return array Returns a list of cleared table caches
      */
-    public function clear($name = null)
+    public function clear(?string $name = null): array
     {
         $tables = [$name];
         if (empty($name)) {
@@ -98,10 +94,6 @@ class SchemaCache
      */
     public function getSchema(Connection $connection)
     {
-        if (!method_exists($connection, 'schemaCollection')) {
-            throw new RuntimeException('The given connection object is not compatible with schema caching, as it does not implement a "schemaCollection()" method.');
-        }
-
         $config = $connection->config();
         if (empty($config['cacheMetadata'])) {
             $connection->cacheMetadata(true);

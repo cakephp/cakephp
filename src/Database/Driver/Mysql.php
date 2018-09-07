@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,11 +19,14 @@ use Cake\Database\Dialect\MysqlDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\MysqlStatement;
+use Cake\Database\StatementInterface;
 use PDO;
 
+/**
+ * Class Mysql
+ */
 class Mysql extends Driver
 {
-
     use MysqlDialectTrait;
 
     /**
@@ -62,7 +66,7 @@ class Mysql extends Driver
      *
      * @return bool true on success
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->_connection) {
             return true;
@@ -117,7 +121,7 @@ class Mysql extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
-    public function enabled()
+    public function enabled(): bool
     {
         return in_array('mysql', PDO::getAvailableDrivers());
     }
@@ -128,7 +132,7 @@ class Mysql extends Driver
      * @param string|\Cake\Database\Query $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query)
+    public function prepare($query): StatementInterface
     {
         $this->connect();
         $isObject = $query instanceof Query;
@@ -144,7 +148,7 @@ class Mysql extends Driver
     /**
      * {@inheritDoc}
      */
-    public function schema()
+    public function schema(): string
     {
         return $this->_config['database'];
     }
@@ -152,7 +156,7 @@ class Mysql extends Driver
     /**
      * {@inheritDoc}
      */
-    public function supportsDynamicConstraints()
+    public function supportsDynamicConstraints(): bool
     {
         return true;
     }
@@ -162,14 +166,14 @@ class Mysql extends Driver
      *
      * @return bool
      */
-    public function supportsNativeJson()
+    public function supportsNativeJson(): bool
     {
         if ($this->_supportsNativeJson !== null) {
             return $this->_supportsNativeJson;
         }
 
         if ($this->_version === null) {
-            $this->_version = $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+            $this->_version = (string)$this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
         }
 
         return $this->_supportsNativeJson = version_compare($this->_version, '5.7.0', '>=');

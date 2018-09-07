@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\QueryInterface;
 use Closure;
 use InvalidArgumentException;
@@ -28,7 +30,6 @@ use InvalidArgumentException;
  */
 class EagerLoader
 {
-
     /**
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
@@ -62,7 +63,7 @@ class EagerLoader
         'finder' => 1,
         'joinType' => 1,
         'strategy' => 1,
-        'negateMatch' => 1
+        'negateMatch' => 1,
     ];
 
     /**
@@ -113,8 +114,6 @@ class EagerLoader
      * this allows this object to calculate joins or any additional queries that
      * must be executed to bring the required associated data.
      *
-     * The getter part is deprecated as of 3.6.0. Use getContain() instead.
-     *
      * Accepted options per passed association:
      *
      * - foreignKey: Used to set a different field to match both tables, if set to false
@@ -133,17 +132,8 @@ class EagerLoader
      * @return array Containments.
      * @throws \InvalidArgumentException When using $queryBuilder with an array of $associations
      */
-    public function contain($associations = [], callable $queryBuilder = null)
+    public function contain($associations, ?callable $queryBuilder = null): array
     {
-        if (empty($associations)) {
-            deprecationWarning(
-                'Using EagerLoader::contain() as getter is deprecated. ' .
-                'Use getContain() instead.'
-            );
-
-            return $this->getContain();
-        }
-
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
@@ -153,8 +143,8 @@ class EagerLoader
 
             $associations = [
                 $associations => [
-                    'queryBuilder' => $queryBuilder
-                ]
+                    'queryBuilder' => $queryBuilder,
+                ],
             ];
         }
 
@@ -175,7 +165,7 @@ class EagerLoader
      *
      * @return array Containments.
      */
-    public function getContain()
+    public function getContain(): array
     {
         return $this->_containments;
     }
@@ -188,7 +178,7 @@ class EagerLoader
      *
      * @return void
      */
-    public function clearContain()
+    public function clearContain(): void
     {
         $this->_containments = [];
         $this->_normalized = null;
@@ -202,7 +192,7 @@ class EagerLoader
      * @param bool $enable The value to set.
      * @return $this
      */
-    public function enableAutoFields($enable = true)
+    public function enableAutoFields(bool $enable = true): self
     {
         $this->_autoFields = (bool)$enable;
 
@@ -214,29 +204,9 @@ class EagerLoader
      *
      * @return bool The current value.
      */
-    public function isAutoFieldsEnabled()
+    public function isAutoFieldsEnabled(): bool
     {
         return $this->_autoFields;
-    }
-
-    /**
-     * Sets/Gets whether or not contained associations will load fields automatically.
-     *
-     * @deprecated 3.4.0 Use enableAutoFields()/isAutoFieldsEnabled() instead.
-     * @param bool|null $enable The value to set.
-     * @return bool The current value.
-     */
-    public function autoFields($enable = null)
-    {
-        deprecationWarning(
-            'EagerLoader::autoFields() is deprecated. ' .
-            'Use enableAutoFields()/isAutoFieldsEnabled() instead.'
-        );
-        if ($enable !== null) {
-            $this->enableAutoFields($enable);
-        }
-
-        return $this->isAutoFieldsEnabled();
     }
 
     /**
@@ -256,7 +226,7 @@ class EagerLoader
      * @param array $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching($assoc, callable $builder = null, $options = [])
+    public function setMatching(string $assoc, ?callable $builder = null, array $options = []): self
     {
         if ($this->_matching === null) {
             $this->_matching = new static();
@@ -290,44 +260,13 @@ class EagerLoader
      *
      * @return array The resulting containments array
      */
-    public function getMatching()
+    public function getMatching(): array
     {
         if ($this->_matching === null) {
             $this->_matching = new static();
         }
 
         return $this->_matching->getContain();
-    }
-
-    /**
-     * Adds a new association to the list that will be used to filter the results of
-     * any given query based on the results of finding records for that association.
-     * You can pass a dot separated path of associations to this method as its first
-     * parameter, this will translate in setting all those associations with the
-     * `matching` option.
-     *
-     * If called with no arguments it will return the current tree of associations to
-     * be matched.
-     *
-     * @deprecated 3.4.0 Use setMatching()/getMatching() instead.
-     * @param string|null $assoc A single association or a dot separated path of associations.
-     * @param callable|null $builder the callback function to be used for setting extra
-     * options to the filtering query
-     * @param array $options Extra options for the association matching, such as 'joinType'
-     * and 'fields'
-     * @return array The resulting containments array
-     */
-    public function matching($assoc = null, callable $builder = null, $options = [])
-    {
-        deprecationWarning(
-            'EagerLoader::matching() is deprecated. ' .
-            'Use setMatch()/getMatching() instead.'
-        );
-        if ($assoc !== null) {
-            $this->setMatching($assoc, $builder, $options);
-        }
-
-        return $this->getMatching();
     }
 
     /**
@@ -346,7 +285,7 @@ class EagerLoader
      * will be normalized
      * @return array
      */
-    public function normalized(Table $repository)
+    public function normalized(Table $repository): array
     {
         if ($this->_normalized !== null || empty($this->_containments)) {
             return (array)$this->_normalized;
@@ -379,7 +318,7 @@ class EagerLoader
      * with the new one
      * @return array
      */
-    protected function _reformatContain($associations, $original)
+    protected function _reformatContain(array $associations, array $original): array
     {
         $result = $original;
 
@@ -416,7 +355,7 @@ class EagerLoader
                     $options;
                 $options = $this->_reformatContain(
                     $options,
-                    isset($pointer[$table]) ? $pointer[$table] : []
+                    $pointer[$table] ?? []
                 );
             }
 
@@ -457,7 +396,7 @@ class EagerLoader
      * per association in the containments array
      * @return void
      */
-    public function attachAssociations(Query $query, Table $repository, $includeFields)
+    public function attachAssociations(Query $query, Table $repository, bool $includeFields): void
     {
         if (empty($this->_containments) && $this->_matching === null) {
             return;
@@ -490,7 +429,7 @@ class EagerLoader
      * attached
      * @return array
      */
-    public function attachableAssociations(Table $repository)
+    public function attachableAssociations(Table $repository): array
     {
         $contain = $this->normalized($repository);
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
@@ -508,7 +447,7 @@ class EagerLoader
      * to be loaded
      * @return \Cake\ORM\EagerLoadable[]
      */
-    public function externalAssociations(Table $repository)
+    public function externalAssociations(Table $repository): array
     {
         if ($this->_loadExternal) {
             return $this->_loadExternal;
@@ -533,7 +472,7 @@ class EagerLoader
      * @return \Cake\ORM\EagerLoadable Object with normalized associations
      * @throws \InvalidArgumentException When containments refer to associations that do not exist.
      */
-    protected function _normalizeContain(Table $parent, $alias, $options, $paths)
+    protected function _normalizeContain(Table $parent, string $alias, array $options, array $paths): EagerLoadable
     {
         $defaults = $this->_containOptions;
         $instance = $parent->getAssociation($alias);
@@ -556,7 +495,7 @@ class EagerLoader
             'config' => array_diff_key($options, $extra),
             'aliasPath' => trim($paths['aliasPath'], '.'),
             'propertyPath' => trim($paths['propertyPath'], '.'),
-            'targetProperty' => $instance->getProperty()
+            'targetProperty' => $instance->getProperty(),
         ];
         $config['canBeJoined'] = $instance->canBeJoined($config['config']);
         $eagerLoadable = new EagerLoadable($alias, $config);
@@ -586,7 +525,7 @@ class EagerLoader
      *
      * @return void
      */
-    protected function _fixStrategies()
+    protected function _fixStrategies(): void
     {
         foreach ($this->_aliasList as $aliases) {
             foreach ($aliases as $configs) {
@@ -610,11 +549,10 @@ class EagerLoader
      * @param \Cake\ORM\EagerLoadable $loadable The association config
      * @return void
      */
-    protected function _correctStrategy($loadable)
+    protected function _correctStrategy(EagerLoadable $loadable): void
     {
         $config = $loadable->getConfig();
-        $currentStrategy = isset($config['strategy']) ?
-            $config['strategy'] :
+        $currentStrategy = $config['strategy'] ??
             'join';
 
         if (!$loadable->canBeJoined() || $currentStrategy !== 'join') {
@@ -634,7 +572,7 @@ class EagerLoader
      * @param array $matching list of associations that should be forcibly joined.
      * @return array
      */
-    protected function _resolveJoins($associations, $matching = [])
+    protected function _resolveJoins(array $associations, array $matching = []): array
     {
         $result = [];
         foreach ($matching as $table => $loadable) {
@@ -669,7 +607,7 @@ class EagerLoader
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
      * @return \Cake\Database\StatementInterface statement modified statement with extra loaders
      */
-    public function loadExternal($query, $statement)
+    public function loadExternal(Query $query, StatementInterface $statement): StatementInterface
     {
         $external = $this->externalAssociations($query->getRepository());
         if (empty($external)) {
@@ -691,13 +629,13 @@ class EagerLoader
                 continue;
             }
 
-            $keys = isset($collected[$path][$alias]) ? $collected[$path][$alias] : null;
+            $keys = $collected[$path][$alias] ?? null;
             $f = $instance->eagerLoader(
                 $config + [
                     'query' => $query,
                     'contain' => $contain,
                     'keys' => $keys,
-                    'nestKey' => $meta->aliasPath()
+                    'nestKey' => $meta->aliasPath(),
                 ]
             );
             $statement = new CallbackStatement($statement, $driver, $f);
@@ -721,7 +659,7 @@ class EagerLoader
      * will be normalized
      * @return array
      */
-    public function associationsMap($table)
+    public function associationsMap(Table $table): array
     {
         $map = [];
 
@@ -745,7 +683,7 @@ class EagerLoader
      * @param bool $matching Whether or not it is an association loaded through `matching()`.
      * @return array
      */
-    protected function _buildAssociationsMap($map, $level, $matching = false)
+    protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
     {
         /* @var \Cake\ORM\EagerLoadable $meta */
         foreach ($level as $assoc => $meta) {
@@ -759,8 +697,8 @@ class EagerLoader
                 'canBeJoined' => $canBeJoined,
                 'entityClass' => $instance->getTarget()->getEntityClass(),
                 'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
-                'matching' => $forMatching !== null ? $forMatching : $matching,
-                'targetProperty' => $meta->targetProperty()
+                'matching' => $forMatching ?? $matching,
+                'targetProperty' => $meta->targetProperty(),
             ];
             if ($canBeJoined && $associations) {
                 $map = $this->_buildAssociationsMap($map, $associations, $matching);
@@ -784,14 +722,14 @@ class EagerLoader
      * If not passed, the default property for the association will be used.
      * @return void
      */
-    public function addToJoinsMap($alias, Association $assoc, $asMatching = false, $targetProperty = null)
+    public function addToJoinsMap(string $alias, Association $assoc, bool $asMatching = false, ?string $targetProperty = null): void
     {
         $this->_joinsMap[$alias] = new EagerLoadable($alias, [
             'aliasPath' => $alias,
             'instance' => $assoc,
             'canBeJoined' => true,
             'forMatching' => $asMatching,
-            'targetProperty' => $targetProperty ?: $assoc->getProperty()
+            'targetProperty' => $targetProperty ?: $assoc->getProperty(),
         ]);
     }
 
@@ -804,7 +742,7 @@ class EagerLoader
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
      * @return array
      */
-    protected function _collectKeys($external, $query, $statement)
+    protected function _collectKeys(array $external, Query $query, $statement): array
     {
         $collectKeys = [];
         /* @var \Cake\ORM\EagerLoadable $meta */
@@ -846,7 +784,7 @@ class EagerLoader
      * @param array $collectKeys The keys to collect
      * @return array
      */
-    protected function _groupKeys($statement, $collectKeys)
+    protected function _groupKeys(BufferedStatement $statement, array $collectKeys): array
     {
         $keys = [];
         while ($result = $statement->fetch('assoc')) {

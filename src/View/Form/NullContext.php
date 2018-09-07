@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Cake\Http\ServerRequest;
  */
 class NullContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -46,7 +46,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function primaryKey()
+    public function primaryKey(): array
     {
         return [];
     }
@@ -54,7 +54,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isPrimaryKey($field)
+    public function isPrimaryKey(string $field): bool
     {
         return false;
     }
@@ -62,7 +62,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isCreate()
+    public function isCreate(): bool
     {
         return true;
     }
@@ -70,7 +70,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function val($field)
+    public function val(string $field)
     {
         return $this->_request->getData($field);
     }
@@ -78,7 +78,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isRequired($field)
+    public function isRequired(string $field): bool
     {
         return false;
     }
@@ -86,15 +86,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function fieldNames()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function type($field)
+    public function getRequiredMessage(string $field): ?string
     {
         return null;
     }
@@ -102,7 +94,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function attributes($field)
+    public function fieldNames(): array
     {
         return [];
     }
@@ -110,7 +102,23 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function hasError($field)
+    public function type(string $field): ?string
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function attributes(string $field): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function hasError(string $field): bool
     {
         return false;
     }
@@ -118,7 +126,7 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function error($field)
+    public function error(string $field): array
     {
         return [];
     }

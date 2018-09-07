@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,10 +21,13 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ExtractTaskTest class
+ *
+ * @property \Cake\Shell\Task\ExtractTask|MockObject $Task
+ * @property \Cake\Console\ConsoleIo|MockObject $io
+ * @property string $path
  */
 class ExtractTaskTest extends TestCase
 {
-
     /**
      * setUp method
      *
@@ -184,6 +188,7 @@ class ExtractTaskTest extends TestCase
         $pattern = '/\#: .*default\.ctp:\d+\n/';
         $this->assertNotRegExp($pattern, $result);
     }
+
     /**
      * testExtractWithoutLocations method
      *
@@ -268,6 +273,7 @@ class ExtractTaskTest extends TestCase
     public function testExtractPlugin()
     {
         static::setAppNamespace();
+        $this->loadPlugins(['TestPlugin']);
 
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
@@ -292,6 +298,7 @@ class ExtractTaskTest extends TestCase
     public function testExtractVendoredPlugin()
     {
         static::setAppNamespace();
+        $this->loadPlugins(['Company/TestPluginThree']);
 
         $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
             ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
@@ -355,5 +362,60 @@ class ExtractTaskTest extends TestCase
 
         $pattern = '/#: Test\//';
         $this->assertNotRegExp($pattern, $result);
+    }
+
+    /**
+     * Test when marker-error option is set
+     * When marker-error is unset, it's already test
+     * with other functions like testExecute that not detects error because err never called
+     */
+    public function testMarkerErrorSets()
+    {
+        $this->Task->method('err')
+            ->will($this->returnCallback([$this, 'echoTest']));
+
+        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'no';
+        $this->Task->params['marker-error'] = true;
+
+        $this->expectOutputRegex('/.*Invalid marker content in .*extract\.ctp.*/');
+        $this->Task->main();
+    }
+
+    /**
+     * A useful function to mock/replace err or out function that allows to use expectOutput
+     * @param string $val
+     * @param int $nbLines
+     */
+    public function echoTest($val = '', $nbLines = 1)
+    {
+        echo $val . str_repeat(PHP_EOL, $nbLines);
+    }
+
+    /**
+     * test relative-paths option
+     *
+     * @return void
+     */
+    public function testExtractWithRelativePaths()
+    {
+        $this->Task->interactive = false;
+
+        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['relative-paths'] = true;
+
+        $this->Task->method('in')
+            ->will($this->returnValue('y'));
+
+        $this->Task->main();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $expected = '#: ./tests/test_app/TestApp/Template/Pages/extract.ctp:';
+        $this->assertContains($expected, $result);
     }
 }

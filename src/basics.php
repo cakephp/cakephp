@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -51,7 +52,7 @@ if (!function_exists('debug')) {
             $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
             $location = [
                 'line' => $trace[0]['line'],
-                'file' => $trace[0]['file']
+                'file' => $trace[0]['file'],
             ];
         }
 
@@ -133,25 +134,10 @@ if (!function_exists('dd')) {
         $trace = Debugger::trace(['start' => 1, 'depth' => 2, 'format' => 'array']);
         $location = [
             'line' => $trace[0]['line'],
-            'file' => $trace[0]['file']
+            'file' => $trace[0]['file'],
         ];
 
         Debugger::printVar($var, $location, $showHtml);
         die(1);
-    }
-}
-
-if (!function_exists('loadPHPUnitAliases')) {
-    /**
-     * Loads PHPUnit aliases
-     *
-     * This is an internal function used for backwards compatibility during
-     * fixture related tests.
-     *
-     * @return void
-     */
-    function loadPHPUnitAliases()
-    {
-        require_once dirname(__DIR__) . DS . 'tests' . DS . 'phpunit_aliases.php';
     }
 }

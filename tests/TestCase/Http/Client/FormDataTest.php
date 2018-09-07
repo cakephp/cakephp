@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class FormDataTest extends TestCase
 {
-
     /**
      * Test getting the boundary.
      *
@@ -60,12 +60,13 @@ class FormDataTest extends TestCase
         $data->add('test', 'value')
             ->add('empty', '')
             ->add('int', 1)
-            ->add('float', 2.3);
+            ->add('float', 2.3)
+            ->add('password', '@secret');
 
-        $this->assertCount(4, $data);
+        $this->assertCount(5, $data);
         $boundary = $data->boundary();
         $result = (string)$data;
-        $expected = 'test=value&empty=&int=1&float=2.3';
+        $expected = 'test=value&empty=&int=1&float=2.3&password=%40secret';
         $this->assertEquals($expected, $result);
     }
 
@@ -81,7 +82,7 @@ class FormDataTest extends TestCase
             'key' => 'value',
             'empty' => '',
             'int' => '1',
-            'float' => '2.3'
+            'float' => '2.3',
         ];
         $data->addMany($array);
         $this->assertCount(4, $data);
@@ -131,51 +132,12 @@ class FormDataTest extends TestCase
         $data->add('Article', [
             'title' => 'first post',
             'published' => 'Y',
-            'tags' => ['blog', 'cakephp']
+            'tags' => ['blog', 'cakephp'],
         ]);
         $result = (string)$data;
         $expected = 'Article%5Btitle%5D=first+post&Article%5Bpublished%5D=Y&' .
             'Article%5Btags%5D%5B0%5D=blog&Article%5Btags%5D%5B1%5D=cakephp';
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test adding a part with a file in it.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAddArrayWithFile()
-    {
-        $this->deprecated(function () {
-
-            $file = CORE_PATH . 'VERSION.txt';
-            $contents = file_get_contents($file);
-
-            $data = new FormData();
-            $data->add('Article', [
-                'title' => 'first post',
-                'thumbnail' => '@' . $file
-            ]);
-            $boundary = $data->boundary();
-            $result = (string)$data;
-
-            $expected = [
-                '--' . $boundary,
-                'Content-Disposition: form-data; name="Article[title]"',
-                '',
-                'first post',
-                '--' . $boundary,
-                'Content-Disposition: form-data; name="Article[thumbnail]"; filename="VERSION.txt"',
-                'Content-Type: text/plain; charset=us-ascii',
-                '',
-                $contents,
-                '--' . $boundary . '--',
-                '',
-                '',
-            ];
-            $this->assertEquals(implode("\r\n", $expected), $result);
-        });
     }
 
     /**
@@ -201,7 +163,7 @@ class FormDataTest extends TestCase
             $contents,
             '--' . $boundary . '--',
             '',
-            ''
+            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }
@@ -232,7 +194,7 @@ class FormDataTest extends TestCase
             $contents,
             '--' . $boundary . '--',
             '',
-            ''
+            '',
         ];
         $this->assertEquals(implode("\r\n", $expected), $result);
     }

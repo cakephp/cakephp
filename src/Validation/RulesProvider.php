@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use ReflectionClass;
  */
 class RulesProvider
 {
-
     /**
      * The class/object to proxy.
      *
@@ -41,6 +41,7 @@ class RulesProvider
      * Constructor, sets the default class to use for calling methods
      *
      * @param string|object $class the default class to proxy
+     * @throws \ReflectionException
      */
     public function __construct($class = Validation::class)
     {

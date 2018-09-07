@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,6 @@ use RuntimeException;
  */
 class RouteCollection
 {
-
     /**
      * The routes connected to this collection.
      *
@@ -95,7 +95,7 @@ class RouteCollection
      *   `_name` option, which enables named routes.
      * @return void
      */
-    public function add(Route $route, array $options = [])
+    public function add(Route $route, array $options = []): void
     {
         $this->_routes[] = $route;
 
@@ -137,7 +137,7 @@ class RouteCollection
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
-    public function parse($url, $method = '')
+    public function parse(string $url, string $method = ''): array
     {
         $decoded = urldecode($url);
 
@@ -158,7 +158,7 @@ class RouteCollection
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parse($url, $method);
-                if ($r === false) {
+                if ($r === null) {
                     continue;
                 }
                 if ($queryParameters) {
@@ -186,7 +186,7 @@ class RouteCollection
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
-    public function parseRequest(ServerRequestInterface $request)
+    public function parseRequest(ServerRequestInterface $request): array
     {
         $uri = $request->getUri();
         $urlPath = urldecode($uri->getPath());
@@ -203,7 +203,7 @@ class RouteCollection
             /* @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parseRequest($request);
-                if ($r === false) {
+                if ($r === null) {
                     continue;
                 }
                 if ($uri->getQuery()) {
@@ -224,7 +224,7 @@ class RouteCollection
      * @param array $url The url to match.
      * @return array The set of names of the url
      */
-    protected function _getNames($url)
+    protected function _getNames(array $url): array
     {
         $plugin = false;
         if (isset($url['plugin']) && $url['plugin'] !== false) {
@@ -234,7 +234,7 @@ class RouteCollection
         if (isset($url['prefix']) && $url['prefix'] !== false) {
             $prefix = strtolower($url['prefix']);
         }
-        $controller = strtolower($url['controller']);
+        $controller = isset($url['controller']) ? strtolower($url['controller']) : null;
         $action = strtolower($url['action']);
 
         $names = [
@@ -311,7 +311,7 @@ class RouteCollection
      * @return string The URL string on match.
      * @throws \Cake\Routing\Exception\MissingRouteException When no route could be matched.
      */
-    public function match($url, $context)
+    public function match(array $url, array $context): string
     {
         // Named routes support optimization.
         if (isset($url['_name'])) {
@@ -352,7 +352,7 @@ class RouteCollection
      *
      * @return \Cake\Routing\Route\Route[]
      */
-    public function routes()
+    public function routes(): array
     {
         return $this->_routes;
     }
@@ -362,32 +362,9 @@ class RouteCollection
      *
      * @return \Cake\Routing\Route\Route[]
      */
-    public function named()
+    public function named(): array
     {
         return $this->_named;
-    }
-
-    /**
-     * Get/set the extensions that the route collection could handle.
-     *
-     * @param null|string|array $extensions Either the list of extensions to set,
-     *   or null to get.
-     * @param bool $merge Whether to merge with or override existing extensions.
-     *   Defaults to `true`.
-     * @return array The valid extensions.
-     * @deprecated 3.5.0 Use getExtensions()/setExtensions() instead.
-     */
-    public function extensions($extensions = null, $merge = true)
-    {
-        deprecationWarning(
-            'RouteCollection::extensions() is deprecated. ' .
-            'Use RouteCollection::setExtensions()/getExtensions() instead.'
-        );
-        if ($extensions !== null) {
-            $this->setExtensions((array)$extensions, $merge);
-        }
-
-        return $this->getExtensions();
     }
 
     /**
@@ -395,7 +372,7 @@ class RouteCollection
      *
      * @return array The valid extensions.
      */
-    public function getExtensions()
+    public function getExtensions(): array
     {
         return $this->_extensions;
     }
@@ -408,7 +385,7 @@ class RouteCollection
      *   Defaults to `true`.
      * @return $this
      */
-    public function setExtensions(array $extensions, $merge = true)
+    public function setExtensions(array $extensions, bool $merge = true): self
     {
         if ($merge) {
             $extensions = array_unique(array_merge(
@@ -431,7 +408,7 @@ class RouteCollection
      * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
      */
-    public function registerMiddleware($name, $middleware)
+    public function registerMiddleware(string $name, $middleware): self
     {
         $this->_middleware[$name] = $middleware;
 
@@ -445,7 +422,7 @@ class RouteCollection
      * @param array $middlewareNames Names of the middleware
      * @return $this
      */
-    public function middlewareGroup($name, array $middlewareNames)
+    public function middlewareGroup(string $name, array $middlewareNames): self
     {
         if ($this->hasMiddleware($name)) {
             $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
@@ -470,7 +447,7 @@ class RouteCollection
      * @param string $name The name of the middleware group to check.
      * @return bool
      */
-    public function hasMiddlewareGroup($name)
+    public function hasMiddlewareGroup(string $name): bool
     {
         return array_key_exists($name, $this->_middlewareGroups);
     }
@@ -481,7 +458,7 @@ class RouteCollection
      * @param string $name The name of the middleware to check.
      * @return bool
      */
-    public function hasMiddleware($name)
+    public function hasMiddleware(string $name): bool
     {
         return isset($this->_middleware[$name]);
     }
@@ -492,7 +469,7 @@ class RouteCollection
      * @param string $name The name of the middleware to check.
      * @return bool
      */
-    public function middlewareExists($name)
+    public function middlewareExists(string $name): bool
     {
         return $this->hasMiddleware($name) || $this->hasMiddlewareGroup($name);
     }
@@ -504,7 +481,7 @@ class RouteCollection
      * @param string[] $middleware The middleware names to add for the path.
      * @return $this
      */
-    public function applyMiddleware($path, array $middleware)
+    public function applyMiddleware(string $path, array $middleware): self
     {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
@@ -532,7 +509,7 @@ class RouteCollection
      *   the groups middleware will be flattened into the returned list.
      * @throws \RuntimeException when a requested middleware does not exist.
      */
-    public function getMiddleware(array $names)
+    public function getMiddleware(array $names): array
     {
         $out = [];
         foreach ($names as $name) {

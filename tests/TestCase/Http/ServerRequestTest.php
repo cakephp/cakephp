@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -133,7 +134,7 @@ class ServerRequestTest extends TestCase
     public function testNoAutoParseConstruction()
     {
         $_GET = [
-            'one' => 'param'
+            'one' => 'param',
         ];
         $request = new ServerRequest();
         $this->assertNull($request->getQuery('one'));
@@ -149,15 +150,30 @@ class ServerRequestTest extends TestCase
         $data = [
             'query' => [
                 'one' => 'param',
-                'two' => 'banana'
+                'two' => 'banana',
             ],
-            'url' => 'some/path'
+            'url' => 'some/path',
         ];
         $request = new ServerRequest($data);
         $this->assertEquals($request->getQueryParams(), $data['query']);
         $this->assertEquals('/some/path', $request->getRequestTarget());
     }
 
+    /**
+     * Test constructing with a string url.
+     *
+     * @return void
+     */
+    public function testConstructStringUrlIgnoreServer()
+    {
+        $_SERVER['REQUEST_URI'] = '/some/other/path';
+
+        $request = new ServerRequest(['url' => '/articles/view/1']);
+        $this->assertEquals('/articles/view/1', $request->getUri()->getPath());
+
+        $request = new ServerRequest(['url' => '/']);
+        $this->assertEquals('/', $request->getUri()->getPath());
+    }
     /**
      * Test that querystring args provided in the URL string are parsed.
      *
@@ -212,49 +228,20 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test addParams() method
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testAddParams()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $request = $request
-                ->withParam('controller', 'posts')
-                ->withParam('action', 'view');
-            $result = $request->addParams(['plugin' => null, 'action' => 'index']);
-
-            $this->assertSame($result, $request, 'Method did not return itself. %s');
-
-            $this->assertEquals('posts', $request->getParam('controller'));
-            $this->assertEquals('index', $request->getParam('action'));
-            $this->assertEquals(null, $request->getParam('plugin'));
-        });
-    }
-
-    /**
-     * Test splicing in paths.
+     * Test getPath().
      *
      * @return void
      */
-    public function testAddPaths()
+    public function testGetPath()
     {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $request->webroot = '/some/path/going/here/';
-            $result = $request->addPaths([
-                'random' => '/something', 'webroot' => '/', 'here' => '/', 'base' => '/base_dir'
-            ]);
+        $request = new ServerRequest(['url' => '']);
+        $this->assertSame('/', $request->getPath());
 
-            $this->assertSame($result, $request, 'Method did not return itself. %s');
+        $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
+        $this->assertEquals('/some/path', $request->getPath());
 
-            $this->assertEquals('/', $request->webroot);
-            $this->assertEquals('/base_dir', $request->base);
-            $this->assertEquals('/', $request->here);
-            $this->assertFalse(isset($request->random));
-        });
+        $request = $request->withRequestTarget('/foo/bar?x=y');
+        $this->assertEquals('/foo/bar', $request->getPath());
     }
 
     /**
@@ -265,7 +252,7 @@ class ServerRequestTest extends TestCase
     public function testPostParsing()
     {
         $post = [
-            'Article' => ['title']
+            'Article' => ['title'],
         ];
         $request = new ServerRequest(compact('post'));
         $this->assertEquals($post, $request->getData());
@@ -276,7 +263,7 @@ class ServerRequestTest extends TestCase
 
         $post = [
             'Article' => ['title' => 'Testing'],
-            'action' => 'update'
+            'action' => 'update',
         ];
         $request = new ServerRequest(compact('post'));
         $this->assertEquals($post, $request->getData());
@@ -290,14 +277,14 @@ class ServerRequestTest extends TestCase
     public function testPutParsing()
     {
         $data = [
-            'Article' => ['title']
+            'Article' => ['title'],
         ];
         $request = new ServerRequest([
             'input' => 'Article[]=title',
             'environment' => [
                 'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
-            ]
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+            ],
         ]);
         $this->assertEquals($data, $request->getData());
 
@@ -306,8 +293,8 @@ class ServerRequestTest extends TestCase
             'input' => 'one=1&two=three',
             'environment' => [
                 'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
-            ]
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+            ],
         ]);
         $this->assertEquals($data, $request->getData());
 
@@ -315,25 +302,25 @@ class ServerRequestTest extends TestCase
             'input' => 'Article[title]=Testing&action=update',
             'environment' => [
                 'REQUEST_METHOD' => 'DELETE',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
-            ]
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+            ],
         ]);
         $expected = [
             'Article' => ['title' => 'Testing'],
-            'action' => 'update'
+            'action' => 'update',
         ];
         $this->assertEquals($expected, $request->getData());
 
         $data = [
             'Article' => ['title'],
-            'Tag' => ['Tag' => [1, 2]]
+            'Tag' => ['Tag' => [1, 2]],
         ];
         $request = new ServerRequest([
             'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
             'environment' => [
                 'REQUEST_METHOD' => 'PATCH',
-                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
-            ]
+                'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8',
+            ],
         ]);
         $this->assertEquals($data, $request->getData());
     }
@@ -350,8 +337,8 @@ class ServerRequestTest extends TestCase
             'input' => $data,
             'environment' => [
                 'REQUEST_METHOD' => 'PUT',
-                'CONTENT_TYPE' => 'application/json'
-            ]
+                'CONTENT_TYPE' => 'application/json',
+            ],
         ]);
         $this->assertEquals([], $request->getData());
         $result = $request->input('json_decode', true);
@@ -371,46 +358,46 @@ class ServerRequestTest extends TestCase
                 'type' => ['file' => 'text/plain'],
                 'tmp_name' => ['file' => __FILE__],
                 'error' => ['file' => 0],
-                'size' => ['file' => 17178]
+                'size' => ['file' => 17178],
             ],
             0 => [
                 'name' => ['image' => 'scratch.text'],
                 'type' => ['image' => 'text/plain'],
                 'tmp_name' => ['image' => __FILE__],
                 'error' => ['image' => 0],
-                'size' => ['image' => 1490]
+                'size' => ['image' => 1490],
             ],
             'pictures' => [
                 'name' => [
                     0 => ['file' => 'a-file.png'],
-                    1 => ['file' => 'a-moose.png']
+                    1 => ['file' => 'a-moose.png'],
                 ],
                 'type' => [
                     0 => ['file' => 'image/png'],
-                    1 => ['file' => 'image/jpg']
+                    1 => ['file' => 'image/jpg'],
                 ],
                 'tmp_name' => [
                     0 => ['file' => __FILE__],
-                    1 => ['file' => __FILE__]
+                    1 => ['file' => __FILE__],
                 ],
                 'error' => [
                     0 => ['file' => 0],
-                    1 => ['file' => 0]
+                    1 => ['file' => 0],
                 ],
                 'size' => [
                     0 => ['file' => 17188],
-                    1 => ['file' => 2010]
+                    1 => ['file' => 2010],
                 ],
-            ]
+            ],
         ];
         $post = [
             'pictures' => [
                 0 => ['name' => 'A cat'],
-                1 => ['name' => 'A moose']
+                1 => ['name' => 'A moose'],
             ],
             0 => [
-                'name' => 'A dog'
-            ]
+                'name' => 'A dog',
+            ],
         ];
         $request = new ServerRequest(compact('files', 'post'));
         $expected = [
@@ -421,7 +408,7 @@ class ServerRequestTest extends TestCase
                     'tmp_name' => __FILE__,
                     'error' => 0,
                     'size' => 17178,
-                ]
+                ],
             ],
             'pictures' => [
                 0 => [
@@ -432,7 +419,7 @@ class ServerRequestTest extends TestCase
                         'tmp_name' => __FILE__,
                         'error' => '0',
                         'size' => 17188,
-                    ]
+                    ],
                 ],
                 1 => [
                     'name' => 'A moose',
@@ -442,8 +429,8 @@ class ServerRequestTest extends TestCase
                         'tmp_name' => __FILE__,
                         'error' => '0',
                         'size' => 2010,
-                    ]
-                ]
+                    ],
+                ],
             ],
             0 => [
                 'name' => 'A dog',
@@ -452,9 +439,9 @@ class ServerRequestTest extends TestCase
                     'type' => 'text/plain',
                     'tmp_name' => __FILE__,
                     'error' => 0,
-                    'size' => 1490
-                ]
-            ]
+                    'size' => 1490,
+                ],
+            ],
         ];
         $this->assertEquals($expected, $request->getData());
 
@@ -485,7 +472,7 @@ class ServerRequestTest extends TestCase
                 'tmp_name' => __FILE__,
                 'error' => 0,
                 'size' => 123,
-            ]
+            ],
         ];
 
         $request = new ServerRequest(compact('files'));
@@ -495,8 +482,8 @@ class ServerRequestTest extends TestCase
                 'type' => 'application/octet-stream',
                 'tmp_name' => __FILE__,
                 'error' => 0,
-                'size' => 123
-            ]
+                'size' => 123,
+            ],
         ];
         $this->assertEquals($expected, $request->getData());
 
@@ -527,7 +514,7 @@ class ServerRequestTest extends TestCase
         ];
 
         $request = new ServerRequest([
-            'files' => $files
+            'files' => $files,
         ]);
         $this->assertEquals($files, $request->getData());
 
@@ -599,9 +586,9 @@ class ServerRequestTest extends TestCase
         $new = $request->withUploadedFiles([
             'pictures' => [
                 [
-                    'image' => $file
-                ]
-            ]
+                    'image' => $file,
+                ],
+            ],
         ]);
         $this->assertNull($new->getUploadedFile('pictures'));
         $this->assertNull($new->getUploadedFile('pictures.0'));
@@ -655,38 +642,10 @@ class ServerRequestTest extends TestCase
 
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'POST'],
-            'post' => ['_method' => 'PUT']
+            'post' => ['_method' => 'PUT'],
         ]);
         $this->assertEquals('PUT', $request->getEnv('REQUEST_METHOD'));
         $this->assertEquals('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
-    }
-
-    /**
-     * Tests the env() method returning a default value in case the requested environment variable is not set.
-     */
-    public function testDefaultEnvValue()
-    {
-        $this->deprecated(function () {
-            $_ENV['DOES_NOT_EXIST'] = null;
-            $request = new ServerRequest();
-            $this->assertNull($request->getEnv('DOES_NOT_EXIST'));
-            $this->assertEquals('default', $request->env('DOES_NOT_EXIST', null, 'default'));
-
-            $_ENV['DOES_EXIST'] = 'some value';
-            $request = new ServerRequest();
-            $this->assertEquals('some value', $request->env('DOES_EXIST'));
-            $this->assertEquals('some value', $request->env('DOES_EXIST', null, 'default'));
-
-            $_ENV['EMPTY_VALUE'] = '';
-            $request = new ServerRequest();
-            $this->assertEquals('', $request->env('EMPTY_VALUE'));
-            $this->assertEquals('', $request->env('EMPTY_VALUE', null, 'default'));
-
-            $_ENV['ZERO'] = '0';
-            $request = new ServerRequest();
-            $this->assertEquals('0', $request->env('ZERO'));
-            $this->assertEquals('0', $request->env('ZERO', null, 'default'));
-        });
     }
 
     /**
@@ -698,14 +657,18 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => [
             'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com, real.ip',
+            'HTTP_X_REAL_IP' => '192.168.1.1',
             'HTTP_CLIENT_IP' => '192.168.1.2',
-            'REMOTE_ADDR' => '192.168.1.3'
+            'REMOTE_ADDR' => '192.168.1.3',
         ]]);
 
         $request->trustProxy = true;
         $this->assertEquals('real.ip', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
+        $this->assertEquals('192.168.1.1', $request->clientIp());
+
+        $request = $request->withEnv('HTTP_X_REAL_IP', '');
         $this->assertEquals('192.168.1.2', $request->clientIp());
 
         $request->trustProxy = false;
@@ -716,6 +679,42 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('HTTP_CLIENT_IP', '');
         $this->assertEquals('192.168.1.3', $request->clientIp());
+    }
+
+    /**
+     * test clientIp method with trusted proxies
+     *
+     * @return void
+     */
+    public function testClientIpWithTrustedProxies()
+    {
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_FORWARDED_FOR' => 'real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
+            'HTTP_X_REAL_IP' => '192.168.1.1',
+            'HTTP_CLIENT_IP' => '192.168.1.2',
+            'REMOTE_ADDR' => '192.168.1.4',
+        ]]);
+
+        $request->setTrustedProxies([
+            '192.168.1.0',
+            '192.168.1.1',
+            '192.168.1.2',
+            '192.168.1.3',
+        ]);
+
+        $this->assertEquals('real.ip', $request->clientIp());
+
+        $request = $request->withEnv(
+            'HTTP_X_FORWARDED_FOR',
+            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
+        );
+        $this->assertEquals('192.168.1.3', $request->clientIp());
+
+        $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
+        $this->assertEquals('192.168.1.1', $request->clientIp());
+
+        $request->trustProxy = false;
+        $this->assertEquals('192.168.1.4', $request->clientIp());
     }
 
     /**
@@ -733,10 +732,10 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('HTTP_REFERER', '');
         $result = $request->referer(true);
-        $this->assertSame('/', $result);
+        $this->assertNull($result);
 
         $result = $request->referer();
-        $this->assertSame('/', $result);
+        $this->assertNull($result);
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
@@ -770,7 +769,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'url' => '/waves/users/login',
             'webroot' => '/waves/',
-            'base' => '/waves'
+            'base' => '/waves',
         ]);
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/waves/waves/add');
 
@@ -864,21 +863,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test the method() method.
-     *
-     * @return void
-     * @deprecated
-     */
-    public function testMethod()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest(['environment' => ['REQUEST_METHOD' => 'delete']]);
-
-            $this->assertEquals('delete', $request->method());
-        });
-    }
-
-    /**
      * Test getMethod()
      *
      * @return void
@@ -886,7 +870,7 @@ class ServerRequestTest extends TestCase
     public function testGetMethod()
     {
         $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'delete']
+            'environment' => ['REQUEST_METHOD' => 'delete'],
         ]);
         $this->assertEquals('delete', $request->getMethod());
     }
@@ -899,7 +883,7 @@ class ServerRequestTest extends TestCase
     public function testWithMethod()
     {
         $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'delete']
+            'environment' => ['REQUEST_METHOD' => 'delete'],
         ]);
         $new = $request->withMethod('put');
         $this->assertNotSame($new, $request);
@@ -917,7 +901,7 @@ class ServerRequestTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupported HTTP method "no good" provided');
         $request = new ServerRequest([
-            'environment' => ['REQUEST_METHOD' => 'delete']
+            'environment' => ['REQUEST_METHOD' => 'delete'],
         ]);
         $request->withMethod('no good');
     }
@@ -934,7 +918,7 @@ class ServerRequestTest extends TestCase
 
         // SERVER var.
         $request = new ServerRequest([
-            'environment' => ['SERVER_PROTOCOL' => 'HTTP/1.0']
+            'environment' => ['SERVER_PROTOCOL' => 'HTTP/1.0'],
         ]);
         $this->assertEquals('1.0', $request->getProtocolVersion());
     }
@@ -1101,9 +1085,6 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $request = $request->withEnv('HTTPS', 1);
-        $this->assertTrue($request->is('ssl'));
-
         $request = $request->withEnv('HTTPS', 'on');
         $this->assertTrue($request->is('ssl'));
 
@@ -1116,84 +1097,8 @@ class ServerRequestTest extends TestCase
         $request = $request->withEnv('HTTPS', 'off');
         $this->assertFalse($request->is('ssl'));
 
-        $request = $request->withEnv('HTTPS', false);
-        $this->assertFalse($request->is('ssl'));
-
         $request = $request->withEnv('HTTPS', '');
         $this->assertFalse($request->is('ssl'));
-    }
-
-    /**
-     * Test getting request params with object properties.
-     *
-     * @return void
-     */
-    public function testMagicget()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $request->params = ['controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs'];
-
-            $this->assertEquals('posts', $request->controller);
-            $this->assertEquals('view', $request->action);
-            $this->assertEquals('blogs', $request->plugin);
-            $this->assertNull($request->banana);
-        });
-    }
-
-    /**
-     * Test isset()/empty() with overloaded properties.
-     *
-     * @return void
-     */
-    public function testMagicisset()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $request->params = [
-                'controller' => 'posts',
-                'action' => 'view',
-                'plugin' => 'blogs',
-            ];
-
-            $this->assertTrue(isset($request->controller));
-            $this->assertFalse(isset($request->notthere));
-            $this->assertNotEmpty($request->controller);
-        });
-    }
-
-    /**
-     * Test the array access implementation
-     *
-     * @return void
-     */
-    public function testArrayAccess()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-            $request->params = ['controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs'];
-
-            $this->assertEquals('posts', $request['controller']);
-
-            $request['slug'] = 'speedy-slug';
-            $this->assertEquals('speedy-slug', $request->slug);
-            $this->assertEquals('speedy-slug', $request['slug']);
-
-            $this->assertArrayHasKey('action', $request);
-            $this->assertArrayNotHasKey('wrong-param', $request);
-
-            $this->assertArrayHasKey('plugin', $request);
-            unset($request['plugin']);
-            $this->assertArrayNotHasKey('plugin', $request);
-            $this->assertNull($request['plugin']);
-            $this->assertNull($request->plugin);
-
-            $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
-            $this->assertTrue(isset($request['url']['one']));
-
-            $request->data = ['Post' => ['title' => 'something']];
-            $this->assertEquals('something', $request['data']['Post']['title']);
-        });
     }
 
     /**
@@ -1285,8 +1190,8 @@ class ServerRequestTest extends TestCase
             'HTTP_HOST' => 'localhost',
             'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16',
             'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
-            'HTTP_CONTENT_MD5' => 'abc123'
+            'CONTENT_LENGTH' => '1337',
+            'HTTP_CONTENT_MD5' => 'abc123',
         ]]);
 
         $this->assertEquals($request->getEnv('HTTP_HOST'), $request->getHeaderLine('host'));
@@ -1308,7 +1213,7 @@ class ServerRequestTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $headers = $request->getHeaders();
         $expected = [
@@ -1333,7 +1238,7 @@ class ServerRequestTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $this->assertTrue($request->hasHeader('Host'));
         $this->assertTrue($request->hasHeader('Content-Type'));
@@ -1354,7 +1259,7 @@ class ServerRequestTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $this->assertEquals([], $request->getHeader('Not-there'));
 
@@ -1375,9 +1280,9 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['environment' => [
             'HTTP_HOST' => 'localhost',
             'CONTENT_TYPE' => 'application/json',
-            'CONTENT_LENGTH' => 1337,
+            'CONTENT_LENGTH' => '1337',
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $this->assertEquals('', $request->getHeaderLine('Authorization'));
 
@@ -1400,23 +1305,16 @@ class ServerRequestTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $new = $request->withHeader('Content-Length', 999);
         $this->assertNotSame($new, $request);
 
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
         $this->assertEquals(999, $new->getHeaderLine('Content-length'), 'new request is correct');
-        $this->deprecated(function () use ($new) {
-            $this->assertEquals(999, $new->header('Content-Length'));
-        });
 
         $new = $request->withHeader('Double', ['a']);
         $this->assertEquals(['a'], $new->getHeader('Double'), 'List values are overwritten');
-
-        $this->deprecated(function () use ($new) {
-            $this->assertEquals(['a'], $new->header('Double'), 'headers written in bc way.');
-        });
     }
 
     /**
@@ -1431,17 +1329,13 @@ class ServerRequestTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $new = $request->withAddedHeader('Double', 'c');
         $this->assertNotSame($new, $request);
 
         $this->assertEquals('a, b', $request->getHeaderLine('Double'), 'old request is unchanged');
         $this->assertEquals('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
-
-        $this->deprecated(function () use ($new) {
-            $this->assertEquals(['a', 'b', 'c'], $new->header('Double'));
-        });
 
         $new = $request->withAddedHeader('Content-Length', 777);
         $this->assertEquals([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
@@ -1462,17 +1356,13 @@ class ServerRequestTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => 1337,
             'HTTP_CONTENT_MD5' => 'abc123',
-            'HTTP_DOUBLE' => ['a', 'b']
+            'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
         $new = $request->withoutHeader('Content-Length', 999);
         $this->assertNotSame($new, $request);
 
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
         $this->assertEquals('', $new->getHeaderLine('Content-length'), 'new request is correct');
-
-        $this->deprecated(function () use ($new) {
-            $this->assertNull($new->header('Content-Length'));
-        });
     }
 
     /**
@@ -1483,12 +1373,12 @@ class ServerRequestTest extends TestCase
     public function testAccepts()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png'
+            'HTTP_ACCEPT' => 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png',
         ]]);
 
         $result = $request->accepts();
         $expected = [
-            'text/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png', 'application/xml'
+            'text/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png', 'application/xml',
         ];
         $this->assertEquals($expected, $result, 'Content types differ.');
 
@@ -1507,11 +1397,11 @@ class ServerRequestTest extends TestCase
     public function testAcceptWithWhitespace()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'text/xml  ,  text/html ,  text/plain,image/png'
+            'HTTP_ACCEPT' => 'text/xml  ,  text/html ,  text/plain,image/png',
         ]]);
         $result = $request->accepts();
         $expected = [
-            'text/xml', 'text/html', 'text/plain', 'image/png'
+            'text/xml', 'text/html', 'text/plain', 'image/png',
         ];
         $this->assertEquals($expected, $result, 'Content types differ.');
 
@@ -1526,7 +1416,7 @@ class ServerRequestTest extends TestCase
     public function testAcceptWithQvalueSorting()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0'
+            'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0',
         ]]);
         $result = $request->accepts();
         $expected = ['application/xml', 'text/html', 'application/json'];
@@ -1541,7 +1431,7 @@ class ServerRequestTest extends TestCase
     public function testParseAcceptWithQValue()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png'
+            'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png',
         ]]);
         $result = $request->parseAccept();
         $expected = [
@@ -1560,7 +1450,7 @@ class ServerRequestTest extends TestCase
     public function testParseAcceptNoQValues()
     {
         $request = new ServerRequest(['environment' => [
-            'HTTP_ACCEPT' => 'application/json, text/plain, */*'
+            'HTTP_ACCEPT' => 'application/json, text/plain, */*',
         ]]);
         $result = $request->parseAccept();
         $expected = [
@@ -1578,7 +1468,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => [
             'url' => '/',
-            'HTTP_ACCEPT' => 'application/json;level=1, text/plain, */*'
+            'HTTP_ACCEPT' => 'application/json;level=1, text/plain, */*',
         ]], false);
 
         $result = $request->parseAccept();
@@ -1599,7 +1489,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => [
             'url' => '/',
-            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8'
+            'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8',
         ]], false);
         $result = $request->parseAccept();
         $expected = [
@@ -1803,7 +1693,7 @@ class ServerRequestTest extends TestCase
             'dir' => APP_DIR,
             'webroot' => 'webroot',
             'base' => false,
-            'baseUrl' => '/cake/index.php'
+            'baseUrl' => '/cake/index.php',
         ]);
 
         $request = ServerRequestFactory::fromGlobals();
@@ -1982,7 +1872,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SCRIPT_NAME' => '/index.php',
@@ -2001,7 +1891,7 @@ class ServerRequestTest extends TestCase
                 [
                     'base' => '/index.php',
                     'webroot' => '/webroot/',
-                    'url' => ''
+                    'url' => '',
                 ],
             ],
             [
@@ -2011,7 +1901,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/index.php?',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'QUERY_STRING' => '/posts/add',
@@ -2020,14 +1910,14 @@ class ServerRequestTest extends TestCase
                         'URL' => '/index.php?/posts/add',
                         'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
                         'argv' => ['/posts/add'],
-                        'argc' => 1
+                        'argc' => 1,
                     ],
                 ],
                 [
                     'url' => 'posts/add',
                     'base' => '/index.php?',
-                    'webroot' => '/webroot/'
-                ]
+                    'webroot' => '/webroot/',
+                ],
             ],
             [
                 'IIS - No rewrite sub dir 2',
@@ -2048,13 +1938,13 @@ class ServerRequestTest extends TestCase
                         'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
                         'PHP_SELF' => '/site/index.php',
                         'argv' => [],
-                        'argc' => 0
+                        'argc' => 0,
                     ],
                 ],
                 [
                     'url' => '',
                     'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/'
+                    'webroot' => '/site/webroot/',
                 ],
             ],
             [
@@ -2064,7 +1954,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/site/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'GET' => ['/posts/add' => ''],
                     'SERVER' => [
@@ -2077,14 +1967,14 @@ class ServerRequestTest extends TestCase
                         'DOCUMENT_ROOT' => 'C:\\Inetpub\\wwwroot',
                         'PHP_SELF' => '/site/index.php/posts/add',
                         'argv' => ['/posts/add'],
-                        'argc' => 1
+                        'argc' => 1,
                     ],
                 ],
                 [
                     'url' => 'posts/add',
                     'base' => '/site/index.php',
-                    'webroot' => '/site/webroot/'
-                ]
+                    'webroot' => '/site/webroot/',
+                ],
             ],
             [
                 'Apache - No rewrite, document root set to webroot, requesting path',
@@ -2093,7 +1983,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
@@ -2108,7 +1998,7 @@ class ServerRequestTest extends TestCase
                 [
                     'url' => 'posts/index',
                     'base' => '/index.php',
-                    'webroot' => '/'
+                    'webroot' => '/',
                 ],
             ],
             [
@@ -2118,7 +2008,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
@@ -2133,7 +2023,7 @@ class ServerRequestTest extends TestCase
                 [
                     'url' => '',
                     'base' => '/index.php',
-                    'webroot' => '/'
+                    'webroot' => '/',
                 ],
             ],
             [
@@ -2143,7 +2033,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/site/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
@@ -2168,7 +2058,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/site/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
@@ -2192,7 +2082,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => '/site/index.php',
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'GET' => ['a' => 'b', 'c' => 'd'],
                     'SERVER' => [
@@ -2203,7 +2093,7 @@ class ServerRequestTest extends TestCase
                         'SCRIPT_NAME' => '/site/index.php',
                         'PATH_INFO' => '/posts/index',
                         'PHP_SELF' => '/site/index.php/posts/index',
-                        'QUERY_STRING' => 'a=b&c=d'
+                        'QUERY_STRING' => 'a=b&c=d',
                     ],
                 ],
                 [
@@ -2220,7 +2110,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => false,
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
@@ -2244,7 +2134,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => false,
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
@@ -2269,7 +2159,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => false,
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
@@ -2294,7 +2184,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => false,
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'SERVER' => [
                         'SERVER_NAME' => 'localhost',
@@ -2318,7 +2208,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => false,
                         'dir' => 'TestApp',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'GET' => ['/posts/add' => ''],
                     'SERVER' => [
@@ -2336,7 +2226,7 @@ class ServerRequestTest extends TestCase
                     'url' => 'posts/add',
                     'base' => '',
                     'webroot' => '/',
-                    'urlParams' => []
+                    'urlParams' => [],
                 ],
             ],
             [
@@ -2346,7 +2236,7 @@ class ServerRequestTest extends TestCase
                         'base' => false,
                         'baseUrl' => false,
                         'dir' => 'app',
-                        'webroot' => 'webroot'
+                        'webroot' => 'webroot',
                     ],
                     'GET' => ['/site/posts/add' => ''],
                     'SERVER' => [
@@ -2364,7 +2254,7 @@ class ServerRequestTest extends TestCase
                     'url' => 'posts/add',
                     'base' => '/site',
                     'webroot' => '/site/',
-                    'urlParams' => []
+                    'urlParams' => [],
                 ],
             ],
         ];
@@ -2394,32 +2284,6 @@ class ServerRequestTest extends TestCase
         if (isset($expected['urlParams'])) {
             $this->assertEquals($expected['urlParams'], $request->getQueryParams(), 'GET param mismatch');
         }
-
-        $this->deprecated(function () use ($request, $expected) {
-            $this->assertEquals($expected['url'], $request->url, 'URL is incorrect');
-            $this->assertEquals($expected['base'], $request->base, 'base is incorrect');
-            $this->assertEquals($expected['webroot'], $request->webroot, 'webroot error');
-        });
-    }
-
-    /**
-     * Test the query() method
-     *
-     * @return void
-     */
-    public function testQuery()
-    {
-        $this->deprecated(function () {
-            $array = [
-                'query' => ['foo' => 'bar', 'zero' => '0']
-            ];
-            $request = new ServerRequest($array);
-
-            $this->assertSame('bar', $request->query('foo'));
-            $this->assertSame('0', $request->query('zero'));
-            $this->assertNull($request->query('imaginary'));
-            $this->assertSame($array['query'], $request->query());
-        });
     }
 
     /**
@@ -2434,9 +2298,9 @@ class ServerRequestTest extends TestCase
                 'foo' => 'bar',
                 'zero' => '0',
                 'test' => [
-                    'foo', 'bar'
-                ]
-            ]
+                    'foo', 'bar',
+                ],
+            ],
         ];
         $request = new ServerRequest($array);
 
@@ -2444,8 +2308,8 @@ class ServerRequestTest extends TestCase
             'foo' => 'bar',
             'zero' => '0',
             'test' => [
-                'foo', 'bar'
-            ]
+                'foo', 'bar',
+            ],
         ], $request->getQuery());
 
         $this->assertSame('bar', $request->getQuery('foo'));
@@ -2469,11 +2333,11 @@ class ServerRequestTest extends TestCase
     {
         $get = [
             'test' => ['foo', 'bar'],
-            'key' => 'value'
+            'key' => 'value',
         ];
 
         $request = new ServerRequest([
-            'query' => $get
+            'query' => $get,
         ]);
         $this->assertSame($get, $request->getQueryParams());
     }
@@ -2487,11 +2351,11 @@ class ServerRequestTest extends TestCase
     {
         $get = [
             'test' => ['foo', 'bar'],
-            'key' => 'value'
+            'key' => 'value',
         ];
 
         $request = new ServerRequest([
-            'query' => $get
+            'query' => $get,
         ]);
         $new = $request->withQueryParams(['new' => 'data']);
         $this->assertSame($get, $request->getQueryParams());
@@ -2511,7 +2375,7 @@ class ServerRequestTest extends TestCase
         ];
 
         $request = new ServerRequest([
-            'environment' => $vars
+            'environment' => $vars,
         ]);
         $expected = $vars + [
             'CONTENT_TYPE' => null,
@@ -2534,38 +2398,13 @@ class ServerRequestTest extends TestCase
                 'admin' => true,
                 'truthy' => 1,
                 'zero' => '0',
-            ]
+            ],
         ]);
-        $this->assertFalse($request->getParam('not_set'));
+        $this->assertNull($request->getParam('not_set'));
         $this->assertTrue($request->getParam('admin'));
         $this->assertSame(1, $request->getParam('truthy'));
         $this->assertSame('posts', $request->getParam('controller'));
         $this->assertSame('0', $request->getParam('zero'));
-    }
-
-    /**
-     * Test using param()
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testReadingParamsOld()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest([
-                'params' => [
-                    'controller' => 'posts',
-                    'admin' => true,
-                    'truthy' => 1,
-                    'zero' => '0',
-                ]
-            ]);
-            $this->assertFalse($request->param('not_set'));
-            $this->assertTrue($request->param('admin'));
-            $this->assertSame(1, $request->param('truthy'));
-            $this->assertSame('posts', $request->param('controller'));
-            $this->assertSame('0', $request->param('zero'));
-        });
     }
 
     /**
@@ -2577,23 +2416,13 @@ class ServerRequestTest extends TestCase
     {
         $post = [
             'Model' => [
-                'field' => 'value'
-            ]
+                'field' => 'value',
+            ],
         ];
         $request = new ServerRequest(compact('post'));
-        $this->deprecated(function () use ($post, $request) {
-            $this->assertEquals($post['Model'], $request->data('Model'));
-        });
         $this->assertEquals($post['Model'], $request->getData('Model'));
 
-        $this->deprecated(function () use ($post, $request) {
-            $this->assertEquals($post, $request->data());
-        });
         $this->assertEquals($post, $request->getData());
-
-        $this->deprecated(function () use ($request) {
-            $this->assertNull($request->data('Model.imaginary'));
-        });
         $this->assertNull($request->getData('Model.imaginary'));
 
         $this->assertSame('value', $request->getData('Model.field', 'default'));
@@ -2611,31 +2440,6 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(compact('post'));
         $this->assertNull($request->getData('Model'));
         $this->assertNull($request->getData('Model.field'));
-    }
-
-    /**
-     * Test writing with data()
-     *
-     * @return void
-     */
-    public function testDataWriting()
-    {
-        $this->deprecated(function () {
-            $_POST['data'] = [
-                'Model' => [
-                    'field' => 'value'
-                ]
-            ];
-            $request = new ServerRequest();
-            $result = $request->data('Model.new_value', 'new value');
-            $this->assertSame($result, $request, 'Return was not $this');
-
-            $this->assertEquals('new value', $request->data['Model']['new_value']);
-
-            $request->data('Post.title', 'New post')->data('Comment.1.author', 'Mark');
-            $this->assertEquals('New post', $request->data['Post']['title']);
-            $this->assertEquals('Mark', $request->data['Comment']['1']['author']);
-        });
     }
 
     /**
@@ -2663,7 +2467,6 @@ class ServerRequestTest extends TestCase
     /**
      * Test reading params
      *
-     * @group deprecated
      * @dataProvider paramReadingDataProvider
      */
     public function testGetParam($toRead, $expected)
@@ -2681,11 +2484,8 @@ class ServerRequestTest extends TestCase
                 'admin' => true,
                 'truthy' => 1,
                 'zero' => '0',
-            ]
+            ],
         ]);
-        $this->deprecated(function () use ($expected, $request, $toRead) {
-            $this->assertSame($expected, $request->param($toRead));
-        });
         $this->assertSame($expected, $request->getParam($toRead));
     }
 
@@ -2700,12 +2500,12 @@ class ServerRequestTest extends TestCase
             'params' => [
                 'controller' => 'Articles',
                 'null' => null,
-            ]
+            ],
         ]);
         $this->assertSame('Articles', $request->getParam('controller', 'default'));
         $this->assertSame('default', $request->getParam('null', 'default'));
-        $this->assertNull($request->getParam('unset', null));
-        $this->assertFalse($request->getParam('unset'));
+        $this->assertFalse($request->getParam('unset', false));
+        $this->assertNull($request->getParam('unset'));
     }
 
     /**
@@ -2734,7 +2534,7 @@ class ServerRequestTest extends TestCase
             ],
             [
                 'does_not_exist',
-                false,
+                null,
             ],
             [
                 'admin',
@@ -2758,7 +2558,7 @@ class ServerRequestTest extends TestCase
      */
     public function testParamWriting()
     {
-        $request = new ServerRequest('/');
+        $request = new ServerRequest(['url' => '/']);
         $request = $request->withParam('action', 'index');
 
         $this->assertInstanceOf(
@@ -2768,7 +2568,7 @@ class ServerRequestTest extends TestCase
         );
 
         $request = $request->withParam('Post.null', null);
-        $this->assertFalse($request->getParam('Post.null'), 'default value should be used.');
+        $this->assertNull($request->getParam('Post.null'), 'default value should be used.');
 
         $request = $request->withParam('Post.false', false);
         $this->assertFalse($request->getParam('Post.false'));
@@ -2830,74 +2630,6 @@ class ServerRequestTest extends TestCase
     }
 
     /**
-     * Test the here() method
-     *
-     * @return void
-     */
-    public function testHere()
-    {
-        $this->deprecated(function () {
-            Configure::write('App.base', '/base_path');
-            $q = ['test' => 'value'];
-            $request = new ServerRequest([
-                'query' => $q,
-                'url' => '/posts/add/1/value',
-                'base' => '/base_path'
-            ]);
-
-            $result = $request->here();
-            $this->assertEquals('/base_path/posts/add/1/value?test=value', $result);
-
-            $result = $request->here(false);
-            $this->assertEquals('/posts/add/1/value?test=value', $result);
-
-            $request = new ServerRequest([
-                'url' => '/posts/base_path/1/value',
-                'query' => ['test' => 'value'],
-                'base' => '/base_path'
-            ]);
-            $result = $request->here();
-            $this->assertEquals('/base_path/posts/base_path/1/value?test=value', $result);
-
-            $result = $request->here(false);
-            $this->assertEquals('/posts/base_path/1/value?test=value', $result);
-        });
-    }
-
-    /**
-     * Test the here() with space in URL
-     *
-     * @return void
-     */
-    public function testHereWithSpaceInUrl()
-    {
-        $this->deprecated(function () {
-            Configure::write('App.base', '');
-            $_GET = ['/admin/settings/settings/prefix/Access_Control' => ''];
-            $request = new ServerRequest('/admin/settings/settings/prefix/Access%20Control');
-
-            $result = $request->here();
-            $this->assertEquals('/admin/settings/settings/prefix/Access%20Control', $result);
-        });
-    }
-
-    /**
-     * Test the input() method.
-     *
-     * @return void
-     */
-    public function testSetInput()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest();
-
-            $request->setInput('I came from setInput');
-            $result = $request->input();
-            $this->assertEquals('I came from setInput', $result);
-        });
-    }
-
-    /**
      * Test the input() method.
      *
      * @return void
@@ -2905,7 +2637,7 @@ class ServerRequestTest extends TestCase
     public function testInput()
     {
         $request = new ServerRequest([
-            'input' => 'I came from stdin'
+            'input' => 'I came from stdin',
         ]);
         $result = $request->input();
         $this->assertEquals('I came from stdin', $result);
@@ -2919,7 +2651,7 @@ class ServerRequestTest extends TestCase
     public function testInputDecode()
     {
         $request = new ServerRequest([
-            'input' => '{"name":"value"}'
+            'input' => '{"name":"value"}',
         ]);
 
         $result = $request->input('json_decode');
@@ -2941,7 +2673,7 @@ class ServerRequestTest extends TestCase
 XML;
 
         $request = new ServerRequest([
-            'input' => $xml
+            'input' => $xml,
         ]);
 
         $result = $request->input('Cake\Utility\Xml::build', ['return' => 'domdocument']);
@@ -2960,7 +2692,7 @@ XML;
     public function testGetBody()
     {
         $request = new ServerRequest([
-            'input' => 'key=val&some=data'
+            'input' => 'key=val&some=data',
         ]);
         $result = $request->getBody();
         $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
@@ -2975,7 +2707,7 @@ XML;
     public function testWithBody()
     {
         $request = new ServerRequest([
-            'input' => 'key=val&some=data'
+            'input' => 'key=val&some=data',
         ]);
         $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
         $new = $request->withBody($body);
@@ -2998,20 +2730,6 @@ XML;
     }
 
     /**
-     * test url property
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testUrlProperty()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest(['url' => 'articles/view/3']);
-            $this->assertEquals('articles/view/3', $request->url);
-        });
-    }
-
-    /**
      * Test withUri
      *
      * @return void
@@ -3022,39 +2740,13 @@ XML;
             'environment' => [
                 'HTTP_HOST' => 'example.com',
             ],
-            'url' => 'articles/view/3'
+            'url' => 'articles/view/3',
         ]);
         $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
         $new = $request->withUri($uri);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($uri, $request->getUri());
         $this->assertSame($uri, $new->getUri());
-    }
-
-    /**
-     * Test withUri
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testWithUriCompatibility()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest([
-                'environment' => [
-                    'HTTP_HOST' => 'example.com',
-                ],
-                'url' => 'articles/view/3'
-            ]);
-            $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
-            $new = $request->withUri($uri);
-            $this->assertNotSame($new, $request);
-            $this->assertNotSame($uri, $request->getUri());
-            $this->assertSame($uri, $new->getUri());
-            $this->assertSame('articles/view/3', $new->url);
-            $this->assertSame('articles/view/3', $request->url);
-            $this->assertSame('example.com', $new->getHeaderLine('Host'));
-        });
     }
 
     /**
@@ -3066,9 +2758,9 @@ XML;
     {
         $request = new ServerRequest([
             'environment' => [
-                'HTTP_HOST' => 'localhost'
+                'HTTP_HOST' => 'localhost',
             ],
-            'url' => 'articles/view/3'
+            'url' => 'articles/view/3',
         ]);
         $uri = new Uri();
         $uri = $uri->withHost('example.com')
@@ -3088,7 +2780,7 @@ XML;
     public function testWithUriPreserveHostNoHostHeader()
     {
         $request = new ServerRequest([
-            'url' => 'articles/view/3'
+            'url' => 'articles/view/3',
         ]);
         $uri = new Uri();
         $uri = $uri->withHost('example.com')
@@ -3111,8 +2803,8 @@ XML;
                 'controller' => 'posts',
                 'action' => 'index',
                 'plugin' => null,
-                'requested' => 1
-            ]
+                'requested' => 1,
+            ],
         ]);
         $this->assertTrue($request->is('requested'));
         $this->assertTrue($request->isRequested());
@@ -3122,7 +2814,7 @@ XML;
                 'controller' => 'posts',
                 'action' => 'index',
                 'plugin' => null,
-            ]
+            ],
         ]);
         $this->assertFalse($request->is('requested'));
         $this->assertFalse($request->isRequested());
@@ -3139,20 +2831,11 @@ XML;
             'cookies' => [
                 'testing' => 'A value in the cookie',
                 'user' => [
-                    'remember' => '1'
-                ]
-            ]
+                    'remember' => '1',
+                ],
+            ],
         ]);
-
-        $this->deprecated(function () use ($request) {
-            $this->assertEquals('A value in the cookie', $request->cookie('testing'));
-        });
         $this->assertEquals('A value in the cookie', $request->getCookie('testing'));
-
-        $this->deprecated(function () use ($request) {
-            $this->assertNull($request->cookie('not there'));
-        });
-
         $this->assertNull($request->getCookie('not there'));
         $this->assertSame('default', $request->getCookie('not there', 'default'));
 
@@ -3169,7 +2852,7 @@ XML;
     public function testGetCookieParams()
     {
         $cookies = [
-            'testing' => 'A value in the cookie'
+            'testing' => 'A value in the cookie',
         ];
         $request = new ServerRequest(['cookies' => $cookies]);
         $this->assertSame($cookies, $request->getCookieParams());
@@ -3183,7 +2866,7 @@ XML;
     public function testWithCookieParams()
     {
         $cookies = [
-            'testing' => 'A value in the cookie'
+            'testing' => 'A value in the cookie',
         ];
         $request = new ServerRequest(['cookies' => $cookies]);
         $new = $request->withCookieParams(['remember_me' => 1]);
@@ -3201,7 +2884,7 @@ XML;
     {
         $cookies = [
             'remember_me' => '1',
-            'color' => 'blue'
+            'color' => 'blue',
         ];
         $request = new ServerRequest(['cookies' => $cookies]);
 
@@ -3240,7 +2923,7 @@ XML;
     {
         $request = new ServerRequest(['environment' => [
             'url' => '/posts/edit/1',
-            'REQUEST_METHOD' => 'PUT'
+            'REQUEST_METHOD' => 'PUT',
         ]]);
 
         $this->assertTrue($request->allowMethod('put'));
@@ -3258,7 +2941,7 @@ XML;
     {
         $request = new ServerRequest([
             'url' => '/posts/edit/1',
-            'environment' => ['REQUEST_METHOD' => 'PUT']
+            'environment' => ['REQUEST_METHOD' => 'PUT'],
         ]);
 
         try {
@@ -3274,30 +2957,13 @@ XML;
     }
 
     /**
-     * Tests getting the sessions from the request
-     *
-     * @return void
-     */
-    public function testSession()
-    {
-        $this->deprecated(function () {
-            $session = new Session;
-            $request = new ServerRequest(['session' => $session]);
-            $this->assertSame($session, $request->session());
-
-            $request = ServerRequestFactory::fromGlobals();
-            $this->assertEquals($session, $request->session());
-        });
-    }
-
-    /**
      * Tests getting the session from the request
      *
      * @return void
      */
     public function testGetSession()
     {
-        $session = new Session;
+        $session = new Session();
         $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->getSession());
 
@@ -3332,7 +2998,7 @@ XML;
         $post = ['_method' => 'GET', 'foo' => 'bar'];
         $request = new ServerRequest([
             'post' => $post,
-            'environment' => ['REQUEST_METHOD' => 'POST']
+            'environment' => ['REQUEST_METHOD' => 'POST'],
         ]);
         $this->assertEmpty($request->getData());
 
@@ -3341,8 +3007,8 @@ XML;
             'post' => ['foo' => 'bar'],
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET'
-            ]
+                'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
+            ],
         ]);
         $this->assertEmpty($request->getData());
     }
@@ -3355,18 +3021,18 @@ XML;
     public function testWithParam()
     {
         $request = new ServerRequest([
-            'params' => ['controller' => 'Articles']
+            'params' => ['controller' => 'Articles'],
         ]);
         $result = $request->withParam('action', 'view');
         $this->assertNotSame($result, $request, 'New instance should be made');
-        $this->assertFalse($request->getParam('action'), 'No side-effect on original');
+        $this->assertNull($request->getParam('action'), 'No side-effect on original');
         $this->assertSame('view', $result->getParam('action'));
 
         $result = $request->withParam('action', 'index')
             ->withParam('plugin', 'DebugKit')
             ->withParam('prefix', 'Admin');
         $this->assertNotSame($result, $request, 'New instance should be made');
-        $this->assertFalse($request->getParam('action'), 'No side-effect on original');
+        $this->assertNull($request->getParam('action'), 'No side-effect on original');
         $this->assertSame('index', $result->getParam('action'));
         $this->assertSame('DebugKit', $result->getParam('plugin'));
         $this->assertSame('Admin', $result->getParam('prefix'));
@@ -3413,9 +3079,9 @@ XML;
         $request = new ServerRequest([
             'post' => [
                 'Model' => [
-                    'field' => 'value'
-                ]
-            ]
+                    'field' => 'value',
+                ],
+            ],
         ]);
         $result = $request->withData('Model.new_value', 'new value');
         $this->assertNull($request->getData('Model.new_value'), 'Original request should not change.');
@@ -3436,9 +3102,9 @@ XML;
             'post' => [
                 'Model' => [
                     'id' => 1,
-                    'field' => 'value'
-                ]
-            ]
+                    'field' => 'value',
+                ],
+            ],
         ]);
         $updated = $request->withoutData('Model.field');
         $this->assertNotSame($updated, $request);
@@ -3457,9 +3123,9 @@ XML;
         $request = new ServerRequest([
             'post' => [
                 'Model' => [
-                    'field' => 'value'
-                ]
-            ]
+                    'field' => 'value',
+                ],
+            ],
         ]);
         $result = $request->withData('Model.field.new_value', 'new value');
         $this->assertEquals(
@@ -3480,7 +3146,7 @@ XML;
     public function testWithDataFalseyValues()
     {
         $request = new ServerRequest([
-            'post' => []
+            'post' => [],
         ]);
         $result = $request->withData('false', false)
             ->withData('null', null)
@@ -3492,7 +3158,7 @@ XML;
             'null' => null,
             'empty_string' => '',
             'zero' => 0,
-            'zero_string' => '0'
+            'zero_string' => '0',
         ];
         $this->assertSame($expected, $result->getData());
     }
@@ -3516,73 +3182,6 @@ XML;
         $update = $new->withAttribute('key', ['complex']);
         $this->assertNotEquals($update, $new, 'Should be different');
         $this->assertSame(['complex'], $update->getAttribute('key'));
-    }
-
-    /**
-     * Test that withAttribute() can modify the deprecated public properties.
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testWithAttributesCompatibility()
-    {
-        $this->deprecated(function () {
-            $request = new ServerRequest([
-                'params' => [
-                    'controller' => 'Articles',
-                    'action' => 'index'
-                ],
-                'base' => '/cakeapp',
-                'webroot' => '/cakeapp/'
-            ]);
-
-            $new = $request->withAttribute('base', '/replace')
-                ->withAttribute('webroot', '/replace/')
-                ->withAttribute('params', ['controller' => 'Tags']);
-
-            // Original request should not change.
-            $this->assertSame('/cakeapp', $request->getAttribute('base'));
-            $this->assertSame('/cakeapp/', $request->getAttribute('webroot'));
-            $this->assertSame(
-                ['controller' => 'Articles', 'action' => 'index'],
-                $request->getAttribute('params')
-            );
-
-            $this->assertSame('/replace', $new->getAttribute('base'));
-            $this->assertSame('/replace', $new->base);
-            $this->assertSame('/replace/', $new->getAttribute('webroot'));
-            $this->assertSame('/replace/', $new->webroot);
-
-            $this->assertSame(['controller' => 'Tags'], $new->getAttribute('params'));
-            $this->assertSame(['controller' => 'Tags'], $new->params);
-        });
-    }
-
-    /**
-     * Test that getAttribute() can read deprecated public properties.
-     *
-     * @group deprecated
-     * @dataProvider emulatedPropertyProvider
-     * @return void
-     */
-    public function testGetAttributesCompatibility($prop)
-    {
-        $this->deprecated(function () use ($prop) {
-            $request = new ServerRequest([
-                'params' => [
-                    'controller' => 'Articles',
-                    'action' => 'index'
-                ],
-                'base' => '/cakeapp',
-                'webroot' => '/cakeapp/'
-            ]);
-
-            if ($prop === 'session') {
-                $this->assertSame($request->getSession(), $request->getAttribute($prop));
-            } else {
-                $this->assertSame($request->{$prop}, $request->getAttribute($prop));
-            }
-        });
     }
 
     /**
@@ -3611,7 +3210,8 @@ XML;
                 'pass' => [],
             ],
             'webroot' => '',
-            'base' => ''
+            'base' => '',
+            'here' => '/',
         ];
         $this->assertEquals($expected, $new->getAttributes());
     }
@@ -3632,7 +3232,7 @@ XML;
     }
 
     /**
-     * Test that withoutAttribute() cannot remove deprecated public properties.
+     * Test that withoutAttribute() cannot remove emulatedAttributes properties.
      *
      * @dataProvider emulatedPropertyProvider
      * @return void
@@ -3654,9 +3254,9 @@ XML;
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_URI' => '/articles/view/1',
-                'QUERY_STRING' => 'comments=1&open=0'
+                'QUERY_STRING' => 'comments=1&open=0',
             ],
-            'base' => '/basedir'
+            'base' => '/basedir',
         ]);
         $this->assertEquals(
             '/articles/view/1?comments=1&open=0',
@@ -3716,10 +3316,11 @@ XML;
     public function emulatedPropertyProvider()
     {
         return [
+            ['here'],
             ['params'],
             ['base'],
             ['webroot'],
-            ['session']
+            ['session'],
         ];
     }
 

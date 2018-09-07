@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,8 @@
 namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component\AuthComponent;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
+use Cake\Http\Response;
 
 /**
  * TestAuthComponent class
@@ -27,10 +29,10 @@ class TestAuthComponent extends AuthComponent
     public $authCheckCalledFrom = null;
 
     /**
-     * @param Event $event
+     * @param \Cake\Event\EventInterface $event
      * @return \Cake\Http\Response|null
      */
-    public function authCheck(Event $event)
+    public function authCheck(EventInterface $event): ?Response
     {
         if (isset($this->earlyAuthTest)) {
             if ($this->_config['checkAuthIn'] !== $event->getName()) {

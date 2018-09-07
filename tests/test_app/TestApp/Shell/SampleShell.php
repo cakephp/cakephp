@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * SampleShell file
  *
@@ -24,7 +25,6 @@ use Cake\Console\Shell;
 
 class SampleShell extends Shell
 {
-
     public $tasks = ['Sample', 'Load'];
 
     /**

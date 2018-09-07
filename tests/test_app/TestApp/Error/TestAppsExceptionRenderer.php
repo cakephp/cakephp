@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace TestApp\Error;
 
 use Cake\Controller\Controller;
@@ -11,22 +11,22 @@ use TestApp\Controller\TestAppsErrorController;
 
 class TestAppsExceptionRenderer extends ExceptionRenderer
 {
-
     /**
      * {@inheritDoc}
      */
     protected function _getController()
     {
-        if (!$request = Router::getRequest(true)) {
+        $request = $this->request ?: Router::getRequest(true);
+        if ($request === null) {
             $request = new ServerRequest();
         }
         $response = new Response();
         try {
             $controller = new TestAppsErrorController($request, $response);
-            $controller->viewBuilder()->layout('banana');
+            $controller->viewBuilder()->setLayout('banana');
         } catch (\Exception $e) {
             $controller = new Controller($request, $response);
-            $controller->viewBuilder()->templatePath('Error');
+            $controller->viewBuilder()->setTemplatePath('Error');
         }
 
         return $controller;

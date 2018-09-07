@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Http\CallbackStream;
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
@@ -73,7 +75,7 @@ class ResponseEmitterTest extends TestCase
         $expected = [
             'HTTP/1.1 201 Created',
             'Content-Type: text/html',
-            'Location: http://example.com/cake/1'
+            'Location: http://example.com/cake/1',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
     }
@@ -110,7 +112,7 @@ class ResponseEmitterTest extends TestCase
     public function testEmitResponseArrayCookies()
     {
         $response = (new Response())
-            ->withCookie('simple', ['value' => 'val', 'secure' => true])
+            ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');
@@ -122,7 +124,7 @@ class ResponseEmitterTest extends TestCase
         $this->assertEquals('ok', $out);
         $expected = [
             'HTTP/1.1 200 OK',
-            'Content-Type: text/plain'
+            'Content-Type: text/plain',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
         $expected = [
@@ -133,7 +135,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => true,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'google',
@@ -142,7 +144,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => true
+                'httponly' => true,
             ],
         ];
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);
@@ -171,7 +173,7 @@ class ResponseEmitterTest extends TestCase
         $this->assertEquals('ok', $out);
         $expected = [
             'HTTP/1.1 200 OK',
-            'Content-Type: text/plain'
+            'Content-Type: text/plain',
         ];
         $this->assertEquals($expected, $GLOBALS['mockedHeaders']);
         $expected = [
@@ -182,7 +184,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => true,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'people',
@@ -191,7 +193,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'google',
@@ -200,7 +202,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => true
+                'httponly' => true,
             ],
             [
                 'name' => 'a',
@@ -209,7 +211,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 1610576581,
                 'domain' => 'www.example.com',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ],
             [
                 'name' => 'list[]',
@@ -218,7 +220,7 @@ class ResponseEmitterTest extends TestCase
                 'expire' => 0,
                 'domain' => '',
                 'secure' => false,
-                'httponly' => false
+                'httponly' => false,
             ],
         ];
         $this->assertEquals($expected, $GLOBALS['mockedCookies']);

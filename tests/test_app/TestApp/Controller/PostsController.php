@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,32 +15,27 @@
  */
 namespace TestApp\Controller;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
+use Cake\Http\Cookie\Cookie;
 
 /**
  * PostsController class
  */
 class PostsController extends AppController
 {
-    /**
-     * Components array
-     *
-     * @var array
-     */
-    public $components = [
-        'Flash',
-        'RequestHandler' => [
-            'enableBeforeRedirect' => false
-        ],
-        'Security',
-    ];
+    public function initialize(): void
+    {
+        $this->loadComponent('Flash');
+        $this->loadComponent('RequestHandler');
+        $this->loadComponent('Security');
+    }
 
     /**
      * beforeFilter
      *
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
-    public function beforeFilter(Event $event)
+    public function beforeFilter(EventInterface $event)
     {
         if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
@@ -55,7 +51,7 @@ class PostsController extends AppController
     public function index($layout = 'default')
     {
         $this->Flash->error('An error message');
-        $this->response = $this->response->withCookie('remember_me', 1);
+        $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
         $this->set('test', 'value');
         $this->viewBuilder()->setLayout($layout);
     }
@@ -63,7 +59,7 @@ class PostsController extends AppController
     /**
      * Sets a flash message and redirects (no rendering)
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function flashNoRender()
     {
@@ -95,5 +91,32 @@ class PostsController extends AppController
     public function file()
     {
         return $this->response->withFile(__FILE__);
+    }
+
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function empty_response()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function secretCookie()
+    {
+        return $this->response
+            ->withCookie(new Cookie('secrets', 'name'))
+            ->withStringBody('ok');
+    }
+
+    public function stacked_flash()
+    {
+        $this->Flash->error('Error 1');
+        $this->Flash->error('Error 2');
+        $this->Flash->success('Success 1', ['key' => 'custom']);
+        $this->Flash->success('Success 2', ['key' => 'custom']);
+
+        return $this->getResponse()->withStringBody('');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,6 @@ use TestApp\View\CustomJsonView;
  */
 class CellTest extends TestCase
 {
-
     /**
      * @var \Cake\View\View
      */
@@ -45,7 +45,7 @@ class CellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Plugin::load(['TestPlugin', 'TestTheme']);
+        $this->loadPlugins(['TestPlugin', 'TestTheme']);
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $this->View = new View($request, $response);
@@ -59,8 +59,7 @@ class CellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestPlugin');
-        Plugin::unload('TestTheme');
+        Plugin::unload();
         unset($this->View);
     }
 
@@ -74,7 +73,7 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles::teaserList');
         $render = "{$cell}";
 
-        $this->assertEquals('teaser_list', $cell->template);
+        $this->assertEquals('teaser_list', $cell->viewBuilder()->getTemplate());
         $this->assertContains('<h2>Lorem ipsum</h2>', $render);
         $this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
         $this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
@@ -83,6 +82,21 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Cello');
         $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
         $this->assertEquals("Cellos\n", $cell->render());
+    }
+
+    /**
+     * Tests debug output.
+     *
+     * @return void
+     */
+    public function testDebugInfo()
+    {
+        $cell = $this->View->cell('Articles::teaserList');
+        $data = $cell->__debugInfo();
+        $this->assertArrayHasKey('request', $data);
+        $this->assertArrayHasKey('response', $data);
+        $this->assertEquals('teaserList', $data['action']);
+        $this->assertEquals([], $data['args']);
     }
 
     /**
@@ -100,7 +114,7 @@ class CellTest extends TestCase
         set_error_handler($capture);
 
         $cell = $this->View->cell('Articles::teaserList');
-        $cell->template = 'nope';
+        $cell->viewBuilder()->setTemplate('nope');
         $result = "{$cell}";
     }
 
@@ -128,26 +142,12 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles');
 
-        $this->assertEquals('display', $appCell->template);
+        $this->assertEquals('display', $appCell->viewBuilder()->getTemplate());
         $this->assertContains('dummy', "{$appCell}");
 
         $pluginCell = $this->View->cell('TestPlugin.Dummy');
         $this->assertContains('dummy', "{$pluginCell}");
-        $this->assertEquals('display', $pluginCell->template);
-    }
-
-    /**
-     * Tests that cell action setting the template using the property renders the correct template
-     *
-     * @return void
-     */
-    public function testSettingCellTemplateFromAction()
-    {
-        $appCell = $this->View->cell('Articles::customTemplate');
-
-        $this->assertContains('This is the alternate template', "{$appCell}");
-        $this->assertEquals('alternate_teaser_list', $appCell->template);
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
+        $this->assertEquals('display', $pluginCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -160,7 +160,7 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles::customTemplatePath');
 
         $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
-        $this->assertEquals('custom_template_path', $appCell->template);
+        $this->assertEquals('custom_template_path', $appCell->viewBuilder()->getTemplate());
         $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
@@ -218,12 +218,11 @@ class CellTest extends TestCase
      */
     public function testCellRenderThemed()
     {
-        $this->View->theme = 'TestTheme';
+        $this->View->setTheme('TestTheme');
         $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
 
-        $this->assertEquals($this->View->theme, $cell->viewBuilder()->getTheme());
+        $this->assertEquals($this->View->getTheme(), $cell->viewBuilder()->getTheme());
         $this->assertContains('Themed cell content.', $cell->render());
-        $this->assertEquals($cell->View->theme, $cell->viewBuilder()->getTheme());
     }
 
     /**
@@ -240,7 +239,7 @@ class CellTest extends TestCase
         );
 
         $cell = $this->View->cell('Articles');
-        $cell->plugin = 'TestPlugin';
+        $cell->viewBuilder()->setPlugin('TestPlugin');
         $this->assertContains(
             'TestPlugin Articles/display',
             $cell->render('display')
@@ -288,7 +287,7 @@ class CellTest extends TestCase
     public function testPluginCellAlternateTemplate()
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-        $cell->template = '../../Element/translate';
+        $cell->viewBuilder()->setTemplate('../../Element/translate');
         $this->assertContains('This is a translatable string', "{$cell}");
     }
 
@@ -348,9 +347,14 @@ class CellTest extends TestCase
      */
     public function testCellInheritsHelperConfig()
     {
-        $this->View->helpers = ['Url', 'Form', 'Banana'];
-        $cell = $this->View->cell('Articles');
-        $this->assertSame($this->View->helpers, $cell->helpers);
+        $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $helpers = ['Url', 'Form', 'Banana'];
+
+        $view = new View($request, $response, null, ['helpers' => $helpers]);
+
+        $cell = $view->cell('Articles');
+        $this->assertSame($helpers, $cell->viewBuilder()->getHelpers());
     }
 
     /**
@@ -363,7 +367,7 @@ class CellTest extends TestCase
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $view = new CustomJsonView($request, $response);
-        $view->theme = 'Pretty';
+        $view->setTheme('Pretty');
         $cell = $view->cell('Articles');
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());
@@ -402,7 +406,8 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n");
+            ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n")
+            ->will($this->returnValue(true));
         Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
@@ -447,11 +452,12 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('my_key', "dummy\n");
+            ->with('my_key', "dummy\n")
+            ->will($this->returnValue(true));
         Cache::setConfig('cell', $mock);
 
         $cell = $this->View->cell('Articles', [], [
-            'cache' => ['key' => 'my_key', 'config' => 'cell']
+            'cache' => ['key' => 'my_key', 'config' => 'cell'],
         ]);
         $result = $cell->render();
         $this->assertEquals("dummy\n", $result);
@@ -472,10 +478,11 @@ class CellTest extends TestCase
             ->will($this->returnValue(false));
         $mock->expects($this->once())
             ->method('write')
-            ->with('cell_test_app_view_cell_articles_cell_customTemplate_default', "<h1>This is the alternate template</h1>\n");
+            ->with('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder_default', "<h1>This is the alternate template</h1>\n")
+            ->will($this->returnValue(true));
         Cache::setConfig('default', $mock);
 
-        $cell = $this->View->cell('Articles::customTemplate', [], ['cache' => true]);
+        $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render();
         $this->assertContains('This is the alternate template', $result);
 

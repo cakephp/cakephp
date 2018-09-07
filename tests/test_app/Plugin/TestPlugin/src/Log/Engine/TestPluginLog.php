@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Psr\Log\AbstractLogger;
  */
 class TestPluginLog extends AbstractLogger
 {
-
     public function log($level, $message, array $context = [])
     {
     }

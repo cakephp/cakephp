@@ -4,7 +4,7 @@
   </a>
 </p>
 <p align="center">
-    <a href="LICENSE.txt" target="_blank">
+    <a href="LICENSE" target="_blank">
         <img alt="Software License" src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square">
     </a>
     <a href="https://travis-ci.org/cakephp/cakephp" target="_blank">
@@ -38,7 +38,7 @@ recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can run the following:
 
 ``` bash
-$ composer require cakephp/cakephp:"~3.5"
+$ composer require cakephp/cakephp:"~3.6"
 ```
 
 ## Running Tests
@@ -69,7 +69,7 @@ tests for CakePHP by doing the following:
 
 * [Slack](https://cakesf.herokuapp.com/) - Join us on Slack.
 * [#cakephp](https://webchat.freenode.net/?channels=#cakephp) on irc.freenode.net - Come chat with us, we have cake.
-* [Forum](http://discourse.cakephp.org/) - Official CakePHP forum.
+* [Forum](https://discourse.cakephp.org/) - Official CakePHP forum.
 * [GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 * [Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps) - Want to contribute? Get involved!
 

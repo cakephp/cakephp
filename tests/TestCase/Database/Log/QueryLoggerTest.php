@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class QueryLoggerTest extends TestCase
 {
-
     /**
      * Set up
      *
@@ -54,10 +54,10 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolation()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
-        $query = new LoggedQuery;
+        $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
         $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
 
@@ -74,10 +74,10 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationNotNamed()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
-        $query = new LoggedQuery;
+        $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
         $query->params = ['string', '3', null, true, false, 0];
 
@@ -94,10 +94,10 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationDuplicate()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
-        $query = new LoggedQuery;
+        $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p1 AND c = :p2 AND d = :p2';
         $query->params = ['p1' => 'string', 'p2' => 3];
 
@@ -114,10 +114,10 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationNamed()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
-        $query = new LoggedQuery;
+        $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p11 AND c = :p20 AND d = :p2';
         $query->params = ['p11' => 'test', 'p1' => 'string', 'p2' => 3, 'p20' => 5];
 
@@ -134,10 +134,10 @@ class QueryLoggerTest extends TestCase
      */
     public function testStringInterpolationSpecialChars()
     {
-        $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')
+        $logger = $this->getMockBuilder('Cake\Database\Log\QueryLogger')
             ->setMethods(['_log'])
             ->getMock();
-        $query = new LoggedQuery;
+        $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4';
         $query->params = ['p1' => '$2y$10$dUAIj', 'p2' => '$0.23', 'p3' => 'a\\0b\\1c\\d', 'p4' => "a'b"];
 
@@ -155,18 +155,18 @@ class QueryLoggerTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = new QueryLogger;
-        $query = new LoggedQuery;
+        $logger = new QueryLogger();
+        $query = new LoggedQuery();
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
         $query->params = ['string', '3', null];
 
-        $engine = $this->getMockBuilder('\Cake\Log\Engine\BaseLog')
+        $engine = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->setConstructorArgs(['scopes' => ['queriesLog']])
             ->getMock();
         Log::engine('queryLoggerTest');
 
-        $engine2 = $this->getMockBuilder('\Cake\Log\Engine\BaseLog')
+        $engine2 = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->setConstructorArgs(['scopes' => ['foo']])
             ->getMock();

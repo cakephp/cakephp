@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ShellTestShell file
  *
@@ -51,7 +52,7 @@ class ShellTestShell extends Shell
      * @param int $status
      * @return void
      */
-    protected function _stop($status = Shell::CODE_SUCCESS)
+    protected function _stop(int $status = Shell::CODE_SUCCESS): void
     {
         $this->stopped = $status;
     }

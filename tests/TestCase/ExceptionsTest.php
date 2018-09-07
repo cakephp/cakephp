@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * ExceptionsTest file
  *
@@ -17,16 +18,13 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Error\FatalErrorException;
-use Cake\Error\PHP7ErrorException;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\TestSuite\TestCase;
-use Error;
 use Exception;
 
 class ExceptionsTest extends TestCase
 {
-
     /**
      * Tests simple exceptions work.
      *
@@ -75,26 +73,6 @@ class ExceptionsTest extends TestCase
     }
 
     /**
-     * Tests PHP7ErrorException works.
-     *
-     * @return void
-     */
-    public function testPHP7ErrorException()
-    {
-        $this->skipIf(version_compare(PHP_VERSION, '7.0.0', '<'));
-
-        $previous = new Exception();
-        $error = new Error('message', 100, $previous);
-        $line = __LINE__ - 1;
-
-        $exception = new PHP7ErrorException($error);
-        $this->assertSame(100, $exception->getCode());
-        $this->assertSame(__FILE__, $exception->getFile());
-        $this->assertSame($line, $exception->getLine());
-        $this->assertSame($previous, $exception->getPrevious());
-    }
-
-    /**
      * Tests PersistenceFailedException works.
      *
      * @return void
@@ -110,7 +88,7 @@ class ExceptionsTest extends TestCase
         $this->assertSame($previous, $exception->getPrevious());
         $this->assertSame($entity, $exception->getEntity());
 
-        $exception = new PersistenceFailedException(new Entity, 'message', null, $previous);
+        $exception = new PersistenceFailedException(new Entity(), 'message', null, $previous);
         $this->assertSame('message', $exception->getMessage());
         $this->assertSame(500, $exception->getCode());
         $this->assertSame($previous, $exception->getPrevious());

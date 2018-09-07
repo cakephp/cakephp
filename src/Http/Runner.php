@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -43,7 +44,7 @@ class Runner
      * @param \Psr\Http\Message\ResponseInterface $response The response
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
-    public function run($middleware, ServerRequestInterface $request, ResponseInterface $response)
+    public function run(MiddlewareQueue $middleware, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $this->middleware = $middleware;
         $this->index = 0;
@@ -56,7 +57,7 @@ class Runner
      * @param \Psr\Http\Message\ResponseInterface $response The response object
      * @return \Psr\Http\Message\ResponseInterface An updated response
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $next = $this->middleware->get($this->index);
         if ($next) {

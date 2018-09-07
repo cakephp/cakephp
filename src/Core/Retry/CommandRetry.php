@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Exception;
  */
 class CommandRetry
 {
-
     /**
      * The strategy to follow should the executed action fail.
      *
@@ -45,7 +45,7 @@ class CommandRetry
      * @param \Cake\Core\Retry\RetryStrategyInterface $strategy The strategy to follow should the action fail
      * @param int $retries The number of times the action has been already called
      */
-    public function __construct(RetryStrategyInterface $strategy, $retries = 1)
+    public function __construct(RetryStrategyInterface $strategy, int $retries = 1)
     {
         $this->strategy = $strategy;
         $this->retries = $retries;
@@ -56,6 +56,7 @@ class CommandRetry
      *
      * @param callable $action The callable action to execute with a retry strategy
      * @return mixed The return value of the passed action callable
+     * @throws \Exception
      */
     public function run(callable $action)
     {

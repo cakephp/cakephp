@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,9 +16,6 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type;
-use Cake\Database\TypeInterface;
-use Cake\Database\Type\BatchCastingInterface;
 use PDO;
 use RuntimeException;
 
@@ -26,31 +24,8 @@ use RuntimeException;
  *
  * Use to convert float/decimal data between PHP and the database types.
  */
-class FloatType extends Type implements TypeInterface, BatchCastingInterface
+class FloatType extends BaseType implements BatchCastingInterface
 {
-    /**
-     * Identifier name for this type.
-     *
-     * (This property is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @var string|null
-     */
-    protected $_name;
-
-    /**
-     * Constructor.
-     *
-     * (This method is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @param string|null $name The name identifying this type
-     */
-    public function __construct($name = null)
-    {
-        $this->_name = $name;
-    }
-
     /**
      * The class to use for representing number objects
      *
@@ -73,7 +48,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?float
     {
         if ($value === null || $value === '') {
             return null;
@@ -90,7 +65,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      * @return float|null
      * @throws \Cake\Core\Exception\Exception
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, Driver $driver): ?float
     {
         if ($value === null) {
             return null;
@@ -104,7 +79,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -124,7 +99,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }
@@ -135,22 +110,19 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return float|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?float
     {
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value)) {
-            return (float)$value;
-        }
         if (is_string($value) && $this->_useLocaleParser) {
             return $this->_parseValue($value);
         }
-        if (is_array($value)) {
-            return 1.0;
+        if (is_numeric($value)) {
+            return (float)$value;
         }
 
-        return $value;
+        return null;
     }
 
     /**
@@ -160,7 +132,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      * @param bool $enable Whether or not to enable
      * @return $this
      */
-    public function useLocaleParser($enable = true)
+    public function useLocaleParser(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
@@ -186,7 +158,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
      * @param string $value The value to parse and convert to an float.
      * @return float
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value): float
     {
         $class = static::$numberClass;
 

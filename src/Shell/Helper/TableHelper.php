@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\Console\Helper;
  */
 class TableHelper extends Helper
 {
-
     /**
      * Default config for this helper.
      *
@@ -39,13 +39,13 @@ class TableHelper extends Helper
      * @param array $rows The rows on which the columns width will be calculated on.
      * @return array
      */
-    protected function _calculateWidths($rows)
+    protected function _calculateWidths(array $rows): array
     {
         $widths = [];
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
-                $columnLength = mb_strwidth($v);
-                if ($columnLength >= (isset($widths[$k]) ? $widths[$k] : 0)) {
+                $columnLength = mb_strwidth((string)$v);
+                if ($columnLength >= ($widths[$k] ?? 0)) {
                     $widths[$k] = $columnLength;
                 }
             }
@@ -60,7 +60,7 @@ class TableHelper extends Helper
      * @param array $widths The widths of each column to output.
      * @return void
      */
-    protected function _rowSeparator($widths)
+    protected function _rowSeparator(array $widths): void
     {
         $out = '';
         foreach ($widths as $column) {
@@ -78,7 +78,7 @@ class TableHelper extends Helper
      * @param array $options Options to be passed.
      * @return void
      */
-    protected function _render(array $row, $widths, $options = [])
+    protected function _render(array $row, array $widths, array $options = []): void
     {
         if (count($row) === 0) {
             return;
@@ -86,7 +86,7 @@ class TableHelper extends Helper
 
         $out = '';
         foreach (array_values($row) as $i => $column) {
-            $pad = $widths[$i] - mb_strwidth($column);
+            $pad = $widths[$i] - mb_strwidth((string)$column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }
@@ -105,7 +105,7 @@ class TableHelper extends Helper
      * @param array $rows The data to render out.
      * @return void
      */
-    public function output($rows)
+    public function output(array $rows): void
     {
         if (!is_array($rows) || count($rows) === 0) {
             return;
@@ -142,7 +142,7 @@ class TableHelper extends Helper
      * @param string $style The style to be applied
      * @return string
      */
-    protected function _addStyle($text, $style)
+    protected function _addStyle(string $text, string $style): string
     {
         return '<' . $style . '>' . $text . '</' . $style . '>';
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,9 +16,9 @@
 namespace Cake\Database\Type;
 
 use Cake\Database\Driver;
-use Cake\Database\Type;
-use Cake\Database\TypeInterface;
-use Cake\Database\Type\BatchCastingInterface;
+use Cake\I18n\FrozenTime;
+use Cake\I18n\Time;
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -30,29 +31,8 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
+class DateTimeType extends BaseType
 {
-    /**
-     * Identifier name for this type.
-     *
-     * (This property is declared here again so that the inheritance from
-     * Cake\Database\Type can be removed in the future.)
-     *
-     * @var string|null
-     */
-    protected $_name;
-
-    /**
-     * The class to use for representing date objects
-     *
-     * This property can only be used before an instance of this type
-     * class is constructed. After that use `useMutable()` or `useImmutable()` instead.
-     *
-     * @var string
-     * @deprecated 3.2.0 Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
-     */
-    public static $dateTimeClass = 'Cake\I18n\Time';
-
     /**
      * Whether or not we want to override the time of the converted Time objects
      * so it points to the start of the day.
@@ -115,9 +95,9 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      */
     public function __construct($name = null)
     {
-        $this->_name = $name;
+        parent::__construct($name);
 
-        $this->_setClassName(static::$dateTimeClass, 'DateTime');
+        $this->useImmutable();
     }
 
     /**
@@ -127,7 +107,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, Driver $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -174,7 +154,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
     /**
      * Convert strings into DateTime instances.
      *
-     * @param string $value The value to convert.
+     * @param string|int|null $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime|null
      */
@@ -230,7 +210,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      * @param mixed $value Request data
      * @return \DateTimeInterface|null
      */
-    public function marshal($value)
+    public function marshal($value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
             return $value;
@@ -252,13 +232,13 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
                 $compare = true;
             }
             if ($compare && $date && !$this->_compare($date, $value)) {
-                return $value;
+                return null;
             }
             if ($date) {
                 return $date;
             }
         } catch (Exception $e) {
-            return $value;
+            return null;
         }
 
         if (is_array($value) && implode('', $value) === '') {
@@ -286,7 +266,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
             $value['minute'],
             $value['second']
         );
-        $tz = isset($value['timezone']) ? $value['timezone'] : null;
+        $tz = $value['timezone'] ?? null;
 
         return new $class($format, $tz);
     }
@@ -296,7 +276,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      * @param mixed $value Request data
      * @return bool
      */
-    protected function _compare($date, $value)
+    protected function _compare($date, $value): bool
     {
         foreach ((array)$this->_format as $format) {
             if ($date->format($format) === $value) {
@@ -314,7 +294,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      * @param bool $enable Whether or not to enable
      * @return $this
      */
-    public function useLocaleParser($enable = true)
+    public function useLocaleParser(bool $enable = true)
     {
         if ($enable === false) {
             $this->_useLocaleParser = $enable;
@@ -354,7 +334,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      */
     public function useImmutable()
     {
-        $this->_setClassName('Cake\I18n\FrozenTime', 'DateTimeImmutable');
+        $this->_setClassName(FrozenTime::class, DateTimeImmutable::class);
 
         return $this;
     }
@@ -366,13 +346,13 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      * @param string $fallback The classname to use when the preferred class does not exist.
      * @return void
      */
-    protected function _setClassName($class, $fallback)
+    protected function _setClassName(string $class, string $fallback): void
     {
         if (!class_exists($class)) {
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this->_className;
+        $this->_datetimeInstance = new $this->_className();
     }
 
     /**
@@ -380,7 +360,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      *
      * @return string
      */
-    public function getDateTimeClassName()
+    public function getDateTimeClassName(): string
     {
         return $this->_className;
     }
@@ -392,7 +372,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      */
     public function useMutable()
     {
-        $this->_setClassName('Cake\I18n\Time', 'DateTime');
+        $this->_setClassName(Time::class, DateTime::class);
 
         return $this;
     }
@@ -404,7 +384,7 @@ class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\I18n\Time|null
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value)
     {
         /* @var \Cake\I18n\Time $class */
         $class = $this->_className;

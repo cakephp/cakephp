@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,14 +19,15 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
+use TypeError;
 
 /**
  * XmlTest class
  */
 class XmlTest extends TestCase
 {
-
     /**
      * autoFixtures property
      *
@@ -38,7 +40,7 @@ class XmlTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.users'
+        'core.articles', 'core.users',
     ];
 
     /**
@@ -64,6 +66,19 @@ class XmlTest extends TestCase
         Configure::write('App.encoding', $this->_appEncoding);
     }
 
+    public function testExceptionChainingForInvalidInput()
+    {
+        try {
+            $value = "invalid-xml-input<<";
+            Xml::build($value);
+            $this->fail('This line should not be executed because of exception above.');
+        } catch (XmlException $exception) {
+            $cause = $exception->getPrevious();
+            $this->assertNotNull($cause);
+            $this->assertInstanceOf(\Exception::class, $cause);
+        }
+    }
+
     /**
      * testBuild method
      *
@@ -86,17 +101,20 @@ class XmlTest extends TestCase
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
         $xml = CORE_TESTS . 'Fixture/sample.xml';
-        $obj = Xml::build($xml);
+        $obj = Xml::build($xml, ['readFile' => true]);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
 
-        $this->assertEquals(Xml::build($xml), Xml::build(file_get_contents($xml)));
+        $this->assertEquals(
+            Xml::build($xml, ['readFile' => true]),
+            Xml::build(file_get_contents($xml))
+        );
 
-        $obj = Xml::build($xml, ['return' => 'domdocument']);
+        $obj = Xml::build($xml, ['return' => 'domdocument', 'readFile' => true]);
         $this->assertEquals('tags', $obj->firstChild->nodeName);
 
         $this->assertEquals(
-            Xml::build($xml, ['return' => 'domdocument']),
+            Xml::build($xml, ['return' => 'domdocument', 'readFile' => true]),
             Xml::build(file_get_contents($xml), ['return' => 'domdocument'])
         );
 
@@ -109,7 +127,7 @@ class XmlTest extends TestCase
         $this->assertEquals('tag', $obj->firstChild->nodeName);
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
-        $obj = Xml::build($xml, ['return' => 'domdocument', 'encoding' => null]);
+        $obj = Xml::build($xml, ['return' => 'domdocument', 'encoding' => '']);
         $this->assertNotRegExp('/encoding/', $obj->saveXML());
     }
 
@@ -153,8 +171,8 @@ class XmlTest extends TestCase
 
         $xml = new Collection([
             'response' => [
-                'users' => new Collection(['leonardo', 'raphael'])
-            ]
+                'users' => new Collection(['leonardo', 'raphael']),
+            ],
         ]);
         $obj = Xml::build($xml);
         $this->assertContains('<users>leonardo</users>', $obj->saveXML());
@@ -170,8 +188,8 @@ class XmlTest extends TestCase
         $user = new Entity(['username' => 'mark', 'email' => 'mark@example.com']);
         $xml = new Collection([
             'response' => [
-                'users' => new Collection([$user])
-            ]
+                'users' => new Collection([$user]),
+            ],
         ]);
         $obj = Xml::build($xml);
         $output = $obj->saveXML();
@@ -234,6 +252,54 @@ class XmlTest extends TestCase
     }
 
     /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $htmlFile = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($htmlFile);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
+        $xml = Xml::loadHtml($html);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        $this->expectException(TypeError::class);
+        Xml::loadHtml(null);
+    }
+
+    /**
      * testFromArray method
      *
      * @return void
@@ -260,16 +326,16 @@ class XmlTest extends TestCase
                 'tag' => [
                     [
                         'id' => '1',
-                        'name' => 'defect'
+                        'name' => 'defect',
                     ],
                     [
                         'id' => '2',
-                        'name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        'name' => 'enhancement',
+                    ],
+                ],
+            ],
         ];
-        $obj = Xml::fromArray($xml, 'attributes');
+        $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
@@ -303,7 +369,7 @@ XML;
 
         $xml = [
             'tags' => [
-            ]
+            ],
         ];
         $obj = Xml::fromArray($xml);
         $this->assertEquals('tags', $obj->getName());
@@ -316,10 +382,10 @@ XML;
                 'float' => 10.2,
                 'string' => 'ok',
                 'null' => null,
-                'array' => []
-            ]
+                'array' => [],
+            ],
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $this->assertEquals(6, count($obj));
         $this->assertSame((string)$obj->bool, '1');
         $this->assertSame((string)$obj->int, '1');
@@ -333,16 +399,16 @@ XML;
                 'tag' => [
                     [
                         '@id' => '1',
-                        'name' => 'defect'
+                        'name' => 'defect',
                     ],
                     [
                         '@id' => '2',
-                        'name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        'name' => 'enhancement',
+                    ],
+                ],
+            ],
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>
@@ -362,17 +428,17 @@ XML;
                     [
                         '@id' => '1',
                         'name' => 'defect',
-                        '@' => 'Tag 1'
+                        '@' => 'Tag 1',
                     ],
                     [
                         '@id' => '2',
-                        'name' => 'enhancement'
+                        'name' => 'enhancement',
                     ],
                 ],
-                '@' => 'All tags'
-            ]
+                '@' => 'All tags',
+            ],
         ];
-        $obj = Xml::fromArray($xml, 'tags');
+        $obj = Xml::fromArray($xml, ['format' => 'tags']);
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tags>All tags<tag id="1">Tag 1<name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>
@@ -383,11 +449,11 @@ XML;
             'tags' => [
                 'tag' => [
                     'id' => 1,
-                    '@' => 'defect'
-                ]
-            ]
+                    '@' => 'defect',
+                ],
+            ],
         ];
-        $obj = Xml::fromArray($xml, 'attributes');
+        $obj = Xml::fromArray($xml, ['format' => 'attributes']);
         $xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
     }
@@ -402,8 +468,8 @@ XML;
         $xml = [
             'tag' => [
                 '@' => 0,
-                '@test' => 'A test'
-            ]
+                '@test' => 'A test',
+            ],
         ];
         $obj = Xml::fromArray($xml);
         $xmlText = <<<XML
@@ -413,7 +479,7 @@ XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $xml = [
-            'tag' => ['0']
+            'tag' => ['0'],
         ];
         $obj = Xml::fromArray($xml);
         $xmlText = <<<XML
@@ -440,10 +506,10 @@ XML;
                         ],
                         2 => [
                             'id' => '9647',
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ];
         $obj = Xml::fromArray($xmlArray);
         $expected = <<<XML
@@ -473,14 +539,14 @@ XML;
                 'tag' => [
                     [
                         'id' => '1',
-                        'name' => 'defect'
+                        'name' => 'defect',
                     ],
                     [
                         'id' => '2',
-                        'name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        'name' => 'enhancement',
+                    ],
+                ],
+            ],
         ];
 
         $expected = <<<XML
@@ -513,14 +579,14 @@ XML;
                 'tag' => [
                     [
                         'id' => '1',
-                        'name' => 'defect'
+                        'name' => 'defect',
                     ],
                     [
                         'id' => '2',
-                        'name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        'name' => 'enhancement',
+                    ],
+                ],
+            ],
                 ];
 
                 $expected = <<<XML
@@ -563,27 +629,27 @@ XML;
                     'tag' => [
                         [
                             [
-                                'string'
-                            ]
-                        ]
-                    ]
-                ]
+                                'string',
+                            ],
+                        ],
+                    ],
+                ],
             ]],
             [[
                 'tags' => [
                     '@tag' => [
                         [
                             '@id' => '1',
-                            'name' => 'defect'
+                            'name' => 'defect',
                         ],
                         [
                             '@id' => '2',
-                            'name' => 'enhancement'
-                        ]
-                    ]
-                ]
+                            'name' => 'enhancement',
+                        ],
+                    ],
+                ],
             ]],
-            [new \DateTime()]
+            [new \DateTime()],
         ];
     }
 
@@ -614,10 +680,10 @@ XML;
             'brand' => 'Malte Lange & Co',
             'availability' => 'in stock',
             'authors' => [
-                'author' => ['Malte Lange & Co']
-            ]
+                'author' => ['Malte Lange & Co'],
+            ],
         ];
-        $xml = Xml::fromArray(['products' => $data], 'tags');
+        $xml = Xml::fromArray(['products' => $data], ['format' => 'tags']);
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <products>
@@ -647,20 +713,20 @@ XML;
         $this->assertEquals(['tag' => 'name'], Xml::toArray($obj));
 
         $xml = CORE_TESTS . 'Fixture/sample.xml';
-        $obj = Xml::build($xml);
+        $obj = Xml::build($xml, ['readFile' => true]);
         $expected = [
             'tags' => [
                 'tag' => [
                     [
                         '@id' => '1',
-                        'name' => 'defect'
+                        'name' => 'defect',
                     ],
                     [
                         '@id' => '2',
-                        'name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        'name' => 'enhancement',
+                    ],
+                ],
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($obj));
 
@@ -669,32 +735,32 @@ XML;
                 'tag' => [
                     [
                         'id' => '1',
-                        'name' => 'defect'
+                        'name' => 'defect',
                     ],
                     [
                         'id' => '2',
-                        'name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        'name' => 'enhancement',
+                    ],
+                ],
+            ],
         ];
-        $this->assertEquals(Xml::toArray(Xml::fromArray($array, 'tags')), $array);
+        $this->assertEquals(Xml::toArray(Xml::fromArray($array, ['format' => 'tags'])), $array);
 
         $expected = [
             'tags' => [
                 'tag' => [
                     [
                         '@id' => '1',
-                        '@name' => 'defect'
+                        '@name' => 'defect',
                     ],
                     [
                         '@id' => '2',
-                        '@name' => 'enhancement'
-                    ]
-                ]
-            ]
+                        '@name' => 'enhancement',
+                    ],
+                ],
+            ],
         ];
-        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes'])));
         $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['return' => 'domdocument', 'format' => 'attributes'])));
         $this->assertEquals(Xml::toArray(Xml::fromArray($array)), $array);
         $this->assertEquals(Xml::toArray(Xml::fromArray($array, ['return' => 'domdocument'])), $array);
@@ -705,15 +771,15 @@ XML;
                     'id' => '1',
                     'posts' => [
                         ['id' => '1'],
-                        ['id' => '2']
-                    ]
+                        ['id' => '2'],
+                    ],
                 ],
                 'tagOther' => [
                     'subtag' => [
-                        'id' => '1'
-                    ]
-                ]
-            ]
+                        'id' => '1',
+                    ],
+                ],
+            ],
         ];
         $expected = [
             'tags' => [
@@ -721,17 +787,17 @@ XML;
                     '@id' => '1',
                     'posts' => [
                         ['@id' => '1'],
-                        ['@id' => '2']
-                    ]
+                        ['@id' => '2'],
+                    ],
                 ],
                 'tagOther' => [
                     'subtag' => [
-                        '@id' => '1'
-                    ]
-                ]
-            ]
+                        '@id' => '1',
+                    ],
+                ],
+            ],
         ];
-        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, 'attributes')));
+        $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes'])));
         $this->assertEquals($expected, Xml::toArray(Xml::fromArray($array, ['format' => 'attributes', 'return' => 'domdocument'])));
 
         $xml = <<<XML
@@ -745,9 +811,9 @@ XML;
             'root' => [
                 'tag' => [
                     '@id' => 1,
-                    '@' => 'defect'
-                ]
-            ]
+                    '@' => 'defect',
+                ],
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($obj));
 
@@ -765,9 +831,9 @@ XML;
                 'table' => [
                     ['tr' => ['td' => ['Apples', 'Bananas']]],
                     ['name' => 'CakePHP', 'license' => 'MIT'],
-                    'The book is on the table.'
-                ]
-            ]
+                    'The book is on the table.',
+                ],
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($obj));
 
@@ -782,8 +848,8 @@ XML;
         $expected = [
             'root' => [
                 'tag' => 'defect',
-                'cake:bug' => 1
-            ]
+                'cake:bug' => 1,
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($obj));
 
@@ -792,8 +858,8 @@ XML;
         $expected = [
             'tag' => [
                 '@type' => 'myType',
-                '@' => 0
-            ]
+                '@' => 0,
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($obj));
     }
@@ -819,7 +885,7 @@ XML;
             'link' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
             'description' => 'I\'m going to show you how I implemented a payment module via the Alertpay payment processor.',
             'pubDate' => 'Tue, 31 Aug 2010 01:42:00 -0500',
-            'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn'
+            'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
         ];
         $this->assertSame($expected, $rssAsArray['rss']['channel']['item'][1]);
 
@@ -831,7 +897,7 @@ XML;
                     'atom:link' => [
                         '@href' => 'http://bakery.cakephp.org/articles/rss',
                         '@rel' => 'self',
-                        '@type' => 'application/rss+xml'
+                        '@type' => 'application/rss+xml',
                     ],
                     'title' => 'The Bakery: ',
                     'link' => 'http://bakery.cakephp.org/',
@@ -840,15 +906,15 @@ XML;
                     'item' => [
                         [
                             'title' => 'CakePHP 1.3.4 released',
-                            'link' => 'http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released'
+                            'link' => 'http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released',
                         ],
                         [
                             'title' => 'Wizard Component 1.2 Tutorial',
-                            'link' => 'http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial'
-                        ]
-                    ]
-                ]
-            ]
+                            'link' => 'http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial',
+                        ],
+                    ],
+                ],
+            ],
         ];
         $rssAsSimpleXML = Xml::fromArray($rss);
         $xmlText = <<<XML
@@ -885,8 +951,8 @@ XML;
         $expected = [
             'methodCall' => [
                 'methodName' => 'test',
-                'params' => ''
-            ]
+                'params' => '',
+            ],
         ];
         $this->assertSame($expected, Xml::toArray($xml));
 
@@ -903,14 +969,14 @@ XML;
                                         ['int' => '12'],
                                         ['string' => 'Egypt'],
                                         ['boolean' => '0'],
-                                        ['int' => '-31']
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                        ['int' => '-31'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->assertSame($expected, Xml::toArray($xml));
 
@@ -945,18 +1011,18 @@ XML;
                                 'data' => [
                                     'value' => [
                                         ['int' => '1'],
-                                        ['string' => 'testing']
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                        ['string' => 'testing'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
         $this->assertSame($expected, Xml::toArray($xml));
 
-        $xml = Xml::fromArray($expected, 'tags');
+        $xml = Xml::fromArray($expected, ['format' => 'tags']);
         $this->assertXmlStringEqualsXmlString($xmlText, $xml->asXML());
     }
 
@@ -967,29 +1033,29 @@ XML;
      */
     public function testSoap()
     {
-        $xmlRequest = Xml::build(CORE_TESTS . 'Fixture/soap_request.xml');
+        $xmlRequest = Xml::build(CORE_TESTS . 'Fixture/soap_request.xml', ['readFile' => true]);
         $expected = [
             'Envelope' => [
                 '@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
                 'soap:Body' => [
                     'm:GetStockPrice' => [
-                        'm:StockName' => 'IBM'
-                    ]
-                ]
-            ]
+                        'm:StockName' => 'IBM',
+                    ],
+                ],
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($xmlRequest));
 
-        $xmlResponse = Xml::build(CORE_TESTS . DS . 'Fixture/soap_response.xml');
+        $xmlResponse = Xml::build(CORE_TESTS . DS . 'Fixture/soap_response.xml', ['readFile' => true]);
         $expected = [
             'Envelope' => [
                 '@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
                 'soap:Body' => [
                     'm:GetStockPriceResponse' => [
-                        'm:Price' => '34.5'
-                    ]
-                ]
-            ]
+                        'm:Price' => '34.5',
+                    ],
+                ],
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($xmlResponse));
 
@@ -1000,12 +1066,12 @@ XML;
                 'soap:Body' => [
                     'xmlns:m' => 'http://www.example.org/stock',
                     'm:GetStockPrice' => [
-                        'm:StockName' => 'IBM'
-                    ]
-                ]
-            ]
+                        'm:StockName' => 'IBM',
+                    ],
+                ],
+            ],
         ];
-        $xmlRequest = Xml::fromArray($xml, ['encoding' => null]);
+        $xmlRequest = Xml::fromArray($xml, ['encoding' => '']);
         $xmlText = <<<XML
 <?xml version="1.0"?>
 <soap:Envelope xmlns:soap="http://www.w3.org/2001/12/soap-envelope" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">
@@ -1041,10 +1107,10 @@ XML;
                 'ns:tag' => [
                     '@id' => '1',
                     'child' => 'good',
-                    'otherchild' => 'bad'
+                    'otherchild' => 'bad',
                 ],
-                'tag' => 'Tag without ns'
-            ]
+                'tag' => 'Tag without ns',
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($xmlResponse));
 
@@ -1052,20 +1118,20 @@ XML;
         $expected = [
             'root' => [
                 'ns:tag' => [
-                    '@id' => '1'
+                    '@id' => '1',
                 ],
                 'tag' => [
-                    'id' => '1'
-                ]
-            ]
+                    'id' => '1',
+                ],
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($xmlResponse));
 
         $xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:attr>1</ns:attr></root>');
         $expected = [
             'root' => [
-                'ns:attr' => '1'
-            ]
+                'ns:attr' => '1',
+            ],
         ];
         $this->assertEquals($expected, Xml::toArray($xmlResponse));
 
@@ -1076,9 +1142,9 @@ XML;
             'root' => [
                 'ns:attr' => [
                     'xmlns:ns' => 'http://cakephp.org',
-                    '@' => 1
-                ]
-            ]
+                    '@' => 1,
+                ],
+            ],
         ];
         $expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>';
         $xmlResponse = Xml::fromArray($xml);
@@ -1090,10 +1156,10 @@ XML;
                     'xmlns:pref' => 'http://cakephp.org',
                     'pref:item' => [
                         'item 1',
-                        'item 2'
-                    ]
-                ]
-            ]
+                        'item 2',
+                    ],
+                ],
+            ],
         ];
         $expected = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1110,9 +1176,9 @@ XML;
         $xml = [
             'root' => [
                 'tag' => [
-                    'xmlns:' => 'http://cakephp.org'
-                ]
-            ]
+                    'xmlns:' => 'http://cakephp.org',
+                ],
+            ],
         ];
         $expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><tag xmlns="http://cakephp.org"/></root>';
         $xmlResponse = Xml::fromArray($xml);
@@ -1120,8 +1186,8 @@ XML;
 
         $xml = [
             'root' => [
-                'xmlns:' => 'http://cakephp.org'
-            ]
+                'xmlns:' => 'http://cakephp.org',
+            ],
         ];
         $expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns="http://cakephp.org"/>';
         $xmlResponse = Xml::fromArray($xml);
@@ -1129,8 +1195,8 @@ XML;
 
         $xml = [
             'root' => [
-                'xmlns:ns' => 'http://cakephp.org'
-            ]
+                'xmlns:ns' => 'http://cakephp.org',
+            ],
         ];
         $expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns:ns="http://cakephp.org"/>';
         $xmlResponse = Xml::fromArray($xml);
@@ -1160,7 +1226,7 @@ XML;
     {
         return [
             [new \DateTime()],
-            [[]]
+            [[]],
         ];
     }
 
@@ -1185,8 +1251,8 @@ XML;
     {
         $data = [
             'outer' => [
-                'inner' => ['name' => 'mark & mark']
-            ]
+                'inner' => ['name' => 'mark & mark'],
+            ],
         ];
         $obj = Xml::build($data);
         $result = $obj->asXml();
@@ -1223,8 +1289,8 @@ XML;
         $classname = self::class; // Will always be a valid class name
         $data = [
             'outer' => [
-                'inner' => $classname
-            ]
+                'inner' => $classname,
+            ],
         ];
         $obj = Xml::build($data);
         $result = $obj->asXml();

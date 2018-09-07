@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,10 +15,15 @@
 namespace Cake\TestSuite;
 
 use Cake\Core\Configure;
+use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Server;
 use Cake\Http\ServerRequestFactory;
+use Cake\Routing\Router;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 use ReflectionException;
 use Zend\Diactoros\Stream;
@@ -33,7 +39,7 @@ class MiddlewareDispatcher
     /**
      * The test case being run.
      *
-     * @var \Cake\TestSuite\IntegrationTestCase
+     * @var \Cake\TestSuite\TestCase
      */
     protected $_test;
 
@@ -52,27 +58,119 @@ class MiddlewareDispatcher
     protected $_constructorArgs;
 
     /**
+     * The application that is being dispatched.
+     *
+     * @var \Cake\Core\HttpApplicationInterface
+     */
+    protected $app;
+
+    /**
      * Constructor
      *
-     * @param \Cake\TestSuite\IntegrationTestCase $test The test case to run.
+     * @param \Cake\TestSuite\TestCase $test The test case to run.
      * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
      */
-    public function __construct($test, $class = null, $constructorArgs = null)
+    public function __construct(TestCase $test, ?string $class = null, ?array $constructorArgs = null)
     {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];
+
+        try {
+            $reflect = new ReflectionClass($this->_class);
+            $this->app = $reflect->newInstanceArgs($this->_constructorArgs);
+        } catch (ReflectionException $e) {
+            throw new LogicException(sprintf('Cannot load "%s" for use in integration testing.', $this->_class));
+        }
+    }
+
+    /**
+     * Resolve the provided URL into a string.
+     *
+     * @param array|string $url The URL array/string to resolve.
+     * @return string
+     */
+    public function resolveUrl($url): string
+    {
+        // If we need to resolve a Route URL but there are no routes, load routes.
+        if (is_array($url) && count(Router::getRouteCollection()->routes()) === 0) {
+            return $this->resolveRoute($url);
+        }
+
+        return Router::url($url);
+    }
+
+    /**
+     * Convert a URL array into a string URL via routing.
+     *
+     * @param array $url The url to resolve
+     * @return string
+     */
+    protected function resolveRoute(array $url): string
+    {
+        // Simulate application bootstrap and route loading.
+        // We need both to ensure plugins are loaded.
+        $this->app->bootstrap();
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginBootstrap();
+        }
+        $builder = Router::createRouteBuilder('/');
+
+        if ($this->app instanceof HttpApplicationInterface) {
+            $this->app->routes($builder);
+        }
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
+        }
+
+        $out = Router::url($url);
+        Router::reload();
+
+        return $out;
+    }
+
+    /**
+     * Create a PSR7 request from the request spec.
+     *
+     * @param array $spec The request spec.
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    protected function _createRequest(array $spec): ServerRequestInterface
+    {
+        if (isset($spec['input'])) {
+            $spec['post'] = [];
+        }
+        $environment = array_merge(
+            array_merge($_SERVER, ['REQUEST_URI' => $spec['url'], 'PHP_SELF' => '/']),
+            $spec['environment']
+        );
+        $request = ServerRequestFactory::fromGlobals(
+            $environment,
+            $spec['query'],
+            $spec['post'],
+            $spec['cookies']
+        );
+        $request = $request->withAttribute('session', $spec['session']);
+
+        if (isset($spec['input'])) {
+            $stream = new Stream('php://memory', 'rw');
+            $stream->write($spec['input']);
+            $stream->rewind();
+            $request = $request->withBody($stream);
+        }
+
+        return $request;
     }
 
     /**
      * Run a request and get the response.
      *
-     * @param \Cake\Http\ServerRequest $request The request to execute.
+     * @param array $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
      */
-    public function execute($request)
+    public function execute(array $requestSpec): ResponseInterface
     {
         try {
             $reflect = new ReflectionClass($this->_class);
@@ -92,37 +190,7 @@ class MiddlewareDispatcher
         );
 
         $server = new Server($app);
-        $psrRequest = $this->_createRequest($request);
 
-        return $server->run($psrRequest);
-    }
-
-    /**
-     * Create a PSR7 request from the request spec.
-     *
-     * @param array $spec The request spec.
-     * @return \Psr\Http\Message\RequestInterface
-     */
-    protected function _createRequest($spec)
-    {
-        if (isset($spec['input'])) {
-            $spec['post'] = [];
-        }
-        $request = ServerRequestFactory::fromGlobals(
-            array_merge($_SERVER, $spec['environment'], ['REQUEST_URI' => $spec['url']]),
-            $spec['query'],
-            $spec['post'],
-            $spec['cookies']
-        );
-        $request = $request->withAttribute('session', $spec['session']);
-
-        if (isset($spec['input'])) {
-            $stream = new Stream('php://memory', 'rw');
-            $stream->write($spec['input']);
-            $stream->rewind();
-            $request = $request->withBody($stream);
-        }
-
-        return $request;
+        return $server->run($this->_createRequest($requestSpec));
     }
 }

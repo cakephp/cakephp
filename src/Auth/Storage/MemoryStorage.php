@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ namespace Cake\Auth\Storage;
  */
 class MemoryStorage implements StorageInterface
 {
-
     /**
      * User record.
      *
@@ -45,7 +45,7 @@ class MemoryStorage implements StorageInterface
     /**
      * {@inheritDoc}
      */
-    public function write($user)
+    public function write($user): void
     {
         $this->_user = $user;
     }
@@ -53,7 +53,7 @@ class MemoryStorage implements StorageInterface
     /**
      * {@inheritDoc}
      */
-    public function delete()
+    public function delete(): void
     {
         $this->_user = null;
     }

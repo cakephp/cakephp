@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -41,7 +42,7 @@ class BinaryTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('binary');
+        $this->type = TypeFactory::build('binary');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
@@ -61,22 +62,6 @@ class BinaryTypeTest extends TestCase
         $result = $this->type->toPHP($fh, $this->driver);
         $this->assertSame($fh, $result);
         fclose($fh);
-    }
-
-    /**
-     * SQLServer returns binary fields as hexadecimal
-     * Ensure decoding happens for SQLServer drivers
-     *
-     * @return void
-     */
-    public function testToPHPSqlserver()
-    {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $result = $this->type->toPHP('536F6D652076616C7565', $driver);
-        $this->assertInternalType('resource', $result);
-        $this->assertSame('Some value', stream_get_contents($result));
     }
 
     /**

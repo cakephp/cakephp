@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
@@ -30,14 +32,13 @@ use RuntimeException;
  */
 class SchemaCacheShell extends Shell
 {
-
     /**
      * Build metadata.
      *
      * @param string|null $name The name of the table to build cache data for.
      * @return bool
      */
-    public function build($name = null)
+    public function build(?string $name = null): bool
     {
         $cache = $this->_getSchemaCache();
         $tables = $cache->build($name);
@@ -57,7 +58,7 @@ class SchemaCacheShell extends Shell
      * @param string|null $name The name of the table to clear cache data for.
      * @return bool
      */
-    public function clear($name = null)
+    public function clear(?string $name = null): bool
     {
         $cache = $this->_getSchemaCache();
         $tables = $cache->clear($name);
@@ -76,7 +77,7 @@ class SchemaCacheShell extends Shell
      *
      * @return \Cake\Database\SchemaCache
      */
-    protected function _getSchemaCache()
+    protected function _getSchemaCache(): SchemaCache
     {
         try {
             $connection = ConnectionManager::get($this->params['connection']);
@@ -92,7 +93,7 @@ class SchemaCacheShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->addSubcommand('clear', [

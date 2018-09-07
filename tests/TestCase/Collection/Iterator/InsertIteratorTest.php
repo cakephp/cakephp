@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class InsertIteratorTest extends TestCase
 {
-
     /**
      * Test insert simple path
      *
@@ -32,14 +32,14 @@ class InsertIteratorTest extends TestCase
     {
         $items = [
             'a' => ['name' => 'Derp'],
-            'b' => ['name' => 'Derpina']
+            'b' => ['name' => 'Derpina'],
         ];
         $values = [20, 21];
         $iterator = new InsertIterator($items, 'age', $values);
         $result = $iterator->toArray();
         $expected = [
             'a' => ['name' => 'Derp', 'age' => 20],
-            'b' => ['name' => 'Derpina', 'age' => 21]
+            'b' => ['name' => 'Derpina', 'age' => 21],
         ];
         $this->assertSame($expected, $result);
     }
@@ -96,14 +96,14 @@ class InsertIteratorTest extends TestCase
     {
         $items = [
             'a' => ['name' => 'Derp'],
-            'b' => ['name' => 'Derpina']
+            'b' => ['name' => 'Derpina'],
         ];
         $values = [20];
         $iterator = new InsertIterator($items, 'age', $values);
         $result = $iterator->toArray();
         $expected = [
             'a' => ['name' => 'Derp', 'age' => 20],
-            'b' => ['name' => 'Derpina']
+            'b' => ['name' => 'Derpina'],
         ];
         $this->assertSame($expected, $result);
     }
@@ -118,14 +118,14 @@ class InsertIteratorTest extends TestCase
     {
         $items = [
             'a' => ['name' => 'Derp'],
-            'b' => ['name' => 'Derpina']
+            'b' => ['name' => 'Derpina'],
         ];
         $values = [20, 21, 23];
         $iterator = new InsertIterator($items, 'age', $values);
         $result = $iterator->toArray();
         $expected = [
             'a' => ['name' => 'Derp', 'age' => 20],
-            'b' => ['name' => 'Derpina', 'age' => 21]
+            'b' => ['name' => 'Derpina', 'age' => 21],
         ];
         $this->assertSame($expected, $result);
     }
@@ -150,7 +150,7 @@ class InsertIteratorTest extends TestCase
         $result = $iterator->toArray();
         $expected = [
             'a' => ['name' => 'Derp', 'age' => 20],
-            'b' => ['name' => 'Derpina', 'age' => 21]
+            'b' => ['name' => 'Derpina', 'age' => 21],
         ];
         $this->assertSame($expected, $result);
     }

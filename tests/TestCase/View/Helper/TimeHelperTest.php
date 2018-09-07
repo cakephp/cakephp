@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\View\View;
  */
 class TimeHelperTest extends TestCase
 {
-
     /**
      * @var \Cake\View\Helper\TimeHelper
      */
@@ -46,7 +46,7 @@ class TimeHelperTest extends TestCase
         parent::setUp();
         $this->View = new View();
         $this->Time = new TimeHelper($this->View);
-        Time::$defaultLocale = 'en_US';
+        Time::setDefaultLocale('en_US');
         $this->locale = I18n::getLocale();
     }
 
@@ -58,7 +58,7 @@ class TimeHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Time::$defaultLocale = 'en_US';
+        Time::setDefaultLocale('en_US');
         I18n::setLocale($this->locale);
     }
 
@@ -73,15 +73,15 @@ class TimeHelperTest extends TestCase
         $timestamp = strtotime('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => 'span'
+            'element' => 'span',
         ]);
         $expected = [
             'span' => [
                 'title' => $timestamp,
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             'on ' . date('n/j/y', $timestamp),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
 
@@ -89,17 +89,17 @@ class TimeHelperTest extends TestCase
             'end' => '1 years',
             'element' => [
                 'title' => 'testing',
-                'rel' => 'test'
-            ]
+                'rel' => 'test',
+            ],
         ]);
         $expected = [
             'span' => [
                 'title' => 'testing',
                 'class' => 'time-ago-in-words',
-                'rel' => 'test'
+                'rel' => 'test',
             ],
             'on ' . date('n/j/y', $timestamp),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
 
@@ -111,10 +111,10 @@ class TimeHelperTest extends TestCase
         $expected = [
             'div' => [
                 'title' => $timestamp,
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             '2 weeks',
-            '/div'
+            '/div',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -130,7 +130,7 @@ class TimeHelperTest extends TestCase
         $timestamp = new Time('+8 years, +4 months +2 weeks +3 days');
         $result = $Time->timeAgoInWords($timestamp, [
             'end' => '1 years',
-            'element' => 'span'
+            'element' => 'span',
         ]);
         $vancouver = clone $timestamp;
         $vancouver->timezone('America/Vancouver');
@@ -138,10 +138,10 @@ class TimeHelperTest extends TestCase
         $expected = [
             'span' => [
                 'title' => $vancouver->__toString(),
-                'class' => 'time-ago-in-words'
+                'class' => 'time-ago-in-words',
             ],
             'on ' . $vancouver->format('n/j/y'),
-            '/span'
+            '/span',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -200,7 +200,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtom()
     {
-        $dateTime = new \DateTime;
+        $dateTime = new \DateTime();
         $this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
@@ -212,7 +212,7 @@ class TimeHelperTest extends TestCase
     public function testToAtomOutputTimezone()
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new Time;
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
         $this->assertEquals($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
@@ -246,7 +246,7 @@ class TimeHelperTest extends TestCase
     public function testToRssOutputTimezone()
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new Time;
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
 
@@ -330,7 +330,7 @@ class TimeHelperTest extends TestCase
         $map = [
             'Mon' => [-1, 7], 'Tue' => [-2, 6], 'Wed' => [-3, 5],
             'Thu' => [-4, 4], 'Fri' => [-5, 3], 'Sat' => [-6, 2],
-            'Sun' => [-7, 1]
+            'Sun' => [-7, 1],
         ];
         $days = $map[date('D')];
 
@@ -350,11 +350,11 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isThisMonth('+0 day');
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y')));
+        $result = $this->Time->isThisMonth($time = mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') - mt_rand(1, 12)));
         $this->assertFalse($result);
-        $result = $this->Time->isThisMonth(mktime(0, 0, 0, date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
+        $result = $this->Time->isThisMonth(mktime(0, 0, 0, (int)date('m'), mt_rand(1, 28), date('Y') + mt_rand(1, 12)));
         $this->assertFalse($result);
     }
 
@@ -367,7 +367,7 @@ class TimeHelperTest extends TestCase
     {
         $result = $this->Time->isThisYear('+0 day');
         $this->assertTrue($result);
-        $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), date('Y')));
+        $result = $this->Time->isThisYear(mktime(0, 0, 0, mt_rand(1, 12), mt_rand(1, 28), (int)date('Y')));
         $this->assertTrue($result);
     }
 
@@ -421,6 +421,7 @@ class TimeHelperTest extends TestCase
         $this->assertTrue($this->Time->wasWithinLast('1 year', '-1 year'));
         $this->assertTrue($this->Time->wasWithinLast('1 second', '-1 second'));
         $this->assertTrue($this->Time->wasWithinLast('1 minute', '-1 minute'));
+        $this->assertTrue($this->Time->wasWithinLast('1 hour', '-1 hour'));
         $this->assertTrue($this->Time->wasWithinLast('1 year', '-1 year'));
         $this->assertTrue($this->Time->wasWithinLast('1 month', '-1 month'));
         $this->assertTrue($this->Time->wasWithinLast('1 day', '-1 day'));
@@ -443,6 +444,7 @@ class TimeHelperTest extends TestCase
 
         $this->assertFalse($this->Time->wasWithinLast('1 day', '-2 weeks'));
         $this->assertFalse($this->Time->wasWithinLast('1 day', '-2 days'));
+        $this->assertTrue($this->Time->wasWithinLast('1 day', '-23 hours -59 minutes -59 seconds'));
         $this->assertFalse($this->Time->wasWithinLast('0 days', '-2 days'));
         $this->assertTrue($this->Time->wasWithinLast('1 hour', '-20 seconds'));
         $this->assertTrue($this->Time->wasWithinLast('1 year', '-60 minutes -30 seconds'));
@@ -451,23 +453,7 @@ class TimeHelperTest extends TestCase
     }
 
     /**
-     * test deprecated usage of wasWithinLast()
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testWasWithinLastNumericString()
-    {
-        $this->deprecated(function () {
-            $this->assertTrue($this->Time->wasWithinLast('5 ', '-3 days'));
-            $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 hour'));
-            $this->assertTrue($this->Time->wasWithinLast('1   ', '-1 minute'));
-            $this->assertTrue($this->Time->wasWithinLast('1   ', '-23 hours -59 minutes -59 seconds'));
-        });
-    }
-
-    /**
-     * testWasWithinLast method
+     * testisWithinNext method
      *
      * @return void
      */
@@ -526,19 +512,19 @@ class TimeHelperTest extends TestCase
         $this->assertTimeFormat($expected, $result);
 
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM GMT';
-        $this->assertTimeFormat($expected, $result);
+        $expected = 'Thursday, January 14, 2010 at 1:59:28 PM';
+        $this->assertStringStartsWith($expected, $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';
         $this->assertEquals($expected, $result);
 
         I18n::setLocale('fr_FR');
-        Time::$defaultLocale = 'fr_FR';
+        Time::setDefaultLocale('fr_FR');
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $expected = 'jeudi 14 janvier 2010 13:59:28 UTC';
-        $this->assertTimeFormat($expected, $result);
+        $this->assertContains('jeudi 14 janvier 2010', $result);
+        $this->assertContains('13:59:28', $result);
     }
 
     /**

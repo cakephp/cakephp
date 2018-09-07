@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,14 +23,13 @@ use Cake\TestSuite\TestCase;
  */
 class DefaultPasswordHasherTest extends TestCase
 {
-
     /**
      * Tests that a password not produced by DefaultPasswordHasher needs
      * to be rehashed
      *
      * @return void
      */
-    public function testNeedsRehash()
+    public function testNeedsRehash(): void
     {
         $hasher = new DefaultPasswordHasher();
         $this->assertTrue($hasher->needsRehash(md5('foo')));
@@ -43,7 +43,7 @@ class DefaultPasswordHasherTest extends TestCase
      *
      * @return void
      */
-    public function testNeedsRehashWithDifferentOptions()
+    public function testNeedsRehashWithDifferentOptions(): void
     {
         $defaultHasher = new DefaultPasswordHasher(['hashType' => PASSWORD_BCRYPT, 'hashOptions' => ['cost' => 10]]);
         $updatedHasher = new DefaultPasswordHasher(['hashType' => PASSWORD_BCRYPT, 'hashOptions' => ['cost' => 12]]);

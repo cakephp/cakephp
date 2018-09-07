@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ use Cake\Datasource\EntityInterface;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
 use RuntimeException;
-use Traversable;
 
 /**
  * Factory for getting form context instance based on provided data.
@@ -53,13 +53,13 @@ class ContextFactory
      *   be of form `['type' => 'a-string', 'callable' => ..]`
      * @return \Cake\View\Form\ContextFactory
      */
-    public static function createWithDefaults(array $providers = [])
+    public static function createWithDefaults(array $providers = []): self
     {
         $providers = [
             [
                 'type' => 'orm',
                 'callable' => function ($request, $data) {
-                    if (is_array($data['entity']) || $data['entity'] instanceof Traversable) {
+                    if (is_iterable($data['entity'])) {
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
                             return new EntityContext($request, $data);
@@ -71,7 +71,7 @@ class ContextFactory
                     if (is_array($data['entity']) && empty($data['entity']['schema'])) {
                         return new EntityContext($request, $data);
                     }
-                }
+                },
             ],
             [
                 'type' => 'array',
@@ -79,7 +79,7 @@ class ContextFactory
                     if (is_array($data['entity']) && isset($data['entity']['schema'])) {
                         return new ArrayContext($request, $data['entity']);
                     }
-                }
+                },
             ],
             [
                 'type' => 'form',
@@ -87,7 +87,7 @@ class ContextFactory
                     if ($data['entity'] instanceof Form) {
                         return new FormContext($request, $data);
                     }
-                }
+                },
             ],
         ] + $providers;
 
@@ -109,7 +109,7 @@ class ContextFactory
      *   when the form context is the correct type.
      * @return $this
      */
-    public function addProvider($type, callable $check)
+    public function addProvider(string $type, callable $check): self
     {
         $this->providers = [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;
@@ -128,7 +128,7 @@ class ContextFactory
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    public function get(ServerRequest $request, array $data = [])
+    public function get(ServerRequest $request, array $data = []): ContextInterface
     {
         $data += ['entity' => null];
 

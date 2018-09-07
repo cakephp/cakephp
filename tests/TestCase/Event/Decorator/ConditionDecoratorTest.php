@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Decorator\ConditionDecorator;
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 
@@ -24,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class ConditionDecoratorTest extends TestCase
 {
-
     /**
      * testCanTriggerIf
      *
@@ -32,14 +33,14 @@ class ConditionDecoratorTest extends TestCase
      */
     public function testCanTriggerIf()
     {
-        $callable = function (Event $event) {
+        $callable = function (EventInterface $event) {
             return 'success';
         };
 
         $decorator = new ConditionDecorator($callable, [
-            'if' => function (Event $event) {
+            'if' => function (EventInterface $event) {
                 return $event->getData('canTrigger');
-            }
+            },
         ]);
 
         $event = new Event('decorator.test', $this);
@@ -62,19 +63,19 @@ class ConditionDecoratorTest extends TestCase
      */
     public function testCascadingEvents()
     {
-        $callable = function (Event $event) {
+        $callable = function (EventInterface $event) {
             $event->setData('counter', $event->getData('counter') + 1);
 
             return $event;
         };
 
         $listener1 = new ConditionDecorator($callable, [
-            'if' => function (Event $event) {
+            'if' => function (EventInterface $event) {
                 return false;
-            }
+            },
         ]);
 
-        $listener2 = function (Event $event) {
+        $listener2 = function (EventInterface $event) {
             $event->setData('counter', $event->getData('counter') + 1);
 
             return $event;
@@ -84,11 +85,11 @@ class ConditionDecoratorTest extends TestCase
         EventManager::instance()->on('decorator.test2', $listener2);
 
         $event = new Event('decorator.test2', $this, [
-            'counter' => 1
+            'counter' => 1,
         ]);
 
         EventManager::instance()->dispatch($event);
-        $this->assertEquals(2, $event->data('counter'));
+        $this->assertEquals(2, $event->getData('counter'));
     }
 
     /**
@@ -99,12 +100,12 @@ class ConditionDecoratorTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cake\Event\Decorator\ConditionDecorator the `if` condition is not a callable!');
-        $callable = function (Event $event) {
+        $callable = function (EventInterface $event) {
             return 'success';
         };
 
         $decorator = new ConditionDecorator($callable, [
-            'if' => 'not a callable'
+            'if' => 'not a callable',
         ]);
 
         $event = new Event('decorator.test', $this, []);

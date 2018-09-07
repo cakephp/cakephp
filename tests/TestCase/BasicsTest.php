@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * BasicsTest file
  *
@@ -27,7 +28,6 @@ require_once CAKE . 'basics.php';
  */
 class BasicsTest extends TestCase
 {
-
     /**
      * test the array_diff_key compatibility function.
      *
@@ -160,10 +160,6 @@ class BasicsTest extends TestCase
         $result = h($string, false);
         $this->assertEquals('&lt;foo&gt; &amp; &nbsp;', $result);
 
-        $string = '<foo> & &nbsp;';
-        $result = h($string, 'UTF-8');
-        $this->assertEquals('&lt;foo&gt; &amp; &amp;nbsp;', $result);
-
         $string = "An invalid\x80string";
         $result = h($string);
         $this->assertContains('string', $result);
@@ -172,7 +168,7 @@ class BasicsTest extends TestCase
         $result = h($arr);
         $expected = [
             '&lt;foo&gt;',
-            '&amp;nbsp;'
+            '&amp;nbsp;',
         ];
         $this->assertEquals($expected, $result);
 
@@ -180,7 +176,7 @@ class BasicsTest extends TestCase
         $result = h($arr, false);
         $expected = [
             '&lt;foo&gt;',
-            '&nbsp;'
+            '&nbsp;',
         ];
         $this->assertEquals($expected, $result);
 
@@ -188,7 +184,7 @@ class BasicsTest extends TestCase
         $result = h($arr, false);
         $expected = [
             'f' => '&lt;foo&gt;',
-            'n' => '&nbsp;'
+            'n' => '&nbsp;',
         ];
         $this->assertEquals($expected, $result);
 
@@ -241,7 +237,7 @@ EXPECTED;
         $this->assertSame($value, debug($value, true));
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -255,7 +251,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', true, true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -269,7 +265,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', true, false);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -283,7 +279,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', null);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -308,7 +304,7 @@ EXPECTED;
         debug('<div>this-is-a-test</div>', null, false);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;

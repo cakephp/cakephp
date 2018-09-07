@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -56,7 +57,7 @@ class MiddlewareQueue implements Countable
      * @return callable|null Either the callable middleware or null
      *   if the index is undefined.
      */
-    public function get($index)
+    public function get(int $index): ?callable
     {
         if (isset($this->callables[$index])) {
             return $this->callables[$index];
@@ -71,8 +72,9 @@ class MiddlewareQueue implements Countable
      * @param int $index The index to fetch.
      * @return callable|null Either the callable middleware or null
      *   if the index is undefined.
+     * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve($index)
+    protected function resolve(int $index): ?callable
     {
         if (!isset($this->queue[$index])) {
             return null;
@@ -81,13 +83,13 @@ class MiddlewareQueue implements Countable
         if (is_string($this->queue[$index])) {
             $class = $this->queue[$index];
             $className = App::className($class, 'Middleware', 'Middleware');
-            if (!$className || !class_exists($className)) {
+            if ($className === null || !class_exists($className)) {
                 throw new RuntimeException(sprintf(
                     'Middleware "%s" was not found.',
                     $class
                 ));
             }
-            $callable = new $className;
+            $callable = new $className();
         } else {
             $callable = $this->queue[$index];
         }
@@ -101,7 +103,7 @@ class MiddlewareQueue implements Countable
      * @param callable|string|array $middleware The middleware(s) to append.
      * @return $this
      */
-    public function add($middleware)
+    public function add($middleware): self
     {
         if (is_array($middleware)) {
             $this->queue = array_merge($this->queue, $middleware);
@@ -120,7 +122,7 @@ class MiddlewareQueue implements Countable
      * @return $this
      * @see MiddlewareQueue::add()
      */
-    public function push($middleware)
+    public function push($middleware): self
     {
         return $this->add($middleware);
     }
@@ -131,7 +133,7 @@ class MiddlewareQueue implements Countable
      * @param callable|string|array $middleware The middleware(s) to prepend.
      * @return $this
      */
-    public function prepend($middleware)
+    public function prepend($middleware): self
     {
         if (is_array($middleware)) {
             $this->queue = array_merge($middleware, $this->queue);
@@ -153,7 +155,7 @@ class MiddlewareQueue implements Countable
      * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAt($index, $middleware)
+    public function insertAt(int $index, $middleware): self
     {
         array_splice($this->queue, $index, 0, [$middleware]);
 
@@ -171,7 +173,7 @@ class MiddlewareQueue implements Countable
      * @return $this
      * @throws \LogicException If middleware to insert before is not found.
      */
-    public function insertBefore($class, $middleware)
+    public function insertBefore(string $class, $middleware): self
     {
         $found = false;
         $i = null;
@@ -200,7 +202,7 @@ class MiddlewareQueue implements Countable
      * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAfter($class, $middleware)
+    public function insertAfter(string $class, $middleware): self
     {
         $found = false;
         $i = null;
@@ -226,7 +228,7 @@ class MiddlewareQueue implements Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->queue);
     }

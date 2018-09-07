@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,20 +15,19 @@
  */
 namespace TestApp\View\Helper;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\View\Helper;
 
 class EventListenerTestHelper extends Helper
 {
-
     /**
      * Before render callback. Stub.
      *
-     * @param \Cake\Event\Event $event The event instance.
+     * @param \Cake\Event\EventInterface $event The event instance.
      * @param string $viewFile The view file being rendered.
      * @return void
      */
-    public function beforeRender(Event $event, $viewFile)
+    public function beforeRender(EventInterface $event, $viewFile)
     {
         $this->config('options.foo', 'bar');
     }
@@ -37,7 +37,7 @@ class EventListenerTestHelper extends Helper
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return ['View.beforeRender' => 'beforeRender'];
     }

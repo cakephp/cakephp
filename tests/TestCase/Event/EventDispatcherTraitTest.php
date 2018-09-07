@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -11,7 +12,6 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Test\TestCase\Event;
 
 use Cake\Event\Event;
@@ -52,22 +52,6 @@ class EventDispatcherTraitTest extends TestCase
     }
 
     /**
-     * testEventManager
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testEventManager()
-    {
-        $this->deprecated(function () {
-            $eventManager = new EventManager();
-            $this->subject->eventManager($eventManager);
-
-            $this->assertSame($eventManager, $this->subject->eventManager());
-        });
-    }
-
-    /**
      * testGetEventManager
      *
      * @return void
@@ -75,20 +59,6 @@ class EventDispatcherTraitTest extends TestCase
     public function testGetEventManager()
     {
         $this->assertInstanceOf(EventManager::class, $this->subject->getEventManager());
-    }
-
-    /**
-     * testSetEventManager
-     *
-     * @return void
-     */
-    public function testSetEventManager()
-    {
-        $eventManager = new EventManager();
-
-        $this->subject->setEventManager($eventManager);
-
-        $this->assertSame($eventManager, $this->subject->getEventManager());
     }
 
     /**

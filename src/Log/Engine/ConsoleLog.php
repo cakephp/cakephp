@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use InvalidArgumentException;
  */
 class ConsoleLog extends BaseLog
 {
-
     /**
      * Default config for this class
      *
@@ -32,7 +32,7 @@ class ConsoleLog extends BaseLog
         'stream' => 'php://stderr',
         'levels' => null,
         'scopes' => [],
-        'outputAs' => 'see constructor'
+        'outputAs' => 'see constructor',
     ];
 
     /**
@@ -86,7 +86,7 @@ class ConsoleLog extends BaseLog
      * @param array $context Additional information about the logged message
      * @return bool success of write.
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): bool
     {
         $message = $this->_format($message, $context);
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message;

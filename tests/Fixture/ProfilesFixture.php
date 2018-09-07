@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class ProfilesFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -35,7 +34,7 @@ class ProfilesFixture extends TestFixture
         'is_active' => ['type' => 'boolean', 'null' => false, 'default' => true],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ]
+        ],
     ];
 
     /**

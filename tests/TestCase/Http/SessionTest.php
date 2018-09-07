@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,17 +15,18 @@
  */
 namespace Cake\Test\TestCase\Network;
 
+use Cake\Core\Plugin;
 use Cake\Http\Session;
 use Cake\Http\Session\CacheSession;
 use Cake\Http\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * TestCacheSession
  */
 class TestCacheSession extends CacheSession
 {
-
     protected function _writeSession()
     {
         return true;
@@ -36,7 +38,6 @@ class TestCacheSession extends CacheSession
  */
 class TestDatabaseSession extends DatabaseSession
 {
-
     protected function _writeSession()
     {
         return true;
@@ -48,8 +49,7 @@ class TestDatabaseSession extends DatabaseSession
  */
 class TestWebSession extends Session
 {
-
-    protected function _hasSession()
+    protected function _hasSession(): bool
     {
         $isCLI = $this->_isCLI;
         $this->_isCLI = false;
@@ -67,7 +67,6 @@ class TestWebSession extends Session
  */
 class SessionTest extends TestCase
 {
-
     protected static $_gcDivisor;
 
     /**
@@ -86,6 +85,7 @@ class SessionTest extends TestCase
     {
         unset($_SESSION);
         parent::tearDown();
+        Plugin::unload();
     }
 
     /**
@@ -105,8 +105,8 @@ class SessionTest extends TestCase
             'timeout' => 86400,
             'ini' => [
                 'session.referer_check' => 'example.com',
-                'session.use_trans_sid' => false
-            ]
+                'session.use_trans_sid' => false,
+            ],
         ];
 
         Session::create($config);
@@ -215,7 +215,7 @@ class SessionTest extends TestCase
             'one' => 1,
             'two' => 2,
             'three' => ['something'],
-            'null' => null
+            'null' => null,
         ]);
         $this->assertEquals(1, $session->read('one'));
         $this->assertEquals(['something'], $session->read('three'));
@@ -255,9 +255,6 @@ class SessionTest extends TestCase
         $this->assertFalse($session->check('Some.string'));
 
         $value = $session->consume('');
-        $this->assertNull($value);
-
-        $value = $session->consume(null);
         $this->assertNull($value);
 
         $value = $session->consume('Some.array');
@@ -303,6 +300,25 @@ class SessionTest extends TestCase
     }
 
     /**
+     * test close method
+     *
+     * @return void
+     */
+    public function testCloseFailure()
+    {
+        $session = new Session();
+        $session->started();
+        $this->assertTrue($session->start());
+        try {
+            $session->close();
+        } catch (RuntimeException $e) {
+            // closing the session in CLI should raise an error
+            // and won't close the session.
+            $this->assertTrue($session->started());
+        }
+    }
+
+    /**
      * testClear method
      *
      * @return void
@@ -332,8 +348,6 @@ class SessionTest extends TestCase
 
         $session->write('Clearing.sale', 'everything must go');
         $session->delete('');
-        $this->assertTrue($session->check('Clearing.sale'));
-        $session->delete(null);
         $this->assertTrue($session->check('Clearing.sale'));
 
         $session->delete('Clearing');
@@ -474,8 +488,8 @@ class SessionTest extends TestCase
             'handler' => [
                 'engine' => 'TestAppLibSession',
                 'these' => 'are',
-                'a few' => 'options'
-            ]
+                'a few' => 'options',
+            ],
         ];
 
         $session = Session::create($config);
@@ -494,13 +508,13 @@ class SessionTest extends TestCase
     public function testUsingPluginHandler()
     {
         static::setAppNamespace();
-        \Cake\Core\Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $config = [
             'defaults' => 'cake',
             'handler' => [
-                'engine' => 'TestPlugin.TestPluginSession'
-            ]
+                'engine' => 'TestPlugin.TestPluginSession',
+            ],
         ];
 
         $session = Session::create($config);
@@ -518,7 +532,7 @@ class SessionTest extends TestCase
     public function testEngineWithPreMadeInstance()
     {
         static::setAppNamespace();
-        $engine = new \TestApp\Http\Session\TestAppLibSession;
+        $engine = new \TestApp\Http\Session\TestAppLibSession();
         $session = new Session(['handler' => ['engine' => $engine]]);
         $this->assertSame($engine, $session->engine());
 
@@ -534,13 +548,10 @@ class SessionTest extends TestCase
      */
     public function testBadEngine()
     {
-        // Not actually deprecated, but we need to supress the deprecation warning.
-        $this->deprecated(function () {
-            $this->expectException(\InvalidArgumentException::class);
-            $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
-            $session = new Session();
-            $session->engine('Derp');
-        });
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class "Derp" does not exist and cannot be used as a session engine');
+        $session = new Session();
+        $session->engine('Derp');
     }
 
     /**
@@ -590,7 +601,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 0,
                 'session.use_trans_sid' => 0,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());
@@ -610,7 +621,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 1,
                 'session.use_trans_sid' => 0,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());
@@ -634,7 +645,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 1,
                 'session.use_trans_sid' => 1,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());
@@ -654,7 +665,7 @@ class SessionTest extends TestCase
             'ini' => [
                 'session.use_cookies' => 1,
                 'session.use_trans_sid' => 0,
-            ]
+            ],
         ]);
 
         $this->assertFalse($session->started());

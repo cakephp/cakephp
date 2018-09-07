@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ namespace Cake\Database\Type;
  */
 class TimeType extends DateTimeType
 {
-
     /**
      * Time format for DateTime object
      *
@@ -32,7 +32,7 @@ class TimeType extends DateTimeType
     /**
      * {@inheritDoc}
      */
-    protected function _parseValue($value)
+    protected function _parseValue(string $value)
     {
         /* @var \Cake\I18n\Time $class */
         $class = $this->_className;

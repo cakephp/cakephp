@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class TableRegistryTest extends TestCase
 {
-
     /**
      * Original TableLocator.
      *
@@ -115,21 +115,6 @@ class TableRegistryTest extends TestCase
     {
         $locator = TableRegistry::getTableLocator();
         $this->assertInstanceOf('Cake\ORM\Locator\TableLocator', $locator);
-    }
-
-    /**
-     * Test config() method.
-     *
-     * @return void
-     */
-    public function testConfig()
-    {
-        $this->deprecated(function () {
-            $locator = $this->_setMockLocator();
-            $locator->expects($this->once())->method('config')->with('Test', []);
-
-            TableRegistry::config('Test', []);
-        });
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite\Constraint;
 
 use Cake\Event\Event;
@@ -12,7 +13,6 @@ use Cake\TestSuite\TestCase;
  */
 class EventFiredWithTest extends TestCase
 {
-
     /**
      * tests EventFiredWith constraint
      *
@@ -25,10 +25,10 @@ class EventFiredWithTest extends TestCase
         $manager->trackEvents(true);
 
         $myEvent = new Event('my.event', $this, [
-            'key' => 'value'
+            'key' => 'value',
         ]);
         $myOtherEvent = new Event('my.other.event', $this, [
-            'key' => null
+            'key' => null,
         ]);
 
         $manager->getEventList()->add($myEvent);
@@ -59,7 +59,7 @@ class EventFiredWithTest extends TestCase
         $manager->trackEvents(true);
 
         $myEvent = new Event('my.event', $this, [
-            'key' => 'value'
+            'key' => 'value',
         ]);
 
         $manager->getEventList()->add($myEvent);

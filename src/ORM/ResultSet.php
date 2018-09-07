@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,7 +18,7 @@ namespace Cake\ORM;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
-use Cake\Database\Type;
+use Cake\Database\StatementInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use SplFixedArray;
@@ -30,16 +31,7 @@ use SplFixedArray;
  */
 class ResultSet implements ResultSetInterface
 {
-
     use CollectionTrait;
-
-    /**
-     * Original query from where results were generated
-     *
-     * @var \Cake\ORM\Query
-     * @deprecated 3.1.6 Due to a memory leak, this property cannot be used anymore
-     */
-    protected $_query;
 
     /**
      * Database statement holding the results
@@ -173,8 +165,9 @@ class ResultSet implements ResultSetInterface
      * @param \Cake\ORM\Query $query Query from where results come
      * @param \Cake\Database\StatementInterface $statement The statement to fetch from
      */
-    public function __construct($query, $statement)
+    public function __construct(Query $query, StatementInterface $statement)
     {
+        /** @var \Cake\ORM\Table $repository */
         $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
@@ -212,7 +205,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return int
      */
-    public function key()
+    public function key(): int
     {
         return $this->_index;
     }
@@ -224,7 +217,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->_index++;
     }
@@ -237,9 +230,9 @@ class ResultSet implements ResultSetInterface
      * @throws \Cake\Database\Exception
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
-        if ($this->_index == 0) {
+        if ($this->_index === 0) {
             return;
         }
 
@@ -258,7 +251,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->_useBuffering) {
             $valid = $this->_index < $this->_count;
@@ -310,7 +303,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return string Serialized object
      */
-    public function serialize()
+    public function serialize(): string
     {
         if (!$this->_useBuffering) {
             $msg = 'You cannot serialize an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
@@ -351,7 +344,7 @@ class ResultSet implements ResultSetInterface
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if ($this->_count !== null) {
             return $this->_count;
@@ -376,7 +369,7 @@ class ResultSet implements ResultSetInterface
      * @param \Cake\ORM\Query $query The query from where to derive the associations
      * @return void
      */
-    protected function _calculateAssociationMap($query)
+    protected function _calculateAssociationMap(Query $query): void
     {
         $map = $query->getEagerLoader()->associationsMap($this->_defaultTable);
         $this->_matchingMap = (new Collection($map))
@@ -397,7 +390,7 @@ class ResultSet implements ResultSetInterface
      * @param \Cake\ORM\Query $query The query from where to derive the column map
      * @return void
      */
-    protected function _calculateColumnMap($query)
+    protected function _calculateColumnMap(Query $query): void
     {
         $map = [];
         foreach ($query->clause('select') as $key => $field) {
@@ -424,52 +417,6 @@ class ResultSet implements ResultSetInterface
     }
 
     /**
-     * Creates a map of Type converter classes for each of the columns that should
-     * be fetched by this object.
-     *
-     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
-     * @return void
-     */
-    protected function _calculateTypeMap()
-    {
-        deprecationWarning('ResultSet::_calculateTypeMap() is deprecated, and will be removed in 4.0.0.');
-    }
-
-    /**
-     * Returns the Type classes for each of the passed fields belonging to the
-     * table.
-     *
-     * @param \Cake\ORM\Table $table The table from which to get the schema
-     * @param array $fields The fields whitelist to use for fields in the schema.
-     * @return array
-     */
-    protected function _getTypes($table, $fields)
-    {
-        $types = [];
-        $schema = $table->getSchema();
-        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
-        $typeMap = array_combine(
-            $map,
-            array_map(['Cake\Database\Type', 'build'], $map)
-        );
-
-        foreach (['string', 'text'] as $t) {
-            if (get_class($typeMap[$t]) === 'Cake\Database\Type') {
-                unset($typeMap[$t]);
-            }
-        }
-
-        foreach (array_intersect($fields, $schema->columns()) as $col) {
-            $typeName = $schema->getColumnType($col);
-            if (isset($typeMap[$typeName])) {
-                $types[$col] = $typeMap[$typeName];
-            }
-        }
-
-        return $types;
-    }
-
-    /**
      * Helper function to fetch the next result from the statement or
      * seeded results.
      *
@@ -493,9 +440,9 @@ class ResultSet implements ResultSetInterface
      * Correctly nests results keys including those coming from associations
      *
      * @param array $row Array containing columns and values or false if there is no results
-     * @return array Results
+     * @return array|\Cake\Datasource\EntityInterface Results
      */
-    protected function _groupResult($row)
+    protected function _groupResult(array $row)
     {
         $defaultAlias = $this->_defaultAlias;
         $results = $presentAliases = [];
@@ -503,7 +450,7 @@ class ResultSet implements ResultSetInterface
             'useSetters' => false,
             'markClean' => true,
             'markNew' => false,
-            'guard' => false
+            'guard' => false,
         ];
 
         foreach ($this->_matchingMapColumns as $alias => $keys) {
@@ -594,22 +541,6 @@ class ResultSet implements ResultSetInterface
         }
 
         return $results;
-    }
-
-    /**
-     * Casts all values from a row brought from a table to the correct
-     * PHP type.
-     *
-     * @param string $alias The table object alias
-     * @param array $values The values to cast
-     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
-     * @return array
-     */
-    protected function _castValues($alias, $values)
-    {
-        deprecationWarning('ResultSet::_castValues() is deprecated, and will be removed in 4.0.0.');
-
-        return $values;
     }
 
     /**

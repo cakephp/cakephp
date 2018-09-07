@@ -2,13 +2,15 @@
 namespace Cake\Test\Fixture;
 
 use Cake\Http\Response;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * This class helps in indirectly testing the functionality of IntegrationTestCase
  */
-class AssertIntegrationTestCase extends IntegrationTestCase
+class AssertIntegrationTestCase extends TestCase
 {
+    use IntegrationTestTrait;
 
     /**
      * testBadAssertNoRedirect

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,11 +21,6 @@ namespace TestPlugin\Controller;
 
 class TestsController extends TestPluginAppController
 {
-
-    public $helpers = ['TestPlugin.OtherHelper', 'Html'];
-
-    public $components = ['TestPlugin.Plugins'];
-
     public function index()
     {
         $this->set('test_value', 'It is a variable');

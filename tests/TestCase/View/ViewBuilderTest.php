@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,6 +25,50 @@ use Cake\View\ViewBuilder;
  */
 class ViewBuilderTest extends TestCase
 {
+    public function testSetVar()
+    {
+        $builder = new ViewBuilder();
+
+        $builder->setVar('testing', 'value');
+        $this->assertSame('value', $builder->getVar('testing'));
+    }
+
+    public function testSetVars()
+    {
+        $builder = new ViewBuilder();
+
+        $data = ['test' => 'val', 'foo' => 'bar'];
+        $builder->setVars($data);
+        $this->assertEquals($data, $builder->getVars());
+
+        $update = ['test' => 'updated'];
+        $builder->setVars($update);
+        $this->assertEquals(
+            ['test' => 'val', 'foo' => 'bar', 'test' => 'updated'],
+            $builder->getVars()
+        );
+
+        $update = ['overwrite' => 'yes'];
+        $builder->setVars($update, false);
+        $this->assertEquals(
+            ['overwrite' => 'yes'],
+            $builder->getVars()
+        );
+    }
+
+    public function testHasVar()
+    {
+        $builder = new ViewBuilder();
+
+        $this->assertFalse($builder->hasVar('foo'));
+
+        $builder->setVar('foo', 'value');
+        $this->assertTrue($builder->hasVar('foo'));
+
+        $builder->setVar('bar', null);
+        $this->assertTrue($builder->hasVar('bar'));
+    }
+
     /**
      * data provider for string properties.
      *
@@ -39,8 +84,20 @@ class ViewBuilderTest extends TestCase
             ['theme', 'TestPlugin'],
             ['template', 'edit'],
             ['name', 'Articles'],
-            ['autoLayout', true],
             ['className', 'Cake\View\JsonView'],
+        ];
+    }
+
+    /**
+     * data provider for boolean properties.
+     * Format: [key, expectedDefault, newValue]
+     *
+     * @return array
+     */
+    public function boolPropertyProvider()
+    {
+        return [
+            ['autoLayout', true, false],
         ];
     }
 
@@ -65,10 +122,30 @@ class ViewBuilderTest extends TestCase
      */
     public function testStringProperties($property, $value)
     {
+        $get = 'get' . ucfirst($property);
+        $set = 'set' . ucfirst($property);
+
         $builder = new ViewBuilder();
-        $this->assertNull($builder->{$property}(), 'Default value should be null');
-        $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        $this->assertNull($builder->{$get}(), 'Default value should be null');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
+    }
+
+    /**
+     * Test string property accessor/mutator methods.
+     *
+     * @dataProvider boolPropertyProvider
+     * @return void
+     */
+    public function testBoolProperties($property, $default, $value)
+    {
+        $set = 'enable' . ucfirst($property);
+        $get = 'is' . ucfirst($property) . 'Enabled';
+
+        $builder = new ViewBuilder();
+        $this->assertSame($default, $builder->{$get}(), 'Default value not as expected');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
 
     /**
@@ -79,10 +156,13 @@ class ViewBuilderTest extends TestCase
      */
     public function testArrayProperties($property, $value)
     {
+        $get = 'get' . ucfirst($property);
+        $set = 'set' . ucfirst($property);
+
         $builder = new ViewBuilder();
-        $this->assertSame([], $builder->{$property}(), 'Default value should be empty list');
-        $this->assertSame($builder, $builder->{$property}($value), 'Setter returns this');
-        $this->assertSame($value, $builder->{$property}(), 'Getter gets value.');
+        $this->assertSame([], $builder->{$get}(), 'Default value should be empty list');
+        $this->assertSame($builder, $builder->{$set}($value), 'Setter returns this');
+        $this->assertSame($value, $builder->{$get}(), 'Getter gets value.');
     }
 
     /**
@@ -93,14 +173,17 @@ class ViewBuilderTest extends TestCase
      */
     public function testArrayPropertyMerge($property, $value)
     {
+        $get = 'get' . ucfirst($property);
+        $set = 'set' . ucfirst($property);
+
         $builder = new ViewBuilder();
-        $builder->{$property}($value);
+        $builder->{$set}($value);
 
-        $builder->{$property}(['Merged'], true);
-        $this->assertSame(array_merge($value, ['Merged']), $builder->{$property}(), 'Should merge');
+        $builder->{$set}(['Merged'], true);
+        $this->assertSame(array_merge($value, ['Merged']), $builder->{$get}(), 'Should merge');
 
-        $builder->{$property}($value, false);
-        $this->assertSame($value, $builder->{$property}(), 'Should replace');
+        $builder->{$set}($value, false);
+        $this->assertSame($value, $builder->{$get}(), 'Should replace');
     }
 
     /**
@@ -123,9 +206,10 @@ class ViewBuilderTest extends TestCase
             ->setHelpers(['Form', 'Html'])
             ->setLayoutPath('Admin/')
             ->setTheme('TestTheme')
-            ->setPlugin('TestPlugin');
+            ->setPlugin('TestPlugin')
+            ->setVars(['foo' => 'bar', 'x' => 'old']);
         $view = $builder->build(
-            ['one' => 'value'],
+            ['one' => 'value', 'x' => 'new'],
             $request,
             $response,
             $events
@@ -135,12 +219,14 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('default', $view->getLayout());
         $this->assertEquals('Articles/', $view->getTemplatePath());
         $this->assertEquals('Admin/', $view->getLayoutPath());
-        $this->assertEquals('TestPlugin', $view->plugin);
-        $this->assertEquals('TestTheme', $view->theme);
-        $this->assertSame($request, $view->request);
-        $this->assertInstanceOf(Response::class, $view->response);
+        $this->assertEquals('TestPlugin', $view->getPlugin());
+        $this->assertEquals('TestTheme', $view->getTheme());
+        $this->assertSame($request, $view->getRequest());
+        $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
-        $this->assertSame(['one' => 'value'], $view->viewVars);
+        $this->assertSame(['one', 'x', 'foo'], $view->getVars());
+        $this->assertSame('value', $view->get('one'));
+        $this->assertSame('bar', $view->get('foo'));
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
     }
@@ -207,6 +293,7 @@ class ViewBuilderTest extends TestCase
             '_layout' => 'test',
             '_helpers' => ['Html'],
             '_className' => 'JsonView',
+            '_autoLayout' => true,
         ];
         $this->assertEquals($expected, $result);
 
@@ -238,5 +325,78 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('test', $builder->getLayout());
         $this->assertEquals(['Html'], $builder->getHelpers());
         $this->assertEquals('JsonView', $builder->getClassName());
+    }
+
+    /**
+     * test setOptions() with 1 string param, merge true
+     *
+     * @return void
+     */
+    public function testSetOptionsOne()
+    {
+        $builder = new ViewBuilder();
+        $this->assertSame($builder, $builder->setOptions(['newOption']));
+        $this->assertContains('newOption', $builder->getOptions());
+    }
+
+    /**
+     * test setOptions() with 2 strings in array, merge true.
+     *
+     * @return void
+     */
+    public function testSetOptionsMultiple()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions(['oldOption'], false);
+
+        $option = ['newOption', 'anotherOption'];
+        $builder->setOptions($option);
+        $expects = ['oldOption', 'newOption', 'anotherOption'];
+
+        $result = $builder->getOptions();
+        $this->assertContainsOnly('string', $result);
+        $this->assertEquals($expects, $result);
+    }
+
+    /**
+     * test empty params reads _viewOptions.
+     *
+     * @return void
+     */
+    public function testReadingViewOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions(['one', 'two', 'three'], false);
+
+        $this->assertEquals(['one', 'two', 'three'], $builder->getOptions());
+    }
+
+    /**
+     * test setting $merge `false` overrides correct options.
+     *
+     * @return void
+     */
+    public function testMergeFalseViewOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions(['one', 'two', 'three'], false);
+
+        $expected = ['four', 'five', 'six'];
+        $builder->setOptions($expected, false);
+        $this->assertEquals($expected, $builder->getOptions());
+    }
+
+    /**
+     * test _viewOptions is undefined and $opts is null, an empty array is returned.
+     *
+     * @return void
+     */
+    public function testUndefinedValidViewOptions()
+    {
+        $builder = new ViewBuilder();
+        $builder->setOptions([], false);
+        $result = $builder->getOptions();
+        $this->assertInternalType('array', $result);
+        $this->assertEmpty($result);
     }
 }

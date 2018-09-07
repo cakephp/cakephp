@@ -1,25 +1,16 @@
 <?php
+declare(strict_types=1);
 namespace Cake\TestSuite\Constraint;
 
-if (class_exists('PHPUnit_Runner_Version', false)
-    && !class_exists('PHPUnit\Framework\Constraint\Constraint', false)
-) {
-    class_alias('PHPUnit_Framework_Constraint', 'PHPUnit\Framework\Constraint\Constraint');
-}
-if (class_exists('PHPUnit_Runner_Version', false)
-    && !class_exists('PHPUnit\Framework\AssertionFailedError', false)
-) {
-    class_alias('PHPUnit_Framework_AssertionFailedError', 'PHPUnit\Framework\AssertionFailedError');
-}
-
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
 /**
  * EventFiredWith constraint
  *
- * Another glorified in_array check
+ * @internal
  */
 class EventFiredWith extends Constraint
 {
@@ -49,9 +40,9 @@ class EventFiredWith extends Constraint
      *
      * @param \Cake\Event\EventManager $eventManager Event manager to check
      * @param string $dataKey Data key
-     * @param string $dataValue Data value
+     * @param string|null $dataValue Data value
      */
-    public function __construct($eventManager, $dataKey, $dataValue)
+    public function __construct(EventManager $eventManager, string $dataKey, ?string $dataValue)
     {
         parent::__construct();
         $this->_eventManager = $eventManager;
@@ -69,7 +60,7 @@ class EventFiredWith extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $firedEvents = [];
         $list = $this->_eventManager->getEventList();
@@ -79,7 +70,7 @@ class EventFiredWith extends Constraint
         }
 
         $eventGroup = collection($firedEvents)
-            ->groupBy(function (Event $event) {
+            ->groupBy(function (EventInterface $event) {
                 return $event->getName();
             })
             ->toArray();
@@ -94,7 +85,7 @@ class EventFiredWith extends Constraint
             throw new AssertionFailedError(sprintf('Event "%s" was fired %d times, cannot make data assertion', $other, count($events)));
         }
 
-        /* @var \Cake\Event\Event $event */
+        /* @var \Cake\Event\EventInterface $event */
         $event = $events[0];
 
         if (array_key_exists($this->_dataKey, $event->getData()) === false) {
@@ -109,7 +100,7 @@ class EventFiredWith extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'was fired with ' . $this->_dataKey . ' matching ' . (string)$this->_dataValue;
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell\Task;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
@@ -24,7 +26,6 @@ use Cake\Utility\Inflector;
  */
 class AssetsTask extends Shell
 {
-
     /**
      * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
      * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
@@ -34,7 +35,7 @@ class AssetsTask extends Shell
      *   If null all plugins will be processed.
      * @return void
      */
-    public function symlink($name = null)
+    public function symlink(?string $name = null): void
     {
         $this->_process($this->_list($name));
     }
@@ -47,9 +48,9 @@ class AssetsTask extends Shell
      *   If null all plugins will be processed.
      * @return void
      */
-    public function copy($name = null)
+    public function copy(?string $name = null): void
     {
-        $this->_process($this->_list($name), true, $this->param('overwrite'));
+        $this->_process($this->_list($name), true, (bool)$this->param('overwrite'));
     }
 
     /**
@@ -60,7 +61,7 @@ class AssetsTask extends Shell
      * @return void
      * @since 3.5.12
      */
-    public function remove($name = null)
+    public function remove(?string $name = null): void
     {
         $plugins = $this->_list($name);
 
@@ -83,12 +84,12 @@ class AssetsTask extends Shell
      *   If null all plugins will be processed.
      * @return array List of plugins with meta data.
      */
-    protected function _list($name = null)
+    protected function _list(?string $name = null): array
     {
         if ($name === null) {
             $pluginsList = Plugin::loaded();
         } else {
-            if (!Plugin::loaded($name)) {
+            if (!Plugin::isLoaded($name)) {
                 $this->err(sprintf('Plugin %s is not loaded.', $name));
 
                 return [];
@@ -123,7 +124,7 @@ class AssetsTask extends Shell
                 'srcPath' => Plugin::path($plugin) . 'webroot',
                 'destDir' => $dir,
                 'link' => $link,
-                'namespaced' => $namespaced
+                'namespaced' => $namespaced,
             ];
         }
 
@@ -138,7 +139,7 @@ class AssetsTask extends Shell
      * @param bool $overwrite Overwrite existing files.
      * @return void
      */
-    protected function _process($plugins, $copy = false, $overwrite = false)
+    protected function _process(array $plugins, bool $copy = false, bool $overwrite = false): void
     {
         $overwrite = (bool)$this->param('overwrite');
 
@@ -195,7 +196,7 @@ class AssetsTask extends Shell
      * @param array $config Plugin config.
      * @return bool
      */
-    protected function _remove($config)
+    protected function _remove(array $config): bool
     {
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
             $this->verbose(
@@ -248,7 +249,7 @@ class AssetsTask extends Shell
      * @param string $dir Directory name
      * @return bool
      */
-    protected function _createDirectory($dir)
+    protected function _createDirectory(string $dir): bool
     {
         $old = umask(0);
         // @codingStandardsIgnoreStart
@@ -274,7 +275,7 @@ class AssetsTask extends Shell
      * @param string $link Link name
      * @return bool
      */
-    protected function _createSymlink($target, $link)
+    protected function _createSymlink(string $target, string $link): bool
     {
         // @codingStandardsIgnoreStart
         $result = @symlink($target, $link);
@@ -296,10 +297,10 @@ class AssetsTask extends Shell
      * @param string $destination Destination directory
      * @return bool
      */
-    protected function _copyDirectory($source, $destination)
+    protected function _copyDirectory(string $source, string $destination): bool
     {
         $folder = new Folder($source);
-        if ($folder->copy(['to' => $destination])) {
+        if ($folder->copy($destination)) {
             $this->out('Copied assets to directory ' . $destination);
 
             return true;
@@ -315,23 +316,23 @@ class AssetsTask extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 
         $parser->addSubcommand('symlink', [
-            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.'
+            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.',
         ])->addSubcommand('copy', [
-            'help' => 'Copy plugin assets to app\'s webroot.'
+            'help' => 'Copy plugin assets to app\'s webroot.',
         ])->addSubcommand('remove', [
-            'help' => 'Remove plugin assets from app\'s webroot.'
+            'help' => 'Remove plugin assets from app\'s webroot.',
         ])->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'optional' => true,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',
             'default' => false,
-            'boolean' => true
+            'boolean' => true,
         ]);
 
         return $parser;

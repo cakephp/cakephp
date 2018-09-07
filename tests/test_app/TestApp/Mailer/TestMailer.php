@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,15 +22,14 @@ use Cake\Mailer\Mailer;
  */
 class TestMailer extends Mailer
 {
-
     public function getEmailForAssertion()
     {
         return $this->_email;
     }
 
-    public function reset()
+    protected function reset(): Mailer
     {
-        $this->template = $this->viewBuilder()->template();
+        $this->template = $this->viewBuilder()->getTemplate();
 
         return parent::reset();
     }

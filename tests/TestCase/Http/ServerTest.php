@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,8 +16,7 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Core\HttpApplicationInterface;
-use Cake\Event\Event;
-use Cake\Event\EventList;
+use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
@@ -24,11 +24,6 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
-use TestApp\Http\BadResponseApplication;
-use TestApp\Http\EventApplication;
-use TestApp\Http\InvalidMiddlewareApplication;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
@@ -171,20 +166,6 @@ class ServerTest extends TestCase
     }
 
     /**
-     * Test an application failing to build middleware properly
-     *
-     * @return void
-     */
-    public function testRunWithApplicationNotMakingMiddleware()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('The application `middleware` method');
-        $app = new InvalidMiddlewareApplication($this->config);
-        $server = new Server($app);
-        $server->run();
-    }
-
-    /**
      * Test middleware being invoked.
      *
      * @return void
@@ -199,20 +180,6 @@ class ServerTest extends TestCase
     }
 
     /**
-     * Test middleware not creating a response.
-     *
-     * @return void
-     */
-    public function testRunMiddlewareNoResponse()
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Application did not create a response. Got "Not a response" instead.');
-        $app = new BadResponseApplication($this->config);
-        $server = new Server($app);
-        $server->run();
-    }
-
-    /**
      * Test that emit invokes the appropriate methods on the emitter.
      *
      * @return void
@@ -224,7 +191,7 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMockBuilder('Zend\Diactoros\Response\EmitterInterface')->getMock();
+        $emitter = $this->getMockBuilder('Zend\HttpHandlerRunner\Emitter\EmitterInterface')->getMock();
         $emitter->expects($this->once())
             ->method('emit')
             ->with($final);
@@ -266,7 +233,7 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $this->called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (Event $event, $middleware) {
+        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, $middleware) {
             $this->assertInstanceOf('Cake\Http\MiddlewareQueue', $middleware);
             $middleware->add(function ($req, $res, $next) {
                 $this->called = true;
@@ -323,20 +290,5 @@ class ServerTest extends TestCase
         $events = new EventManager();
         $server = new Server($app);
         $server->setEventManager($events);
-    }
-
-    /**
-     * test deprecated method defined in interface
-     *
-     * @return void
-     */
-    public function testEventManagerCompat()
-    {
-        $this->deprecated(function () {
-            $app = $this->createMock(HttpApplicationInterface::class);
-
-            $server = new Server($app);
-            $this->assertSame(EventManager::instance(), $server->eventManager());
-        });
     }
 }

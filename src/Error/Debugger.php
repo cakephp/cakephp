@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,7 +42,7 @@ class Debugger
      * @var array
      */
     protected $_defaultConfig = [
-        'outputMask' => []
+        'outputMask' => [],
     ];
 
     /**
@@ -67,7 +68,7 @@ class Debugger
     protected $_templates = [
         'log' => [
             'trace' => '{:reference} - {:path}, line {:line}',
-            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]'
+            'error' => '{:error} ({:code}): {:description} in [{:file}, line {:line}]',
         ],
         'js' => [
             'error' => '',
@@ -86,13 +87,13 @@ class Debugger
         'txt' => [
             'error' => "{:error}: {:code} :: {:description} on line {:line} of {:path}\n{:info}",
             'code' => '',
-            'info' => ''
+            'info' => '',
         ],
         'base' => [
             'traceLine' => '{:reference} - {:path}, line {:line}',
             'trace' => "Trace:\n{:trace}\n",
             'context' => "Context:\n{:context}\n",
-        ]
+        ],
     ];
 
     /**
@@ -165,7 +166,7 @@ class Debugger
      * @param string|null $class Class name.
      * @return \Cake\Error\Debugger
      */
-    public static function getInstance($class = null)
+    public static function getInstance(?string $class = null)
     {
         static $instance = [];
         if (!empty($class)) {
@@ -203,7 +204,7 @@ class Debugger
      *
      * @return array
      */
-    public static function outputMask()
+    public static function outputMask(): array
     {
         return static::configInstance('outputMask');
     }
@@ -219,7 +220,7 @@ class Debugger
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return void
      */
-    public static function setOutputMask(array $value, $merge = true)
+    public static function setOutputMask(array $value, bool $merge = true): void
     {
         static::configInstance('outputMask', $value, $merge);
     }
@@ -233,7 +234,7 @@ class Debugger
      * @see \Cake\Error\Debugger::exportVar()
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#outputting-values
      */
-    public static function dump($var, $depth = 3)
+    public static function dump($var, int $depth = 3): void
     {
         pr(static::exportVar($var, $depth));
     }
@@ -247,7 +248,7 @@ class Debugger
      * @param int $depth The depth to output to. Defaults to 3.
      * @return void
      */
-    public static function log($var, $level = 'debug', $depth = 3)
+    public static function log($var, $level = 'debug', int $depth = 3): void
     {
         $source = static::trace(['start' => 1]) . "\n";
         Log::write($level, "\n" . $source . static::exportVar($var, $depth));
@@ -291,7 +292,7 @@ class Debugger
      * @return mixed Formatted stack trace.
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#generating-stack-traces
      */
-    public static function formatTrace($backtrace, $options = [])
+    public static function formatTrace($backtrace, array $options = [])
     {
         if ($backtrace instanceof Exception) {
             $backtrace = $backtrace->getTrace();
@@ -303,7 +304,7 @@ class Debugger
             'args' => false,
             'start' => 0,
             'scope' => null,
-            'exclude' => ['call_user_func_array', 'trigger_error']
+            'exclude' => ['call_user_func_array', 'trigger_error'],
         ];
         $options = Hash::merge($defaults, $options);
 
@@ -314,7 +315,7 @@ class Debugger
             'line' => '??',
             'file' => '[internal]',
             'class' => null,
-            'function' => '[main]'
+            'function' => '[main]',
         ];
 
         for ($i = $options['start']; $i < $count && $i < $options['depth']; $i++) {
@@ -372,7 +373,7 @@ class Debugger
      * @param string $path Path to shorten.
      * @return string Normalized path
      */
-    public static function trimPath($path)
+    public static function trimPath(string $path): string
     {
         if (defined('APP') && strpos($path, APP) === 0) {
             return str_replace(APP, 'APP/', $path);
@@ -408,7 +409,7 @@ class Debugger
      * @see https://secure.php.net/highlight_string
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#getting-an-excerpt-from-a-file
      */
-    public static function excerpt($file, $line, $context = 2)
+    public static function excerpt(string $file, int $line, int $context = 2): array
     {
         $lines = [];
         if (!file_exists($file)) {
@@ -430,7 +431,7 @@ class Debugger
                 continue;
             }
             $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
-            if ($i == $line) {
+            if ($i === $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
                 $lines[] = $string;
@@ -447,7 +448,7 @@ class Debugger
      * @param string $str The string to convert.
      * @return string
      */
-    protected static function _highlight($str)
+    protected static function _highlight(string $str): string
     {
         if (function_exists('hphp_log') || function_exists('hphp_gettid')) {
             return htmlentities($str);
@@ -486,11 +487,11 @@ class Debugger
      * This is done to protect database credentials, which could be accidentally
      * shown in an error message if CakePHP is deployed in development mode.
      *
-     * @param string $var Variable to convert.
+     * @param mixed $var Variable to convert.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
-    public static function exportVar($var, $depth = 3)
+    public static function exportVar($var, int $depth = 3): string
     {
         return static::_export($var, $depth, 0);
     }
@@ -503,7 +504,7 @@ class Debugger
      * @param int $indent The current indentation level.
      * @return string The dumped variable.
      */
-    protected static function _export($var, $depth, $indent)
+    protected static function _export($var, int $depth, int $indent): string
     {
         switch (static::getType($var)) {
             case 'boolean':
@@ -549,7 +550,7 @@ class Debugger
      * @param int $indent The current indentation level.
      * @return string Exported array.
      */
-    protected static function _array(array $var, $depth, $indent)
+    protected static function _array(array $var, int $depth, int $indent): string
     {
         $out = '[';
         $break = $end = null;
@@ -590,7 +591,7 @@ class Debugger
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object($var, $depth, $indent)
+    protected static function _object($var, int $depth, int $indent): string
     {
         $out = '';
         $props = [];
@@ -655,7 +656,7 @@ class Debugger
      *
      * @return string Returns the current format when getting.
      */
-    public static function getOutputFormat()
+    public static function getOutputFormat(): string
     {
         return Debugger::getInstance()->_outputFormat;
     }
@@ -667,7 +668,7 @@ class Debugger
      * @return void
      * @throws \InvalidArgumentException When choosing a format that doesn't exist.
      */
-    public static function setOutputFormat($format)
+    public static function setOutputFormat(string $format): void
     {
         $self = Debugger::getInstance();
 
@@ -675,33 +676,6 @@ class Debugger
             throw new InvalidArgumentException('Invalid Debugger output format.');
         }
         $self->_outputFormat = $format;
-    }
-
-    /**
-     * Get/Set the output format for Debugger error rendering.
-     *
-     * @deprecated 3.5.0 Use getOutputFormat()/setOutputFormat() instead.
-     * @param string|null $format The format you want errors to be output as.
-     *   Leave null to get the current format.
-     * @return string|null Returns null when setting. Returns the current format when getting.
-     * @throws \InvalidArgumentException When choosing a format that doesn't exist.
-     */
-    public static function outputAs($format = null)
-    {
-        deprecationWarning(
-            'Debugger::outputAs() is deprecated. Use Debugger::getOutputFormat()/setOutputFormat() instead.'
-        );
-        $self = Debugger::getInstance();
-        if ($format === null) {
-            return $self->_outputFormat;
-        }
-
-        if (!isset($self->_templates[$format])) {
-            throw new InvalidArgumentException('Invalid Debugger output format.');
-        }
-        $self->_outputFormat = $format;
-
-        return null;
     }
 
     /**
@@ -747,7 +721,7 @@ class Debugger
      * @param array $strings Template strings, or a callback to be used for the output format.
      * @return array The resulting format string set.
      */
-    public static function addFormat($format, array $strings)
+    public static function addFormat(string $format, array $strings): array
     {
         $self = Debugger::getInstance();
         if (isset($self->_templates[$format])) {
@@ -772,7 +746,7 @@ class Debugger
      * @param array $data Data to output.
      * @return void
      */
-    public function outputError($data)
+    public function outputError(array $data): void
     {
         $defaults = [
             'level' => 0,
@@ -860,7 +834,7 @@ class Debugger
      * @param mixed $var The variable to get the type of.
      * @return string The type of variable.
      */
-    public static function getType($var)
+    public static function getType($var): string
     {
         if (is_object($var)) {
             return get_class($var);
@@ -900,7 +874,7 @@ class Debugger
      *    data in a browser-friendly way.
      * @return void
      */
-    public static function printVar($var, $location = [], $showHtml = null)
+    public static function printVar($var, array $location = [], ?bool $showHtml = null): void
     {
         $location += ['file' => null, 'line' => null];
         $file = $location['file'];
@@ -917,7 +891,7 @@ class Debugger
             $file = str_replace($search, '', $file);
         }
         $html = <<<HTML
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 %s
 <pre class="cake-debug">
 %s

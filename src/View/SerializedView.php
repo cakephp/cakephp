@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use RuntimeException;
  */
 abstract class SerializedView extends View
 {
-
     /**
      * Response type.
      *
@@ -41,12 +41,12 @@ abstract class SerializedView extends View
      * @param array $viewOptions An array of view options
      */
     public function __construct(
-        ServerRequest $request = null,
-        Response $response = null,
-        EventManager $eventManager = null,
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
-        if ($response && $response instanceof Response) {
+        if ($response) {
             $response = $response->withType($this->_responseType);
         }
         parent::__construct($request, $response, $eventManager, $viewOptions);
@@ -55,13 +55,15 @@ abstract class SerializedView extends View
     /**
      * Load helpers only if serialization is disabled.
      *
-     * @return void
+     * @return $this
      */
     public function loadHelpers()
     {
         if (empty($this->viewVars['_serialize'])) {
             parent::loadHelpers();
         }
+
+        return $this;
     }
 
     /**
@@ -69,7 +71,7 @@ abstract class SerializedView extends View
      *
      * @param array|string $serialize The name(s) of the view variable(s) that
      *   need(s) to be serialized
-     * @return string The serialized data
+     * @return string|false The serialized data or false.
      */
     abstract protected function _serialize($serialize);
 
@@ -82,11 +84,11 @@ abstract class SerializedView extends View
      *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      *
-     * @param string|bool|null $view The view being rendered.
+     * @param string|false|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
      * @return string|null The rendered view.
      */
-    public function render($view = null, $layout = null)
+    public function render($view = null, $layout = null): ?string
     {
         $serialize = false;
         if (isset($this->viewVars['_serialize'])) {
@@ -99,10 +101,12 @@ abstract class SerializedView extends View
                 throw new RuntimeException('Serialization of View data failed.');
             }
 
-            return (string)$result;
+            return $result;
         }
         if ($view !== false && $this->_getViewFileName($view)) {
             return parent::render($view, false);
         }
+
+        return null;
     }
 }

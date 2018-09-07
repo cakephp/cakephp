@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\TestSuite\TestCase;
  */
 class ExtractIteratorTest extends TestCase
 {
-
     /**
      * Tests it is possible to extract a column in the first level of an array
      *
@@ -33,7 +33,7 @@ class ExtractIteratorTest extends TestCase
     {
         $items = [
             ['a' => 1, 'b' => 2],
-            ['a' => 3, 'b' => 4]
+            ['a' => 3, 'b' => 4],
         ];
         $extractor = new ExtractIterator($items, 'a');
         $this->assertEquals([1, 3], iterator_to_array($extractor));
@@ -54,7 +54,7 @@ class ExtractIteratorTest extends TestCase
     {
         $items = [
             new ArrayObject(['a' => 1, 'b' => 2]),
-            new ArrayObject(['a' => 3, 'b' => 4])
+            new ArrayObject(['a' => 3, 'b' => 4]),
         ];
         $extractor = new ExtractIterator($items, 'a');
         $this->assertEquals([1, 3], iterator_to_array($extractor));
@@ -92,7 +92,7 @@ class ExtractIteratorTest extends TestCase
     {
         $items = [
             ['a' => 1, 'b' => 2],
-            ['a' => 3, 'b' => 4]
+            ['a' => 3, 'b' => 4],
         ];
         $extractor = new ExtractIterator($items, function ($item) {
             return $item['b'];

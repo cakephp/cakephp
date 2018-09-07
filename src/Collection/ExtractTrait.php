@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Traversable;
  */
 trait ExtractTrait
 {
-
     /**
      * Returns a callable that can be used to extract a property or column from
      * an array or object based on a dot separated path.
@@ -32,7 +32,7 @@ trait ExtractTrait
      * of doing that.
      * @return callable
      */
-    protected function _propertyExtractor($callback)
+    protected function _propertyExtractor($callback): callable
     {
         if (!is_string($callback)) {
             return $callback;
@@ -124,7 +124,7 @@ trait ExtractTrait
      * value to be compared the item with.
      * @return callable
      */
-    protected function _createMatcherFilter(array $conditions)
+    protected function _createMatcherFilter(array $conditions): callable
     {
         $matchers = [];
         foreach ($conditions as $property => $value) {

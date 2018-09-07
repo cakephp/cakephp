@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ namespace Cake\Database;
  */
 class TypeMap
 {
-
     /**
      * Associative array with the default fields and the related types this query might contain.
      *
@@ -80,43 +80,9 @@ class TypeMap
      *
      * @return array
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return $this->_defaults;
-    }
-
-    /**
-     * Configures a map of default fields and their associated types to be
-     * used as the default list of types for every function in this class
-     * with a $types param. Useful to avoid repetition when calling the same
-     * functions using the same fields and types.
-     *
-     * If called with no arguments it will return the currently configured types.
-     *
-     * ### Example
-     *
-     * ```
-     * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
-     * ```
-     *
-     * This method will replace all the existing type maps with the ones provided.
-     *
-     * @deprecated 3.4.0 Use setDefaults()/getDefaults() instead.
-     * @param array|null $defaults associative array where keys are field names and values
-     * are the correspondent type.
-     * @return $this|array
-     */
-    public function defaults(array $defaults = null)
-    {
-        deprecationWarning(
-            'TypeMap::defaults() is deprecated. ' .
-            'Use TypeMap::setDefaults()/getDefaults() instead.'
-        );
-        if ($defaults !== null) {
-            return $this->setDefaults($defaults);
-        }
-
-        return $this->getDefaults();
     }
 
     /**
@@ -127,7 +93,7 @@ class TypeMap
      * @param array $types The additional types to add.
      * @return void
      */
-    public function addDefaults(array $types)
+    public function addDefaults(array $types): void
     {
         $this->_defaults += $types;
     }
@@ -159,40 +125,9 @@ class TypeMap
      *
      * @return array
      */
-    public function getTypes()
+    public function getTypes(): array
     {
         return $this->_types;
-    }
-
-    /**
-     * Sets a map of fields and their associated types for single-use.
-     *
-     * If called with no arguments it will return the currently configured types.
-     *
-     * ### Example
-     *
-     * ```
-     * $query->types(['created' => 'time']);
-     * ```
-     *
-     * This method will replace all the existing type maps with the ones provided.
-     *
-     * @deprecated 3.4.0 Use setTypes()/getTypes() instead.
-     * @param array|null $types associative array where keys are field names and values
-     * are the correspondent type.
-     * @return $this|array
-     */
-    public function types(array $types = null)
-    {
-        deprecationWarning(
-            'TypeMap::types() is deprecated. ' .
-            'Use TypeMap::setTypes()/getTypes() instead.'
-        );
-        if ($types !== null) {
-            return $this->setTypes($types);
-        }
-
-        return $this->getTypes();
     }
 
     /**
@@ -200,10 +135,10 @@ class TypeMap
      * the column type will be looked for inside the default mapping. If neither exist,
      * null will be returned.
      *
-     * @param string $column The type for a given column
+     * @param string|int $column The type for a given column
      * @return null|string
      */
-    public function type($column)
+    public function type($column): ?string
     {
         if (isset($this->_types[$column])) {
             return $this->_types[$column];
@@ -220,7 +155,7 @@ class TypeMap
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->_types + $this->_defaults;
     }

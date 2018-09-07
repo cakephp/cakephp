@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -77,7 +78,7 @@ class RuleInvoker
      * @param array $options The options to set.
      * @return $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): self
     {
         $this->options = $options + $this->options;
 
@@ -92,7 +93,7 @@ class RuleInvoker
      * @param string $name The name to set.
      * @return $this
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         if ($name) {
             $this->name = $name;
@@ -109,7 +110,7 @@ class RuleInvoker
      * @param array $scope The rule's scope/options.
      * @return bool Whether or not the rule passed.
      */
-    public function __invoke($entity, $scope)
+    public function __invoke(EntityInterface $entity, array $scope): bool
     {
         $rule = $this->rule;
         $pass = $rule($entity, $this->options + $scope);

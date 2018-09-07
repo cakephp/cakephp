@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * I18mShell file
  *
@@ -24,7 +25,6 @@ use Cake\Console\Shell;
 
 class I18mShell extends Shell
 {
-
     /**
      * main method
      *

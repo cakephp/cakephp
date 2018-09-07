@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,7 @@ use Cake\Core\Exception\Exception;
  * Exception class for halting errors in console tasks
  *
  * @see \Cake\Console\Shell::_stop()
- * @see \Cake\Console\Shell::error()
+ * @see \Cake\Console\Shell::abort()
  */
 class StopException extends Exception
 {

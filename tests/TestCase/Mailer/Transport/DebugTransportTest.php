@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * DebugTransportTest file
  *
@@ -24,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class DebugTransportTest extends TestCase
 {
-
     /**
      * Setup
      *

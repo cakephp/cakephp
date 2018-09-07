@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,7 +19,6 @@ namespace TestApp\View\Cell;
  */
 class ArticlesCell extends \Cake\View\Cell
 {
-
     /**
      * valid cell options.
      *
@@ -59,26 +59,14 @@ class ArticlesCell extends \Cake\View\Cell
 
     /**
      * Renders a view using a different template than the action name
-     * The template is set using the ``Cell::$template`` property
-     *
-     * @return void
-     */
-    public function customTemplate()
-    {
-        $this->template = 'alternate_teaser_list';
-    }
-
-    /**
-     * Renders a view using a different template than the action name
      * The template is set using the ViewBuilder bound to the Cell
      *
      * @return void
      */
     public function customTemplateViewBuilder()
     {
-        $this->template = 'derp';
         $this->counter++;
-        $this->viewBuilder()->template('alternate_teaser_list');
+        $this->viewBuilder()->setTemplate('alternate_teaser_list');
     }
 
     /**
@@ -89,7 +77,7 @@ class ArticlesCell extends \Cake\View\Cell
      */
     public function customTemplatePath()
     {
-        $this->viewBuilder()->templatePath('Cell/Articles/Subdir');
+        $this->viewBuilder()->setTemplatePath('Cell/Articles/Subdir');
     }
 
     /**

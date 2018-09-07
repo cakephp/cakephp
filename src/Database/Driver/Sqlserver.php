@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ use Cake\Database\Dialect\SqlserverDialectTrait;
 use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\SqlserverStatement;
+use Cake\Database\StatementInterface;
 use PDO;
 
 /**
@@ -25,7 +27,6 @@ use PDO;
  */
 class Sqlserver extends Driver
 {
-
     use SqlserverDialectTrait;
 
     /**
@@ -63,7 +64,7 @@ class Sqlserver extends Driver
      * @throws \InvalidArgumentException if an unsupported setting is in the driver config
      * @return bool true on success
      */
-    public function connect()
+    public function connect(): bool
     {
         if ($this->_connection) {
             return true;
@@ -76,14 +77,14 @@ class Sqlserver extends Driver
 
         $config['flags'] += [
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         if (!empty($config['encoding'])) {
             $config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
         }
         $port = '';
-        if (strlen($config['port'])) {
+        if ($config['port']) {
             $port = ',' . $config['port'];
         }
 
@@ -130,7 +131,7 @@ class Sqlserver extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
-    public function enabled()
+    public function enabled(): bool
     {
         return in_array('sqlsrv', PDO::getAvailableDrivers());
     }
@@ -141,7 +142,7 @@ class Sqlserver extends Driver
      * @param string|\Cake\Database\Query $query The query to prepare.
      * @return \Cake\Database\StatementInterface
      */
-    public function prepare($query)
+    public function prepare($query): StatementInterface
     {
         $this->connect();
         $options = [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL];
@@ -157,7 +158,7 @@ class Sqlserver extends Driver
     /**
      * {@inheritDoc}
      */
-    public function supportsDynamicConstraints()
+    public function supportsDynamicConstraints(): bool
     {
         return true;
     }

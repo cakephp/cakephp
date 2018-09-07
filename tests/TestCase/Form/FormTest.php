@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,14 +20,12 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Form\AppForm;
 use TestApp\Form\FormSchema;
-use TestApp\Form\ValidateForm;
 
 /**
  * Form test case.
  */
 class FormTest extends TestCase
 {
-
     /**
      * Test schema()
      *
@@ -46,27 +45,6 @@ class FormTest extends TestCase
 
         $form = new AppForm();
         $this->assertInstanceOf(FormSchema::class, $form->schema());
-    }
-
-    /**
-     * Test validator()
-     *
-     * @return void
-     * @group deprecated
-     */
-    public function testValidator()
-    {
-        $this->deprecated(function () {
-            $form = new Form();
-            $validator = $form->validator();
-
-            $this->assertInstanceOf('Cake\Validation\Validator', $validator);
-            $this->assertSame($validator, $form->validator(), 'Same instance each time');
-
-            $validator = $this->getMockBuilder('Cake\Validation\Validator')->getMock();
-            $this->assertSame($validator, $form->validator($validator));
-            $this->assertSame($validator, $form->validator());
-        });
     }
 
     /**
@@ -114,32 +92,17 @@ class FormTest extends TestCase
 
         $data = [
             'email' => 'rong',
-            'body' => 'too short'
+            'body' => 'too short',
         ];
         $this->assertFalse($form->validate($data));
         $this->assertCount(2, $form->errors());
 
         $data = [
             'email' => 'test@example.com',
-            'body' => 'Some content goes here'
+            'body' => 'Some content goes here',
         ];
         $this->assertTrue($form->validate($data));
         $this->assertCount(0, $form->errors());
-    }
-
-    /**
-     * tests validate using deprecated validate() method
-     *
-     * @return void
-     */
-    public function testValidateDeprected()
-    {
-        $this->deprecated(function () {
-            $form = new ValidateForm();
-            $data = [];
-            $this->assertFalse($form->validate($data));
-            $this->assertCount(1, $form->errors());
-        });
     }
 
     /**
@@ -153,7 +116,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', [
                 'message' => 'Must be a valid email',
-                'rule' => 'email'
+                'rule' => 'email',
             ])
             ->add('body', 'length', [
                 'message' => 'Must be so long',
@@ -162,7 +125,7 @@ class FormTest extends TestCase
 
         $data = [
             'email' => 'rong',
-            'body' => 'too short'
+            'body' => 'too short',
         ];
         $form->validate($data);
         $errors = $form->errors();
@@ -180,7 +143,7 @@ class FormTest extends TestCase
     {
         $form = new Form();
         $expected = [
-           'field_name' => ['rule_name' => 'message']
+           'field_name' => ['rule_name' => 'message'],
         ];
 
         $form->setErrors($expected);
@@ -200,7 +163,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
-            'email' => 'rong'
+            'email' => 'rong',
         ];
         $form->expects($this->never())
             ->method('_execute');
@@ -221,7 +184,7 @@ class FormTest extends TestCase
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
-            'email' => 'test@example.com'
+            'email' => 'test@example.com',
         ];
         $form->expects($this->once())
             ->method('_execute')
@@ -229,6 +192,22 @@ class FormTest extends TestCase
             ->will($this->returnValue(true));
 
         $this->assertTrue($form->execute($data));
+    }
+
+    /**
+     * Test setting and getting form data.
+     *
+     * @return void
+     */
+    public function testDataSetGet()
+    {
+        $form = new Form();
+        $expected = ['title' => 'title', 'is_published' => true];
+        $form->setData(['title' => 'title', 'is_published' => true]);
+
+        $this->assertSame($expected, $form->getData());
+        $this->assertEquals('title', $form->getData('title'));
+        $this->assertNull($form->getData('non-existent'));
     }
 
     /**
@@ -243,5 +222,6 @@ class FormTest extends TestCase
         $this->assertArrayHasKey('_schema', $result);
         $this->assertArrayHasKey('_errors', $result);
         $this->assertArrayHasKey('_validator', $result);
+        $this->assertArrayHasKey('_data', $result);
     }
 }

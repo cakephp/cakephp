@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * MissingTableClassException class
  *
@@ -21,6 +22,5 @@ use Cake\Core\Exception\Exception;
  */
 class MissingTableClassException extends Exception
 {
-
     protected $_messageTemplate = 'Table class %s could not be found.';
 }

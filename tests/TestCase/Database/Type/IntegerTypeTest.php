@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
 
@@ -41,7 +42,7 @@ class IntegerTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('integer');
+        $this->type = TypeFactory::build('integer');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
@@ -78,15 +79,15 @@ class IntegerTypeTest extends TestCase
             'a' => null,
             'b' => '2.3',
             'c' => '15',
-            'c' => '0.0',
-            'd' => 10
+            'd' => '0.0',
+            'e' => 10,
         ];
         $expected = [
             'a' => null,
             'b' => 2,
             'c' => 15,
-            'c' => 0,
-            'd' => 10
+            'd' => 0,
+            'e' => 10,
         ];
         $this->assertEquals(
             $expected,
@@ -159,7 +160,14 @@ class IntegerTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
-        $this->assertSame(1, $result);
+        $this->assertNull($result);
+
+        $result = $this->type->marshal('+0123.45e2');
+        if (version_compare(PHP_VERSION, '7.1', '<')) {
+            $this->assertSame(123, $result);
+        } else {
+            $this->assertSame(12345, $result);
+        }
     }
 
     /**

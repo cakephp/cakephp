@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -27,7 +28,6 @@ use LogicException;
  */
 trait StaticConfigTrait
 {
-
     /**
      * Configuration sets.
      *
@@ -67,12 +67,12 @@ trait StaticConfigTrait
      * ```
      *
      * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array $config An array of name => configuration data for adapter.
+     * @param array|object $config An array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
      */
-    public static function setConfig($key, $config = null)
+    public static function setConfig($key, $config = null): void
     {
         if ($config === null) {
             if (!is_array($key)) {
@@ -112,69 +112,9 @@ trait StaticConfigTrait
      * @param string $key The name of the configuration.
      * @return array|null Array of configuration data.
      */
-    public static function getConfig($key)
+    public static function getConfig(string $key): ?array
     {
-        return isset(static::$_config[$key]) ? static::$_config[$key] : null;
-    }
-
-    /**
-     * This method can be used to define configuration adapters for an application
-     * or read existing configuration.
-     *
-     * To change an adapter's configuration at runtime, first drop the adapter and then
-     * reconfigure it.
-     *
-     * Adapters will not be constructed until the first operation is done.
-     *
-     * ### Usage
-     *
-     * Assuming that the class' name is `Cache` the following scenarios
-     * are supported:
-     *
-     * Reading config data back:
-     *
-     * ```
-     * Cache::config('default');
-     * ```
-     *
-     * Setting a cache engine up.
-     *
-     * ```
-     * Cache::config('default', $settings);
-     * ```
-     *
-     * Injecting a constructed adapter in:
-     *
-     * ```
-     * Cache::config('default', $instance);
-     * ```
-     *
-     * Configure multiple adapters at once:
-     *
-     * ```
-     * Cache::config($arrayOfConfig);
-     * ```
-     *
-     * @deprecated 3.4.0 Use setConfig()/getConfig() instead.
-     * @param string|array $key The name of the configuration, or an array of multiple configs.
-     * @param array|null $config An array of name => configuration data for adapter.
-     * @return array|null Null when adding configuration or an array of configuration data when reading.
-     * @throws \BadMethodCallException When trying to modify an existing config.
-     */
-    public static function config($key, $config = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::config() is deprecated. ' .
-            'Use setConfig()/getConfig() instead.'
-        );
-
-        if ($config !== null || is_array($key)) {
-            static::setConfig($key, $config);
-
-            return null;
-        }
-
-        return static::getConfig($key);
+        return static::$_config[$key] ?? null;
     }
 
     /**
@@ -189,7 +129,7 @@ trait StaticConfigTrait
      * @param string $config An existing configuration you wish to remove.
      * @return bool Success of the removal, returns false when the config does not exist.
      */
-    public static function drop($config)
+    public static function drop(string $config): bool
     {
         if (!isset(static::$_config[$config])) {
             return false;
@@ -207,7 +147,7 @@ trait StaticConfigTrait
      *
      * @return array Array of configurations.
      */
-    public static function configured()
+    public static function configured(): array
     {
         return array_keys(static::$_config);
     }
@@ -244,7 +184,7 @@ trait StaticConfigTrait
      * @return array The configuration array to be stored after parsing the DSN
      * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
-    public static function parseDsn($dsn)
+    public static function parseDsn(string $dsn): array
     {
         if (empty($dsn)) {
             return [];
@@ -343,7 +283,7 @@ REGEXP;
      * @param array $map Additions/edits to the class map to apply.
      * @return void
      */
-    public static function setDsnClassMap(array $map)
+    public static function setDsnClassMap(array $map): void
     {
         static::$_dsnClassMap = $map + static::$_dsnClassMap;
     }
@@ -353,29 +293,8 @@ REGEXP;
      *
      * @return array
      */
-    public static function getDsnClassMap()
+    public static function getDsnClassMap(): array
     {
         return static::$_dsnClassMap;
-    }
-
-    /**
-     * Returns or updates the DSN class map for this class.
-     *
-     * @deprecated 3.4.0 Use setDsnClassMap()/getDsnClassMap() instead.
-     * @param array|null $map Additions/edits to the class map to apply.
-     * @return array
-     */
-    public static function dsnClassMap(array $map = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::setDsnClassMap() is deprecated. ' .
-            'Use setDsnClassMap()/getDsnClassMap() instead.'
-        );
-
-        if ($map !== null) {
-            static::setDsnClassMap($map);
-        }
-
-        return static::getDsnClassMap();
     }
 }

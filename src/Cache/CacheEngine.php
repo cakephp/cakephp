@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use InvalidArgumentException;
  */
 abstract class CacheEngine
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -36,8 +36,6 @@ abstract class CacheEngine
      *    handy for deleting a complete group from cache.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
-     *    cache::gc from ever being called automatically.
      * - `warnOnWriteFailures` Some engines, such as ApcuEngine, may raise warnings on
      *    write failures.
      *
@@ -47,7 +45,6 @@ abstract class CacheEngine
         'duration' => 3600,
         'groups' => [],
         'prefix' => 'cake_',
-        'probability' => 100,
         'warnOnWriteFailures' => true,
     ];
 
@@ -68,7 +65,7 @@ abstract class CacheEngine
      * @param array $config Associative array of parameters for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
-    public function init(array $config = [])
+    public function init(array $config = []): bool
     {
         $this->setConfig($config);
 
@@ -84,25 +81,13 @@ abstract class CacheEngine
     }
 
     /**
-     * Garbage collection
-     *
-     * Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return void
-     */
-    public function gc($expires = null)
-    {
-    }
-
-    /**
      * Write value for a key into cache
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
      */
-    abstract public function write($key, $value);
+    abstract public function write(string $key, $value): bool;
 
     /**
      * Write data for many keys into cache
@@ -110,7 +95,7 @@ abstract class CacheEngine
      * @param array $data An array of data to be stored in the cache
      * @return array of bools for each key provided, true if the data was successfully cached, false on failure
      */
-    public function writeMany($data)
+    public function writeMany(array $data): array
     {
         $return = [];
         foreach ($data as $key => $value) {
@@ -126,7 +111,7 @@ abstract class CacheEngine
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
      */
-    abstract public function read($key);
+    abstract public function read(string $key);
 
     /**
      * Read multiple keys from the cache
@@ -135,7 +120,7 @@ abstract class CacheEngine
      * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
      * exist, has expired, or if there was an error fetching it
      */
-    public function readMany($keys)
+    public function readMany(array $keys): array
     {
         $return = [];
         foreach ($keys as $key) {
@@ -152,7 +137,7 @@ abstract class CacheEngine
      * @param int $offset How much to add
      * @return bool|int New incremented value, false otherwise
      */
-    abstract public function increment($key, $offset = 1);
+    abstract public function increment(string $key, int $offset = 1);
 
     /**
      * Decrement a number under the key and return decremented value
@@ -161,7 +146,7 @@ abstract class CacheEngine
      * @param int $offset How much to subtract
      * @return bool|int New incremented value, false otherwise
      */
-    abstract public function decrement($key, $offset = 1);
+    abstract public function decrement(string $key, int $offset = 1);
 
     /**
      * Delete a key from the cache
@@ -169,7 +154,7 @@ abstract class CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    abstract public function delete($key);
+    abstract public function delete(string $key): bool;
 
     /**
      * Delete all keys from the cache
@@ -177,7 +162,7 @@ abstract class CacheEngine
      * @param bool $check if true will check expiration, otherwise delete all
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    abstract public function clear($check);
+    abstract public function clear(bool $check): bool;
 
     /**
      * Deletes keys from the cache
@@ -186,7 +171,7 @@ abstract class CacheEngine
      * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
      * false if it didn't exist or couldn't be removed
      */
-    public function deleteMany($keys)
+    public function deleteMany(array $keys): array
     {
         $return = [];
         foreach ($keys as $key) {
@@ -206,7 +191,7 @@ abstract class CacheEngine
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
      */
-    public function add($key, $value)
+    public function add(string $key, $value): bool
     {
         $cachedValue = $this->read($key);
         if ($cachedValue === false) {
@@ -224,7 +209,7 @@ abstract class CacheEngine
      * @param string $group name of the group to be cleared
      * @return bool
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         return false;
     }
@@ -236,7 +221,7 @@ abstract class CacheEngine
      *
      * @return array
      */
-    public function groups()
+    public function groups(): array
     {
         return $this->_config['groups'];
     }
@@ -247,7 +232,7 @@ abstract class CacheEngine
      * @param string $key the key passed over
      * @return bool|string string key or false
      */
-    public function key($key)
+    public function key(string $key)
     {
         if (!$key) {
             return false;
@@ -270,7 +255,7 @@ abstract class CacheEngine
      * @return mixed string $key or false
      * @throws \InvalidArgumentException If key's value is empty
      */
-    protected function _key($key)
+    protected function _key(string $key)
     {
         $key = $this->key($key);
         if ($key === false) {
@@ -287,7 +272,7 @@ abstract class CacheEngine
      * @param string $message The warning message.
      * @return void
      */
-    protected function warning($message)
+    protected function warning(string $message): void
     {
         if ($this->getConfig('warnOnWriteFailures') !== true) {
             return;

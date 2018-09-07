@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,125 +24,124 @@ namespace Cake\Http\Client;
  */
 class Message
 {
-
     /**
      * HTTP 200 code
      *
      * @var int
      */
-    const STATUS_OK = 200;
+    public const STATUS_OK = 200;
 
     /**
      * HTTP 201 code
      *
      * @var int
      */
-    const STATUS_CREATED = 201;
+    public const STATUS_CREATED = 201;
 
     /**
      * HTTP 202 code
      *
      * @var int
      */
-    const STATUS_ACCEPTED = 202;
+    public const STATUS_ACCEPTED = 202;
 
     /**
      * HTTP 203 code
      *
      * @var int
      */
-    const STATUS_NON_AUTHORITATIVE_INFORMATION = 203;
+    public const STATUS_NON_AUTHORITATIVE_INFORMATION = 203;
 
     /**
      * HTTP 204 code
      *
      * @var int
      */
-    const STATUS_NO_CONTENT = 204;
+    public const STATUS_NO_CONTENT = 204;
 
     /**
      * HTTP 301 code
      *
      * @var int
      */
-    const STATUS_MOVED_PERMANENTLY = 301;
+    public const STATUS_MOVED_PERMANENTLY = 301;
 
     /**
      * HTTP 302 code
      *
      * @var int
      */
-    const STATUS_FOUND = 302;
+    public const STATUS_FOUND = 302;
 
     /**
      * HTTP 303 code
      *
      * @var int
      */
-    const STATUS_SEE_OTHER = 303;
+    public const STATUS_SEE_OTHER = 303;
 
     /**
      * HTTP 307 code
      *
      * @var int
      */
-    const STATUS_TEMPORARY_REDIRECT = 307;
+    public const STATUS_TEMPORARY_REDIRECT = 307;
 
     /**
      * HTTP GET method
      *
      * @var string
      */
-    const METHOD_GET = 'GET';
+    public const METHOD_GET = 'GET';
 
     /**
      * HTTP POST method
      *
      * @var string
      */
-    const METHOD_POST = 'POST';
+    public const METHOD_POST = 'POST';
 
     /**
      * HTTP PUT method
      *
      * @var string
      */
-    const METHOD_PUT = 'PUT';
+    public const METHOD_PUT = 'PUT';
 
     /**
      * HTTP DELETE method
      *
      * @var string
      */
-    const METHOD_DELETE = 'DELETE';
+    public const METHOD_DELETE = 'DELETE';
 
     /**
      * HTTP PATCH method
      *
      * @var string
      */
-    const METHOD_PATCH = 'PATCH';
+    public const METHOD_PATCH = 'PATCH';
 
     /**
      * HTTP OPTIONS method
      *
      * @var string
      */
-    const METHOD_OPTIONS = 'OPTIONS';
+    public const METHOD_OPTIONS = 'OPTIONS';
 
     /**
      * HTTP TRACE method
      *
      * @var string
      */
-    const METHOD_TRACE = 'TRACE';
+    public const METHOD_TRACE = 'TRACE';
 
     /**
      * HTTP HEAD method
      *
      * @var string
      */
-    const METHOD_HEAD = 'HEAD';
+    public const METHOD_HEAD = 'HEAD';
 
     /**
      * The array of cookies in the response.
@@ -158,27 +158,11 @@ class Message
     protected $_body;
 
     /**
-     * Get all headers
-     *
-     * @return array
-     * @deprecated 3.3.0 Use getHeaders() instead.
-     */
-    public function headers()
-    {
-        deprecationWarning(
-            'Message::headers() is deprecated. ' .
-            'Use getHeaders() instead.'
-        );
-
-        return $this->headers;
-    }
-
-    /**
      * Get all cookies
      *
      * @return array
      */
-    public function cookies()
+    public function cookies(): array
     {
         return $this->_cookies;
     }
@@ -199,6 +183,3 @@ class Message
         return $this;
     }
 }
-
-// @deprecated Add backwards compat alias.
-class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');

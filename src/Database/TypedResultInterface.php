@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,20 +17,21 @@ namespace Cake\Database;
 
 /**
  * Represents an expression that is known to return a specific type
- *
- * @method string getReturnType()
- * @method $this setReturnType($type)
  */
 interface TypedResultInterface
 {
+    /**
+     * Return the abstract type this expression will return
+     *
+     * @return string
+     */
+    public function getReturnType(): string;
 
     /**
-     * Sets the type of the value this object will generate.
-     * If called without arguments, returns the current known type
+     * Set the return type of the expression
      *
-     * @deprecated 3.5.0 Use getReturnType()/setReturnType() instead.
-     * @param string|null $type The name of the type that is to be returned
-     * @return string|$this
+     * @param string $type The type name to use.
+     * @return void
      */
-    public function returnType($type = null);
+    public function setReturnType(string $type);
 }

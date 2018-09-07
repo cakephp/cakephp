@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,14 +23,13 @@ use Cake\TestSuite\TestCase;
  */
 class AssociationProxyTest extends TestCase
 {
-
     /**
      * Fixtures to be loaded
      *
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.authors', 'core.comments'
+        'core.articles', 'core.authors', 'core.comments',
     ];
 
     /**
@@ -146,7 +146,7 @@ class AssociationProxyTest extends TestCase
             ->setMethods(['crazy'])
             ->getMock();
         $articles->belongsTo('authors', [
-            'targetTable' => $mock
+            'targetTable' => $mock,
         ]);
 
         $mock->expects($this->once())->method('crazy')

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace TestPlugin\Routing\Filter;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Routing\DispatcherFilter;
 
 /**
@@ -22,8 +23,7 @@ use Cake\Routing\DispatcherFilter;
  */
 class Test2DispatcherFilter extends DispatcherFilter
 {
-
-    public function beforeDispatch(Event $event)
+    public function beforeDispatch(EventInterface $event)
     {
         $event->data('response')->statusCode(500);
         $event->stopPropagation();
@@ -31,7 +31,7 @@ class Test2DispatcherFilter extends DispatcherFilter
         return $event->data('response');
     }
 
-    public function afterDispatch(Event $event)
+    public function afterDispatch(EventInterface $event)
     {
         $event->data('response')->statusCode(200);
     }

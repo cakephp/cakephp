@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use PHPUnit\Framework\TestResult;
  */
 class DatabaseSuite extends TestSuite
 {
-
     /**
      * Returns a suite containing all tests requiring a database connection,
      * tests are decorated so that they are run once with automatic
@@ -51,7 +51,7 @@ class DatabaseSuite extends TestSuite
      * @param \PHPUnit\Framework\TestResult $result
      * @return \PHPUnit\Framework\TestResult
      */
-    public function run(TestResult $result = null)
+    public function run(?TestResult $result = null)
     {
         $permutations = [
             'Identifier Quoting' => function () {
@@ -59,7 +59,7 @@ class DatabaseSuite extends TestSuite
             },
             'No identifier quoting' => function () {
                 ConnectionManager::get('test')->getDriver()->enableAutoQuoting(false);
-            }
+            },
         ];
 
         foreach ($permutations as $permutation) {

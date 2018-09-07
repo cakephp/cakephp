@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ namespace Cake\Mailer;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Mailer\Exception\MissingActionException;
+use Cake\View\ViewBuilder;
 
 /**
  * Mailer base class.
@@ -60,14 +62,14 @@ use Cake\Mailer\Exception\MissingActionException;
  * registration event:
  *
  * ```
- * public function implementedEvents()
+ * public function implementedEvents(): array
  * {
  *     return [
  *         'Model.afterSave' => 'onRegistration',
  *     ];
  * }
  *
- * public function onRegistration(Event $event, Entity $entity, ArrayObject $options)
+ * public function onRegistration(EventInterface $event, Entity $entity, ArrayObject $options)
  * {
  *     if ($entity->isNew()) {
  *          $this->send('welcome', [$entity]);
@@ -84,37 +86,27 @@ use Cake\Mailer\Exception\MissingActionException;
  * @method \Cake\Mailer\Email to($email = null, $name = null)
  * @method \Cake\Mailer\Email setFrom($email, $name = null)
  * @method array getFrom()
- * @method \Cake\Mailer\Email from($email = null, $name = null)
  * @method \Cake\Mailer\Email setSender($email, $name = null)
  * @method array getSender()
- * @method \Cake\Mailer\Email sender($email = null, $name = null)
  * @method \Cake\Mailer\Email setReplyTo($email, $name = null)
  * @method array getReplyTo()
- * @method \Cake\Mailer\Email replyTo($email = null, $name = null)
  * @method \Cake\Mailer\Email setReadReceipt($email, $name = null)
  * @method array getReadReceipt()
- * @method \Cake\Mailer\Email readReceipt($email = null, $name = null)
  * @method \Cake\Mailer\Email setReturnPath($email, $name = null)
  * @method array getReturnPath()
- * @method \Cake\Mailer\Email returnPath($email = null, $name = null)
  * @method \Cake\Mailer\Email addTo($email, $name = null)
  * @method \Cake\Mailer\Email setCc($email, $name = null)
  * @method array getCc()
- * @method \Cake\Mailer\Email cc($email = null, $name = null)
  * @method \Cake\Mailer\Email addCc($email, $name = null)
  * @method \Cake\Mailer\Email setBcc($email, $name = null)
  * @method array getBcc()
- * @method \Cake\Mailer\Email bcc($email = null, $name = null)
  * @method \Cake\Mailer\Email addBcc($email, $name = null)
  * @method \Cake\Mailer\Email setCharset($charset)
  * @method string getCharset()
- * @method \Cake\Mailer\Email charset($charset = null)
  * @method \Cake\Mailer\Email setHeaderCharset($charset)
  * @method string getHeaderCharset()
- * @method \Cake\Mailer\Email headerCharset($charset = null)
  * @method \Cake\Mailer\Email setSubject($subject)
  * @method string getSubject()
- * @method \Cake\Mailer\Email subject($subject = null)
  * @method \Cake\Mailer\Email setHeaders(array $headers)
  * @method \Cake\Mailer\Email addHeaders(array $headers)
  * @method \Cake\Mailer\Email getHeaders(array $include = [])
@@ -122,43 +114,31 @@ use Cake\Mailer\Exception\MissingActionException;
  * @method string getTemplate()
  * @method \Cake\Mailer\Email setLayout($layout)
  * @method string getLayout()
- * @method \Cake\Mailer\Email template($template = false, $layout = false)
  * @method \Cake\Mailer\Email setViewRenderer($viewClass)
  * @method string getViewRenderer()
- * @method \Cake\Mailer\Email viewRender($viewClass = null)
  * @method \Cake\Mailer\Email setViewVars($viewVars)
  * @method array getViewVars()
- * @method \Cake\Mailer\Email viewVars($viewVars = null)
  * @method \Cake\Mailer\Email setTheme($theme)
  * @method string getTheme()
- * @method \Cake\Mailer\Email theme($theme = null)
  * @method \Cake\Mailer\Email setHelpers(array $helpers)
  * @method array getHelpers()
- * @method \Cake\Mailer\Email helpers($helpers = null)
  * @method \Cake\Mailer\Email setEmailFormat($format)
  * @method string getEmailFormat()
- * @method \Cake\Mailer\Email emailFormat($format = null)
  * @method \Cake\Mailer\Email setTransport($name)
  * @method \Cake\Mailer\AbstractTransport getTransport()
- * @method \Cake\Mailer\Email transport($name = null)
  * @method \Cake\Mailer\Email setMessageId($message)
  * @method bool|string getMessageId()
- * @method \Cake\Mailer\Email messageId($message = null)
  * @method \Cake\Mailer\Email setDomain($domain)
  * @method string getDomain()
- * @method \Cake\Mailer\Email domain($domain = null)
  * @method \Cake\Mailer\Email setAttachments($attachments)
  * @method array getAttachments()
- * @method \Cake\Mailer\Email attachments($attachments = null)
  * @method \Cake\Mailer\Email addAttachments($attachments)
  * @method \Cake\Mailer\Email message($type = null)
  * @method \Cake\Mailer\Email setProfile($config)
  * @method string|array getProfile()
- * @method \Cake\Mailer\Email profile($config = null)
  */
 abstract class Mailer implements EventListenerInterface
 {
-
     use ModelAwareTrait;
 
     /**
@@ -188,7 +168,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @param \Cake\Mailer\Email|null $email Email instance.
      */
-    public function __construct(Email $email = null)
+    public function __construct(?Email $email = null)
     {
         if ($email === null) {
             $email = new Email();
@@ -203,7 +183,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         if (!static::$name) {
             static::$name = str_replace(
@@ -217,27 +197,11 @@ abstract class Mailer implements EventListenerInterface
     }
 
     /**
-     * Sets layout to use.
-     *
-     * @deprecated 3.4.0 Use setLayout() which sets the layout on the email class instead.
-     * @param string $layout Name of the layout to use.
-     * @return $this
-     */
-    public function layout($layout)
-    {
-        deprecationWarning('Mailer::layout() is deprecated. Use setLayout() which sets the layout on the email class instead.');
-
-        $this->_email->viewBuilder()->setLayout($layout);
-
-        return $this;
-    }
-
-    /**
      * Get Email instance's view builder.
      *
      * @return \Cake\View\ViewBuilder
      */
-    public function viewBuilder()
+    public function viewBuilder(): ViewBuilder
     {
         return $this->_email->viewBuilder();
     }
@@ -266,7 +230,7 @@ abstract class Mailer implements EventListenerInterface
      * @param mixed $value View variable value.
      * @return $this
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): self
     {
         $this->_email->setViewVars(is_string($key) ? [$key => $value] : $key);
 
@@ -283,7 +247,7 @@ abstract class Mailer implements EventListenerInterface
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
      */
-    public function send($action, $args = [], $headers = [])
+    public function send(string $action, array $args = [], array $headers = []): array
     {
         try {
             if (!method_exists($this, $action)) {
@@ -313,7 +277,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    protected function reset()
+    protected function reset(): self
     {
         $this->_email = clone $this->_clonedEmail;
 
@@ -325,7 +289,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         return [];
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,18 +23,17 @@ use Cake\Database\ValueBinder;
  */
 class UnaryExpression implements ExpressionInterface
 {
-
     /**
      * Indicates that the operation is in pre-order
      *
      */
-    const PREFIX = 0;
+    public const PREFIX = 0;
 
     /**
      * Indicates that the operation is in post-order
      *
      */
-    const POSTFIX = 1;
+    public const POSTFIX = 1;
 
     /**
      * The operator this unary expression represents
@@ -63,7 +63,7 @@ class UnaryExpression implements ExpressionInterface
      * @param mixed $value the value to use as the operand for the expression
      * @param int $mode either UnaryExpression::PREFIX or UnaryExpression::POSTFIX
      */
-    public function __construct($operator, $value, $mode = self::PREFIX)
+    public function __construct(string $operator, $value, $mode = self::PREFIX)
     {
         $this->_operator = $operator;
         $this->_value = $value;
@@ -76,7 +76,7 @@ class UnaryExpression implements ExpressionInterface
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $operand = $this->_value;
         if ($operand instanceof ExpressionInterface) {
@@ -94,7 +94,7 @@ class UnaryExpression implements ExpressionInterface
      * {@inheritDoc}
      *
      */
-    public function traverse(callable $callable)
+    public function traverse(callable $callable): void
     {
         if ($this->_value instanceof ExpressionInterface) {
             $callable($this->_value);

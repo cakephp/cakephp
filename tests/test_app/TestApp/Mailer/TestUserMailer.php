@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ namespace TestApp\Mailer;
  */
 class TestUserMailer extends TestMailer
 {
-
     public function invite($email)
     {
         $this->_email
@@ -32,7 +32,7 @@ class TestUserMailer extends TestMailer
             ->addBcc('antograssiot@cakephp.org')
             ->setAttachments([
                 dirname(__FILE__) . DS . 'TestMailer.php',
-                dirname(__FILE__) . DS . 'TestUserMailer.php'
+                dirname(__FILE__) . DS . 'TestUserMailer.php',
             ])
             ->send('Hello ' . $email);
     }

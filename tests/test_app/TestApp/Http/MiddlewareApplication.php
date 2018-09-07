@@ -1,7 +1,9 @@
 <?php
+declare(strict_types=1);
 namespace TestApp\Http;
 
 use Cake\Http\BaseApplication;
+use Cake\Http\MiddlewareQueue;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -11,7 +13,7 @@ class MiddlewareApplication extends BaseApplication
      * @param \Cake\Http\MiddlewareQueue $middleware The middleware stack to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function middleware($middleware)
+    public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         $middleware
             ->add(function ($req, $res, $next) {
@@ -42,7 +44,7 @@ class MiddlewareApplication extends BaseApplication
      * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, $next)
+    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface
     {
         return $res;
     }

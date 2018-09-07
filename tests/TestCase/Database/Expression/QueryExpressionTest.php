@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,46 +42,6 @@ class QueryExpressionTest extends TestCase
     }
 
     /**
-     * Test tieWith() works.
-     *
-     * @group deprecated
-     * @return
-     */
-    public function testTieWith()
-    {
-        $this->deprecated(function () {
-            $expr = new QueryExpression(['1', '2']);
-            $binder = new ValueBinder();
-
-            $this->assertSame($expr, $expr->tieWith('+'));
-            $this->assertSame('+', $expr->tieWith());
-
-            $result = $expr->sql($binder);
-            $this->assertEquals('(1 + 2)', $result);
-        });
-    }
-
-    /**
-     * Test type() works.
-     *
-     * @group deprecated
-     * @return
-     */
-    public function testType()
-    {
-        $this->deprecated(function () {
-            $expr = new QueryExpression(['1', '2']);
-            $binder = new ValueBinder();
-
-            $this->assertSame($expr, $expr->type('+'));
-            $this->assertSame('+', $expr->type());
-
-            $result = $expr->sql($binder);
-            $this->assertEquals('(1 + 2)', $result);
-        });
-    }
-
-    /**
      * Test and() and or() calls work transparently
      *
      * @return void
@@ -88,7 +49,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls()
     {
         $expr = new QueryExpression();
-        $expected = '\Cake\Database\Expression\QueryExpression';
+        $expected = 'Cake\Database\Expression\QueryExpression';
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
@@ -124,7 +85,7 @@ class QueryExpressionTest extends TestCase
             ],
             [
                 'Users.username' => 'string',
-                'Users.active' => 'boolean'
+                'Users.active' => 'boolean',
             ]
         );
 
@@ -199,7 +160,7 @@ class QueryExpressionTest extends TestCase
     {
         return [
             ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
-            ['notLike'], ['in'], ['notIn']
+            ['notLike'], ['in'], ['notIn'],
         ];
     }
 
@@ -221,5 +182,24 @@ class QueryExpressionTest extends TestCase
         $type = current($bindings)['type'];
 
         $this->assertEquals('date', $type);
+    }
+
+    /**
+     * Tests that creating query expressions with either the
+     * array notation or using the combinators will produce a
+     * zero-count expression object.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/12081
+     * @return void
+     */
+    public function testEmptyOr()
+    {
+        $expr = new QueryExpression();
+        $expr = $expr->or_([]);
+        $expr = $expr->or_([]);
+        $this->assertCount(0, $expr);
+
+        $expr = new QueryExpression(['OR' => []]);
+        $this->assertCount(0, $expr);
     }
 }

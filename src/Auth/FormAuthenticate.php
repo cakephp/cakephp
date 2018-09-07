@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
@@ -19,25 +20,33 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 
 /**
- * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
- * data. Can be used by configuring AuthComponent to use it via the AuthComponent::$authenticate config.
+ * Form authentication adapter for AuthComponent.
+ *
+ * Allows you to authenticate users based on form POST data.
+ * Usually, this is a login form that users enter information into.
+ *
+ * ### Using Form auth
+ *
+ * Load `AuthComponent` in your controller's `initialize()` and add 'Form' in 'authenticate' key
  *
  * ```
- *  $this->Auth->authenticate = [
- *      'Form' => [
- *          'finder' => ['auth' => ['some_finder_option' => 'some_value']]
- *      ]
- *  ]
+ * $this->loadComponent('Auth', [
+ *     'authenticate' => [
+ *         'Form' => [
+ *             'fields' => ['username' => 'email', 'password' => 'passwd'],
+ *             'finder' => 'auth',
+ *         ]
+ *     ]
+ * ]);
  * ```
  *
- * When configuring FormAuthenticate you can pass in config to which fields, model and additional conditions
- * are used. See FormAuthenticate::$_config for more information.
+ * When configuring FormAuthenticate you can pass in config to which fields, model and finder
+ * are used. See `BaseAuthenticate::$_defaultConfig` for more information.
  *
- * @see \Cake\Controller\Component\AuthComponent::$authenticate
+ * @see https://book.cakephp.org/3.0/en/controllers/components/authentication.html
  */
 class FormAuthenticate extends BaseAuthenticate
 {
-
     /**
      * Checks the fields to ensure they are supplied.
      *
@@ -45,7 +54,7 @@ class FormAuthenticate extends BaseAuthenticate
      * @param array $fields The fields to be checked.
      * @return bool False if the fields have not been supplied. True if they exist.
      */
-    protected function _checkFields(ServerRequest $request, array $fields)
+    protected function _checkFields(ServerRequest $request, array $fields): bool
     {
         foreach ([$fields['username'], $fields['password']] as $field) {
             $value = $request->getData($field);

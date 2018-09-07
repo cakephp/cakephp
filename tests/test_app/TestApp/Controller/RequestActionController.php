@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) Tests <https://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,7 +21,6 @@ use Cake\Http\Exception\NotFoundException;
  */
 class RequestActionController extends AppController
 {
-
     /**
      * The default model to use.
      *

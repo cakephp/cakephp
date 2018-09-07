@@ -1,7 +1,6 @@
 <?php
+declare(strict_types=1);
 /**
- * IntegrationShell file
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -25,28 +24,28 @@ use Cake\Console\Shell;
 
 class IntegrationShell extends Shell
 {
-
     /**
      * Option parser
      *
      * @return ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = new ConsoleOptionParser();
         $argAndOptionParser = (new ConsoleOptionParser())
             ->addArgument('arg', [
-                'required' => true
+                'required' => true,
             ])
             ->addOption('opt', [
-                'short' => 'o'
+                'short' => 'o',
             ]);
 
         $parser
             ->addSubcommand('argsAndOptions', [
-                'parser' => $argAndOptionParser
+                'parser' => $argAndOptionParser,
             ])
-            ->addSubcommand('bridge');
+            ->addSubcommand('bridge')
+            ->addSubcommand('abort_shell');
 
         return $parser;
     }
@@ -84,5 +83,13 @@ class IntegrationShell extends Shell
     {
         $this->out('arg: ' . $this->args[0]);
         $this->out('opt: ' . $this->param('opt'));
+    }
+
+    /**
+     * @throws \Cake\Console\Exception\StopException
+     */
+    public function abortShell()
+    {
+        $this->abort('Shell aborted');
     }
 }

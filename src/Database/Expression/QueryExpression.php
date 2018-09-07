@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,6 @@ use Countable;
  */
 class QueryExpression implements ExpressionInterface, Countable
 {
-
     use TypeMapTrait;
 
     /**
@@ -77,7 +77,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string $conjunction Value to be used for joining conditions
      * @return $this
      */
-    public function setConjunction($conjunction)
+    public function setConjunction(string $conjunction)
     {
         $this->_conjunction = strtoupper($conjunction);
 
@@ -89,49 +89,9 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @return string
      */
-    public function getConjunction()
+    public function getConjunction(): string
     {
         return $this->_conjunction;
-    }
-
-    /**
-     * Changes the conjunction for the conditions at this level of the expression tree.
-     * If called with no arguments it will return the currently configured value.
-     *
-     * @deprecated 3.4.0 Use setConjunction()/getConjunction() instead.
-     * @param string|null $conjunction value to be used for joining conditions. If null it
-     * will not set any value, but return the currently stored one
-     * @return string|$this
-     */
-    public function tieWith($conjunction = null)
-    {
-        deprecationWarning(
-            'QueryExpression::tieWith() is deprecated. ' .
-            'Use QueryExpression::setConjunction()/getConjunction() instead.'
-        );
-        if ($conjunction !== null) {
-            return $this->setConjunction($conjunction);
-        }
-
-        return $this->getConjunction();
-    }
-
-    /**
-     * Backwards compatible wrapper for tieWith()
-     *
-     * @param string|null $conjunction value to be used for joining conditions. If null it
-     * will not set any value, but return the currently stored one
-     * @return string|$this
-     * @deprecated 3.2.0 Use setConjunction()/getConjunction() instead
-     */
-    public function type($conjunction = null)
-    {
-        deprecationWarning(
-            'QueryExpression::type() is deprecated. ' .
-            'Use QueryExpression::setConjunction()/getConjunction() instead.'
-        );
-
-        return $this->tieWith($conjunction);
     }
 
     /**
@@ -505,7 +465,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->_conditions);
     }
@@ -517,7 +477,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string $right Right join condition field name.
      * @return $this
      */
-    public function equalFields($left, $right)
+    public function equalFields(string $left, string $right)
     {
         $wrapIdentifier = function ($field) {
             if ($field instanceof ExpressionInterface) {
@@ -539,7 +499,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param \Cake\Database\ValueBinder $generator Placeholder generator object
      * @return string
      */
-    public function sql(ValueBinder $generator)
+    public function sql(ValueBinder $generator): string
     {
         $len = $this->count();
         if ($len === 0) {
@@ -573,7 +533,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param callable $callable The callable to apply to all sub-expressions.
      * @return void
      */
-    public function traverse(callable $callable)
+    public function traverse(callable $callable): void
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
@@ -621,7 +581,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @return \Cake\Database\Expression\QueryExpression
      * @throws \BadMethodCallException
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args): self
     {
         if (in_array($method, ['and', 'or'])) {
             return call_user_func_array([$this, $method . '_'], $args);
@@ -636,10 +596,10 @@ class QueryExpression implements ExpressionInterface, Countable
      * as they often contain user input and arrays of strings
      * are easy to sneak in.
      *
-     * @param callable $c The callable to check.
+     * @param callable|string|array $c The callable to check.
      * @return bool Valid callable.
      */
-    public function isCallable($c)
+    public function isCallable($c): bool
     {
         if (is_string($c)) {
             return false;
@@ -657,7 +617,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @return bool
      */
-    public function hasNestedExpression()
+    public function hasNestedExpression(): bool
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
@@ -678,7 +638,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param array $types list of types associated on fields referenced in $conditions
      * @return void
      */
-    protected function _addConditions(array $conditions, array $types)
+    protected function _addConditions(array $conditions, array $types): void
     {
         $operators = ['and', 'or', 'xor'];
 
@@ -687,13 +647,30 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
+            if ($this->isCallable($c)) {
+                $expr = new static([], $typeMap);
+                $c = $c($expr, $this);
+            }
+
             if ($numericKey && empty($c)) {
                 continue;
             }
 
-            if ($this->isCallable($c)) {
-                $expr = new static([], $typeMap);
-                $c = $c($expr, $this);
+            $isArray = is_array($c);
+            $isOperator = $isNot = false;
+            if (!$numericKey) {
+                $normalizedKey = strtolower($k);
+                $isOperator = in_array($normalizedKey, $operators);
+                $isNot = $normalizedKey === 'not';
+            }
+
+            if (($isOperator || $isNot) && ($isArray || $c instanceof Countable) && count($c) === 0) {
+                continue;
+            }
+
+            if ($numericKey && $c instanceof ExpressionInterface) {
+                $this->_conditions[] = $c;
+                continue;
             }
 
             if ($numericKey && is_string($c)) {
@@ -701,22 +678,13 @@ class QueryExpression implements ExpressionInterface, Countable
                 continue;
             }
 
-            if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
+            if ($numericKey && $isArray || $isOperator) {
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }
 
-            if (strtolower($k) === 'not') {
+            if ($isNot) {
                 $this->_conditions[] = new UnaryExpression('NOT', new static($c, $typeMap));
-                continue;
-            }
-
-            if ($c instanceof self && count($c) === 0) {
-                continue;
-            }
-
-            if ($numericKey && $c instanceof ExpressionInterface) {
-                $this->_conditions[] = $c;
                 continue;
             }
 
@@ -738,7 +706,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param mixed $value The value to be bound to a placeholder for the field
      * @return string|\Cake\Database\ExpressionInterface
      */
-    protected function _parseCondition($field, $value)
+    protected function _parseCondition(string $field, $value)
     {
         $operator = '=';
         $expression = $field;
@@ -751,7 +719,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $type = $this->getTypeMap()->type($expression);
         $operator = strtolower(trim($operator));
 
-        $typeMultiple = strpos($type, '[]') !== false;
+        $typeMultiple = (is_string($type) && strpos($type, '[]') !== false);
         if (in_array($operator, ['in', 'not in']) || $typeMultiple) {
             $type = $type ?: 'string';
             $type .= $typeMultiple ? null : '[]';
@@ -797,7 +765,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|\Cake\Database\Expression\IdentifierExpression $field The field name to get a type for.
      * @return string|null The computed type or null, if the type is unknown.
      */
-    protected function _calculateType($field)
+    protected function _calculateType($field): ?string
     {
         $field = $field instanceof IdentifierExpression ? $field->getIdentifier() : $field;
         if (is_string($field)) {

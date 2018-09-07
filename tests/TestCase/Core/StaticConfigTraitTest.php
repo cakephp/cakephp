@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class TestCacheStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -30,7 +30,6 @@ class TestCacheStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'apc' => 'Cake\Cache\Engine\ApcuEngine', // @deprecated in 3.6. Use apcu instead.
         'apcu' => 'Cake\Cache\Engine\ApcuEngine',
         'file' => 'Cake\Cache\Engine\FileEngine',
         'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
@@ -46,7 +45,6 @@ class TestCacheStaticConfig
  */
 class TestEmailStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -66,7 +64,6 @@ class TestEmailStaticConfig
  */
 class TestLogStaticConfig
 {
-
     use StaticConfigTrait;
 
     /**
@@ -86,7 +83,6 @@ class TestLogStaticConfig
  */
 class StaticConfigTraitTest extends TestCase
 {
-
     /**
      * setup method
      *
@@ -127,7 +123,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testParseBadType()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\TypeError::class);
         $className = get_class($this->subject);
         $className::parseDsn(['url' => 'http://:80']);
     }
@@ -238,54 +234,5 @@ class StaticConfigTraitTest extends TestCase
             'scheme' => 'file',
         ];
         $this->assertEquals($expected, TestLogStaticConfig::parseDsn($dsn));
-    }
-
-    /**
-     * Test that the dsn map can be updated/append to
-     *
-     * @return void
-     */
-    public function testCanUpdateClassMap()
-    {
-        $this->deprecated(function () {
-            $expected = [
-                'console' => 'Cake\Log\Engine\ConsoleLog',
-                'file' => 'Cake\Log\Engine\FileLog',
-                'syslog' => 'Cake\Log\Engine\SyslogLog',
-            ];
-            $result = TestLogStaticConfig::getdsnClassMap();
-            $this->assertEquals($expected, $result, 'The class map should match the class property');
-
-            $expected = [
-                'console' => 'Special\EngineLog',
-                'file' => 'Cake\Log\Engine\FileLog',
-                'syslog' => 'Cake\Log\Engine\SyslogLog',
-            ];
-            $result = TestLogStaticConfig::dsnClassMap(['console' => 'Special\EngineLog']);
-            $this->assertEquals($expected, $result, 'Should be possible to change the map');
-
-            $expected = [
-                'console' => 'Special\EngineLog',
-                'file' => 'Cake\Log\Engine\FileLog',
-                'syslog' => 'Cake\Log\Engine\SyslogLog',
-                'my' => 'Special\OtherLog'
-            ];
-            $result = TestLogStaticConfig::dsnClassMap(['my' => 'Special\OtherLog']);
-            $this->assertEquals($expected, $result, 'Should be possible to add to the map');
-        });
-    }
-
-    /**
-     * Tests that former handling of integer keys coming in from PHP internal conversions
-     * won't break in 3.4.
-     *
-     * @return void
-     */
-    public function testConfigBC()
-    {
-        $this->deprecated(function () {
-            $result = TestLogStaticConfig::config(404);
-            $this->assertNull($result);
-        });
     }
 }

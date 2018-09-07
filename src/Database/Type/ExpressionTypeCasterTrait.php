@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 
 /**
  * Offers a method to convert values to ExpressionInterface objects
@@ -23,7 +24,6 @@ use Cake\Database\Type;
  */
 trait ExpressionTypeCasterTrait
 {
-
     /**
      * Conditionally converts the passed value to an ExpressionInterface object
      * if the type class implements the ExpressionTypeInterface. Otherwise,
@@ -40,7 +40,7 @@ trait ExpressionTypeCasterTrait
         }
 
         $baseType = str_replace('[]', '', $type);
-        $converter = Type::build($baseType);
+        $converter = TypeFactory::build($baseType);
 
         if (!$converter instanceof ExpressionTypeInterface) {
             return $value;
@@ -63,12 +63,12 @@ trait ExpressionTypeCasterTrait
      * @param array $types List of type names
      * @return array
      */
-    protected function _requiresToExpressionCasting($types)
+    protected function _requiresToExpressionCasting(array $types): array
     {
         $result = [];
         $types = array_filter($types);
         foreach ($types as $k => $type) {
-            $object = Type::build($type);
+            $object = TypeFactory::build($type);
             if ($object instanceof ExpressionTypeInterface) {
                 $result[$k] = $object;
             }

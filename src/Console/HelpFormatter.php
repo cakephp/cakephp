@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,6 @@
  */
 namespace Cake\Console;
 
-use Cake\Console\Exception\ConsoleException;
 use Cake\Utility\Text;
 use SimpleXMLElement;
 
@@ -29,7 +29,6 @@ use SimpleXMLElement;
  */
 class HelpFormatter
 {
-
     /**
      * The maximum number of arguments shown when generating usage.
      *
@@ -73,15 +72,10 @@ class HelpFormatter
      *
      * @param string $alias The alias
      * @return void
-     * @throws \Cake\Console\Exception\ConsoleException When alias is not a string.
      */
-    public function setAlias($alias)
+    public function setAlias(string $alias): void
     {
-        if (is_string($alias)) {
-            $this->_alias = $alias;
-        } else {
-            throw new ConsoleException('Alias must be of type string.');
-        }
+        $this->_alias = $alias;
     }
 
     /**
@@ -111,7 +105,7 @@ class HelpFormatter
                 $out[] = Text::wrapBlock($command->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1
+                    'indentAt' => 1,
                 ]);
             }
             $out[] = '';
@@ -128,7 +122,7 @@ class HelpFormatter
                 $out[] = Text::wrapBlock($option->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1
+                    'indentAt' => 1,
                 ]);
             }
             $out[] = '';
@@ -143,7 +137,7 @@ class HelpFormatter
                 $out[] = Text::wrapBlock($argument->help($max), [
                     'width' => $width,
                     'indent' => str_repeat(' ', $max),
-                    'indentAt' => 1
+                    'indentAt' => 1,
                 ]);
             }
             $out[] = '';
@@ -164,7 +158,7 @@ class HelpFormatter
      *
      * @return string
      */
-    protected function _generateUsage()
+    protected function _generateUsage(): string
     {
         $usage = [$this->_alias . ' ' . $this->_parser->getCommand()];
         $subcommands = $this->_parser->subcommands();
@@ -197,7 +191,7 @@ class HelpFormatter
      * @param array $collection The collection to find a max length of.
      * @return int
      */
-    protected function _getMaxLength($collection)
+    protected function _getMaxLength(array $collection): int
     {
         $max = 0;
         foreach ($collection as $item) {
@@ -213,7 +207,7 @@ class HelpFormatter
      * @param bool $string Return the SimpleXml object or a string. Defaults to true.
      * @return string|\SimpleXMLElement See $string
      */
-    public function xml($string = true)
+    public function xml(bool $string = true)
     {
         $parser = $this->_parser;
         $xml = new SimpleXMLElement('<shell></shell>');

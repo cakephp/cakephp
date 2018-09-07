@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\TestSuite\TestCase;
  */
 class BodyParserMiddlewareTest extends TestCase
 {
-
     /**
      * Data provider for HTTP method tests.
      *
@@ -49,7 +49,7 @@ class BodyParserMiddlewareTest extends TestCase
     public static function httpMethodProvider()
     {
         return [
-            ['PATCH'], ['PUT'], ['POST'], ['DELETE']
+            ['PATCH'], ['PUT'], ['POST'], ['DELETE'],
         ];
     }
 
@@ -155,11 +155,13 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'text/csv',
             ],
-            'input' => 'a,b,c'
+            'input' => 'a,b,c',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals([], $req->getParsedBody());
+
+            return $res;
         };
         $parser($request, $response, $next);
     }
@@ -179,11 +181,13 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'ApPlIcAtIoN/JSoN',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+
+            return $res;
         };
         $parser($request, $response, $next);
     }
@@ -203,11 +207,13 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'application/json',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+
+            return $res;
         };
         $parser($request, $response, $next);
     }
@@ -226,11 +232,13 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/json; charset=utf-8',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
+
+            return $res;
         };
         $parser($request, $response, $next);
     }
@@ -250,11 +258,13 @@ class BodyParserMiddlewareTest extends TestCase
                 'REQUEST_METHOD' => $method,
                 'CONTENT_TYPE' => 'application/json',
             ],
-            'input' => '{"title": "yay"}'
+            'input' => '{"title": "yay"}',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals([], $req->getParsedBody());
+
+            return $res;
         };
         $parser($request, $response, $next);
     }
@@ -278,14 +288,16 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/xml',
             ],
-            'input' => $xml
+            'input' => $xml,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $expected = [
-                'article' => ['title' => 'yay']
+                'article' => ['title' => 'yay'],
             ];
             $this->assertEquals($expected, $req->getParsedBody());
+
+            return $res;
         };
 
         $parser = new BodyParserMiddleware(['xml' => true]);
@@ -311,17 +323,19 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/xml',
             ],
-            'input' => $xml
+            'input' => $xml,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $expected = [
                 'article' => [
                     'id' => 1,
-                    'title' => 'first'
-                ]
+                    'title' => 'first',
+                ],
             ];
             $this->assertEquals($expected, $req->getParsedBody());
+
+            return $res;
         };
 
         $parser = new BodyParserMiddleware(['xml' => true]);
@@ -357,11 +371,13 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/xml',
             ],
-            'input' => $xml
+            'input' => $xml,
         ]);
         $response = new Response();
         $next = function ($req, $res) {
             $this->assertEquals([], $req->getParsedBody());
+
+            return $res;
         };
 
         $parser = new BodyParserMiddleware(['xml' => true]);
@@ -380,10 +396,11 @@ XML;
                 'REQUEST_METHOD' => 'POST',
                 'CONTENT_TYPE' => 'application/json',
             ],
-            'input' => 'lol'
+            'input' => 'lol',
         ]);
         $response = new Response();
         $next = function ($req, $res) {
+            return $res;
         };
 
         $this->expectException(BadRequestException::class);

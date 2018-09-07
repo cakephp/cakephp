@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,8 @@ use Cake\Utility\Hash;
  *   will be used when there is no request data set. Data should be nested following
  *   the dot separated paths you access your fields with.
  * - `required` A nested array of fields, relationships and boolean
- *   flags to indicate a field is required.
+ *   flags to indicate a field is required. The value can also be a string to be used
+ *   as the required error message
  * - `schema` An array of data that emulate the column structures that
  *   Cake\Database\Schema\Schema uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
@@ -53,13 +55,17 @@ use Cake\Utility\Hash;
  *    'defaults' => [
  *      'id' => 1,
  *      'title' => 'First post!',
- *    ]
+ *    ],
+ *    'required' => [
+ *      'id' => true, // will use default required message
+ *      'title' => 'Please enter a title',
+ *      'body' => false,
+ *    ],
  *  ];
  *  ```
  */
 class ArrayContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -97,7 +103,7 @@ class ArrayContext implements ContextInterface
      *
      * @return array
      */
-    public function primaryKey()
+    public function primaryKey(): array
     {
         if (empty($this->_context['schema']['_constraints']) ||
             !is_array($this->_context['schema']['_constraints'])
@@ -116,7 +122,7 @@ class ArrayContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isPrimaryKey($field)
+    public function isPrimaryKey(string $field): bool
     {
         $primaryKey = $this->primaryKey();
 
@@ -132,7 +138,7 @@ class ArrayContext implements ContextInterface
      *
      * @return bool
      */
-    public function isCreate()
+    public function isCreate(): bool
     {
         $primary = $this->primaryKey();
         foreach ($primary as $column) {
@@ -159,11 +165,11 @@ class ArrayContext implements ContextInterface
      *      context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
-    public function val($field, $options = [])
+    public function val(string $field, array $options = [])
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);
@@ -193,23 +199,39 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check required-ness for.
      * @return bool
      */
-    public function isRequired($field)
+    public function isRequired(string $field): bool
+    {
+        return (bool)$this->getRequiredMessage($field);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage(string $field): ?string
     {
         if (!is_array($this->_context['required'])) {
-            return false;
+            return null;
         }
         $required = Hash::get($this->_context['required'], $field);
         if ($required === null) {
             $required = Hash::get($this->_context['required'], $this->stripNesting($field));
         }
 
-        return (bool)$required;
+        if ($required === false) {
+            return null;
+        }
+
+        if ($required === true) {
+            $required = __d('cake', 'This field is required');
+        }
+
+        return $required;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function fieldNames()
+    public function fieldNames(): array
     {
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
@@ -224,7 +246,7 @@ class ArrayContext implements ContextInterface
      * @return null|string An abstract data type or null.
      * @see \Cake\Database\Type
      */
-    public function type($field)
+    public function type(string $field): ?string
     {
         if (!is_array($this->_context['schema'])) {
             return null;
@@ -235,7 +257,7 @@ class ArrayContext implements ContextInterface
             $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
         }
 
-        return isset($schema['type']) ? $schema['type'] : null;
+        return $schema['type'] ?? null;
     }
 
     /**
@@ -244,7 +266,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to get additional data on.
      * @return array An array of data describing the additional attributes on a field.
      */
-    public function attributes($field)
+    public function attributes(string $field): array
     {
         if (!is_array($this->_context['schema'])) {
             return [];
@@ -264,13 +286,13 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
      */
-    public function hasError($field)
+    public function hasError(string $field): bool
     {
         if (empty($this->_context['errors'])) {
             return false;
         }
 
-        return (bool)Hash::check($this->_context['errors'], $field);
+        return Hash::check($this->_context['errors'], $field);
     }
 
     /**
@@ -280,13 +302,13 @@ class ArrayContext implements ContextInterface
      * @return array An array of errors, an empty array will be returned when the
      *    context has no errors.
      */
-    public function error($field)
+    public function error(string $field): array
     {
         if (empty($this->_context['errors'])) {
             return [];
         }
 
-        return Hash::get($this->_context['errors'], $field);
+        return (array)Hash::get($this->_context['errors'], $field);
     }
 
     /**
@@ -297,7 +319,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path
      * @return string A string with stripped numeric nesting
      */
-    protected function stripNesting($field)
+    protected function stripNesting(string $field): string
     {
         return preg_replace('/\.\d*\./', '.', $field);
     }

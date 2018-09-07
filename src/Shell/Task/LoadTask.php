@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Shell\Task;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Filesystem\File;
 
@@ -22,7 +24,6 @@ use Cake\Filesystem\File;
  */
 class LoadTask extends Shell
 {
-
     /**
      * Path to the bootstrap file.
      *
@@ -36,7 +37,7 @@ class LoadTask extends Shell
      * @param string|null $plugin The plugin name.
      * @return bool
      */
-    public function main($plugin = null)
+    public function main($plugin = null): bool
     {
         $filename = 'bootstrap';
         if ($this->params['cli']) {
@@ -69,7 +70,7 @@ class LoadTask extends Shell
      *
      * @return string
      */
-    protected function makeOptions()
+    protected function makeOptions(): string
     {
         $autoloadString = $this->param('autoload') ? "'autoload' => true" : '';
         $bootstrapString = $this->param('bootstrap') ? "'bootstrap' => true" : '';
@@ -86,7 +87,7 @@ class LoadTask extends Shell
      * @param string $options The plugin options to add
      * @return void
      */
-    protected function modifyApplication($app, $plugin, $options)
+    protected function modifyApplication(string $app, string $plugin, string $options): void
     {
         $file = new File($app, false);
         $contents = $file->read();
@@ -94,10 +95,10 @@ class LoadTask extends Shell
         $append = "\n        \$this->addPlugin('%s', [%s]);\n";
         $insert = str_replace(', []', '', sprintf($append, $plugin, $options));
 
-        if (!preg_match('/function bootstrap\(\)/m', $contents)) {
+        if (!preg_match('/function bootstrap\(\)(?:\s*)\:(?:\s*)void/m', $contents)) {
             $this->abort('Your Application class does not have a bootstrap() method. Please add one.');
         } else {
-            $contents = preg_replace('/(function bootstrap\(\)(?:\s+)\{)/m', '$1' . $insert, $contents);
+            $contents = preg_replace('/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m', '$1' . $insert, $contents);
         }
         $file->write($contents);
 
@@ -112,7 +113,7 @@ class LoadTask extends Shell
      * @param string $options The options string
      * @return bool If modify passed.
      */
-    protected function _modifyBootstrap($plugin, $options)
+    protected function _modifyBootstrap(string $plugin, string $options): bool
     {
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
@@ -134,7 +135,7 @@ class LoadTask extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
 

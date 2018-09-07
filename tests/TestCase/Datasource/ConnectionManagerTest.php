@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
@@ -59,7 +60,6 @@ class FakeConnection
  */
 class ConnectionManagerTest extends TestCase
 {
-
     /**
      * tearDown method
      *
@@ -86,7 +86,7 @@ class ConnectionManagerTest extends TestCase
                 'instance' => 'Sqlite',
                 'database' => ':memory:',
             ]],
-            'Direct instance' => [new FakeConnection],
+            'Direct instance' => [new FakeConnection()],
         ];
     }
 
@@ -114,7 +114,7 @@ class ConnectionManagerTest extends TestCase
     {
         $this->expectException(\Cake\Datasource\Exception\MissingDatasourceException::class);
         ConnectionManager::setConfig('test_variant', [
-            'className' => 'Herp\Derp'
+            'className' => 'Herp\Derp',
         ]);
         ConnectionManager::get('test_variant');
     }
@@ -189,7 +189,7 @@ class ConnectionManagerTest extends TestCase
     {
         ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
-            'database' => ':memory:'
+            'database' => ':memory:',
         ]);
         $results = ConnectionManager::configured();
         $this->assertContains('test_variant', $results);
@@ -202,7 +202,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testGetPluginDataSource()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $name = 'test_variant';
         $config = ['className' => 'TestPlugin.TestSource', 'foo' => 'bar'];
         ConnectionManager::setConfig($name, $config);
@@ -222,7 +222,7 @@ class ConnectionManagerTest extends TestCase
     {
         ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
-            'database' => ':memory:'
+            'database' => ':memory:',
         ]);
         $result = ConnectionManager::configured();
         $this->assertContains('test_variant', $result);
@@ -243,7 +243,7 @@ class ConnectionManagerTest extends TestCase
     {
         ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
-            'database' => ':memory:'
+            'database' => ':memory:',
         ]);
         ConnectionManager::alias('test_variant', 'other_name');
         $result = ConnectionManager::get('test_variant');
@@ -279,7 +279,7 @@ class ConnectionManagerTest extends TestCase
                     'database' => 'database',
                     'port' => 3306,
                     'scheme' => 'mysql',
-                ]
+                ],
             ],
             'subdomain host' => [
                 'mysql://my.host-name.com:3306/database',
@@ -290,7 +290,7 @@ class ConnectionManagerTest extends TestCase
                     'database' => 'database',
                     'port' => 3306,
                     'scheme' => 'mysql',
-                ]
+                ],
             ],
             'user & pass' => [
                 'mysql://root:secret@localhost:3306/database?log=1',
@@ -303,8 +303,8 @@ class ConnectionManagerTest extends TestCase
                     'password' => 'secret',
                     'port' => 3306,
                     'database' => 'database',
-                    'log' => '1'
-                ]
+                    'log' => '1',
+                ],
             ],
             'no password' => [
                 'mysql://user@localhost:3306/database',
@@ -316,7 +316,7 @@ class ConnectionManagerTest extends TestCase
                     'port' => 3306,
                     'scheme' => 'mysql',
                     'username' => 'user',
-                ]
+                ],
             ],
             'empty password' => [
                 'mysql://user:@localhost:3306/database',
@@ -329,7 +329,7 @@ class ConnectionManagerTest extends TestCase
                     'scheme' => 'mysql',
                     'username' => 'user',
                     'password' => '',
-                ]
+                ],
             ],
             'sqlite memory' => [
                 'sqlite:///:memory:',
@@ -338,7 +338,7 @@ class ConnectionManagerTest extends TestCase
                     'driver' => 'Cake\Database\Driver\Sqlite',
                     'database' => ':memory:',
                     'scheme' => 'sqlite',
-                ]
+                ],
             ],
             'sqlite path' => [
                 'sqlite:////absolute/path',
@@ -347,7 +347,7 @@ class ConnectionManagerTest extends TestCase
                     'driver' => 'Cake\Database\Driver\Sqlite',
                     'database' => '/absolute/path',
                     'scheme' => 'sqlite',
-                ]
+                ],
             ],
             'sqlite database query' => [
                 'sqlite:///?database=:memory:',
@@ -356,7 +356,7 @@ class ConnectionManagerTest extends TestCase
                     'driver' => 'Cake\Database\Driver\Sqlite',
                     'database' => ':memory:',
                     'scheme' => 'sqlite',
-                ]
+                ],
             ],
             'sqlserver' => [
                 'sqlserver://sa:Password12!@.\SQL2012SP1/cakephp?MultipleActiveResultSets=false',
@@ -369,7 +369,7 @@ class ConnectionManagerTest extends TestCase
                     'database' => 'cakephp',
                     'scheme' => 'sqlserver',
                     'username' => 'sa',
-                ]
+                ],
             ],
             'sqllocaldb' => [
                 'sqlserver://username:password@(localdb)\.\DeptSharedLocalDB/database',
@@ -381,7 +381,7 @@ class ConnectionManagerTest extends TestCase
                     'database' => 'database',
                     'scheme' => 'sqlserver',
                     'username' => 'username',
-                ]
+                ],
             ],
             'classname query arg' => [
                 'mysql://localhost/database?className=Custom\Driver',
@@ -391,7 +391,7 @@ class ConnectionManagerTest extends TestCase
                     'driver' => 'Custom\Driver',
                     'host' => 'localhost',
                     'scheme' => 'mysql',
-                ]
+                ],
             ],
             'classname and port' => [
                 'mysql://localhost:3306/database?className=Custom\Driver',
@@ -402,7 +402,7 @@ class ConnectionManagerTest extends TestCase
                     'host' => 'localhost',
                     'scheme' => 'mysql',
                     'port' => 3306,
-                ]
+                ],
             ],
             'custom connection class' => [
                 'Cake\Database\Connection://localhost:3306/database?driver=Cake\Database\Driver\Mysql',
@@ -413,7 +413,7 @@ class ConnectionManagerTest extends TestCase
                     'host' => 'localhost',
                     'scheme' => 'Cake\Database\Connection',
                     'port' => 3306,
-                ]
+                ],
             ],
             'complex password' => [
                 'mysql://user:/?#][{}$%20@!@localhost:3306/database?log=1&quoteIdentifiers=1',
@@ -428,8 +428,8 @@ class ConnectionManagerTest extends TestCase
                     'username' => 'user',
                     'log' => 1,
                     'quoteIdentifiers' => 1,
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -465,7 +465,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testConfigWithObject()
     {
-        $connection = new FakeConnection;
+        $connection = new FakeConnection();
         ConnectionManager::setConfig('test_variant', $connection);
         $this->assertSame($connection, ConnectionManager::get('test_variant'));
     }
@@ -477,7 +477,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testConfigWithCallable()
     {
-        $connection = new FakeConnection;
+        $connection = new FakeConnection();
         $callable = function ($alias) use ($connection) {
             $this->assertEquals('test_variant', $alias);
 
@@ -498,7 +498,7 @@ class ConnectionManagerTest extends TestCase
         //Set with explicit name
         ConnectionManager::setConfig('test_variant', [
             'className' => __NAMESPACE__ . '\FakeConnection',
-            'database' => ':memory:'
+            'database' => ':memory:',
         ]);
         $result = ConnectionManager::get('test_variant');
         $this->assertSame('test_variant', $result->configName());
@@ -507,8 +507,8 @@ class ConnectionManagerTest extends TestCase
         ConnectionManager::setConfig([
             'test_variant' => [
                 'className' => __NAMESPACE__ . '\FakeConnection',
-                'database' => ':memory:'
-            ]
+                'database' => ':memory:',
+            ],
         ]);
         $result = ConnectionManager::get('test_variant');
         $this->assertSame('test_variant', $result->configName());

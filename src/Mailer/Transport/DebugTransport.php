@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Emulates the email sending process for testing purposes
  *
@@ -25,14 +26,13 @@ use Cake\Mailer\Email;
  */
 class DebugTransport extends AbstractTransport
 {
-
     /**
      * Send mail
      *
      * @param \Cake\Mailer\Email $email Cake Email
      * @return array
      */
-    public function send(Email $email)
+    public function send(Email $email): array
     {
         $headers = $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']);
         $headers = $this->_headersToString($headers);

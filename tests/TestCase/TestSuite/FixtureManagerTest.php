@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,6 @@ use PDOException;
  */
 class FixtureManagerTest extends TestCase
 {
-
     /**
      * Setup method
      *
@@ -45,6 +45,7 @@ class FixtureManagerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        Plugin::unload();
     }
 
     /**
@@ -71,14 +72,14 @@ class FixtureManagerTest extends TestCase
     public function testLogSchemaWithDebug()
     {
         $db = ConnectionManager::get('test');
-        $restore = $db->logQueries();
-        $db->logQueries(true);
+        $restore = $db->isQueryLoggingEnabled();
+        $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
         Log::setConfig('testQueryLogger', [
             'className' => 'Console',
-            'stream' => $buffer
+            'stream' => $buffer,
         ]);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
@@ -90,7 +91,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->load($test);
         $this->manager->shutdown();
 
-        $db->logQueries($restore);
+        $db->enableQueryLogging($restore);
         $this->assertContains('CREATE TABLE', implode('', $buffer->messages()));
     }
 
@@ -103,14 +104,14 @@ class FixtureManagerTest extends TestCase
     public function testResetDbIfTableExists()
     {
         $db = ConnectionManager::get('test');
-        $restore = $db->logQueries();
-        $db->logQueries(true);
+        $restore = $db->isQueryLoggingEnabled();
+        $db->enableQueryLogging(true);
 
         $this->manager->setDebug(true);
         $buffer = new ConsoleOutput();
         Log::setConfig('testQueryLogger', [
             'className' => 'Console',
-            'stream' => $buffer
+            'stream' => $buffer,
         ]);
 
         $table = new TableSchema('articles', [
@@ -128,7 +129,7 @@ class FixtureManagerTest extends TestCase
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
-        $db->logQueries($restore);
+        $db->enableQueryLogging($restore);
         $this->assertContains('DROP TABLE', implode('', $buffer->messages()));
     }
 
@@ -149,15 +150,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->manager->unload($test);
@@ -168,15 +169,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
 
@@ -190,7 +191,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizePlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['plugin.test_plugin.articles'];
@@ -211,7 +212,7 @@ class FixtureManagerTest extends TestCase
      */
     public function testFixturizePluginSubdirectory()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->fixtures = ['plugin.test_plugin.blog/comments'];
@@ -306,7 +307,7 @@ class FixtureManagerTest extends TestCase
             ->setMethods(['execute'])
             ->setConstructorArgs([[
                 'database' => $connection->config()['database'],
-                'driver' => $connection->getDriver()
+                'driver' => $connection->getDriver(),
             ]])
             ->getMock();
         $testOther->expects($this->atLeastOnce())
@@ -349,15 +350,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
@@ -374,15 +375,15 @@ class FixtureManagerTest extends TestCase
         $expectedConstraint = [
             'type' => 'foreign',
             'columns' => [
-                'tag_id'
+                'tag_id',
             ],
             'references' => [
                 'tags',
-                'id'
+                'id',
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => []
+            'length' => [],
         ];
         $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -40,7 +41,6 @@ namespace Cake\Core;
  */
 class App
 {
-
     /**
      * Return the class name namespaced. This method checks if the class is defined on the
      * application/plugin, otherwise try to load from the CakePHP core
@@ -48,9 +48,9 @@ class App
      * @param string $class Class name
      * @param string $type Type of class
      * @param string $suffix Class name suffix
-     * @return false|string False if the class is not found or namespaced class name
+     * @return string|null Namespaced class name, null if the class is not found.
      */
-    public static function className($class, $type = '', $suffix = '')
+    public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
         if (strpos($class, '\\') !== false) {
             return $class;
@@ -65,13 +65,13 @@ class App
             return $base . $fullname;
         }
         if ($plugin) {
-            return false;
+            return null;
         }
-        if (static::_classExistsInBase($fullname, 'Cake')) {
-            return 'Cake' . $fullname;
+        if (!static::_classExistsInBase($fullname, 'Cake')) {
+            return null;
         }
 
-        return false;
+        return 'Cake' . $fullname;
     }
 
     /**
@@ -114,7 +114,7 @@ class App
      * @param string $suffix Class name suffix
      * @return string Plugin split name of class
      */
-    public static function shortName($class, $type, $suffix = '')
+    public static function shortName(string $class, string $type, string $suffix = ''): string
     {
         $class = str_replace('\\', '/', $class);
         $type = '/' . $type . '/';
@@ -129,7 +129,7 @@ class App
 
         $nonPluginNamespaces = [
             'Cake',
-            str_replace('\\', '/', Configure::read('App.namespace'))
+            str_replace('\\', '/', Configure::read('App.namespace')),
         ];
         if (in_array($pluginName, $nonPluginNamespaces)) {
             return $name;
@@ -147,7 +147,7 @@ class App
      * @param string $namespace Namespace.
      * @return bool
      */
-    protected static function _classExistsInBase($name, $namespace)
+    protected static function _classExistsInBase(string $name, string $namespace): bool
     {
         return class_exists($namespace . $name);
     }
@@ -175,7 +175,7 @@ class App
      * @return array
      * @link https://book.cakephp.org/3.0/en/core-libraries/app.html#finding-paths-to-namespaces
      */
-    public static function path($type, $plugin = null)
+    public static function path(string $type, ?string $plugin = null): array
     {
         if ($type === 'Plugin') {
             return (array)Configure::read('App.paths.plugins');
@@ -211,7 +211,7 @@ class App
      * @param string $type Package type.
      * @return array Full path to package
      */
-    public static function core($type)
+    public static function core(string $type): array
     {
         if ($type === 'Template') {
             return [CORE_PATH . 'templates' . DIRECTORY_SEPARATOR];

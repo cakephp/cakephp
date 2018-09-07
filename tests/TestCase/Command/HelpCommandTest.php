@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,12 +17,13 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
+use Cake\Http\BaseApplication;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * HelpShell test.
+ * HelpCommand test.
  */
-class HelpShellTest extends ConsoleIntegrationTestCase
+class HelpCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
@@ -33,7 +35,23 @@ class HelpShellTest extends ConsoleIntegrationTestCase
         parent::setUp();
         $this->setAppNamespace();
         $this->useCommandRunner(true);
-        Plugin::load('TestPlugin');
+        Plugin::unload();
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+        $app->addPlugin('TestPlugin');
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        Plugin::unload();
     }
 
     /**
@@ -46,6 +64,7 @@ class HelpShellTest extends ConsoleIntegrationTestCase
         $this->exec('help');
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertCommandList();
+        Plugin::unload();
     }
 
     /**
@@ -63,7 +82,6 @@ class HelpShellTest extends ConsoleIntegrationTestCase
     /**
      * Assert the help output.
      *
-     * @param string $output The output to check.
      * @return void
      */
     protected function assertCommandList()
@@ -77,6 +95,7 @@ class HelpShellTest extends ConsoleIntegrationTestCase
         $this->assertOutputContains('- test_plugin.sample', 'Long plugin name');
         $this->assertOutputContains('- routes', 'core shell');
         $this->assertOutputContains('- example', 'short plugin name');
+        $this->assertOutputContains('- abort', 'command object');
         $this->assertOutputContains('To run a command', 'more info present');
         $this->assertOutputContains('To get help', 'more info present');
     }
@@ -95,7 +114,7 @@ class HelpShellTest extends ConsoleIntegrationTestCase
         $find = '<shell name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
         $this->assertOutputContains($find);
 
-        $find = '<shell name="orm_cache" call_as="orm_cache" provider="Cake\Shell\OrmCacheShell" help="orm_cache -h"';
+        $find = '<shell name="schema_cache" call_as="schema_cache" provider="Cake\Shell\SchemaCacheShell" help="schema_cache -h"';
         $this->assertOutputContains($find);
 
         $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Shell\SampleShell" help="test_plugin.sample -h"';

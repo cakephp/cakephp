@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 
 class SiteArticlesFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -30,7 +29,7 @@ class SiteArticlesFixture extends TestFixture
         'site_id' => ['type' => 'integer', 'null' => false],
         'title' => ['type' => 'string', 'null' => true],
         'body' => 'text',
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id', 'site_id']]],
     ];
 
     /**
@@ -66,6 +65,6 @@ class SiteArticlesFixture extends TestFixture
             'site_id' => 1,
             'title' => 'Fourth Article',
             'body' => 'Fourth Article Body',
-        ]
+        ],
     ];
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -13,7 +14,6 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\CommandFactory;
-use Cake\Console\ConsoleIo;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Command\DemoCommand;

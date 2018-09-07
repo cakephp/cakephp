@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Database\Dialect;
 
+use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\MysqlSchema;
 use Cake\Database\SqlDialectTrait;
 
@@ -25,7 +27,6 @@ use Cake\Database\SqlDialectTrait;
  */
 trait MysqlDialectTrait
 {
-
     use SqlDialectTrait;
 
     /**
@@ -55,9 +56,9 @@ trait MysqlDialectTrait
      * Used by Cake\Database\Schema package to reflect schema and
      * generate schema.
      *
-     * @return \Cake\Database\Schema\MysqlSchema
+     * @return \Cake\Database\Schema\BaseSchema
      */
-    public function schemaDialect()
+    public function schemaDialect(): BaseSchema
     {
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new MysqlSchema($this);
@@ -69,7 +70,7 @@ trait MysqlDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function disableForeignKeySQL()
+    public function disableForeignKeySQL(): string
     {
         return 'SET foreign_key_checks = 0';
     }
@@ -77,7 +78,7 @@ trait MysqlDialectTrait
     /**
      * {@inheritDoc}
      */
-    public function enableForeignKeySQL()
+    public function enableForeignKeySQL(): string
     {
         return 'SET foreign_key_checks = 1';
     }

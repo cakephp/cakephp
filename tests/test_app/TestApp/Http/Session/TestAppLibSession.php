@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace TestApp\Http\Session;
 
 use SessionHandlerInterface;
@@ -8,7 +9,6 @@ use SessionHandlerInterface;
  */
 class TestAppLibSession implements SessionHandlerInterface
 {
-
     public $options = [];
 
     public function __construct($options = [])

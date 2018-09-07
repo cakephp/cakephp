@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,6 @@ use UnexpectedValueException;
  */
 trait ModelAwareTrait
 {
-
     /**
      * This object's primary model class name. Should be a plural form.
      * CakePHP will not inflect the name.
@@ -61,7 +61,7 @@ trait ModelAwareTrait
      * @param string $name Class name.
      * @return void
      */
-    protected function _setModelClass($name)
+    protected function _setModelClass(string $name): void
     {
         if (empty($this->modelClass)) {
             $this->modelClass = $name;
@@ -124,7 +124,7 @@ trait ModelAwareTrait
      * @param callable $factory The factory function used to create instances.
      * @return void
      */
-    public function modelFactory($type, callable $factory)
+    public function modelFactory(string $type, callable $factory): void
     {
         $this->_modelFactories[$type] = $factory;
     }
@@ -134,7 +134,7 @@ trait ModelAwareTrait
      *
      * @return string
      */
-    public function getModelType()
+    public function getModelType(): string
     {
         return $this->_modelType;
     }
@@ -146,31 +146,8 @@ trait ModelAwareTrait
      *
      * @return $this
      */
-    public function setModelType($modelType)
+    public function setModelType(string $modelType)
     {
-        $this->_modelType = $modelType;
-
-        return $this;
-    }
-
-    /**
-     * Set or get the model type to be used by this class
-     *
-     * @deprecated 3.5.0 Use getModelType()/setModelType() instead.
-     * @param string|null $modelType The model type or null to retrieve the current
-     *
-     * @return string|$this
-     */
-    public function modelType($modelType = null)
-    {
-        deprecationWarning(
-            get_called_class() . '::modelType() is deprecated. ' .
-            'Use setModelType()/getModelType() instead.'
-        );
-        if ($modelType === null) {
-            return $this->_modelType;
-        }
-
         $this->_modelType = $modelType;
 
         return $this;

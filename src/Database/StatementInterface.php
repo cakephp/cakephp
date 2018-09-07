@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,9 +18,31 @@ namespace Cake\Database;
 /**
  * Represents a database statement. Concrete implementations
  * can either use PDOStatement or a native driver
+ *
+ * @property-read string $queryString
  */
 interface StatementInterface
 {
+    /**
+     * Used to designate that numeric indexes be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    public const FETCH_TYPE_NUM = 'num';
+
+    /**
+     * Used to designate that an associated array be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    public const FETCH_TYPE_ASSOC = 'assoc';
+
+    /**
+     * Used to designate that a stdClass object be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    public const FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Assign a value to a positional or named variable in prepared query. If using
@@ -38,10 +61,10 @@ interface StatementInterface
      *
      * @param string|int $column name or param position to be bound
      * @param mixed $value The value to bind to variable in query
-     * @param string $type name of configured Type class
+     * @param string|int $type name of configured Type class, or PDO type constant.
      * @return void
      */
-    public function bindValue($column, $value, $type = 'string');
+    public function bindValue($column, $value, $type = 'string'): void;
 
     /**
      * Closes a cursor in the database, freeing up any resources and memory
@@ -50,7 +73,7 @@ interface StatementInterface
      *
      * @return void
      */
-    public function closeCursor();
+    public function closeCursor(): void;
 
     /**
      * Returns the number of columns this statement's results will contain
@@ -65,7 +88,7 @@ interface StatementInterface
      *
      * @return int
      */
-    public function columnCount();
+    public function columnCount(): int;
 
     /**
      * Returns the error code for the last error that occurred when executing this statement
@@ -80,7 +103,7 @@ interface StatementInterface
      *
      * @return array
      */
-    public function errorInfo();
+    public function errorInfo(): array;
 
     /**
      * Executes the statement by sending the SQL query to the database. It can optionally
@@ -91,7 +114,7 @@ interface StatementInterface
      * @param array|null $params list of values to be bound to query
      * @return bool true on success, false otherwise
      */
-    public function execute($params = null);
+    public function execute(?array $params = null): bool;
 
     /**
      * Returns the next row for the result set after executing this statement.
@@ -106,7 +129,7 @@ interface StatementInterface
      *  print_r($statement->fetch('assoc')); // will show ['id' => 1, 'title' => 'a title']
      * ```
      *
-     * @param string $type 'num' for positional columns, assoc for named columns
+     * @param string|int $type 'num' for positional columns, assoc for named columns, or PDO fetch mode constants.
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
@@ -123,8 +146,8 @@ interface StatementInterface
      *  print_r($statement->fetchAll('assoc')); // will show [0 => ['id' => 1, 'title' => 'a title']]
      * ```
      *
-     * @param string $type num for fetching columns as positional keys or assoc for column names as keys
-     * @return array list of all results from database for this statement
+     * @param string|int $type num for fetching columns as positional keys or assoc for column names as keys
+     * @return array|false list of all results from database for this statement or false on failure.
      */
     public function fetchAll($type = 'num');
 
@@ -141,7 +164,7 @@ interface StatementInterface
      *
      * @return int
      */
-    public function rowCount();
+    public function rowCount(): int;
 
     /**
      * Statements can be passed as argument for count()
@@ -149,7 +172,7 @@ interface StatementInterface
      *
      * @return int
      */
-    public function count();
+    public function count(): int;
 
     /**
      * Binds a set of values to statement object with corresponding type
@@ -158,14 +181,14 @@ interface StatementInterface
      * @param array $types list of types to be used, keys should match those in $params
      * @return void
      */
-    public function bind($params, $types);
+    public function bind(array $params, array $types): void;
 
     /**
      * Returns the latest primary inserted using this statement
      *
      * @param string|null $table table name or sequence to get last insert value from
      * @param string|null $column the name of the column representing the primary key
-     * @return string
+     * @return string|int
      */
-    public function lastInsertId($table = null, $column = null);
+    public function lastInsertId(?string $table = null, ?string $column = null);
 }

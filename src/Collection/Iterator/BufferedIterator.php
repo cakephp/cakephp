@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use SplDoublyLinkedList;
  */
 class BufferedIterator extends Collection implements Countable, Serializable
 {
-
     /**
      * The in-memory cache containing results from previous iterators
      *
@@ -73,9 +73,9 @@ class BufferedIterator extends Collection implements Countable, Serializable
      * Maintains an in-memory cache of the results yielded by the internal
      * iterator.
      *
-     * @param array|\Traversable $items The items to be filtered.
+     * @param iterable $items The items to be filtered.
      */
-    public function __construct($items)
+    public function __construct(iterable $items)
     {
         $this->_buffer = new SplDoublyLinkedList();
         parent::__construct($items);
@@ -140,7 +140,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
             $this->_key = parent::key();
             $this->_buffer->push([
                 'key' => $this->_key,
-                'value' => $this->_current
+                'value' => $this->_current,
             ]);
         }
 
@@ -168,7 +168,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if (!$this->_started) {
             $this->rewind();

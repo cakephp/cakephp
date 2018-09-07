@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -42,7 +43,6 @@ class BaseLogImpl extends BaseLog
 
 class BaseLogTest extends TestCase
 {
-
     private $testData = ['ä', 'ö', 'ü'];
 
     private $logger;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,7 +18,7 @@ namespace Cake\ORM;
 use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\Type;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association\BelongsToMany;
@@ -35,7 +36,6 @@ use RuntimeException;
  */
 class Marshaller
 {
-
     use AssociationsNormalizerTrait;
 
     /**
@@ -63,7 +63,7 @@ class Marshaller
      * @throws \InvalidArgumentException When associations do not exist.
      * @return array
      */
-    protected function _buildPropertyMap($data, $options)
+    protected function _buildPropertyMap(array $data, array $options): array
     {
         $map = [];
         $schema = $this->_table->getSchema();
@@ -73,7 +73,7 @@ class Marshaller
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
                 $map[$prop] = function ($value, $entity) use ($columnType) {
-                    return Type::build($columnType)->marshal($value);
+                    return TypeFactory::build($columnType)->marshal($value);
                 };
             }
         }
@@ -141,7 +141,6 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead.
      * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
@@ -165,7 +164,7 @@ class Marshaller
      * @see \Cake\ORM\Table::newEntity()
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function one(array $data, array $options = [])
+    public function one(array $data, array $options = []): EntityInterface
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
@@ -236,7 +235,7 @@ class Marshaller
      * @return array The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
      */
-    protected function _validate($data, $options, $isNew)
+    protected function _validate(array $data, array $options, bool $isNew): array
     {
         if (!$options['validate']) {
             return [];
@@ -248,6 +247,7 @@ class Marshaller
         } elseif (is_string($options['validate'])) {
             $validator = $this->_table->getValidator($options['validate']);
         } elseif (is_object($options['validate'])) {
+            /** @var \Cake\Validation\Validator $validator */
             $validator = $options['validate'];
         }
 
@@ -267,17 +267,9 @@ class Marshaller
      * @param array $options The options passed to this marshaller.
      * @return array An array containing prepared data and options.
      */
-    protected function _prepareDataAndOptions($data, $options)
+    protected function _prepareDataAndOptions(array $data, array $options): array
     {
         $options += ['validate' => true];
-
-        if (!isset($options['fields']) && isset($options['fieldList'])) {
-            deprecationWarning(
-                'The `fieldList` option for marshalling is deprecated. Use the `fields` option instead.'
-            );
-            $options['fields'] = $options['fieldList'];
-            unset($options['fieldList']);
-        }
 
         $tableName = $this->_table->getAlias();
         if (isset($data[$tableName])) {
@@ -296,11 +288,11 @@ class Marshaller
      * Create a new sub-marshaller and marshal the associated data.
      *
      * @param \Cake\ORM\Association $assoc The association to marshall
-     * @param array $value The data to hydrate
+     * @param mixed $value The data to hydrate. If not an array, this method will return null.
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|null
      */
-    protected function _marshalAssociation($assoc, $value, $options)
+    protected function _marshalAssociation(Association $assoc, $value, array $options)
     {
         if (!is_array($value)) {
             return null;
@@ -337,7 +329,6 @@ class Marshaller
      * - validate: Set to false to disable validation. Can also be a string of the validator ruleset to be applied.
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead
      * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used. Defaults to null.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
@@ -351,7 +342,7 @@ class Marshaller
      * @see \Cake\ORM\Table::newEntities()
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function many(array $data, array $options = [])
+    public function many(array $data, array $options = []): array
     {
         $output = [];
         foreach ($data as $record) {
@@ -378,10 +369,10 @@ class Marshaller
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    protected function _belongsToMany(BelongsToMany $assoc, array $data, $options = [])
+    protected function _belongsToMany(BelongsToMany $assoc, array $data, array $options = []): array
     {
-        $associated = isset($options['associated']) ? $options['associated'] : [];
-        $forceNew = isset($options['forceNew']) ? $options['forceNew'] : false;
+        $associated = $options['associated'] ?? [];
+        $forceNew = $options['forceNew'] ?? false;
 
         $data = array_values($data);
 
@@ -470,7 +461,7 @@ class Marshaller
      * @param array $ids The list of ids to load.
      * @return \Cake\Datasource\EntityInterface[] An array of entities.
      */
-    protected function _loadAssociatedByIds($assoc, $ids)
+    protected function _loadAssociatedByIds(Association $assoc, array $ids): array
     {
         if (empty($ids)) {
             return [];
@@ -495,23 +486,6 @@ class Marshaller
     }
 
     /**
-     * Loads a list of belongs to many from ids.
-     *
-     * @param \Cake\ORM\Association $assoc The association class for the belongsToMany association.
-     * @param array $ids The list of ids to load.
-     * @return \Cake\Datasource\EntityInterface[] An array of entities.
-     * @deprecated Use _loadAssociatedByIds()
-     */
-    protected function _loadBelongsToMany($assoc, $ids)
-    {
-        deprecationWarning(
-            'Marshaller::_loadBelongsToMany() is deprecated. Use _loadAssociatedByIds() instead.'
-        );
-
-        return $this->_loadAssociatedByIds($assoc, $ids);
-    }
-
-    /**
      * Merges `$data` into `$entity` and recursively does the same for each one of
      * the association names passed in `$options`. When merging associations, if an
      * entity is not present in the parent entity for a given association, a new one
@@ -527,7 +501,6 @@ class Marshaller
      * - associated: Associations listed here will be marshalled as well.
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead
      * - fields: A whitelist of fields to be assigned to the entity. If not present
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
@@ -549,7 +522,7 @@ class Marshaller
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function merge(EntityInterface $entity, array $data, array $options = [])
+    public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
         list($data, $options) = $this->_prepareDataAndOptions($data, $options);
 
@@ -569,7 +542,7 @@ class Marshaller
         $errors = $this->_validate($data + $keys, $options, $isNew);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
-        $properties = $marshalledAssocs = [];
+        $properties = [];
         foreach ($data as $key => $value) {
             if (!empty($errors[$key])) {
                 if ($entity instanceof InvalidPropertyInterface) {
@@ -588,7 +561,7 @@ class Marshaller
                 // same objects, even though those objects may have changed internally.
                 if ((is_scalar($value) && $original === $value) ||
                     ($value === null && $original === $value) ||
-                    (is_object($value) && !($value instanceof EntityInterface) && $original == $value)
+                    (is_object($value) && !($value instanceof EntityInterface) && $original === $value)
                 ) {
                     continue;
                 }
@@ -642,7 +615,6 @@ class Marshaller
      * - validate: Whether or not to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
-     * - fieldList: (deprecated) Since 3.4.0. Use fields instead
      * - fields: A whitelist of fields to be assigned to the entity. If not present,
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
@@ -654,7 +626,7 @@ class Marshaller
      * @return \Cake\Datasource\EntityInterface[]
      * @see \Cake\ORM\Entity::$_accessible
      */
-    public function mergeMany($entities, array $data, array $options = [])
+    public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
         $primary = (array)$this->_table->getPrimaryKey();
 
@@ -662,7 +634,7 @@ class Marshaller
             ->groupBy(function ($el) use ($primary) {
                 $keys = [];
                 foreach ($primary as $key) {
-                    $keys[] = isset($el[$key]) ? $el[$key] : '';
+                    $keys[] = $el[$key] ?? '';
                 }
 
                 return implode(';', $keys);
@@ -672,7 +644,7 @@ class Marshaller
             })
             ->toArray();
 
-        $new = isset($indexed[null]) ? $indexed[null] : [];
+        $new = $indexed[null] ?? [];
         unset($indexed[null]);
         $output = [];
 
@@ -692,7 +664,7 @@ class Marshaller
 
         $conditions = (new Collection($indexed))
             ->map(function ($data, $key) {
-                return explode(';', $key);
+                return explode(';', (string)$key);
             })
             ->filter(function ($keys) use ($primary) {
                 return count(array_filter($keys, 'strlen')) === count($primary);
@@ -730,11 +702,11 @@ class Marshaller
      *
      * @param \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[] $original The original entity
      * @param \Cake\ORM\Association $assoc The association to merge
-     * @param array $value The data to hydrate
+     * @param mixed $value The array of data to hydrate. If not an array, this method will return null.
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]|null
      */
-    protected function _mergeAssociation($original, $assoc, $value, $options)
+    protected function _mergeAssociation($original, Association $assoc, $value, array $options)
     {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);
@@ -753,6 +725,17 @@ class Marshaller
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
 
+        if ($assoc->type() === Association::ONE_TO_MANY) {
+            $hasIds = array_key_exists('_ids', $value);
+            $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
+            if ($hasIds && is_array($value['_ids'])) {
+                return $this->_loadAssociatedByIds($assoc, $value['_ids']);
+            }
+            if ($hasIds || $onlyIds) {
+                return [];
+            }
+        }
+
         return $marshaller->mergeMany($original, $value, (array)$options);
     }
 
@@ -766,9 +749,9 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    protected function _mergeBelongsToMany($original, $assoc, $value, $options)
+    protected function _mergeBelongsToMany($original, Association $assoc, $value, array $options): array
     {
-        $associated = isset($options['associated']) ? $options['associated'] : [];
+        $associated = $options['associated'] ?? [];
 
         $hasIds = array_key_exists('_ids', $value);
         $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
@@ -796,9 +779,9 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[] An array of entities
      */
-    protected function _mergeJoinData($original, $assoc, $value, $options)
+    protected function _mergeJoinData($original, BelongsToMany $assoc, array $value, array $options): array
     {
-        $associated = isset($options['associated']) ? $options['associated'] : [];
+        $associated = $options['associated'] ?? [];
         $extra = [];
         foreach ($original as $entity) {
             // Mark joinData as accessible so we can marshal it properly.

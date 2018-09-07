@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\Utility\Hash;
  */
 class FormContext implements ContextInterface
 {
-
     /**
      * The request object.
      *
@@ -58,7 +58,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function primaryKey()
+    public function primaryKey(): array
     {
         return [];
     }
@@ -66,7 +66,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isPrimaryKey($field)
+    public function isPrimaryKey(string $field): bool
     {
         return false;
     }
@@ -74,7 +74,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isCreate()
+    public function isCreate(): bool
     {
         return true;
     }
@@ -82,14 +82,19 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function val($field, $options = [])
+    public function val(string $field, array $options = [])
     {
         $options += [
             'default' => null,
-            'schemaDefault' => true
+            'schemaDefault' => true,
         ];
 
         $val = $this->_request->getData($field);
+        if ($val !== null) {
+            return $val;
+        }
+
+        $val = $this->_form->getData($field);
         if ($val !== null) {
             return $val;
         }
@@ -108,7 +113,7 @@ class FormContext implements ContextInterface
 
      * @return mixed
      */
-    protected function _schemaDefault($field)
+    protected function _schemaDefault(string $field)
     {
         $field = $this->_form->schema()->field($field);
         if ($field) {
@@ -121,7 +126,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function isRequired($field)
+    public function isRequired(string $field): bool
     {
         $validator = $this->_form->getValidator();
         if (!$validator->hasField($field)) {
@@ -137,7 +142,35 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function fieldNames()
+    public function getRequiredMessage(string $field): ?string
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_form->getValidator();
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function fieldNames(): array
     {
         return $this->_form->schema()->fields();
     }
@@ -145,7 +178,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function type($field)
+    public function type(string $field): ?string
     {
         return $this->_form->schema()->fieldType($field);
     }
@@ -153,7 +186,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function attributes($field)
+    public function attributes(string $field): array
     {
         $column = (array)$this->_form->schema()->field($field);
         $whiteList = ['length' => null, 'precision' => null];
@@ -164,7 +197,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function hasError($field)
+    public function hasError(string $field): bool
     {
         $errors = $this->error($field);
 
@@ -174,7 +207,7 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
-    public function error($field)
+    public function error(string $field): array
     {
         return array_values((array)Hash::get($this->_form->errors(), $field, []));
     }

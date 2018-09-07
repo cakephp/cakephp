@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -32,7 +34,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 abstract class TestCase extends BaseTestCase
 {
-
     use LocatorAwareTrait;
 
     /**
@@ -81,7 +82,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to display.
      * @return bool
      */
-    public function skipIf($shouldSkip, $message = '')
+    public function skipIf(bool $shouldSkip, string $message = ''): bool
     {
         if ($shouldSkip) {
             $this->markTestSkipped($message);
@@ -97,7 +98,7 @@ abstract class TestCase extends BaseTestCase
      * @param callable $callable callable function that will receive asserts
      * @return void
      */
-    public function withErrorReporting($errorLevel, $callable)
+    public function withErrorReporting(int $errorLevel, callable $callable): void
     {
         $default = error_reporting();
         error_reporting($errorLevel);
@@ -114,7 +115,7 @@ abstract class TestCase extends BaseTestCase
      * @param callable $callable callable function that will receive asserts
      * @return void
      */
-    public function deprecated($callable)
+    public function deprecated(callable $callable): void
     {
         $errorLevel = error_reporting();
         error_reporting(E_ALL ^ E_USER_DEPRECATED);
@@ -171,7 +172,7 @@ abstract class TestCase extends BaseTestCase
      * @see \Cake\TestSuite\TestCase::$autoFixtures
      * @throws \Exception when no fixture manager is available.
      */
-    public function loadFixtures()
+    public function loadFixtures(): void
     {
         if ($this->fixtureManager === null) {
             throw new Exception('No fixture manager to load the test fixture');
@@ -190,14 +191,44 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Load plugins into a simulated application.
+     *
+     * Useful to test how plugins being loaded/not loaded interact with other
+     * elements in CakePHP or applications.
+     *
+     * @param array $plugins list of Plugins to load
+     * @return \Cake\Http\BaseApplication
+     */
+    public function loadPlugins(array $plugins = []): BaseApplication
+    {
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+
+        foreach ($plugins as $k => $opts) {
+            if (is_array($opts)) {
+                $app->addPlugin($k, $opts);
+            } else {
+                $app->addPlugin($opts);
+            }
+        }
+        $app->pluginBootstrap();
+        $builder = Router::createRouteBuilder('/');
+        $app->pluginRoutes($builder);
+
+        return $app;
+    }
+
+    /**
      * Asserts that a global event was fired. You must track events in your event manager for this assertion to work
      *
      * @param string $name Event name
-     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
+     * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
      */
-    public function assertEventFired($name, $eventManager = null, $message = '')
+    public function assertEventFired(string $name, ?EventManager $eventManager = null, string $message = ''): void
     {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
@@ -213,11 +244,11 @@ abstract class TestCase extends BaseTestCase
      * @param string $name Event name
      * @param string $dataKey Data key
      * @param string $dataValue Data value
-     * @param EventManager|null $eventManager Event manager to check, defaults to global event manager
+     * @param \Cake\Event\EventManager|null $eventManager Event manager to check, defaults to global event manager
      * @param string $message Assertion failure message
      * @return void
      */
-    public function assertEventFiredWith($name, $dataKey, $dataValue, $eventManager = null, $message = '')
+    public function assertEventFiredWith(string $name, string $dataKey, string $dataValue, ?EventManager $eventManager = null, string $message = ''): void
     {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
@@ -234,7 +265,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to use for failure.
      * @return void
      */
-    public function assertTextNotEquals($expected, $result, $message = '')
+    public function assertTextNotEquals(string $expected, string $result, string $message = ''): void
     {
         $expected = str_replace(["\r\n", "\r"], "\n", $expected);
         $result = str_replace(["\r\n", "\r"], "\n", $result);
@@ -250,7 +281,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to use for failure.
      * @return void
      */
-    public function assertTextEquals($expected, $result, $message = '')
+    public function assertTextEquals(string $expected, string $result, string $message = ''): void
     {
         $expected = str_replace(["\r\n", "\r"], "\n", $expected);
         $result = str_replace(["\r\n", "\r"], "\n", $result);
@@ -266,7 +297,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to use for failure.
      * @return void
      */
-    public function assertTextStartsWith($prefix, $string, $message = '')
+    public function assertTextStartsWith(string $prefix, string $string, string $message = ''): void
     {
         $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
@@ -282,7 +313,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to use for failure.
      * @return void
      */
-    public function assertTextStartsNotWith($prefix, $string, $message = '')
+    public function assertTextStartsNotWith(string $prefix, string $string, string $message = ''): void
     {
         $prefix = str_replace(["\r\n", "\r"], "\n", $prefix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
@@ -298,7 +329,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to use for failure.
      * @return void
      */
-    public function assertTextEndsWith($suffix, $string, $message = '')
+    public function assertTextEndsWith(string $suffix, string $string, string $message = ''): void
     {
         $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
@@ -314,7 +345,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $message The message to use for failure.
      * @return void
      */
-    public function assertTextEndsNotWith($suffix, $string, $message = '')
+    public function assertTextEndsNotWith(string $suffix, string $string, string $message = ''): void
     {
         $suffix = str_replace(["\r\n", "\r"], "\n", $suffix);
         $string = str_replace(["\r\n", "\r"], "\n", $string);
@@ -331,7 +362,7 @@ abstract class TestCase extends BaseTestCase
      * @param bool $ignoreCase Whether or not the search should be case-sensitive.
      * @return void
      */
-    public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false)
+    public function assertTextContains(string $needle, string $haystack, string $message = '', bool $ignoreCase = false): void
     {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -348,26 +379,11 @@ abstract class TestCase extends BaseTestCase
      * @param bool $ignoreCase Whether or not the search should be case-sensitive.
      * @return void
      */
-    public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false)
+    public function assertTextNotContains(string $needle, string $haystack, string $message = '', bool $ignoreCase = false): void
     {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
         $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
-    }
-
-    /**
-     * Asserts HTML tags.
-     *
-     * @param string $string An HTML/XHTML/XML string
-     * @param array $expected An array, see above
-     * @param bool $fullDebug Whether or not more verbose output should be used.
-     * @return void
-     * @deprecated 3.0. Use assertHtml() instead.
-     */
-    public function assertTags($string, $expected, $fullDebug = false)
-    {
-        deprecationWarning('TestCase::assertTags() is deprecated. Use TestCase::assertHtml() instead.');
-        $this->assertHtml($expected, $string, $fullDebug);
     }
 
     /**
@@ -414,7 +430,7 @@ abstract class TestCase extends BaseTestCase
      * @param bool $fullDebug Whether or not more verbose output should be used.
      * @return bool
      */
-    public function assertHtml($expected, $string, $fullDebug = false)
+    public function assertHtml(array $expected, string $string, bool $fullDebug = false): bool
     {
         $regex = [];
         $normalized = [];
@@ -476,11 +492,12 @@ abstract class TestCase extends BaseTestCase
                 $explanations = [];
                 $i = 1;
                 foreach ($attributes as $attr => $val) {
-                    if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                    if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', (string)$val, $matches)) {
                         $attrs[] = $matches[1];
                         $explanations[] = sprintf('Regex "%s" matches', $matches[1]);
                         continue;
                     }
+                    $val = (string)$val;
 
                     $quotes = '["\']';
                     if (is_numeric($attr)) {
@@ -562,7 +579,7 @@ abstract class TestCase extends BaseTestCase
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|bool
      */
-    protected function _assertAttributes($assertions, $string, $fullDebug = false, $regex = '')
+    protected function _assertAttributes(array $assertions, string $string, bool $fullDebug = false, $regex = '')
     {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
@@ -597,7 +614,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $path Path separated by "/" slash.
      * @return string Normalized path separated by DIRECTORY_SEPARATOR.
      */
-    protected function _normalizePath($path)
+    protected function _normalizePath(string $path): string
     {
         return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
@@ -678,7 +695,7 @@ abstract class TestCase extends BaseTestCase
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockForModel($alias, array $methods = [], array $options = [])
+    public function getMockForModel(string $alias, array $methods = [], array $options = [])
     {
         /** @var \Cake\ORM\Table $className */
         $className = $this->_getTableClassName($alias, $options);
@@ -699,7 +716,7 @@ abstract class TestCase extends BaseTestCase
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
-            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
+            $entityAlias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
             $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
             if (class_exists($entityClass)) {
                 $mock->setEntityClass($entityClass);
@@ -724,7 +741,7 @@ abstract class TestCase extends BaseTestCase
      * @return string
      * @throws \Cake\ORM\Exception\MissingTableClassException
      */
-    protected function _getTableClassName($alias, array $options)
+    protected function _getTableClassName(string $alias, array $options): string
     {
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
@@ -744,7 +761,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $appNamespace The app namespace, defaults to "TestApp".
      * @return void
      */
-    public static function setAppNamespace($appNamespace = 'TestApp')
+    public static function setAppNamespace(string $appNamespace = 'TestApp'): void
     {
         Configure::write('App.namespace', $appNamespace);
     }

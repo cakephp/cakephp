@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -101,23 +102,6 @@ class CommandTest extends TestCase
         $parser = $command->getOptionParser();
         $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('routes show', $parser->getCommand());
-    }
-
-    /**
-     * Test option parser fetching
-     *
-     * @expectedException RuntimeException
-     * @return void
-     */
-    public function testGetOptionParserInvalid()
-    {
-        $command = $this->getMockBuilder(Command::class)
-            ->setMethods(['buildOptionParser'])
-            ->getMock();
-        $command->expects($this->once())
-            ->method('buildOptionParser')
-            ->will($this->returnValue(null));
-        $command->getOptionParser();
     }
 
     /**

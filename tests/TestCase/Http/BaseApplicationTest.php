@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Http\BaseApplication;
@@ -22,9 +24,9 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
-use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -66,23 +68,43 @@ class BaseApplicationTest extends TestCase
             'controller' => 'Cakes',
             'action' => 'index',
             'plugin' => null,
-            'pass' => []
+            'pass' => [],
         ]);
 
-        $app = $this->getMockForAbstractClass('Cake\Http\BaseApplication', [$this->path]);
+        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $result = $app($request, $response, $next);
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertEquals('Hello Jane', '' . $result->getBody());
     }
 
+    /**
+     * Ensure that plugins with no plugin class can be loaded.
+     * This makes adopting the new API easier
+     */
     public function testAddPluginUnknownClass()
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('cannot be found');
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $app->addPlugin('SomethingBad');
+        $app->addPlugin('PluginJs');
+        $plugin = $app->getPlugins()->get('PluginJs');
+        $this->assertInstanceOf(BasePlugin::class, $plugin);
+
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS,
+            $plugin->getPath()
+        );
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'config' . DS,
+            $plugin->getConfigPath()
+        );
+        $this->assertEquals(
+            TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src' . DS,
+            $plugin->getClassPath()
+        );
     }
 
+    /**
+     * Ensure that plugin interfaces are implemented.
+     */
     public function testAddPluginBadClass()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -143,7 +165,7 @@ class BaseApplicationTest extends TestCase
             'plugin' => 'TestPlugin',
             'controller' => 'TestPlugin',
             'action' => 'index',
-            '_method' => 'GET'
+            '_method' => 'GET',
         ];
         $this->assertNotEmpty($collection->match($url, []));
     }
@@ -162,29 +184,6 @@ class BaseApplicationTest extends TestCase
     }
 
     /**
-     * Ensure that plugins loaded via Plugin::load()
-     * don't have their bootstrapping run twice.
-     *
-     * @return void
-     */
-    public function testPluginBootstrapInteractWithPluginLoad()
-    {
-        Plugin::load('TestPlugin', ['bootstrap' => true]);
-        $app = $this->getMockForAbstractClass(
-            BaseApplication::class,
-            [$this->path]
-        );
-        $this->assertTrue(Configure::check('PluginTest.test_plugin.bootstrap'));
-        Configure::delete('PluginTest.test_plugin.bootstrap');
-
-        $this->assertNull($app->pluginBootstrap());
-        $this->assertFalse(
-            Configure::check('PluginTest.test_plugin.bootstrap'),
-            'Key should not be set, as plugin has already had bootstrap run'
-        );
-    }
-
-    /**
      * Test that plugins loaded with addPlugin() can load additional
      * plugins.
      *
@@ -198,7 +197,6 @@ class BaseApplicationTest extends TestCase
         );
         $app->addPlugin('ParentPlugin');
         $app->pluginBootstrap();
-
         $this->assertTrue(
             Configure::check('ParentPlugin.bootstrap'),
             'Plugin bootstrap should be run'
@@ -211,29 +209,5 @@ class BaseApplicationTest extends TestCase
             Configure::check('PluginTest.test_plugin_two.bootstrap'),
             'Nested plugin should have bootstrap run'
         );
-    }
-
-    /**
-     * Ensure that Router::$initialized is toggled even if the routes
-     * file fails. This prevents the routes file from being re-parsed
-     * during the error handling process.
-     *
-     * @return void
-     */
-    public function testRouteHookInitializesRouterOnError()
-    {
-        $app = $this->getMockForAbstractClass(
-            'Cake\Http\BaseApplication',
-            [TEST_APP . 'invalid_routes' . DS]
-        );
-        $builder = Router::createRouteBuilder('/');
-        try {
-            $app->routes($builder);
-
-            $this->fail('invalid_routes/routes.php file should raise an error.');
-        } catch (\InvalidArgumentException $e) {
-            $this->assertTrue(Router::$initialized, 'Should be toggled to prevent duplicate route errors');
-            $this->assertContains('route class', $e->getMessage());
-        }
     }
 }

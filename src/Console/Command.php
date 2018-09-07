@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -36,14 +37,14 @@ class Command
      *
      * @var int
      */
-    const CODE_ERROR = 1;
+    public const CODE_ERROR = 1;
 
     /**
      * Default success code
      *
      * @var int
      */
-    const CODE_SUCCESS = 0;
+    public const CODE_SUCCESS = 0;
 
     /**
      * The name of this command.
@@ -73,10 +74,10 @@ class Command
      * command can be calculated.
      *
      * @param string $name The name the command uses in the collection.
-     * @return $this;
+     * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setName($name)
+    public function setName(string $name): self
     {
         if (strpos($name, ' ') < 1) {
             throw new InvalidArgumentException(
@@ -93,7 +94,7 @@ class Command
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -106,7 +107,7 @@ class Command
      * @return \Cake\Console\ConsoleOptionParser
      * @throws \RuntimeException When the parser is invalid
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         list($root, $name) = explode(' ', $this->name, 2);
         $parser = new ConsoleOptionParser($name);
@@ -130,7 +131,7 @@ class Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
-    protected function buildOptionParser(ConsoleOptionParser $parser)
+    protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         return $parser;
     }
@@ -144,7 +145,7 @@ class Command
      *
      * @return void
      */
-    public function initialize()
+    public function initialize(): void
     {
     }
 
@@ -155,7 +156,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null Exit code or null for success.
      */
-    public function run(array $argv, ConsoleIo $io)
+    public function run(array $argv, ConsoleIo $io): ?int
     {
         $this->initialize();
 
@@ -191,7 +192,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return void
      */
-    protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIo $io)
+    protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIo $io): void
     {
         $format = 'text';
         if ($args->getArgumentAt(0) === 'xml') {
@@ -209,7 +210,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return void
      */
-    protected function setOutputLevel(Arguments $args, ConsoleIo $io)
+    protected function setOutputLevel(Arguments $args, ConsoleIo $io): void
     {
         $io->setLoggers(ConsoleIo::NORMAL);
         if ($args->getOption('quiet')) {
@@ -241,7 +242,7 @@ class Command
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    public function abort($code = self::CODE_ERROR)
+    public function abort($code = self::CODE_ERROR): void
     {
         throw new StopException('Command aborted', $code);
     }

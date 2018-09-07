@@ -1,9 +1,9 @@
 <?php
+declare(strict_types=1);
 namespace TestPlugin\Datasource;
 
 class TestSource
 {
-
     /**
      * Config
      *

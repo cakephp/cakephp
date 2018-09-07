@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ use RuntimeException;
  */
 class Exception extends RuntimeException
 {
-
     /**
      * Array of attributes that are passed in from the constructor, and
      * made available in the view when a development error is displayed.
@@ -78,7 +78,7 @@ class Exception extends RuntimeException
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->_attributes;
     }
@@ -88,27 +88,20 @@ class Exception extends RuntimeException
      *
      * See also Cake\Http\Response::withHeader()
      *
-     * @param string|array|null $header An array of header strings or a single header string
-     *  - an associative array of "header name" => "header value"
-     *  - an array of string headers is also accepted (deprecated)
+     * @param string|array|null $header A single header string or an associative
+     *   array of "header name" => "header value"
      * @param string|null $value The header value.
-     * @return array
+     * @return array|null
      */
-    public function responseHeader($header = null, $value = null)
+    public function responseHeader($header = null, $value = null): ?array
     {
         if ($header === null) {
             return $this->_responseHeaders;
         }
         if (is_array($header)) {
-            if (isset($header[0])) {
-                deprecationWarning(
-                    'Passing a list string headers to Exception::responseHeader() is deprecated. ' .
-                    'Use an associative array instead.'
-                );
-            }
-
             return $this->_responseHeaders = $header;
         }
-        $this->_responseHeaders = [$header => $value];
+
+        return $this->_responseHeaders = [$header => $value];
     }
 }

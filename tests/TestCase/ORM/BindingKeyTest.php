@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\TestSuite\TestCase;
  */
 class BindingKeyTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *
@@ -30,13 +30,13 @@ class BindingKeyTest extends TestCase
     public $fixtures = [
         'core.auth_users',
         'core.site_authors',
-        'core.users'
+        'core.users',
     ];
 
     /**
      * Data provider for the two types of strategies BelongsTo and HasOne implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderJoinable()
     {
@@ -46,7 +46,7 @@ class BindingKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany and BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderExternal()
     {
@@ -65,7 +65,7 @@ class BindingKeyTest extends TestCase
         $users->belongsTo('AuthUsers', [
             'bindingKey' => 'username',
             'foreignKey' => 'username',
-            'strategy' => $strategy
+            'strategy' => $strategy,
         ]);
 
         $result = $users->find()
@@ -97,7 +97,7 @@ class BindingKeyTest extends TestCase
         $users->hasOne('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
-            'strategy' => $strategy
+            'strategy' => $strategy,
         ]);
 
         $users->updateAll(['username' => 'jose'], ['username' => 'garrett']);
@@ -121,7 +121,7 @@ class BindingKeyTest extends TestCase
         $authors = $users->hasMany('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
-            'strategy' => $strategy
+            'strategy' => $strategy,
         ]);
 
         $authors->updateAll(['name' => 'garrett'], ['id >' => 2]);

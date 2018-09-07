@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\View\Widget\WidgetLocator;
  */
 class WidgetLocatorTestCase extends TestCase
 {
-
     /**
      * setup method
      *
@@ -92,13 +92,14 @@ class WidgetLocatorTestCase extends TestCase
      */
     public function testAddPluginWidgetsFromConfigInConstructor()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $widgets = [
             'text' => ['Cake\View\Widget\BasicWidget'],
             'TestPlugin.test_widgets',
         ];
         $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
+        Plugin::unload();
     }
 
     /**
@@ -136,7 +137,7 @@ class WidgetLocatorTestCase extends TestCase
         $this->expectExceptionMessage('Widget objects must implement Cake\View\Widget\WidgetInterface');
         $inputs = new WidgetLocator($this->templates, $this->view);
         $inputs->add([
-            'text' => new \StdClass()
+            'text' => new \StdClass(),
         ]);
     }
 
@@ -199,7 +200,7 @@ class WidgetLocatorTestCase extends TestCase
         $inputs->clear();
         $inputs->add([
             'label' => ['Cake\View\Widget\LabelWidget'],
-            'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label']
+            'multicheckbox' => ['Cake\View\Widget\MultiCheckboxWidget', 'label'],
         ]);
         $result = $inputs->get('multicheckbox');
         $this->assertInstanceOf('Cake\View\Widget\MultiCheckboxWidget', $result);

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,6 @@
 namespace Cake\I18n;
 
 use Cake\Chronos\ChronosInterface;
-use DateTimeInterface;
 
 /**
  * Helper class for formatting relative dates & times.
@@ -33,7 +33,7 @@ class RelativeTimeFormatter
      * @return string The difference between the two days in a human readable format
      * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
-    public function diffForHumans(ChronosInterface $date, ChronosInterface $other = null, $absolute = false)
+    public function diffForHumans(ChronosInterface $date, ?ChronosInterface $other = null, bool $absolute = false): string
     {
         $isNow = $other === null;
         if ($isNow) {
@@ -86,15 +86,15 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative timestring.
      *
-     * @param \DateTimeInterface $time The time instance to format.
+     * @param \Cake\I18n\Time|\Cake\I18n\FrozenTime $time The time instance to format.
      * @param array $options Array of options.
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(DateTimeInterface $time, array $options = [])
+    public function timeAgoInWords($time, array $options = []): string
     {
         $options = $this->_options($options, FrozenTime::class);
-        if ($options['timezone'] && $time instanceof ChronosInterface) {
+        if ($options['timezone']) {
             $time = $time->timezone($options['timezone']);
         }
 
@@ -154,7 +154,7 @@ class RelativeTimeFormatter
                 'day' => __d('cake', 'about a day ago'),
                 'week' => __d('cake', 'about a week ago'),
                 'month' => __d('cake', 'about a month ago'),
-                'year' => __d('cake', 'about a year ago')
+                'year' => __d('cake', 'about a year ago'),
             ];
 
             return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
@@ -171,7 +171,7 @@ class RelativeTimeFormatter
             'day' => __d('cake', 'in about a day'),
             'week' => __d('cake', 'in about a week'),
             'month' => __d('cake', 'in about a month'),
-            'year' => __d('cake', 'in about a year')
+            'year' => __d('cake', 'in about a year'),
         ];
 
         return $aboutIn[$fWord];
@@ -180,20 +180,24 @@ class RelativeTimeFormatter
     /**
      * Calculate the data needed to format a relative difference string.
      *
-     * @param \DateTime $futureTime The time from the future.
-     * @param \DateTime $pastTime The time from the past.
+     * @param int|string $futureTime The timestamp from the future.
+     * @param int|string $pastTime The timestamp from the past.
      * @param bool $backwards Whether or not the difference was backwards.
      * @param array $options An array of options.
      * @return array An array of values.
      */
-    protected function _diffData($futureTime, $pastTime, $backwards, $options)
+    protected function _diffData($futureTime, $pastTime, $backwards, $options): array
     {
+        $futureTime = (int)$futureTime;
+        $pastTime = (int)$pastTime;
         $diff = $futureTime - $pastTime;
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
+            $future = [];
             list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
+            $past = [];
             list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
@@ -212,7 +216,7 @@ class RelativeTimeFormatter
                 $days = $future['d'] - $past['d'];
             } else {
                 $daysInPastMonth = date('t', $pastTime);
-                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
+                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, (int)$future['Y']));
 
                 if (!$backwards) {
                     $days = ($daysInPastMonth - $past['d']) + $future['d'];
@@ -220,7 +224,7 @@ class RelativeTimeFormatter
                     $days = ($daysInFutureMonth - $past['d']) + $future['d'];
                 }
 
-                if ($future['m'] != $past['m']) {
+                if ($future['m'] !== $past['m']) {
                     $months--;
                 }
             }
@@ -268,23 +272,37 @@ class RelativeTimeFormatter
             $fWord = $options['accuracy']['minute'];
         }
 
-        $fNum = str_replace(['year', 'month', 'week', 'day', 'hour', 'minute', 'second'], [1, 2, 3, 4, 5, 6, 7], $fWord);
+        $fNum = str_replace(
+            ['year', 'month', 'week', 'day', 'hour', 'minute', 'second'],
+            [1, 2, 3, 4, 5, 6, 7],
+            $fWord
+        );
 
-        return [$fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds];
+        return [
+            $fNum,
+            $fWord,
+            (int)$years,
+            (int)$months,
+            (int)$weeks,
+            (int)$days,
+            (int)$hours,
+            (int)$minutes,
+            (int)$seconds,
+        ];
     }
 
     /**
      * Format a into a relative date string.
      *
-     * @param \DateTimeInterface $date The date to format.
+     * @param \Cake\I18n\Time|\Cake\I18n\FrozenTime $date The date to format.
      * @param array $options Array of options.
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(DateTimeInterface $date, array $options = [])
+    public function dateAgoInWords($date, array $options = []): string
     {
         $options = $this->_options($options, FrozenDate::class);
-        if ($options['timezone'] && $date instanceof ChronosInterface) {
+        if ($options['timezone']) {
             $date = $date->timezone($options['timezone']);
         }
 
@@ -332,7 +350,7 @@ class RelativeTimeFormatter
                 'day' => __d('cake', 'about a day ago'),
                 'week' => __d('cake', 'about a week ago'),
                 'month' => __d('cake', 'about a month ago'),
-                'year' => __d('cake', 'about a year ago')
+                'year' => __d('cake', 'about a year ago'),
             ];
 
             return $relativeDate ? sprintf($options['relativeString'], $relativeDate) : $aboutAgo[$fWord];
@@ -346,7 +364,7 @@ class RelativeTimeFormatter
             'day' => __d('cake', 'in about a day'),
             'week' => __d('cake', 'in about a week'),
             'month' => __d('cake', 'in about a month'),
-            'year' => __d('cake', 'in about a year')
+            'year' => __d('cake', 'in about a year'),
         ];
 
         return $aboutIn[$fWord];
@@ -359,7 +377,7 @@ class RelativeTimeFormatter
      * @param string $class The class name to use for defaults.
      * @return array Options with defaults applied.
      */
-    protected function _options($options, $class)
+    protected function _options(array $options, string $class): array
     {
         $options += [
             'from' => $class::now(),

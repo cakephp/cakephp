@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 
@@ -23,7 +23,6 @@ use InvalidArgumentException;
  */
 class TableRegressionTest extends TestCase
 {
-
     /**
      * Fixture to be used
      *

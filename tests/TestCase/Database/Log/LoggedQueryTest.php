@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\TestSuite\TestCase;
  */
 class LoggedQueryTest extends TestCase
 {
-
     /**
      * Tests that LoggedQuery can be converted to string
      *
@@ -30,7 +30,7 @@ class LoggedQueryTest extends TestCase
      */
     public function testStringConversion()
     {
-        $logged = new LoggedQuery;
+        $logged = new LoggedQuery();
         $logged->query = 'SELECT foo FROM bar';
         $this->assertEquals('duration=0 rows=0 SELECT foo FROM bar', (string)$logged);
     }

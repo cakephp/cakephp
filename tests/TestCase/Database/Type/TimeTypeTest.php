@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ use Cake\Database\Type\TimeType;
 use Cake\I18n\I18n;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use DateTimeImmutable;
 
 /**
  * Test for the Time type.
@@ -79,7 +81,7 @@ class TimeTypeTest extends TestCase
         $this->assertEquals('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
-        $this->assertInstanceOf('DateTime', $result);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result);
         $this->assertEquals('16', $result->format('H'));
         $this->assertEquals('30', $result->format('i'));
         $this->assertEquals('15', $result->format('s'));
@@ -141,10 +143,10 @@ class TimeTypeTest extends TestCase
             [false, null],
             [true, null],
             ['', null],
-            ['derpy', 'derpy'],
-            ['16-nope!', '16-nope!'],
-            ['14:15', '14:15'],
-            ['2014-02-14 13:14:15', '2014-02-14 13:14:15'],
+            ['derpy', null],
+            ['16-nope!', null],
+            ['14:15', null],
+            ['2014-02-14 13:14:15', null],
 
             // valid string types
             ['1392387900', $date],
@@ -162,42 +164,42 @@ class TimeTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 13:14:15')
+                new Time('2014-02-14 13:14:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'am'
+                    'meridian' => 'am',
                 ],
-                new Time('2014-02-14 01:14:15')
+                new Time('2014-02-14 01:14:15'),
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                     'hour' => 1, 'minute' => 14, 'second' => 15,
-                    'meridian' => 'pm'
+                    'meridian' => 'pm',
                 ],
-                new Time('2014-02-14 13:14:15')
+                new Time('2014-02-14 13:14:15'),
             ],
             [
                 [
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                 ],
-                new Time('01:14:15')
+                new Time('01:14:15'),
             ],
 
             // Invalid array types
             [
                 ['hour' => 'nope', 'minute' => 14, 'second' => 15],
-                new Time(date('Y-m-d 00:14:15'))
+                new Time(date('Y-m-d 00:14:15')),
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
-                    'hour' => 'nope', 'minute' => 'nope'
+                    'hour' => 'nope', 'minute' => 'nope',
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Time('2014-02-14 00:00:00'),
             ],
         ];
     }
@@ -213,7 +215,7 @@ class TimeTypeTest extends TestCase
         $result = $this->type->marshal($value);
         if (is_object($expected)) {
             $this->assertEquals($expected, $result);
-            $this->assertInstanceOf('DateTime', $result);
+            $this->assertInstanceOf(DateTimeImmutable::class, $result);
         } else {
             $this->assertSame($expected, $result);
         }

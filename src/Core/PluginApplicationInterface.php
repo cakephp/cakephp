@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,8 +15,10 @@
  */
 namespace Cake\Core;
 
+use Cake\Console\CommandCollection;
 use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventManagerInterface;
+use Cake\Http\MiddlewareQueue;
+use Cake\Routing\RouteBuilder;
 
 /**
  * Interface for Applications that leverage plugins & events.
@@ -28,18 +31,22 @@ interface PluginApplicationInterface extends EventDispatcherInterface
     /**
      * Add a plugin to the loaded plugin set.
      *
+     * If the named plugin does not exist, or does not define a Plugin class, an
+     * instance of `Cake\Core\BasePlugin` will be used. This generated class will have
+     * all plugin hooks enabled.
+     *
      * @param string|\Cake\Core\PluginInterface $name The plugin name or plugin object.
      * @param array $config The configuration data for the plugin if using a string for $name
-     * @return $this
+     * @return \Cake\Core\PluginApplicationInterface
      */
-    public function addPlugin($name, array $config = []);
+    public function addPlugin($name, array $config = []): self;
 
     /**
      * Run bootstrap logic for loaded plugins.
      *
      * @return void
      */
-    public function pluginBootstrap();
+    public function pluginBootstrap(): void;
 
     /**
      * Run routes hooks for loaded plugins
@@ -47,7 +54,7 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param \Cake\Routing\RouteBuilder $routes The route builder to use.
      * @return \Cake\Routing\RouteBuilder
      */
-    public function pluginRoutes($routes);
+    public function pluginRoutes(RouteBuilder $routes): RouteBuilder;
 
     /**
      * Run middleware hooks for plugins
@@ -55,7 +62,7 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param \Cake\Http\MiddlewareQueue $middleware The MiddlewareQueue to use.
      * @return \Cake\Http\MiddlewareQueue
      */
-    public function pluginMiddleware($middleware);
+    public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
      * Run console hooks for plugins
@@ -63,5 +70,5 @@ interface PluginApplicationInterface extends EventDispatcherInterface
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to use.
      * @return \Cake\Console\CommandCollection
      */
-    public function pluginConsole($commands);
+    public function pluginConsole(CommandCollection $commands): CommandCollection;
 }

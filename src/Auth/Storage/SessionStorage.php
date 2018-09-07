@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,6 @@ use Cake\Http\ServerRequest;
  */
 class SessionStorage implements StorageInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -57,7 +57,7 @@ class SessionStorage implements StorageInterface
      */
     protected $_defaultConfig = [
         'key' => 'Auth.User',
-        'redirect' => 'Auth.redirect'
+        'redirect' => 'Auth.redirect',
     ];
 
     /**
@@ -76,7 +76,7 @@ class SessionStorage implements StorageInterface
     /**
      * Read user record from session.
      *
-     * @return array|null User record if available else null.
+     * @return \ArrayAccess|array|null User record if available else null.
      */
     public function read()
     {
@@ -97,7 +97,7 @@ class SessionStorage implements StorageInterface
      * @param array|\ArrayAccess $user User record.
      * @return void
      */
-    public function write($user)
+    public function write($user): void
     {
         $this->_user = $user;
 
@@ -112,7 +112,7 @@ class SessionStorage implements StorageInterface
      *
      * @return void
      */
-    public function delete()
+    public function delete(): void
     {
         $this->_user = false;
 

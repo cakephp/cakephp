@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use NoRewindIterator;
  */
 class BufferedIteratorTest extends TestCase
 {
-
     /**
      * Tests that items are cached once iterated over them
      *
@@ -35,7 +35,7 @@ class BufferedIteratorTest extends TestCase
         $items = new ArrayObject([
             'a' => 1,
             'b' => 2,
-            'c' => 3
+            'c' => 3,
         ]);
         $iterator = new BufferedIterator($items);
         $expected = (array)$items;
@@ -56,7 +56,7 @@ class BufferedIteratorTest extends TestCase
         $items = new ArrayObject([
             'a' => 1,
             'b' => 2,
-            'c' => 3
+            'c' => 3,
         ]);
         $iterator = new BufferedIterator($items);
         $this->assertCount(3, $iterator);

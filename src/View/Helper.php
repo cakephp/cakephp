@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,18 +30,17 @@ use Cake\Event\EventListenerInterface;
  * implementing a callback method subscribes a helper to the related event. The callback methods
  * are as follows:
  *
- * - `beforeRender(Event $event, $viewFile)` - beforeRender is called before the view file is rendered.
- * - `afterRender(Event $event, $viewFile)` - afterRender is called after the view file is rendered
+ * - `beforeRender(EventInterface $event, $viewFile)` - beforeRender is called before the view file is rendered.
+ * - `afterRender(EventInterface $event, $viewFile)` - afterRender is called after the view file is rendered
  *   but before the layout has been rendered.
- * - beforeLayout(Event $event, $layoutFile)` - beforeLayout is called before the layout is rendered.
- * - `afterLayout(Event $event, $layoutFile)` - afterLayout is called after the layout has rendered.
- * - `beforeRenderFile(Event $event, $viewFile)` - Called before any view fragment is rendered.
- * - `afterRenderFile(Event $event, $viewFile, $content)` - Called after any view fragment is rendered.
+ * - beforeLayout(EventInterface $event, $layoutFile)` - beforeLayout is called before the layout is rendered.
+ * - `afterLayout(EventInterface $event, $layoutFile)` - afterLayout is called after the layout has rendered.
+ * - `beforeRenderFile(EventInterface $event, $viewFile)` - Called before any view fragment is rendered.
+ * - `afterRenderFile(EventInterface $event, $viewFile, $content)` - Called after any view fragment is rendered.
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
  */
 class Helper implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -48,7 +48,7 @@ class Helper implements EventListenerInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * Default config for this helper.
@@ -63,42 +63,6 @@ class Helper implements EventListenerInterface
      * @var array
      */
     protected $_helperMap = [];
-
-    /**
-     * The current theme name if any.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
-     * Plugin path
-     *
-     * @var string
-     */
-    public $plugin;
-
-    /**
-     * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],
-     * primaryKey and validates ['field_name']
-     *
-     * @var array
-     */
-    public $fieldset = [];
-
-    /**
-     * Holds tag templates.
-     *
-     * @var array
-     */
-    public $tags = [];
 
     /**
      * The View instance this helper is attached to
@@ -116,8 +80,6 @@ class Helper implements EventListenerInterface
     public function __construct(View $View, array $config = [])
     {
         $this->_View = $View;
-        $this->request = $View->request;
-
         $this->setConfig($config);
 
         if (!empty($this->helpers)) {
@@ -160,7 +122,7 @@ class Helper implements EventListenerInterface
      *
      * @return \Cake\View\View The bound view instance.
      */
-    public function getView()
+    public function getView(): View
     {
         return $this->_View;
     }
@@ -174,9 +136,9 @@ class Helper implements EventListenerInterface
      * @param array $options Array of options
      * @return string onclick JS code
      */
-    protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
+    protected function _confirm(string $message, string $okCode, string $cancelCode = '', array $options = []): string
     {
-        $message = str_replace('\\\n', '\n', json_encode($message));
+        $message = $this->_cleanConfirmMessage($message);
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
         // We cannot change the key here in 3.x, but the behavior is inverted in this case
         $escape = isset($options['escape']) && $options['escape'] === false;
@@ -189,6 +151,21 @@ class Helper implements EventListenerInterface
     }
 
     /**
+     * Returns a string read to be used in confirm()
+     *
+     * @param string|null $message The message to clean
+     * @return string
+     */
+    protected function _cleanConfirmMessage(?string $message): string
+    {
+        if ($message === null) {
+            return '';
+        }
+
+        return str_replace('\\\n', '\n', json_encode($message));
+    }
+
+    /**
      * Adds the given class to the element options
      *
      * @param array $options Array options/attributes to add a class to
@@ -196,7 +173,7 @@ class Helper implements EventListenerInterface
      * @param string $key the key to use for class.
      * @return array Array of options with $key set.
      */
-    public function addClass(array $options = [], $class = null, $key = 'class')
+    public function addClass(array $options = [], ?string $class = null, string $key = 'class'): array
     {
         if (isset($options[$key]) && is_array($options[$key])) {
             $options[$key][] = $class;
@@ -220,7 +197,7 @@ class Helper implements EventListenerInterface
      *
      * @return array
      */
-    public function implementedEvents()
+    public function implementedEvents(): array
     {
         $eventMap = [
             'View.beforeRenderFile' => 'beforeRenderFile',
@@ -228,7 +205,7 @@ class Helper implements EventListenerInterface
             'View.beforeRender' => 'beforeRender',
             'View.afterRender' => 'afterRender',
             'View.beforeLayout' => 'beforeLayout',
-            'View.afterLayout' => 'afterLayout'
+            'View.afterLayout' => 'afterLayout',
         ];
         $events = [];
         foreach ($eventMap as $event => $method) {
@@ -248,7 +225,7 @@ class Helper implements EventListenerInterface
      * @param array $config The configuration settings provided to this helper.
      * @return void
      */
-    public function initialize(array $config)
+    public function initialize(array $config): void
     {
     }
 
@@ -262,10 +239,6 @@ class Helper implements EventListenerInterface
     {
         return [
             'helpers' => $this->helpers,
-            'theme' => $this->theme,
-            'plugin' => $this->plugin,
-            'fieldset' => $this->fieldset,
-            'tags' => $this->tags,
             'implementedEvents' => $this->implementedEvents(),
             '_config' => $this->getConfig(),
         ];

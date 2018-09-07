@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,10 +17,9 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
-use Cake\Database\SchemaCache;
 use Cake\Database\Schema\CachedCollection;
+use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
  */
 class SchemaCacheTest extends TestCase
 {
-
     /**
      * Fixtures.
      *
@@ -115,9 +114,13 @@ class SchemaCacheTest extends TestCase
     public function testBuildNoArgs()
     {
         $ds = ConnectionManager::get('test');
+        $this->cache->method('write')
+            ->will($this->returnValue(true));
+
         $this->cache->expects($this->at(3))
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
 
         $ormCache = new SchemaCache($ds);
         $ormCache->build();
@@ -134,7 +137,8 @@ class SchemaCacheTest extends TestCase
 
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('delete');
 
@@ -153,7 +157,8 @@ class SchemaCacheTest extends TestCase
 
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('read');
         $this->cache->expects($this->never())

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,6 @@ use Cake\TestSuite\TestCase;
  */
 class SaveOptionsBuilderTest extends TestCase
 {
-
     public $fixtures = [
         'core.articles',
         'core.authors',
@@ -60,8 +60,8 @@ class SaveOptionsBuilderTest extends TestCase
     {
         $expected = [
             'associated' => [
-                'Comments' => []
-            ]
+                'Comments' => [],
+            ],
         ];
         $builder = new SaveOptionsBuilder($this->table);
         $builder->associated(
@@ -74,10 +74,10 @@ class SaveOptionsBuilderTest extends TestCase
             'associated' => [
                 'Comments' => [
                     'associated' => [
-                        'Users' => []
-                    ]
-                ]
-            ]
+                        'Users' => [],
+                    ],
+                ],
+            ],
         ];
         $builder = new SaveOptionsBuilder($this->table);
         $builder->associated(
@@ -99,18 +99,18 @@ class SaveOptionsBuilderTest extends TestCase
             'associated' => [
                 'Comments' => [
                     'associated' => [
-                        (int)0 => 'Users'
-                    ]
-                ]
-            ]
+                        (int)0 => 'Users',
+                    ],
+                ],
+            ],
         ];
         $builder = new SaveOptionsBuilder($this->table);
         $builder->associated([
             'Comments' => [
                 'associated' => [
-                    'Users'
-                ]
-            ]
+                    'Users',
+                ],
+            ],
         ]);
         $result = $builder->toArray();
         $this->assertEquals($expected, $result);
@@ -120,19 +120,19 @@ class SaveOptionsBuilderTest extends TestCase
                 'Authors' => [],
                 'Comments' => [
                     'associated' => [
-                        (int)0 => 'Users'
-                    ]
-                ]
-            ]
+                        (int)0 => 'Users',
+                    ],
+                ],
+            ],
         ];
         $builder = new SaveOptionsBuilder($this->table);
         $builder->associated([
             'Authors',
             'Comments' => [
                 'associated' => [
-                    'Users'
-                ]
-            ]
+                    'Users',
+                ],
+            ],
         ]);
         $result = $builder->toArray();
         $this->assertEquals($expected, $result);
@@ -150,15 +150,15 @@ class SaveOptionsBuilderTest extends TestCase
                 'Authors' => [],
                 'Comments' => [
                     'associated' => [
-                        (int)0 => 'Users'
-                    ]
-                ]
+                        (int)0 => 'Users',
+                    ],
+                ],
             ],
             'guard' => false,
             'checkRules' => false,
             'checkExisting' => true,
             'atomic' => true,
-            'validate' => 'default'
+            'validate' => 'default',
         ];
 
         $builder = new SaveOptionsBuilder($this->table);
@@ -166,9 +166,9 @@ class SaveOptionsBuilderTest extends TestCase
             'Authors',
             'Comments' => [
                 'associated' => [
-                    'Users'
-                ]
-            ]
+                    'Users',
+                ],
+            ],
         ])
         ->guard(false)
         ->checkRules(false)
@@ -192,15 +192,15 @@ class SaveOptionsBuilderTest extends TestCase
                 'Authors' => [],
                 'Comments' => [
                     'associated' => [
-                        (int)0 => 'Users'
-                    ]
-                ]
+                        (int)0 => 'Users',
+                    ],
+                ],
             ],
             'guard' => false,
             'checkRules' => false,
             'checkExisting' => true,
             'atomic' => true,
-            'validate' => 'default'
+            'validate' => 'default',
         ];
 
         $builder = new SaveOptionsBuilder($this->table, $options);

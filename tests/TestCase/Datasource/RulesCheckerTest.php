@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleDeleteMode()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -60,7 +61,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleUpdateMode()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -89,7 +90,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleCreateMode()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -118,7 +119,7 @@ class RulesCheckerTest extends TestCase
     public function testAddingRuleWithName()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -142,7 +143,7 @@ class RulesCheckerTest extends TestCase
     public function testAddWithErrorMessage()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -165,7 +166,7 @@ class RulesCheckerTest extends TestCase
     public function testAddWithMessageOption()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();
@@ -188,7 +189,7 @@ class RulesCheckerTest extends TestCase
     public function testAddWithoutFields()
     {
         $entity = new Entity([
-            'name' => 'larry'
+            'name' => 'larry',
         ]);
 
         $rules = new RulesChecker();

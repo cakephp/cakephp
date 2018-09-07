@@ -20,7 +20,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class AuthorsTagsFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -31,7 +30,7 @@ class AuthorsTagsFixture extends TestFixture
         'tag_id' => ['type' => 'integer', 'null' => false],
         '_constraints' => [
             'unique_tag' => ['type' => 'primary', 'columns' => ['author_id', 'tag_id']],
-        ]
+        ],
     ];
 
     /**
@@ -43,6 +42,6 @@ class AuthorsTagsFixture extends TestFixture
         ['author_id' => 3, 'tag_id' => 1],
         ['author_id' => 3, 'tag_id' => 2],
         ['author_id' => 2, 'tag_id' => 1],
-        ['author_id' => 2, 'tag_id' => 3]
+        ['author_id' => 2, 'tag_id' => 3],
     ];
 }

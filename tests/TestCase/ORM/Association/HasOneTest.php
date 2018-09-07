@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -63,24 +64,6 @@ class HasOneTest extends TestCase
     }
 
     /**
-     * Tests that foreignKey() returns the correct configured value
-     *
-     * @group deprecated
-     * @return void
-     */
-    public function testForeignKey()
-    {
-        $this->deprecated(function () {
-            $assoc = new HasOne('Profiles', [
-                'sourceTable' => $this->user
-            ]);
-            $this->assertEquals('user_id', $assoc->foreignKey());
-            $this->assertEquals('another_key', $assoc->foreignKey('another_key'));
-            $this->assertEquals('another_key', $assoc->foreignKey());
-        });
-    }
-
-    /**
      * Tests that setForeignKey() returns the correct configured value
      *
      * @return void
@@ -88,7 +71,7 @@ class HasOneTest extends TestCase
     public function testSetForeignKey()
     {
         $assoc = new HasOne('Profiles', [
-            'sourceTable' => $this->user
+            'sourceTable' => $this->user,
         ]);
         $this->assertEquals('user_id', $assoc->getForeignKey());
         $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
@@ -120,7 +103,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
             'property' => 'profile',
             'joinType' => 'INNER',
-            'conditions' => ['Profiles.is_active' => true]
+            'conditions' => ['Profiles.is_active' => true],
         ];
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();
@@ -141,7 +124,7 @@ class HasOneTest extends TestCase
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
-            'conditions' => ['Profiles.is_active' => true]
+            'conditions' => ['Profiles.is_active' => true],
         ];
         $association = new HasOne('Profiles', $config);
         $query = $this->user->query();
@@ -178,13 +161,13 @@ class HasOneTest extends TestCase
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
-            'foreignKey' => ['user_id', 'user_site_id']
+            'foreignKey' => ['user_id', 'user_site_id'],
         ];
 
         $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
 
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['join', 'select'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -197,8 +180,8 @@ class HasOneTest extends TestCase
                     ['Users.id' => $field1, 'Users.site_id' => $field2],
                 ], $selectTypeMap),
                 'type' => 'LEFT',
-                'table' => 'profiles'
-            ]
+                'table' => 'profiles',
+            ],
         ]);
         $query->expects($this->never())->method('select');
         $association->attachTo($query, ['includeFields' => false]);
@@ -214,7 +197,7 @@ class HasOneTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for "Profiles", got "(user_id)" but expected foreign key for "(id, site_id)"');
-        $query = $this->getMockBuilder('\Cake\ORM\Query')
+        $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['join', 'select'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -249,7 +232,7 @@ class HasOneTest extends TestCase
         $entity = new Entity([
             'username' => 'Mark',
             'email' => 'mark@example.com',
-            'profile' => ['twitter' => '@cakephp']
+            'profile' => ['twitter' => '@cakephp'],
         ]);
 
         $association = new HasOne('Profiles', $config);
@@ -266,7 +249,7 @@ class HasOneTest extends TestCase
     public function testPropertyOption()
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new hasOne('Thing', $config);
+        $association = new HasOne('Thing', $config);
         $this->assertEquals('thing_placeholder', $association->getProperty());
     }
 
@@ -303,8 +286,8 @@ class HasOneTest extends TestCase
         $this->listenerCalled = false;
         $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, $primary) {
             $this->listenerCalled = true;
-            $this->assertInstanceOf('\Cake\Event\Event', $event);
-            $this->assertInstanceOf('\Cake\ORM\Query', $query);
+            $this->assertInstanceOf('Cake\Event\Event', $event);
+            $this->assertInstanceOf('Cake\ORM\Query', $query);
             $this->assertInstanceOf('\ArrayObject', $options);
             $this->assertFalse($primary);
         });
@@ -332,8 +315,8 @@ class HasOneTest extends TestCase
             'Model.beforeFind',
             function ($event, $query, $options, $primary) use ($opts) {
                 $this->listenerCalled = true;
-                $this->assertInstanceOf('\Cake\Event\Event', $event);
-                $this->assertInstanceOf('\Cake\ORM\Query', $query);
+                $this->assertInstanceOf('Cake\Event\Event', $event);
+                $this->assertInstanceOf('Cake\ORM\Query', $query);
                 $this->assertEquals($options, $opts);
                 $this->assertFalse($primary);
             }

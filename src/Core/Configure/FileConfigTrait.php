@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ use Cake\Core\Plugin;
  */
 trait FileConfigTrait
 {
-
     /**
      * The path this engine finds files on.
      *
@@ -40,7 +40,7 @@ trait FileConfigTrait
      * @throws \Cake\Core\Exception\Exception When files don't exist or when
      *  files contain '..' as this could lead to abusive reads.
      */
-    protected function _getFilePath($key, $checkExists = false)
+    protected function _getFilePath(string $key, bool $checkExists = false): string
     {
         if (strpos($key, '..') !== false) {
             throw new Exception('Cannot load/dump configuration files with ../ in them.');
@@ -60,8 +60,9 @@ trait FileConfigTrait
             return $file;
         }
 
-        if (is_file(realpath($file))) {
-            return realpath($file);
+        $realPath = realpath($file);
+        if ($realPath !== false && is_file($realPath)) {
+            return $realPath;
         }
 
         throw new Exception(sprintf('Could not load configuration file: %s', $file));

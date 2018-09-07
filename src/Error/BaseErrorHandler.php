@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,10 +16,10 @@
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception as CoreException;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Error;
-use Exception;
+use Throwable;
 
 /**
  * Base error handler that provides logic common to the CLI + web
@@ -29,13 +30,17 @@ use Exception;
  */
 abstract class BaseErrorHandler
 {
-
     /**
      * Options to use for the Error handling.
      *
      * @var array
      */
     protected $_options = [];
+
+    /**
+     * @var bool
+     */
+    protected $_handled = false;
 
     /**
      * Display an error message in an environment specific way.
@@ -47,7 +52,7 @@ abstract class BaseErrorHandler
      * @param bool $debug Whether or not the app is in debug mode.
      * @return void
      */
-    abstract protected function _displayError($error, $debug);
+    abstract protected function _displayError(array $error, bool $debug): void;
 
     /**
      * Display an exception in an environment specific way.
@@ -55,17 +60,17 @@ abstract class BaseErrorHandler
      * Subclasses should implement this method to display an uncaught exception as
      * desired for the runtime they operate in.
      *
-     * @param \Exception $exception The uncaught exception.
+     * @param \Throwable $exception The uncaught exception.
      * @return void
      */
-    abstract protected function _displayException($exception);
+    abstract protected function _displayException(Throwable $exception): void;
 
     /**
      * Register the error and exception handlers.
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $level = -1;
         if (isset($this->_options['errorLevel'])) {
@@ -73,9 +78,9 @@ abstract class BaseErrorHandler
         }
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
-        set_exception_handler([$this, 'wrapAndHandleException']);
+        set_exception_handler([$this, 'handleException']);
         register_shutdown_function(function () {
-            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');
@@ -123,11 +128,12 @@ abstract class BaseErrorHandler
      * @param array|null $context Context
      * @return bool True if error was handled
      */
-    public function handleError($code, $description, $file = null, $line = null, $context = null)
+    public function handleError(int $code, string $description, ?string $file = null, ?int $line = null, ?array $context = null): bool
     {
         if (error_reporting() === 0) {
             return false;
         }
+        $this->_handled = true;
         list($error, $log) = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
@@ -146,7 +152,7 @@ abstract class BaseErrorHandler
             $data += [
                 'context' => $context,
                 'start' => 3,
-                'path' => Debugger::trimPath($file)
+                'path' => Debugger::trimPath($file),
             ];
         }
         $this->_displayError($data, $debug);
@@ -160,14 +166,13 @@ abstract class BaseErrorHandler
      * then, it wraps the passed object inside another Exception object
      * for backwards compatibility purposes.
      *
-     * @param \Exception|\Error $exception The exception to handle
+     * @param \Throwable $exception The exception to handle
      * @return void
+     * @deprecated 4.0.0 Unused method will be removed in 5.0
      */
-    public function wrapAndHandleException($exception)
+    public function wrapAndHandleException(Throwable $exception): void
     {
-        if ($exception instanceof Error) {
-            $exception = new PHP7ErrorException($exception);
-        }
+        deprecationWarning('This method is no longer in use. Call handleException instead.');
         $this->handleException($exception);
     }
 
@@ -177,12 +182,12 @@ abstract class BaseErrorHandler
      * Uses a template method provided by subclasses to display errors in an
      * environment appropriate way.
      *
-     * @param \Exception $exception Exception instance.
+     * @param \Throwable $exception Exception instance.
      * @return void
      * @throws \Exception When renderer class not found
      * @see https://secure.php.net/manual/en/function.set-exception-handler.php
      */
-    public function handleException(Exception $exception)
+    public function handleException(Throwable $exception): void
     {
         $this->_displayException($exception);
         $this->_logException($exception);
@@ -211,7 +216,7 @@ abstract class BaseErrorHandler
      * @param int $line Line that triggered the error
      * @return bool
      */
-    public function handleFatalError($code, $description, $file, $line)
+    public function handleFatalError(int $code, string $description, string $file, int $line): bool
     {
         $data = [
             'code' => $code,
@@ -234,7 +239,7 @@ abstract class BaseErrorHandler
      * @param int $additionalKb Number in kilobytes
      * @return void
      */
-    public function increaseMemoryLimit($additionalKb)
+    public function increaseMemoryLimit(int $additionalKb): void
     {
         $limit = ini_get('memory_limit');
         if (!strlen($limit) || $limit === '-1') {
@@ -260,11 +265,11 @@ abstract class BaseErrorHandler
     /**
      * Log an error.
      *
-     * @param string $level The level name of the log.
+     * @param int|string $level The level name of the log.
      * @param array $data Array of error data.
      * @return bool
      */
-    protected function _logError($level, $data)
+    protected function _logError($level, array $data): bool
     {
         $message = sprintf(
             '%s (%s): %s in [%s, line %s]',
@@ -277,7 +282,7 @@ abstract class BaseErrorHandler
         if (!empty($this->_options['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
-                'format' => 'log'
+                'format' => 'log',
             ]);
 
             $request = Router::getRequest();
@@ -294,23 +299,19 @@ abstract class BaseErrorHandler
     /**
      * Handles exception logging
      *
-     * @param \Exception $exception Exception instance.
+     * @param \Throwable $exception Exception instance.
      * @return bool
      */
-    protected function _logException(Exception $exception)
+    protected function _logException(Throwable $exception): bool
     {
         $config = $this->_options;
-        $unwrapped = $exception instanceof PHP7ErrorException ?
-            $exception->getError() :
-            $exception;
-
         if (empty($config['log'])) {
             return false;
         }
 
         if (!empty($config['skipLog'])) {
             foreach ((array)$config['skipLog'] as $class) {
-                if ($unwrapped instanceof $class) {
+                if ($exception instanceof $class) {
                     return false;
                 }
             }
@@ -325,7 +326,7 @@ abstract class BaseErrorHandler
      * @param \Cake\Http\ServerRequest $request The request to read from.
      * @return string
      */
-    protected function _requestContext($request)
+    protected function _requestContext($request): string
     {
         $message = "\nRequest URL: " . $request->getRequestTarget();
 
@@ -344,14 +345,11 @@ abstract class BaseErrorHandler
     /**
      * Generates a formatted error message
      *
-     * @param \Exception $exception Exception instance
+     * @param \Throwable $exception Exception instance
      * @return string Formatted message
      */
-    protected function _getMessage(Exception $exception)
+    protected function _getMessage(Throwable $exception): string
     {
-        $exception = $exception instanceof PHP7ErrorException ?
-            $exception->getError() :
-            $exception;
         $config = $this->_options;
         $message = sprintf(
             '[%s] %s in %s on line %s',
@@ -362,7 +360,7 @@ abstract class BaseErrorHandler
         );
         $debug = Configure::read('debug');
 
-        if ($debug && method_exists($exception, 'getAttributes')) {
+        if ($debug && $exception instanceof CoreException) {
             $attributes = $exception->getAttributes();
             if ($attributes) {
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
@@ -387,7 +385,7 @@ abstract class BaseErrorHandler
      * @param int $code Error code to map
      * @return array Array of error word, and log location.
      */
-    public static function mapErrorCode($code)
+    public static function mapErrorCode(int $code): array
     {
         $levelMap = [
             E_PARSE => 'error',

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Static content controller.
  *
@@ -32,14 +33,6 @@ use Cake\View\Exception\MissingTemplateException;
  */
 class PagesController extends AppController
 {
-
-    /**
-     * Default helper
-     *
-     * @var array
-     */
-    public $helpers = ['Html'];
-
     /**
      * Displays a view
      *
@@ -70,7 +63,7 @@ class PagesController extends AppController
         $this->set([
             'page' => $page,
             'subpage' => $subpage,
-            'title_for_layout' => $titleForLayout
+            'title_for_layout' => $titleForLayout,
         ]);
 
         try {

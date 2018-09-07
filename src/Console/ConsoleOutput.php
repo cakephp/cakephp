@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -45,34 +46,33 @@ use InvalidArgumentException;
  */
 class ConsoleOutput
 {
-
     /**
      * Raw output constant - no modification of output text.
      *
      * @var int
      */
-    const RAW = 0;
+    public const RAW = 0;
 
     /**
      * Plain output - tags will be stripped.
      *
      * @var int
      */
-    const PLAIN = 1;
+    public const PLAIN = 1;
 
     /**
      * Color output - Convert known tags in to ANSI color escape codes.
      *
      * @var int
      */
-    const COLOR = 2;
+    public const COLOR = 2;
 
     /**
      * Constant for a newline.
      *
      * @var string
      */
-    const LF = PHP_EOL;
+    public const LF = PHP_EOL;
 
     /**
      * File handle for output.
@@ -82,7 +82,7 @@ class ConsoleOutput
     protected $_output;
 
     /**
-     * The current output type. Manipulated with ConsoleOutput::outputAs();
+     * The current output type. Manipulated with ConsoleOutput::setOutputAs();
      *
      * @var int
      */
@@ -101,7 +101,7 @@ class ConsoleOutput
         'blue' => 34,
         'magenta' => 35,
         'cyan' => 36,
-        'white' => 37
+        'white' => 37,
     ];
 
     /**
@@ -117,7 +117,7 @@ class ConsoleOutput
         'blue' => 44,
         'magenta' => 45,
         'cyan' => 46,
-        'white' => 47
+        'white' => 47,
     ];
 
     /**
@@ -149,7 +149,7 @@ class ConsoleOutput
         'success' => ['text' => 'green'],
         'comment' => ['text' => 'blue'],
         'question' => ['text' => 'magenta'],
-        'notice' => ['text' => 'cyan']
+        'notice' => ['text' => 'cyan'],
     ];
 
     /**
@@ -160,7 +160,7 @@ class ConsoleOutput
      *
      * @param string $stream The identifier of the stream to write output to.
      */
-    public function __construct($stream = 'php://stdout')
+    public function __construct(string $stream = 'php://stdout')
     {
         $this->_output = fopen($stream, 'wb');
 
@@ -179,7 +179,7 @@ class ConsoleOutput
      * @param int $newlines Number of newlines to append
      * @return int|bool The number of bytes returned from writing to output.
      */
-    public function write($message, $newlines = 1)
+    public function write($message, int $newlines = 1)
     {
         if (is_array($message)) {
             $message = implode(static::LF, $message);
@@ -194,12 +194,12 @@ class ConsoleOutput
      * @param string $text Text with styling tags.
      * @return string String with color codes added.
      */
-    public function styleText($text)
+    public function styleText(string $text): string
     {
-        if ($this->_outputAs == static::RAW) {
+        if ($this->_outputAs === static::RAW) {
             return $text;
         }
-        if ($this->_outputAs == static::PLAIN) {
+        if ($this->_outputAs === static::PLAIN) {
             $tags = implode('|', array_keys(static::$_styles));
 
             return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
@@ -218,7 +218,7 @@ class ConsoleOutput
      * @param array $matches An array of matches to replace.
      * @return string
      */
-    protected function _replaceTags($matches)
+    protected function _replaceTags(array $matches): string
     {
         $style = $this->styles($matches['tag']);
         if (empty($style)) {
@@ -248,7 +248,7 @@ class ConsoleOutput
      * @param string $message Message to write.
      * @return int|bool The number of bytes returned from writing to output.
      */
-    protected function _write($message)
+    protected function _write(string $message)
     {
         return fwrite($this->_output, $message);
     }
@@ -292,7 +292,7 @@ class ConsoleOutput
             return static::$_styles;
         }
         if (is_string($style) && $definition === null) {
-            return isset(static::$_styles[$style]) ? static::$_styles[$style] : null;
+            return static::$_styles[$style] ?? null;
         }
         if ($definition === false) {
             unset(static::$_styles[$style]);
@@ -309,7 +309,7 @@ class ConsoleOutput
      *
      * @return int
      */
-    public function getOutputAs()
+    public function getOutputAs(): int
     {
         return $this->_outputAs;
     }
@@ -321,31 +321,12 @@ class ConsoleOutput
      * @return void
      * @throws \InvalidArgumentException in case of a not supported output type.
      */
-    public function setOutputAs($type)
+    public function setOutputAs(int $type): void
     {
         if (!in_array($type, [self::RAW, self::PLAIN, self::COLOR], true)) {
             throw new InvalidArgumentException(sprintf('Invalid output type "%s".', $type));
         }
 
-        $this->_outputAs = $type;
-    }
-
-    /**
-     * Get/Set the output type to use. The output type how formatting tags are treated.
-     *
-     * @deprecated 3.5.0 Use getOutputAs()/setOutputAs() instead.
-     * @param int|null $type The output type to use. Should be one of the class constants.
-     * @return int|null Either null or the value if getting.
-     */
-    public function outputAs($type = null)
-    {
-        deprecationWarning(
-            'ConsoleOutput::outputAs() is deprecated. ' .
-            'Use ConsoleOutput::setOutputAs()/getOutputAs() instead.'
-        );
-        if ($type === null) {
-            return $this->_outputAs;
-        }
         $this->_outputAs = $type;
     }
 

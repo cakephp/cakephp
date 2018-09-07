@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -81,7 +82,7 @@ class AssetMiddleware
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    public function __invoke($request, $response, $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $url = $request->getUri()->getPath();
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
@@ -116,7 +117,7 @@ class AssetMiddleware
      * @param \Cake\Filesystem\File $file The file object to compare.
      * @return bool
      */
-    protected function isNotModified($request, $file)
+    protected function isNotModified(ServerRequestInterface $request, File $file): bool
     {
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');
         if (!$modifiedSince) {
@@ -130,9 +131,9 @@ class AssetMiddleware
      * Builds asset file path based off url
      *
      * @param string $url Asset URL
-     * @return string Absolute path for asset file
+     * @return string|null Absolute path for asset file, null on failure
      */
-    protected function _getAssetFile($url)
+    protected function _getAssetFile(string $url): ?string
     {
         $parts = explode('/', ltrim($url, '/'));
         $pluginPart = [];
@@ -142,7 +143,7 @@ class AssetMiddleware
             }
             $pluginPart[] = Inflector::camelize($parts[$i]);
             $plugin = implode('/', $pluginPart);
-            if ($plugin && Plugin::loaded($plugin)) {
+            if ($plugin && Plugin::isLoaded($plugin)) {
                 $parts = array_slice($parts, $i + 1);
                 $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;
@@ -151,7 +152,7 @@ class AssetMiddleware
             }
         }
 
-        return '';
+        return null;
     }
 
     /**
@@ -162,7 +163,7 @@ class AssetMiddleware
      * @param \Cake\Filesystem\File $file The file wrapper for the file.
      * @return \Psr\Http\Message\ResponseInterface The response with the file & headers.
      */
-    protected function deliverAsset(ServerRequestInterface $request, ResponseInterface $response, $file)
+    protected function deliverAsset(ServerRequestInterface $request, ResponseInterface $response, File $file): ResponseInterface
     {
         $contentType = $this->getType($file);
         $modified = $file->lastChange();
@@ -182,10 +183,10 @@ class AssetMiddleware
     /**
      * Return the type from a File object
      *
-     * @param File $file The file from which you get the type
+     * @param \Cake\Filesystem\File $file The file from which you get the type
      * @return string
      */
-    protected function getType($file)
+    protected function getType(File $file): string
     {
         $extension = $file->ext();
         if (isset($this->typeMap[$extension])) {

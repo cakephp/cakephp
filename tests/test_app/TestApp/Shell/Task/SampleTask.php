@@ -1,7 +1,6 @@
 <?php
+declare(strict_types=1);
 /**
- * SampleTask file
- *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
@@ -15,12 +14,12 @@
  */
 namespace TestApp\Shell\Task;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 
 class SampleTask extends Shell
 {
-
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = parent::getOptionParser();
         $parser->addOption('sample', [

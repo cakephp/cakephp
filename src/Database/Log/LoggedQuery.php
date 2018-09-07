@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,7 +23,6 @@ namespace Cake\Database\Log;
  */
 class LoggedQuery
 {
-
     /**
      * Query string that was executed
      *
@@ -33,7 +33,7 @@ class LoggedQuery
     /**
      * Number of milliseconds this query took to complete
      *
-     * @var int
+     * @var float
      */
     public $took = 0;
 
@@ -63,7 +63,7 @@ class LoggedQuery
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return "duration={$this->took} rows={$this->numRows} {$this->query}";
     }

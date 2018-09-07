@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,13 +25,12 @@ use RecursiveIterator;
  */
 class NoChildrenIterator extends Collection implements RecursiveIterator
 {
-
     /**
      * Returns false as there are no children iterators in this collection
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return false;
     }

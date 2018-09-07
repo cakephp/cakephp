@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,8 +15,8 @@
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
 use Cake\Database\Type\DecimalType;
+use Cake\Database\TypeFactory;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -53,7 +54,7 @@ class DecimalTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('decimal');
+        $this->type = TypeFactory::build('decimal');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
         $this->localeString = I18n::getLocale();
         $this->numberClass = DecimalType::$numberClass;
@@ -100,13 +101,13 @@ class DecimalTypeTest extends TestCase
             'a' => null,
             'b' => '2.3',
             'c' => '15',
-            'c' => '0.0',
+            'd' => '0.0',
         ];
         $expected = [
             'a' => null,
             'b' => 2.3,
             'c' => 15,
-            'c' => 0.0,
+            'd' => 0.0,
         ];
         $this->assertEquals(
             $expected,
@@ -159,7 +160,7 @@ class DecimalTypeTest extends TestCase
     public function testMarshal()
     {
         $result = $this->type->marshal('some data');
-        $this->assertSame('some data', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal('');
         $this->assertNull($result);
@@ -168,10 +169,10 @@ class DecimalTypeTest extends TestCase
         $this->assertSame(2.51, $result);
 
         $result = $this->type->marshal('3.5 bears');
-        $this->assertSame('3.5 bears', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
-        $this->assertSame(1, $result);
+        $this->assertNull($result);
     }
 
     /**

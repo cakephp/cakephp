@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,7 +15,7 @@
  */
 namespace Cake\Event\Decorator;
 
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use RuntimeException;
 
 /**
@@ -25,7 +26,6 @@ use RuntimeException;
  */
 class ConditionDecorator extends AbstractDecorator
 {
-
     /**
      * {@inheritDoc}
      */
@@ -42,10 +42,10 @@ class ConditionDecorator extends AbstractDecorator
     /**
      * Checks if the event is triggered for this listener.
      *
-     * @param \Cake\Event\Event $event Event object.
+     * @param \Cake\Event\EventInterface $event Event object.
      * @return bool
      */
-    public function canTrigger(Event $event)
+    public function canTrigger(EventInterface $event): bool
     {
         $if = $this->_evaluateCondition('if', $event);
         $unless = $this->_evaluateCondition('unless', $event);
@@ -57,10 +57,10 @@ class ConditionDecorator extends AbstractDecorator
      * Evaluates the filter conditions
      *
      * @param string $condition Condition type
-     * @param \Cake\Event\Event $event Event object
+     * @param \Cake\Event\EventInterface $event Event object
      * @return bool
      */
-    protected function _evaluateCondition($condition, Event $event)
+    protected function _evaluateCondition(string $condition, EventInterface $event): bool
     {
         if (!isset($this->_options[$condition])) {
             return $condition !== 'unless';
@@ -69,6 +69,6 @@ class ConditionDecorator extends AbstractDecorator
             throw new RuntimeException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
 
-        return $this->_options[$condition]($event);
+        return (bool)$this->_options[$condition]($event);
     }
 }

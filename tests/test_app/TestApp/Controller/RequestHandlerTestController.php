@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  *
@@ -23,7 +24,6 @@ use Cake\Controller\Controller;
  */
 class RequestHandlerTestController extends Controller
 {
-
     /**
      * test method for ajax redirection
      *
@@ -31,7 +31,7 @@ class RequestHandlerTestController extends Controller
      */
     public function destination()
     {
-        $this->viewBuilder()->templatePath('Posts');
+        $this->viewBuilder()->setTemplatePath('Posts');
         $this->render('index');
     }
 
@@ -55,7 +55,7 @@ class RequestHandlerTestController extends Controller
      */
     public function ajax2_layout()
     {
-        $this->viewBuilder()->layout('ajax2');
+        $this->viewBuilder()->setLayout('ajax2');
         $this->destination();
     }
 

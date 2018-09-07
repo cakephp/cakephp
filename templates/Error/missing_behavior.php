@@ -26,10 +26,10 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 if (empty($plugin)) {
     $filePath = APP_DIR . DIRECTORY_SEPARATOR;
 }
-if (!empty($plugin) && Plugin::loaded($plugin)) {
+if (!empty($plugin) && Plugin::isLoaded($plugin)) {
     $filePath = Plugin::classPath($plugin);
 }
-if (!empty($plugin) && !Plugin::loaded($plugin)) {
+if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
     $filePath = $pluginPath . h($plugin) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR;
 }
 

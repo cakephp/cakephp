@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,18 +16,21 @@
 namespace Cake\Database\Exception;
 
 use Cake\Core\Exception\Exception;
+use Throwable;
 
+/**
+ * Class NestedTransactionRollbackException
+ */
 class NestedTransactionRollbackException extends Exception
 {
-
     /**
      * Constructor
      *
      * @param string|null $message If no message is given a default meesage will be used.
-     * @param int $code Status code, defaults to 500.
-     * @param \Exception|null $previous the previous exception.
+     * @param int|null $code Status code, defaults to 500.
+     * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct($message = null, $code = 500, $previous = null)
+    public function __construct(?string $message = null, ?int $code = 500, ?Throwable $previous = null)
     {
         if ($message === null) {
             $message = 'Cannot commit transaction - rollback() has been already called in the nested transaction';

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,17 +16,14 @@
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Crypto\Mcrypt;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
-use RuntimeException;
 
 /**
  * SecurityTest class
  */
 class SecurityTest extends TestCase
 {
-
     /**
      * testHash method
      *
@@ -83,59 +81,6 @@ class SecurityTest extends TestCase
     }
 
     /**
-     * testRijndael method
-     *
-     * @return void
-     */
-    public function testRijndael()
-    {
-        $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='));
-        $engine = Security::engine();
-
-        Security::engine(new Mcrypt());
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-
-        $result = Security::rijndael($txt, $key, 'encrypt');
-        $this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
-
-        $result = Security::rijndael('', $key, 'encrypt');
-        $this->assertEquals('', Security::rijndael($result, $key, 'decrypt'));
-
-        $key = 'this is my key of over 32 chars, yes it is';
-        $result = Security::rijndael($txt, $key, 'encrypt');
-        $this->assertEquals($txt, Security::rijndael($result, $key, 'decrypt'));
-
-        Security::engine($engine);
-    }
-
-    /**
-     * testRijndaelInvalidOperation method
-     *
-     * @return void
-     */
-    public function testRijndaelInvalidOperation()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-        Security::rijndael($txt, $key, 'foo');
-    }
-
-    /**
-     * testRijndaelInvalidKey method
-     *
-     * @return void
-     */
-    public function testRijndaelInvalidKey()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $txt = 'The quick brown fox jumped over the lazy dog.';
-        $key = 'too small';
-        Security::rijndael($txt, $key, 'encrypt');
-    }
-
-    /**
      * Test encrypt/decrypt.
      *
      * @return void
@@ -162,7 +107,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key);
 
         $key = 'Not the same key. This one will fail';
-        $this->assertFalse(Security::decrypt($txt, $key), 'Modified key will fail.');
+        $this->assertNull(Security::decrypt($txt, $key), 'Modified key will fail.');
     }
 
     /**
@@ -179,7 +124,7 @@ class SecurityTest extends TestCase
 
         // Change one of the bytes in the hmac.
         $result[10] = 'x';
-        $this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified hmac causes failure.');
+        $this->assertNull(Security::decrypt($result, $key, $salt), 'Modified hmac causes failure.');
     }
 
     /**
@@ -195,7 +140,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key, $salt);
 
         $salt = 'humpty dumpty had a great fall.';
-        $this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified salt causes failure.');
+        $this->assertNull(Security::decrypt($result, $key, $salt), 'Modified salt causes failure.');
     }
 
     /**
@@ -223,15 +168,6 @@ class SecurityTest extends TestCase
 
         $result = Security::encrypt('', $key);
         $this->assertSame('', Security::decrypt($result, $key));
-
-        $result = Security::encrypt(false, $key);
-        $this->assertSame('', Security::decrypt($result, $key));
-
-        $result = Security::encrypt(null, $key);
-        $this->assertSame('', Security::decrypt($result, $key));
-
-        $result = Security::encrypt(0, $key);
-        $this->assertSame('0', Security::decrypt($result, $key));
 
         $result = Security::encrypt('0', $key);
         $this->assertSame('0', Security::decrypt($result, $key));
@@ -266,34 +202,19 @@ class SecurityTest extends TestCase
     }
 
     /**
-     * Test that values encrypted with open ssl can be decrypted with mcrypt and the reverse.
+     * Test engine
      *
-     * @group deprecated
      * @return void
      */
     public function testEngineEquivalence()
     {
-        $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'This needs mcrypt extension to be loaded.');
-        $this->deprecated(function () {
-            $restore = Security::engine();
-            $txt = "Obi-wan you're our only hope";
-            $key = 'This is my secret key phrase it is quite long.';
-            $salt = 'A tasty salt that is delicious';
+        $restore = Security::engine();
+        $newEngine = new OpenSsl();
 
-            Security::engine(new Mcrypt());
-            $cipher = Security::encrypt($txt, $key, $salt);
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+        Security::engine($newEngine);
 
-            Security::engine(new OpenSsl());
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-
-            Security::engine(new OpenSsl());
-            $cipher = Security::encrypt($txt, $key, $salt);
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-
-            Security::engine(new Mcrypt());
-            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-        });
+        $this->assertSame($newEngine, Security::engine());
+        $this->assertNotSame($restore, Security::engine());
     }
 
     /**
@@ -364,5 +285,32 @@ class SecurityTest extends TestCase
         $this->assertSame(64, strlen($value));
 
         $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
+    }
+
+    /**
+     * test constantEquals
+     *
+     * @return void
+     */
+    public function testConstantEquals()
+    {
+        $this->assertFalse(Security::constantEquals('abcde', null));
+        $this->assertFalse(Security::constantEquals('abcde', false));
+        $this->assertFalse(Security::constantEquals('abcde', true));
+        $this->assertFalse(Security::constantEquals('abcde', 1));
+
+        $this->assertFalse(Security::constantEquals(null, 'abcde'));
+        $this->assertFalse(Security::constantEquals(false, 'abcde'));
+        $this->assertFalse(Security::constantEquals(1, 'abcde'));
+        $this->assertFalse(Security::constantEquals(true, 'abcde'));
+
+        $this->assertTrue(Security::constantEquals('abcde', 'abcde'));
+        $this->assertFalse(Security::constantEquals('abcdef', 'abcde'));
+        $this->assertFalse(Security::constantEquals('abcde', 'abcdef'));
+        $this->assertFalse(Security::constantEquals('a', 'abcdef'));
+
+        $snowman = "\xe2\x98\x83";
+        $this->assertTrue(Security::constantEquals($snowman, $snowman));
+        $this->assertFalse(Security::constantEquals(str_repeat($snowman, 3), $snowman));
     }
 }

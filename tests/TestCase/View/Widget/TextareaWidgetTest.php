@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,7 +24,6 @@ use Cake\View\Widget\TextareaWidget;
  */
 class TextareaWidgetTest extends TestCase
 {
-
     /**
      * setup
      *
@@ -97,7 +97,7 @@ class TextareaWidgetTest extends TestCase
         $data = [
             'templateVars' => ['custom' => 'value'],
             'name' => 'comment',
-            'val' => 'body'
+            'val' => 'body',
         ];
         $result = $input->render($data, $this->context);
         $expected = [
