@@ -28,6 +28,13 @@ class UpgradeCommandTest extends TestCase
     use ConsoleIntegrationTestTrait;
 
     /**
+     * pluginPaths
+     *
+     * @var array
+     */
+    protected $pluginPaths = [];
+
+    /**
      * setup method
      *
      * @return void
@@ -73,7 +80,7 @@ class UpgradeCommandTest extends TestCase
      */
     public function tearDown()
     {
-        Configure::read('App.paths.plugins', $this->pluginPaths);
+        Configure::write('App.paths.plugins', $this->pluginPaths);
     }
 
     /**
