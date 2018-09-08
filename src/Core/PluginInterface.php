@@ -56,6 +56,13 @@ interface PluginInterface
     public function getClassPath(): string;
 
     /**
+     * Get the filesystem path to templates for this plugin
+     *
+     * @return string
+     */
+    public function getTemplatePath(): string;
+
+    /**
      * Load all the application configuration and bootstrap logic.
      *
      * The default implementation of this method will include the `config/bootstrap.php` in the plugin if it exist. You

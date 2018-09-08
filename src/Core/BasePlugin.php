@@ -78,6 +78,13 @@ class BasePlugin implements PluginInterface
     protected $configPath;
 
     /**
+     * The templates path for this plugin.
+     *
+     * @var string
+     */
+    protected $templatePath;
+
+    /**
      * The name of this plugin
      *
      * @var string
@@ -173,6 +180,19 @@ class BasePlugin implements PluginInterface
         $path = $this->getPath();
 
         return $path . 'src' . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTemplatePath(): string
+    {
+        if ($this->templatePath) {
+            return $this->templatePath;
+        }
+        $path = $this->getPath();
+
+        return $path . 'templates' . DIRECTORY_SEPARATOR;
     }
 
     /**

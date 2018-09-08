@@ -156,6 +156,7 @@ class BasePluginTest extends TestCase
         $this->assertSame($expected, $plugin->getPath());
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
         $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
+        $this->assertSame($expected . 'templates' . DS, $plugin->getTemplatePath());
     }
 
     public function testGetPathOptionValue()
@@ -165,6 +166,7 @@ class BasePluginTest extends TestCase
         $this->assertSame($expected, $plugin->getPath());
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
         $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
+        $this->assertSame($expected . 'templates' . DS, $plugin->getTemplatePath());
     }
 
     public function testGetPathSubclass()
@@ -174,5 +176,6 @@ class BasePluginTest extends TestCase
         $this->assertSame($expected, $plugin->getPath());
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
         $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
+        $this->assertSame($expected . 'templates' . DS, $plugin->getTemplatePath());
     }
 }
