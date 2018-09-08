@@ -103,7 +103,7 @@ class UpgradeCommand extends Command
     }
 
     /**
-     * Recursively move src/Template to Template
+     * Recursively move "src/Template" to "templates"
      *
      * @param string $path Path
      * @return void
