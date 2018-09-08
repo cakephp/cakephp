@@ -79,7 +79,7 @@ class UpgradeCommandTest extends TestCase
         Configure::write('App.paths.plugins', [$this->fs->url() . '/plugins'], true);
 
         $this->namespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', $appNamespace);
+        Configure::write('App.namespace', 'TestApp');
     }
 
     /**
