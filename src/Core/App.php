@@ -188,7 +188,7 @@ class App
         }
         if (!empty($plugin)) {
             if ($type === 'Template') {
-                return [Plugin::path($plugin) . 'templates' . DIRECTORY_SEPARATOR];
+                return [Plugin::templatePath($plugin)];
             }
 
             return [Plugin::classPath($plugin) . $type . DIRECTORY_SEPARATOR];
