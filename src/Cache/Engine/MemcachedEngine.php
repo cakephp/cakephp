@@ -15,7 +15,8 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use InvalidArgumentException;
+use Cake\Cache\Exception\InvalidArgumentException;
+;
 use Memcached;
 
 /**
@@ -290,11 +291,57 @@ class MemcachedEngine extends CacheEngine
     }
 
     /**
+     * Read a key from the cache
+     *
+     * @deprecated Since 3.6 use get()
+     * @param string $key Identifier for the data
+     * @return mixed The cached data, or false if the data doesn't exist, has
+     * expired, or if there was an error fetching it.
+     */
+    public function read($key)
+    {
+        $key = $this->_key($key);
+
+        return $this->_Memcached->get($key);
+    }
+
+    /**
      * Write data for key into cache. When using memcached as your cache engine
      * remember that the Memcached pecl extension does not support cache expiry
      * times greater than 30 days in the future. Any duration greater than 30 days
      * will be treated as never expiring.
      *
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
+     * @return bool True if the data was successfully cached, false on failure
+     * @see https://secure.php.net/manual/en/memcache.set.php
+     */
+    public function set($key, $value, $ttl = null)
+    {
+        $duration = $this->_config['duration'];
+        if ($ttl !== null) {
+            $duration = $ttl;
+        }
+
+        if ($duration > 30 * DAY) {
+            $duration = 0;
+        }
+
+        $key = $this->_key($key);
+
+        return $this->_Memcached->set($key, $value, $duration);
+    }
+
+    /**
+     * Write data for key into cache. When using memcached as your cache engine
+     * remember that the Memcached pecl extension does not support cache expiry
+     * times greater than 30 days in the future. Any duration greater than 30 days
+     * will be treated as never expiring.
+     *
+     * @deprecated Since 3.6 use set()
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
@@ -306,7 +353,6 @@ class MemcachedEngine extends CacheEngine
         if ($duration > 30 * DAY) {
             $duration = 0;
         }
-
         $key = $this->_key($key);
 
         return $this->_Memcached->set($key, $value, $duration);
@@ -340,14 +386,20 @@ class MemcachedEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
+     * @param mixed $default Default value
      * @return mixed The cached data, or false if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function read($key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
-        return $this->_Memcached->get($key);
+        $result = $this->_Memcached->get($key);
+        if ($result === false) {
+            return $default;
+        }
+
+        return $result;
     }
 
     /**
@@ -441,17 +493,22 @@ class MemcachedEngine extends CacheEngine
     }
 
     /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return true;
+    }
+
+    /**
      * Delete all keys from the cache
      *
-     * @param bool $check If true will check expiration, otherwise delete all.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
-
         $keys = $this->_Memcached->getAllKeys();
         if ($keys === false) {
             return false;

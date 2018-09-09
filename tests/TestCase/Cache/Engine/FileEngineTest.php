@@ -16,14 +16,20 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use LogicException;
 
 /**
  * FileEngineTest class
  */
 class FileEngineTest extends TestCase
 {
+    /**
+     * @var \Cake\Cache\Engine\FileEngine
+     */
+    protected $engine;
 
     /**
      * setUp method
@@ -66,6 +72,8 @@ class FileEngineTest extends TestCase
         ];
         Cache::drop('file_test');
         Cache::setConfig('file_test', array_merge($defaults, $config));
+
+        $this->cache = Cache::engine('file_test');
     }
 
     /**
@@ -73,11 +81,11 @@ class FileEngineTest extends TestCase
      *
      * @return void
      */
-    public function testReadAndWriteCacheExpired()
+    public function testReadExpired()
     {
         $this->_configCache(['duration' => 1]);
 
-        $result = Cache::read('test', 'file_test');
+        $result = $this->cache->read('test');
         $expecting = '';
         $this->assertEquals($expecting, $result);
     }
@@ -105,6 +113,44 @@ class FileEngineTest extends TestCase
     }
 
     /**
+     * Test reading and writing to the cache.
+     *
+     * @return void
+     */
+    public function testSetAndGet()
+    {
+        $result = $this->cache->get('test');
+        $this->assertEquals('', $result);
+        $this->assertFalse($this->cache->has('test'));
+
+        $result = $this->cache->get('test', 'default');
+        $this->assertEquals('default', $result);
+
+        $this->assertFalse($this->cache->set('test', ''));
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $this->assertTrue($this->cache->set('test', $data));
+        $this->assertTrue($this->cache->has('test'));
+        $this->assertFileExists(TMP . 'tests/cake_test');
+
+        $result = $this->cache->get('test');
+        $this->assertEquals($data, $result);
+
+        $this->cache->delete('test');
+    }
+
+    /**
+     * Test has() with bad input.
+     *
+     * @return void
+     */
+    public function testHasInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->cache->has(['thing']);
+    }
+
+    /**
      * Test read/write on the same cache key. Ensures file handles are re-wound.
      *
      * @return void
@@ -120,6 +166,30 @@ class FileEngineTest extends TestCase
         Cache::delete('rw', 'file_test');
         $this->assertEquals('first write', $result);
         $this->assertEquals('second write', $resultB);
+    }
+
+    /**
+     * test set ttl argument.
+     *
+     * @return void
+     */
+    public function testSetWithTtl()
+    {
+        $this->_configCache(['duration' => 100]);
+
+        $result = $this->cache->get('test');
+        $this->assertNull($result);
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $result = $this->cache->set('other_test', $data, 1);
+        $this->assertTrue($result);
+
+        sleep(2);
+        $result = $this->cache->get('other_test');
+        $this->assertNull($result);
+
+        $result = $this->cache->get('other_test', 'default');
+        $this->assertSame('default', $result);
     }
 
     /**
@@ -373,6 +443,23 @@ class FileEngineTest extends TestCase
         $this->assertEquals($expected, $data);
 
         Cache::drop('windows_test');
+    }
+
+    /**
+     * testGetWithDefault method
+     *
+     * @return void
+     */
+    public function testGetWithDefault()
+    {
+        $result = Cache::get('does-not-exist', null, 'file_test');
+        $this->assertNull($result);
+
+        $result = Cache::get('does-not-exist', false, 'file_test');
+        $this->assertFalse($result);
+
+        $result = Cache::get('does-not-exist', 'no-it-does', 'file_test');
+        $this->assertEquals('no-it-does', $result);
     }
 
     /**
@@ -640,5 +727,27 @@ class FileEngineTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'file_test');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test increment
+     *
+     * @return void
+     */
+    public function testIncrement()
+    {
+        $this->expectException(LogicException::class);
+        $this->cache->increment('thing', 1);
+    }
+
+    /**
+     * Test decrement
+     *
+     * @return void
+     */
+    public function testDecrement()
+    {
+        $this->expectException(LogicException::class);
+        $this->cache->decrement('thing', 1);
     }
 }

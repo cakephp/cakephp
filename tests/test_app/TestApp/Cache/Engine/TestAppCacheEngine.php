@@ -24,15 +24,22 @@ use Cake\Cache\CacheEngine;
 
 class TestAppCacheEngine extends CacheEngine
 {
-
     public function write($key, $value)
+    {
+    }
+
+    public function set($key, $data, $ttl = null)
     {
         if ($key === 'fail') {
             return false;
         }
     }
 
-    public function read($key)
+    public function read($key, $default = null)
+    {
+    }
+
+    public function get($key, $default = null)
     {
     }
 
@@ -48,7 +55,11 @@ class TestAppCacheEngine extends CacheEngine
     {
     }
 
-    public function clear($check)
+    public function clearExpired()
+    {
+    }
+
+    public function clear()
     {
     }
 

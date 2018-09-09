@@ -15,6 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use DateInterval;
 
 /**
  * Xcache storage engine for cache
@@ -71,6 +72,7 @@ class XcacheEngine extends CacheEngine
     /**
      * Write data for key into cache
      *
+     * @deprecated Since 3.6 use set()
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
@@ -78,11 +80,9 @@ class XcacheEngine extends CacheEngine
     public function write($key, $value)
     {
         $key = $this->_key($key);
-
         if (!is_numeric($value)) {
             $value = serialize($value);
         }
-
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
         xcache_set($key . '_expires', $expires, $duration);
@@ -93,11 +93,81 @@ class XcacheEngine extends CacheEngine
     /**
      * Read a key from the cache
      *
+     * @deprecated Since 3.6 use get()
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      */
     public function read($key)
+    {
+        $key = $this->_key($key);
+        if (xcache_isset($key)) {
+            $time = time();
+            $cachetime = (int)xcache_get($key . '_expires');
+            if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
+                return false;
+            }
+            $value = xcache_get($key);
+            if (is_string($value) && !is_numeric($value)) {
+                $value = unserialize($value);
+            }
+
+            return $value;
+        }
+
+        return false;
+    }
+
+    /**
+     * Write data for key into cache
+     *
+     * @param string $key Identifier for the data
+     * @param mixed $value Data to be cached
+     * @param null|int|DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *                                     the driver supports TTL then the library may set a default value
+     *                                     for it or let the driver take care of that.
+     * @return bool True if the data was successfully cached, false on failure
+     */
+    public function set($key, $value, $ttl = null)
+    {
+        $key = $this->_key($key);
+
+        if (!is_numeric($value)) {
+            $value = serialize($value);
+        }
+
+        if ($ttl === null) {
+            $ttl = $this->_config['duration'];
+        }
+
+        if ($ttl instanceof DateInterval) {
+            $expires = Chronos::now()
+                ->addYears($ttl->y)
+                ->addMonths($ttl->m)
+                ->addDays($ttl->d)
+                ->addHours($ttl->h)
+                ->addMinutes($ttl->i)
+                ->addSeconds($ttl->s)
+                ->toUnixString();
+            $ttl = $expires - time();
+        } else {
+            $expires = time() + $ttl;
+        }
+
+        xcache_set($key . '_expires', $expires, $ttl);
+
+        return xcache_set($key, $value, $ttl);
+    }
+
+    /**
+     * Read a key from the cache
+     *
+     * @param string $key Identifier for the data
+     * @param mixed $default Default value
+     * @return mixed The cached data, or false if the data doesn't exist,
+     *   has expired, or if there was an error fetching it
+     */
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
@@ -116,7 +186,7 @@ class XcacheEngine extends CacheEngine
             return $value;
         }
 
-        return false;
+        return $default;
     }
 
     /**
@@ -165,12 +235,9 @@ class XcacheEngine extends CacheEngine
     /**
      * Delete all keys from the cache
      *
-     * @param bool $check If true no deletes will occur and instead CakePHP will rely
-     *   on key TTL values.
-     *   Unused for Xcache engine.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear()
     {
         $this->_auth();
         $max = xcache_count(XC_TYPE_VAR);

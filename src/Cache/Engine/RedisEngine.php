@@ -34,7 +34,6 @@ class RedisEngine extends CacheEngine
 
     /**
      * The default config used unless overridden by runtime configuration
-     *
      * - `database` database number to use for connection.
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
@@ -69,7 +68,6 @@ class RedisEngine extends CacheEngine
 
     /**
      * Initialize the Cache Engine
-     *
      * Called automatically by the cache frontend
      *
      * @param array $config array of setting for the engine
@@ -123,6 +121,7 @@ class RedisEngine extends CacheEngine
     /**
      * Write data for key into cache.
      *
+     * @deprecated Since 3.6 use set() instead
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
@@ -130,29 +129,45 @@ class RedisEngine extends CacheEngine
     public function write($key, $value)
     {
         $key = $this->_key($key);
-
         if (!is_int($value)) {
             $value = serialize($value);
         }
-
         $duration = $this->_config['duration'];
         if ($duration === 0) {
             return $this->_Redis->set($key, $value);
         }
-
         return $this->_Redis->setex($key, $duration, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function set($key, $data, $ttl = null)
+    {
+        $key = $this->_key($key);
+
+        if (!is_int($data)) {
+            $data = serialize($data);
+        }
+
+        $duration = $this->_config['duration'];
+        if ($duration === 0) {
+            return $this->_Redis->set($key, $data);
+        }
+
+        return $this->_Redis->setex($key, $duration, $data);
     }
 
     /**
      * Read a key from the cache
      *
+     * @deprecated Since 3.6 use set() instead
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
      */
     public function read($key)
     {
         $key = $this->_key($key);
-
         $value = $this->_Redis->get($key);
         if (preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
@@ -160,8 +175,28 @@ class RedisEngine extends CacheEngine
         if ($value !== false && is_string($value)) {
             return unserialize($value);
         }
-
         return $value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function get($key, $default = null)
+    {
+        $key = $this->_key($key);
+
+        $value = $this->_Redis->get($key);
+        if (preg_match('/^[-]?\d+$/', $value)) {
+            return (int)$value;
+        }
+
+        if ($value !== false && is_string($value)) {
+            $result = unserialize($value);
+
+            return $result === false ? $default : $result;
+        }
+
+        return $value === false ? $default : $value;
     }
 
     /**
@@ -218,16 +253,23 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return true;
+    }
+
+    /**
      * Delete all keys from the cache
      *
      * @param bool $check If true will check expiration, otherwise delete all.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         $keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
 
         $result = [];

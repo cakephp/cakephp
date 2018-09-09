@@ -15,6 +15,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Utility\Inflector;
 use Exception;
 use LogicException;
@@ -106,31 +107,28 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Garbage collection. Permanently remove all expired and deleted data
-     *
-     * @param int|null $expires [optional] An expires timestamp, invalidating all data before.
-     * @return bool True if garbage collection was successful, false on failure
-     */
-    public function gc($expires = null)
-    {
-        return $this->clear(true);
-    }
-
-    /**
      * Write data for key into cache
      *
+     * @deprecated Since 3.6 use set() instead
      * @param string $key Identifier for the data
      * @param mixed $data Data to be cached
      * @return bool True if the data was successfully cached, false on failure
      */
     public function write($key, $data)
     {
+        return $this->set($key, $data, $this->_config['duration']);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function set($key, $data, $ttl = null)
+    {
         if ($data === '' || !$this->_init) {
             return false;
         }
 
         $key = $this->_key($key);
-
         if ($this->_setKey($key, true) === false) {
             return false;
         }
@@ -148,11 +146,12 @@ class FileEngine extends CacheEngine
                 $data = serialize($data);
             }
         }
+        if ($ttl === null) {
+            $ttl = $this->_config['duration'];
+        }
 
-        $duration = $this->_config['duration'];
-        $expires = time() + $duration;
+        $expires = time() + $ttl;
         $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
-
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
         }
@@ -173,6 +172,7 @@ class FileEngine extends CacheEngine
     /**
      * Read a key from the cache
      *
+     * @deprecated Since 3.6 use get() instead
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has
      *   expired, or if there was an error fetching it
@@ -180,9 +180,51 @@ class FileEngine extends CacheEngine
     public function read($key)
     {
         $key = $this->_key($key);
-
         if (!$this->_init || $this->_setKey($key) === false) {
             return false;
+        }
+        if ($this->_config['lock']) {
+            $this->_File->flock(LOCK_SH);
+        }
+        $this->_File->rewind();
+        $time = time();
+        $cachetime = (int)$this->_File->current();
+        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
+            if ($this->_config['lock']) {
+                $this->_File->flock(LOCK_UN);
+            }
+
+            return false;
+        }
+        $data = '';
+        $this->_File->next();
+        while ($this->_File->valid()) {
+            $data .= $this->_File->current();
+            $this->_File->next();
+        }
+        if ($this->_config['lock']) {
+            $this->_File->flock(LOCK_UN);
+        }
+        $data = trim($data);
+        if ($data !== '' && !empty($this->_config['serialize'])) {
+            if ($this->_config['isWindows']) {
+                $data = str_replace('\\\\\\\\', '\\', $data);
+            }
+            $data = unserialize((string)$data);
+        }
+
+        return $data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function get($key, $default = null)
+    {
+        $key = $this->_key($key);
+
+        if (!$this->_init || $this->_setKey($key) === false) {
+            return $default;
         }
 
         if ($this->_config['lock']) {
@@ -198,7 +240,7 @@ class FileEngine extends CacheEngine
                 $this->_File->flock(LOCK_UN);
             }
 
-            return false;
+            return $default;
         }
 
         $data = '';
@@ -219,6 +261,10 @@ class FileEngine extends CacheEngine
                 $data = str_replace('\\\\\\\\', '\\', $data);
             }
             $data = unserialize((string)$data);
+        }
+
+        if ($data === false) {
+            return $default;
         }
 
         return $data;
@@ -253,7 +299,7 @@ class FileEngine extends CacheEngine
      * @param bool $check Optional - only delete expired cache items
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    protected function _clear($check = false)
     {
         if (!$this->_init) {
             return false;
@@ -287,6 +333,26 @@ class FileEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * Clears all expired cache entries
+     *
+     * @return bool
+     */
+    public function clearExpired()
+    {
+        return $this->_clear(true);
+    }
+
+    /**
+     * Delete all values from the cache
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clear()
+    {
+        return $this->_clear();
     }
 
     /**
@@ -491,5 +557,17 @@ class FileEngine extends CacheEngine
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function has($key)
+    {
+        if (!is_string($key)) {
+            throw new InvalidArgumentException();
+        }
+
+        return $this->get($key) !== null;
     }
 }
