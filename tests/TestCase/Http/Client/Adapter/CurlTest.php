@@ -254,7 +254,9 @@ class CurlTest extends TestCase
     {
         $options = [
             'proxy' => [
-                'proxy' => '127.0.0.1:8080'
+                'proxy' => '127.0.0.1:8080',
+                'username' => 'frodo',
+                'password' => 'one_ring',
             ]
         ];
         $request = new Request('http://localhost/things', 'GET');
@@ -271,6 +273,7 @@ class CurlTest extends TestCase
             CURLOPT_HTTPGET => true,
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_PROXY => '127.0.0.1:8080',
+            CURLOPT_PROXYUSERPWD => 'frodo:one_ring',
         ];
         $this->assertSame($expected, $result);
     }
