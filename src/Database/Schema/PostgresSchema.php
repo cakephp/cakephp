@@ -359,7 +359,6 @@ class PostgresSchema extends BaseSchema
             TableSchema::TYPE_TINYINTEGER => ' SMALLINT',
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchema::TYPE_BINARY_UUID => ' UUID',
-            TableSchema::TYPE_BINARY => ' BYTEA',
             TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchema::TYPE_FLOAT => ' FLOAT',
             TableSchema::TYPE_DECIMAL => ' DECIMAL',
@@ -386,6 +385,9 @@ class PostgresSchema extends BaseSchema
 
         if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
+        }
+        if ($data['type'] === TableSchema::TYPE_BINARY) {
+            $out .= ' BYTEA';
         }
 
         if ($data['type'] === TableSchema::TYPE_STRING ||

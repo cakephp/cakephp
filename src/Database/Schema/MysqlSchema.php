@@ -137,7 +137,7 @@ class MysqlSchema extends BaseSchema
         if ($col === 'binary' && $length === 16) {
             return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
         }
-        if (strpos($col, 'blob') !== false || $col === 'binary') {
+        if (strpos($col, 'blob') !== false || in_array($col, ['binary', 'varbinary'])) {
             $lengthName = substr($col, 0, -4);
             $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : $length;
 
@@ -359,7 +359,17 @@ class MysqlSchema extends BaseSchema
                     break;
                 case TableSchema::TYPE_BINARY:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
-                    if (empty($data['length']) || !$isKnownLength) {
+
+                    if (!empty($data['length']) && !$isKnownLength) {
+                        if ($data['length'] > 2) {
+                            $out .= ' VARBINARY(' . $data['length'] . ')';
+                        } else {
+                            $out .= ' BINARY(' . $data['length'] . ')';
+                        }
+                        break;
+                    }
+
+                    if (empty($data['length'])) {
                         $out .= ' BLOB';
                         break;
                     }
