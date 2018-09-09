@@ -6486,6 +6486,8 @@ class ModelReadTest extends BaseModelTest {
 
 	public function testBuildQueryAllI18nConditions() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$dbName = $this->db->config['database'];
+
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -6502,7 +6504,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
@@ -6520,7 +6522,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
@@ -6556,6 +6558,8 @@ class ModelReadTest extends BaseModelTest {
 
 	public function testBuildQueryCountI18nConditions() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$dbName = $this->db->config['database'];
+		j
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -6572,7 +6576,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName
 					),
 					'conditions' => array(
 						'`TranslatedArticle`.`id`' => (object)array(
@@ -6589,7 +6593,7 @@ class ModelReadTest extends BaseModelTest {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(

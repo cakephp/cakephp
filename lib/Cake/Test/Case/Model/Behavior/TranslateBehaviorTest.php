@@ -1455,6 +1455,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 	public function testBeforeFindAllI18nConditions() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$dbName = $this->db->config['database'];
+
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -1471,7 +1473,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName,
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
@@ -1489,7 +1491,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName,
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
@@ -1537,6 +1539,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 	public function testBeforeFindCountI18nConditions() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
+		$dbName = $this->db->config['database'];
+
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
@@ -1553,7 +1557,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName,
 					),
 					'conditions' => array(
 						'`TranslatedArticle`.`id`' => (object)array(
@@ -1570,7 +1574,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 					'table' => (object)array(
 						'tablePrefix' => '',
 						'table' => 'article_i18n',
-						'schemaName' => 'cakephp_test',
+						'schemaName' => $dbName,
 					),
 					'conditions' => array(
 						'TranslatedArticle.id' => (object)array(
