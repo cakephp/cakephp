@@ -303,7 +303,7 @@ class CakeRequest implements ArrayAccess {
 			return $this->base = $base;
 		}
 
-		if (!$baseUrl) {
+		if (empty($baseUrl)) {
 			$base = dirname(env('PHP_SELF'));
 			// Clean up additional / which cause following code to fail..
 			$base = preg_replace('#/+#', '/', $base);

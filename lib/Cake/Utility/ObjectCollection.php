@@ -95,6 +95,7 @@ abstract class ObjectCollection {
 		if (empty($this->_enabled)) {
 			return true;
 		}
+		$subject = null;
 		if ($callback instanceof CakeEvent) {
 			$event = $callback;
 			if (is_array($event->data)) {
@@ -125,7 +126,7 @@ abstract class ObjectCollection {
 		}
 		$result = null;
 		foreach ($list as $name) {
-			$result = call_user_func_array(array($this->_loaded[$name], $callback), compact('subject') + $params);
+			$result = call_user_func_array(array($this->_loaded[$name], $callback), array_filter(compact('subject')) + $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}

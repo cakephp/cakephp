@@ -1162,13 +1162,13 @@ class CakeResponse {
 	public function checkNotModified(CakeRequest $request) {
 		$etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
 		$modifiedSince = $request->header('If-Modified-Since');
+		$checks = array();
 		if ($responseTag = $this->etag()) {
-			$etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
+			$checks[] = in_array('*', $etags) || in_array($responseTag, $etags);
 		}
 		if ($modifiedSince) {
-			$timeMatches = strtotime($this->modified()) === strtotime($modifiedSince);
+			$checks[] = strtotime($this->modified()) === strtotime($modifiedSince);
 		}
-		$checks = compact('etagMatches', 'timeMatches');
 		if (empty($checks)) {
 			return false;
 		}
