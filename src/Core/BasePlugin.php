@@ -103,7 +103,7 @@ class BasePlugin implements PluginInterface
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
         }
-        foreach (['name', 'path', 'classPath', 'configPath'] as $path) {
+        foreach (['name', 'path', 'classPath', 'configPath', 'templatePath'] as $path) {
             if (isset($options[$path])) {
                 $this->{$path} = $options[$path];
             }

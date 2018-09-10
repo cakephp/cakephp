@@ -141,11 +141,14 @@ class BasePluginTest extends TestCase
             'bootstrap' => false,
             'console' => false,
             'middleware' => false,
+            'templatePath' => '/plates/'
         ]);
         $this->assertFalse($plugin->isEnabled('routes'));
         $this->assertFalse($plugin->isEnabled('bootstrap'));
         $this->assertFalse($plugin->isEnabled('console'));
         $this->assertFalse($plugin->isEnabled('middleware'));
+
+        $this->assertSame('/plates/', $plugin->getTemplatePath());
     }
 
     public function testGetPathBaseClass()
