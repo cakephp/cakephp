@@ -881,7 +881,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank']),
+            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass('Cake\Test\TestCase\ORM\Behavior\Article');
 
