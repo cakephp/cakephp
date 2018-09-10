@@ -1323,7 +1323,7 @@ class Response implements ResponseInterface
      * @return \Cake\Http\Cookie\CookieCollection
      * @return static
      */
-    public function withCookieCollection(CookieCollectionInterface $cookieCollection): CookieCollectionInterface
+    public function withCookieCollection(CookieCollectionInterface $cookieCollection): ResponseInterface
     {
         $new = clone $this;
         $new->_cookies = $cookieCollection;
