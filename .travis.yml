@@ -49,13 +49,10 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
-  - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then pecl channel-update pecl.php.net; fi;
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install channel://pecl.php.net/apcu-5.1.5 || true; fi
 
   - sudo locale-gen da_DK
 
