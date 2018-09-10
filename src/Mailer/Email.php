@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use BadMethodCallException;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Filesystem\File;
@@ -26,13 +25,9 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\ViewVarsTrait;
-use Closure;
-use Exception;
 use InvalidArgumentException;
 use JsonSerializable;
 use LogicException;
-use PDO;
-use RuntimeException;
 use Serializable;
 use SimpleXMLElement;
 
@@ -291,24 +286,6 @@ class Email implements JsonSerializable, Serializable
      * @var int|null
      */
     protected $_priority;
-
-    /**
-     * An array mapping url schemes to fully qualified Transport class names
-     *
-     * @var array
-     */
-    protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
-    ];
-
-    /**
-     * Configuration profiles for transports.
-     *
-     * @var array
-     */
-    protected static $_transportConfig = [];
 
     /**
      * A copy of the configuration profile for this
@@ -1031,6 +1008,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTemplate(?string $template): self
     {
+        deprecationWarning(
+            'Email::setTemplate() is deprecated. Use $email->viewBuilder()->setTemplate() instead.'
+        );
+
         $this->viewBuilder()->setTemplate($template ?: '');
 
         return $this;
@@ -1043,6 +1024,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getTemplate(): string
     {
+        deprecationWarning(
+            'Email::getTemplate() is deprecated. Use $email->viewBuilder()->getTemplate() instead.'
+        );
+
         return $this->viewBuilder()->getTemplate();
     }
 
@@ -1054,6 +1039,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setLayout(?string $layout): self
     {
+        deprecationWarning(
+            'Email::setLayout() is deprecated. Use $email->viewBuilder()->setLayout() instead.'
+        );
+
         $this->viewBuilder()->setLayout($layout ?: false);
 
         return $this;
@@ -1062,10 +1051,14 @@ class Email implements JsonSerializable, Serializable
     /**
      * Gets layout.
      *
-     * @return string
+     * @return string|null|false
      */
-    public function getLayout(): string
+    public function getLayout()
     {
+        deprecationWarning(
+            'Email::getLayout() is deprecated. Use $email->viewBuilder()->getLayout() instead.'
+        );
+
         return $this->viewBuilder()->getLayout();
     }
 
@@ -1112,7 +1105,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getViewVars(): array
     {
-        return $this->viewVars;
+        return $this->viewBuilder()->getVars();
     }
 
     /**
@@ -1123,6 +1116,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTheme(?string $theme): self
     {
+        deprecationWarning(
+            'Email::setTheme() is deprecated. Use $email->viewBuilder()->setTheme() instead.'
+        );
+
         $this->viewBuilder()->setTheme($theme);
 
         return $this;
@@ -1135,6 +1132,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getTheme(): ?string
     {
+        deprecationWarning(
+            'Email::getTheme() is deprecated. Use $email->viewBuilder()->getTheme() instead.'
+        );
+
         return $this->viewBuilder()->getTheme();
     }
 
@@ -1146,6 +1147,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setHelpers(array $helpers): self
     {
+        deprecationWarning(
+            'Email::setHelpers() is deprecated. Use $email->viewBuilder()->setHelpers() instead.'
+        );
+
         $this->viewBuilder()->setHelpers($helpers, false);
 
         return $this;
@@ -1158,6 +1163,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getHelpers(): array
     {
+        deprecationWarning(
+            'Email::getHelpers() is deprecated. Use $email->viewBuilder()->getHelpers() instead.'
+        );
+
         return $this->viewBuilder()->getHelpers();
     }
 
@@ -1203,7 +1212,7 @@ class Email implements JsonSerializable, Serializable
     public function setTransport($name): self
     {
         if (is_string($name)) {
-            $transport = $this->_constructTransport($name);
+            $transport = TransportFactory::get($name);
         } elseif (is_object($name)) {
             $transport = $name;
         } else {
@@ -1228,48 +1237,6 @@ class Email implements JsonSerializable, Serializable
     public function getTransport(): ?AbstractTransport
     {
         return $this->_transport;
-    }
-
-    /**
-     * Build a transport instance from configuration data.
-     *
-     * @param string $name The transport configuration name to build.
-     * @return \Cake\Mailer\AbstractTransport
-     * @throws \InvalidArgumentException When transport configuration is missing or invalid.
-     */
-    protected function _constructTransport($name)
-    {
-        if (!isset(static::$_transportConfig[$name])) {
-            throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
-        }
-
-        if (!isset(static::$_transportConfig[$name]['className'])) {
-            throw new InvalidArgumentException(
-                sprintf('Transport config "%s" is invalid, the required `className` option is missing', $name)
-            );
-        }
-
-        $config = static::$_transportConfig[$name];
-
-        if (is_object($config['className'])) {
-            if (!$config['className'] instanceof AbstractTransport) {
-                throw new InvalidArgumentException(sprintf(
-                    'Transport object must be of type "AbstractTransport". Found invalid type: "%s".',
-                    get_class($config['className'])
-                ));
-            }
-
-            return $config['className'];
-        }
-
-        $className = App::className($config['className'], 'Mailer/Transport', 'Transport');
-        if (!$className) {
-            throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
-        }
-
-        unset($config['className']);
-
-        return new $className($config);
     }
 
     /**
@@ -1481,86 +1448,6 @@ class Email implements JsonSerializable, Serializable
     public function getPriority(): ?int
     {
         return $this->_priority;
-    }
-
-    /**
-     * Sets transport configuration.
-     *
-     * Use this method to define transports to use in delivery profiles.
-     * Once defined you cannot edit the configurations, and must use
-     * Email::dropTransport() to flush the configuration first.
-     *
-     * When using an array of configuration data a new transport
-     * will be constructed for each message sent. When using a Closure, the
-     * closure will be evaluated for each message.
-     *
-     * The `className` is used to define the class to use for a transport.
-     * It can either be a short name, or a fully qualified class name
-     *
-     * @param string|array $key The configuration name to write. Or
-     *   an array of multiple transports to set.
-     * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
-     *   data, or a transport instance. Null when using key as array.
-     * @return void
-     * @throws \BadMethodCallException When modifying an existing configuration.
-     */
-    public static function setConfigTransport($key, $config = null): void
-    {
-        if (is_array($key)) {
-            foreach ($key as $name => $settings) {
-                static::setConfigTransport($name, $settings);
-            }
-
-            return;
-        }
-
-        if (isset(static::$_transportConfig[$key])) {
-            throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
-        }
-
-        if (is_object($config)) {
-            $config = ['className' => $config];
-        }
-
-        if (isset($config['url'])) {
-            $parsed = static::parseDsn($config['url']);
-            unset($config['url']);
-            $config = $parsed + $config;
-        }
-
-        static::$_transportConfig[$key] = $config;
-    }
-
-    /**
-     * Gets current transport configuration.
-     *
-     * @param string $key The configuration name to read.
-     * @return array|null Transport config.
-     */
-    public static function getConfigTransport(string $key): ?array
-    {
-        return static::$_transportConfig[$key] ?? null;
-    }
-
-    /**
-     * Returns an array containing the named transport configurations
-     *
-     * @return array Array of configurations.
-     */
-    public static function configuredTransport(): array
-    {
-        return array_keys(static::$_transportConfig);
-    }
-
-    /**
-     * Delete transport configuration.
-     *
-     * @param string $key The transport name to remove.
-     * @return void
-     */
-    public static function dropTransport($key): void
-    {
-        unset(static::$_transportConfig[$key]);
     }
 
     /**
@@ -1792,12 +1679,13 @@ class Email implements JsonSerializable, Serializable
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
 
-        $this->viewBuilder()->setLayout('default');
-        $this->viewBuilder()->setTemplate('');
-        $this->viewBuilder()->setClassName('Cake\View\View');
-        $this->viewVars = [];
-        $this->viewBuilder()->setTheme(null);
-        $this->viewBuilder()->setHelpers(['Html'], false);
+        $this->viewBuilder()
+            ->setLayout('default')
+            ->setTemplate('')
+            ->setClassName('Cake\View\View')
+            ->setTheme(null)
+            ->setHelpers(['Html'], false)
+            ->setVars([], false);
 
         return $this;
     }
@@ -2259,13 +2147,6 @@ class Email implements JsonSerializable, Serializable
      * Serializes the email object to a value that can be natively serialized and re-used
      * to clone this email instance.
      *
-     * It has certain limitations for viewVars that are good to know:
-     *
-     *    - ORM\Query executed and stored as resultset
-     *    - SimpleXMLElements stored as associative array
-     *    - Exceptions stored as strings
-     *    - Resources, \Closure and \PDO are not supported.
-     *
      * @return array Serializable array of configuration properties.
      * @throws \Exception When a view var object can not be properly serialized.
      */
@@ -2274,7 +2155,7 @@ class Email implements JsonSerializable, Serializable
         $properties = [
             '_to', '_from', '_sender', '_replyTo', '_cc', '_bcc', '_subject',
             '_returnPath', '_readReceipt', '_emailFormat', '_emailPattern', '_domain',
-            '_attachments', '_messageId', '_headers', '_appCharset', 'viewVars', 'charset', 'headerCharset',
+            '_attachments', '_messageId', '_headers', '_appCharset', 'charset', 'headerCharset',
         ];
 
         $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];
@@ -2290,38 +2171,9 @@ class Email implements JsonSerializable, Serializable
             }
         });
 
-        array_walk_recursive($array['viewVars'], [$this, '_checkViewVars']);
-
         return array_filter($array, function ($i) {
             return !is_array($i) && strlen($i) || !empty($i);
         });
-    }
-
-    /**
-     * Iterates through hash to clean up and normalize.
-     *
-     * @param mixed $item Reference to the view var value.
-     * @param string $key View var key.
-     * @return void
-     * @throws \RuntimeException
-     */
-    protected function _checkViewVars(&$item, $key)
-    {
-        if ($item instanceof Exception) {
-            $item = (string)$item;
-        }
-
-        if (is_resource($item) ||
-            $item instanceof Closure ||
-            $item instanceof PDO
-        ) {
-            throw new RuntimeException(sprintf(
-                'Failed serializing the `%s` %s in the `%s` view var',
-                is_resource($item) ? get_resource_type($item) : get_class($item),
-                is_resource($item) ? 'resource' : 'object',
-                $key
-            ));
-        }
     }
 
     /**

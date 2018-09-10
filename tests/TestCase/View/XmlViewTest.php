@@ -259,7 +259,8 @@ class XmlViewTest extends TestCase
         $this->assertSame('application/xml', $View->getResponse()->getType());
 
         $data = ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']];
-        $Controller->viewVars = [];
+        $Controller = new Controller($Request, $Response);
+        $Controller->viewBuilder()->setClassName('Xml');
         $Controller->set($data);
         $Controller->set('_serialize', true);
         $View = $Controller->createView();

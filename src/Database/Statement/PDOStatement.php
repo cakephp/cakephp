@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Database\Driver;
 use PDO;
 use PDOStatement as Statement;
 
@@ -30,7 +31,7 @@ class PDOStatement extends StatementDecorator
      * @param \PDOStatement|null $statement Original statement to be decorated.
      * @param \Cake\Database\Driver|null $driver Driver instance.
      */
-    public function __construct(?Statement $statement = null, ?\Cake\Database\Driver $driver = null)
+    public function __construct(?Statement $statement = null, ?Driver $driver = null)
     {
         parent::__construct($statement, $driver);
     }

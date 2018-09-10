@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,11 +27,11 @@ class MailSentWith extends MailConstraintBase
     /**
      * Constructor
      *
-     * @param int $at At
-     * @param string $method Method
+     * @param int|null $at At
+     * @param string|null $method Method
      * @return void
      */
-    public function __construct($at = null, $method = null)
+    public function __construct(?int $at = null, ?string $method = null)
     {
         if ($method) {
             $this->method = $method;
@@ -44,7 +45,7 @@ class MailSentWith extends MailConstraintBase
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $emails = $this->getEmails();
         foreach ($emails as $email) {
@@ -65,7 +66,7 @@ class MailSentWith extends MailConstraintBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         if ($this->at) {
             return sprintf('is in email #%d `%s`', $this->at, $this->method);

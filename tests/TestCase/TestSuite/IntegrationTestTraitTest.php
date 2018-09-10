@@ -23,17 +23,19 @@ use Cake\Http\Response;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\Router;
 use Cake\Test\Fixture\AssertIntegrationTestCase;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Error\Deprecated;
 use Zend\Diactoros\UploadedFile;
 
 /**
- * Self test of the IntegrationTestCase
+ * Self test of the IntegrationTestTrait
  */
-class IntegrationTestTraitTest extends IntegrationTestCase
+class IntegrationTestTraitTest extends TestCase
 {
+    use IntegrationTestTrait;
+
     /**
      * stub encryption key.
      *
@@ -64,15 +66,6 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         });
 
         $this->configApplication(Configure::read('App.namespace') . '\Application', null);
-    }
-
-    /**
-     * Check for a deprecation warning
-     */
-    public function testUseHttpServerWarning()
-    {
-        $this->expectException(Deprecated::class);
-        $this->useHttpServer(false);
     }
 
     /**
@@ -885,6 +878,18 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test the location header assertion string not contains
+     *
+     * @return void
+     */
+    public function testAssertRedirectNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
+        $this->assertRedirectNotContains('test');
+    }
+
+    /**
      * Test the location header assertion.
      *
      * @return void
@@ -947,6 +952,19 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->_response = $this->_response->withHeader('Etag', 'abc123');
 
         $this->assertHeaderContains('Etag', 'abc');
+    }
+
+    /**
+     * Test the header not contains assertion.
+     *
+     * @return void
+     */
+    public function testAssertHeaderNotContains()
+    {
+        $this->_response = new Response();
+        $this->_response = $this->_response->withHeader('Etag', 'abc123');
+
+        $this->assertHeaderNotContains('Etag', 'xyz');
     }
 
     /**

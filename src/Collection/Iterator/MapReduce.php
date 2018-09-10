@@ -158,7 +158,7 @@ class MapReduce implements IteratorAggregate
      */
     public function emit($val, $key = null): void
     {
-        $this->_result[$key === null ? $this->_counter : $key] = $val;
+        $this->_result[$key ?? $this->_counter] = $val;
         $this->_counter++;
     }
 

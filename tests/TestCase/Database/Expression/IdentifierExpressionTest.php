@@ -46,6 +46,6 @@ class IdentifierExpressionTest extends TestCase
     public function testSQL()
     {
         $expression = new IdentifierExpression('foo');
-        $this->assertEquals('foo', $expression->sql(new ValueBinder));
+        $this->assertEquals('foo', $expression->sql(new ValueBinder()));
     }
 }

@@ -36,7 +36,7 @@ class CakeStreamWrapper implements \ArrayAccess
     public function stream_open($path, $mode, $options, &$openedPath)
     {
         if ($path === 'http://throw_exception/') {
-            throw new \Exception;
+            throw new \Exception();
         }
 
         $query = parse_url($path, PHP_URL_QUERY);

@@ -327,7 +327,6 @@ class DebuggerTest extends TestCase
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) {
-	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
@@ -346,6 +345,7 @@ object(Cake\View\View) {
 	[protected] layout => 'default'
 	[protected] layoutPath => null
 	[protected] autoLayout => true
+	[protected] viewVars => []
 	[protected] _ext => '.ctp'
 	[protected] subDir => ''
 	[protected] theme => null

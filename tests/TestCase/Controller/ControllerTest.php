@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -406,7 +406,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderCallbackChangingViewClass(): void
     {
-        $Controller = new Controller(new ServerRequest, new Response());
+        $Controller = new Controller(new ServerRequest(), new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
             $controller = $event->getSubject();
@@ -431,7 +431,7 @@ class ControllerTest extends TestCase
      */
     public function testBeforeRenderEventCancelsRender(): void
     {
-        $Controller = new Controller(new ServerRequest, new Response());
+        $Controller = new Controller(new ServerRequest(), new Response());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
             return false;
@@ -524,7 +524,7 @@ class ControllerTest extends TestCase
             ->getMock();
         $Controller = new Controller(null, $Response);
 
-        $newResponse = new Response;
+        $newResponse = new Response();
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
             return $newResponse;
         });
@@ -575,8 +575,8 @@ class ControllerTest extends TestCase
         $this->assertEquals('http://localhost/posts/index', $result);
 
         $Controller = new Controller(null);
-        $result = $Controller->referer(null, false);
-        $this->assertEquals('/', $result);
+        $result = $Controller->referer('/', false);
+        $this->assertEquals('http://localhost/', $result);
     }
 
     /**
@@ -595,7 +595,7 @@ class ControllerTest extends TestCase
         Router::pushRequest($request);
 
         $request->expects($this->any())->method('referer')
-            ->will($this->returnValue('/'));
+            ->will($this->returnValue(null));
 
         $controller = new Controller($request);
         $result = $controller->referer('/', true);
@@ -1058,7 +1058,34 @@ class ControllerTest extends TestCase
         $controller->dispatchEvent('Controller.beforeRender');
         $view = $controller->createView();
 
-        $this->assertArrayHasKey('testVariable', $view->viewVars);
+        $this->assertNotEmpty('testVariable', $view->get('testVariable'));
+    }
+
+    /**
+     * Test that render()'s arguments are available in beforeRender() through view builder.
+     *
+     * @return void
+     */
+    public function testBeforeRenderTemplateAndLayout()
+    {
+        $Controller = new Controller(new ServerRequest(), new Response());
+        $Controller->getEventManager()->on('Controller.beforeRender', function ($event) {
+            $this->assertEquals(
+                '/Element/test_element',
+                $event->getSubject()->viewBuilder()->getTemplate()
+            );
+            $this->assertEquals(
+                'default',
+                $event->getSubject()->viewBuilder()->getLayout()
+            );
+
+            $event->getSubject()->viewBuilder()
+                ->setTemplatePath('Posts')
+                ->setTemplate('index');
+        });
+
+        $result = $Controller->render('/Element/test_element', 'default');
+        $this->assertRegExp('/posts index/', (string)$result);
     }
 
     /**
@@ -1125,7 +1152,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
         $this->assertInstanceOf(Response::class, $controller->getResponse());
 
-        $response = new Response;
+        $response = new Response();
         $this->assertSame($controller, $controller->setResponse($response));
         $this->assertSame($response, $controller->getResponse());
     }

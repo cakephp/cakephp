@@ -839,7 +839,7 @@ class ViewTest extends TestCase
      */
     public function testViewVars()
     {
-        $this->assertEquals(['testData' => 'Some test data', 'test2' => 'more data', 'test3' => 'even more data'], $this->View->viewVars);
+        $this->assertEquals(['testData', 'test2', 'test3'], $this->View->getVars());
     }
 
     /**
@@ -1914,7 +1914,7 @@ TEXT;
     }
 
     /**
-     * Test extend() preceeded by an element()
+     * Test extend() preceded by an element()
      *
      * @return void
      */
@@ -1931,7 +1931,7 @@ TEXT;
     }
 
     /**
-     * Test extend() preceeded by an element()
+     * Test extend() preceded by an element()
      *
      * @return void
      */

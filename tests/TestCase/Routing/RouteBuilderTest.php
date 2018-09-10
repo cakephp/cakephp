@@ -726,7 +726,7 @@ class RouteBuilderTest extends TestCase
             'controller' => 'Articles',
             'action' => 'edit',
             '_method' => 'PUT',
-            'id' => 99,
+            'id' => '99',
         ]);
         $this->assertEquals('/api/articles/99', $url);
 
@@ -736,7 +736,7 @@ class RouteBuilderTest extends TestCase
             'action' => 'edit',
             '_method' => 'PUT',
             '_ext' => 'json',
-            'id' => 99,
+            'id' => '99',
         ]);
         $this->assertEquals('/api/articles/99.json', $url);
     }
@@ -1051,6 +1051,25 @@ class RouteBuilderTest extends TestCase
             ->registerMiddleware('test2', $func);
         $routes->applyMiddleware('test');
         $routes->applyMiddleware('test2');
+
+        $this->assertAttributeEquals(['test', 'test2'], 'middleware', $routes);
+    }
+
+    /**
+     * Test that applyMiddleware() uses unique middleware set
+     *
+     * @return void
+     */
+    public function testApplyMiddlewareUnique()
+    {
+        $func = function () {
+        };
+        $routes = new RouteBuilder($this->collection, '/api');
+        $routes->registerMiddleware('test', $func)
+            ->registerMiddleware('test2', $func);
+
+        $routes->applyMiddleware('test', 'test2');
+        $routes->applyMiddleware('test2', 'test');
 
         $this->assertAttributeEquals(['test', 'test2'], 'middleware', $routes);
     }

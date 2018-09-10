@@ -15,19 +15,17 @@ parameters:
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
-        - '#Call to an undefined method DateTimeInterface::i18nFormat\(\)#'
         - '#Cannot call method lastInsertId\(\) on null#'
         - '#Access to an undefined property Cake\\Mailer\\Email::\$request#'
         - '#Access to an undefined property Cake\\Mailer\\Email::\$response#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
-        - '#Call to an undefined method Traversable::getInnerIterator\(\)#'
-        - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
-        - '#Binary operation "\+=" between \(array\&hasOffset\(.*\)\) and array results in an error#'
         - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject#'
+        - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
+        - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
     earlyTerminatingMethodCalls:
-        Cake\Shell\Shell:
+        Cake\Console\Shell:
             - abort
 
 services:

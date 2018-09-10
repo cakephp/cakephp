@@ -81,16 +81,6 @@ abstract class Cell implements EventDispatcherInterface
     protected $args = [];
 
     /**
-     * These properties can be set directly on Cell and passed to the View as options.
-     *
-     * @var array
-     * @see \Cake\View\View
-     */
-    protected $_validViewOptions = [
-        'viewPath',
-    ];
-
-    /**
      * List of valid options (constructor's fourth arguments)
      * Override this property in subclasses to whitelist
      * which options you want set as properties in your Cell.

@@ -101,13 +101,13 @@ class FloatTypeTest extends TestCase
             'a' => null,
             'b' => '2.3',
             'c' => '15',
-            'c' => '0.0',
+            'd' => '0.0',
         ];
         $expected = [
             'a' => null,
             'b' => 2.3,
             'c' => 15,
-            'c' => 0.0,
+            'd' => 0.0,
         ];
         $this->assertEquals(
             $expected,
@@ -161,7 +161,7 @@ class FloatTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
-        $this->assertSame(1.0, $result);
+        $this->assertNull($result);
     }
 
     /**

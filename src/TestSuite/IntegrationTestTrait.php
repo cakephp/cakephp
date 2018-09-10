@@ -14,8 +14,10 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
+use Cake\Event\EventInterface;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
@@ -36,6 +38,7 @@ use Cake\TestSuite\Constraint\Response\FileSent;
 use Cake\TestSuite\Constraint\Response\FileSentAs;
 use Cake\TestSuite\Constraint\Response\HeaderContains;
 use Cake\TestSuite\Constraint\Response\HeaderEquals;
+use Cake\TestSuite\Constraint\Response\HeaderNotContains;
 use Cake\TestSuite\Constraint\Response\HeaderNotSet;
 use Cake\TestSuite\Constraint\Response\HeaderSet;
 use Cake\TestSuite\Constraint\Response\StatusCode;
@@ -53,9 +56,9 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
-use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpUnitException;
+use Throwable;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -102,7 +105,7 @@ trait IntegrationTestTrait
     /**
      * The exception being thrown if the case.
      *
-     * @var \Exception|null
+     * @var \Throwable|null
      */
     protected $_exception;
 
@@ -221,23 +224,7 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Toggle whether or not you want to use the HTTP Server stack.
-     *
-     * @param bool $enable Enable/disable the usage of the HTTP Stack.
-     * @return void
-     */
-    public function useHttpServer(bool $enable): void
-    {
-        if ($enable === false) {
-            deprecationWarning('Calling `useHttpServer(false)` does nothing, and will be removed.');
-        }
-    }
-
-    /**
      * Configure the application class to use in integration tests.
-     *
-     * Combined with `useHttpServer()` to customize the class name and constructor arguments
-     * of your application class.
      *
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
@@ -381,7 +368,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function get($url): void
     {
@@ -398,7 +385,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function post($url, $data = []): void
     {
@@ -415,7 +402,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function patch($url, $data = []): void
     {
@@ -432,7 +419,7 @@ trait IntegrationTestTrait
      * @param string|array $url The URL to request.
      * @param array $data The data for the request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function put($url, $data = []): void
     {
@@ -448,7 +435,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function delete($url): void
     {
@@ -464,7 +451,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function head($url): void
     {
@@ -480,7 +467,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL to request.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     public function options($url): void
     {
@@ -496,7 +483,7 @@ trait IntegrationTestTrait
      * @param string $method The HTTP method
      * @param array|null $data The request data.
      * @return void
-     * @throws \PHPUnit\Exception
+     * @throws \PHPUnit\Exception|\Throwable
      */
     protected function _sendRequest($url, $method, $data = []): void
     {
@@ -517,7 +504,7 @@ trait IntegrationTestTrait
             throw $e;
         } catch (LogicException $e) {
             throw $e;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->_exception = $e;
             // Simulate the global exception handler being invoked.
             $this->_handleError($e);
@@ -529,7 +516,7 @@ trait IntegrationTestTrait
      *
      * @return \Cake\TestSuite\MiddlewareDispatcher A dispatcher instance
      */
-    protected function _makeDispatcher(): \Cake\TestSuite\MiddlewareDispatcher
+    protected function _makeDispatcher(): MiddlewareDispatcher
     {
         return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
     }
@@ -541,7 +528,7 @@ trait IntegrationTestTrait
      * @param \Cake\Controller\Controller|null $controller Controller instance.
      * @return void
      */
-    public function controllerSpy(\Cake\Event\EventInterface $event, ?\Cake\Controller\Controller $controller = null): void
+    public function controllerSpy(EventInterface $event, ?Controller $controller = null): void
     {
         if (!$controller) {
             /** @var \Cake\Controller\Controller $controller */
@@ -568,11 +555,10 @@ trait IntegrationTestTrait
      * This method will attempt to use the configured exception renderer.
      * If that class does not exist, the built-in renderer will be used.
      *
-     * @param \Exception $exception Exception to handle.
+     * @param \Throwable $exception Exception to handle.
      * @return void
-     * @throws \Exception
      */
-    protected function _handleError(\Exception $exception): void
+    protected function _handleError(Throwable $exception): void
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
@@ -747,14 +733,7 @@ trait IntegrationTestTrait
      */
     public function viewVariable(string $name)
     {
-        if (empty($this->_controller->viewVars)) {
-            $this->fail('There are no view variables, perhaps you need to run a request?');
-        }
-        if (isset($this->_controller->viewVars[$name])) {
-            return $this->_controller->viewVars[$name];
-        }
-
-        return null;
+        return $this->_controller->viewBuilder()->getVar($name);
     }
 
     /**
@@ -845,6 +824,19 @@ trait IntegrationTestTrait
     }
 
     /**
+     * Asserts that the Location header does not contain a substring
+     *
+     * @param string $url The URL you expected the client to go to.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectNotContains($url, $message = '')
+    {
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
+        $this->assertThat($url, new HeaderNotContains($this->_response, 'Location'), $message);
+    }
+
+    /**
      * Asserts that the Location header is not set.
      *
      * @param string $message The failure message that will be appended to the generated message.
@@ -881,6 +873,20 @@ trait IntegrationTestTrait
     {
         $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
         $this->assertThat($content, new HeaderContains($this->_response, $header), $message);
+    }
+
+    /**
+     * Asserts response header does not contain a string
+     *
+     * @param string $header The header to check
+     * @param string $content The content to check for.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertHeaderNotContains($header, $content, $message = '')
+    {
+        $this->assertThat(null, new HeaderSet($this->_response, $header), $message);
+        $this->assertThat($content, new HeaderNotContains($this->_response, $header), $message);
     }
 
     /**

@@ -114,7 +114,7 @@ class QueryTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderHasMany()
     {
@@ -124,7 +124,7 @@ class QueryTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsTo implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderBelongsTo()
     {
@@ -134,7 +134,7 @@ class QueryTest extends TestCase
     /**
      * Data provider for the two types of strategies BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderBelongsToMany()
     {
@@ -1837,7 +1837,7 @@ class QueryTest extends TestCase
             ['shuffle', $identity, $collection],
             ['sample', 10, $collection],
             ['take', 1, $collection],
-            ['append', new \ArrayIterator, $collection],
+            ['append', new \ArrayIterator(), $collection],
             ['compile', true, $collection],
         ];
     }

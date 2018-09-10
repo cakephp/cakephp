@@ -1,6 +1,20 @@
 <?php
+declare(strict_types=1);
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @since         3.2.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
 namespace Cake\TestSuite\Constraint;
 
+use Cake\Event\EventManager;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
 
@@ -23,7 +37,7 @@ class EventFired extends Constraint
      *
      * @param \Cake\Event\EventManager $eventManager Event manager to check
      */
-    public function __construct($eventManager)
+    public function __construct(EventManager $eventManager)
     {
         parent::__construct();
         $this->_eventManager = $eventManager;
@@ -39,7 +53,7 @@ class EventFired extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         return $this->_eventManager->getEventList()->hasEvent($other);
     }
@@ -49,7 +63,7 @@ class EventFired extends Constraint
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'was fired';
     }

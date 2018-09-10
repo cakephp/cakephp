@@ -2771,6 +2771,8 @@ class FormHelperTest extends TestCase
                 'type' => 'text', 'name' => 'title',
                 'id' => 'title', 'class' => 'form-error',
                 'required' => 'required',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -2793,6 +2795,8 @@ class FormHelperTest extends TestCase
                 'id' => 'title',
                 'class' => 'form-error',
                 'required' => 'required',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             ['div' => ['class' => 'error-message']],
             'Custom error!',
@@ -3694,7 +3698,7 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertHtml($expected, $result);
 
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $this->View->setRequest(
             $this->View->getRequest()->withData('Model', ['user_id' => 'value'])
         );
@@ -3719,7 +3723,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $this->View->setRequest(
             $this->View->getRequest()->withData('Thing', ['user_id' => null])
         );
@@ -3744,7 +3748,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $this->View->setRequest(
             $this->View->getRequest()->withData('Thing', ['user_id' => 'value'])
         );
@@ -3840,7 +3844,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlOverridingMagicSelectType()
     {
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user_id', ['type' => 'text']);
         $expected = [
             'div' => ['class' => 'input text'],
@@ -3851,7 +3855,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         //Check that magic types still work for plural/singular vars
-        $this->View->viewVars['types'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('types', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.type');
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3874,7 +3878,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlMagicTypeDoesNotOverride()
     {
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user', ['type' => 'checkbox']);
         $expected = [
             'div' => ['class' => 'input checkbox'],
@@ -3948,7 +3952,7 @@ class FormHelperTest extends TestCase
         ]);
         $entity = new Entity(['balance' => 1]);
         $this->Form->create($entity, ['context' => ['table' => 'ValidateUsers']]);
-        $this->View->viewVars['balances'] = [0 => 'nothing', 1 => 'some', 100 => 'a lot'];
+        $this->View->set('balances', [0 => 'nothing', 1 => 'some', 100 => 'a lot']);
         $result = $this->Form->control('balance');
         $expected = [
             'div' => ['class' => 'input select'],
@@ -3994,7 +3998,7 @@ class FormHelperTest extends TestCase
      */
     public function testControlMagicSelectChangeToRadio()
     {
-        $this->View->viewVars['users'] = ['value' => 'good', 'other' => 'bad'];
+        $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user_id', ['type' => 'radio']);
         $this->assertContains('input type="radio"', $result);
     }
@@ -5376,7 +5380,7 @@ class FormHelperTest extends TestCase
             1 => 'Orion',
             2 => 'Helios',
         ];
-        $this->View->viewVars['spacecraft'] = $spacecraft;
+        $this->View->set('spacecraft', $spacecraft);
         $this->Form->create();
         $result = $this->Form->control('spacecraft._ids');
         $expected = [
@@ -5415,7 +5419,7 @@ class FormHelperTest extends TestCase
             1 => 'Orion',
             2 => 'Helios',
         ];
-        $this->View->viewVars['spacecraft'] = $spacecraft;
+        $this->View->set('spacecraft', $spacecraft);
 
         $article = new Article();
         $article->setError('spacecraft', ['Invalid']);
@@ -7175,7 +7179,14 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('title', ['label' => false]);
         $expected = [
             'div' => ['class' => 'input text required'],
-            'input' => ['type' => 'text', 'required' => 'required', 'id' => 'title', 'name' => 'title'],
+            'input' => [
+                'type' => 'text',
+                'required' => 'required',
+                'id' => 'title',
+                'name' => 'title',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
+            ],
             '/div',
         ];
         $this->assertHtml($expected, $result);
@@ -8411,6 +8422,8 @@ class FormHelperTest extends TestCase
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
+                    'oninvalid' => 'this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
+                    'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
                 ],
                 '/textarea',
             '/div'
@@ -8585,6 +8598,7 @@ class FormHelperTest extends TestCase
         $table->setValidator('default', $validator);
         $contact = new Entity();
 
+        $this->Form->setConfig('autoSetCustomValidity', false);
         $this->Form->create($contact, ['context' => ['table' => 'Contacts']]);
         $this->Form->setTemplates([
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}} data-message="{{customValidityMessage}}" {{custom}}/>',
@@ -8645,6 +8659,8 @@ class FormHelperTest extends TestCase
             ],
         ];
         $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('autoSetCustomValidity', true);
     }
 
     /**
@@ -8673,6 +8689,8 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'id' => 'title',
                 'required' => 'required',
+                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
             ],
             '/div',
         ];

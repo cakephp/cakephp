@@ -29,6 +29,7 @@ I18n::setLocale('en_US');
 use Cake\Core\Configure;
 
 Configure::write('App.paths.locales', ['/path/with/trailing/slash/']);
+```
 
 Please refer to the [CakePHP Manual](https://book.cakephp.org/3.0/en/core-libraries/internationalization-and-localization.html#language-files) for details
 about expected folder structure and file naming.

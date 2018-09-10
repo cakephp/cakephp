@@ -418,9 +418,9 @@ class ConsoleOptionParser
         } else {
             $defaults = [
                 'name' => $name,
-                'short' => null,
+                'short' => '',
                 'help' => '',
-                'default' => null,
+                'default' => '',
                 'boolean' => false,
                 'choices' => [],
             ];

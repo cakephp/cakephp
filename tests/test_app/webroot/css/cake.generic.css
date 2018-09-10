@@ -83,7 +83,7 @@ p {
     line-height:20px;
     background: #003d4c url('../img/cake.icon.png') no-repeat left;
     color: #fff;
-    padding: 0px 30px;
+    padding: 0 30px;
 }
 #header h1 a {
     color: #fff;
@@ -173,7 +173,7 @@ td.actions {
     white-space: nowrap;
 }
 table td.actions a {
-    margin: 0px 6px;
+    margin: 0 6px;
     padding:2px 5px;
 }
 
@@ -237,7 +237,7 @@ table td.actions a {
 /** Scaffold View **/
 dl {
     line-height: 2em;
-    margin: 0em 0em;
+    margin: 0 0;
     width: 60%;
 }
 dl dd:nth-child(4n+2),
@@ -335,7 +335,7 @@ option {
 input[type=checkbox] {
     clear: left;
     float: left;
-    margin: 0px 6px 7px 2px;
+    margin: 0 6px 7px 2px;
     width: auto;
 }
 div.checkbox label {
@@ -364,7 +364,7 @@ form .submit input[type=submit] {
     background-image: -moz-linear-gradient(top, #76BF6B, #3B8230);
     border-color: #2d6324;
     color: #fff;
-    text-shadow: rgba(0, 0, 0, 0.5) 0px -1px 0px;
+    text-shadow: rgba(0, 0, 0, 0.5) 0 -1px 0;
     padding: 8px 10px;
 }
 form .submit input[type=submit]:hover {
@@ -379,9 +379,9 @@ form .error {
     font-weight: normal;
 }
 form .error-message {
-    -moz-border-radius: none;
-    -webkit-border-radius: none;
-    border-radius: none;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
     border: none;
     background: none;
     margin: 0;
@@ -424,7 +424,6 @@ p.error,
     background-image: -webkit-linear-gradient(top, #ffcc00, #E6B800);
     background-image: -o-linear-gradient(top, #ffcc00, #E6B800);
     background-image: linear-gradient(top, #ffcc00, #E6B800);
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(0, 0, 0, 0.2);
     margin-bottom: 18px;
     padding: 7px 14px;
@@ -526,11 +525,11 @@ input[type=submit],
     -moz-border-radius: 4px;
     border-radius: 4px;
     text-decoration: none;
-    text-shadow: #fff 0px 1px 0px;
+    text-shadow: #fff 0 1px 0;
     min-width: 0;
-    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0px 1px 1px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 1px 1px rgba(0, 0, 0, 0.2);
     -webkit-user-select: none;
     user-select: none;
 }
@@ -550,7 +549,7 @@ input[type=submit]:active,
     background-image: -ms-linear-gradient(top, #dfdfdf, #eee);
     background-image: -o-linear-gradient(top, #dfdfdf, #eee);
     background-image: linear-gradient(top, #dfdfdf, #eee);
-    text-shadow: #eee 0px 1px 0px;
+    text-shadow: #eee 0 1px 0;
     -moz-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
     -webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.3);
@@ -626,15 +625,15 @@ pre {
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    margin: 0px 4px 10px 2px;
+    margin: 0 4px 10px 2px;
     font-family: sans-serif;
     font-size: 14px;
     line-height: 14px;
     display: inline-block;
     text-decoration: none;
-    -moz-box-shadow: inset 0px 1px 0 rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: inset 0px 1px 0 rgba(0, 0, 0, 0.3);
-    box-shadow: inset 0px 1px 0 rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.3);
 }
 .cake-code-dump pre {
     position: relative;
@@ -646,18 +645,17 @@ pre {
 .cake-stack-trace pre {
     color: #000;
     background-color: #F0F0F0;
-    margin: 0px 0 10px 0;
+    margin: 0 0 10px 0;
     padding: 1em;
     overflow: auto;
     text-shadow: none;
 }
 .cake-stack-trace li {
-    padding: 10px 5px 0px;
+    padding: 10px 5px 0;
     margin: 0 0 4px 0;
     font-family: monospace;
     border: 1px solid #bbb;
     -moz-border-radius: 4px;
-    -wekbkit-border-radius: 4px;
     border-radius: 4px;
     background: #dcdcdc;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#dcdcdc));

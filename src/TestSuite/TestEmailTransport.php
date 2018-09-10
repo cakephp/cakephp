@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Email;
+use Cake\Mailer\TransportFactory;
 
 /**
  * TestEmailTransport
@@ -54,13 +55,13 @@ class TestEmailTransport extends AbstractTransport
      */
     public static function replaceAllTransports(): void
     {
-        $configuredTransports = Email::configuredTransport();
+        $configuredTransports = TransportFactory::configured();
 
         foreach ($configuredTransports as $configuredTransport) {
-            $config = Email::getConfigTransport($configuredTransport);
+            $config = TransportFactory::getConfig($configuredTransport);
             $config['className'] = self::class;
-            Email::dropTransport($configuredTransport);
-            Email::setConfigTransport($configuredTransport, $config);
+            TransportFactory::drop($configuredTransport);
+            TransportFactory::setConfig($configuredTransport, $config);
         }
     }
 

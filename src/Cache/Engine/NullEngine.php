@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -26,7 +27,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function init(array $config = [])
+    public function init(array $config = []): bool
     {
         return true;
     }
@@ -34,36 +35,15 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function gc($expires = null)
+    public function write(string $key, $value): bool
     {
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function write($key, $value)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function writeMany($data)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function read($key)
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function readMany($keys)
+    public function writeMany(array $data): array
     {
         return [];
     }
@@ -71,36 +51,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function increment($key, $offset = 1)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function decrement($key, $offset = 1)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function delete($key)
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function deleteMany($keys)
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function clear($check)
+    public function read(string $key)
     {
         return false;
     }
@@ -108,7 +59,53 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function clearGroup($group)
+    public function readMany(array $keys): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function increment(string $key, int $offset = 1)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function decrement(string $key, int $offset = 1)
+    {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function delete(string $key): bool
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteMany(array $keys): array
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clear(bool $check): bool
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearGroup(string $group): bool
     {
         return false;
     }

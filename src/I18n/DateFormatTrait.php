@@ -173,7 +173,7 @@ trait DateFormatTrait
             $time = $time->timezone($timezone);
         }
 
-        $format = $format !== null ? $format : static::$_toStringFormat;
+        $format = $format ?? static::$_toStringFormat;
         $locale = $locale ?: static::$defaultLocale;
 
         return $this->_formatObject($time, $format, $locale);

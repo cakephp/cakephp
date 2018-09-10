@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -32,7 +33,7 @@ class ExitCode extends Constraint
      *
      * @param int $exitCode Exit code
      */
-    public function __construct($exitCode)
+    public function __construct(int $exitCode)
     {
         parent::__construct();
 

@@ -697,7 +697,7 @@ class EagerLoader
                 'canBeJoined' => $canBeJoined,
                 'entityClass' => $instance->getTarget()->getEntityClass(),
                 'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
-                'matching' => $forMatching !== null ? $forMatching : $matching,
+                'matching' => $forMatching ?? $matching,
                 'targetProperty' => $meta->targetProperty(),
             ];
             if ($canBeJoined && $associations) {

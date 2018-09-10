@@ -38,7 +38,7 @@ trait CookieCryptTrait
      *
      * @return string
      */
-    abstract protected function _getCookieEncryptionKey();
+    abstract protected function _getCookieEncryptionKey(): string;
 
     /**
      * Encrypts $value using public $type method in Security class
@@ -49,7 +49,7 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return string Encoded values
      */
-    protected function _encrypt($value, $encrypt, $key = null)
+    protected function _encrypt(string $value, $encrypt, ?string $key = null): string
     {
         if (is_array($value)) {
             $value = $this->_implode($value);
@@ -77,11 +77,11 @@ trait CookieCryptTrait
      * @return void
      * @throws \RuntimeException When an invalid cipher is provided.
      */
-    protected function _checkCipher($encrypt)
+    protected function _checkCipher(string $encrypt): void
     {
         if (!in_array($encrypt, $this->_validCiphers)) {
             $msg = sprintf(
-                'Invalid encryption cipher. Must be one of %s.',
+                'Invalid encryption cipher. Must be one of %s or false.',
                 implode(', ', $this->_validCiphers)
             );
             throw new RuntimeException($msg);
@@ -91,12 +91,12 @@ trait CookieCryptTrait
     /**
      * Decrypts $value using public $type method in Security class
      *
-     * @param array $values Values to decrypt
+     * @param array|string $values Values to decrypt
      * @param string|bool $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decrypted values
      */
-    protected function _decrypt($values, $mode, $key = null)
+    protected function _decrypt($values, $mode, ?string $key = null)
     {
         if (is_string($values)) {
             return $this->_decode($values, $mode, $key);
@@ -118,7 +118,7 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return string|array Decoded values.
      */
-    protected function _decode($value, $encrypt, $key)
+    protected function _decode(string $value, $encrypt, ?string $key)
     {
         if (!$encrypt) {
             return $this->_explode($value);

@@ -208,7 +208,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * all the fields in the schema of the table or the association will be added to
      * the select clause.
      *
-     * @param array|\Cake\Database\ExpressionInterface|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
+     * @param array|\Cake\Database\ExpressionInterface|callable|string|\Cake\ORM\Table|\Cake\ORM\Association $fields fields
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
@@ -1059,7 +1059,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _execute(): ResultSetInterface
+    protected function _execute()
     {
         $this->triggerBeforeFind();
         if ($this->_results) {

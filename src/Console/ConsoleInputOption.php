@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -252,7 +253,7 @@ class ConsoleInputOption
         }
         $option->addAttribute('short', $short);
         $option->addAttribute('help', $this->_help);
-        $option->addAttribute('boolean', (int)$this->_boolean);
+        $option->addAttribute('boolean', (string)(int)$this->_boolean);
         $option->addChild('default', $this->_default);
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {

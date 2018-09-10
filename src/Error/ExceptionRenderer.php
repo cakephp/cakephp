@@ -123,9 +123,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $controller = null;
 
         try {
-            $namespace = 'Controller';
+            $class = null;
+
             $prefix = $request->getParam('prefix');
             if ($prefix) {
+                $namespace = 'Controller';
                 if (strpos($prefix, '/') === false) {
                     $namespace .= '/' . Inflector::camelize($prefix);
                 } else {
@@ -135,14 +137,16 @@ class ExceptionRenderer implements ExceptionRendererInterface
                     );
                     $namespace .= '/' . implode('/', $prefixes);
                 }
+
+                $class = App::className('Error', $namespace, 'Controller');
             }
 
-            $class = App::className('Error', $namespace, 'Controller');
-            if (!$class && $namespace !== 'Controller') {
+            if (!$class) {
+                /** @var string $class */
                 $class = App::className('Error', 'Controller', 'Controller');
             }
 
-            /* @var \Cake\Controller\Controller $controller */
+            /** @var \Cake\Controller\Controller $controller */
             $controller = new $class($request, $response);
             $controller->startupProcess();
             $startup = true;
@@ -179,10 +183,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $method = $this->_method($exception);
         $template = $this->_template($exception, $method, $code);
 
-        $isDebug = Configure::read('debug');
-        if (($isDebug || $exception instanceof HttpException) &&
-            method_exists($this, $method)
-        ) {
+        if (method_exists($this, $method)) {
             return $this->_customMethod($method, $exception);
         }
 
@@ -204,6 +205,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'code' => $code,
             '_serialize' => ['message', 'url', 'code'],
         ];
+
+        $isDebug = Configure::read('debug');
         if ($isDebug) {
             $viewVars['trace'] = Debugger::formatTrace($exception->getTrace(), [
                 'format' => 'array',
@@ -316,16 +319,16 @@ class ExceptionRenderer implements ExceptionRendererInterface
     }
 
     /**
-     * Get an error code value within range 400 to 506
+     * Get HTTP status code.
      *
      * @param \Throwable $exception Exception.
-     * @return int Error code value within range 400 to 506
+     * @return int A valid HTTP error status code.
      */
     protected function _code(Throwable $exception): int
     {
         $code = 500;
         $errorCode = $exception->getCode();
-        if ($errorCode >= 400 && $errorCode < 506) {
+        if ($errorCode >= 400 && $errorCode < 600) {
             $code = $errorCode;
         }
 
@@ -399,55 +402,6 @@ class ExceptionRenderer implements ExceptionRendererInterface
         $this->controller->dispatchEvent('Controller.shutdown');
 
         return $this->controller->getResponse();
-    }
-
-    /**
-     * Magic accessor for properties made protected.
-     *
-     * @param string $name Name of the attribute to get.
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        $protected = [
-            'error',
-            'controller',
-            'template',
-            'method',
-        ];
-        if (in_array($name, $protected, true)) {
-            deprecationWarning(sprintf(
-                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
-                $name
-            ));
-        }
-
-        return $this->{$name};
-    }
-
-    /**
-     * Magic setter for properties made protected.
-     *
-     * @param string $name Name to property.
-     * @param mixed $value Value for property.
-     * @return void
-     */
-    public function __set($name, $value)
-    {
-        $protected = [
-            'error',
-            'controller',
-            'template',
-            'method',
-        ];
-        if (in_array($name, $protected, true)) {
-            deprecationWarning(sprintf(
-                'ExceptionRenderer::$%s is now protected and should no longer be accessed in public context.',
-                $name
-            ));
-        }
-
-        $this->{$name} = $value;
     }
 
     /**

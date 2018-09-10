@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<psalm
+    totallyTyped="false"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <directory name="src/TestSuite" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <LessSpecificReturnType errorLevel="info" />
+
+        <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
+
+        <DeprecatedMethod errorLevel="info" />
+        <DeprecatedProperty errorLevel="info" />
+        <DeprecatedClass errorLevel="info" />
+        <DeprecatedConstant errorLevel="info" />
+        <DeprecatedInterface errorLevel="info" />
+        <DeprecatedTrait errorLevel="info" />
+
+        <MissingClosureReturnType errorLevel="info" />
+        <MissingReturnType errorLevel="info" />
+        <MissingPropertyType errorLevel="info" />
+        <InvalidDocblock errorLevel="info" />
+        <MisplacedRequiredParam errorLevel="info" />
+
+        <PropertyNotSetInConstructor errorLevel="info" />
+        <MissingConstructor errorLevel="info" />
+        <MissingClosureParamType errorLevel="info" />
+        <MissingParamType errorLevel="info" />
+
+        <RedundantCondition errorLevel="info" />
+
+        <DocblockTypeContradiction errorLevel="info" />
+        <RedundantConditionGivenDocblockType errorLevel="info" />
+
+        <UnresolvableInclude errorLevel="info" />
+
+        <RawObjectIteration errorLevel="info" />
+
+        <!-- level 4 issues - points to possible deficiencies in logic, higher false-positives -->
+
+        <MoreSpecificReturnType errorLevel="info" />
+        <LessSpecificReturnStatement errorLevel="info" />
+        <TypeCoercion errorLevel="info" />
+
+        <PossiblyFalseArgument errorLevel="info" />
+        <PossiblyFalseIterator errorLevel="info" />
+        <PossiblyFalseOperand errorLevel="info" />
+        <PossiblyFalsePropertyAssignmentValue errorLevel="info" />
+        <PossiblyFalseReference errorLevel="info" />
+        <PossiblyInvalidArgument errorLevel="info" />
+        <PossiblyInvalidArrayAccess errorLevel="info" />
+        <PossiblyInvalidArrayAssignment errorLevel="info" />
+        <PossiblyInvalidArrayOffset errorLevel="info" />
+        <PossiblyInvalidFunctionCall errorLevel="info" />
+        <PossiblyInvalidIterator errorLevel="info" />
+        <PossiblyInvalidMethodCall errorLevel="info" />
+        <PossiblyInvalidOperand errorLevel="info" />
+        <PossiblyInvalidPropertyAssignment errorLevel="info" />
+        <PossiblyInvalidPropertyAssignmentValue errorLevel="info" />
+        <PossiblyInvalidPropertyFetch errorLevel="info" />
+        <PossiblyNullArgument errorLevel="info" />
+        <PossiblyNullArrayAccess errorLevel="info" />
+        <PossiblyNullArrayAssignment errorLevel="info" />
+        <PossiblyNullArrayOffset errorLevel="info" />
+        <PossiblyNullFunctionCall errorLevel="info" />
+        <PossiblyNullIterator errorLevel="info" />
+        <PossiblyNullOperand errorLevel="info" />
+        <PossiblyNullPropertyAssignment errorLevel="info" />
+        <PossiblyNullPropertyAssignmentValue errorLevel="info" />
+        <PossiblyNullPropertyFetch errorLevel="info" />
+        <PossiblyNullReference errorLevel="info" />
+        <PossiblyUndefinedGlobalVariable errorLevel="info" />
+        <PossiblyUndefinedVariable errorLevel="info" />
+        <PossiblyUndefinedArrayOffset errorLevel="info" />
+        <PossiblyUndefinedMethod errorLevel="info" />
+
+        <!-- level 5 issues - should be avoided at mosts costs... -->
+
+        <ForbiddenCode errorLevel="info" />
+        <ImplicitToStringCast errorLevel="info" />
+        <InvalidScalarArgument errorLevel="info" />
+        <InvalidToString errorLevel="info" />
+        <InvalidOperand errorLevel="info" />
+        <NoInterfaceProperties errorLevel="info" />
+        <TooManyArguments errorLevel="info" />
+        <TypeDoesNotContainType errorLevel="info" />
+        <TypeDoesNotContainNull errorLevel="info" />
+        <MissingDocblockType errorLevel="info" />
+        <ImplementedReturnTypeMismatch errorLevel="info" />
+
+        <!-- level 6 issues - really bad things -->
+
+        <InvalidNullableReturnType errorLevel="info" />
+        <NullableReturnStatement errorLevel="info" />
+        <InvalidFalsableReturnType errorLevel="info" />
+        <FalsableReturnStatement errorLevel="info" />
+
+        <MoreSpecificImplementedParamType errorLevel="info" />
+        <LessSpecificImplementedReturnType errorLevel="info" />
+
+        <InvalidReturnStatement errorLevel="info" />
+        <InvalidReturnType errorLevel="info" />
+        <UndefinedThisPropertyAssignment errorLevel="info" />
+
+        <!-- level 7 issues - even worse -->
+        <InvalidArgument errorLevel="info" />
+        <InvalidPropertyAssignmentValue errorLevel="info" />
+
+        <!-- CakePHP Specific -->
+        <UndefinedConstant errorLevel="suppress" />
+
+        <UndefinedPropertyAssignment>
+            <errorLevel type="suppress">
+                <file name="src/Core/StaticConfigTrait.php" />
+                <file name="src/Database/Log/LoggingStatement.php" />
+                <file name="src/Http/ServerRequestFactory.php" />
+            </errorLevel>
+        </UndefinedPropertyAssignment>
+
+        <UndefinedPropertyFetch>
+            <errorLevel type="suppress">
+                <file name="src/Core/StaticConfigTrait.php" />
+            </errorLevel>
+        </UndefinedPropertyFetch>
+
+        <EmptyArrayAccess>
+            <errorLevel type="suppress">
+                <file name="src/Database/Dialect/SqlserverDialectTrait.php" />
+            </errorLevel>
+        </EmptyArrayAccess>
+
+        <InvalidArrayOffset>
+            <errorLevel type="suppress">
+                <file name="src/I18n/Parser/MoFileParser.php" />
+                <file name="src/I18n/Parser/PoFileParser.php" />
+                <file name="src/View/Widget/RadioWidget.php" />
+            </errorLevel>
+        </InvalidArrayOffset>
+
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/View/XmlView.php" />
+            </errorLevel>
+        </PossiblyUndefinedMethod>
+
+        <LoopInvalidation>
+            <errorLevel type="suppress">
+                <file name="src/View/Form/EntityContext.php" />
+                <file name="src/Filesystem/Folder.php" />
+                <file name="src/Core/Configure/Engine/IniConfig.php" />
+            </errorLevel>
+        </LoopInvalidation>
+
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <file name="src/Cache/Engine/MemcachedEngine.php" />
+                <file name="src/Cache/Engine/RedisEngine.php" />
+                <file name="src/ORM/Behavior/TranslateBehavior.php" />
+            </errorLevel>
+        </UndefinedClass>
+
+        <UndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/Console/Shell.php" />
+                <file name="src/Controller/Component/AuthComponent.php" />
+                <file name="src/Datasource/Paginator.php" />
+                <file name="src/Datasource/ResultSetDecorator.php" />
+                <file name="src/ORM/Association.php" />
+                <file name="src/ORM/Association/BelongsToMany.php" />
+            </errorLevel>
+        </UndefinedMethod>
+
+        <NullReference>
+            <errorLevel type="suppress">
+                <file name="src/Database/Driver.php" />
+            </errorLevel>
+        </NullReference>
+
+        <PossiblyUndefinedMethod>
+            <errorLevel type="suppress">
+                <file name="src/ORM/LazyEagerLoader.php" />
+                <file name="src/View/XmlView.php" />
+            </errorLevel>
+        </PossiblyUndefinedMethod>
+
+        <InvalidPassByReference>
+            <errorLevel type="suppress">
+                <file name="src/Console/ConsoleInput.php" />
+            </errorLevel>
+        </InvalidPassByReference>
+
+        <InvalidCast>
+            <errorLevel type="suppress">
+                <file name="src/Core/functions.php" />
+            </errorLevel>
+        </InvalidCast>
+
+    </issueHandlers>
+</psalm>

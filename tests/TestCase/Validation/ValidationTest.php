@@ -165,463 +165,464 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::lengthBetween('abcdefg', 1, 7));
         $this->assertTrue(Validation::lengthBetween('', 0, 7));
         $this->assertTrue(Validation::lengthBetween('אกあアꀀ豈', 1, 7));
+        $this->assertTrue(Validation::lengthBetween(1, 1, 3));
 
         $this->assertFalse(Validation::lengthBetween('abcdefg', 1, 6));
         $this->assertFalse(Validation::lengthBetween('ÆΔΩЖÇ', 1, 3));
-        $this->assertFalse(Validation::lengthBetween(1, 1, 3));
     }
 
     /**
-     * testcc method
+     * testCreditCard method
      *
      * @return void
      */
-    public function testCc()
+    public function testCreditCard()
     {
         // American Express
-        $this->assertTrue(Validation::cc('370482756063980', ['amex']));
-        $this->assertTrue(Validation::cc('349106433773483', ['amex']));
-        $this->assertTrue(Validation::cc('344671486204764', ['amex']));
-        $this->assertTrue(Validation::cc('344042544509943', ['amex']));
-        $this->assertTrue(Validation::cc('377147515754475', ['amex']));
-        $this->assertTrue(Validation::cc('375239372816422', ['amex']));
-        $this->assertTrue(Validation::cc('376294341957707', ['amex']));
-        $this->assertTrue(Validation::cc('341779292230411', ['amex']));
-        $this->assertTrue(Validation::cc('341646919853372', ['amex']));
-        $this->assertTrue(Validation::cc('348498616319346', ['amex']));
+        $this->assertTrue(Validation::creditCard('370482756063980', ['amex']));
+        $this->assertTrue(Validation::creditCard('349106433773483', ['amex']));
+        $this->assertTrue(Validation::creditCard('344671486204764', ['amex']));
+        $this->assertTrue(Validation::creditCard('344042544509943', ['amex']));
+        $this->assertTrue(Validation::creditCard('377147515754475', ['amex']));
+        $this->assertTrue(Validation::creditCard('375239372816422', ['amex']));
+        $this->assertTrue(Validation::creditCard('376294341957707', ['amex']));
+        $this->assertTrue(Validation::creditCard('341779292230411', ['amex']));
+        $this->assertTrue(Validation::creditCard('341646919853372', ['amex']));
+        $this->assertTrue(Validation::creditCard('348498616319346', ['amex']));
         // BankCard
-        $this->assertTrue(Validation::cc('5610745867413420', ['bankcard']));
-        $this->assertTrue(Validation::cc('5610376649499352', ['bankcard']));
-        $this->assertTrue(Validation::cc('5610091936000694', ['bankcard']));
-        $this->assertTrue(Validation::cc('5602248780118788', ['bankcard']));
-        $this->assertTrue(Validation::cc('5610631567676765', ['bankcard']));
-        $this->assertTrue(Validation::cc('5602238211270795', ['bankcard']));
-        $this->assertTrue(Validation::cc('5610173951215470', ['bankcard']));
-        $this->assertTrue(Validation::cc('5610139705753702', ['bankcard']));
-        $this->assertTrue(Validation::cc('5602226032150551', ['bankcard']));
-        $this->assertTrue(Validation::cc('5602223993735777', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5610745867413420', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5610376649499352', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5610091936000694', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5602248780118788', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5610631567676765', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5602238211270795', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5610173951215470', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5610139705753702', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5602226032150551', ['bankcard']));
+        $this->assertTrue(Validation::creditCard('5602223993735777', ['bankcard']));
         // Diners Club 14
-        $this->assertTrue(Validation::cc('30155483651028', ['diners']));
-        $this->assertTrue(Validation::cc('36371312803821', ['diners']));
-        $this->assertTrue(Validation::cc('38801277489875', ['diners']));
-        $this->assertTrue(Validation::cc('30348560464296', ['diners']));
-        $this->assertTrue(Validation::cc('30349040317708', ['diners']));
-        $this->assertTrue(Validation::cc('36567413559978', ['diners']));
-        $this->assertTrue(Validation::cc('36051554732702', ['diners']));
-        $this->assertTrue(Validation::cc('30391842198191', ['diners']));
-        $this->assertTrue(Validation::cc('30172682197745', ['diners']));
-        $this->assertTrue(Validation::cc('30162056566641', ['diners']));
-        $this->assertTrue(Validation::cc('30085066927745', ['diners']));
-        $this->assertTrue(Validation::cc('36519025221976', ['diners']));
-        $this->assertTrue(Validation::cc('30372679371044', ['diners']));
-        $this->assertTrue(Validation::cc('38913939150124', ['diners']));
-        $this->assertTrue(Validation::cc('36852899094637', ['diners']));
-        $this->assertTrue(Validation::cc('30138041971120', ['diners']));
-        $this->assertTrue(Validation::cc('36184047836838', ['diners']));
-        $this->assertTrue(Validation::cc('30057460264462', ['diners']));
-        $this->assertTrue(Validation::cc('38980165212050', ['diners']));
-        $this->assertTrue(Validation::cc('30356516881240', ['diners']));
-        $this->assertTrue(Validation::cc('38744810033182', ['diners']));
-        $this->assertTrue(Validation::cc('30173638706621', ['diners']));
-        $this->assertTrue(Validation::cc('30158334709185', ['diners']));
-        $this->assertTrue(Validation::cc('30195413721186', ['diners']));
-        $this->assertTrue(Validation::cc('38863347694793', ['diners']));
-        $this->assertTrue(Validation::cc('30275627009113', ['diners']));
-        $this->assertTrue(Validation::cc('30242860404971', ['diners']));
-        $this->assertTrue(Validation::cc('30081877595151', ['diners']));
-        $this->assertTrue(Validation::cc('38053196067461', ['diners']));
-        $this->assertTrue(Validation::cc('36520379984870', ['diners']));
+        $this->assertTrue(Validation::creditCard('30155483651028', ['diners']));
+        $this->assertTrue(Validation::creditCard('36371312803821', ['diners']));
+        $this->assertTrue(Validation::creditCard('38801277489875', ['diners']));
+        $this->assertTrue(Validation::creditCard('30348560464296', ['diners']));
+        $this->assertTrue(Validation::creditCard('30349040317708', ['diners']));
+        $this->assertTrue(Validation::creditCard('36567413559978', ['diners']));
+        $this->assertTrue(Validation::creditCard('36051554732702', ['diners']));
+        $this->assertTrue(Validation::creditCard('30391842198191', ['diners']));
+        $this->assertTrue(Validation::creditCard('30172682197745', ['diners']));
+        $this->assertTrue(Validation::creditCard('30162056566641', ['diners']));
+        $this->assertTrue(Validation::creditCard('30085066927745', ['diners']));
+        $this->assertTrue(Validation::creditCard('36519025221976', ['diners']));
+        $this->assertTrue(Validation::creditCard('30372679371044', ['diners']));
+        $this->assertTrue(Validation::creditCard('38913939150124', ['diners']));
+        $this->assertTrue(Validation::creditCard('36852899094637', ['diners']));
+        $this->assertTrue(Validation::creditCard('30138041971120', ['diners']));
+        $this->assertTrue(Validation::creditCard('36184047836838', ['diners']));
+        $this->assertTrue(Validation::creditCard('30057460264462', ['diners']));
+        $this->assertTrue(Validation::creditCard('38980165212050', ['diners']));
+        $this->assertTrue(Validation::creditCard('30356516881240', ['diners']));
+        $this->assertTrue(Validation::creditCard('38744810033182', ['diners']));
+        $this->assertTrue(Validation::creditCard('30173638706621', ['diners']));
+        $this->assertTrue(Validation::creditCard('30158334709185', ['diners']));
+        $this->assertTrue(Validation::creditCard('30195413721186', ['diners']));
+        $this->assertTrue(Validation::creditCard('38863347694793', ['diners']));
+        $this->assertTrue(Validation::creditCard('30275627009113', ['diners']));
+        $this->assertTrue(Validation::creditCard('30242860404971', ['diners']));
+        $this->assertTrue(Validation::creditCard('30081877595151', ['diners']));
+        $this->assertTrue(Validation::creditCard('38053196067461', ['diners']));
+        $this->assertTrue(Validation::creditCard('36520379984870', ['diners']));
         // 2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::cc('36747701998969', ['diners']));
-        $this->assertTrue(Validation::cc('36427861123159', ['diners']));
-        $this->assertTrue(Validation::cc('36150537602386', ['diners']));
-        $this->assertTrue(Validation::cc('36582388820610', ['diners']));
-        $this->assertTrue(Validation::cc('36729045250216', ['diners']));
+        $this->assertTrue(Validation::creditCard('36747701998969', ['diners']));
+        $this->assertTrue(Validation::creditCard('36427861123159', ['diners']));
+        $this->assertTrue(Validation::creditCard('36150537602386', ['diners']));
+        $this->assertTrue(Validation::creditCard('36582388820610', ['diners']));
+        $this->assertTrue(Validation::creditCard('36729045250216', ['diners']));
         // 2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::cc('5597511346169950', ['diners']));
-        $this->assertTrue(Validation::cc('5526443162217562', ['diners']));
-        $this->assertTrue(Validation::cc('5577265786122391', ['diners']));
-        $this->assertTrue(Validation::cc('5534061404676989', ['diners']));
-        $this->assertTrue(Validation::cc('5545313588374502', ['diners']));
+        $this->assertTrue(Validation::creditCard('5597511346169950', ['diners']));
+        $this->assertTrue(Validation::creditCard('5526443162217562', ['diners']));
+        $this->assertTrue(Validation::creditCard('5577265786122391', ['diners']));
+        $this->assertTrue(Validation::creditCard('5534061404676989', ['diners']));
+        $this->assertTrue(Validation::creditCard('5545313588374502', ['diners']));
         // Discover
-        $this->assertTrue(Validation::cc('6011802876467237', ['disc']));
-        $this->assertTrue(Validation::cc('6506432777720955', ['disc']));
-        $this->assertTrue(Validation::cc('6011126265283942', ['disc']));
-        $this->assertTrue(Validation::cc('6502187151579252', ['disc']));
-        $this->assertTrue(Validation::cc('6506600836002298', ['disc']));
-        $this->assertTrue(Validation::cc('6504376463615189', ['disc']));
-        $this->assertTrue(Validation::cc('6011440907005377', ['disc']));
-        $this->assertTrue(Validation::cc('6509735979634270', ['disc']));
-        $this->assertTrue(Validation::cc('6011422366775856', ['disc']));
-        $this->assertTrue(Validation::cc('6500976374623323', ['disc']));
+        $this->assertTrue(Validation::creditCard('6011802876467237', ['disc']));
+        $this->assertTrue(Validation::creditCard('6506432777720955', ['disc']));
+        $this->assertTrue(Validation::creditCard('6011126265283942', ['disc']));
+        $this->assertTrue(Validation::creditCard('6502187151579252', ['disc']));
+        $this->assertTrue(Validation::creditCard('6506600836002298', ['disc']));
+        $this->assertTrue(Validation::creditCard('6504376463615189', ['disc']));
+        $this->assertTrue(Validation::creditCard('6011440907005377', ['disc']));
+        $this->assertTrue(Validation::creditCard('6509735979634270', ['disc']));
+        $this->assertTrue(Validation::creditCard('6011422366775856', ['disc']));
+        $this->assertTrue(Validation::creditCard('6500976374623323', ['disc']));
         // enRoute
-        $this->assertTrue(Validation::cc('201496944158937', ['enroute']));
-        $this->assertTrue(Validation::cc('214945833739665', ['enroute']));
-        $this->assertTrue(Validation::cc('214982692491187', ['enroute']));
-        $this->assertTrue(Validation::cc('214901395949424', ['enroute']));
-        $this->assertTrue(Validation::cc('201480676269187', ['enroute']));
-        $this->assertTrue(Validation::cc('214911922887807', ['enroute']));
-        $this->assertTrue(Validation::cc('201485025457250', ['enroute']));
-        $this->assertTrue(Validation::cc('201402662758866', ['enroute']));
-        $this->assertTrue(Validation::cc('214981579370225', ['enroute']));
-        $this->assertTrue(Validation::cc('201447595859877', ['enroute']));
+        $this->assertTrue(Validation::creditCard('201496944158937', ['enroute']));
+        $this->assertTrue(Validation::creditCard('214945833739665', ['enroute']));
+        $this->assertTrue(Validation::creditCard('214982692491187', ['enroute']));
+        $this->assertTrue(Validation::creditCard('214901395949424', ['enroute']));
+        $this->assertTrue(Validation::creditCard('201480676269187', ['enroute']));
+        $this->assertTrue(Validation::creditCard('214911922887807', ['enroute']));
+        $this->assertTrue(Validation::creditCard('201485025457250', ['enroute']));
+        $this->assertTrue(Validation::creditCard('201402662758866', ['enroute']));
+        $this->assertTrue(Validation::creditCard('214981579370225', ['enroute']));
+        $this->assertTrue(Validation::creditCard('201447595859877', ['enroute']));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('213134762247898', ['jcb']));
-        $this->assertTrue(Validation::cc('180078671678892', ['jcb']));
-        $this->assertTrue(Validation::cc('180010559353736', ['jcb']));
-        $this->assertTrue(Validation::cc('213195474464253', ['jcb']));
-        $this->assertTrue(Validation::cc('213106675562183', ['jcb']));
-        $this->assertTrue(Validation::cc('213163299662667', ['jcb']));
-        $this->assertTrue(Validation::cc('180032506857825', ['jcb']));
-        $this->assertTrue(Validation::cc('213157919192733', ['jcb']));
-        $this->assertTrue(Validation::cc('180031358949367', ['jcb']));
-        $this->assertTrue(Validation::cc('180033802147846', ['jcb']));
+        $this->assertTrue(Validation::creditCard('213134762247898', ['jcb']));
+        $this->assertTrue(Validation::creditCard('180078671678892', ['jcb']));
+        $this->assertTrue(Validation::creditCard('180010559353736', ['jcb']));
+        $this->assertTrue(Validation::creditCard('213195474464253', ['jcb']));
+        $this->assertTrue(Validation::creditCard('213106675562183', ['jcb']));
+        $this->assertTrue(Validation::creditCard('213163299662667', ['jcb']));
+        $this->assertTrue(Validation::creditCard('180032506857825', ['jcb']));
+        $this->assertTrue(Validation::creditCard('213157919192733', ['jcb']));
+        $this->assertTrue(Validation::creditCard('180031358949367', ['jcb']));
+        $this->assertTrue(Validation::creditCard('180033802147846', ['jcb']));
         // JCB 16 digit
-        $this->assertTrue(Validation::cc('3096806857839939', ['jcb']));
-        $this->assertTrue(Validation::cc('3158699503187091', ['jcb']));
-        $this->assertTrue(Validation::cc('3112549607186579', ['jcb']));
-        $this->assertTrue(Validation::cc('3112332922425604', ['jcb']));
-        $this->assertTrue(Validation::cc('3112001541159239', ['jcb']));
-        $this->assertTrue(Validation::cc('3112162495317841', ['jcb']));
-        $this->assertTrue(Validation::cc('3337562627732768', ['jcb']));
-        $this->assertTrue(Validation::cc('3337107161330775', ['jcb']));
-        $this->assertTrue(Validation::cc('3528053736003621', ['jcb']));
-        $this->assertTrue(Validation::cc('3528915255020360', ['jcb']));
-        $this->assertTrue(Validation::cc('3096786059660921', ['jcb']));
-        $this->assertTrue(Validation::cc('3528264799292320', ['jcb']));
-        $this->assertTrue(Validation::cc('3096469164130136', ['jcb']));
-        $this->assertTrue(Validation::cc('3112127443822853', ['jcb']));
-        $this->assertTrue(Validation::cc('3096849995802328', ['jcb']));
-        $this->assertTrue(Validation::cc('3528090735127407', ['jcb']));
-        $this->assertTrue(Validation::cc('3112101006819234', ['jcb']));
-        $this->assertTrue(Validation::cc('3337444428040784', ['jcb']));
-        $this->assertTrue(Validation::cc('3088043154151061', ['jcb']));
-        $this->assertTrue(Validation::cc('3088295969414866', ['jcb']));
-        $this->assertTrue(Validation::cc('3158748843158575', ['jcb']));
-        $this->assertTrue(Validation::cc('3158709206148538', ['jcb']));
-        $this->assertTrue(Validation::cc('3158365159575324', ['jcb']));
-        $this->assertTrue(Validation::cc('3158671691305165', ['jcb']));
-        $this->assertTrue(Validation::cc('3528523028771093', ['jcb']));
-        $this->assertTrue(Validation::cc('3096057126267870', ['jcb']));
-        $this->assertTrue(Validation::cc('3158514047166834', ['jcb']));
-        $this->assertTrue(Validation::cc('3528274546125962', ['jcb']));
-        $this->assertTrue(Validation::cc('3528890967705733', ['jcb']));
-        $this->assertTrue(Validation::cc('3337198811307545', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3096806857839939', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3158699503187091', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3112549607186579', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3112332922425604', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3112001541159239', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3112162495317841', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3337562627732768', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3337107161330775', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528053736003621', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528915255020360', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3096786059660921', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528264799292320', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3096469164130136', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3112127443822853', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3096849995802328', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528090735127407', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3112101006819234', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3337444428040784', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3088043154151061', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3088295969414866', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3158748843158575', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3158709206148538', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3158365159575324', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3158671691305165', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528523028771093', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3096057126267870', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3158514047166834', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528274546125962', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3528890967705733', ['jcb']));
+        $this->assertTrue(Validation::creditCard('3337198811307545', ['jcb']));
         // Maestro (debit card)
-        $this->assertTrue(Validation::cc('5020147409985219', ['maestro']));
-        $this->assertTrue(Validation::cc('5020931809905616', ['maestro']));
-        $this->assertTrue(Validation::cc('5020412965470224', ['maestro']));
-        $this->assertTrue(Validation::cc('5020129740944022', ['maestro']));
-        $this->assertTrue(Validation::cc('5020024696747943', ['maestro']));
-        $this->assertTrue(Validation::cc('5020581514636509', ['maestro']));
-        $this->assertTrue(Validation::cc('5020695008411987', ['maestro']));
-        $this->assertTrue(Validation::cc('5020565359718977', ['maestro']));
-        $this->assertTrue(Validation::cc('6339931536544062', ['maestro']));
-        $this->assertTrue(Validation::cc('6465028615704406', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020147409985219', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020931809905616', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020412965470224', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020129740944022', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020024696747943', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020581514636509', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020695008411987', ['maestro']));
+        $this->assertTrue(Validation::creditCard('5020565359718977', ['maestro']));
+        $this->assertTrue(Validation::creditCard('6339931536544062', ['maestro']));
+        $this->assertTrue(Validation::creditCard('6465028615704406', ['maestro']));
         // Mastercard
-        $this->assertTrue(Validation::cc('5580424361774366', ['mc']));
-        $this->assertTrue(Validation::cc('5589563059318282', ['mc']));
-        $this->assertTrue(Validation::cc('5387558333690047', ['mc']));
-        $this->assertTrue(Validation::cc('5163919215247175', ['mc']));
-        $this->assertTrue(Validation::cc('5386742685055055', ['mc']));
-        $this->assertTrue(Validation::cc('5102303335960674', ['mc']));
-        $this->assertTrue(Validation::cc('5526543403964565', ['mc']));
-        $this->assertTrue(Validation::cc('5538725892618432', ['mc']));
-        $this->assertTrue(Validation::cc('5119543573129778', ['mc']));
-        $this->assertTrue(Validation::cc('5391174753915767', ['mc']));
-        $this->assertTrue(Validation::cc('5510994113980714', ['mc']));
-        $this->assertTrue(Validation::cc('5183720260418091', ['mc']));
-        $this->assertTrue(Validation::cc('5488082196086704', ['mc']));
-        $this->assertTrue(Validation::cc('5484645164161834', ['mc']));
-        $this->assertTrue(Validation::cc('5171254350337031', ['mc']));
-        $this->assertTrue(Validation::cc('5526987528136452', ['mc']));
-        $this->assertTrue(Validation::cc('5504148941409358', ['mc']));
-        $this->assertTrue(Validation::cc('5240793507243615', ['mc']));
-        $this->assertTrue(Validation::cc('5162114693017107', ['mc']));
-        $this->assertTrue(Validation::cc('5163104807404753', ['mc']));
-        $this->assertTrue(Validation::cc('5590136167248365', ['mc']));
-        $this->assertTrue(Validation::cc('5565816281038948', ['mc']));
-        $this->assertTrue(Validation::cc('5467639122779531', ['mc']));
-        $this->assertTrue(Validation::cc('5297350261550024', ['mc']));
-        $this->assertTrue(Validation::cc('5162739131368058', ['mc']));
+        $this->assertTrue(Validation::creditCard('5580424361774366', ['mc']));
+        $this->assertTrue(Validation::creditCard('5589563059318282', ['mc']));
+        $this->assertTrue(Validation::creditCard('5387558333690047', ['mc']));
+        $this->assertTrue(Validation::creditCard('5163919215247175', ['mc']));
+        $this->assertTrue(Validation::creditCard('5386742685055055', ['mc']));
+        $this->assertTrue(Validation::creditCard('5102303335960674', ['mc']));
+        $this->assertTrue(Validation::creditCard('5526543403964565', ['mc']));
+        $this->assertTrue(Validation::creditCard('5538725892618432', ['mc']));
+        $this->assertTrue(Validation::creditCard('5119543573129778', ['mc']));
+        $this->assertTrue(Validation::creditCard('5391174753915767', ['mc']));
+        $this->assertTrue(Validation::creditCard('5510994113980714', ['mc']));
+        $this->assertTrue(Validation::creditCard('5183720260418091', ['mc']));
+        $this->assertTrue(Validation::creditCard('5488082196086704', ['mc']));
+        $this->assertTrue(Validation::creditCard('5484645164161834', ['mc']));
+        $this->assertTrue(Validation::creditCard('5171254350337031', ['mc']));
+        $this->assertTrue(Validation::creditCard('5526987528136452', ['mc']));
+        $this->assertTrue(Validation::creditCard('5504148941409358', ['mc']));
+        $this->assertTrue(Validation::creditCard('5240793507243615', ['mc']));
+        $this->assertTrue(Validation::creditCard('5162114693017107', ['mc']));
+        $this->assertTrue(Validation::creditCard('5163104807404753', ['mc']));
+        $this->assertTrue(Validation::creditCard('5590136167248365', ['mc']));
+        $this->assertTrue(Validation::creditCard('5565816281038948', ['mc']));
+        $this->assertTrue(Validation::creditCard('5467639122779531', ['mc']));
+        $this->assertTrue(Validation::creditCard('5297350261550024', ['mc']));
+        $this->assertTrue(Validation::creditCard('5162739131368058', ['mc']));
         // Mastercard (additional 2016 BIN)
-        $this->assertTrue(Validation::cc('2221000000000009', ['mc']));
-        $this->assertTrue(Validation::cc('2720999999999996', ['mc']));
-        $this->assertTrue(Validation::cc('2223000010005798', ['mc']));
-        $this->assertTrue(Validation::cc('2623430710235708', ['mc']));
-        $this->assertTrue(Validation::cc('2420452519835723', ['mc']));
+        $this->assertTrue(Validation::creditCard('2221000000000009', ['mc']));
+        $this->assertTrue(Validation::creditCard('2720999999999996', ['mc']));
+        $this->assertTrue(Validation::creditCard('2223000010005798', ['mc']));
+        $this->assertTrue(Validation::creditCard('2623430710235708', ['mc']));
+        $this->assertTrue(Validation::creditCard('2420452519835723', ['mc']));
         // Solo 16
-        $this->assertTrue(Validation::cc('6767432107064987', ['solo']));
-        $this->assertTrue(Validation::cc('6334667758225411', ['solo']));
-        $this->assertTrue(Validation::cc('6767037421954068', ['solo']));
-        $this->assertTrue(Validation::cc('6767823306394854', ['solo']));
-        $this->assertTrue(Validation::cc('6334768185398134', ['solo']));
-        $this->assertTrue(Validation::cc('6767286729498589', ['solo']));
-        $this->assertTrue(Validation::cc('6334972104431261', ['solo']));
-        $this->assertTrue(Validation::cc('6334843427400616', ['solo']));
-        $this->assertTrue(Validation::cc('6767493947881311', ['solo']));
-        $this->assertTrue(Validation::cc('6767194235798817', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767432107064987', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334667758225411', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767037421954068', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767823306394854', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334768185398134', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767286729498589', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334972104431261', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334843427400616', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767493947881311', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767194235798817', ['solo']));
         // Solo 18
-        $this->assertTrue(Validation::cc('676714834398858593', ['solo']));
-        $this->assertTrue(Validation::cc('676751666435130857', ['solo']));
-        $this->assertTrue(Validation::cc('676781908573924236', ['solo']));
-        $this->assertTrue(Validation::cc('633488724644003240', ['solo']));
-        $this->assertTrue(Validation::cc('676732252338067316', ['solo']));
-        $this->assertTrue(Validation::cc('676747520084495821', ['solo']));
-        $this->assertTrue(Validation::cc('633465488901381957', ['solo']));
-        $this->assertTrue(Validation::cc('633487484858610484', ['solo']));
-        $this->assertTrue(Validation::cc('633453764680740694', ['solo']));
-        $this->assertTrue(Validation::cc('676768613295414451', ['solo']));
+        $this->assertTrue(Validation::creditCard('676714834398858593', ['solo']));
+        $this->assertTrue(Validation::creditCard('676751666435130857', ['solo']));
+        $this->assertTrue(Validation::creditCard('676781908573924236', ['solo']));
+        $this->assertTrue(Validation::creditCard('633488724644003240', ['solo']));
+        $this->assertTrue(Validation::creditCard('676732252338067316', ['solo']));
+        $this->assertTrue(Validation::creditCard('676747520084495821', ['solo']));
+        $this->assertTrue(Validation::creditCard('633465488901381957', ['solo']));
+        $this->assertTrue(Validation::creditCard('633487484858610484', ['solo']));
+        $this->assertTrue(Validation::creditCard('633453764680740694', ['solo']));
+        $this->assertTrue(Validation::creditCard('676768613295414451', ['solo']));
         // Solo 19
-        $this->assertTrue(Validation::cc('6767838565218340113', ['solo']));
-        $this->assertTrue(Validation::cc('6767760119829705181', ['solo']));
-        $this->assertTrue(Validation::cc('6767265917091593668', ['solo']));
-        $this->assertTrue(Validation::cc('6767938856947440111', ['solo']));
-        $this->assertTrue(Validation::cc('6767501945697390076', ['solo']));
-        $this->assertTrue(Validation::cc('6334902868716257379', ['solo']));
-        $this->assertTrue(Validation::cc('6334922127686425532', ['solo']));
-        $this->assertTrue(Validation::cc('6334933119080706440', ['solo']));
-        $this->assertTrue(Validation::cc('6334647959628261714', ['solo']));
-        $this->assertTrue(Validation::cc('6334527312384101382', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767838565218340113', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767760119829705181', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767265917091593668', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767938856947440111', ['solo']));
+        $this->assertTrue(Validation::creditCard('6767501945697390076', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334902868716257379', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334922127686425532', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334933119080706440', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334647959628261714', ['solo']));
+        $this->assertTrue(Validation::creditCard('6334527312384101382', ['solo']));
         // Switch 16
-        $this->assertTrue(Validation::cc('5641829171515733', ['switch']));
-        $this->assertTrue(Validation::cc('5641824852820809', ['switch']));
-        $this->assertTrue(Validation::cc('6759129648956909', ['switch']));
-        $this->assertTrue(Validation::cc('6759626072268156', ['switch']));
-        $this->assertTrue(Validation::cc('5641822698388957', ['switch']));
-        $this->assertTrue(Validation::cc('5641827123105470', ['switch']));
-        $this->assertTrue(Validation::cc('5641823755819553', ['switch']));
-        $this->assertTrue(Validation::cc('5641821939587682', ['switch']));
-        $this->assertTrue(Validation::cc('4936097148079186', ['switch']));
-        $this->assertTrue(Validation::cc('5641829739125009', ['switch']));
-        $this->assertTrue(Validation::cc('5641822860725507', ['switch']));
-        $this->assertTrue(Validation::cc('4936717688865831', ['switch']));
-        $this->assertTrue(Validation::cc('6759487613615441', ['switch']));
-        $this->assertTrue(Validation::cc('5641821346840617', ['switch']));
-        $this->assertTrue(Validation::cc('5641825793417126', ['switch']));
-        $this->assertTrue(Validation::cc('5641821302759595', ['switch']));
-        $this->assertTrue(Validation::cc('6759784969918837', ['switch']));
-        $this->assertTrue(Validation::cc('5641824910667036', ['switch']));
-        $this->assertTrue(Validation::cc('6759139909636173', ['switch']));
-        $this->assertTrue(Validation::cc('6333425070638022', ['switch']));
-        $this->assertTrue(Validation::cc('5641823910382067', ['switch']));
-        $this->assertTrue(Validation::cc('4936295218139423', ['switch']));
-        $this->assertTrue(Validation::cc('6333031811316199', ['switch']));
-        $this->assertTrue(Validation::cc('4936912044763198', ['switch']));
-        $this->assertTrue(Validation::cc('4936387053303824', ['switch']));
-        $this->assertTrue(Validation::cc('6759535838760523', ['switch']));
-        $this->assertTrue(Validation::cc('6333427174594051', ['switch']));
-        $this->assertTrue(Validation::cc('5641829037102700', ['switch']));
-        $this->assertTrue(Validation::cc('5641826495463046', ['switch']));
-        $this->assertTrue(Validation::cc('6333480852979946', ['switch']));
-        $this->assertTrue(Validation::cc('5641827761302876', ['switch']));
-        $this->assertTrue(Validation::cc('5641825083505317', ['switch']));
-        $this->assertTrue(Validation::cc('6759298096003991', ['switch']));
-        $this->assertTrue(Validation::cc('4936119165483420', ['switch']));
-        $this->assertTrue(Validation::cc('4936190990500993', ['switch']));
-        $this->assertTrue(Validation::cc('4903356467384927', ['switch']));
-        $this->assertTrue(Validation::cc('6333372765092554', ['switch']));
-        $this->assertTrue(Validation::cc('5641821330950570', ['switch']));
-        $this->assertTrue(Validation::cc('6759841558826118', ['switch']));
-        $this->assertTrue(Validation::cc('4936164540922452', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641829171515733', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641824852820809', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759129648956909', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759626072268156', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641822698388957', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641827123105470', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641823755819553', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641821939587682', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936097148079186', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641829739125009', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641822860725507', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936717688865831', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759487613615441', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641821346840617', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641825793417126', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641821302759595', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759784969918837', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641824910667036', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759139909636173', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333425070638022', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641823910382067', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936295218139423', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333031811316199', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936912044763198', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936387053303824', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759535838760523', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333427174594051', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641829037102700', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641826495463046', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333480852979946', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641827761302876', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641825083505317', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759298096003991', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936119165483420', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936190990500993', ['switch']));
+        $this->assertTrue(Validation::creditCard('4903356467384927', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333372765092554', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641821330950570', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759841558826118', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936164540922452', ['switch']));
         // Switch 18
-        $this->assertTrue(Validation::cc('493622764224625174', ['switch']));
-        $this->assertTrue(Validation::cc('564182823396913535', ['switch']));
-        $this->assertTrue(Validation::cc('675917308304801234', ['switch']));
-        $this->assertTrue(Validation::cc('675919890024220298', ['switch']));
-        $this->assertTrue(Validation::cc('633308376862556751', ['switch']));
-        $this->assertTrue(Validation::cc('564182377633208779', ['switch']));
-        $this->assertTrue(Validation::cc('564182870014926787', ['switch']));
-        $this->assertTrue(Validation::cc('675979788553829819', ['switch']));
-        $this->assertTrue(Validation::cc('493668394358130935', ['switch']));
-        $this->assertTrue(Validation::cc('493637431790930965', ['switch']));
-        $this->assertTrue(Validation::cc('633321438601941513', ['switch']));
-        $this->assertTrue(Validation::cc('675913800898840986', ['switch']));
-        $this->assertTrue(Validation::cc('564182592016841547', ['switch']));
-        $this->assertTrue(Validation::cc('564182428380440899', ['switch']));
-        $this->assertTrue(Validation::cc('493696376827623463', ['switch']));
-        $this->assertTrue(Validation::cc('675977939286485757', ['switch']));
-        $this->assertTrue(Validation::cc('490302699502091579', ['switch']));
-        $this->assertTrue(Validation::cc('564182085013662230', ['switch']));
-        $this->assertTrue(Validation::cc('493693054263310167', ['switch']));
-        $this->assertTrue(Validation::cc('633321755966697525', ['switch']));
-        $this->assertTrue(Validation::cc('675996851719732811', ['switch']));
-        $this->assertTrue(Validation::cc('493699211208281028', ['switch']));
-        $this->assertTrue(Validation::cc('493697817378356614', ['switch']));
-        $this->assertTrue(Validation::cc('675968224161768150', ['switch']));
-        $this->assertTrue(Validation::cc('493669416873337627', ['switch']));
-        $this->assertTrue(Validation::cc('564182439172549714', ['switch']));
-        $this->assertTrue(Validation::cc('675926914467673598', ['switch']));
-        $this->assertTrue(Validation::cc('564182565231977809', ['switch']));
-        $this->assertTrue(Validation::cc('675966282607849002', ['switch']));
-        $this->assertTrue(Validation::cc('493691609704348548', ['switch']));
-        $this->assertTrue(Validation::cc('675933118546065120', ['switch']));
-        $this->assertTrue(Validation::cc('493631116677238592', ['switch']));
-        $this->assertTrue(Validation::cc('675921142812825938', ['switch']));
-        $this->assertTrue(Validation::cc('633338311815675113', ['switch']));
-        $this->assertTrue(Validation::cc('633323539867338621', ['switch']));
-        $this->assertTrue(Validation::cc('675964912740845663', ['switch']));
-        $this->assertTrue(Validation::cc('633334008833727504', ['switch']));
-        $this->assertTrue(Validation::cc('493631941273687169', ['switch']));
-        $this->assertTrue(Validation::cc('564182971729706785', ['switch']));
-        $this->assertTrue(Validation::cc('633303461188963496', ['switch']));
+        $this->assertTrue(Validation::creditCard('493622764224625174', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182823396913535', ['switch']));
+        $this->assertTrue(Validation::creditCard('675917308304801234', ['switch']));
+        $this->assertTrue(Validation::creditCard('675919890024220298', ['switch']));
+        $this->assertTrue(Validation::creditCard('633308376862556751', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182377633208779', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182870014926787', ['switch']));
+        $this->assertTrue(Validation::creditCard('675979788553829819', ['switch']));
+        $this->assertTrue(Validation::creditCard('493668394358130935', ['switch']));
+        $this->assertTrue(Validation::creditCard('493637431790930965', ['switch']));
+        $this->assertTrue(Validation::creditCard('633321438601941513', ['switch']));
+        $this->assertTrue(Validation::creditCard('675913800898840986', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182592016841547', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182428380440899', ['switch']));
+        $this->assertTrue(Validation::creditCard('493696376827623463', ['switch']));
+        $this->assertTrue(Validation::creditCard('675977939286485757', ['switch']));
+        $this->assertTrue(Validation::creditCard('490302699502091579', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182085013662230', ['switch']));
+        $this->assertTrue(Validation::creditCard('493693054263310167', ['switch']));
+        $this->assertTrue(Validation::creditCard('633321755966697525', ['switch']));
+        $this->assertTrue(Validation::creditCard('675996851719732811', ['switch']));
+        $this->assertTrue(Validation::creditCard('493699211208281028', ['switch']));
+        $this->assertTrue(Validation::creditCard('493697817378356614', ['switch']));
+        $this->assertTrue(Validation::creditCard('675968224161768150', ['switch']));
+        $this->assertTrue(Validation::creditCard('493669416873337627', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182439172549714', ['switch']));
+        $this->assertTrue(Validation::creditCard('675926914467673598', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182565231977809', ['switch']));
+        $this->assertTrue(Validation::creditCard('675966282607849002', ['switch']));
+        $this->assertTrue(Validation::creditCard('493691609704348548', ['switch']));
+        $this->assertTrue(Validation::creditCard('675933118546065120', ['switch']));
+        $this->assertTrue(Validation::creditCard('493631116677238592', ['switch']));
+        $this->assertTrue(Validation::creditCard('675921142812825938', ['switch']));
+        $this->assertTrue(Validation::creditCard('633338311815675113', ['switch']));
+        $this->assertTrue(Validation::creditCard('633323539867338621', ['switch']));
+        $this->assertTrue(Validation::creditCard('675964912740845663', ['switch']));
+        $this->assertTrue(Validation::creditCard('633334008833727504', ['switch']));
+        $this->assertTrue(Validation::creditCard('493631941273687169', ['switch']));
+        $this->assertTrue(Validation::creditCard('564182971729706785', ['switch']));
+        $this->assertTrue(Validation::creditCard('633303461188963496', ['switch']));
         // Switch 19
-        $this->assertTrue(Validation::cc('6759603460617628716', ['switch']));
-        $this->assertTrue(Validation::cc('4936705825268647681', ['switch']));
-        $this->assertTrue(Validation::cc('5641829846600479183', ['switch']));
-        $this->assertTrue(Validation::cc('6759389846573792530', ['switch']));
-        $this->assertTrue(Validation::cc('4936189558712637603', ['switch']));
-        $this->assertTrue(Validation::cc('5641822217393868189', ['switch']));
-        $this->assertTrue(Validation::cc('4903075563780057152', ['switch']));
-        $this->assertTrue(Validation::cc('4936510653566569547', ['switch']));
-        $this->assertTrue(Validation::cc('4936503083627303364', ['switch']));
-        $this->assertTrue(Validation::cc('4936777334398116272', ['switch']));
-        $this->assertTrue(Validation::cc('5641823876900554860', ['switch']));
-        $this->assertTrue(Validation::cc('6759619236903407276', ['switch']));
-        $this->assertTrue(Validation::cc('6759011470269978117', ['switch']));
-        $this->assertTrue(Validation::cc('6333175833997062502', ['switch']));
-        $this->assertTrue(Validation::cc('6759498728789080439', ['switch']));
-        $this->assertTrue(Validation::cc('4903020404168157841', ['switch']));
-        $this->assertTrue(Validation::cc('6759354334874804313', ['switch']));
-        $this->assertTrue(Validation::cc('6759900856420875115', ['switch']));
-        $this->assertTrue(Validation::cc('5641827269346868860', ['switch']));
-        $this->assertTrue(Validation::cc('5641828995047453870', ['switch']));
-        $this->assertTrue(Validation::cc('6333321884754806543', ['switch']));
-        $this->assertTrue(Validation::cc('6333108246283715901', ['switch']));
-        $this->assertTrue(Validation::cc('6759572372800700102', ['switch']));
-        $this->assertTrue(Validation::cc('4903095096797974933', ['switch']));
-        $this->assertTrue(Validation::cc('6333354315797920215', ['switch']));
-        $this->assertTrue(Validation::cc('6759163746089433755', ['switch']));
-        $this->assertTrue(Validation::cc('6759871666634807647', ['switch']));
-        $this->assertTrue(Validation::cc('5641827883728575248', ['switch']));
-        $this->assertTrue(Validation::cc('4936527975051407847', ['switch']));
-        $this->assertTrue(Validation::cc('5641823318396882141', ['switch']));
-        $this->assertTrue(Validation::cc('6759123772311123708', ['switch']));
-        $this->assertTrue(Validation::cc('4903054736148271088', ['switch']));
-        $this->assertTrue(Validation::cc('4936477526808883952', ['switch']));
-        $this->assertTrue(Validation::cc('4936433964890967966', ['switch']));
-        $this->assertTrue(Validation::cc('6333245128906049344', ['switch']));
-        $this->assertTrue(Validation::cc('4936321036970553134', ['switch']));
-        $this->assertTrue(Validation::cc('4936111816358702773', ['switch']));
-        $this->assertTrue(Validation::cc('4936196077254804290', ['switch']));
-        $this->assertTrue(Validation::cc('6759558831206830183', ['switch']));
-        $this->assertTrue(Validation::cc('5641827998830403137', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759603460617628716', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936705825268647681', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641829846600479183', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759389846573792530', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936189558712637603', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641822217393868189', ['switch']));
+        $this->assertTrue(Validation::creditCard('4903075563780057152', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936510653566569547', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936503083627303364', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936777334398116272', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641823876900554860', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759619236903407276', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759011470269978117', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333175833997062502', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759498728789080439', ['switch']));
+        $this->assertTrue(Validation::creditCard('4903020404168157841', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759354334874804313', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759900856420875115', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641827269346868860', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641828995047453870', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333321884754806543', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333108246283715901', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759572372800700102', ['switch']));
+        $this->assertTrue(Validation::creditCard('4903095096797974933', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333354315797920215', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759163746089433755', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759871666634807647', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641827883728575248', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936527975051407847', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641823318396882141', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759123772311123708', ['switch']));
+        $this->assertTrue(Validation::creditCard('4903054736148271088', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936477526808883952', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936433964890967966', ['switch']));
+        $this->assertTrue(Validation::creditCard('6333245128906049344', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936321036970553134', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936111816358702773', ['switch']));
+        $this->assertTrue(Validation::creditCard('4936196077254804290', ['switch']));
+        $this->assertTrue(Validation::creditCard('6759558831206830183', ['switch']));
+        $this->assertTrue(Validation::creditCard('5641827998830403137', ['switch']));
         // VISA 13 digit
-        $this->assertTrue(Validation::cc('4024007174754', ['visa']));
-        $this->assertTrue(Validation::cc('4104816460717', ['visa']));
-        $this->assertTrue(Validation::cc('4716229700437', ['visa']));
-        $this->assertTrue(Validation::cc('4539305400213', ['visa']));
-        $this->assertTrue(Validation::cc('4728260558665', ['visa']));
-        $this->assertTrue(Validation::cc('4929100131792', ['visa']));
-        $this->assertTrue(Validation::cc('4024007117308', ['visa']));
-        $this->assertTrue(Validation::cc('4539915491024', ['visa']));
-        $this->assertTrue(Validation::cc('4539790901139', ['visa']));
-        $this->assertTrue(Validation::cc('4485284914909', ['visa']));
-        $this->assertTrue(Validation::cc('4782793022350', ['visa']));
-        $this->assertTrue(Validation::cc('4556899290685', ['visa']));
-        $this->assertTrue(Validation::cc('4024007134774', ['visa']));
-        $this->assertTrue(Validation::cc('4333412341316', ['visa']));
-        $this->assertTrue(Validation::cc('4539534204543', ['visa']));
-        $this->assertTrue(Validation::cc('4485640373626', ['visa']));
-        $this->assertTrue(Validation::cc('4929911445746', ['visa']));
-        $this->assertTrue(Validation::cc('4539292550806', ['visa']));
-        $this->assertTrue(Validation::cc('4716523014030', ['visa']));
-        $this->assertTrue(Validation::cc('4024007125152', ['visa']));
-        $this->assertTrue(Validation::cc('4539758883311', ['visa']));
-        $this->assertTrue(Validation::cc('4024007103258', ['visa']));
-        $this->assertTrue(Validation::cc('4916933155767', ['visa']));
-        $this->assertTrue(Validation::cc('4024007159672', ['visa']));
-        $this->assertTrue(Validation::cc('4716935544871', ['visa']));
-        $this->assertTrue(Validation::cc('4929415177779', ['visa']));
-        $this->assertTrue(Validation::cc('4929748547896', ['visa']));
-        $this->assertTrue(Validation::cc('4929153468612', ['visa']));
-        $this->assertTrue(Validation::cc('4539397132104', ['visa']));
-        $this->assertTrue(Validation::cc('4485293435540', ['visa']));
-        $this->assertTrue(Validation::cc('4485799412720', ['visa']));
-        $this->assertTrue(Validation::cc('4916744757686', ['visa']));
-        $this->assertTrue(Validation::cc('4556475655426', ['visa']));
-        $this->assertTrue(Validation::cc('4539400441625', ['visa']));
-        $this->assertTrue(Validation::cc('4485437129173', ['visa']));
-        $this->assertTrue(Validation::cc('4716253605320', ['visa']));
-        $this->assertTrue(Validation::cc('4539366156589', ['visa']));
-        $this->assertTrue(Validation::cc('4916498061392', ['visa']));
-        $this->assertTrue(Validation::cc('4716127163779', ['visa']));
-        $this->assertTrue(Validation::cc('4024007183078', ['visa']));
-        $this->assertTrue(Validation::cc('4041553279654', ['visa']));
-        $this->assertTrue(Validation::cc('4532380121960', ['visa']));
-        $this->assertTrue(Validation::cc('4485906062491', ['visa']));
-        $this->assertTrue(Validation::cc('4539365115149', ['visa']));
-        $this->assertTrue(Validation::cc('4485146516702', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007174754', ['visa']));
+        $this->assertTrue(Validation::creditCard('4104816460717', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716229700437', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539305400213', ['visa']));
+        $this->assertTrue(Validation::creditCard('4728260558665', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929100131792', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007117308', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539915491024', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539790901139', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485284914909', ['visa']));
+        $this->assertTrue(Validation::creditCard('4782793022350', ['visa']));
+        $this->assertTrue(Validation::creditCard('4556899290685', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007134774', ['visa']));
+        $this->assertTrue(Validation::creditCard('4333412341316', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539534204543', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485640373626', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929911445746', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539292550806', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716523014030', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007125152', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539758883311', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007103258', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916933155767', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007159672', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716935544871', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929415177779', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929748547896', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929153468612', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539397132104', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485293435540', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485799412720', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916744757686', ['visa']));
+        $this->assertTrue(Validation::creditCard('4556475655426', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539400441625', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485437129173', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716253605320', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539366156589', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916498061392', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716127163779', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007183078', ['visa']));
+        $this->assertTrue(Validation::creditCard('4041553279654', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532380121960', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485906062491', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539365115149', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485146516702', ['visa']));
         // VISA 16 digit
-        $this->assertTrue(Validation::cc('4916375389940009', ['visa']));
-        $this->assertTrue(Validation::cc('4929167481032610', ['visa']));
-        $this->assertTrue(Validation::cc('4485029969061519', ['visa']));
-        $this->assertTrue(Validation::cc('4485573845281759', ['visa']));
-        $this->assertTrue(Validation::cc('4485669810383529', ['visa']));
-        $this->assertTrue(Validation::cc('4929615806560327', ['visa']));
-        $this->assertTrue(Validation::cc('4556807505609535', ['visa']));
-        $this->assertTrue(Validation::cc('4532611336232890', ['visa']));
-        $this->assertTrue(Validation::cc('4532201952422387', ['visa']));
-        $this->assertTrue(Validation::cc('4485073797976290', ['visa']));
-        $this->assertTrue(Validation::cc('4024007157580969', ['visa']));
-        $this->assertTrue(Validation::cc('4053740470212274', ['visa']));
-        $this->assertTrue(Validation::cc('4716265831525676', ['visa']));
-        $this->assertTrue(Validation::cc('4024007100222966', ['visa']));
-        $this->assertTrue(Validation::cc('4539556148303244', ['visa']));
-        $this->assertTrue(Validation::cc('4532449879689709', ['visa']));
-        $this->assertTrue(Validation::cc('4916805467840986', ['visa']));
-        $this->assertTrue(Validation::cc('4532155644440233', ['visa']));
-        $this->assertTrue(Validation::cc('4467977802223781', ['visa']));
-        $this->assertTrue(Validation::cc('4539224637000686', ['visa']));
-        $this->assertTrue(Validation::cc('4556629187064965', ['visa']));
-        $this->assertTrue(Validation::cc('4532970205932943', ['visa']));
-        $this->assertTrue(Validation::cc('4821470132041850', ['visa']));
-        $this->assertTrue(Validation::cc('4916214267894485', ['visa']));
-        $this->assertTrue(Validation::cc('4024007169073284', ['visa']));
-        $this->assertTrue(Validation::cc('4716783351296122', ['visa']));
-        $this->assertTrue(Validation::cc('4556480171913795', ['visa']));
-        $this->assertTrue(Validation::cc('4929678411034997', ['visa']));
-        $this->assertTrue(Validation::cc('4682061913519392', ['visa']));
-        $this->assertTrue(Validation::cc('4916495481746474', ['visa']));
-        $this->assertTrue(Validation::cc('4929007108460499', ['visa']));
-        $this->assertTrue(Validation::cc('4539951357838586', ['visa']));
-        $this->assertTrue(Validation::cc('4716482691051558', ['visa']));
-        $this->assertTrue(Validation::cc('4916385069917516', ['visa']));
-        $this->assertTrue(Validation::cc('4929020289494641', ['visa']));
-        $this->assertTrue(Validation::cc('4532176245263774', ['visa']));
-        $this->assertTrue(Validation::cc('4556242273553949', ['visa']));
-        $this->assertTrue(Validation::cc('4481007485188614', ['visa']));
-        $this->assertTrue(Validation::cc('4716533372139623', ['visa']));
-        $this->assertTrue(Validation::cc('4929152038152632', ['visa']));
-        $this->assertTrue(Validation::cc('4539404037310550', ['visa']));
-        $this->assertTrue(Validation::cc('4532800925229140', ['visa']));
-        $this->assertTrue(Validation::cc('4916845885268360', ['visa']));
-        $this->assertTrue(Validation::cc('4394514669078434', ['visa']));
-        $this->assertTrue(Validation::cc('4485611378115042', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916375389940009', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929167481032610', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485029969061519', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485573845281759', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485669810383529', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929615806560327', ['visa']));
+        $this->assertTrue(Validation::creditCard('4556807505609535', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532611336232890', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532201952422387', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485073797976290', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007157580969', ['visa']));
+        $this->assertTrue(Validation::creditCard('4053740470212274', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716265831525676', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007100222966', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539556148303244', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532449879689709', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916805467840986', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532155644440233', ['visa']));
+        $this->assertTrue(Validation::creditCard('4467977802223781', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539224637000686', ['visa']));
+        $this->assertTrue(Validation::creditCard('4556629187064965', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532970205932943', ['visa']));
+        $this->assertTrue(Validation::creditCard('4821470132041850', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916214267894485', ['visa']));
+        $this->assertTrue(Validation::creditCard('4024007169073284', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716783351296122', ['visa']));
+        $this->assertTrue(Validation::creditCard('4556480171913795', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929678411034997', ['visa']));
+        $this->assertTrue(Validation::creditCard('4682061913519392', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916495481746474', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929007108460499', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539951357838586', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716482691051558', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916385069917516', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929020289494641', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532176245263774', ['visa']));
+        $this->assertTrue(Validation::creditCard('4556242273553949', ['visa']));
+        $this->assertTrue(Validation::creditCard('4481007485188614', ['visa']));
+        $this->assertTrue(Validation::creditCard('4716533372139623', ['visa']));
+        $this->assertTrue(Validation::creditCard('4929152038152632', ['visa']));
+        $this->assertTrue(Validation::creditCard('4539404037310550', ['visa']));
+        $this->assertTrue(Validation::creditCard('4532800925229140', ['visa']));
+        $this->assertTrue(Validation::creditCard('4916845885268360', ['visa']));
+        $this->assertTrue(Validation::creditCard('4394514669078434', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485611378115042', ['visa']));
+        $this->assertTrue(Validation::creditCard('4485-6113-7811-5042', ['visa']));
         // Visa Electron
-        $this->assertTrue(Validation::cc('4175003346287100', ['electron']));
-        $this->assertTrue(Validation::cc('4913042516577228', ['electron']));
-        $this->assertTrue(Validation::cc('4917592325659381', ['electron']));
-        $this->assertTrue(Validation::cc('4917084924450511', ['electron']));
-        $this->assertTrue(Validation::cc('4917994610643999', ['electron']));
-        $this->assertTrue(Validation::cc('4175005933743585', ['electron']));
-        $this->assertTrue(Validation::cc('4175008373425044', ['electron']));
-        $this->assertTrue(Validation::cc('4913119763664154', ['electron']));
-        $this->assertTrue(Validation::cc('4913189017481812', ['electron']));
-        $this->assertTrue(Validation::cc('4913085104968622', ['electron']));
-        $this->assertTrue(Validation::cc('4175008803122021', ['electron']));
-        $this->assertTrue(Validation::cc('4913294453962489', ['electron']));
-        $this->assertTrue(Validation::cc('4175009797419290', ['electron']));
-        $this->assertTrue(Validation::cc('4175005028142917', ['electron']));
-        $this->assertTrue(Validation::cc('4913940802385364', ['electron']));
+        $this->assertTrue(Validation::creditCard('4175003346287100', ['electron']));
+        $this->assertTrue(Validation::creditCard('4913042516577228', ['electron']));
+        $this->assertTrue(Validation::creditCard('4917592325659381', ['electron']));
+        $this->assertTrue(Validation::creditCard('4917084924450511', ['electron']));
+        $this->assertTrue(Validation::creditCard('4917994610643999', ['electron']));
+        $this->assertTrue(Validation::creditCard('4175005933743585', ['electron']));
+        $this->assertTrue(Validation::creditCard('4175008373425044', ['electron']));
+        $this->assertTrue(Validation::creditCard('4913119763664154', ['electron']));
+        $this->assertTrue(Validation::creditCard('4913189017481812', ['electron']));
+        $this->assertTrue(Validation::creditCard('4913085104968622', ['electron']));
+        $this->assertTrue(Validation::creditCard('4175008803122021', ['electron']));
+        $this->assertTrue(Validation::creditCard('4913294453962489', ['electron']));
+        $this->assertTrue(Validation::creditCard('4175009797419290', ['electron']));
+        $this->assertTrue(Validation::creditCard('4175005028142917', ['electron']));
+        $this->assertTrue(Validation::creditCard('4913940802385364', ['electron']));
         // Voyager
-        $this->assertTrue(Validation::cc('869940697287073', ['voyager']));
-        $this->assertTrue(Validation::cc('869934523596112', ['voyager']));
-        $this->assertTrue(Validation::cc('869958670174621', ['voyager']));
-        $this->assertTrue(Validation::cc('869921250068209', ['voyager']));
-        $this->assertTrue(Validation::cc('869972521242198', ['voyager']));
+        $this->assertTrue(Validation::creditCard('869940697287073', ['voyager']));
+        $this->assertTrue(Validation::creditCard('869934523596112', ['voyager']));
+        $this->assertTrue(Validation::creditCard('869958670174621', ['voyager']));
+        $this->assertTrue(Validation::creditCard('869921250068209', ['voyager']));
+        $this->assertTrue(Validation::creditCard('869972521242198', ['voyager']));
         // Credit card number should not pass as array
-        $this->assertFalse(Validation::cc(['869972521242198'], ['voyager']));
+        $this->assertFalse(Validation::creditCard(['869972521242198'], ['voyager']));
     }
 
     /**
@@ -679,158 +680,158 @@ class ValidationTest extends TestCase
     }
 
     /**
-     * testCustomRegexForCc method
+     * testCustomRegexForCreditCard method
      *
      * @return void
      */
-    public function testCustomRegexForCc()
+    public function testCustomRegexForCreditCard()
     {
-        $this->assertTrue(Validation::cc('370482756063980', null, false, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('1233210593374358', null, false, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::creditCard('370482756063980', null, false, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('1233210593374358', null, false, '/123321\\d{11}/'));
     }
 
     /**
-     * testCustomRegexForCcWithLuhnCheck method
+     * testCustomRegexForCreditCardWithLuhnCheck method
      *
      * @return void
      */
-    public function testCustomRegexForCcWithLuhnCheck()
+    public function testCustomRegexForCreditCardWithLuhnCheck()
     {
-        $this->assertTrue(Validation::cc('12332110426226941', null, true, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12332105933743585', null, true, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12332105933743587', null, true, '/123321\\d{11}/'));
-        $this->assertFalse(Validation::cc('12312305933743585', null, true, '/123321\\d{11}/'));
+        $this->assertTrue(Validation::creditCard('12332110426226941', null, true, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('12332105933743585', null, true, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('12332105933743587', null, true, '/123321\\d{11}/'));
+        $this->assertFalse(Validation::creditCard('12312305933743585', null, true, '/123321\\d{11}/'));
     }
 
     /**
-     * testFastCc method
+     * testFastCreditCard method
      *
      * @return void
      */
-    public function testFastCc()
+    public function testFastCreditCard()
     {
         // too short
-        $this->assertFalse(Validation::cc('123456789012'));
+        $this->assertFalse(Validation::creditCard('123456789012'));
         // American Express
-        $this->assertTrue(Validation::cc('370482756063980'));
+        $this->assertTrue(Validation::creditCard('370482756063980'));
         // Diners Club 14
-        $this->assertTrue(Validation::cc('30155483651028'));
+        $this->assertTrue(Validation::creditCard('30155483651028'));
         // 2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::cc('36747701998969'));
+        $this->assertTrue(Validation::creditCard('36747701998969'));
         // 2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::cc('5597511346169950'));
+        $this->assertTrue(Validation::creditCard('5597511346169950'));
         // Discover
-        $this->assertTrue(Validation::cc('6011802876467237'));
+        $this->assertTrue(Validation::creditCard('6011802876467237'));
         // Mastercard
-        $this->assertTrue(Validation::cc('5580424361774366'));
+        $this->assertTrue(Validation::creditCard('5580424361774366'));
         // VISA 13 digit
-        $this->assertTrue(Validation::cc('4024007174754'));
+        $this->assertTrue(Validation::creditCard('4024007174754'));
         // VISA 16 digit
-        $this->assertTrue(Validation::cc('4916375389940009'));
+        $this->assertTrue(Validation::creditCard('4916375389940009'));
         // Visa Electron
-        $this->assertTrue(Validation::cc('4175003346287100'));
+        $this->assertTrue(Validation::creditCard('4175003346287100'));
     }
 
     /**
-     * testAllCc method
+     * testAllCreditCard method
      *
      * @return void
      */
-    public function testAllCc()
+    public function testAllCreditCard()
     {
         // American Express
-        $this->assertTrue(Validation::cc('370482756063980', 'all'));
+        $this->assertTrue(Validation::creditCard('370482756063980', 'all'));
         // BankCard
-        $this->assertTrue(Validation::cc('5610745867413420', 'all'));
+        $this->assertTrue(Validation::creditCard('5610745867413420', 'all'));
         // Diners Club 14
-        $this->assertTrue(Validation::cc('30155483651028', 'all'));
+        $this->assertTrue(Validation::creditCard('30155483651028', 'all'));
         // 2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::cc('36747701998969', 'all'));
+        $this->assertTrue(Validation::creditCard('36747701998969', 'all'));
         // 2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::cc('5597511346169950', 'all'));
+        $this->assertTrue(Validation::creditCard('5597511346169950', 'all'));
         // Discover
-        $this->assertTrue(Validation::cc('6011802876467237', 'all'));
+        $this->assertTrue(Validation::creditCard('6011802876467237', 'all'));
         // enRoute
-        $this->assertTrue(Validation::cc('201496944158937', 'all'));
+        $this->assertTrue(Validation::creditCard('201496944158937', 'all'));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('213134762247898', 'all'));
+        $this->assertTrue(Validation::creditCard('213134762247898', 'all'));
         // JCB 16 digit
-        $this->assertTrue(Validation::cc('3096806857839939', 'all'));
+        $this->assertTrue(Validation::creditCard('3096806857839939', 'all'));
         // Maestro (debit card)
-        $this->assertTrue(Validation::cc('5020147409985219', 'all'));
+        $this->assertTrue(Validation::creditCard('5020147409985219', 'all'));
         // Mastercard
-        $this->assertTrue(Validation::cc('5580424361774366', 'all'));
+        $this->assertTrue(Validation::creditCard('5580424361774366', 'all'));
         // Solo 16
-        $this->assertTrue(Validation::cc('6767432107064987', 'all'));
+        $this->assertTrue(Validation::creditCard('6767432107064987', 'all'));
         // Solo 18
-        $this->assertTrue(Validation::cc('676714834398858593', 'all'));
+        $this->assertTrue(Validation::creditCard('676714834398858593', 'all'));
         // Solo 19
-        $this->assertTrue(Validation::cc('6767838565218340113', 'all'));
+        $this->assertTrue(Validation::creditCard('6767838565218340113', 'all'));
         // Switch 16
-        $this->assertTrue(Validation::cc('5641829171515733', 'all'));
+        $this->assertTrue(Validation::creditCard('5641829171515733', 'all'));
         // Switch 18
-        $this->assertTrue(Validation::cc('493622764224625174', 'all'));
+        $this->assertTrue(Validation::creditCard('493622764224625174', 'all'));
         // Switch 19
-        $this->assertTrue(Validation::cc('6759603460617628716', 'all'));
+        $this->assertTrue(Validation::creditCard('6759603460617628716', 'all'));
         // VISA 13 digit
-        $this->assertTrue(Validation::cc('4024007174754', 'all'));
+        $this->assertTrue(Validation::creditCard('4024007174754', 'all'));
         // VISA 16 digit
-        $this->assertTrue(Validation::cc('4916375389940009', 'all'));
+        $this->assertTrue(Validation::creditCard('4916375389940009', 'all'));
         // Visa Electron
-        $this->assertTrue(Validation::cc('4175003346287100', 'all'));
+        $this->assertTrue(Validation::creditCard('4175003346287100', 'all'));
         // Voyager
-        $this->assertTrue(Validation::cc('869940697287073', 'all'));
+        $this->assertTrue(Validation::creditCard('869940697287073', 'all'));
     }
 
     /**
-     * testAllCcDeep method
+     * testAllCreditCardDeep method
      *
      * @return void
      */
-    public function testAllCcDeep()
+    public function testAllCreditCardDeep()
     {
         // American Express
-        $this->assertTrue(Validation::cc('370482756063980', 'all', true));
+        $this->assertTrue(Validation::creditCard('370482756063980', 'all', true));
         // BankCard
-        $this->assertTrue(Validation::cc('5610745867413420', 'all', true));
+        $this->assertTrue(Validation::creditCard('5610745867413420', 'all', true));
         // Diners Club 14
-        $this->assertTrue(Validation::cc('30155483651028', 'all', true));
+        $this->assertTrue(Validation::creditCard('30155483651028', 'all', true));
         // 2004 MasterCard/Diners Club Alliance International 14
-        $this->assertTrue(Validation::cc('36747701998969', 'all', true));
+        $this->assertTrue(Validation::creditCard('36747701998969', 'all', true));
         // 2004 MasterCard/Diners Club Alliance US & Canada 16
-        $this->assertTrue(Validation::cc('5597511346169950', 'all', true));
+        $this->assertTrue(Validation::creditCard('5597511346169950', 'all', true));
         // Discover
-        $this->assertTrue(Validation::cc('6011802876467237', 'all', true));
+        $this->assertTrue(Validation::creditCard('6011802876467237', 'all', true));
         // enRoute
-        $this->assertTrue(Validation::cc('201496944158937', 'all', true));
+        $this->assertTrue(Validation::creditCard('201496944158937', 'all', true));
         // JCB 15 digit
-        $this->assertTrue(Validation::cc('213134762247898', 'all', true));
+        $this->assertTrue(Validation::creditCard('213134762247898', 'all', true));
         // JCB 16 digit
-        $this->assertTrue(Validation::cc('3096806857839939', 'all', true));
+        $this->assertTrue(Validation::creditCard('3096806857839939', 'all', true));
         // Maestro (debit card)
-        $this->assertTrue(Validation::cc('5020147409985219', 'all', true));
+        $this->assertTrue(Validation::creditCard('5020147409985219', 'all', true));
         // Mastercard
-        $this->assertTrue(Validation::cc('5580424361774366', 'all', true));
+        $this->assertTrue(Validation::creditCard('5580424361774366', 'all', true));
         // Solo 16
-        $this->assertTrue(Validation::cc('6767432107064987', 'all', true));
+        $this->assertTrue(Validation::creditCard('6767432107064987', 'all', true));
         // Solo 18
-        $this->assertTrue(Validation::cc('676714834398858593', 'all', true));
+        $this->assertTrue(Validation::creditCard('676714834398858593', 'all', true));
         // Solo 19
-        $this->assertTrue(Validation::cc('6767838565218340113', 'all', true));
+        $this->assertTrue(Validation::creditCard('6767838565218340113', 'all', true));
         // Switch 16
-        $this->assertTrue(Validation::cc('5641829171515733', 'all', true));
+        $this->assertTrue(Validation::creditCard('5641829171515733', 'all', true));
         // Switch 18
-        $this->assertTrue(Validation::cc('493622764224625174', 'all', true));
+        $this->assertTrue(Validation::creditCard('493622764224625174', 'all', true));
         // Switch 19
-        $this->assertTrue(Validation::cc('6759603460617628716', 'all', true));
+        $this->assertTrue(Validation::creditCard('6759603460617628716', 'all', true));
         // VISA 13 digit
-        $this->assertTrue(Validation::cc('4024007174754', 'all', true));
+        $this->assertTrue(Validation::creditCard('4024007174754', 'all', true));
         // VISA 16 digit
-        $this->assertTrue(Validation::cc('4916375389940009', 'all', true));
+        $this->assertTrue(Validation::creditCard('4916375389940009', 'all', true));
         // Visa Electron
-        $this->assertTrue(Validation::cc('4175003346287100', 'all', true));
+        $this->assertTrue(Validation::creditCard('4175003346287100', 'all', true));
         // Voyager
-        $this->assertTrue(Validation::cc('869940697287073', 'all', true));
+        $this->assertTrue(Validation::creditCard('869940697287073', 'all', true));
     }
 
     /**
@@ -1960,7 +1961,7 @@ class ValidationTest extends TestCase
      */
     public function testEmailDeep()
     {
-        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for non-existant domains, skipping deep email checks.');
+        $this->skipIf((bool)gethostbynamel('example.abcd'), 'Your DNS service responds for non-existent domains, skipping deep email checks.');
 
         $this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
         $this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
@@ -2715,7 +2716,7 @@ class ValidationTest extends TestCase
     /**
      * Provider for uploaded file tests.
      *
-     * @return void
+     * @return array
      */
     public function uploadedFileProvider()
     {
@@ -2864,6 +2865,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::geoCoordinate('-245.274398, -133.775136'));
         $this->assertTrue(Validation::geoCoordinate('51.165691', ['format' => 'lat']));
         $this->assertTrue(Validation::geoCoordinate('10.451526', ['format' => 'long']));
+        $this->assertFalse(Validation::geoCoordinate([]));
     }
 
     /**
@@ -2945,7 +2947,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::isInteger('2.5'));
         $this->assertFalse(Validation::isInteger([]));
-        $this->assertFalse(Validation::isInteger(new \StdClass));
+        $this->assertFalse(Validation::isInteger(new \StdClass()));
         $this->assertFalse(Validation::isInteger('2 bears'));
     }
 
@@ -2962,7 +2964,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::ascii([]));
         $this->assertFalse(Validation::ascii(1001));
         $this->assertFalse(Validation::ascii(3.14));
-        $this->assertFalse(Validation::ascii(new \StdClass));
+        $this->assertFalse(Validation::ascii(new \StdClass()));
 
         // Latin-1 supplement
         $this->assertFalse(Validation::ascii('some' . "\xc2\x82" . 'value'));
@@ -2985,7 +2987,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::utf8([]));
         $this->assertFalse(Validation::utf8(1001));
         $this->assertFalse(Validation::utf8(3.14));
-        $this->assertFalse(Validation::utf8(new \StdClass));
+        $this->assertFalse(Validation::utf8(new \StdClass()));
         $this->assertTrue(Validation::utf8('1 big blue bus.'));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()'));
 
@@ -3013,7 +3015,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::utf8([], ['extended' => true]));
         $this->assertFalse(Validation::utf8(1001, ['extended' => true]));
         $this->assertFalse(Validation::utf8(3.14, ['extended' => true]));
-        $this->assertFalse(Validation::utf8(new \StdClass, ['extended' => true]));
+        $this->assertFalse(Validation::utf8(new \StdClass(), ['extended' => true]));
         $this->assertTrue(Validation::utf8('1 big blue bus.', ['extended' => true]));
         $this->assertTrue(Validation::utf8(',.<>[]{;/?\)()', ['extended' => true]));
 

@@ -140,7 +140,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'users']);
         $this->assertEquals('users', $table->getTable());
 
-        $table = new UsersTable;
+        $table = new UsersTable();
         $this->assertEquals('users', $table->getTable());
 
         $table = $this->getMockBuilder('Cake\ORM\Table')
@@ -172,7 +172,7 @@ class TableTest extends TestCase
         $table = new Table(['table' => 'stuffs']);
         $this->assertEquals('stuffs', $table->getAlias());
 
-        $table = new UsersTable;
+        $table = new UsersTable();
         $this->assertEquals('Users', $table->getAlias());
 
         $table = $this->getMockBuilder('Cake\ORM\Table')
@@ -1460,7 +1460,7 @@ class TableTest extends TestCase
     {
         $this->expectException(\Cake\ORM\Exception\MissingEntityException::class);
         $this->expectExceptionMessage('Entity class FooUser could not be found.');
-        $table = new Table;
+        $table = new Table();
         $table->setEntityClass('FooUser');
     }
 
@@ -1472,7 +1472,7 @@ class TableTest extends TestCase
      */
     public function testTableClassConventionForAPP()
     {
-        $table = new \TestApp\Model\Table\ArticlesTable;
+        $table = new \TestApp\Model\Table\ArticlesTable();
         $this->assertEquals('TestApp\Model\Entity\Article', $table->getEntityClass());
     }
 
@@ -1483,7 +1483,7 @@ class TableTest extends TestCase
      */
     public function testSetEntityClass()
     {
-        $table = new Table;
+        $table = new Table();
         $class = '\\' . $this->getMockClass('Cake\ORM\Entity');
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertEquals($class, $table->getEntityClass());
@@ -2748,7 +2748,7 @@ class TableTest extends TestCase
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $query->expects($this->once())->method('execute')
-            ->will($this->throwException(new \PDOException));
+            ->will($this->throwException(new \PDOException()));
 
         $data = new Entity([
             'username' => 'superuser',
@@ -3595,8 +3595,8 @@ class TableTest extends TestCase
      */
     public function testValidatorSetter()
     {
-        $table = new Table;
-        $validator = new \Cake\Validation\Validator;
+        $table = new Table();
+        $validator = new \Cake\Validation\Validator();
         $table->setValidator('other', $validator);
         $this->assertSame($validator, $table->getValidator('other'));
         $this->assertSame($table, $validator->getProvider('table'));
@@ -3609,11 +3609,11 @@ class TableTest extends TestCase
      */
     public function testHasValidator()
     {
-        $table = new Table;
+        $table = new Table();
         $this->assertTrue($table->hasValidator('default'));
         $this->assertFalse($table->hasValidator('other'));
 
-        $validator = new \Cake\Validation\Validator;
+        $validator = new \Cake\Validation\Validator();
         $table->setValidator('other', $validator);
         $this->assertTrue($table->hasValidator('other'));
     }
@@ -4873,7 +4873,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successfull
+     * Integration test for replacing entities with HasMany and an empty target list. The transaction must be successful
      *
      * @return void
      */
@@ -4915,7 +4915,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successfull.
+     * Integration test for replacing entities with HasMany and no already persisted entities. The transaction must be successful.
      * Replace operation should prevent considering 0 changed records an error when they are not found in the table
      *
      * @return void
@@ -5876,7 +5876,7 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('marshaller')
             ->will($this->returnValue($marshaller));
 
-        $entities = [new Entity];
+        $entities = [new Entity()];
         $data = [['foo' => 'bar']];
         $marshaller->expects($this->once())
             ->method('mergeMany')
@@ -6196,7 +6196,7 @@ class TableTest extends TestCase
     public function testValidateUnique()
     {
         $table = $this->getTableLocator()->get('Users');
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
         $validator->setProvider('table', $table);
 
@@ -6233,7 +6233,7 @@ class TableTest extends TestCase
     public function testValidateUniqueScope()
     {
         $table = $this->getTableLocator()->get('Users');
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('username', 'unique', [
             'rule' => ['validateUnique', ['derp' => 'erp', 'scope' => 'id']],
             'provider' => 'table',
@@ -6266,7 +6266,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('SiteArticles');
         $table->save($entity);
 
-        $validator = new Validator;
+        $validator = new Validator();
         $validator->add('site_id', 'unique', [
             'rule' => [
                 'validateUnique',
@@ -6411,7 +6411,7 @@ class TableTest extends TestCase
 
     /**
      * Tests that passing a coned entity that was marked as new to save() will
-     * actaully save it as a new entity
+     * actually save it as a new entity
      *
      * @group save
      * @return void

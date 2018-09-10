@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\ChronosInterface;
-use DateTimeInterface;
 
 /**
  * Helper class for formatting relative dates & times.
@@ -87,15 +86,15 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative timestring.
      *
-     * @param \DateTimeInterface $time The time instance to format.
+     * @param \Cake\I18n\Time|\Cake\I18n\FrozenTime $time The time instance to format.
      * @param array $options Array of options.
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(DateTimeInterface $time, array $options = []): string
+    public function timeAgoInWords($time, array $options = []): string
     {
         $options = $this->_options($options, FrozenTime::class);
-        if ($options['timezone'] && $time instanceof ChronosInterface) {
+        if ($options['timezone']) {
             $time = $time->timezone($options['timezone']);
         }
 
@@ -195,8 +194,10 @@ class RelativeTimeFormatter
 
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
+            $future = [];
             list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
+            $past = [];
             list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
@@ -293,15 +294,15 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative date string.
      *
-     * @param \DateTimeInterface $date The date to format.
+     * @param \Cake\I18n\Time|\Cake\I18n\FrozenTime $date The date to format.
      * @param array $options Array of options.
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(DateTimeInterface $date, array $options = []): string
+    public function dateAgoInWords($date, array $options = []): string
     {
         $options = $this->_options($options, FrozenDate::class);
-        if ($options['timezone'] && $date instanceof ChronosInterface) {
+        if ($options['timezone']) {
             $date = $date->timezone($options['timezone']);
         }
 

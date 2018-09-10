@@ -107,8 +107,15 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $result = $this->_query($username)->first();
 
         if (empty($result)) {
-            $hasher = $this->passwordHasher();
-            $hasher->hash((string)$password);
+            // Waste time hashing the password, to prevent
+            // timing side-channels. However, don't hash
+            // null passwords as authentication systems
+            // like digest auth don't use passwords
+            // and hashing *could* create a timing side-channel.
+            if ($password !== null) {
+                $hasher = $this->passwordHasher();
+                $hasher->hash($password);
+            }
 
             return false;
         }
@@ -222,9 +229,9 @@ abstract class BaseAuthenticate implements EventListenerInterface
      *
      * @param \Cake\Http\ServerRequest $request A request object.
      * @param \Cake\Http\Response $response A response object.
-     * @return void
+     * @return \Cake\Http\Response|null|void
      */
-    public function unauthenticated(ServerRequest $request, Response $response): void
+    public function unauthenticated(ServerRequest $request, Response $response)
     {
     }
 

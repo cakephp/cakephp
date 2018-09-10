@@ -200,7 +200,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToAtom()
     {
-        $dateTime = new \DateTime;
+        $dateTime = new \DateTime();
         $this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
@@ -212,7 +212,7 @@ class TimeHelperTest extends TestCase
     public function testToAtomOutputTimezone()
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new Time;
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
         $this->assertEquals($vancouver->format(Time::ATOM), $this->Time->toAtom($vancouver));
@@ -246,7 +246,7 @@ class TimeHelperTest extends TestCase
     public function testToRssOutputTimezone()
     {
         $this->Time->setConfig('outputTimezone', 'America/Vancouver');
-        $dateTime = new Time;
+        $dateTime = new Time();
         $vancouver = clone $dateTime;
         $vancouver->timezone('America/Vancouver');
 

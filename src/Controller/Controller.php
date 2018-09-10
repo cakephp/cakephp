@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -149,15 +149,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @var \Cake\Controller\ComponentRegistry
      */
     protected $_components;
-
-    /**
-     * These Controller properties will be passed from the Controller to the View as options.
-     *
-     * @var array
-     * @see \Cake\View\View
-     */
-    protected $_validViewOptions = [
-    ];
 
     /**
      * Automatically set to the name of a plugin.
@@ -408,7 +399,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     }
 
     /**
-     * Disbale automatic action rendering.
+     * Disable automatic action rendering.
      *
      * @return $this
      * @since 3.6.0
@@ -627,13 +618,21 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $builder = $this->viewBuilder();
         if (!$builder->getTemplatePath()) {
-            $builder->setTemplatePath($this->_viewPath());
+            $builder->setTemplatePath($this->_templatePath());
         }
 
         if ($this->request->getParam('bare')) {
             $builder->enableAutoLayout(false);
         }
         $this->autoRender = false;
+
+        if ($template !== null) {
+            $builder->setTemplate($template);
+        }
+
+        if ($layout !== null) {
+            $builder->setLayout($layout);
+        }
 
         $event = $this->dispatchEvent('Controller.beforeRender');
         if ($event->getResult() instanceof Response) {
@@ -643,34 +642,34 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->response;
         }
 
-        if ($builder->getTemplate() === null && $this->request->getParam('action')) {
+        if ($builder->getTemplate() === null) {
             $builder->setTemplate($this->request->getParam('action'));
         }
 
         $view = $this->createView();
-        $contents = $view->render($template, $layout);
+        $contents = $view->render();
         $this->setResponse($view->getResponse()->withStringBody($contents));
 
         return $this->response;
     }
 
     /**
-     * Get the viewPath based on controller name and request prefix.
+     * Get the templatePath based on controller name and request prefix.
      *
      * @return string
      */
-    protected function _viewPath(): string
+    protected function _templatePath(): string
     {
-        $viewPath = $this->name;
+        $templatePath = $this->name;
         if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
                 explode('/', $this->request->getParam('prefix'))
             );
-            $viewPath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $viewPath;
+            $templatePath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $templatePath;
         }
 
-        return $viewPath;
+        return $templatePath;
     }
 
     /**
@@ -680,14 +679,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param bool $local If false, do not restrict referring URLs to local server. Careful with trusting external sources.
      * @return string Referring URL
      */
-    public function referer($default = null, $local = true): string
+    public function referer($default = '/', bool $local = true): string
     {
         if (!$this->request) {
             return Router::url($default, !$local);
         }
 
         $referer = $this->request->referer($local);
-        if ($referer === '/' && $default && $default !== $referer) {
+        if ($referer === null) {
             $url = Router::url($default, !$local);
             $base = $this->request->getAttribute('base');
             if ($local && $base && strpos($url, $base) === 0) {

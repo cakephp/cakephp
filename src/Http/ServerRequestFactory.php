@@ -19,6 +19,9 @@ use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Psr\Http\Message\UriInterface;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;
+use function Zend\Diactoros\marshalHeadersFromSapi;
+use function Zend\Diactoros\marshalUriFromSapi;
+use function Zend\Diactoros\normalizeServer;
 
 /**
  * Factory for making ServerRequest instances.
@@ -54,7 +57,7 @@ abstract class ServerRequestFactory extends BaseFactory
         ?array $cookies = null,
         ?array $files = null
     ): ServerRequest {
-        $server = static::normalizeServer($server ?: $_SERVER);
+        $server = normalizeServer($server ?: $_SERVER);
         $uri = static::createUri($server);
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
@@ -86,25 +89,25 @@ abstract class ServerRequestFactory extends BaseFactory
     public static function createUri(array $server = []): UriInterface
     {
         $server += $_SERVER;
-        $server = static::normalizeServer($server);
-        $headers = static::marshalHeaders($server);
+        $server = normalizeServer($server);
+        $headers = marshalHeadersFromSapi($server);
 
-        return static::marshalUriFromServer($server, $headers);
+        return static::marshalUriFromSapi($server, $headers);
     }
 
     /**
      * Build a UriInterface object.
      *
      * Add in some CakePHP specific logic/properties that help
-     * perserve backwards compatibility.
+     * preserve backwards compatibility.
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
      * @return \Psr\Http\Message\UriInterface a constructed Uri
      */
-    public static function marshalUriFromServer(array $server, array $headers): UriInterface
+    protected static function marshalUriFromSapi(array $server, array $headers): UriInterface
     {
-        $uri = parent::marshalUriFromServer($server, $headers);
+        $uri = marshalUriFromSapi($server, $headers);
         list($base, $webroot) = static::getBase($uri, $server);
 
         // Look in PATH_INFO first, as this is the exact value we need prepared

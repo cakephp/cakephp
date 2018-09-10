@@ -172,7 +172,7 @@ class TranslateBehaviorTest extends TestCase
 
     /**
      * Tests that fields from a translated model use the I18n class locale
-     * and that it propogates to associated models
+     * and that it propagates to associated models
      *
      * @return void
      */
@@ -1330,7 +1330,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank']),
+            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
         $table->setEntityClass(__NAMESPACE__ . '\Article');
 
@@ -1379,7 +1379,7 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Groups');
         $table->addBehavior('Translate', [
             'fields' => ['title'],
-            'validator' => (new \Cake\Validation\Validator)->add('title', 'notBlank', ['rule' => 'notBlank']),
+            'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
 
         $data = [
@@ -1643,7 +1643,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
             'validator' => 'custom',
         ]);
-        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $validator = (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
@@ -1726,7 +1726,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title', 'body'],
             'validator' => 'custom',
         ]);
-        $validator = (new Validator)->add('title', 'notBlank', ['rule' => 'notBlank']);
+        $validator = (new Validator())->add('title', 'notBlank', ['rule' => 'notBlank']);
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 

@@ -208,7 +208,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ValueBinder $generator The value binder to use.
      * @return array First position containing the template and the second a placeholder
      */
-    protected function _stringExpression(\Cake\Database\ValueBinder $generator): array
+    protected function _stringExpression(ValueBinder $generator): array
     {
         $template = '%s ';
 

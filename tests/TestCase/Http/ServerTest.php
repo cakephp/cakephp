@@ -191,7 +191,7 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMockBuilder('Zend\Diactoros\Response\EmitterInterface')->getMock();
+        $emitter = $this->getMockBuilder('Zend\HttpHandlerRunner\Emitter\EmitterInterface')->getMock();
         $emitter->expects($this->once())
             ->method('emit')
             ->with($final);

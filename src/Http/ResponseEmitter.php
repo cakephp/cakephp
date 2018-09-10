@@ -24,7 +24,7 @@ use Cake\Core\Configure;
 use Cake\Log\Log;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\RelativeStream;
-use Zend\Diactoros\Response\EmitterInterface;
+use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 /**
  * Emits a Response to the PHP Server API.
@@ -40,7 +40,7 @@ class ResponseEmitter implements EmitterInterface
     /**
      * {@inheritDoc}
      */
-    public function emit(ResponseInterface $response, $maxBufferLength = 8192)
+    public function emit(ResponseInterface $response, $maxBufferLength = 8192): bool
     {
         $file = $line = null;
         if (headers_sent($file, $line)) {
@@ -66,6 +66,8 @@ class ResponseEmitter implements EmitterInterface
         if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
+
+        return true;
     }
 
     /**

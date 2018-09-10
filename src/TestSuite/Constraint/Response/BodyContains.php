@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -33,7 +34,7 @@ class BodyContains extends ResponseBase
      * @param \Cake\Http\Response $response A response instance.
      * @param bool $ignoreCase Ignore case
      */
-    public function __construct(Response $response, $ignoreCase = false)
+    public function __construct(Response $response, bool $ignoreCase = false)
     {
         parent::__construct($response);
 
@@ -46,7 +47,7 @@ class BodyContains extends ResponseBase
      * @param mixed $other Expected type
      * @return bool
      */
-    public function matches($other)
+    public function matches($other): bool
     {
         $method = 'mb_strpos';
         if ($this->ignoreCase) {
@@ -61,7 +62,7 @@ class BodyContains extends ResponseBase
      *
      * @return string
      */
-    public function toString()
+    public function toString(): string
     {
         return 'is in response body';
     }

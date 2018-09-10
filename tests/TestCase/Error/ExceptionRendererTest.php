@@ -28,6 +28,7 @@ use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
+use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\NotFoundException;
@@ -104,7 +105,7 @@ class TestErrorController extends Controller
     /**
      * index method
      *
-     * @return void
+     * @return array
      */
     public function index()
     {
@@ -127,7 +128,7 @@ class MyCustomExceptionRenderer extends ExceptionRenderer
     /**
      * custom error message type.
      *
-     * @return void
+     * @return string
      */
     public function missingWidgetThing()
     {
@@ -206,6 +207,46 @@ class ExceptionRendererTest extends TestCase
         );
 
         Configure::write('App.namespace', $namespace);
+    }
+
+    /**
+     * testTemplatePath
+     *
+     * @return void
+     */
+    public function testTemplatePath()
+    {
+        $request = (new ServerRequest())
+            ->withParam('controller', 'Foo')
+            ->withParam('action', 'bar');
+        $exception = new NotFoundException();
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+
+        $request = $request->withParam('prefix', 'admin');
+        $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
+
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('missingAction', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+
+        Configure::write('debug', false);
+        $ExceptionRenderer = new ExceptionRenderer($exception, $request);
+
+        $ExceptionRenderer->render();
+        $controller = $ExceptionRenderer->__debugInfo()['controller'];
+        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertEquals(
+            'Admin' . DIRECTORY_SEPARATOR . 'Error',
+            $controller->viewBuilder()->getTemplatePath()
+        );
     }
 
     /**
@@ -695,6 +736,11 @@ class ExceptionRendererTest extends TestCase
                 ['/Internal Error/'],
                 500,
             ],
+            [
+                new HttpException('Network Authentication Required', 511),
+                ['/Network Authentication Required/'],
+                511,
+            ],
         ];
     }
 
@@ -727,6 +773,13 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$exceptionRenderer->render()->getBody();
         $this->assertContains('widget thing is missing', $result);
+
+        // Custom method should be called even when debug is off.
+        Configure::write('debug', false);
+        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertContains('widget thing is missing', $result);
     }
 
     /**
@@ -743,7 +796,7 @@ class ExceptionRendererTest extends TestCase
             ->setMethods(['render'])
             ->getMock();
         $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->request = new ServerRequest;
+        $controller->request = new ServerRequest();
         $controller->expects($this->at(0))
             ->method('render')
             ->with('missingHelper')
@@ -771,7 +824,7 @@ class ExceptionRendererTest extends TestCase
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
-        $controller->request = new ServerRequest;
+        $controller->request = new ServerRequest();
         $controller->expects($this->any())
             ->method('beforeRender')
             ->will($this->throwException($exception));
@@ -802,7 +855,7 @@ class ExceptionRendererTest extends TestCase
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
             }
         );
-        $controller->setRequest(new ServerRequest);
+        $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();

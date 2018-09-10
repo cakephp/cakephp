@@ -163,6 +163,75 @@ $cacheConfig = [
 Cache::setConfig('_cake_model_', $cacheConfig);
 ```
 
+## Creating Custom Table and Entity Classes
+
+By default, the Cake ORM uses the `\Cake\ORM\Table` and `\Cake\ORM\Entity` classes to
+interact with the database. While using the default classes makes sense for
+quick scripts and small applications, you will often want to use your own
+classes for adding your custom logic.
+
+When using the ORM as a standalone package, you are free to choose where to
+store these classes. For example, you could use the `Data` folder for this:
+
+```php
+<?php
+// in src/Data/Table/ArticlesTable.php
+namespace Acme\Data\Table;
+
+use Acme\Data\Entity\Article;
+use Acme\Data\Table\UsersTable;
+use Cake\ORM\Table;
+
+class ArticlesTable extends Table
+{
+    public function initialize()
+    {
+        $this->setEntityClass(Article::class);
+        $this->belongsTo('Users', ['className' => UsersTable::class]);
+    }
+}
+```
+
+This table class is now setup to connect to the `articles` table in your
+database and return instances of `Article` when fetching results. In order to
+get an instance of this class, as shown before, you can use the `TableLocator`:
+
+```php
+<?php
+use Acme\Data\Table\ArticlesTable;
+use Cake\ORM\Locator\TableLocator;
+
+$locator = new TableLocator();
+$articles = $locator->get('Articles', ['className' => ArticlesTable::class]);
+```
+
+### Using Conventions-Based Loading
+
+It may get quite tedious having to specify each time the class name to load. So
+the Cake ORM can do most of the work for you if you give it some configuration.
+
+The convention is to have all ORM related classes inside the `src/Model` folder,
+that is the `Model` sub-namespace for your app. So you will usually have the
+`src/Model/Table` and `src/Model/Entity` folders in your project. But first, we
+need to inform Cake of the namespace your application lives in:
+
+```php
+<?php
+use Cake\Core\Configure;
+
+Configure::write('App.namespace', 'Acme');
+```
+
+You can also set a longer namaspace up to the place where the `Model` folder is:
+
+```php
+<?php
+use Cake\Core\Configure;
+
+Configure::write('App.namespace', 'My\Log\SubNamespace');
+```
+
+
 ## Additional Documentation
 
 Consult [the CakePHP ORM documentation](https://book.cakephp.org/3.0/en/orm.html)

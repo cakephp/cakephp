@@ -361,6 +361,26 @@ class Session
     }
 
     /**
+     * Write data and close the session
+     *
+     * @return bool True if session was started
+     */
+    public function close()
+    {
+        if (!$this->_started) {
+            return true;
+        }
+
+        if (!session_write_close()) {
+            throw new RuntimeException('Could not close the session');
+        }
+
+        $this->_started = false;
+
+        return true;
+    }
+
+    /**
      * Determine if Session has already been started.
      *
      * @return bool True if session has been started.

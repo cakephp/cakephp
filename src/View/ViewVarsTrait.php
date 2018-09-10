@@ -21,18 +21,9 @@ use Cake\Event\EventDispatcherInterface;
  *
  * Once collected context data can be passed to another object.
  * This is done in Controller, TemplateTask and View for example.
- *
- * @property array $_validViewOptions
  */
 trait ViewVarsTrait
 {
-    /**
-     * Variables for the view
-     *
-     * @var array
-     */
-    public $viewVars = [];
-
     /**
      * The view builder instance being used.
      *
@@ -68,24 +59,15 @@ trait ViewVarsTrait
             $builder->setClassName($viewClass);
         }
 
-        $validViewOptions = $this->viewOptions();
-        $viewOptions = [];
-        foreach ($validViewOptions as $option) {
-            if (property_exists($this, $option)) {
-                $viewOptions[$option] = $this->{$option};
-            }
-        }
-
         foreach (['name', 'plugin'] as $prop) {
             if (isset($this->{$prop})) {
                 $method = 'set' . ucfirst($prop);
                 $builder->{$method}($this->{$prop});
             }
         }
-        $builder->setOptions($viewOptions);
 
         return $builder->build(
-            $this->viewVars,
+            [],
             $this->request ?? null,
             $this->response ?? null,
             $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
@@ -111,35 +93,8 @@ trait ViewVarsTrait
         } else {
             $data = [$name => $value];
         }
-        $this->viewVars = $data + $this->viewVars;
+        $this->viewBuilder()->setVars($data);
 
         return $this;
-    }
-
-    /**
-     * Get/Set valid view options in the object's _validViewOptions property. The property is
-     * created as an empty array if it is not set. If called without any parameters it will
-     * return the current list of valid view options. See `createView()`.
-     *
-     * @param string|array|null $options string or array of string to be appended to _validViewOptions.
-     * @param bool $merge Whether to merge with or override existing valid View options.
-     *   Defaults to `true`.
-     * @return array The updated view options as an array.
-     */
-    public function viewOptions($options = null, bool $merge = true): array
-    {
-        if (!isset($this->_validViewOptions)) {
-            $this->_validViewOptions = [];
-        }
-
-        if ($options === null) {
-            return $this->_validViewOptions;
-        }
-
-        if (!$merge) {
-            return $this->_validViewOptions = (array)$options;
-        }
-
-        return $this->_validViewOptions = array_merge($this->_validViewOptions, (array)$options);
     }
 }

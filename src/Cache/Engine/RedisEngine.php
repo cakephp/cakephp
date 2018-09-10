@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -43,8 +44,6 @@ class RedisEngine extends CacheEngine
      * - `port` port number to the Redis server.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
-     *    cache::gc from ever being called automatically.
      * - `server` URL or ip to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
@@ -59,7 +58,6 @@ class RedisEngine extends CacheEngine
         'persistent' => true,
         'port' => 6379,
         'prefix' => 'cake_',
-        'probability' => 100,
         'host' => null,
         'server' => '127.0.0.1',
         'timeout' => 0,
@@ -74,7 +72,7 @@ class RedisEngine extends CacheEngine
      * @param array $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
-    public function init(array $config = [])
+    public function init(array $config = []): bool
     {
         if (!extension_loaded('redis')) {
             return false;
@@ -94,7 +92,7 @@ class RedisEngine extends CacheEngine
      *
      * @return bool True if Redis server was connected
      */
-    protected function _connect()
+    protected function _connect(): bool
     {
         try {
             $this->_Redis = new Redis();
@@ -104,7 +102,12 @@ class RedisEngine extends CacheEngine
                 $return = $this->_Redis->connect($this->_config['server'], $this->_config['port'], $this->_config['timeout']);
             } else {
                 $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
-                $return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
+                $return = $this->_Redis->pconnect(
+                    $this->_config['server'],
+                    (int)$this->_config['port'],
+                    (int)$this->_config['timeout'],
+                    $persistentId
+                );
             }
         } catch (RedisException $e) {
             return false;
@@ -113,7 +116,7 @@ class RedisEngine extends CacheEngine
             $return = $this->_Redis->auth($this->_config['password']);
         }
         if ($return) {
-            $return = $this->_Redis->select($this->_config['database']);
+            $return = $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;
@@ -126,7 +129,7 @@ class RedisEngine extends CacheEngine
      * @param mixed $value Data to be cached
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function write($key, $value)
+    public function write(string $key, $value): bool
     {
         $key = $this->_key($key);
 
@@ -148,15 +151,16 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
      */
-    public function read($key)
+    public function read(string $key)
     {
         $key = $this->_key($key);
 
         $value = $this->_Redis->get($key);
-        if (preg_match('/^[-]?\d+$/', $value)) {
+        $isString = is_string($value);
+        if ($isString && preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
         }
-        if ($value !== false && is_string($value)) {
+        if ($value !== false && $isString) {
             return unserialize($value);
         }
 
@@ -170,7 +174,7 @@ class RedisEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
      */
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
@@ -190,7 +194,7 @@ class RedisEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
      */
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
@@ -209,7 +213,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
@@ -222,7 +226,7 @@ class RedisEngine extends CacheEngine
      * @param bool $check If true will check expiration, otherwise delete all.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear(bool $check): bool
     {
         if ($check) {
             return true;
@@ -246,7 +250,7 @@ class RedisEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure.
      * @link https://github.com/phpredis/phpredis#setnx
      */
-    public function add($key, $value)
+    public function add(string $key, $value): bool
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
@@ -270,7 +274,7 @@ class RedisEngine extends CacheEngine
      *
      * @return array
      */
-    public function groups()
+    public function groups(): array
     {
         $result = [];
         foreach ($this->_config['groups'] as $group) {
@@ -292,7 +296,7 @@ class RedisEngine extends CacheEngine
      * @param string $group name of the group to be cleared
      * @return bool success
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         return (bool)$this->_Redis->incr($this->_config['prefix'] . $group);
     }

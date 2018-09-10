@@ -165,7 +165,7 @@ class FormHelper extends Helper
             'confirmJs' => '{{confirm}}',
         ],
         // set HTML5 validation message to custom required/empty messages
-        'autoSetCustomValidity' => false,
+        'autoSetCustomValidity' => true,
     ];
 
     /**
@@ -811,6 +811,8 @@ class FormHelper extends Helper
      * - `for` - Set the for attribute, if its not defined the for attribute
      *   will be generated from the $fieldName parameter using
      *   FormHelper::_domId().
+     * - `escape` - Set to `false` to turn off escaping of label text.
+     *   Defaults to `true`.
      *
      * Examples:
      *
@@ -2755,9 +2757,13 @@ class FormHelper extends Helper
             $secure = $data['secure'];
             unset($data['secure']);
         }
+        /** @var \Cake\View\Widget\WidgetInterface $widget */
         $widget = $this->_locator->get($name);
         $out = $widget->render($data, $this->context());
-        if (isset($data['name']) && $secure !== null && $secure !== self::SECURE_SKIP) {
+        if (isset($data['name']) &&
+            $secure !== null &&
+            $secure !== self::SECURE_SKIP
+        ) {
             foreach ($widget->secureFields($data) as $field) {
                 $this->_secure($secure, $this->_secureFieldName($field));
             }

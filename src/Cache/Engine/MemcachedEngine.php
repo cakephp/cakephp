@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -50,8 +51,6 @@ class MemcachedEngine extends CacheEngine
      *    the same persistent value will share a single underlying connection.
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
-     *    cache::gc from ever being called automatically.
      * - `serialize` The serializer engine used to serialize data. Available engines are php,
      *    igbinary and json. Beside php, the memcached extension must be compiled with the
      *    appropriate serializer support.
@@ -72,7 +71,6 @@ class MemcachedEngine extends CacheEngine
         'persistent' => false,
         'port' => null,
         'prefix' => 'cake_',
-        'probability' => 100,
         'serialize' => 'php',
         'servers' => ['127.0.0.1'],
         'options' => [],
@@ -102,7 +100,7 @@ class MemcachedEngine extends CacheEngine
      * @throws \InvalidArgumentException When you try use authentication without
      *   Memcached compiled with SASL support
      */
-    public function init(array $config = [])
+    public function init(array $config = []): bool
     {
         if (!extension_loaded('memcached')) {
             return false;
@@ -194,7 +192,7 @@ class MemcachedEngine extends CacheEngine
      * @throws \InvalidArgumentException When the Memcached extension is not built
      *   with the desired serializer engine.
      */
-    protected function _setOptions()
+    protected function _setOptions(): void
     {
         $this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
@@ -241,7 +239,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $server The server address string.
      * @return array Array containing host, port
      */
-    public function parseServerString($server)
+    public function parseServerString(string $server): array
     {
         $socketTransport = 'unix://';
         if (strpos($server, $socketTransport) === 0) {
@@ -268,7 +266,7 @@ class MemcachedEngine extends CacheEngine
     /**
      * Read an option value from the memcached connection.
      *
-     * @param string $name The option name to read.
+     * @param string|int $name The option name to read.
      * @return string|int|null|bool
      */
     public function getOption($name)
@@ -287,7 +285,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure
      * @see https://secure.php.net/manual/en/memcache.set.php
      */
-    public function write($key, $value)
+    public function write(string $key, $value): bool
     {
         $duration = $this->_config['duration'];
         if ($duration > 30 * DAY) {
@@ -306,7 +304,7 @@ class MemcachedEngine extends CacheEngine
      * @return array of bools for each key provided, true if the data was
      *   successfully cached, false on failure
      */
-    public function writeMany($data)
+    public function writeMany(array $data): array
     {
         $cacheData = [];
         foreach ($data as $key => $value) {
@@ -330,7 +328,7 @@ class MemcachedEngine extends CacheEngine
      * @return mixed The cached data, or false if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function read($key)
+    public function read(string $key)
     {
         $key = $this->_key($key);
 
@@ -344,7 +342,7 @@ class MemcachedEngine extends CacheEngine
      * @return array An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.
      */
-    public function readMany($keys)
+    public function readMany(array $keys): array
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
@@ -368,7 +366,7 @@ class MemcachedEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
      */
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
         $key = $this->_key($key);
 
@@ -382,7 +380,7 @@ class MemcachedEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
      */
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
         $key = $this->_key($key);
 
@@ -396,7 +394,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed.
      */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $key = $this->_key($key);
 
@@ -410,7 +408,7 @@ class MemcachedEngine extends CacheEngine
      * @return array of boolean values that are true if the key was successfully
      *   deleted, false if it didn't exist or couldn't be removed.
      */
-    public function deleteMany($keys)
+    public function deleteMany(array $keys): array
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
@@ -433,7 +431,7 @@ class MemcachedEngine extends CacheEngine
      * @param bool $check If true will check expiration, otherwise delete all.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear($check)
+    public function clear(bool $check): bool
     {
         if ($check) {
             return true;
@@ -460,7 +458,7 @@ class MemcachedEngine extends CacheEngine
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
      */
-    public function add($key, $value)
+    public function add(string $key, $value): bool
     {
         $duration = $this->_config['duration'];
         if ($duration > 30 * DAY) {
@@ -479,7 +477,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @return array
      */
-    public function groups()
+    public function groups(): array
     {
         if (empty($this->_compiledGroupNames)) {
             foreach ($this->_config['groups'] as $group) {
@@ -514,7 +512,7 @@ class MemcachedEngine extends CacheEngine
      * @param string $group name of the group to be cleared
      * @return bool success
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         return (bool)$this->_Memcached->increment($this->_config['prefix'] . $group);
     }

@@ -162,7 +162,6 @@ class ServerRequestTest extends TestCase
     /**
      * Test constructing with a string url.
      *
-     * @deprecated
      * @return void
      */
     public function testConstructStringUrlIgnoreServer()
@@ -733,10 +732,10 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv('HTTP_REFERER', '');
         $result = $request->referer(true);
-        $this->assertSame('/', $result);
+        $this->assertNull($result);
 
         $result = $request->referer();
-        $this->assertSame('/', $result);
+        $this->assertNull($result);
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
         $result = $request->referer(true);
@@ -2964,7 +2963,7 @@ XML;
      */
     public function testGetSession()
     {
-        $session = new Session;
+        $session = new Session();
         $request = new ServerRequest(['session' => $session]);
         $this->assertSame($session, $request->getSession());
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
@@ -40,7 +41,7 @@ class CakesController extends Controller
     /**
      * invalid method
      *
-     * @return \Cake\Http\Response
+     * @return string
      */
     public function invalid()
     {
