@@ -161,12 +161,14 @@ class UpgradeCommand extends Command
     {
         $this->io->out("Move $source to $dest");
 
-        if (!$this->args->getOption('dry-run')) {
-            if ($this->git) {
-                exec("git mv $source $dest");
-            } else {
-                rename($source, $dest);
-            }
+        if ($this->args->getOption('dry-run')) {
+            return;
+        }
+
+        if ($this->git) {
+            exec("git mv $source $dest");
+        } else {
+            rename($source, $dest);
         }
     }
 
