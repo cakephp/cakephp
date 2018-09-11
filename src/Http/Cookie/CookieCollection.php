@@ -153,7 +153,7 @@ class CookieCollection implements CookieCollectionInterface
      * @param string $name The name of the cookie to remove.
      * @return static
      */
-    public function remove(string $name): self
+    public function remove(string $name): CookieCollectionInterface
     {
         $new = clone $this;
         $key = mb_strtolower($name);

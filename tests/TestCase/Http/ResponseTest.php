@@ -766,6 +766,21 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test setting the cookie collection
+     *
+     * @return void
+     */
+    public function testWithCookieCollection()
+    {
+        $response = new Response();
+
+        $collection = new CookieCollection();
+        $newResponse = $response->withCookieCollection($collection);
+
+        $this->assertNotSame($response->getCookieCollection(), $newResponse->getCookieCollection());
+    }
+
+    /**
      * Test setting cookies with no value
      *
      * @return void
