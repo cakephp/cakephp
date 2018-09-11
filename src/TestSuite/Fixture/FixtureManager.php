@@ -354,7 +354,7 @@ class FixtureManager
                 get_class($test),
                 $e->getMessage()
             );
-            throw new Exception($msg, null, $e);
+            throw new \RuntimeException($msg, 0, $e);
         }
     }
 

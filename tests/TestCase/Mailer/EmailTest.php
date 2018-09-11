@@ -2046,7 +2046,7 @@ class EmailTest extends TestCase
         $this->Email->reset();
 
         $this->assertSame('utf-8', $this->Email->charset, $this->Email->charset);
-        $this->assertNull($this->Email->headerCharset, $this->Email->headerCharset);
+        $this->assertNull($this->Email->headerCharset);
     }
 
     /**

@@ -104,7 +104,7 @@ class FolderTest extends TestCase
 
         // is "/" in "/tests/test_app/"
         $result = $Base->inPath(realpath(DS), true);
-        $this->assertFalse($result, true);
+        $this->assertFalse($result);
 
         // is "/tests/test_app/" in "/tests/test_app/"
         $result = $Base->inPath($basePath, true);

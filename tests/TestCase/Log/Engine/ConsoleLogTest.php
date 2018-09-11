@@ -33,7 +33,7 @@ class ConsoleLogTest extends TestCase
         if (DIRECTORY_SEPARATOR !== '\\') { //skip if test is on windows
             $output->expects($this->at(0))
                 ->method('setOutputAs')
-                ->with($this->stringContains(ConsoleOutput::COLOR));
+                ->with($this->stringContains((string)ConsoleOutput::COLOR));
         }
         $message = ' Error: oh noes</error>';
         $output->expects($this->at(1))

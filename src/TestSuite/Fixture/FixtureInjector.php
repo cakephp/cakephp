@@ -16,16 +16,19 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\BaseTestListener;
+use Cake\TestSuite\TestListenerTrait;
 use PHPUnit\Framework\Test;
+use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestSuite;
 
 /**
  * Test listener used to inject a fixture manager in all tests that
  * are composed inside a Test Suite
  */
-class FixtureInjector extends BaseTestListener
+class FixtureInjector implements TestListener
 {
+    use TestListenerTrait;
+
     /**
      * The instance of the fixture manager to use
      *
@@ -104,7 +107,7 @@ class FixtureInjector extends BaseTestListener
      * @param float $time current time
      * @return void
      */
-    public function endTest(Test $test, $time): void
+    public function endTest(Test $test, float $time): void
     {
         if ($test instanceof TestCase) {
             $this->_fixtureManager->unload($test);
