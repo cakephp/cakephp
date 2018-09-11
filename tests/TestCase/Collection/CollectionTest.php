@@ -2634,7 +2634,7 @@ class CollectionTest extends TestCase
     }
 
     /**
-     * Tests that elements in a lazy collection are only fetched once
+     * Tests that elements in a lazy collection are not fetched immediately.
      *
      * @return void
      */
