@@ -102,7 +102,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
                 continue;
             }
 
-            if ($values[$field] !== null && $values[$field] !== '' && !is_numeric($values[$field])) {
+            if (!is_numeric($values[$field])) {
                 throw new InvalidArgumentException(sprintf(
                     'Cannot convert value of type `%s` to integer',
                     getTypeName($values[$field])
