@@ -695,7 +695,21 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmpty($field, $when = true, $message = null)
     {
-        return $this->allowEmptyByFlags($field, null, $when, $message);
+        $defaults = [
+            'when' => $when,
+            'message' => $message,
+        ];
+        if (!is_array($field)) {
+            $field = $this->_convertValidatorToArray($field, $defaults);
+        }
+
+        foreach ($field as $fieldName => $setting) {
+            $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
+            $fieldName = array_keys($settings)[0];
+            $this->allowEmptyByFlags($fieldName, null, $settings[$fieldName]['when'], $settings[$fieldName]['message']);
+        }
+
+        return $this;
     }
 
     /**
@@ -721,24 +735,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * // Email can be empty on update
      * $validator->allowEmptyByFlags('email', Validator::EMPTY_STRING, 'update');
-     *
-     * // Email and subject can be empty on update
-     * $validator->allowEmptyByFlags(['email', 'subject'], Validator::EMPTY_STRING, 'update');
-     *
-     * // Email can be always empty, subject and content can be empty on update.
-     * $validator->allowEmptyByFlags(
-     *      [
-     *          'email' => [
-     *              'when' => true
-     *          ],
-     *          'content' => [
-     *              'message' => 'Content cannot be empty'
-     *          ],
-     *          'subject'
-     *      ],
-     *      Validator::EMPTY_STRING,
-     *      'update'
-     * );
      * ```
      *
      * It is possible to conditionally allow emptiness on a field by passing a callback
@@ -769,7 +765,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->allowEmptyArray('items');
      * ```
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param int|null $flags A bitmask of EMPTY_* flags which specify what is empty
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
@@ -779,27 +775,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyByFlags($field, $flags, $when = true, $message = null)
     {
-        $settingsDefault = [
-            'flags' => $flags,
-            'when' => $when,
-            'message' => $message,
-        ];
-
-        if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray($field, $settingsDefault);
+        $this->field($field)->allowEmpty($when);
+        if ($message) {
+            $this->_allowEmptyMessages[$field] = $message;
         }
-
-        foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray($fieldName, $settingsDefault, $setting);
-            $fieldName = current(array_keys($settings));
-
-            $this->field($fieldName)->allowEmpty($settings[$fieldName]['when']);
-            if ($settings[$fieldName]['message']) {
-                $this->_allowEmptyMessages[$fieldName] = $settings[$fieldName]['message'];
-            }
-            if ($settings[$fieldName]['flags'] !== null) {
-                $this->_allowEmptyFlags[$fieldName] = $settings[$fieldName]['flags'];
-            }
+        if ($flags !== null) {
+            $this->_allowEmptyFlags[$field] = $flags;
         }
 
         return $this;
@@ -810,7 +791,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * This method is equivalent to calling allowEmptyByFlags() with EMPTY_STRING flag.
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -829,7 +810,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * This method is equivalent to calling allowEmptyByFlags() with EMPTY_STRING +
      * EMPTY_ARRAY flags.
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -847,7 +828,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * This method is equivalent to calling allowEmptyByFlags() with EMPTY_FILE flag.
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -866,7 +847,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * This method is equivalent to calling allowEmptyByFlags() with EMPTY_STRING +
      * EMPTY_DATE flags.
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -885,7 +866,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * This method is equivalent to calling allowEmptyByFlags() with EMPTY_STRING +
      * EMPTY_TIME flags.
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -904,7 +885,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * This method is equivalent to calling allowEmptyByFlags() with EMPTY_STRING +
      * EMPTY_DATE + EMPTY_TIME flags.
      *
-     * @param string|array $field the name of the field or a list of fields
+     * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
@@ -1000,7 +981,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * method called will take precedence.
      *
      * @deprecated Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
-     *   allowEmptyDate(), allowEmptyTime() or allowEmptyDateTime() with oppsite
+     *   allowEmptyDate(), allowEmptyTime() or allowEmptyDateTime() with reversed
      *   conditions instead.
      * @param string|array $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
