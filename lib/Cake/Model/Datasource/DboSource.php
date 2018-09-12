@@ -3539,7 +3539,7 @@ class DboSource extends DataSource {
 		} elseif (isset($column['null']) && $column['null'] === false) {
 			$out .= ' NOT NULL';
 		}
-		if ($type === 'timestamp' && isset($column['default']) && strtolower($column['default']) === 'current_timestamp') {
+		if (in_array($type, array('timestamp', 'datetime')) && isset($column['default']) && strtolower($column['default']) === 'current_timestamp') {
 			$out = str_replace(array("'CURRENT_TIMESTAMP'", "'current_timestamp'"), 'CURRENT_TIMESTAMP', $out);
 		}
 		return $this->_buildFieldParameters($out, $column, 'afterDefault');
