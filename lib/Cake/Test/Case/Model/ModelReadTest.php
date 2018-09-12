@@ -6559,7 +6559,6 @@ class ModelReadTest extends BaseModelTest {
 	public function testBuildQueryCountI18nConditions() {
 		$this->skipIf(!$this->db instanceof Mysql, 'This test is only compatible with Mysql.');
 		$dbName = $this->db->config['database'];
-		j
 		$this->loadFixtures('TranslateArticle', 'TranslatedArticle', 'User');
 		$TestModel = new TranslatedArticle();
 		$TestModel->cacheQueries = false;
