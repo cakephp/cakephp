@@ -54,7 +54,7 @@ class RoutingMiddleware
     /**
      * Constructor
      *
-     * @param \Cake\Core\HttpApplicationInterface $app The application instance that routes are defined on.
+     * @param \Cake\Core\HttpApplicationInterface|null $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
     public function __construct(HttpApplicationInterface $app = null, $cacheConfig = null)
