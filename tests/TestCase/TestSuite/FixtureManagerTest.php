@@ -56,12 +56,12 @@ class FixtureManagerTest extends TestCase
     public function testFixturizeCore()
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['core.articles'];
+        $test->fixtures = ['core.Articles'];
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
         $this->assertCount(1, $fixtures);
-        $this->assertArrayHasKey('core.articles', $fixtures);
-        $this->assertInstanceOf('Cake\Test\Fixture\ArticlesFixture', $fixtures['core.articles']);
+        $this->assertArrayHasKey('core.Articles', $fixtures);
+        $this->assertInstanceOf('Cake\Test\Fixture\ArticlesFixture', $fixtures['core.Articles']);
     }
 
     /**
@@ -83,7 +83,7 @@ class FixtureManagerTest extends TestCase
         ]);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['core.articles'];
+        $test->fixtures = ['core.Articles'];
         $this->manager->fixturize($test);
         // Need to load/shutdown twice to ensure fixture is created.
         $this->manager->load($test);
@@ -125,7 +125,7 @@ class FixtureManagerTest extends TestCase
         }
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['core.articles'];
+        $test->fixtures = ['core.Articles'];
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
@@ -141,7 +141,7 @@ class FixtureManagerTest extends TestCase
     public function testFixturizeCoreConstraint()
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['core.articles', 'core.articles_tags', 'core.tags'];
+        $test->fixtures = ['core.Articles', 'core.ArticlesTags', 'core.Tags'];
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
@@ -194,14 +194,14 @@ class FixtureManagerTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['plugin.test_plugin.articles'];
+        $test->fixtures = ['plugin.TestPlugin.Articles'];
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
         $this->assertCount(1, $fixtures);
-        $this->assertArrayHasKey('plugin.test_plugin.articles', $fixtures);
+        $this->assertArrayHasKey('plugin.TestPlugin.Articles', $fixtures);
         $this->assertInstanceOf(
             'TestPlugin\Test\Fixture\ArticlesFixture',
-            $fixtures['plugin.test_plugin.articles']
+            $fixtures['plugin.TestPlugin.Articles']
         );
     }
 
@@ -215,14 +215,14 @@ class FixtureManagerTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['plugin.test_plugin.blog/comments'];
+        $test->fixtures = ['plugin.TestPlugin.blog/comments'];
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
         $this->assertCount(1, $fixtures);
-        $this->assertArrayHasKey('plugin.test_plugin.blog/comments', $fixtures);
+        $this->assertArrayHasKey('plugin.TestPlugin.Blog/Comments', $fixtures);
         $this->assertInstanceOf(
             'TestPlugin\Test\Fixture\Blog\CommentsFixture',
-            $fixtures['plugin.test_plugin.blog/comments']
+            $fixtures['plugin.TestPlugin.Blog/Comments']
         );
     }
 
@@ -234,14 +234,14 @@ class FixtureManagerTest extends TestCase
     public function testFixturizeVendorPlugin()
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['plugin.Company/TestPluginThree.articles'];
+        $test->fixtures = ['plugin.Company/TestPluginThree.Articles'];
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
         $this->assertCount(1, $fixtures);
-        $this->assertArrayHasKey('plugin.Company/TestPluginThree.articles', $fixtures);
+        $this->assertArrayHasKey('plugin.Company/TestPluginThree.Articles', $fixtures);
         $this->assertInstanceOf(
             'Company\TestPluginThree\Test\Fixture\ArticlesFixture',
-            $fixtures['plugin.Company/TestPluginThree.articles']
+            $fixtures['plugin.Company/TestPluginThree.Articles']
         );
     }
 
@@ -271,9 +271,9 @@ class FixtureManagerTest extends TestCase
     public function testFixturizeInvalidType()
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('Referenced fixture class "Test\Fixture\Derp.derpFixture" not found. Fixture "derp.derp" was referenced');
+        $this->expectExceptionMessage('Referenced fixture class "Test\Fixture\Derp.DerpFixture" not found. Fixture "Derp.Derp" was referenced');
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['derp.derp'];
+        $test->fixtures = ['Derp.Derp'];
         $this->manager->fixturize($test);
     }
 
@@ -321,7 +321,7 @@ class FixtureManagerTest extends TestCase
         ConnectionManager::alias('test_other', 'other');
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['core.other_articles'];
+        $test->fixtures = ['core.OtherArticles'];
         $this->manager->fixturize($test);
         $this->manager->load($test);
 
@@ -338,7 +338,7 @@ class FixtureManagerTest extends TestCase
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->autoFixtures = false;
-        $test->fixtures = ['core.articles', 'core.articles_tags', 'core.tags'];
+        $test->fixtures = ['core.Articles', 'core.ArticlesTags', 'core.Tags'];
         $this->manager->fixturize($test);
         $this->manager->loadSingle('Articles');
         $this->manager->loadSingle('Tags');
@@ -398,7 +398,7 @@ class FixtureManagerTest extends TestCase
     public function testExceptionOnLoad()
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['core.products'];
+        $test->fixtures = ['core.Products'];
 
         $manager = $this->getMockBuilder(FixtureManager::class)
             ->setMethods(['_runOperation'])
@@ -440,7 +440,7 @@ class FixtureManagerTest extends TestCase
             }));
 
         $fixtures = [
-            'core.products' => $fixture,
+            'core.Products' => $fixture,
         ];
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();

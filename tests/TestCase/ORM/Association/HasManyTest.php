@@ -35,7 +35,7 @@ class HasManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.comments', 'core.articles', 'core.authors'];
+    public $fixtures = ['core.Comments', 'core.Articles', 'core.Authors'];
 
     /**
      * Set up

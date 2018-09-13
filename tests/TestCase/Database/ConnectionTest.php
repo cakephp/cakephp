@@ -36,7 +36,7 @@ use ReflectionProperty;
 class ConnectionTest extends TestCase
 {
 
-    public $fixtures = ['core.things'];
+    public $fixtures = ['core.Things'];
 
     /**
      * Where the NestedTransactionRollbackException was created.
