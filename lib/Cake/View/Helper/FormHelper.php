@@ -1061,7 +1061,7 @@ class FormHelper extends AppHelper {
 			$radioOptions = (array)$options['options'];
 			unset($options['options']);
 		} else {
-			$radioOptions = [];
+			$radioOptions = array();
 		}
 
 		$label = $this->_getLabel($fieldName, $options);
