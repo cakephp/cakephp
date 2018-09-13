@@ -160,7 +160,7 @@ class FrozenTime extends Chronos implements TimeInterface
      */
     public function timeAgoInWords(array $options = []): string
     {
-        return static::diffFormatter()->timeAgoInWords($this, $options);
+        return static::getDiffFormatter()->timeAgoInWords($this, $options);
     }
 
     /**

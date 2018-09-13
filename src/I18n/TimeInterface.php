@@ -204,10 +204,17 @@ interface TimeInterface extends ChronosInterface, JsonSerializable
     public static function parseTime(string $time, $format = null);
 
     /**
-     * Get the difference formatter instance or overwrite the current one.
+     * Get the difference formatter instance.
      *
-     * @param \Cake\I18n\RelativeTimeFormatter|null $formatter The formatter instance when setting.
      * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
      */
-    public static function diffFormatter($formatter = null);
+    public static function getDiffFormatter(): RelativeTimeFormatter;
+
+    /**
+     * Set the difference formatter instance.
+     *
+     * @param \Cake\I18n\RelativeTimeFormatter $formatter The formatter instance when setting.
+     * @return void
+     */
+    public static function setDiffFormatter(RelativeTimeFormatter $formatter): void;
 }

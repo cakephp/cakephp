@@ -130,6 +130,6 @@ class Date extends MutableDate implements TimeInterface
      */
     public function timeAgoInWords(array $options = []): string
     {
-        return static::diffFormatter()->dateAgoInWords($this, $options);
+        return static::getDiffFormatter()->dateAgoInWords($this, $options);
     }
 }
