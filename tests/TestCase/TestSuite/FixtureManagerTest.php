@@ -414,7 +414,7 @@ class FixtureManagerTest extends TestCase
         $e = null;
         try {
             $manager->load($test);
-        } catch (CakeException $e) {
+        } catch (\Exception $e) {
         }
 
         $this->assertNotNull($e);
