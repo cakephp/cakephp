@@ -215,7 +215,7 @@ class FixtureManagerTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
-        $test->fixtures = ['plugin.TestPlugin.blog/comments'];
+        $test->fixtures = ['plugin.TestPlugin.Blog/Comments'];
         $this->manager->fixturize($test);
         $fixtures = $this->manager->loaded();
         $this->assertCount(1, $fixtures);
