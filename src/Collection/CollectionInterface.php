@@ -575,7 +575,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param int $howMany The number of elements at the end of the collection
      * @return \Cake\Collection\CollectionInterface
      */
-    public function takeLast($howMany);
+    public function takeLast(int $howMany): CollectionInterface;
 
     /**
      * Returns a new collection that will skip the specified amount of elements

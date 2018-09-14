@@ -402,7 +402,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      */
-    public function takeLast($howMany)
+    public function takeLast(int $howMany): CollectionInterface
     {
         if ($howMany < 1) {
             throw new \InvalidArgumentException("The takeLast method requires a number greater than 0.");
