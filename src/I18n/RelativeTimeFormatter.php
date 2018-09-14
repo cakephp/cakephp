@@ -25,13 +25,13 @@ class RelativeTimeFormatter
     /**
      * Get the difference in a human readable format.
      *
-     * @param \Cake\I18n\TimeInterface $date The datetime to start with.
-     * @param \Cake\I18n\TimeInterface|null $other The datetime to compare against.
+     * @param \Cake\I18n\I18nDateTimeInterface $date The datetime to start with.
+     * @param \Cake\I18n\I18nDateTimeInterface|null $other The datetime to compare against.
      * @param bool $absolute removes time difference modifiers ago, after, etc
      * @return string The difference between the two days in a human readable format
      * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
-    public function diffForHumans(TimeInterface $date, ?TimeInterface $other = null, bool $absolute = false): string
+    public function diffForHumans(I18nDateTimeInterface $date, ?I18nDateTimeInterface $other = null, bool $absolute = false): string
     {
         $isNow = $other === null;
         if ($isNow) {
@@ -50,8 +50,8 @@ class RelativeTimeFormatter
                 break;
             case ($diffInterval->d > 0):
                 $count = $diffInterval->d;
-                if ($count >= TimeInterface::DAYS_PER_WEEK) {
-                    $count = (int)($count / TimeInterface::DAYS_PER_WEEK);
+                if ($count >= I18nDateTimeInterface::DAYS_PER_WEEK) {
+                    $count = (int)($count / I18nDateTimeInterface::DAYS_PER_WEEK);
                     $message = __dn('cake', '{0} week', '{0} weeks', $count, $count);
                 } else {
                     $message = __dn('cake', '{0} day', '{0} days', $count, $count);
@@ -84,12 +84,12 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative timestring.
      *
-     * @param \Cake\I18n\TimeInterface $time The time instance to format.
+     * @param \Cake\I18n\I18nDateTimeInterface $time The time instance to format.
      * @param array $options Array of options.
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
      */
-    public function timeAgoInWords(TimeInterface $time, array $options = []): string
+    public function timeAgoInWords(I18nDateTimeInterface $time, array $options = []): string
     {
         $options = $this->_options($options, FrozenTime::class);
         if ($options['timezone']) {
@@ -292,12 +292,12 @@ class RelativeTimeFormatter
     /**
      * Format a into a relative date string.
      *
-     * @param \Cake\I18n\TimeInterface $date The date to format.
+     * @param \Cake\I18n\I18nDateTimeInterface $date The date to format.
      * @param array $options Array of options.
      * @return string Relative date string.
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
-    public function dateAgoInWords(TimeInterface $date, array $options = []): string
+    public function dateAgoInWords(I18nDateTimeInterface $date, array $options = []): string
     {
         $options = $this->_options($options, FrozenDate::class);
         if ($options['timezone']) {

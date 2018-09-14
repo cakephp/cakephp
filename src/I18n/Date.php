@@ -23,7 +23,7 @@ use IntlDateFormatter;
  *
  * Adds handy methods and locale-aware formatting helpers
  */
-class Date extends MutableDate implements TimeInterface
+class Date extends MutableDate implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 

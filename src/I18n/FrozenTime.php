@@ -26,7 +26,7 @@ use IntlDateFormatter;
  *
  * This object provides an immutable variant of Cake\I18n\Time
  */
-class FrozenTime extends Chronos implements TimeInterface
+class FrozenTime extends Chronos implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 

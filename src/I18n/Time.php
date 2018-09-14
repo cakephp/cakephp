@@ -24,7 +24,7 @@ use IntlDateFormatter;
  * Extends the built-in DateTime class to provide handy methods and locale-aware
  * formatting helpers
  */
-class Time extends MutableDateTime implements TimeInterface
+class Time extends MutableDateTime implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 

@@ -25,7 +25,7 @@ use IntlDateFormatter;
  *
  * This object provides an immutable variant of Cake\I18n\Date
  */
-class FrozenDate extends ChronosDate implements TimeInterface
+class FrozenDate extends ChronosDate implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 

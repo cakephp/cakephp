@@ -21,7 +21,7 @@ use JsonSerializable;
 /**
  * Interface for date formatting methods shared by both Time & Date.
  */
-interface TimeInterface extends ChronosInterface, JsonSerializable
+interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
 {
     /**
      * Gets the default locale.
