@@ -211,6 +211,9 @@ class Response extends Message implements ResponseInterface
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
+            if (strpos($value, ':') === false) {
+                continue;
+            }
             list($name, $value) = explode(':', $value, 2);
             $value = trim($value);
             $name = trim($name);

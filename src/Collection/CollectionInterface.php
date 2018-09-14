@@ -559,6 +559,25 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function take(int $size = 1, int $from = 0): CollectionInterface;
 
     /**
+     * Returns the last N elements of a collection
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [1, 2, 3, 4, 5];
+     *
+     * $last = (new Collection($items))->takeLast(3);
+     *
+     * // Result will look like this when converted to array
+     * [3, 4, 5];
+     * ```
+     *
+     * @param int $howMany The number of elements at the end of the collection
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function takeLast($howMany);
+
+    /**
      * Returns a new collection that will skip the specified amount of elements
      * at the beginning of the iteration.
      *

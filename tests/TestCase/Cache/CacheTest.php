@@ -23,6 +23,7 @@ use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Error\Error;
+use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 
 /**
  * CacheTest class
@@ -856,5 +857,30 @@ class CacheTest extends TestCase
         Cache::setRegistry($registry);
 
         $this->assertSame($registry, Cache::getRegistry());
+    }
+
+    /**
+     * Test getting instances with pool
+     *
+     * @return void
+     */
+    public function testPool()
+    {
+        $this->_configCache();
+
+        $pool = Cache::pool('tests');
+        $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
+    }
+
+    /**
+     * Test getting instances with pool
+     *
+     * @return void
+     */
+    public function testPoolCacheDisabled()
+    {
+        Cache::disable();
+        $pool = Cache::pool('tests');
+        $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
     }
 }

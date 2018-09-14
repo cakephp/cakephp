@@ -215,6 +215,17 @@ class Cache
     }
 
     /**
+     * Get a SimpleCacheEngine object for the named cache pool.
+     *
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\SimpleCacheEngine
+     */
+    public static function pool($config)
+    {
+        return new SimpleCacheEngine(static::engine($config));
+    }
+
+    /**
      * Write data for key into cache.
      *
      * ### Usage:
