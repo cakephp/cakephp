@@ -941,6 +941,27 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
+     * Test adding a scope with action in the scope
+     *
+     * @return void
+     */
+    public function testScopeWithAction()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function ($routes) {
+            $routes->connect('/shared', ['shared' => true]);
+            $routes->get('/exclusive', ['exclusive' => true]);
+        });
+        $all = $this->collection->routes();
+        $this->assertCount(2, $all);
+        $this->assertSame('view', $all[0]->defaults['action']);
+        $this->assertArrayHasKey('shared', $all[0]->defaults);
+
+        $this->assertSame('view', $all[1]->defaults['action']);
+        $this->assertArrayHasKey('exclusive', $all[1]->defaults);
+    }
+
+    /**
      * Test that nested scopes inherit middleware.
      *
      * @return void

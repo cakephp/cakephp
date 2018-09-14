@@ -724,14 +724,9 @@ class RouteBuilder
     public function connect($route, $defaults = [], array $options = [])
     {
         $defaults = $this->parseDefaults($defaults);
-        if (!isset($options['action']) && !isset($defaults['action'])) {
-            $defaults['action'] = 'index';
-        }
-
         if (empty($options['_ext'])) {
             $options['_ext'] = $this->_extensions;
         }
-
         if (empty($options['routeClass'])) {
             $options['routeClass'] = $this->_routeClass;
         }
@@ -823,6 +818,9 @@ class RouteBuilder
                 }
             }
             $defaults += $this->_params + ['plugin' => null];
+            if (!isset($defaults['action']) && !isset($options['action'])) {
+                $defaults['action'] = 'index';
+            }
 
             $route = new $routeClass($route, $defaults, $options);
         }

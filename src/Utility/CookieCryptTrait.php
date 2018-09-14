@@ -128,7 +128,18 @@ trait CookieCryptTrait
         }
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
-        $value = base64_decode(substr($value, strlen($prefix)));
+        $prefixLength = strlen($prefix);
+
+        if (strncmp($value, $prefix, $prefixLength) !== 0) {
+            return '';
+        }
+
+        $value = base64_decode(substr($value, $prefixLength), true);
+
+        if ($value === false || $value === '') {
+            return '';
+        }
+
         if ($key === null) {
             $key = $this->_getCookieEncryptionKey();
         }
@@ -137,6 +148,10 @@ trait CookieCryptTrait
         }
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
+        }
+
+        if ($value === false) {
+            return '';
         }
 
         return $this->_explode($value);
