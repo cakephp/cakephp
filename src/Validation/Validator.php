@@ -2306,7 +2306,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns true if the field is empty in the passed data array
      *
-     * @param mixed $data value to check against
+     * @param mixed $data Value to check against.
      * @return bool
      * @deprecated Use isEmpty() instead
      */
@@ -2318,7 +2318,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Returns true if the field is empty in the passed data array
      *
-     * @param mixed $data value to check against
+     * @param mixed $data Value to check against.
      * @param int $flags A bitmask of EMPTY_* flags which specify what is empty
      * @return bool
      */
