@@ -144,7 +144,7 @@ trait CookieCryptTrait
             $value = Security::decrypt($value, $key);
         }
 
-        if ($value === false) {
+        if ($value === null) {
             return '';
         }
 
