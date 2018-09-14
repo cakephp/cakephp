@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Cache;
 
-use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
