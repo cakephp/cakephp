@@ -17,14 +17,13 @@ namespace Cake\I18n;
 
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
-use JsonSerializable;
 
 /**
  * Extends the Date class provided by Chronos.
  *
  * Adds handy methods and locale-aware formatting helpers
  */
-class Date extends MutableDate implements JsonSerializable
+class Date extends MutableDate implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 
@@ -131,6 +130,6 @@ class Date extends MutableDate implements JsonSerializable
      */
     public function timeAgoInWords(array $options = []): string
     {
-        return static::diffFormatter()->dateAgoInWords($this, $options);
+        return static::getDiffFormatter()->dateAgoInWords($this, $options);
     }
 }

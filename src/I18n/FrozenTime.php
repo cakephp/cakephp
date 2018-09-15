@@ -19,7 +19,6 @@ use Cake\Chronos\Chronos;
 use DateTimeInterface;
 use DateTimeZone;
 use IntlDateFormatter;
-use JsonSerializable;
 
 /**
  * Extends the built-in DateTime class to provide handy methods and locale-aware
@@ -27,7 +26,7 @@ use JsonSerializable;
  *
  * This object provides an immutable variant of Cake\I18n\Time
  */
-class FrozenTime extends Chronos implements JsonSerializable
+class FrozenTime extends Chronos implements I18nDateTimeInterface
 {
     use DateFormatTrait;
 
@@ -161,7 +160,7 @@ class FrozenTime extends Chronos implements JsonSerializable
      */
     public function timeAgoInWords(array $options = []): string
     {
-        return static::diffFormatter()->timeAgoInWords($this, $options);
+        return static::getDiffFormatter()->timeAgoInWords($this, $options);
     }
 
     /**
