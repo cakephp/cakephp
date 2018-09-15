@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -236,9 +237,9 @@ class CacheTest extends TestCase
         Cache::disable();
         $this->_configCache();
 
-        $this->assertNull(Cache::write('no_save', 'Noooo!', 'tests'));
+        $this->assertTrue(Cache::write('no_save', 'Noooo!', 'tests'));
         $this->assertFalse(Cache::read('no_save', 'tests'));
-        $this->assertNull(Cache::delete('no_save', 'tests'));
+        $this->assertTrue(Cache::delete('no_save', 'tests'));
     }
 
     /**
@@ -324,7 +325,7 @@ class CacheTest extends TestCase
      */
     public function testWriteNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
     }
 
@@ -335,7 +336,7 @@ class CacheTest extends TestCase
      */
     public function testIncrementNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
     }
 
@@ -642,8 +643,8 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('An empty value is not valid as a cache key');
+        $this->expectException(CacheInvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string');
         $this->_configCache();
         Cache::write(null, 'not null', 'tests');
     }
@@ -740,7 +741,7 @@ class CacheTest extends TestCase
 
         Cache::disable();
 
-        $this->assertNull(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
+        $this->assertTrue(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
         $this->assertFalse(Cache::read('key_2', 'test_cache_disable_1'));
 
         Cache::enable();
@@ -755,7 +756,7 @@ class CacheTest extends TestCase
             'path' => TMP . 'tests'
         ]);
 
-        $this->assertNull(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
+        $this->assertTrue(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
         $this->assertFalse(Cache::read('key_4', 'test_cache_disable_2'));
 
         Cache::enable();
@@ -764,7 +765,7 @@ class CacheTest extends TestCase
         $this->assertSame(Cache::read('key_5', 'test_cache_disable_2'), 'hello');
 
         Cache::disable();
-        $this->assertNull(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
+        $this->assertTrue(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
         $this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
 
         Cache::enable();
