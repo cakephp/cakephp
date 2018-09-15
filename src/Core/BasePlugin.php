@@ -192,7 +192,7 @@ class BasePlugin implements PluginInterface
         }
         $path = $this->getPath();
 
-        return $path . 'templates' . DIRECTORY_SEPARATOR;
+        return $this->templatePath = $path . 'templates' . DIRECTORY_SEPARATOR;
     }
 
     /**
