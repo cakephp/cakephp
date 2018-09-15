@@ -31,9 +31,9 @@ class RulesCheckerIntegrationTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.articles_tags', 'core.authors', 'core.tags',
-        'core.special_tags', 'core.categories', 'core.site_articles', 'core.site_authors',
-        'core.comments',
+        'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Tags',
+        'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
+        'core.Comments',
     ];
 
     /**

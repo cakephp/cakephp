@@ -277,7 +277,7 @@ class ViewTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.posts', 'core.users'];
+    public $fixtures = ['core.Posts', 'core.Users'];
 
     /**
      * @var \Cake\View\View

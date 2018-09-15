@@ -31,7 +31,7 @@ class SchemaCacheShellTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.tags'];
+    public $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * setup method
