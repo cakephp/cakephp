@@ -1096,7 +1096,8 @@ class ResponseTest extends TestCase
 
         $expected = '/* this is the test asset css file */';
         $this->assertEquals($expected, trim($body->getContents()));
-        $this->assertEquals($expected, trim($new->getFile()->read()));
+        $file = $new->getFile()->openFile();
+        $this->assertEquals($expected, trim($file->fread(100)));
     }
 
     /**
