@@ -18,8 +18,9 @@ namespace Cake\Shell\Task;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Task for symlinking / copying plugin assets to app's webroot.
@@ -231,16 +232,17 @@ class AssetsTask extends Shell
             }
         }
 
-        $folder = new Folder($dest);
-        if ($folder->delete()) {
+        $fs = new Filesystem();
+        try {
+            $fs->remove($dest);
             $this->out('Deleted ' . $dest);
-
-            return true;
-        } else {
+        } catch (IOException $e) {
             $this->err('Failed to delete ' . $dest);
 
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -299,16 +301,18 @@ class AssetsTask extends Shell
      */
     protected function _copyDirectory(string $source, string $destination): bool
     {
-        $folder = new Folder($source);
-        if ($folder->copy($destination)) {
-            $this->out('Copied assets to directory ' . $destination);
+        $fs = new Filesystem();
 
-            return true;
+        try {
+            $fs->mirror($source, $destination);
+            $this->out('Copied assets to directory ' . $destination);
+        } catch (IOException $e) {
+            $this->err('Error copying assets to directory ' . $destination);
+
+            return false;
         }
 
-        $this->err('Error copying assets to directory ' . $destination);
-
-        return false;
+        return true;
     }
 
     /**
