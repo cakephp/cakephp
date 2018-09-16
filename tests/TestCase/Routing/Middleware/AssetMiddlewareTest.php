@@ -16,10 +16,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Core\Plugin;
+use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
-use Zend\Diactoros\Response;
 
 /**
  * Test for AssetMiddleware
@@ -183,28 +183,6 @@ class AssetMiddlewareTest extends TestCase
         $this->assertEquals(
             gmdate('D, j M Y G:i:s ', $expires) . 'GMT',
             $res->getHeaderLine('Expires')
-        );
-    }
-
-    /**
-     * Test that content-types can be injected
-     *
-     * @return void
-     */
-    public function testCustomFileTypes()
-    {
-        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/root.js']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
-
-        $middleware = new AssetMiddleware(['types' => ['js' => 'custom/stuff']]);
-        $res = $middleware($request, $response, $next);
-
-        $this->assertEquals(
-            'custom/stuff',
-            $res->getHeaderLine('Content-Type')
         );
     }
 

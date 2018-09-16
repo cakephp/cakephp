@@ -16,11 +16,10 @@ declare(strict_types=1);
 namespace Cake\Routing\Middleware;
 
 use Cake\Core\Plugin;
+use Cake\Http\Response;
 use Cake\Utility\Inflector;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use SplFileInfo;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;
 
 /**
@@ -40,26 +39,6 @@ class AssetMiddleware
     protected $cacheTime = '+1 day';
 
     /**
-     * A extension to content type mapping for plain text types.
-     *
-     * Because finfo doesn't give useful information for plain text types,
-     * we have to handle that here.
-     *
-     * @var array
-     */
-    protected $typeMap = [
-        'css' => 'text/css',
-        'json' => 'application/json',
-        'js' => 'application/javascript',
-        'ico' => 'image/x-icon',
-        'eot' => 'application/vnd.ms-fontobject',
-        'svg' => 'image/svg+xml',
-        'html' => 'text/html',
-        'rss' => 'application/rss+xml',
-        'xml' => 'application/xml',
-    ];
-
-    /**
      * Constructor.
      *
      * @param array $options The options to use
@@ -69,20 +48,17 @@ class AssetMiddleware
         if (!empty($options['cacheTime'])) {
             $this->cacheTime = $options['cacheTime'];
         }
-        if (!empty($options['types'])) {
-            $this->typeMap = array_merge($this->typeMap, $options['types']);
-        }
     }
 
     /**
      * Serve assets if the path matches one.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
+     * @param \Cake\Http\Response $response The response.
      * @param callable $next Callback to invoke the next middleware.
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @return \Cake\Http\Response A response
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, Response $response, callable $next): Response
     {
         $url = $request->getUri()->getPath();
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
@@ -101,10 +77,12 @@ class AssetMiddleware
         $file = new SplFileInfo($assetFile);
         $modifiedTime = $file->getMTime();
         if ($this->isNotModified($request, $file)) {
-            $headers = $response->getHeaders();
-            $headers['Last-Modified'] = date(DATE_RFC850, $modifiedTime);
-
-            return new Response('php://memory', 304, $headers);
+            return $response
+                ->withStatus(304)
+                ->withHeader(
+                    'Last-Modified',
+                    date(DATE_RFC850, $modifiedTime)
+                );
         }
 
         return $this->deliverAsset($request, $response, $file);
@@ -159,13 +137,13 @@ class AssetMiddleware
      * Sends an asset file to the client
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object to use.
-     * @param \Psr\Http\Message\ResponseInterface $response The response object to use.
+     * @param \Cake\Http\Response $response The response object to use.
      * @param \SplFileInfo $file The file wrapper for the file.
-     * @return \Psr\Http\Message\ResponseInterface The response with the file & headers.
+     * @return \Cake\Http\Response The response with the file & headers.
      */
-    protected function deliverAsset(ServerRequestInterface $request, ResponseInterface $response, SplFileInfo $file): ResponseInterface
+    protected function deliverAsset(ServerRequestInterface $request, Response $response, SplFileInfo $file): Response
     {
-        $contentType = $this->getType($file);
+        $contentType = $response->getMimeType($file->getExtension()) ?: 'application/octet-stream';
         $modified = $file->getMTime();
         $expire = strtotime($this->cacheTime);
         $maxAge = $expire - time();
@@ -178,21 +156,5 @@ class AssetMiddleware
             ->withHeader('Date', gmdate('D, j M Y G:i:s \G\M\T', time()))
             ->withHeader('Last-Modified', gmdate('D, j M Y G:i:s \G\M\T', $modified))
             ->withHeader('Expires', gmdate('D, j M Y G:i:s \G\M\T', $expire));
-    }
-
-    /**
-     * Return the type from a File object
-     *
-     * @param \SplFileInfo $file The file from which you get the type
-     * @return string
-     */
-    protected function getType(SplFileInfo $file): string
-    {
-        $extension = $file->getExtension();
-        if (isset($this->typeMap[$extension])) {
-            return $this->typeMap[$extension];
-        }
-
-        return 'application/octet-stream';
     }
 }
