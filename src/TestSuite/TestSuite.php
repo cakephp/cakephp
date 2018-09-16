@@ -17,8 +17,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Filesystem\Folder;
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
+use Symfony\Component\Finder\Finder;
 
 /**
  * A class to contain test cases and run them with shared fixtures
@@ -33,13 +33,16 @@ class TestSuite extends BaseTestSuite
      */
     public function addTestDirectory(string $directory = '.'): void
     {
-        $Folder = new Folder($directory);
-        list(, $files) = $Folder->read(true, true, true);
+        $finder = new Finder();
+        $finder->files()
+            ->in($directory)
+            ->depth(0)
+            ->sortByName()
+            ->name('*.php');
 
-        foreach ($files as $file) {
-            if (substr($file, -4) === '.php') {
-                $this->addTestFile($file);
-            }
+        $shells = [];
+        foreach ($finder as $file) {
+            $this->addTestFile($file->getRealPath());
         }
     }
 
@@ -51,13 +54,15 @@ class TestSuite extends BaseTestSuite
      */
     public function addTestDirectoryRecursive(string $directory = '.'): void
     {
-        $Folder = new Folder($directory);
-        $files = $Folder->tree(null, true, 'files');
+        $finder = new Finder();
+        $finder->files()
+            ->in($directory)
+            ->sortByName()
+            ->name('*.php');
 
-        foreach ($files as $file) {
-            if (substr($file, -4) === '.php') {
-                $this->addTestFile($file);
-            }
+        $shells = [];
+        foreach ($finder as $file) {
+            $this->addTestFile($file->getRealPath());
         }
     }
 }
