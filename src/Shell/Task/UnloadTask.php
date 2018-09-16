@@ -17,7 +17,6 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Filesystem\File;
 
 /**
  * Task for unloading plugins.
@@ -99,8 +98,7 @@ class UnloadTask extends Shell
     {
         $finder = "@\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n@";
 
-        $bootstrap = new File($this->bootstrap, false);
-        $content = $bootstrap->read();
+        $content = file_get_contents($this->bootstrap);
 
         if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
             $newContent = preg_replace($finder, '', $content);
@@ -109,7 +107,7 @@ class UnloadTask extends Shell
                 return false;
             }
 
-            $bootstrap->write($newContent);
+            file_put_contents($this->bootstrap, $newContent);
 
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
