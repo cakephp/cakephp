@@ -69,7 +69,7 @@ class CsrfComponent extends Component
      */
     public function initialize(array $config)
     {
-        if ($this->getController()->request->getParam('_csrfToken') !== false) {
+        if ($this->getController()->getRequest()->getParam('_csrfToken') !== false) {
             triggerWarning('CSRF token already defined. Disable CsrfComponent if you use CsrfProtectionMiddleware.');
         }
     }
