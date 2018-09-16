@@ -19,7 +19,6 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
-use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
@@ -29,6 +28,8 @@ use Cake\Utility\Text;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
+use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -857,22 +858,17 @@ class Shell
             $this->out(sprintf('Creating file %s', $path));
         }
 
-        $File = new File($path, true);
-
+        $fs = new Filesystem();
         try {
-            if ($File->exists() && $File->writable()) {
-                $File->write($contents);
-                $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
-
-                return true;
-            }
-
+            $fs->dumpFile($path, $contents);
+            $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
+        } catch (IOException $e) {
             $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
 
             return false;
-        } finally {
-            $File->close();
         }
+
+        return true;
     }
 
     /**
