@@ -18,8 +18,8 @@ namespace Cake\Console;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem
@@ -109,22 +109,23 @@ class CommandScanner
      */
     protected function scanDir(string $path, string $namespace, string $prefix, array $hide): array
     {
-        $dir = new Folder($path);
-        $contents = $dir->read(true, true);
-        if (empty($contents[1])) {
+        if (!is_dir($path)) {
             return [];
         }
 
         $classPattern = '/(Shell|Command)$/';
+
+        $finder = new Finder();
+        $finder->files()
+            ->in($path)
+            ->depth(0)
+            ->sortByName()
+            ->name('/(Shell|Command)\.php$/');
+
         $shells = [];
-        foreach ($contents[1] as $file) {
-            if (substr($file, -4) !== '.php') {
-                continue;
-            }
-            $shell = substr($file, 0, -4);
-            if (!preg_match($classPattern, $shell)) {
-                continue;
-            }
+        foreach ($finder as $file) {
+            $fileName = $file->getFilename();
+            $shell = substr($fileName, 0, -4);
 
             $name = Inflector::underscore(preg_replace($classPattern, '', $shell));
             if (in_array($name, $hide, true)) {
@@ -132,12 +133,14 @@ class CommandScanner
             }
 
             $class = $namespace . $shell;
-            if (!is_subclass_of($class, Shell::class) && !is_subclass_of($class, Command::class)) {
+            if (!is_subclass_of($class, Shell::class)
+                && !is_subclass_of($class, Command::class)
+            ) {
                 continue;
             }
 
             $shells[] = [
-                'file' => $path . $file,
+                'file' => $path . $fileName,
                 'fullName' => $prefix . $name,
                 'name' => $name,
                 'class' => $class,
