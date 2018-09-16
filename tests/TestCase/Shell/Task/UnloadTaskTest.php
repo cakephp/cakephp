@@ -167,13 +167,12 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
      */
     public function testRegularExpressions($content)
     {
-        $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->append($content);
+        file_put_contents($this->bootstrap, $content, FILE_APPEND);
 
         $this->exec('plugin unload --no_app TestPlugin');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $result = $bootstrap->read();
+        $result = file_get_contents($this->bootstrap);
         $this->assertNotRegexp("/Plugin\:\:load\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
     }
 
@@ -207,8 +206,11 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
      */
     protected function _addPluginToBootstrap($name)
     {
-        $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->append("\n\nPlugin::load('$name', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n");
+        file_put_contents(
+            $this->bootstrap,
+            "\n\nPlugin::load('$name', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);\n",
+            FILE_APPEND
+        );
     }
 
     /**

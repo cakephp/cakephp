@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Console\Shell;
-use Cake\Filesystem\File;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
@@ -37,11 +36,8 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->bootstrapCli = ROOT . DS . 'config' . DS . 'bootstrap_cli.php';
         copy($this->bootstrap, $this->bootstrapCli);
 
-        $bootstrap = new File($this->bootstrap, false);
-        $this->originalBootstrapContent = $bootstrap->read();
-
-        $app = new File($this->app, false);
-        $this->originalAppContent = $app->read();
+        $this->originalBootstrapContent = file_get_contents($this->bootstrap);
+        $this->originalAppContent = file_get_contents($this->app);
     }
 
     /**
@@ -53,12 +49,9 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
     {
         parent::tearDown();
 
-        $bootstrap = new File($this->bootstrap, false);
-        $bootstrap->write($this->originalBootstrapContent);
+        file_put_contents($this->bootstrap, $this->originalBootstrapContent);
+        file_put_contents($this->app, $this->originalAppContent);
         unlink($this->bootstrapCli);
-
-        $app = new File($this->app, false);
-        $app->write($this->originalAppContent);
     }
 
     /**
