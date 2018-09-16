@@ -62,6 +62,19 @@ class CsrfComponent extends Component
     ];
 
     /**
+     * Warn if CsrfComponent is used together with CsrfProtectionMiddleware
+     *
+     * @param array $config The config data.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        if ($this->getController()->request->getParam('_csrfToken') !== false) {
+            triggerWarning('CSRF token already defined. Disable CsrfComponent if you use CsrfProtectionMiddleware.');
+        }
+    }
+
+    /**
      * Startup callback.
      *
      * Validates the CSRF token for POST data. If
