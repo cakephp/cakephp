@@ -21,8 +21,8 @@ use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Language string extractor
@@ -765,8 +765,14 @@ class ExtractTask extends Shell
         }
         foreach ($this->_paths as $path) {
             $path = realpath($path) . DIRECTORY_SEPARATOR;
-            $Folder = new Folder($path);
-            $files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
+
+            $finder = new Finder();
+            $finder->files()
+                ->in($path)
+                ->sortByName()
+                ->name('/\.(php|ctp)$/');
+
+            $files = array_keys(iterator_to_array($finder));
             if (!empty($pattern)) {
                 $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
                 $files = array_values($files);
