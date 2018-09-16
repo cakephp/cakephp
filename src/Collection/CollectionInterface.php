@@ -830,6 +830,16 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function compile(bool $preserveKeys = true): CollectionInterface;
 
     /**
+     * Returns a new collection where any operations chained after it are guaranteed
+     * to be run lazily. That is, elements will be yieleded one at a time.
+     *
+     * A lazy collection can only be iterated once. A second attempt results in an error.
+     *
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function lazy();
+
+    /**
      * Returns a new collection where the operations performed by this collection.
      * No matter how many times the new collection is iterated, those operations will
      * only be performed once.

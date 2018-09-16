@@ -687,6 +687,20 @@ trait CollectionTrait
 
     /**
      * {@inheritDoc}
+     */
+    public function lazy()
+    {
+        $generator = function () {
+            foreach ($this->unwrap() as $k => $v) {
+                yield $k => $v;
+            }
+        };
+
+        return new Collection($generator());
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @return \Cake\Collection\CollectionInterface
      */

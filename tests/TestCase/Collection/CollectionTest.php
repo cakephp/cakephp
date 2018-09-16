@@ -2723,4 +2723,21 @@ class CollectionTest extends TestCase
         $this->assertTrue($newIterator->checkValues());
         $this->assertCount(3, $newIterator->toArray());
     }
+
+    /**
+     * Tests that elements in a lazy collection are not fetched immediately.
+     *
+     * @return void
+     */
+    public function testLazy()
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = (new Collection($items))->lazy();
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
+        $callable->expects($this->never())->method('__invoke');
+        $collection->filter($callable)->filter($callable);
+    }
 }

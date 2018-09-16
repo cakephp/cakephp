@@ -45,11 +45,11 @@ class CounterCacheBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.counter_cache_categories',
-        'core.counter_cache_posts',
-        'core.counter_cache_comments',
-        'core.counter_cache_users',
-        'core.counter_cache_user_category_posts',
+        'core.CounterCacheCategories',
+        'core.CounterCachePosts',
+        'core.CounterCacheComments',
+        'core.CounterCacheUsers',
+        'core.CounterCacheUserCategoryPosts'
     ];
 
     /**

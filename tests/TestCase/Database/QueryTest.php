@@ -32,11 +32,11 @@ use DateTimeImmutable;
 class QueryTest extends TestCase
 {
     public $fixtures = [
-        'core.articles',
-        'core.authors',
-        'core.comments',
-        'core.profiles',
-        'core.menu_link_trees',
+        'core.Articles',
+        'core.Authors',
+        'core.Comments',
+        'core.Profiles',
+        'core.MenuLinkTrees',
     ];
 
     public $autoFixtures = false;

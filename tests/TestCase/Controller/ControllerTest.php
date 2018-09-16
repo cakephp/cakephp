@@ -201,8 +201,8 @@ class ControllerTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.comments',
-        'core.posts',
+        'core.Comments',
+        'core.Posts',
     ];
 
     /**

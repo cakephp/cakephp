@@ -107,7 +107,8 @@ class TestEmail extends Email
  */
 class EmailTest extends TestCase
 {
-    public $fixtures = ['core.users'];
+
+    public $fixtures = ['core.Users'];
 
     /**
      * @var \Cake\Test\TestCase\Mailer\TestEmail

@@ -30,7 +30,7 @@ trait ConventionsTrait
      */
     protected function _fixtureName(string $name): string
     {
-        return Inflector::underscore($name);
+        return Inflector::camelize($name);
     }
 
     /**

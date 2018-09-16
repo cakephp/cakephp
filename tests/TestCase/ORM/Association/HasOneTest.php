@@ -32,7 +32,7 @@ class HasOneTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.users', 'core.profiles'];
+    public $fixtures = ['core.Users', 'core.Profiles'];
 
     /**
      * @var bool

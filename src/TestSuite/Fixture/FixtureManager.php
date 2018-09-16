@@ -191,19 +191,43 @@ class FixtureManager
                     list($plugin, $name) = explode('.', $pathName);
                     // Flip vendored plugin separators
                     $path = str_replace('/', '\\', $plugin);
+                    $uninflected = $path;
                     $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
+                    if ($baseNamespace !== $uninflected) {
+                        deprecationWarning(sprintf(
+                            'Declaring fixtures in underscored format in TestCase::$fixtures is deprecated.' . "\n" .
+                            'Expected "%s" instead in "%s".',
+                            str_replace('\\', '/', $baseNamespace),
+                            get_class($test)
+                        ));
+                    }
                     $additionalPath = null;
                 } else {
                     $baseNamespace = '';
                     $name = $fixture;
                 }
 
+                $uninflected = $name;
                 // Tweak subdirectory names, so camelize() can make the correct name
                 if (strpos($name, '/') > 0) {
-                    $name = str_replace('/', '\\ ', $name);
+                    $name = str_replace('/', '\\', $name);
+                    $uninflected = $name;
+                    $name = str_replace('\\', '\ ', $name);
                 }
 
                 $name = Inflector::camelize($name);
+                if ($name !== $uninflected) {
+                    deprecationWarning(sprintf(
+                        'Declaring fixtures in underscored format in TestCase::$fixtures is deprecated.' . "\n" .
+                        'Found "%s.%s" in "%s". Expected "%s.%s" instead.',
+                        $type,
+                        $uninflected,
+                        get_class($test),
+                        $type,
+                        str_replace('\\', '/', $name)
+                    ));
+                }
+
                 $nameSegments = [
                     $baseNamespace,
                     'Test\Fixture',

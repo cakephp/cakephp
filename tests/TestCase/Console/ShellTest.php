@@ -53,13 +53,13 @@ class ShellTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.articles_tags',
-        'core.attachments',
-        'core.comments',
-        'core.posts',
-        'core.tags',
-        'core.users',
+        'core.Articles',
+        'core.ArticlesTags',
+        'core.Attachments',
+        'core.Comments',
+        'core.Posts',
+        'core.Tags',
+        'core.Users',
     ];
 
     /** @var \Cake\Console\Shell */

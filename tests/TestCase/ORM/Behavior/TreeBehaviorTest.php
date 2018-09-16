@@ -29,8 +29,8 @@ class TreeBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.menu_link_trees',
-        'core.number_trees',
+        'core.MenuLinkTrees',
+        'core.NumberTrees'
     ];
 
     public function setUp()

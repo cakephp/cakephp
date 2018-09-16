@@ -35,7 +35,7 @@ class BelongsToManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.special_tags', 'core.articles_tags', 'core.tags'];
+    public $fixtures = ['core.Articles', 'core.SpecialTags', 'core.ArticlesTags', 'core.Tags'];
 
     /**
      * Set up
