@@ -19,8 +19,8 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use TestApp\Shell\MergeShell;
 use TestApp\Shell\ShellTestShell;
 use TestApp\Shell\TestingDispatchShell;
@@ -85,8 +85,8 @@ class ShellTest extends TestCase
         $this->Shell = new ShellTestShell($this->io, $this->getTableLocator());
 
         if (is_dir(TMP . 'shell_test')) {
-            $Folder = new Folder(TMP . 'shell_test');
-            $Folder->delete();
+            $fs = new Filesystem();
+            $fs->remove(TMP . 'shell_test');
         }
     }
 
@@ -496,7 +496,8 @@ class ShellTest extends TestCase
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
 
-        new Folder($path, true);
+        // @codingStandardsIgnoreLine
+        @mkdir($path);
 
         $contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
 
@@ -523,7 +524,8 @@ class ShellTest extends TestCase
         touch($file);
         $this->assertFileExists($file);
 
-        new Folder($path, true);
+        // @codingStandardsIgnoreLine
+        @mkdir($path);
 
         $contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
         $this->Shell->interactive = false;
@@ -542,7 +544,8 @@ class ShellTest extends TestCase
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
 
-        new Folder($path, true);
+        // @codingStandardsIgnoreLine
+        @mkdir($path);
 
         $this->io->expects($this->once())
             ->method('askChoice')
@@ -569,7 +572,8 @@ class ShellTest extends TestCase
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
 
-        new Folder($path, true);
+        // @codingStandardsIgnoreLine
+        @mkdir($path);
 
         $this->io->expects($this->once())
             ->method('askChoice')
@@ -596,7 +600,8 @@ class ShellTest extends TestCase
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
 
-        new Folder($path, true);
+        // @codingStandardsIgnoreLine
+        @mkdir($path);
 
         touch($file);
         $this->assertFileExists($file);
@@ -625,7 +630,8 @@ class ShellTest extends TestCase
             $path . DS . 'file3.php' => 'My third content',
         ];
 
-        new Folder($path, true);
+        // @codingStandardsIgnoreLine
+        @mkdir($path);
 
         $this->io->expects($this->once())
             ->method('askChoice')
