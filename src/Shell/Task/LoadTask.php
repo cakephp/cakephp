@@ -17,7 +17,6 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Filesystem\File;
 
 /**
  * Task for loading plugins.
@@ -89,8 +88,7 @@ class LoadTask extends Shell
      */
     protected function modifyApplication(string $app, string $plugin, string $options): void
     {
-        $file = new File($app, false);
-        $contents = $file->read();
+        $contents = file_get_contents($app);
 
         $append = "\n        \$this->addPlugin('%s', [%s]);\n";
         $insert = str_replace(', []', '', sprintf($append, $plugin, $options));
@@ -100,7 +98,7 @@ class LoadTask extends Shell
         } else {
             $contents = preg_replace('/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m', '$1' . $insert, $contents);
         }
-        $file->write($contents);
+        file_put_contents($app, $contents);
 
         $this->out('');
         $this->out(sprintf('%s modified', $app));
@@ -115,12 +113,14 @@ class LoadTask extends Shell
      */
     protected function _modifyBootstrap(string $plugin, string $options): bool
     {
-        $bootstrap = new File($this->bootstrap, false);
-        $contents = $bootstrap->read();
+        $contents = file_get_contents($this->bootstrap);
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
             $append = "\nPlugin::load('%s', [%s]);\n";
 
-            $bootstrap->append(str_replace(', []', '', sprintf($append, $plugin, $options)));
+            file_put_contents(
+                $this->bootstrap,
+                str_replace(', []', '', sprintf($append, $plugin, $options))
+            );
             $this->out('');
             $this->out(sprintf('%s modified', $this->bootstrap));
 
