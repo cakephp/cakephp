@@ -21,6 +21,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\HtmlHelper;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * HtmlHelperTest class
@@ -1129,7 +1130,9 @@ class HtmlHelperTest extends TestCase
     {
         $this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
 
-        $testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
+        $testfile = WWW_ROOT . 'test_theme/js/__test_js.js';
+        // @codingStandardsIgnoreLine
+        @mkdir(WWW_ROOT . 'test_theme/js');
         touch($testfile);
 
         $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
@@ -1139,7 +1142,7 @@ class HtmlHelperTest extends TestCase
             'script' => ['src' => '/test_theme/js/__test_js.js'],
         ];
         $this->assertHtml($expected, $result);
-        unlink($testfile);
+        (new Filesystem())->remove(WWW_ROOT . 'test_theme/js');
     }
 
     /**

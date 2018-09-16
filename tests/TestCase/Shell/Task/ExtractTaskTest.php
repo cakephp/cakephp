@@ -52,7 +52,7 @@ class ExtractTaskTest extends TestCase
         $this->path = TMP . 'tests/extract_task_test';
 
         // @codingStandardsIgnoreLine
-        @mkdir($this->path . DS . 'locale');
+        @mkdir($this->path . DS . 'locale', 0777, true);
     }
 
     /**

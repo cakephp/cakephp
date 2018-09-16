@@ -334,6 +334,6 @@ class AssetsTaskTest extends TestCase
         $newfilectime = filectime($path);
         $this->assertTrue($newfilectime > $filectime);
 
-        $this->fs->remove($WWW_ROOT . 'company');
+        $this->fs->remove(WWW_ROOT . 'company');
     }
 }

@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * ConsoleIo test.
