@@ -20,8 +20,8 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
-use Cake\Filesystem\File;
 use Cake\Utility\Inflector;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -586,6 +586,8 @@ class ExtractTask extends Shell
         if (!empty($this->params['overwrite'])) {
             $overwriteAll = true;
         }
+
+        $fs = new Filesystem();
         foreach ($this->_storage as $domain => $sentences) {
             $output = $this->_writeHeader();
             foreach ($sentences as $sentence => $header) {
@@ -599,9 +601,11 @@ class ExtractTask extends Shell
             }
 
             $filename = str_replace('/', '_', $domain) . '.pot';
-            $File = new File($this->_output . $filename);
             $response = '';
-            while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
+            while ($overwriteAll === false
+                && $fs->exists($this->_output . $filename)
+                && strtoupper($response) !== 'Y'
+            ) {
                 $this->out();
                 $response = $this->in(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
@@ -612,15 +616,13 @@ class ExtractTask extends Shell
                     $response = '';
                     while (!$response) {
                         $response = $this->in('What would you like to name this file?', null, 'new_' . $filename);
-                        $File = new File($this->_output . $response);
                         $filename = $response;
                     }
                 } elseif (strtoupper($response) === 'A') {
                     $overwriteAll = true;
                 }
             }
-            $File->write($output);
-            $File->close();
+            $fs->dumpFile($this->_output . $filename, $output);
         }
     }
 
