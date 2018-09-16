@@ -18,7 +18,6 @@ namespace Cake\Mailer;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
-use Cake\Filesystem\File;
 use Cake\Http\Client\FormDataPart;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
@@ -1910,9 +1909,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _readFile($path)
     {
-        $File = new File($path);
-
-        return chunk_split(base64_encode($File->read()));
+        return chunk_split(base64_encode((string)file_get_contents($path)));
     }
 
     /**
