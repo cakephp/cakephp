@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 
