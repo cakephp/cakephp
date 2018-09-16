@@ -29,7 +29,7 @@ class AssociationProxyTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.Articles', 'core.Authors', 'core.Comments'
+        'core.Articles', 'core.Authors', 'core.Comments',
     ];
 
     /**

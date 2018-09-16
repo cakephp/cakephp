@@ -107,7 +107,6 @@ class TestEmail extends Email
  */
 class EmailTest extends TestCase
 {
-
     public $fixtures = ['core.Users'];
 
     /**

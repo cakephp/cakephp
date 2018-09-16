@@ -103,7 +103,7 @@ class MarshallerTest extends TestCase
         'core.Comments',
         'core.SpecialTags',
         'core.Tags',
-        'core.Users'
+        'core.Users',
     ];
 
     /**

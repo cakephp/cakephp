@@ -47,7 +47,7 @@ class QueryTest extends TestCase
         'core.Comments',
         'core.Datatypes',
         'core.Posts',
-        'core.Tags'
+        'core.Tags',
     ];
 
     /**

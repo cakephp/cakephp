@@ -48,7 +48,7 @@ class TranslateBehaviorTest extends TestCase
         'core.SpecialTags',
         'core.Tags',
         'core.Comments',
-        'core.Translates'
+        'core.Translates',
     ];
 
     public function tearDown()

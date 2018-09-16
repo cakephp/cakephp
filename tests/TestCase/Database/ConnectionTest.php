@@ -35,7 +35,6 @@ use ReflectionProperty;
  */
 class ConnectionTest extends TestCase
 {
-
     public $fixtures = ['core.Things'];
 
     /**

@@ -49,7 +49,7 @@ class CounterCacheBehaviorTest extends TestCase
         'core.CounterCachePosts',
         'core.CounterCacheComments',
         'core.CounterCacheUsers',
-        'core.CounterCacheUserCategoryPosts'
+        'core.CounterCacheUserCategoryPosts',
     ];
 
     /**

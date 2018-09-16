@@ -45,7 +45,7 @@ class QueryRegressionTest extends TestCase
         'core.SpecialTags',
         'core.TagsTranslations',
         'core.Translates',
-        'core.Users'
+        'core.Users',
     ];
 
     public $autoFixtures = false;

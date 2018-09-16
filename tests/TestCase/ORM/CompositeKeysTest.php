@@ -50,7 +50,7 @@ class CompositeKeyTest extends TestCase
         'core.SiteArticles',
         'core.SiteArticlesTags',
         'core.SiteAuthors',
-        'core.SiteTags'
+        'core.SiteTags',
     ];
 
     /**

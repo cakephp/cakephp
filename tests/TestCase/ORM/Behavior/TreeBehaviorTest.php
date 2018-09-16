@@ -30,7 +30,7 @@ class TreeBehaviorTest extends TestCase
      */
     public $fixtures = [
         'core.MenuLinkTrees',
-        'core.NumberTrees'
+        'core.NumberTrees',
     ];
 
     public function setUp()

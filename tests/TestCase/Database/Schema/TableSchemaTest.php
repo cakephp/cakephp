@@ -42,7 +42,7 @@ class TableTest extends TestCase
         'core.Tags',
         'core.ArticlesTags',
         'core.Orders',
-        'core.Products'
+        'core.Products',
     ];
 
     protected $_map;

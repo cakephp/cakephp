@@ -30,7 +30,7 @@ class BindingKeyTest extends TestCase
     public $fixtures = [
         'core.AuthUsers',
         'core.SiteAuthors',
-        'core.Users'
+        'core.Users',
     ];
 
     /**

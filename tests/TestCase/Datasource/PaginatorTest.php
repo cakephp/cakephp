@@ -32,7 +32,7 @@ class PaginatorTest extends TestCase
      */
     public $fixtures = [
         'core.Posts', 'core.Articles', 'core.ArticlesTags',
-        'core.Authors', 'core.AuthorsTags', 'core.Tags'
+        'core.Authors', 'core.AuthorsTags', 'core.Tags',
     ];
 
     /**
