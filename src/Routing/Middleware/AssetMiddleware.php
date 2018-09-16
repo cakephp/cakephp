@@ -78,6 +78,7 @@ class AssetMiddleware
         $modifiedTime = $file->getMTime();
         if ($this->isNotModified($request, $file)) {
             return $response
+                ->withStringBody('')
                 ->withStatus(304)
                 ->withHeader(
                     'Last-Modified',
