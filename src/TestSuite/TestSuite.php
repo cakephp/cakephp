@@ -42,7 +42,7 @@ class TestSuite extends BaseTestSuite
 
         $shells = [];
         foreach ($finder as $file) {
-            $this->addTestFile($file->getRealPath());
+            $this->addTestFile($file->getPathName());
         }
     }
 
@@ -62,7 +62,7 @@ class TestSuite extends BaseTestSuite
 
         $shells = [];
         foreach ($finder as $file) {
-            $this->addTestFile($file->getRealPath());
+            $this->addTestFile($file->getPathName());
         }
     }
 }

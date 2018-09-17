@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\TestSuite\TestCase;
-use Symfony\Component\Filesystem\Filesystem;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * TestSuiteTest
@@ -71,15 +71,14 @@ class TestSuiteTest extends TestCase
      */
     public function testAddTestDirectoryRecursiveWithHidden()
     {
-        $this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithHidden unless the tmp folder is writable.');
-
-        $path = TMP . 'MyTestFolder';
-        (new Filesystem())->remove($path);
-
-        mkdir($path . DS . '.svn', 0777, true);
-        touch($path . DS . '.svn/InHiddenFolderTest.php');
-        touch($path . DS . 'NotHiddenTest.php');
-        touch($path . DS . '.HiddenTest.php');
+        $ds = [
+            '.svn' => [
+                'InHiddenFolderTest.php' => '',
+            ],
+            'NotHiddenTest.php' => '',
+            '.HiddenTest.php' => '',
+        ];
+        $vfs = vfsStream::setup('root', 444, $ds);
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
             ->setMethods(['addTestFile'])
@@ -88,9 +87,7 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly(1))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($path);
-
-        (new Filesystem())->remove($path);
+        $suite->addTestDirectoryRecursive($vfs->url());
     }
 
     /**
@@ -100,15 +97,12 @@ class TestSuiteTest extends TestCase
      */
     public function testAddTestDirectoryRecursiveWithNonPhp()
     {
-        $this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithNonPhp unless the tmp folder is writable.');
-
-        $path = TMP . 'MyTestFolder';
-        (new Filesystem())->remove($path);
-
-        mkdir($path, 0777, true);
-        touch($path . DS . 'BackupTest.php~');
-        touch($path . DS . 'SomeNotesTest.txt');
-        touch($path . DS . 'NotHiddenTest.php');
+        $ds = [
+            'BackupTest.php~' => '',
+            'SomeNotesTest.txt' => '',
+            'NotHiddenTest.php' => '',
+        ];
+        $vfs = vfsStream::setup('root', 444, $ds);
 
         $suite = $this->getMockBuilder('Cake\TestSuite\TestSuite')
             ->setMethods(['addTestFile'])
@@ -117,8 +111,6 @@ class TestSuiteTest extends TestCase
             ->expects($this->exactly(1))
             ->method('addTestFile');
 
-        $suite->addTestDirectoryRecursive($path);
-
-        (new Filesystem())->remove($path);
+        $suite->addTestDirectoryRecursive($vfs->url());
     }
 }
