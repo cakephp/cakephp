@@ -105,7 +105,7 @@ class TestSuiteTest extends TestCase
         $path = TMP . 'MyTestFolder';
         (new Filesystem())->remove($path);
 
-        mkdir($path);
+        mkdir($path, 0777, true);
         touch($path . DS . 'BackupTest.php~');
         touch($path . DS . 'SomeNotesTest.txt');
         touch($path . DS . 'NotHiddenTest.php');
