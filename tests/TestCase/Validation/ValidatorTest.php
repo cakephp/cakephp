@@ -574,7 +574,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testAllowEmptyDateTime()
+    public function testAllowEmptyWithDateTimeFields()
     {
         $validator = new Validator();
         $validator->allowEmpty('created')
@@ -620,7 +620,7 @@ class ValidatorTest extends TestCase
      *
      * @return void
      */
-    public function testAllowEmptyFileFields()
+    public function testAllowEmptyWithFileFields()
     {
         $validator = new Validator();
         $validator->allowEmpty('picture')
@@ -704,6 +704,377 @@ class ValidatorTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $validator = new Validator();
         $validator->allowEmpty(['title' => 'derp', 'created' => false]);
+    }
+
+    /**
+     * Tests the allowEmptyString method
+     *
+     * @return void
+     */
+    public function testAllowEmptyString()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyString('title')
+            ->scalar('title');
+
+        $this->assertTrue($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $data = [
+            'title' => '',
+        ];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = [
+            'title' => null,
+        ];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = [
+            'title' => [],
+        ];
+        $this->assertNotEmpty($validator->errors($data));
+
+        $validator = new Validator();
+        $validator->allowEmptyString('title', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $data = [
+            'title' => null,
+        ];
+        $expected = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the allowEmptyArray method
+     *
+     * @return void
+     */
+    public function testAllowEmptyArray()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyArray('items')
+            ->hasAtMost('items', 3);
+
+        $this->assertTrue($validator->field('items')->isEmptyAllowed());
+
+        $data = [
+            'items' => '',
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'items' => null,
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'items' => [],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'items' => [1, 2, 3, 4, 5],
+        ];
+        $expected = [
+            'items' => [
+                'hasAtMost' => 'The provided value is invalid',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($expected, $result);
+
+        $validator = new Validator();
+        $validator->allowEmptyArray('items', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('items', true));
+        $this->assertTrue($validator->isEmptyAllowed('items', false));
+
+        $data = [
+            'items' => null,
+        ];
+        $expected = [
+            'items' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the allowEmptyFile method
+     *
+     * @return void
+     */
+    public function testAllowEmptyFile()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyFile('photo')
+            ->uploadedFile('photo', []);
+
+        $this->assertTrue($validator->field('photo')->isEmptyAllowed());
+
+        $data = [
+            'photo' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_NO_FILE,
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'photo' => null,
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'photo' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_FORM_SIZE,
+            ]
+        ];
+        $expected = [
+            'photo' => [
+                'uploadedFile' => 'The provided value is invalid'
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($expected, $result);
+
+        $data = [
+            'photo' => '',
+        ];
+        $expected = [
+            'photo' => [
+                'uploadedFile' => 'The provided value is invalid'
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($expected, $result);
+
+        $data = [
+            'photo' => [],
+        ];
+        $result = $validator->errors($data);
+        $expected = [
+            'photo' => [
+                'uploadedFile' => 'The provided value is invalid'
+            ]
+        ];
+        $this->assertSame($expected, $result);
+        $this->assertNotEmpty($result);
+
+        $validator = new Validator();
+        $validator->allowEmptyArray('photo', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('photo', true));
+        $this->assertTrue($validator->isEmptyAllowed('photo', false));
+
+        $data = [
+            'photo' => null,
+        ];
+        $expected = [
+            'photo' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the allowEmptyDate method
+     *
+     * @return void
+     */
+    public function testAllowEmptyDate()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyDate('date')
+            ->date('date');
+
+        $this->assertTrue($validator->field('date')->isEmptyAllowed());
+
+        $data = [
+            'date' => [
+                'year' => '',
+                'month' => '',
+                'day' => ''
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'date' => '',
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'date' => null,
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'date' => [],
+        ];
+        $expected = [
+            'date' => [
+                'date' => 'The provided value is invalid'
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($expected, $result);
+
+        $validator = new Validator();
+        $validator->allowEmptyArray('date', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('date', true));
+        $this->assertTrue($validator->isEmptyAllowed('date', false));
+
+        $data = [
+            'date' => null,
+        ];
+        $expected = [
+            'date' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the allowEmptyDate method
+     *
+     * @return void
+     */
+    public function testAllowEmptyTime()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyTime('time')
+            ->time('time');
+
+        $this->assertTrue($validator->field('time')->isEmptyAllowed());
+
+        $data = [
+            'time' => [
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'time' => '',
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'time' => null,
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'time' => [],
+        ];
+        $expected = [
+            'time' => [
+                'time' => 'The provided value is invalid'
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($expected, $result);
+
+        $validator = new Validator();
+        $validator->allowEmptyArray('time', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('time', true));
+        $this->assertTrue($validator->isEmptyAllowed('time', false));
+
+        $data = [
+            'time' => null,
+        ];
+        $expected = [
+            'time' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the allowEmptyDate method
+     *
+     * @return void
+     */
+    public function testAllowEmptyDateTime()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyDate('published')
+            ->dateTime('published');
+
+        $this->assertTrue($validator->field('published')->isEmptyAllowed());
+
+        $data = [
+            'published' => [
+                'year' => '',
+                'month' => '',
+                'day' => '',
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'published' => '',
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'published' => null,
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'published' => [],
+        ];
+        $expected = [
+            'published' => [
+                'dateTime' => 'The provided value is invalid'
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($expected, $result);
+
+        $validator = new Validator();
+        $validator->allowEmptyArray('published', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('published', true));
+        $this->assertTrue($validator->isEmptyAllowed('published', false));
+
+        $data = [
+            'published' => null,
+        ];
+        $expected = [
+            'published' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
     }
 
     /**
@@ -1323,6 +1694,7 @@ class ValidatorTest extends TestCase
             ],
             '_presenceMessages' => [],
             '_allowEmptyMessages' => [],
+            '_allowEmptyFlags' => [],
             '_useI18n' => true,
         ];
         $this->assertEquals($expected, $result);
