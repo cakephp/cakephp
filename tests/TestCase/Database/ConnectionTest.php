@@ -468,7 +468,7 @@ class ConnectionTest extends TestCase
         $title = 'changed the title!';
         $body = new \DateTime('2012-01-01');
         $values = compact('title', 'body');
-        $this->connection->update('things', $values, ['id' => '1-string-parsed-as-int'], ['body' => 'date', 'id' => 'integer']);
+        $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $this->assertCount(1, $result);
         $row = $result->fetch('assoc');
@@ -495,17 +495,17 @@ class ConnectionTest extends TestCase
      */
     public function testDeleteWithConditions()
     {
-        $this->connection->delete('things', ['id' => '1-rest-is-omitted'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '1'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '1-rest-is-omitted'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '1'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(1, $result);
         $result->closeCursor();
 
-        $this->connection->delete('things', ['id' => '2-rest-is-omitted'], ['id' => 'integer']);
+        $this->connection->delete('things', ['id' => '2'], ['id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things');
         $this->assertCount(0, $result);
         $result->closeCursor();
