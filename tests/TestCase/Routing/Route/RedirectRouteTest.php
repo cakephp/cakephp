@@ -236,4 +236,17 @@ class RedirectRouteTest extends TestCase
         $route = new RedirectRoute('/:lang/my_controllers', ['controller' => 'tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route->parse('/nl/my_controllers/');
     }
+
+    /**
+     * Test setting HTTP status
+     *
+     * @return void
+     */
+    public function testSetStatus()
+    {
+        $route = new RedirectRoute('/home', ['controller' => 'posts']);
+        $result = $route->setStatus(302);
+        $this->assertSame($result, $route, 'Should return this');
+        $this->assertEquals(302, $route->options['status']);
+    }
 }
