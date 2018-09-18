@@ -337,7 +337,7 @@ class Cache
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ));
             }
         }

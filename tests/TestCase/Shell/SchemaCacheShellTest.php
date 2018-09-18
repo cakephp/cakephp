@@ -105,6 +105,9 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testBuildNoArgs()
     {
+        $this->cache->expects($this->any())
+            ->method('write')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->at(3))
             ->method('write')
             ->with('test_articles');
@@ -122,7 +125,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('delete');
 
@@ -139,7 +143,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('read');
         $this->cache->expects($this->never())
@@ -182,7 +187,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->cache->expects($this->at(3))
             ->method('delete')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
 
         $this->shell->params['connection'] = 'test';
         $this->shell->clear();
