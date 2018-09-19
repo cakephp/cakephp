@@ -346,7 +346,7 @@ object(Cake\View\View) {
 	[protected] layoutPath => null
 	[protected] autoLayout => true
 	[protected] viewVars => []
-	[protected] _ext => '.ctp'
+	[protected] _ext => '.php'
 	[protected] subDir => ''
 	[protected] theme => null
 	[protected] request => object(Cake\Http\ServerRequest) {}

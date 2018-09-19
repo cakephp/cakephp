@@ -164,7 +164,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $_ext = '.ctp';
+    protected $_ext = '.php';
 
     /**
      * Sub-directory for this template file. This is often used for extension based routing.
@@ -296,7 +296,7 @@ class View implements EventDispatcherInterface
     public const TYPE_LAYOUT = 'layout';
 
     /**
-     * Constant for template folder  'Template'
+     * Constant for type used for App::path().
      *
      * @var string
      */
@@ -1436,7 +1436,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
+            [dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {

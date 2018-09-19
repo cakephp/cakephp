@@ -143,6 +143,24 @@ class PluginTest extends TestCase
     }
 
     /**
+     * Tests that Plugin::templatePath() returns the correct path for the loaded plugins
+     *
+     * @return void
+     */
+    public function testTemplatePath()
+    {
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS;
+        $this->assertPathEquals(Plugin::templatePath('TestPlugin'), $expected);
+
+        $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'templates' . DS;
+        $this->assertPathEquals(Plugin::templatePath('TestPluginTwo'), $expected);
+
+        $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'templates' . DS;
+        $this->assertPathEquals(Plugin::templatePath('Company/TestPluginThree'), $expected);
+    }
+
+    /**
      * Tests that Plugin::classPath() throws an exception on unknown plugin
      *
      * @return void

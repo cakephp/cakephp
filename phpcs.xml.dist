@@ -8,6 +8,8 @@
         <exclude name="CakePHP.Formatting.UseInAlphabeticalOrder.UseInAlphabeticalOrder" />
     </rule>
 
+    <exclude-pattern>tests/*/templates/*</exclude-pattern>
+
     <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma" />
     <rule ref="SlevomatCodingStandard.Classes.UnusedPrivateElements" />
     <rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility">
@@ -38,7 +40,6 @@
             <property name="newlinesCountBetweenOpenTagAndDeclare" value="1" />
         </properties>
         <exclude-pattern>*/config/*</exclude-pattern>
-        <exclude-pattern>*/Templates/*</exclude-pattern>
         <exclude-pattern>*/tests/Fixture/*</exclude-pattern>
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints" />
