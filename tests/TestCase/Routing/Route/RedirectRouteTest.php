@@ -246,7 +246,7 @@ class RedirectRouteTest extends TestCase
     {
         $route = new RedirectRoute('/home', ['controller' => 'posts']);
         $result = $route->setStatus(302);
-        $this->assertSame($result, $route, 'Should return this');
+        $this->assertSame($result, $route);
         $this->assertEquals(302, $route->options['status']);
     }
 }
