@@ -70,7 +70,8 @@ class CsrfComponent extends Component
     public function initialize(array $config)
     {
         if ($this->getController()->getRequest()->getParam('_csrfToken') !== false) {
-            deprecationWarning('CSRF token already defined. Disable CsrfComponent if you use CsrfProtectionMiddleware.');
+            deprecationWarning('Loading CsrfComponent while CsrfProtectionMiddleware is active ' .
+                'will corrupt CSRF data and form submitting will fail.');
         }
     }
 
