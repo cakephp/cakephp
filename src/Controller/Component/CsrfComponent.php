@@ -63,6 +63,20 @@ class CsrfComponent extends Component
     ];
 
     /**
+     * Warn if CsrfComponent is used together with CsrfProtectionMiddleware
+     *
+     * @param array $config The config data.
+     * @return void
+     */
+    public function initialize(array $config)
+    {
+        if ($this->getController()->getRequest()->getParam('_csrfToken') !== false) {
+            deprecationWarning('Loading CsrfComponent while CsrfProtectionMiddleware is active ' .
+                'will corrupt CSRF data and form submitting will fail.');
+        }
+    }
+
+    /**
      * Startup callback.
      *
      * Validates the CSRF token for POST data. If
