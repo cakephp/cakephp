@@ -108,4 +108,17 @@ class RedirectRoute extends Route
     {
         return false;
     }
+
+    /**
+     * Sets the HTTP status
+     *
+     * @param int $status The status code for this route
+     * @return $this
+     */
+    public function setStatus($status)
+    {
+        $this->options['status'] = $status;
+
+        return $this;
+    }
 }

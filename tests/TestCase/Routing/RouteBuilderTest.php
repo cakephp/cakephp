@@ -428,6 +428,10 @@ class RouteBuilderTest extends TestCase
 
         $this->assertInstanceOf(RedirectRoute::class, $route);
         $this->assertEquals('/forums', $route->redirect[0]);
+
+        $route = $routes->redirect('/old', '/forums');
+        $this->assertInstanceOf(RedirectRoute::class, $route);
+        $this->assertSame($route, $this->collection->routes()[2]);
     }
 
     /**
