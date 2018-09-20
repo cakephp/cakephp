@@ -53,7 +53,7 @@ use RuntimeException;
  *
  * in your Controller to use plugin `SuperHot` as a theme. Eg. If current action
  * is PostsController::index() then View class will look for template file
- * `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
+ * `plugins/SuperHot/templates/Posts/index.php`. If a theme template
  * is not found for the current action the default app template file is used.
  *
  * @property \Cake\View\Helper\BreadcrumbsHelper $Breadcrumbs
@@ -122,7 +122,7 @@ class View implements EventDispatcherInterface
 
     /**
      * The name of the template file to render. The name specified
-     * is the filename in /src/Template/<SubFolder> without the .ctp extension.
+     * is the filename in /templates/<SubFolder> without the .php extension.
      *
      * @var string
      */
@@ -130,7 +130,7 @@ class View implements EventDispatcherInterface
 
     /**
      * The name of the layout file to render the template inside of. The name specified
-     * is the filename of the layout in /src/Template/Layout without the .ctp
+     * is the filename of the layout in /templates/Layout without the .php
      * extension.
      *
      * @var string|false
@@ -160,7 +160,7 @@ class View implements EventDispatcherInterface
     protected $viewVars = [];
 
     /**
-     * File extension. Defaults to CakePHP's template ".ctp".
+     * File extension. Defaults to ".php".
      *
      * @var string
      */
@@ -508,7 +508,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Get the name of the template file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     * filename in /templates/<SubFolder> without the .php extension.
      *
      * @return string
      */
@@ -519,7 +519,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Set the name of the template file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     * filename in /templates/<SubFolder> without the .php extension.
      *
      * @param string|false $name Template file name to set.
      * @return $this
@@ -533,8 +533,8 @@ class View implements EventDispatcherInterface
 
     /**
      * Get the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
+     * The name specified is the filename of the layout in /templates/Layout
+     * without the .php extension.
      *
      * @return string|false
      */
@@ -545,8 +545,8 @@ class View implements EventDispatcherInterface
 
     /**
      * Set the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
+     * The name specified is the filename of the layout in /templates/Layout
+     * without the .php extension.
      *
      * @param string|bool $name Layout file name to set.
      * @return $this
@@ -564,7 +564,7 @@ class View implements EventDispatcherInterface
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
      * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
      *
-     * @param string $name Name of template file in the /src/Template/Element/ folder,
+     * @param string $name Name of template file in the /templates/Element/ folder,
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
@@ -644,7 +644,7 @@ class View implements EventDispatcherInterface
     /**
      * Checks if an element exists
      *
-     * @param string $name Name of template file in the /src/Template/Element/ folder,
+     * @param string $name Name of template file in the /templates/Element/ folder,
      *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @return bool Success
@@ -1193,10 +1193,10 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Returns filename of given action's template file (.ctp) as a string.
+     * Returns filename of given action's template file as a string.
      * CamelCased action names will be under_scored by default.
      * This means that you can have LongActionNames that refer to
-     * long_action_names.ctp views. You can change the inflection rule by
+     * long_action_names.php templates. You can change the inflection rule by
      * overriding _inflectViewFileName.
      *
      * @param string|null $name Controller action to find template filename for
@@ -1311,7 +1311,7 @@ class View implements EventDispatcherInterface
      * Returns layout filename for this template as a string.
      *
      * @param string|null $name The name of the layout to find.
-     * @return string Filename for layout file (.ctp).
+     * @return string Filename for layout file.
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
      */
     protected function _getLayoutFileName(?string $name = null): string

@@ -7,13 +7,13 @@ The Folder and File utilities are convenience classes to help you read from and 
 
 ## Basic Usage
 
-Create a folder instance and search for all the `.ctp` files within it:
+Create a folder instance and search for all the `.php` files within it:
 
 ```php
 use Cake\Filesystem\Folder;
 
 $dir = new Folder('/path/to/folder');
-$files = $dir->find('.*\.ctp');
+$files = $dir->find('.*\.php');
 ```
 
 Now you can loop through the files and read from or write/append to the contents or simply delete the file:
