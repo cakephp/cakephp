@@ -284,19 +284,19 @@ class Cache
      */
     public static function write($key, $value, $config = 'default')
     {
-        $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        $success = $engine->write($key, $value);
+        $backend = static::pool($config);
+        $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ),
                 E_USER_WARNING
             );
@@ -329,15 +329,15 @@ class Cache
      */
     public static function writeMany($data, $config = 'default')
     {
-        $engine = static::engine($config);
-        $return = $engine->writeMany($data);
+        $backend = static::pool($config);
+        $return = $backend->setMultiple($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
                 throw new RuntimeException(sprintf(
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ));
             }
         }
@@ -368,6 +368,7 @@ class Cache
      */
     public static function read($key, $config = 'default')
     {
+        // TODO In 4.x this needs to change to use pool()
         $engine = static::engine($config);
 
         return $engine->read($key);
@@ -397,6 +398,7 @@ class Cache
      */
     public static function readMany($keys, $config = 'default')
     {
+        // In 4.x this needs to change to use pool()
         $engine = static::engine($config);
 
         return $engine->readMany($keys);
@@ -463,9 +465,9 @@ class Cache
      */
     public static function delete($key, $config = 'default')
     {
-        $engine = static::engine($config);
+        $backend = static::pool($config);
 
-        return $engine->delete($key);
+        return $backend->delete($key);
     }
 
     /**
@@ -492,9 +494,9 @@ class Cache
      */
     public static function deleteMany($keys, $config = 'default')
     {
-        $engine = static::engine($config);
+        $backend = static::pool($config);
 
-        return $engine->deleteMany($keys);
+        return $backend->deleteMultiple($keys);
     }
 
     /**
