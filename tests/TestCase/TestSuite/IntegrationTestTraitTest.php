@@ -609,7 +609,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testArrayUrls()
     {
-        $this->post(['controller' => 'Posts', 'action' => 'index']);
+        $this->post(['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
         $this->assertEquals('value', $this->viewVariable('test'));
     }
 
@@ -932,10 +932,10 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     public function testAssertRedirect()
     {
         $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/get/tasks/index');
 
         $this->assertRedirect();
-        $this->assertRedirect('/tasks/index');
+        $this->assertRedirect('/get/tasks/index');
         $this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
 
         $this->assertResponseEmpty();
