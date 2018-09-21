@@ -384,8 +384,8 @@ class Hash {
  * following the path specified in `$groupPath`.
  *
  * @param array $data Array from where to extract keys and values
- * @param string $keyPath A dot-separated string.
- * @param string $valuePath A dot-separated string.
+ * @param array|string $keyPath A dot-separated string or array for formatting rules.
+ * @param array|string $valuePath A dot-separated string or array for formatting rules.
  * @param string $groupPath A dot-separated string.
  * @return array Combined array
  * @link https://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::combine
