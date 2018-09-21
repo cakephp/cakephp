@@ -18,6 +18,7 @@ use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
+use Composer\CaBundle\CaBundle;
 
 /**
  * HTTP curl adapter test.
@@ -30,7 +31,7 @@ class CurlTest extends TestCase
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
 
         $this->curl = new Curl();
-        $this->caFile = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+        $this->caFile = CaBundle::getBundledCaBundlePath();
     }
 
     /**

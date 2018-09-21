@@ -18,6 +18,7 @@ namespace Cake\Network;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
+use Composer\CaBundle\CaBundle;
 use Exception;
 use InvalidArgumentException;
 
@@ -207,9 +208,7 @@ class Socket
             $this->_config['context']['ssl']['peer_name'] = $host;
         }
         if (empty($this->_config['context']['ssl']['cafile'])) {
-            $dir = dirname(dirname(__DIR__));
-            $this->_config['context']['ssl']['cafile'] = $dir . DIRECTORY_SEPARATOR .
-                'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+            $this->_config['context']['ssl']['cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($this->_config['context']['ssl']['verify_host'])) {
             $this->_config['context']['ssl']['CN_match'] = $host;
