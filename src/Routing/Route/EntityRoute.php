@@ -41,13 +41,15 @@ class EntityRoute extends Route
      */
     public function match(array $url, array $context = [])
     {
+        if (empty($this->_compiledRoute)) {
+            $this->compile();
+        }
+
         if (isset($url['_entity'])) {
             $entity = $url['_entity'];
             $this->_checkEntity($entity);
 
-            preg_match_all('@:(\w+)@', $this->template, $matches);
-
-            foreach ($matches[1] as $field) {
+            foreach ($this->keys as $field) {
                 if (!isset($url[$field]) && isset($entity[$field])) {
                     $url[$field] = $entity[$field];
                 }
