@@ -329,15 +329,16 @@ class Cache
      */
     public static function writeMany($data, $config = 'default')
     {
-        $backend = static::pool($config);
-        $return = $backend->setMultiple($data);
+        $engine = static::engine($config);
+
+        $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
                 throw new RuntimeException(sprintf(
                     '%s cache was unable to write \'%s\' to %s cache',
                     $config,
                     $key,
-                    get_class($backend)
+                    get_class($engine)
                 ));
             }
         }
