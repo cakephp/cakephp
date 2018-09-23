@@ -78,15 +78,9 @@
         <PossiblyNullPropertyAssignmentValue errorLevel="info" />
         <PossiblyNullPropertyFetch errorLevel="info" />
         <PossiblyNullReference errorLevel="info" />
-        <PossiblyUndefinedGlobalVariable errorLevel="info" />
-        <PossiblyUndefinedVariable errorLevel="info" />
-        <PossiblyUndefinedArrayOffset errorLevel="info" />
-        <PossiblyUndefinedMethod errorLevel="info" />
 
         <!-- level 5 issues - should be avoided at mosts costs... -->
 
-        <ForbiddenCode errorLevel="info" />
-        <ImplicitToStringCast errorLevel="info" />
         <InvalidScalarArgument errorLevel="info" />
         <InvalidToString errorLevel="info" />
         <InvalidOperand errorLevel="info" />
@@ -111,6 +105,19 @@
         <InvalidPropertyAssignmentValue errorLevel="info" />
 
         <!-- CakePHP Specific -->
+        <PossiblyUndefinedArrayOffset>
+            <errorLevel type="suppress">
+                <file name="src/I18n/Parser/PoFileParser.php" />
+            </errorLevel>
+        </PossiblyUndefinedArrayOffset>
+
+        <ImplicitToStringCast>
+            <errorLevel type="suppress">
+                <file name="src/Http/Client/FormData.php" />
+                <file name="src/View/Cell.php" />
+            </errorLevel>
+        </ImplicitToStringCast>
+
         <UndefinedConstant errorLevel="suppress" />
 
         <UndefinedPropertyAssignment>
