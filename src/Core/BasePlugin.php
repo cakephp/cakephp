@@ -78,6 +78,13 @@ class BasePlugin implements PluginInterface
     protected $configPath;
 
     /**
+     * The templates path for this plugin.
+     *
+     * @var string
+     */
+    protected $templatePath;
+
+    /**
      * The name of this plugin
      *
      * @var string
@@ -96,7 +103,7 @@ class BasePlugin implements PluginInterface
                 $this->{"{$key}Enabled"} = (bool)$options[$key];
             }
         }
-        foreach (['name', 'path', 'classPath', 'configPath'] as $path) {
+        foreach (['name', 'path', 'classPath', 'configPath', 'templatePath'] as $path) {
             if (isset($options[$path])) {
                 $this->{$path} = $options[$path];
             }
@@ -173,6 +180,19 @@ class BasePlugin implements PluginInterface
         $path = $this->getPath();
 
         return $path . 'src' . DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTemplatePath(): string
+    {
+        if ($this->templatePath) {
+            return $this->templatePath;
+        }
+        $path = $this->getPath();
+
+        return $this->templatePath = $path . 'templates' . DIRECTORY_SEPARATOR;
     }
 
     /**

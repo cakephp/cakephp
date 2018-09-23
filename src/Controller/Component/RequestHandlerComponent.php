@@ -229,9 +229,9 @@ class RequestHandlerComponent extends Component
      * - If Router::extensions() is enabled, the layout and template type are
      *   switched based on the parsed extension or `Accept` header. For example,
      *   if `controller/action.xml` is requested, the view path becomes
-     *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
+     *   `templates/Controller/xml/action.php`. Also if `controller/action` is
      *   requested with `Accept: application/xml` in the headers the view
-     *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
+     *   path will become `templates/Controller/xml/action.php`. Layout and template
      *   types will only switch to mime-types recognized by Cake\Http\Response.
      *   If you need to declare additional mime-types, you can do so using
      *   Cake\Http\Response::type() in your controller's beforeFilter() method.

@@ -81,6 +81,20 @@ class Plugin
     }
 
     /**
+     * Returns the filesystem path for plugin's folder containing template files.
+     *
+     * @param string $name name of the plugin in CamelCase format.
+     * @return string Path to the plugin folder container config files.
+     * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
+     */
+    public static function templatePath(string $name): string
+    {
+        $plugin = static::getCollection()->get($name);
+
+        return $plugin->getTemplatePath();
+    }
+
+    /**
      * Returns true if the plugin $plugin is already loaded.
      *
      * @param string $plugin Plugin name.
