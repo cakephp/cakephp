@@ -91,7 +91,6 @@
         <InvalidToString errorLevel="info" />
         <InvalidOperand errorLevel="info" />
         <NoInterfaceProperties errorLevel="info" />
-        <TooManyArguments errorLevel="info" />
         <TypeDoesNotContainType errorLevel="info" />
         <TypeDoesNotContainNull errorLevel="info" />
         <ImplementedReturnTypeMismatch errorLevel="info" />
