@@ -21,6 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Event\Event;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Exception\XmlException;
@@ -332,8 +333,11 @@ class RequestHandlerComponent extends Component
             !in_array($this->ext, ['html', 'htm']) &&
             $response->getMimeType($this->ext)
         );
+        if ($this->ext && !$isRecognized) {
+            throw new NotFoundException('Invoked extension not recognized: ' . $this->ext);
+        }
 
-        if ($this->ext && $isRecognized) {
+        if ($this->ext) {
             $this->renderAs($controller, $this->ext);
             $response = $controller->response;
         } else {
@@ -594,6 +598,9 @@ class RequestHandlerComponent extends Component
         $viewClass = null;
         if ($builder->getClassName() === null) {
             $viewClass = App::className($view, 'View', 'View');
+            if ($viewClass === false) {
+                throw new RuntimeException('Configured view class can not be found: ' . $view);
+            }
         }
 
         if ($viewClass) {

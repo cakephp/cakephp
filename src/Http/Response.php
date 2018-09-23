@@ -1111,7 +1111,7 @@ class Response implements ResponseInterface
     {
         deprecationWarning(
             'Response::type() is deprecated. ' .
-            'Use getType() or withType() instead.'
+            'Use getType(), setType() or withType() instead.'
         );
 
         if ($contentType === null) {
@@ -1135,6 +1135,22 @@ class Response implements ResponseInterface
         $this->_setContentType();
 
         return $contentType;
+    }
+
+    /**
+     * Sets a content type into the map.
+     *
+     * E.g.: setType('xhtml' => ['application/xhtml+xml', 'application/xhtml', 'text/xhtml'])
+     *
+     * This is needed for RequestHandlerComponent and recognition of types.
+     *
+     * @param string $type
+     * @param string|array $definition
+     * @return void
+     */
+    public function setType($type, $definition)
+    {
+        $this->_mimeTypes[$type] = $definition;
     }
 
     /**
