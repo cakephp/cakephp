@@ -142,8 +142,10 @@
 
         <InvalidArrayOffset>
             <errorLevel type="suppress">
+                <file name="src/Core/StaticConfigTrait.php" />
                 <file name="src/I18n/Parser/MoFileParser.php" />
                 <file name="src/I18n/Parser/PoFileParser.php" />
+                <file name="src/Routing/Middleware/AssetMiddleware.php"/>
                 <file name="src/View/Widget/RadioWidget.php" />
             </errorLevel>
         </InvalidArrayOffset>
