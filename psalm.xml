@@ -94,22 +94,18 @@
         <TooManyArguments errorLevel="info" />
         <TypeDoesNotContainType errorLevel="info" />
         <TypeDoesNotContainNull errorLevel="info" />
-        <MissingDocblockType errorLevel="info" />
         <ImplementedReturnTypeMismatch errorLevel="info" />
 
         <!-- level 6 issues - really bad things -->
 
         <InvalidNullableReturnType errorLevel="info" />
         <NullableReturnStatement errorLevel="info" />
-        <InvalidFalsableReturnType errorLevel="info" />
-        <FalsableReturnStatement errorLevel="info" />
 
         <MoreSpecificImplementedParamType errorLevel="info" />
         <LessSpecificImplementedReturnType errorLevel="info" />
 
         <InvalidReturnStatement errorLevel="info" />
         <InvalidReturnType errorLevel="info" />
-        <UndefinedThisPropertyAssignment errorLevel="info" />
 
         <!-- level 7 issues - even worse -->
         <InvalidArgument errorLevel="info" />

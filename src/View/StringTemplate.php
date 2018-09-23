@@ -222,9 +222,10 @@ class StringTemplate
      *
      * @param string $name The template name.
      * @param array $data The data to insert.
-     * @return string|null Formatted string or null if template not found.
+     * @return string Formatted string
+     * @throws \RuntimeException If template not found.
      */
-    public function format(string $name, array $data): ?string
+    public function format(string $name, array $data): string
     {
         if (!isset($this->_compiled[$name])) {
             throw new RuntimeException("Cannot find template named '$name'.");
