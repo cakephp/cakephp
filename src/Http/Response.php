@@ -1144,8 +1144,8 @@ class Response implements ResponseInterface
      *
      * This is needed for RequestHandlerComponent and recognition of types.
      *
-     * @param string $type
-     * @param string|array $definition
+     * @param string $type Content type.
+     * @param string|array $definition Definition of the content type.
      * @return void
      */
     public function setType($type, $definition)
