@@ -23,6 +23,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use SplFileObject;
+use Symfony\Component\Finder\Finder;
 
 /**
  * File Storage engine for cache. Filestorage is the slowest cache storage
@@ -457,24 +458,20 @@ class FileEngine extends CacheEngine
     public function clearGroup(string $group): bool
     {
         $this->_File = null;
-        $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
-        $contents = new RecursiveIteratorIterator(
-            $directoryIterator,
-            RecursiveIteratorIterator::CHILD_FIRST
-        );
-        foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathname(), DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR) !== false;
-            $hasPrefix = true;
-            if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
-            }
-            if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathname();
-                $object = null;
-                //@codingStandardsIgnoreStart
-                @unlink($path);
-                //@codingStandardsIgnoreEnd
-            }
+
+        $finder = new Finder();
+        $finder
+            ->files()
+            ->in($this->_config['path'])
+            ->path($group);
+
+        if (strlen($this->_config['prefix']) !== 0) {
+            $finder->name('/' . $this->_config['prefix'] . '/');
+        }
+
+        foreach ($finder as $file) {
+            // @codingStandardsIgnoreLine
+            @unlink($file->getPathname());
         }
 
         return true;
