@@ -15,6 +15,7 @@
 
 namespace Cake\Cache;
 
+use Cake\Cache\CacheEngineInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -24,7 +25,7 @@ use Psr\SimpleCache\CacheInterface;
  * @since 3.7.0
  * @link https://www.php-fig.org/psr/psr-16/
  */
-class SimpleCacheEngine implements CacheInterface
+class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
 {
     /**
      * The wrapped cache engine object.
@@ -38,7 +39,7 @@ class SimpleCacheEngine implements CacheInterface
      *
      * @param \Cake\Cache\CacheEngine $innerEngine The decorated engine.
      */
-    public function __construct($innerEngine)
+    public function __construct(CacheEngine $innerEngine)
     {
         $this->innerEngine = $innerEngine;
     }
@@ -236,5 +237,29 @@ class SimpleCacheEngine implements CacheInterface
     public function has($key)
     {
         return $this->get($key) !== null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function increment($key, $offset = 1)
+    {
+        return $this->innerEngine->increment($key, $offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function decrement($key, $offset = 1)
+    {
+        return $this->innerEngine->decrement($key, $offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearGroup($group)
+    {
+        return $this->innerEngine->clearGroup($group);
     }
 }
