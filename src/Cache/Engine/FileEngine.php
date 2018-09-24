@@ -463,10 +463,17 @@ class FileEngine extends CacheEngine
         $finder
             ->files()
             ->in($this->_config['path'])
-            ->path($group);
+            ->filter(function ($file) use ($group) {
+                $pos = strpos(
+                    DIRECTORY_SEPARATOR . $file->getRelativePathname(),
+                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
+                );
+
+                return $pos !== false;
+            });
 
         if (strlen($this->_config['prefix']) !== 0) {
-            $finder->name('/' . $this->_config['prefix'] . '/');
+            $finder->name('/^' . $this->_config['prefix'] . '/');
         }
 
         foreach ($finder as $file) {
