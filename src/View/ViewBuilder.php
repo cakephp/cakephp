@@ -566,7 +566,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the view classname.
      *
-     * @return string
+     * @return string|null
      */
     public function getClassName()
     {
