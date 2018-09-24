@@ -19,6 +19,7 @@ use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
+use Composer\CaBundle\CaBundle;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -216,7 +217,7 @@ class Stream implements AdapterInterface
             'ssl_passphrase',
         ];
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
             $url = $request->getUri();
