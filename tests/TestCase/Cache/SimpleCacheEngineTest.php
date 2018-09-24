@@ -292,7 +292,9 @@ class SimpleCacheEngineTest extends TestCase
             'key2' => 'other value',
             'key' => 'a value',
         ];
-        $this->cache->setMultiple($data);
+
+        $result = $this->cache->setMultiple($data);
+        $this->assertTrue($result);
 
         $results = $this->cache->getMultiple(array_keys($data));
         $this->assertEquals($expected, $results);

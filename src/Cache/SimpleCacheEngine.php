@@ -191,12 +191,21 @@ class SimpleCacheEngine implements CacheInterface
             $this->innerEngine->setConfig('duration', $ttl);
         }
         try {
-            return $this->innerEngine->writeMany($values);
+            $result = $this->innerEngine->writeMany($values);
+            foreach ($result as $key => $success) {
+                if ($success === false) {
+                    return false;
+                }
+            }
+
+            return true;
         } finally {
             if (isset($restore)) {
                 $this->innerEngine->setConfig('duration', $restore);
             }
         }
+
+        return false;
     }
 
     /**

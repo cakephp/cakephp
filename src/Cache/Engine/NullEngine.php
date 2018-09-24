@@ -50,14 +50,6 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function writeMany($data)
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function read($key)
     {
         return false;
