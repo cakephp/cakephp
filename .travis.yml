@@ -5,9 +5,17 @@ php:
   - 5.6
   - 7.1
   - 7.2
-  - 7.3
+  - 7.3.0RC1
 
-dist: trusty
+sudo: required
+
+dist: xenial
+
+addons:
+  apt:
+    packages:
+      # See: https://github.com/travis-ci/travis-ci/issues/9717
+      - libzip4
 
 env:
   matrix:
@@ -34,7 +42,7 @@ cache:
 matrix:
   fast_finish: true
   allow_failures:
-    - php: 7.3
+    - php: 7.3.0RC1
 
   include:
     - php: 7.0
