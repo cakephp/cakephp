@@ -52,14 +52,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The plugin name to use.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_plugin;
 
     /**
      * The theme name to use.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_theme;
 

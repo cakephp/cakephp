@@ -55,10 +55,11 @@ interface ContextInterface
      *      context's schema should be used if it's not explicitly provided.
      *
      * @param string $field A dot separated path to the field a value
+     * @param array $options Options.
      *   is needed for.
      * @return mixed
      */
-    public function val(string $field);
+    public function val(string $field, array $options = []);
 
     /**
      * Check if a given field is 'required'.

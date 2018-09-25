@@ -156,6 +156,7 @@ class Cookie implements CookieInterface
         if ($this->isExpanded) {
             $value = $this->_flatten($this->value);
         }
+        $headerValue = [];
         $headerValue[] = sprintf('%s=%s', $this->name, rawurlencode($value));
 
         if ($this->expiresAt) {

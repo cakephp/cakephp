@@ -78,44 +78,46 @@
         <PossiblyNullPropertyAssignmentValue errorLevel="info" />
         <PossiblyNullPropertyFetch errorLevel="info" />
         <PossiblyNullReference errorLevel="info" />
-        <PossiblyUndefinedGlobalVariable errorLevel="info" />
-        <PossiblyUndefinedVariable errorLevel="info" />
-        <PossiblyUndefinedArrayOffset errorLevel="info" />
-        <PossiblyUndefinedMethod errorLevel="info" />
 
         <!-- level 5 issues - should be avoided at mosts costs... -->
 
-        <ForbiddenCode errorLevel="info" />
-        <ImplicitToStringCast errorLevel="info" />
         <InvalidScalarArgument errorLevel="info" />
         <InvalidToString errorLevel="info" />
         <InvalidOperand errorLevel="info" />
         <NoInterfaceProperties errorLevel="info" />
-        <TooManyArguments errorLevel="info" />
         <TypeDoesNotContainType errorLevel="info" />
         <TypeDoesNotContainNull errorLevel="info" />
-        <MissingDocblockType errorLevel="info" />
         <ImplementedReturnTypeMismatch errorLevel="info" />
 
         <!-- level 6 issues - really bad things -->
 
         <InvalidNullableReturnType errorLevel="info" />
         <NullableReturnStatement errorLevel="info" />
-        <InvalidFalsableReturnType errorLevel="info" />
-        <FalsableReturnStatement errorLevel="info" />
 
         <MoreSpecificImplementedParamType errorLevel="info" />
         <LessSpecificImplementedReturnType errorLevel="info" />
 
         <InvalidReturnStatement errorLevel="info" />
         <InvalidReturnType errorLevel="info" />
-        <UndefinedThisPropertyAssignment errorLevel="info" />
 
         <!-- level 7 issues - even worse -->
         <InvalidArgument errorLevel="info" />
         <InvalidPropertyAssignmentValue errorLevel="info" />
 
         <!-- CakePHP Specific -->
+        <PossiblyUndefinedArrayOffset>
+            <errorLevel type="suppress">
+                <file name="src/I18n/Parser/PoFileParser.php" />
+            </errorLevel>
+        </PossiblyUndefinedArrayOffset>
+
+        <ImplicitToStringCast>
+            <errorLevel type="suppress">
+                <file name="src/Http/Client/FormData.php" />
+                <file name="src/View/Cell.php" />
+            </errorLevel>
+        </ImplicitToStringCast>
+
         <UndefinedConstant errorLevel="suppress" />
 
         <UndefinedPropertyAssignment>
@@ -140,8 +142,10 @@
 
         <InvalidArrayOffset>
             <errorLevel type="suppress">
+                <file name="src/Core/StaticConfigTrait.php" />
                 <file name="src/I18n/Parser/MoFileParser.php" />
                 <file name="src/I18n/Parser/PoFileParser.php" />
+                <file name="src/Routing/Middleware/AssetMiddleware.php"/>
                 <file name="src/View/Widget/RadioWidget.php" />
             </errorLevel>
         </InvalidArrayOffset>
