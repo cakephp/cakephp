@@ -359,13 +359,9 @@ class MysqlSchema extends BaseSchema
                     break;
                 case TableSchema::TYPE_BINARY:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
-
-                    if (!empty($data['length']) && !$isKnownLength) {
-                        if ($data['length'] > 2) {
-                            $out .= ' VARBINARY(' . $data['length'] . ')';
-                        } else {
-                            $out .= ' BINARY(' . $data['length'] . ')';
-                        }
+                    if ($isKnownLength) {
+                        $length = array_search($data['length'], TableSchema::$columnLengths);
+                        $out .= ' ' . strtoupper($length) . 'BLOB';
                         break;
                     }
 
@@ -374,11 +370,11 @@ class MysqlSchema extends BaseSchema
                         break;
                     }
 
-                    if ($isKnownLength) {
-                        $length = array_search($data['length'], TableSchema::$columnLengths);
-                        $out .= ' ' . strtoupper($length) . 'BLOB';
+                    if ($data['length'] > 2) {
+                        $out .= ' VARBINARY(' . $data['length'] . ')';
+                    } else {
+                        $out .= ' BINARY(' . $data['length'] . ')';
                     }
-
                     break;
             }
         }
