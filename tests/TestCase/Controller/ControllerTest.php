@@ -300,7 +300,11 @@ class ControllerTest extends TestCase
         $controller->Bar = true;
         $this->assertTrue($controller->Bar);
 
-        $this->expectException(Notice::class);
+        if (class_exists(Notice::class)) {
+            $this->expectException(Notice::class);
+        } else {
+            $this->expectException(\PHPUnit_Framework_Error_Notice::class);
+        }
         $this->expectExceptionMessage(sprintf(
             'Undefined property: Controller::$Foo in %s on line %s',
             __FILE__,
