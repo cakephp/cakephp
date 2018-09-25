@@ -970,30 +970,40 @@ XML;
             'Accept',
             'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
         );
-        $this->assertTrue($this->RequestHandler->isXml());
-        $this->assertFalse($this->RequestHandler->isAtom());
-        $this->assertFalse($this->RequestHandler->isRSS());
+        $this->deprecated(function () {
+            $this->assertTrue($this->RequestHandler->isXml());
+            $this->assertFalse($this->RequestHandler->isAtom());
+            $this->assertFalse($this->RequestHandler->isRSS());
+        });
 
         $this->Controller->request = $this->request->withHeader(
             'Accept',
             'application/atom+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
         );
-        $this->assertTrue($this->RequestHandler->isAtom());
-        $this->assertFalse($this->RequestHandler->isRSS());
+        $this->deprecated(function () {
+            $this->assertTrue($this->RequestHandler->isAtom());
+            $this->assertFalse($this->RequestHandler->isRSS());
+        });
 
         $this->Controller->request = $this->request->withHeader(
             'Accept',
             'application/rss+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
         );
-        $this->assertFalse($this->RequestHandler->isAtom());
-        $this->assertTrue($this->RequestHandler->isRSS());
+        $this->deprecated(function () {
+            $this->assertFalse($this->RequestHandler->isAtom());
+            $this->assertTrue($this->RequestHandler->isRSS());
+        });
 
-        $this->assertFalse($this->RequestHandler->isWap());
+        $this->deprecated(function () {
+            $this->assertFalse($this->RequestHandler->isWap());
+        });
         $this->Controller->request = $this->request->withHeader(
             'Accept',
             'text/vnd.wap.wml,text/html,text/plain,image/png,*/*'
         );
-        $this->assertTrue($this->RequestHandler->isWap());
+        $this->deprecated(function () {
+            $this->assertTrue($this->RequestHandler->isWap());
+        });
     }
 
     /**
@@ -1003,9 +1013,11 @@ XML;
      */
     public function testResponseContentType()
     {
-        $this->assertEquals('html', $this->RequestHandler->responseType());
-        $this->assertTrue($this->RequestHandler->respondAs('atom'));
-        $this->assertEquals('atom', $this->RequestHandler->responseType());
+        $this->deprecated(function () {
+            $this->assertEquals('html', $this->RequestHandler->responseType());
+            $this->assertTrue($this->RequestHandler->respondAs('atom'));
+            $this->assertEquals('atom', $this->RequestHandler->responseType());
+        });
     }
 
     /**
@@ -1023,7 +1035,9 @@ XML;
             ->will($this->returnValue(true));
 
         $this->Controller->request = $request;
-        $this->assertTrue($this->RequestHandler->isMobile());
+        $this->deprecated(function () {
+            $this->assertTrue($this->RequestHandler->isMobile());
+        });
     }
 
     /**
