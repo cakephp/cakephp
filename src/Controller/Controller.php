@@ -370,11 +370,24 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         list($plugin, $class) = pluginSplit($this->modelClass, true);
-        if ($class !== $name) {
-            return false;
+        if ($class === $name) {
+            return $this->loadModel($plugin . $class);
         }
 
-        return $this->loadModel($plugin . $class);
+        $trace = debug_backtrace();
+        $parts = explode('\\', get_class($this));
+        trigger_error(
+            sprintf(
+                'Undefined property: %s::$%s in %s on line %s',
+                array_pop($parts),
+                $name,
+                $trace[0]['file'],
+                $trace[0]['line']
+            ),
+            E_USER_NOTICE
+        );
+
+        return false;
     }
 
     /**
