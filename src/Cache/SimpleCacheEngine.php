@@ -251,7 +251,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * {@inheritDoc}
      */
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
         return $this->innerEngine->increment($key, $offset);
     }
@@ -259,7 +259,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * {@inheritDoc}
      */
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
         return $this->innerEngine->decrement($key, $offset);
     }
@@ -267,7 +267,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * {@inheritDoc}
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         return $this->innerEngine->clearGroup($group);
     }
