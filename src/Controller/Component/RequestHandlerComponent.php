@@ -598,9 +598,6 @@ class RequestHandlerComponent extends Component
         $viewClass = null;
         if ($builder->getClassName() === null) {
             $viewClass = App::className($view, 'View', 'View');
-            if ($viewClass === false) {
-                throw new RuntimeException('Configured view class can not be found: ' . $view);
-            }
         }
 
         if ($viewClass) {
