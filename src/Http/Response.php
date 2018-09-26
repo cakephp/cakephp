@@ -2708,7 +2708,7 @@ class Response implements ResponseInterface
         }
 
         $bufferSize = 8192;
-        if (array_search('set_time_limit', explode(',', ini_get('disable_functions'))) === false) {
+        if (strpos(ini_get('disable_functions'),'set_time_limit') === false) {
             set_time_limit(0);
         }
         session_write_close();
