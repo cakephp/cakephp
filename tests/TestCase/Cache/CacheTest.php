@@ -19,6 +19,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -324,7 +325,7 @@ class CacheTest extends TestCase
      */
     public function testWriteNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
     }
 
@@ -335,7 +336,7 @@ class CacheTest extends TestCase
      */
     public function testIncrementNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
     }
 
@@ -620,8 +621,8 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('An empty value is not valid as a cache key');
+        $this->expectException(CacheInvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string');
         $this->_configCache();
         Cache::write('', 'not null', 'tests');
     }

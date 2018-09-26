@@ -18,7 +18,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 
 /**
- * Null cache engine, all operations return false.
+ * Null cache engine, all operations appear to work, but do nothing.
  *
  * This is used internally for when Cache::disable() has been called.
  */
@@ -69,6 +69,7 @@ class NullEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1)
     {
+        return true;
     }
 
     /**
@@ -76,6 +77,7 @@ class NullEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1)
     {
+        return true;
     }
 
     /**

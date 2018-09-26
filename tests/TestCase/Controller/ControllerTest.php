@@ -24,6 +24,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Error\Notice;
 use PHPUnit\Framework\Error\Warning;
 use TestApp\Controller\Admin\PostsController;
 use TestPlugin\Controller\TestPluginController;
@@ -241,7 +242,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller($request, $response);
         $Controller->modelClass = 'SiteArticles';
 
-        $this->assertFalse($Controller->Articles);
+        $this->assertFalse(isset($Controller->Articles));
         $this->assertInstanceOf(
             'Cake\ORM\Table',
             $Controller->SiteArticles
@@ -250,11 +251,36 @@ class ControllerTest extends TestCase
 
         $Controller->modelClass = 'Articles';
 
-        $this->assertFalse($Controller->SiteArticles);
+        $this->assertFalse(isset($Controller->SiteArticles));
         $this->assertInstanceOf(
             'TestApp\Model\Table\ArticlesTable',
             $Controller->Articles
         );
+    }
+
+    /**
+     * testUndefinedPropertyError
+     *
+     * @return void
+     */
+    public function testUndefinedPropertyError()
+    {
+        $controller = new Controller();
+
+        $controller->Bar = true;
+        $this->assertTrue($controller->Bar);
+
+        if (class_exists(Notice::class)) {
+            $this->expectException(Notice::class);
+        } else {
+            $this->expectException(\PHPUnit_Framework_Error_Notice::class);
+        }
+        $this->expectExceptionMessage(sprintf(
+            'Undefined property: Controller::$Foo in %s on line %s',
+            __FILE__,
+            __LINE__ + 2
+        ));
+        $controller->Foo->baz();
     }
 
     /**
@@ -888,7 +914,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->response;
+            return $e->getSubject()->getResponse();
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -897,7 +923,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $Controller = new \TestApp\Controller\Admin\PostsController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->response;
+            return $e->getSubject()->getResponse();
         });
         $Controller->render();
         $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -910,7 +936,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new \TestApp\Controller\PagesController($request, $response);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->response;
+            return $e->getSubject()->getResponse();
         });
         $Controller->render();
         $this->assertEquals('Pages', $Controller->viewBuilder()->getTemplatePath());

@@ -464,7 +464,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $this->Controller->getEventManager()->on('Controller.beforeRender', function () {
-            return $this->Controller->response;
+            return $this->Controller->getResponse();
         });
         $this->Controller->render();
         $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
@@ -765,7 +765,7 @@ XML;
     public function testRenderAsCalledTwice(): void
     {
         $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\EventInterface $e) {
-            return $e->getSubject()->response;
+            return $e->getSubject()->getResponse();
         });
         $this->Controller->render();
 

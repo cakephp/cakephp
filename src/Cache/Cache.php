@@ -249,19 +249,19 @@ class Cache
      */
     public static function write(string $key, $value, $config = 'default'): bool
     {
-        $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        $success = $engine->write($key, $value);
+        $backend = static::pool($config);
+        $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ),
                 E_USER_WARNING
             );
@@ -295,6 +295,7 @@ class Cache
     public static function writeMany(array $data, string $config = 'default'): array
     {
         $engine = static::engine($config);
+
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
@@ -333,6 +334,7 @@ class Cache
      */
     public static function read(string $key, string $config = 'default')
     {
+        // TODO In 4.x this needs to change to use pool()
         $engine = static::engine($config);
 
         return $engine->read($key);
@@ -362,6 +364,7 @@ class Cache
      */
     public static function readMany(array $keys, string $config = 'default'): array
     {
+        // In 4.x this needs to change to use pool()
         $engine = static::engine($config);
 
         return $engine->readMany($keys);
@@ -378,7 +381,7 @@ class Cache
      */
     public static function increment(string $key, int $offset = 1, string $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -397,7 +400,7 @@ class Cache
      */
     public static function decrement(string $key, int $offset = 1, string $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -428,9 +431,9 @@ class Cache
      */
     public static function delete(string $key, string $config = 'default'): bool
     {
-        $engine = static::engine($config);
+        $backend = static::pool($config);
 
-        return $engine->delete($key);
+        return $backend->delete($key);
     }
 
     /**
@@ -457,9 +460,9 @@ class Cache
      */
     public static function deleteMany(array $keys, string $config = 'default'): array
     {
-        $engine = static::engine($config);
+        $backend = static::engine($config);
 
-        return $engine->deleteMany($keys);
+        return $backend->deleteMany($keys);
     }
 
     /**
@@ -502,7 +505,7 @@ class Cache
      */
     public static function clearGroup(string $group, string $config = 'default'): bool
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
 
         return $engine->clearGroup($group);
     }

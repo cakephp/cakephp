@@ -724,7 +724,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(
                 [
-                    'id' => '3something-crazy',
+                    'id' => '3',
                     'created <' => new \DateTime('2013-01-01 12:00'),
                 ],
                 ['created' => 'datetime', 'id' => 'integer']
@@ -740,7 +740,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(
                 [
-                    'id' => '1something-crazy',
+                    'id' => '1',
                     'created <' => new \DateTime('2013-01-01 12:00'),
                 ],
                 ['created' => 'datetime', 'id' => 'integer']

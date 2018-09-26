@@ -652,6 +652,16 @@ SQL;
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
                 '[img] VARBINARY(MAX)',
             ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 5],
+                '[bytes] VARBINARY(5)'
+            ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 1],
+                '[bytes] BINARY(1)'
+            ],
             // Boolean
             [
                 'checked',
