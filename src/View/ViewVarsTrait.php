@@ -75,7 +75,7 @@ trait ViewVarsTrait
         $builder = $this->viewBuilder();
         if ($viewClass === null && $builder->getClassName() === null) {
             $builder->setClassName($this->viewClass);
-            unset($this->viewClass);
+            $this->viewClass = null;
         }
         if ($viewClass) {
             $builder->setClassName($viewClass);
