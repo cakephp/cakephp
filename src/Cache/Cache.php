@@ -416,7 +416,7 @@ class Cache
      */
     public static function increment($key, $offset = 1, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -435,7 +435,7 @@ class Cache
      */
     public static function decrement($key, $offset = 1, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -540,7 +540,7 @@ class Cache
      */
     public static function clearGroup($group, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
 
         return $engine->clearGroup($group);
     }
