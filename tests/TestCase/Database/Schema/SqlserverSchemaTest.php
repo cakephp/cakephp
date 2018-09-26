@@ -655,12 +655,12 @@ SQL;
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 5],
-                '[bytes] VARBINARY(5)'
+                '[bytes] VARBINARY(5)',
             ],
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 1],
-                '[bytes] BINARY(1)'
+                '[bytes] BINARY(1)',
             ],
             // Boolean
             [

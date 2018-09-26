@@ -1065,7 +1065,7 @@ class RouteTest extends TestCase
         );
         $result = $route->match([
             'controller' => 'Articles',
-            'action' => 'foo'
+            'action' => 'foo',
         ]);
         $this->assertEquals("/anything", $result);
     }

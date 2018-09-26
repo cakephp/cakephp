@@ -598,12 +598,12 @@ SQL;
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 5],
-                '`bytes` VARBINARY(5)'
+                '`bytes` VARBINARY(5)',
             ],
             [
                 'bit',
                 ['type' => 'binary', 'length' => 1],
-                '`bit` BINARY(1)'
+                '`bit` BINARY(1)',
             ],
             // Integers
             [

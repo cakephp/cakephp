@@ -88,7 +88,7 @@ class EntityRouteTest extends TestCase
     {
         $entity = new Article([
             'category_id' => 2,
-            'slug' => 'article-slug'
+            'slug' => 'article-slug',
         ]);
 
         $route = $route = new EntityRoute(
@@ -100,7 +100,7 @@ class EntityRouteTest extends TestCase
 
         $result = $route->match([
             '_entity' => $entity,
-            '_name' => 'articlesView'
+            '_name' => 'articlesView',
         ]);
 
         $this->assertEquals('/articles/2_article-slug', $result);

@@ -109,7 +109,7 @@ class IntegerTypeTest extends TestCase
             'c' => '15',
             'd' => '0.0',
             'e' => 10,
-            'f' => '6a88accf-a34e-4dd9-ade0-8d255ccaecbe'
+            'f' => '6a88accf-a34e-4dd9-ade0-8d255ccaecbe',
         ];
         $expected = [
             'a' => null,
@@ -117,7 +117,7 @@ class IntegerTypeTest extends TestCase
             'c' => 15,
             'd' => 0,
             'e' => 10,
-            'f' => '6a88accf-a34e-4dd9-ade0-8d255ccaecbe'
+            'f' => '6a88accf-a34e-4dd9-ade0-8d255ccaecbe',
         ];
         $this->assertEquals(
             $expected,

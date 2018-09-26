@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace Cake\Cache;
 
-use Cake\Cache\CacheEngineInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**

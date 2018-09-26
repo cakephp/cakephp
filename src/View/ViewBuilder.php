@@ -73,7 +73,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Whether or not autoLayout should be enabled.
      *
-     * @var bool|null
+     * @var bool
      */
     protected $_autoLayout = true;
 
@@ -244,7 +244,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function enableAutoLayout(bool $enable = true): self
     {
-        $this->_autoLayout = (bool)$enable;
+        $this->_autoLayout = $enable;
 
         return $this;
     }
@@ -253,7 +253,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Returns if CakePHP's conventional mode of applying layout files is enabled.
      * Disabled means that layouts will not be automatically applied to rendered views.
      *
-     * @return bool|null
+     * @return bool
      */
     public function isAutoLayoutEnabled(): bool
     {
