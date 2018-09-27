@@ -391,7 +391,7 @@ class RequestHandlerComponent extends Component
     public function isAtom()
     {
         deprecationWarning(
-            'RequestHandlerComponent::isRss() is deprecated. Use RequestHandlerComponent::prefers(\'atom\') instead.'
+            'RequestHandlerComponent::isAtom() is deprecated. Use RequestHandlerComponent::prefers(\'atom\') instead.'
         );
 
         return $this->prefers('atom');
