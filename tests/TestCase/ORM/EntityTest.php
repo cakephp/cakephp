@@ -1184,7 +1184,7 @@ class EntityTest extends TestCase
         $this->deprecated(function () {
             $entity = new Entity();
             $this->assertEmpty($entity->getErrors());
-            $this->assertSame($entity, $entity->getErrors('foo', 'bar'));
+            $this->assertSame($entity, $entity->setErrors('foo', 'bar'));
             $this->assertEquals(['bar'], $entity->getErrors('foo'));
 
             $this->assertEquals([], $entity->getErrors('boo'));
@@ -1204,7 +1204,7 @@ class EntityTest extends TestCase
             $this->assertEquals($expected, $entity->getErrors());
 
             $errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
-            $this->assertSame($entity, $entity->getErrors($errors, null, true));
+            $this->assertSame($entity, $entity->setErrors($errors, null, true));
             $errors['bar'] = ['else'];
             $this->assertEquals($errors, $entity->getErrors());
         });
