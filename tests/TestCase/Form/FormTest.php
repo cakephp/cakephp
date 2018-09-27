@@ -148,12 +148,11 @@ class FormTest extends TestCase
      * Test the errors methods.
      *
      * @return void
+     * @deprecated 3.7.0 Use Form::testGetErrors() instead.
      */
     public function testErrors()
     {
-        $this->deprecated(function () {
-            $this->testGetErrors();
-        });
+        $this->testGetErrors();
     }
 
     /**
