@@ -34,7 +34,7 @@
         "cakephp/chronos": "^1.0.1",
         "aura/intl": "^3.0.0",
         "psr/log": "^1.0.0",
-        "zendframework/zend-diactoros": "^1.4.0"
+        "zendframework/zend-diactoros": "^1.4.0|^2.0.0"
     },
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
