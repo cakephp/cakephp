@@ -49,7 +49,7 @@ class RequestHandlerComponent extends Component
     /**
      * Contains the file extension parsed out by the Router
      *
-     * Deprecated 3.7.0: This property will be made protected in 4.0.0
+     * Deprecated as of 3.7.0. This property will be made protected in 4.0.0.
      *
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
