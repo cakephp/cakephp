@@ -321,6 +321,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\Event $event The Controller.beforeRender event.
      * @return bool false if the render process should be aborted
+     * @throws \Cake\Http\Exception\NotFoundException If invoked extension is not configured.
      */
     public function beforeRender(Event $event)
     {
@@ -334,7 +335,7 @@ class RequestHandlerComponent extends Component
             $response->getMimeType($this->ext)
         );
         if ($this->ext && !$isRecognized) {
-            throw new NotFoundException('Invoked extension not recognized: ' . $this->ext);
+            throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
         }
 
         if ($this->ext) {
