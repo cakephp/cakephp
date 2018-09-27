@@ -1183,30 +1183,30 @@ class EntityTest extends TestCase
     {
         $this->deprecated(function () {
             $entity = new Entity();
-            $this->assertEmpty($entity->errors());
-            $this->assertSame($entity, $entity->errors('foo', 'bar'));
-            $this->assertEquals(['bar'], $entity->errors('foo'));
+            $this->assertEmpty($entity->getErrors());
+            $this->assertSame($entity, $entity->getErrors('foo', 'bar'));
+            $this->assertEquals(['bar'], $entity->getErrors('foo'));
 
-            $this->assertEquals([], $entity->errors('boo'));
+            $this->assertEquals([], $entity->getErrors('boo'));
             $entity['boo'] = [
                 'something' => 'stupid',
                 'and' => false
             ];
-            $this->assertEquals([], $entity->errors('boo'));
+            $this->assertEquals([], $entity->getErrors('boo'));
 
             $entity->errors('foo', 'other error');
-            $this->assertEquals(['bar', 'other error'], $entity->errors('foo'));
+            $this->assertEquals(['bar', 'other error'], $entity->getErrors('foo'));
 
             $entity->errors('bar', ['something', 'bad']);
-            $this->assertEquals(['something', 'bad'], $entity->errors('bar'));
+            $this->assertEquals(['something', 'bad'], $entity->getErrors('bar'));
 
             $expected = ['foo' => ['bar', 'other error'], 'bar' => ['something', 'bad']];
-            $this->assertEquals($expected, $entity->errors());
+            $this->assertEquals($expected, $entity->getErrors());
 
             $errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
-            $this->assertSame($entity, $entity->errors($errors, null, true));
+            $this->assertSame($entity, $entity->getErrors($errors, null, true));
             $errors['bar'] = ['else'];
-            $this->assertEquals($errors, $entity->errors());
+            $this->assertEquals($errors, $entity->getErrors());
         });
     }
 

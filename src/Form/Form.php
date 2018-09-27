@@ -251,8 +251,27 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * to `validate()` or `execute()`.
      *
      * @return array Last set validation errors.
+     * @deprecated 3.7.0 Use Form::getErrors() instead.
      */
     public function errors()
+    {
+        deprecationWarning(
+            'Form::errors() is deprecated. ' .
+            'Use Form::getErrors() instead.'
+        );
+
+        return $this->getErrors();
+    }
+
+    /**
+     * Get the errors in the form
+     *
+     * Will return the errors from the last call
+     * to `validate()` or `execute()`.
+     *
+     * @return array Last set validation errors.
+     */
+    public function getErrors()
     {
         return $this->_errors;
     }
@@ -353,7 +372,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     {
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
-            '_errors' => $this->errors(),
+            '_errors' => $this->getErrors(),
             '_validator' => $this->getValidator()->__debugInfo()
         ];
 
