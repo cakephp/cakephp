@@ -1205,10 +1205,10 @@ class Email implements JsonSerializable, Serializable
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
-            } else {
-                $headers['Message-ID'] = $this->_messageId;
+                $this->_messageId = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             }
+
+            $headers['Message-ID'] = $this->_messageId;
         }
 
         if ($this->_priority) {
