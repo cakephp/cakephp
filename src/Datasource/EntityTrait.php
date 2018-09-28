@@ -1032,13 +1032,13 @@ trait EntityTrait
      * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
      *
      * // Returns the error messages for a single field
-     * $entity->errors('salary');
+     * $entity->getErrors('salary');
      *
      * // Returns all error messages indexed by field name
-     * $entity->errors();
+     * $entity->getErrors();
      *
      * // Sets the error messages for multiple fields at once
-     * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
+     * $entity->getErrors(['salary' => ['message'], 'name' => ['another message']);
      * ```
      *
      * When used as a setter, this method will return this entity instance for method
