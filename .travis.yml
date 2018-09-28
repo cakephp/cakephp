@@ -7,11 +7,6 @@ php:
   - 7.2
   - 7.3.0RC1
 
-addons:
-  apt:
-    packages:
-      - libzip4
-
 sudo: required
 
 dist: xenial
@@ -31,6 +26,9 @@ services:
   - mysql
 
 addons:
+  apt:
+    packages:
+      - libzip4
   postgresql: "9.4"
 
 cache:
