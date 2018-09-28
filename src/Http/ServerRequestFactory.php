@@ -17,8 +17,9 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\ServerRequestFactory as BaseFactory;
 use function Zend\Diactoros\marshalHeadersFromSapi;
 use function Zend\Diactoros\marshalUriFromSapi;
 use function Zend\Diactoros\normalizeServer;
@@ -30,7 +31,7 @@ use function Zend\Diactoros\normalizeServer;
  * the basePath and webroot attributes. Furthermore the Uri's path
  * is corrected to only contain the 'virtual' path for the request.
  */
-abstract class ServerRequestFactory extends BaseFactory
+abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 {
     /**
      * Create a request from the supplied superglobal values.
@@ -77,6 +78,21 @@ abstract class ServerRequestFactory extends BaseFactory
         ]);
 
         return $request;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
+    {
+        $uploadedFiles = [];
+
+        return new ServerRequest(
+            $serverParams,
+            $uploadedFiles,
+            $uri,
+            $method
+        );
     }
 
     /**
