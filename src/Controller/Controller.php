@@ -282,7 +282,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Magic accessor for model autoloading.
      *
      * @param string $name Property name
-     * @return bool|object The model instance or false
+     * @return \Cake\Datasource\RepositoryInterface|null The model instance or null
      */
     public function __get(string $name)
     {
@@ -304,7 +304,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             E_USER_NOTICE
         );
 
-        return false;
+        return null;
     }
 
     /**
