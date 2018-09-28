@@ -10,7 +10,6 @@ php:
 addons:
   apt:
     packages:
-      # See: https://github.com/travis-ci/travis-ci/issues/9717
       - libzip4
 
 sudo: required
