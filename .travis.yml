@@ -7,15 +7,15 @@ php:
   - 7.2
   - 7.3.0RC1
 
-sudo: required
-
-dist: xenial
-
 addons:
   apt:
     packages:
       # See: https://github.com/travis-ci/travis-ci/issues/9717
       - libzip4
+
+sudo: required
+
+dist: xenial
 
 env:
   matrix:
@@ -53,7 +53,7 @@ matrix:
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
-  - phpenv config-rm xdebug.ini
+  - if [[ ${TRAVIS_PHP_VERSION} != "7.3.0RC1" ]]; then phpenv config-rm xdebug.ini; fi
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
