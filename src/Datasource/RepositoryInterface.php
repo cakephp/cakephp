@@ -18,8 +18,10 @@ namespace Cake\Datasource;
  * Describes the methods that any class representing a data storage should
  * comply with.
  *
- * @method $this setAlias($alias)
+ * @method $this setAlias(string $alias)
  * @method string getAlias()
+ * @method $this setRegistryAlias(string $alias)
+ * @method string getRegistryAlias()
  */
 interface RepositoryInterface
 {
