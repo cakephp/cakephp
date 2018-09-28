@@ -530,11 +530,11 @@ class RequestHandlerComponentTest extends TestCase
     public function testUnrecognizedExtensionFailure()
     {
         Router::extensions(['json', 'foo'], false);
-        $this->Controller->setRequest($this->Controller->request->withParam('_ext', 'foo'));
+        $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));
         $event = new Event('Controller.startup', $this->Controller);
         $this->RequestHandler->startup($event);
         $this->Controller->getEventManager()->on('Controller.beforeRender', function () {
-            return $this->Controller->response;
+            return $this->Controller->getResponse();
         });
         $this->Controller->render();
         $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
