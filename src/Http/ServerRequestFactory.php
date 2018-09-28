@@ -98,6 +98,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
      */
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
+        $serverParams['REQUEST_METHOD'] = $method;
         $options = ['environment' => $serverParams];
 
         if ($uri instanceof UriInterface) {
@@ -106,9 +107,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $options['url'] = $uri;
         }
 
-        $request = new ServerRequest($options);
-
-        return $request->withMethod($method);
+        return new ServerRequest($options);
     }
 
     /**
