@@ -13,7 +13,7 @@ dist: xenial
 
 env:
   matrix:
-    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
     - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
