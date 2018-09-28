@@ -65,7 +65,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Default table instance
      *
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
      */
     protected $_defaultTable;
 

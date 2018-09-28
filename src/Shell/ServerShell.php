@@ -82,7 +82,7 @@ class ServerShell extends Shell
             $this->_host = $this->param('host');
         }
         if ($this->param('port')) {
-            $this->_port = $this->param('port');
+            $this->_port = (int)$this->param('port');
         }
         if ($this->param('document_root')) {
             $this->_documentRoot = $this->param('document_root');
