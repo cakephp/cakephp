@@ -48,7 +48,12 @@ class Request extends Message implements RequestInterface
             'User-Agent' => 'CakePHP',
         ];
         $this->addHeaders($headers);
-        $this->body($data);
+
+        if ($data === null) {
+            $this->stream = new Stream('php://memory', 'rw');
+        } else {
+            $this->body($data);
+        }
     }
 
     /**
