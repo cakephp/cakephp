@@ -148,11 +148,31 @@ class FormTest extends TestCase
      * Test the errors methods.
      *
      * @return void
-     * @deprecated 3.7.0 Use Form::testGetErrors() instead.
      */
     public function testErrors()
     {
-        $this->testGetErrors();
+        $this->deprecated(function () {
+            $form = new Form();
+            $form->getValidator()
+                ->add('email', 'format', [
+                    'message' => 'Must be a valid email',
+                    'rule' => 'email'
+                ])
+                ->add('body', 'length', [
+                    'message' => 'Must be so long',
+                    'rule' => ['minLength', 12],
+                ]);
+
+            $data = [
+                'email' => 'rong',
+                'body' => 'too short'
+            ];
+            $form->validate($data);
+            $errors = $form->errors();
+            $this->assertCount(2, $errors);
+            $this->assertEquals('Must be a valid email', $errors['email']['format']);
+            $this->assertEquals('Must be so long', $errors['body']['length']);
+        });
     }
 
     /**
