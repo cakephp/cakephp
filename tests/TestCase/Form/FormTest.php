@@ -162,7 +162,7 @@ class FormTest extends TestCase
                     'message' => 'Must be so long',
                     'rule' => ['minLength', 12],
                 ]);
-            
+
             $data = [
                 'email' => 'rong',
                 'body' => 'too short'
