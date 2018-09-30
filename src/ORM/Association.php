@@ -328,22 +328,6 @@ abstract class Association
     }
 
     /**
-     * The class name of the target table object
-     *
-     * @deprecated 3.7.0 Use getClassName() instead.
-     * @return string
-     */
-    public function className(): string
-    {
-        deprecationWarning(
-            get_called_class() . '::className() is deprecated. ' .
-            'Use getClassName() instead.'
-        );
-
-        return $this->getClassName();
-    }
-
-    /**
      * Sets the table instance for the source side of the association.
      *
      * @param \Cake\ORM\Table $table the instance to be assigned as source side
