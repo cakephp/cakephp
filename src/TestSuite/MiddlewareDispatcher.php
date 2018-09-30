@@ -68,6 +68,7 @@ class MiddlewareDispatcher
      * @param string|null $class The application class name. Defaults to App\Application.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      *   Defaults to `['./config']`
+     * @throws \LogicException If it cannot load class for use in integration testing.
      */
     public function __construct($test, $class = null, $constructorArgs = null)
     {
@@ -77,7 +78,9 @@ class MiddlewareDispatcher
 
         try {
             $reflect = new ReflectionClass($this->_class);
-            $this->app = $reflect->newInstanceArgs($this->_constructorArgs);
+            /** @var \Cake\Core\HttpApplicationInterface $app */
+            $app = $reflect->newInstanceArgs($this->_constructorArgs);
+            $this->app = $app;
         } catch (ReflectionException $e) {
             throw new LogicException(sprintf('Cannot load "%s" for use in integration testing.', $this->_class));
         }

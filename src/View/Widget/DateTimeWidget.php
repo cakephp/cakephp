@@ -267,7 +267,7 @@ class DateTimeWidget implements WidgetInterface
         }
 
         if (isset($options['minute']['interval'])) {
-            $change = $this->_adjustValue($date->format('i'), $options['minute']);
+            $change = $this->_adjustValue((int)$date->format('i'), $options['minute']);
             $date->modify($change > 0 ? "+$change minutes" : "$change minutes");
         }
 

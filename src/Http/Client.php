@@ -197,7 +197,7 @@ class Client
     /**
      * Get the cookies stored in the Client.
      *
-     * @return \Cake\Http\Client\CookieCollection
+     * @return \Cake\Http\Cookie\CookieCollection
      */
     public function cookies()
     {

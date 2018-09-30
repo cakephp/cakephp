@@ -93,6 +93,7 @@ class SchemaCache
      *
      * @param \Cake\Database\Connection $connection Connection object
      * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
     public function getSchema(Connection $connection)
     {

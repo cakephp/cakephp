@@ -156,7 +156,7 @@ trait DateFormatTrait
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
-     * @return string Formatted and translated date string
+     * @return string|int Formatted and translated date string
      */
     public function i18nFormat($format = null, $timezone = null, $locale = null)
     {
