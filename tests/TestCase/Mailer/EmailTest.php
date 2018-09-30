@@ -617,6 +617,15 @@ class EmailTest extends TestCase
         $this->assertSame('<my-email@localhost>', $result);
     }
 
+    public function testAutoMessageIdIsIdempotent()
+    {
+        $headers = $this->Email->getHeaders();
+        $this->assertArrayHasKey('Message-ID', $headers);
+
+        $regeneratedHeaders = $this->Email->getHeaders();
+        $this->assertSame($headers['Message-ID'], $regeneratedHeaders['Message-ID']);
+    }
+
     /**
      * @return void
      */

@@ -46,7 +46,7 @@ class RequestHandlerComponent extends Component
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
-    public $ext;
+    protected $ext;
 
     /**
      * The template to use when rendering the given content type.
@@ -272,59 +272,6 @@ class RequestHandlerComponent extends Component
             return;
         }
         $controller->setResponse($response);
-    }
-
-    /**
-     * Returns true if the current call accepts an XML response, false otherwise
-     *
-     * @return bool True if client accepts an XML response
-     */
-    public function isXml(): bool
-    {
-        return $this->prefers('xml');
-    }
-
-    /**
-     * Returns true if the current call accepts an RSS response, false otherwise
-     *
-     * @return bool True if client accepts an RSS response
-     */
-    public function isRss(): bool
-    {
-        return $this->prefers('rss');
-    }
-
-    /**
-     * Returns true if the current call accepts an Atom response, false otherwise
-     *
-     * @return bool True if client accepts an RSS response
-     */
-    public function isAtom(): bool
-    {
-        return $this->prefers('atom');
-    }
-
-    /**
-     * Returns true if user agent string matches a mobile web browser, or if the
-     * client accepts WAP content.
-     *
-     * @return bool True if user agent is a mobile web browser
-     */
-    public function isMobile(): bool
-    {
-        $request = $this->getController()->getRequest();
-
-        return $request->is('mobile') || $this->accepts('wap');
-    }
-
-    /**
-     * Returns true if the client accepts WAP content
-     *
-     * @return bool
-     */
-    public function isWap(): bool
-    {
-        return $this->prefers('wap');
     }
 
     /**
@@ -594,19 +541,6 @@ class RequestHandlerComponent extends Component
         $controller->setResponse($response);
 
         return true;
-    }
-
-    /**
-     * Returns the current response type (Content-type header), or null if not alias exists
-     *
-     * @return mixed A string content type alias, or raw content type if no alias map exists,
-     *  otherwise null
-     */
-    public function responseType()
-    {
-        $response = $this->getController()->getResponse();
-
-        return $response->mapType($response->getType());
     }
 
     /**
