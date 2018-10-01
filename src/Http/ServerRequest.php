@@ -1844,7 +1844,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return \Psr\Http\Message\StreamInterface Returns the body as a stream.
      */
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->stream;
     }

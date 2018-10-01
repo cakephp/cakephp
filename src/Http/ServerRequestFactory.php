@@ -17,8 +17,9 @@ namespace Cake\Http;
 
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Psr\Http\Message\ServerRequestFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\ServerRequestFactory as BaseFactory;
 use function Zend\Diactoros\marshalHeadersFromSapi;
 use function Zend\Diactoros\marshalUriFromSapi;
 use function Zend\Diactoros\normalizeServer;
@@ -30,7 +31,7 @@ use function Zend\Diactoros\normalizeServer;
  * the basePath and webroot attributes. Furthermore the Uri's path
  * is corrected to only contain the 'virtual' path for the request.
  */
-abstract class ServerRequestFactory extends BaseFactory
+abstract class ServerRequestFactory implements ServerRequestFactoryInterface
 {
     /**
      * Create a request from the supplied superglobal values.
@@ -77,6 +78,36 @@ abstract class ServerRequestFactory extends BaseFactory
         ]);
 
         return $request;
+    }
+
+    /**
+     * Create a new server request.
+     *
+     * Note that server-params are taken precisely as given - no parsing/processing
+     * of the given values is performed, and, in particular, no attempt is made to
+     * determine the HTTP method or URI, which must be provided explicitly.
+     *
+     * @param string $method The HTTP method associated with the request.
+     * @param \Psr\Http\Message\UriInterface|string $uri The URI associated with the request. If
+     *     the value is a string, the factory MUST create a UriInterface
+     *     instance based on it.
+     * @param array $serverParams Array of SAPI parameters with which to seed
+     *     the generated request instance.
+     *
+     * @return \Psr\Http\Message\ServerRequestInterface
+     */
+    public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
+    {
+        $serverParams['REQUEST_METHOD'] = $method;
+        $options = ['environment' => $serverParams];
+
+        if ($uri instanceof UriInterface) {
+            $options['uri'] = $uri;
+        } else {
+            $options['url'] = $uri;
+        }
+
+        return new ServerRequest($options);
     }
 
     /**
