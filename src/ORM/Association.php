@@ -320,9 +320,9 @@ abstract class Association
     /**
      * Gets the class name of the target table object.
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassName(): string
+    public function getClassName(): ?string
     {
         return $this->_className;
     }
