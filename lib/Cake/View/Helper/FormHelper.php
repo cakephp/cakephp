@@ -1389,7 +1389,7 @@ class FormHelper extends AppHelper {
 		} elseif (is_array($div)) {
 			$divOptions = array_merge($divOptions, $div);
 		}
-		if ($this->_extractOption('required', $options) !== false &&
+		if ($this->_extractOption('required', $options) !== false ||
 			$this->_introspectModel($this->model(), 'validates', $this->field())
 		) {
 			$divOptions = $this->addClass($divOptions, 'required');
