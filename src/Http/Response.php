@@ -1140,7 +1140,7 @@ class Response implements ResponseInterface
     /**
      * Sets a content type definition into the map.
      *
-     * E.g.: setType('xhtml' => ['application/xhtml+xml', 'application/xhtml'])
+     * E.g.: setTypeMap('xhtml', ['application/xhtml+xml', 'application/xhtml'])
      *
      * This is needed for RequestHandlerComponent and recognition of types.
      *
