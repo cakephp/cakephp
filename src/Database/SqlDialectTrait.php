@@ -60,7 +60,7 @@ trait SqlDialectTrait
         }
 
         // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w-\s]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
         }
 
@@ -72,7 +72,7 @@ trait SqlDialectTrait
             return $this->_startQuote . $field . $this->_endQuote . $matches[2];
         }
 
-        if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
+        if (preg_match('/^[\w_\s-]*[\w_-]+/', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
