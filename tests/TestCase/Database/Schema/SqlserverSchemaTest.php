@@ -244,6 +244,27 @@ SQL;
                 null,
                 ['type' => 'text', 'length' => null]
             ],
+            [
+                'IMAGE',
+                10,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 10]
+            ],
+            [
+                'BINARY',
+                20,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 20]
+            ],
+            [
+                'VARBINARY',
+                30,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 30]
+            ],
         ];
     }
 
