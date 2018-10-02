@@ -254,7 +254,7 @@ class Route
     /**
      * Set the names of parameters that will persisted automatically
      *
-     * Persistent parametesr allow you to define which route parameters should be automatically
+     * Persistent parameters allow you to define which route parameters should be automatically
      * included when generating new URLs. You can override persistent parameters
      * by redefining them in a URL or remove them by setting the persistent parameter to `false`.
      *
