@@ -600,6 +600,47 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that linking entities will set the junction table registry alias
+     *
+     * @return void
+     */
+    public function testLinkSetSourceToJunctionEntities()
+    {
+        $connection = ConnectionManager::get('test');
+        $joint = $this->getMockBuilder('\Cake\ORM\Table')
+            ->setMethods(['save', 'getPrimaryKey'])
+            ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
+            ->getMock();
+        $joint->setRegistryAlias('Plugin.ArticlesTags');
+
+        $config = [
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
+            'through' => $joint,
+        ];
+
+        $assoc = new BelongsToMany('Tags', $config);
+        $opts = ['markNew' => false];
+        $entity = new Entity(['id' => 1], $opts);
+        $tags = [new Entity(['id' => 2], $opts)];
+
+        $joint->method('getPrimaryKey')
+            ->will($this->returnValue(['article_id', 'tag_id']));
+
+        $joint->expects($this->once())
+            ->method('save')
+            ->will($this->returnCallback(function (Entity $e, $opts) {
+                $this->assertSame('Plugin.ArticlesTags', $e->getSource());
+
+                return $e;
+            }));
+
+        $this->assertTrue($assoc->link($entity, $tags));
+        $this->assertSame($entity->tags, $tags);
+        $this->assertSame('Plugin.ArticlesTags', $entity->tags[0]->get('_joinData')->getSource());
+    }
+
+    /**
      * Test liking entities having a non persisted source entity
      *
      * @return void
