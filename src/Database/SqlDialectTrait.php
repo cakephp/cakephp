@@ -72,7 +72,7 @@ trait SqlDialectTrait
             return $this->_startQuote . $field . $this->_endQuote . $matches[2];
         }
 
-        if (preg_match('/^[\w-_\s]*[\w-_]+/u', $identifier)) {
+        if (preg_match('/^[\w_\s-]*[\w_-]+/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
