@@ -150,13 +150,6 @@
             </errorLevel>
         </InvalidArrayOffset>
 
-        <PossiblyUndefinedMethod>
-            <errorLevel type="suppress">
-                <file name="src/ORM/ResultSet.php" />
-                <file name="src/View/XmlView.php" />
-            </errorLevel>
-        </PossiblyUndefinedMethod>
-
         <LoopInvalidation>
             <errorLevel type="suppress">
                 <file name="src/View/Form/EntityContext.php" />
@@ -193,6 +186,7 @@
         <PossiblyUndefinedMethod>
             <errorLevel type="suppress">
                 <file name="src/ORM/LazyEagerLoader.php" />
+                <file name="src/ORM/ResultSet.php" />
                 <file name="src/View/XmlView.php" />
             </errorLevel>
         </PossiblyUndefinedMethod>
