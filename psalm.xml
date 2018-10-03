@@ -152,6 +152,7 @@
 
         <PossiblyUndefinedMethod>
             <errorLevel type="suppress">
+                <file name="src/ORM/ResultSet.php" />
                 <file name="src/View/XmlView.php" />
             </errorLevel>
         </PossiblyUndefinedMethod>
