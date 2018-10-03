@@ -467,7 +467,7 @@ class RoutingMiddlewareTest extends TestCase
         $cacheConfigName = '_cake_router_';
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
         ]);
         Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
@@ -497,7 +497,7 @@ class RoutingMiddlewareTest extends TestCase
         Cache::disable();
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
         ]);
         Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
@@ -529,7 +529,7 @@ class RoutingMiddlewareTest extends TestCase
 
         Cache::setConfig('_cake_router_', [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
         ]);
         Router::$initialized = false;
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);

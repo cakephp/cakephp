@@ -671,16 +671,16 @@ class CookieComponentTest extends TestCase
         ]);
 
         $data = $this->Cookie->read('Encrypted_empty');
-        $this->assertEquals('', $data);
+        $this->assertSame('', $data);
 
         $data = $this->Cookie->read('Encrypted_wrong_prefix');
-        $this->assertEquals('', $data);
+        $this->assertSame('', $data);
 
         $data = $this->Cookie->read('Encrypted_altered');
-        $this->assertEquals('', $data);
+        $this->assertSame('', $data);
 
         $data = $this->Cookie->read('Encrypted_invalid_chars');
-        $this->assertEquals('', $data);
+        $this->assertSame('', $data);
     }
 
     /**
