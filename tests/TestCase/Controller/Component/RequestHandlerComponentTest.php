@@ -20,6 +20,7 @@ use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\AjaxView;
@@ -35,15 +36,11 @@ class RequestHandlerComponentTest extends TestCase
 {
 
     /**
-     * Controller property
-     *
      * @var RequestHandlerTestController
      */
     public $Controller;
 
     /**
-     * RequestHandler property
-     *
      * @var RequestHandlerComponent
      */
     public $RequestHandler;
@@ -90,7 +87,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler = $this->Controller->components()->load('RequestHandler');
         $this->request = $request;
 
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->setExtensions('json');
             $routes->fallbacks('InflectedRoute');
         });
@@ -383,7 +380,6 @@ class RequestHandlerComponentTest extends TestCase
     {
         $this->deprecated(function () {
             $this->RequestHandler->setConfig(['viewClassMap' => ['json' => 'CustomJson']]);
-            $this->RequestHandler->initialize([]);
             $result = $this->RequestHandler->viewClassMap();
             $expected = [
                 'json' => 'CustomJson',
@@ -416,7 +412,6 @@ class RequestHandlerComponentTest extends TestCase
     {
         $this->Controller->request = $this->request->withHeader('X-Requested-With', 'XMLHttpRequest');
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->Controller->beforeFilter($event);
         $this->RequestHandler->startup($event);
         $this->assertTrue($this->Controller->request->getParam('isAjax'));
@@ -432,7 +427,6 @@ class RequestHandlerComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->request = $this->request->withHeader('X-Requested-With', 'XMLHttpRequest');
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -443,7 +437,6 @@ class RequestHandlerComponentTest extends TestCase
 
         $this->_init();
         $this->Controller->request = $this->Controller->request->withParam('_ext', 'js');
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $this->assertNotEquals(AjaxView::class, $this->Controller->viewBuilder()->getClassName());
     }
@@ -459,7 +452,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->request = $this->Controller->request->withParam('_ext', 'json');
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -480,7 +472,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->request = $this->Controller->request->withParam('_ext', 'xml');
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -501,7 +492,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->request = $this->Controller->request->withParam('_ext', 'ajax');
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -521,7 +511,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax', 'csv'], false);
         $this->Controller->request = $this->Controller->request->withParam('_ext', 'csv');
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $this->Controller->getEventManager()->on('Controller.beforeRender', function () {
             return $this->Controller->response;
@@ -529,6 +518,26 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->render();
         $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
         $this->assertEquals('csv', $this->Controller->viewBuilder()->getLayoutPath());
+    }
+
+    /**
+     * Tests that configured extensions that have no configured mimetype do not silently fallback to HTML.
+     *
+     * @return void
+     * @expectedException \Cake\Http\Exception\NotFoundException
+     * @expectedExceptionMessage Invoked extension not recognized/configured: foo
+     */
+    public function testUnrecognizedExtensionFailure()
+    {
+        Router::extensions(['json', 'foo'], false);
+        $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->Controller->getEventManager()->on('Controller.beforeRender', function () {
+            return $this->Controller->getResponse();
+        });
+        $this->Controller->render();
+        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -799,7 +808,6 @@ XML;
         $this->Controller->request = $this->Controller->request->withHeader('X-Requested-With', 'XMLHttpRequest');
 
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->setConfig('enableBeforeRedirect', false);
         $this->RequestHandler->startup($event);
         $this->assertNull($this->RequestHandler->beforeRedirect($event, '/posts/index', $this->Controller->response));
@@ -816,7 +824,6 @@ XML;
     {
         $this->deprecated(function () {
             $event = new Event('Controller.startup', $this->Controller);
-            $this->RequestHandler->initialize([]);
             $this->RequestHandler->startup($event);
             $this->assertNull($this->RequestHandler->beforeRedirect($event, '/', $this->Controller->response));
         });
@@ -839,7 +846,6 @@ XML;
             $this->Controller->response->expects($this->never())
                 ->method('body');
 
-            $this->RequestHandler->initialize([]);
             $this->RequestHandler->startup($event);
             $this->assertNull($this->RequestHandler->beforeRedirect($event, null, $this->Controller->response));
         });
