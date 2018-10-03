@@ -12,7 +12,6 @@ parameters:
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
         - '#Access to an undefined property Exception::\$queryString#'
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
-        - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
         - '#Cannot call method lastInsertId\(\) on null#'
         - '#Access to an undefined property Cake\\Mailer\\Email::\$request#'

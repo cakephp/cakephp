@@ -335,7 +335,7 @@ class FileEngineTest extends TestCase
             'engine' => 'File',
             'isWindows' => true,
             'prefix' => null,
-            'path' => TMP,
+            'path' => CACHE,
         ]);
 
         $expected = [
