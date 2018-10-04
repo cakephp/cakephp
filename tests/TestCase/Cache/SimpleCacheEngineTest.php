@@ -484,4 +484,21 @@ class SimpleCacheEngineTest extends TestCase
         $cache = new SimpleCacheEngine($mock);
         $this->assertTrue($cache->decrement('key', 2));
     }
+
+    /**
+     * Test pass through on add()
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        $mock = $this->createMock(CacheEngine::class);
+        $mock->expects($this->once())
+            ->method('add')
+            ->with('key', 2)
+            ->will($this->returnValue(true));
+
+        $cache = new SimpleCacheEngine($mock);
+        $this->assertTrue($cache->add('key', 2));
+    }
 }
