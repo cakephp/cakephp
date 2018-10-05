@@ -18,6 +18,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\MultiCheckboxWidget;
+use Cake\View\Widget\NestingLabelWidget;
 
 /**
  * MultiCheckbox test case.
@@ -36,6 +37,7 @@ class MultiCheckboxWidgetTest extends TestCase
         $templates = [
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             'label' => '<label{{attrs}}>{{text}}</label>',
+            'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
             'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
             'multicheckboxWrapper' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             'multicheckboxTitle' => '<legend>{{text}}</legend>',
@@ -435,6 +437,42 @@ class MultiCheckboxWidgetTest extends TestCase
                 'value' => '2',
                 'id' => 'test-2',
             ]],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test rendering without input nesting inspite of using NestingLabelWidget
+     *
+     * @return void
+     */
+    public function testRenderNestingLabelWidgetWithoutInputNesting()
+    {
+        $label = new NestingLabelWidget($this->templates);
+        $input = new MultiCheckboxWidget($this->templates, $label);
+        $data = [
+            'name' => 'tags',
+            'label' => [
+                'input' => false,
+            ],
+            'options' => [
+                1 => 'CakePHP',
+            ],
+        ];
+        $result = $input->render($data, $this->context);
+
+        $expected = [
+            ['div' => ['class' => 'checkbox']],
+            ['input' => [
+                'type' => 'checkbox',
+                'name' => 'tags[]',
+                'value' => 1,
+                'id' => 'tags-1',
+            ]],
+            ['label' => ['for' => 'tags-1']],
+            'CakePHP',
+            '/label',
             '/div',
         ];
         $this->assertHtml($expected, $result);
