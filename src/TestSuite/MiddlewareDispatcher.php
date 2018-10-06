@@ -126,7 +126,6 @@ class MiddlewareDispatcher
         }
 
         $out = Router::url($url);
-        Router::reload();
 
         return $out;
     }
