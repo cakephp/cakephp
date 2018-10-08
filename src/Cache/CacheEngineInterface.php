@@ -26,6 +26,16 @@ namespace Cake\Cache;
 interface CacheEngineInterface
 {
     /**
+     * Write data for key into a cache engine if it doesn't exist already.
+     *
+     * @param string $key Identifier for the data.
+     * @param mixed $value Data to be cached - anything except a resource.
+     * @return bool True if the data was successfully cached, false on failure.
+     *   Or if the key existed already.
+     */
+    public function add($key, $value);
+
+    /**
      * Increment a number under the key and return incremented value
      *
      * @param string $key Identifier for the data
