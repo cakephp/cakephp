@@ -1850,6 +1850,27 @@ class QueryTest extends TestCase
     }
 
     /**
+     * Test that order() works with an associative array which contains extra values.
+     *
+     * @return void
+     */
+    public function testSelectOrderByAssociativeArrayContainingExtraExpressions()
+    {
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->order([
+                'id' => 'desc -- Comment',
+            ]);
+        $result = $query->execute();
+        $this->assertEquals(['id' => 3], $result->fetch('assoc'));
+        $this->assertEquals(['id' => 2], $result->fetch('assoc'));
+        $this->assertEquals(['id' => 1], $result->fetch('assoc'));
+        $result->closeCursor();
+    }
+
+    /**
      * Tests that order() works with closures.
      *
      * @return void
