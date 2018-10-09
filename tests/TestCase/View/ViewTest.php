@@ -921,7 +921,7 @@ class ViewTest extends TestCase
     public function testElementNonExistent()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessageRegExp('#^Element file "Element[\\\\/]non_existent_element\.php" is missing\.$#');
+        $this->expectExceptionMessageRegExp('#^Element file "element[\\\\/]non_existent_element\.php" is missing\.$#');
 
         $this->View->element('non_existent_element');
     }
@@ -934,7 +934,7 @@ class ViewTest extends TestCase
     public function testElementInexistentPluginElement()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.Element[\\\\/]plugin_element\.php" is missing\.$#');
+        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.element[\\\\/]plugin_element\.php" is missing\.$#');
 
         $this->View->element('test_plugin.plugin_element');
     }
@@ -1394,11 +1394,11 @@ class ViewTest extends TestCase
         $this->PostsController->setPlugin('TestPlugin');
         $this->PostsController->setName('Posts');
         $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
-        $View->setTemplatePath('Element');
+        $View->setTemplatePath('element');
 
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
         $result = $View->getViewFileName('sub_dir/sub_element');
-        $expected = $pluginPath . 'templates' . DS . 'Element' . DS . 'sub_dir' . DS . 'sub_element.php';
+        $expected = $pluginPath . 'templates' . DS . 'element' . DS . 'sub_dir' . DS . 'sub_element.php';
         $this->assertPathEquals($expected, $result);
     }
 
@@ -1439,8 +1439,8 @@ class ViewTest extends TestCase
         $result = $View->getViewFileName('/Pages/home');
         $this->assertRegExp('/Pages(\/|\\\)home.php/', $result);
 
-        $result = $View->getViewFileName('../Element/test_element');
-        $this->assertRegExp('/Element(\/|\\\)test_element.php/', $result);
+        $result = $View->getViewFileName('../element/test_element');
+        $this->assertRegExp('/element(\/|\\\)test_element.php/', $result);
 
         $expected = TEST_APP . 'templates' . DS . 'Posts' . DS . 'index.php';
         $result = $View->getViewFileName('../Posts/index');

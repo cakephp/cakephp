@@ -282,13 +282,6 @@ class View implements EventDispatcherInterface
     public const TYPE_ELEMENT = 'element';
 
     /**
-     * Constant for name of view file 'Element'
-     *
-     * @var string
-     */
-    public const NAME_ELEMENT = 'Element';
-
-    /**
      * Constant for view file type 'layout'
      *
      * @var string
@@ -603,7 +596,7 @@ class View implements EventDispatcherInterface
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
-            $file = $plugin . static::NAME_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
+            $file = $plugin . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new MissingElementException([$file]);
         }
     }
@@ -961,7 +954,7 @@ class View implements EventDispatcherInterface
                     if (!$parent) {
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . static::NAME_ELEMENT . DIRECTORY_SEPARATOR;
+                        $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
@@ -1353,7 +1346,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
-        $elementPaths = $this->_getSubPaths(static::NAME_ELEMENT);
+        $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
