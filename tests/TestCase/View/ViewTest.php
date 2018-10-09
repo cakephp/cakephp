@@ -435,11 +435,11 @@ class ViewTest extends TestCase
         $ThemeView = new TestView(null, null, null, $viewOptions);
         $themePath = Plugin::path('TestTheme') . 'templates' . DS;
 
-        $expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.php';
+        $expected = $themePath . 'plugin' . DS . 'TestPlugin' . DS . 'Tests' . DS . 'index.php';
         $result = $ThemeView->getViewFileName('index');
         $this->assertPathEquals($expected, $result);
 
-        $expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'layout' . DS . 'plugin_default.php';
+        $expected = $themePath . 'plugin' . DS . 'TestPlugin' . DS . 'layout' . DS . 'plugin_default.php';
         $result = $ThemeView->getLayoutFileName('plugin_default');
         $this->assertPathEquals($expected, $result);
 
@@ -469,7 +469,7 @@ class ViewTest extends TestCase
         $paths = $View->paths('TestPlugin');
         $pluginPath = Plugin::path('TestPlugin');
         $expected = [
-            TEST_APP . 'templates' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            TEST_APP . 'templates' . DS . 'plugin' . DS . 'TestPlugin' . DS,
             $pluginPath . 'templates' . DS,
             TEST_APP . 'templates' . DS,
             CORE_PATH . 'templates' . DS,
@@ -496,9 +496,9 @@ class ViewTest extends TestCase
         $pluginPath = Plugin::path('TestPlugin');
         $themePath = Plugin::path('TestTheme');
         $expected = [
-            $themePath . 'templates' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $themePath . 'templates' . DS . 'plugin' . DS . 'TestPlugin' . DS,
             $themePath . 'templates' . DS,
-            TEST_APP . 'templates' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            TEST_APP . 'templates' . DS . 'plugin' . DS . 'TestPlugin' . DS,
             $pluginPath . 'templates' . DS,
             TEST_APP . 'templates' . DS,
             CORE_PATH . 'templates' . DS,
@@ -529,10 +529,10 @@ class ViewTest extends TestCase
         $pluginPath = Plugin::path('TestPlugin');
         $themePath = Plugin::path('TestTheme');
         $expected = [
-            $themePath . 'templates' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            $themePath . 'templates' . DS . 'plugin' . DS . 'TestPlugin' . DS,
             $themePath . 'templates' . DS,
-            TEST_APP . 'templates' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
-            $pluginPath . 'templates' . DS . 'Plugin' . DS . 'TestPlugin' . DS,
+            TEST_APP . 'templates' . DS . 'plugin' . DS . 'TestPlugin' . DS,
+            $pluginPath . 'templates' . DS . 'plugin' . DS . 'TestPlugin' . DS,
             $pluginPath . 'templates' . DS,
             TEST_APP . 'templates' . DS,
             TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS,

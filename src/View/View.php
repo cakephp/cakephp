@@ -296,6 +296,13 @@ class View implements EventDispatcherInterface
     public const NAME_TEMPLATE = 'Template';
 
     /**
+     * Constant for folder name containing files for overriding plugin templates.
+     *
+     * @var string
+     */
+    public const PLUGIN_TEMPLATE_FOLDER = 'plugin';
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
@@ -1410,7 +1417,7 @@ class View implements EventDispatcherInterface
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
-                $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
+                $pluginPaths[] = $templatePaths[$i] . static::PLUGIN_TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }
             $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
         }
@@ -1420,7 +1427,7 @@ class View implements EventDispatcherInterface
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
-                    array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
+                    array_unshift($themePaths, $themePaths[$i] . static::PLUGIN_TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
                 }
             }
         }
