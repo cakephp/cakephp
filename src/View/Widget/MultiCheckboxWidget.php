@@ -194,17 +194,14 @@ class MultiCheckboxWidget implements WidgetInterface
         if ($checkbox['label'] === false && strpos($this->_templates->get('checkboxWrapper'), '{{input}}') === false) {
             $label = $input;
         } else {
-            $labelAttrs = [
+            $labelAttrs = is_array($checkbox['label']) ? $checkbox['label'] : [];
+            $labelAttrs += [
                 'for' => $checkbox['id'],
                 'escape' => $checkbox['escape'],
                 'text' => $checkbox['text'],
                 'templateVars' => $checkbox['templateVars'],
                 'input' => $input
             ];
-
-            if (is_array($checkbox['label'])) {
-                $labelAttrs += $checkbox['label'];
-            }
 
             if ($checkbox['checked']) {
                 $labelAttrs = $this->_templates->addClass($labelAttrs, 'selected');

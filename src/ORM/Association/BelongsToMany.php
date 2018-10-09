@@ -825,12 +825,12 @@ class BelongsToMany extends Association
         $targetPrimaryKey = (array)$target->getPrimaryKey();
         $bindingKey = (array)$this->getBindingKey();
         $jointProperty = $this->_junctionProperty;
-        $junctionAlias = $junction->getAlias();
+        $junctionRegistryAlias = $junction->getRegistryAlias();
 
         foreach ($targetEntities as $e) {
             $joint = $e->get($jointProperty);
             if (!$joint || !($joint instanceof EntityInterface)) {
-                $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionAlias]);
+                $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
             $targetKeys = array_combine($assocForeignKey, $e->extract($targetPrimaryKey));
