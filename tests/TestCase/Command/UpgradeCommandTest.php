@@ -56,6 +56,7 @@ class UpgradeCommandTest extends TestCase
         $ds = [
             'src' => [
                 'Template' => [
+                    'Email' => ['html' => ['def.php' => '']],
                     'Element' => ['foo.ctp' => ''],
                     'Layout' => ['default.ctp' => ''],
                     'Cell' => [
@@ -63,6 +64,7 @@ class UpgradeCommandTest extends TestCase
                     ],
                     'Plugin' => [
                         'TestPlugin' => [
+                            'Layout' => ['Email' => ['text.php' => '']],
                             'Element' => ['bar.ctp' => ''],
                             'Posts' => ['index.ctp' => ''],
                         ],
@@ -83,7 +85,10 @@ class UpgradeCommandTest extends TestCase
                             'Element' => [
                                 'foo.ctp' => '',
                             ],
-                            'Layout' => ['plugin.ctp' => ''],
+                            'Layout' => [
+                                'plugin.ctp' => '',
+                                'Email' => ['html.php' => ''],
+                            ],
                             'Cell' => [
                                 'TestPluginCell' => ['bar.ctp' => ''],
                             ],
@@ -128,6 +133,7 @@ class UpgradeCommandTest extends TestCase
         $ds = [
             'src' => [],
             'templates' => [
+                'email' => ['html' => ['def.php' => '']],
                 'element' => ['foo.php' => ''],
                 'layout' => ['default.php' => ''],
                 'cell' => [
@@ -135,6 +141,7 @@ class UpgradeCommandTest extends TestCase
                 ],
                 'plugin' => [
                     'TestPlugin' => [
+                        'layout' => ['email' => ['text.php' => '']],
                         'element' => ['bar.php' => ''],
                         'Posts' => ['index.php' => ''],
                     ],
@@ -155,7 +162,10 @@ class UpgradeCommandTest extends TestCase
                         'element' => [
                             'foo.php' => '',
                         ],
-                        'layout' => ['plugin.php' => ''],
+                        'layout' => [
+                            'plugin.php' => '',
+                            'email' => ['html.php' => ''],
+                        ],
                         'cell' => [
                             'TestPluginCell' => ['bar.php' => ''],
                         ],

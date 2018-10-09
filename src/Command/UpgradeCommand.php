@@ -149,7 +149,7 @@ class UpgradeCommand extends Command
         );
         $iterIter = new RecursiveIteratorIterator($dirIter);
 
-        $folders = ['Layout', 'Element', 'Cell', 'Plugin'];
+        $folders = ['Layout', 'Element', 'Cell', 'Email', 'Plugin'];
 
         foreach ($folders as $folder) {
             $templateDirs = new RegexIterator(
