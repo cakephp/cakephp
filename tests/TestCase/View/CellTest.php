@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\View\Cell;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
@@ -161,7 +162,7 @@ class CellTest extends TestCase
 
         $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
         $this->assertEquals('custom_template_path', $appCell->viewBuilder()->getTemplate());
-        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
+        $this->assertEquals(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
     /**
