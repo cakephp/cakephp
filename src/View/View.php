@@ -272,7 +272,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public const TYPE_TEMPLATE = 'view';
+    public const TYPE_TEMPLATE = 'template';
 
     /**
      * Constant for view file type 'element'
