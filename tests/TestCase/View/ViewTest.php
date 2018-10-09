@@ -358,8 +358,8 @@ class ViewTest extends TestCase
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $ThemeView->setLayoutPath('Email' . DS . 'html');
-        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'Email' . DS . 'html' . DS . 'default.php';
+        $ThemeView->setLayoutPath('email' . DS . 'html');
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'email' . DS . 'html' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
@@ -702,8 +702,8 @@ class ViewTest extends TestCase
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
-        $View->setLayoutPath('Email' . DS . 'html');
-        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'Email' . DS . 'html' . DS . 'default.php';
+        $View->setLayoutPath('email' . DS . 'html');
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'email' . DS . 'html' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
     }

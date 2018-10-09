@@ -503,7 +503,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('templates' . DS . 'Layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -522,7 +522,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('templates' . DS . 'Layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -1294,7 +1294,7 @@ class IntegrationTestTraitTest extends TestCase
             'assertFileResponse' => ['assertFileResponse', 'Failed asserting that \'test\' file was sent.', '/posts/file', 'test'],
             'assertHeader' => ['assertHeader', 'Failed asserting that \'test\' equals content in header \'X-Cake\'.', '/posts/header', 'X-Cake', 'test'],
             'assertHeaderContains' => ['assertHeaderContains', 'Failed asserting that \'test\' is in header \'X-Cake\'', '/posts/header', 'X-Cake', 'test'],
-            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file ' . $templateDir . 'Layout' . DS . 'default.php.', '/posts/index', 'custom_layout'],
+            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file ' . $templateDir . 'layout' . DS . 'default.php.', '/posts/index', 'custom_layout'],
             'assertRedirect' => ['assertRedirect', 'Failed asserting that \'http://localhost/\' equals content in header \'Location\'.', '/posts/flashNoRender', '/'],
             'assertRedirectContains' => ['assertRedirectContains', 'Failed asserting that \'/posts/somewhere-else\' is in header \'Location\'.', '/posts/flashNoRender', '/posts/somewhere-else'],
             'assertResponseCode' => ['assertResponseCode', 'Failed asserting that 302 matches response status code 200.', '/posts/index', 302],
