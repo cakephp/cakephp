@@ -61,7 +61,7 @@ class CacheTest extends TestCase
     {
         Cache::setConfig('tests', [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
             'prefix' => 'test_'
         ]);
     }
@@ -73,7 +73,7 @@ class CacheTest extends TestCase
      */
     public function testCacheEngineFallback()
     {
-        $filename = tempnam(TMP, 'tmp_');
+        $filename = tempnam(CACHE, 'tmp_');
 
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -83,13 +83,13 @@ class CacheTest extends TestCase
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
             'prefix' => 'test_',
         ]);
 
         $engine = Cache::engine('tests');
         $path = $engine->getConfig('path');
-        $this->assertSame(TMP, $path);
+        $this->assertSame(CACHE, $path);
 
         Cache::drop('tests');
         Cache::drop('tests_fallback');
@@ -105,7 +105,7 @@ class CacheTest extends TestCase
     {
         $this->expectException(Error::class);
 
-        $filename = tempnam(TMP, 'tmp_');
+        $filename = tempnam(CACHE, 'tmp_');
 
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -124,7 +124,7 @@ class CacheTest extends TestCase
      */
     public function testCacheEngineFallbackToSelf()
     {
-        $filename = tempnam(TMP, 'tmp_');
+        $filename = tempnam(CACHE, 'tmp_');
 
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -154,7 +154,7 @@ class CacheTest extends TestCase
      */
     public function testCacheFallbackWithGroups()
     {
-        $filename = tempnam(TMP, 'tmp_');
+        $filename = tempnam(CACHE, 'tmp_');
 
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -165,7 +165,7 @@ class CacheTest extends TestCase
         ]);
         Cache::setConfig('tests_fallback', [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
             'prefix' => 'test_',
             'groups' => ['group3', 'group1'],
         ]);
@@ -188,7 +188,7 @@ class CacheTest extends TestCase
      */
     public function testCacheFallbackIntegration()
     {
-        $filename = tempnam(TMP, 'tmp_');
+        $filename = tempnam(CACHE, 'tmp_');
 
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -204,7 +204,7 @@ class CacheTest extends TestCase
         ]);
         Cache::setConfig('tests_fallback_final', [
             'engine' => 'File',
-            'path' => TMP . 'cake_test' . DS,
+            'path' => CACHE . 'cake_test' . DS,
             'groups' => ['integration_group_3'],
         ]);
 
@@ -300,12 +300,12 @@ class CacheTest extends TestCase
         static::setAppNamespace();
         Plugin::load('TestPlugin');
 
-        $config = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
+        $config = ['engine' => 'TestAppCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         Cache::setConfig('libEngine', $config);
         $engine = Cache::engine('libEngine');
         $this->assertInstanceOf('TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
-        $config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_'];
+        $config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         $result = Cache::setConfig('pluginLibEngine', $config);
         $engine = Cache::engine('pluginLibEngine');
         $this->assertInstanceOf('TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
@@ -359,12 +359,12 @@ class CacheTest extends TestCase
         return [
             'Array of data using engine key.' => [[
                 'engine' => 'File',
-                'path' => TMP . 'tests',
+                'path' => CACHE . 'tests',
                 'prefix' => 'cake_test_'
             ]],
             'Array of data using classname key.' => [[
                 'className' => 'File',
-                'path' => TMP . 'tests',
+                'path' => CACHE . 'tests',
                 'prefix' => 'cake_test_'
             ]],
             'Direct instance' => [new FileEngine()],
@@ -425,7 +425,7 @@ class CacheTest extends TestCase
     public function testConfigErrorOnReconfigure()
     {
         $this->expectException(\BadMethodCallException::class);
-        Cache::setConfig('tests', ['engine' => 'File', 'path' => TMP]);
+        Cache::setConfig('tests', ['engine' => 'File', 'path' => CACHE]);
         Cache::setConfig('tests', ['engine' => 'Apc']);
     }
 
@@ -440,7 +440,7 @@ class CacheTest extends TestCase
         $this->deprecated(function () {
             $config = [
                 'engine' => 'File',
-                'path' => TMP,
+                'path' => CACHE,
                 'prefix' => 'cake_'
             ];
             Cache::config('tests', $config);
@@ -460,7 +460,7 @@ class CacheTest extends TestCase
     {
         $config = [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
             'prefix' => 'cake_'
         ];
         Cache::setConfig('tests', $config);
@@ -479,7 +479,7 @@ class CacheTest extends TestCase
     {
         Cache::setConfig('cache.dotted', [
             'className' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
             'prefix' => 'cache_value_'
         ]);
 
@@ -731,7 +731,7 @@ class CacheTest extends TestCase
         Cache::enable();
         Cache::setConfig('test_cache_disable_1', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => CACHE . 'tests'
         ]);
 
         $this->assertTrue(Cache::write('key_1', 'hello', 'test_cache_disable_1'));
@@ -751,7 +751,7 @@ class CacheTest extends TestCase
         Cache::disable();
         Cache::setConfig('test_cache_disable_2', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => CACHE . 'tests'
         ]);
 
         $this->assertNull(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
@@ -779,11 +779,11 @@ class CacheTest extends TestCase
     {
         Cache::setConfig('configTest', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => CACHE . 'tests'
         ]);
         Cache::setConfig('anotherConfigTest', [
             'engine' => 'File',
-            'path' => TMP . 'tests'
+            'path' => CACHE . 'tests'
         ]);
 
         Cache::write('key_1', 'hello', 'configTest');
