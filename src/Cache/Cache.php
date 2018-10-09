@@ -196,6 +196,8 @@ class Cache
      *
      * @param string $config The configuration name you want an engine for.
      * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
+     * @deprecated 3.7.0 Use Cache::pool() instead. In 4.0 all cache engines will implement the
+     *   PSR16 interface and this method does not return objects implementing that interface.
      */
     public static function engine(string $config): CacheEngine
     {
@@ -220,7 +222,7 @@ class Cache
      * @param string $config The name of the configured cache backend.
      * @return \Cake\Cache\SimpleCacheEngine
      */
-    public static function pool($config)
+    public static function pool(string $config)
     {
         return new SimpleCacheEngine(static::engine($config));
     }
@@ -468,7 +470,8 @@ class Cache
     /**
      * Delete all keys from the cache.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
+     * @param bool $check if true will check expiration, otherwise delete all. This parameter
+     *   will become a no-op value in 4.0 as it is deprecated.
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache was successfully cleared, false otherwise
      */
@@ -482,7 +485,8 @@ class Cache
     /**
      * Delete all keys from the cache from all configurations.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
+     * @param bool $check if true will check expiration, otherwise delete all. This parameter
+     *   will become a no-op value in 4.0 as it is deprecated.
      * @return array Status code. For each configuration, it reports the status of the operation
      */
     public static function clearAll(bool $check = false): array
@@ -639,11 +643,11 @@ class Cache
      */
     public static function add(string $key, $value, $config = 'default'): bool
     {
-        $engine = static::engine($config);
+        $pool = static::pool($config);
         if (is_resource($value)) {
             return false;
         }
 
-        return $engine->add($key, $value);
+        return $pool->add($key, $value);
     }
 }

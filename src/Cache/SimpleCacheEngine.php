@@ -251,6 +251,14 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * {@inheritDoc}
      */
+    public function add(string $key, $value): bool
+    {
+        return $this->innerEngine->add($key, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function increment(string $key, int $offset = 1)
     {
         return $this->innerEngine->increment($key, $offset);

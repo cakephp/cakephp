@@ -133,6 +133,30 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetTypeMap()
+    {
+        $response = new Response();
+        $response->setTypeMap('ical', 'text/calendar');
+
+        $response = $response->withType('ical')->getType();
+        $this->assertEquals('text/calendar', $response);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetTypeMapAsArray()
+    {
+        $response = new Response();
+        $response->setTypeMap('ical', ['text/calendar']);
+
+        $response = $response->withType('ical')->getType();
+        $this->assertEquals('text/calendar', $response);
+    }
+
+    /**
      * Tests the withType method
      *
      * @return void

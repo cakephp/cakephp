@@ -637,6 +637,22 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Sets a content type definition into the map.
+     *
+     * E.g.: setTypeMap('xhtml', ['application/xhtml+xml', 'application/xhtml'])
+     *
+     * This is needed for RequestHandlerComponent and recognition of types.
+     *
+     * @param string $type Content type.
+     * @param string|array $mimeType Definition of the mime type.
+     * @return void
+     */
+    public function setTypeMap(string $type, $mimeType)
+    {
+        $this->_mimeTypes[$type] = $mimeType;
+    }
+
+    /**
      * Returns the current content type.
      *
      * @return string

@@ -21,6 +21,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -242,6 +243,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\EventInterface $event The Controller.beforeRender event.
      * @return void
+     * @throws \Cake\Http\Exception\NotFoundException If invoked extension is not configured.
      */
     public function beforeRender(EventInterface $event)
     {
@@ -255,8 +257,11 @@ class RequestHandlerComponent extends Component
             !in_array($this->ext, ['html', 'htm']) &&
             $response->getMimeType($this->ext)
         );
+        if ($this->ext && !$isRecognized) {
+            throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
+        }
 
-        if ($this->ext && $isRecognized) {
+        if ($this->ext) {
             $this->renderAs($controller, $this->ext);
             $response = $controller->getResponse();
         } else {
