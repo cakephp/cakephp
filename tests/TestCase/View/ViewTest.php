@@ -349,24 +349,24 @@ class ViewTest extends TestCase
         $result = $ThemeView->getViewFileName('/Posts/index');
         $this->assertPathEquals($expected, $result);
 
-        $expected = Plugin::path('TestTheme') . 'templates' . DS . 'Layout' . DS . 'default.php';
+        $expected = Plugin::path('TestTheme') . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $ThemeView->setLayoutPath('rss');
-        $expected = TEST_APP . 'templates' . DS . 'Layout' . DS . 'rss' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'rss' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $ThemeView->setLayoutPath('Email' . DS . 'html');
-        $expected = TEST_APP . 'templates' . DS . 'Layout' . DS . 'Email' . DS . 'html' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'Email' . DS . 'html' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
 
         $ThemeView->setTheme('Company/TestPluginThree');
-        $expected = Plugin::path('Company/TestPluginThree') . 'templates' . DS . 'Layout' . DS . 'default.php';
+        $expected = Plugin::path('Company/TestPluginThree') . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
     }
@@ -390,7 +390,7 @@ class ViewTest extends TestCase
         $result = $View->getViewFileName('index');
         $this->assertEquals($expected, $result);
 
-        $expected = Plugin::path('TestPlugin') . 'templates' . DS . 'Layout' . DS . 'default.php';
+        $expected = Plugin::path('TestPlugin') . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertEquals($expected, $result);
     }
@@ -439,11 +439,11 @@ class ViewTest extends TestCase
         $result = $ThemeView->getViewFileName('index');
         $this->assertPathEquals($expected, $result);
 
-        $expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'Layout' . DS . 'plugin_default.php';
+        $expected = $themePath . 'Plugin' . DS . 'TestPlugin' . DS . 'layout' . DS . 'plugin_default.php';
         $result = $ThemeView->getLayoutFileName('plugin_default');
         $this->assertPathEquals($expected, $result);
 
-        $expected = $themePath . 'Layout' . DS . 'default.php';
+        $expected = $themePath . 'layout' . DS . 'default.php';
         $result = $ThemeView->getLayoutFileName('default');
         $this->assertPathEquals($expected, $result);
     }
@@ -562,7 +562,7 @@ class ViewTest extends TestCase
         $result = $View->getViewFileName('index');
         $this->assertPathEquals($expected, $result);
 
-        $expected = $pluginPath . 'templates' . DS . 'Layout' . DS . 'default.php';
+        $expected = $pluginPath . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
     }
@@ -693,17 +693,17 @@ class ViewTest extends TestCase
 
         $View = new TestView(null, null, null, $viewOptions);
 
-        $expected = TEST_APP . 'templates' . DS . 'Layout' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $View->setLayoutPath('rss');
-        $expected = TEST_APP . 'templates' . DS . 'Layout' . DS . 'rss' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'rss' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $View->setLayoutPath('Email' . DS . 'html');
-        $expected = TEST_APP . 'templates' . DS . 'Layout' . DS . 'Email' . DS . 'html' . DS . 'default.php';
+        $expected = TEST_APP . 'templates' . DS . 'layout' . DS . 'Email' . DS . 'html' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
     }
@@ -724,13 +724,13 @@ class ViewTest extends TestCase
         $View = new TestView(null, null, null, $viewOptions);
 
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS .
-            'Layout' . DS . 'default.php';
+            'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName('TestPlugin.default');
         $this->assertPathEquals($expected, $result);
 
         $View->setRequest($View->getRequest()->withParam('plugin', 'TestPlugin'));
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS .
-            'Layout' . DS . 'default.php';
+            'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName('default');
         $this->assertPathEquals($expected, $result);
     }
@@ -747,7 +747,7 @@ class ViewTest extends TestCase
         // Prefix specific layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix'));
         $expected = TEST_APP . 'templates' . DS .
-            'FooPrefix' . DS . 'Layout' . DS . 'default.php';
+            'FooPrefix' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
@@ -758,19 +758,19 @@ class ViewTest extends TestCase
         // Nested prefix layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'foo_prefix/bar_prefix'));
         $expected = TEST_APP . 'templates' . DS .
-            'FooPrefix' . DS . 'BarPrefix' . DS . 'Layout' . DS . 'default.php';
+            'FooPrefix' . DS . 'BarPrefix' . DS . 'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
 
         $expected = TEST_APP . 'templates' . DS .
-            'FooPrefix' . DS . 'Layout' . DS . 'nested_prefix_cascade.php';
+            'FooPrefix' . DS . 'layout' . DS . 'nested_prefix_cascade.php';
         $result = $View->getLayoutFileName('nested_prefix_cascade');
         $this->assertPathEquals($expected, $result);
 
         // Fallback to app's layout
         $View->setRequest($View->getRequest()->withParam('prefix', 'Admin'));
         $expected = TEST_APP . 'templates' . DS .
-            'Layout' . DS . 'default.php';
+            'layout' . DS . 'default.php';
         $result = $View->getLayoutFileName();
         $this->assertPathEquals($expected, $result);
     }
