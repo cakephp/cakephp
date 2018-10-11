@@ -282,13 +282,6 @@ class View implements EventDispatcherInterface
     public const TYPE_ELEMENT = 'element';
 
     /**
-     * Constant for name of view file 'Element'
-     *
-     * @var string
-     */
-    public const NAME_ELEMENT = 'Element';
-
-    /**
      * Constant for view file type 'layout'
      *
      * @var string
@@ -301,6 +294,13 @@ class View implements EventDispatcherInterface
      * @var string
      */
     public const NAME_TEMPLATE = 'Template';
+
+    /**
+     * Constant for folder name containing files for overriding plugin templates.
+     *
+     * @var string
+     */
+    public const PLUGIN_TEMPLATE_FOLDER = 'plugin';
 
     /**
      * Constructor
@@ -603,7 +603,7 @@ class View implements EventDispatcherInterface
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
-            $file = $plugin . static::NAME_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
+            $file = $plugin . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new MissingElementException([$file]);
         }
     }
@@ -961,7 +961,7 @@ class View implements EventDispatcherInterface
                     if (!$parent) {
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . static::NAME_ELEMENT . DIRECTORY_SEPARATOR;
+                        $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
@@ -1326,7 +1326,7 @@ class View implements EventDispatcherInterface
         }
         list($plugin, $name) = $this->pluginSplit($name);
 
-        $layoutPaths = $this->_getSubPaths('Layout' . DIRECTORY_SEPARATOR . $subDir);
+        $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
@@ -1353,7 +1353,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
-        $elementPaths = $this->_getSubPaths(static::NAME_ELEMENT);
+        $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
@@ -1417,7 +1417,7 @@ class View implements EventDispatcherInterface
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
-                $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
+                $pluginPaths[] = $templatePaths[$i] . static::PLUGIN_TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }
             $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
         }
@@ -1427,7 +1427,7 @@ class View implements EventDispatcherInterface
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
-                    array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
+                    array_unshift($themePaths, $themePaths[$i] . static::PLUGIN_TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
                 }
             }
         }

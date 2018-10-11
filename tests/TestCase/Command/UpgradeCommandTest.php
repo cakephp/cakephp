@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\visitor\vfsStreamStructureVisitor;
 
 /**
  * UpgradeCommand test.
@@ -55,6 +56,19 @@ class UpgradeCommandTest extends TestCase
         $ds = [
             'src' => [
                 'Template' => [
+                    'Email' => ['html' => ['def.php' => '']],
+                    'Element' => ['foo.ctp' => ''],
+                    'Layout' => ['default.ctp' => ''],
+                    'Cell' => [
+                        'MyCell' => ['display.ctp' => ''],
+                    ],
+                    'Plugin' => [
+                        'TestPlugin' => [
+                            'Layout' => ['Email' => ['text.php' => '']],
+                            'Element' => ['bar.ctp' => ''],
+                            'Posts' => ['index.ctp' => ''],
+                        ],
+                    ],
                     'Pages' => [
                         'home.ctp' => '',
                     ],
@@ -63,12 +77,26 @@ class UpgradeCommandTest extends TestCase
             'plugins' => [
                 'TestPlugin' => [
                     'src' => [
+                        // This is ensure "src/Cell" does not get renamed.
+                        'Cell' => [
+                            'TestPluginCell.php' => '',
+                        ],
                         'Template' => [
                             'Element' => [
                                 'foo.ctp' => '',
                             ],
+                            'Layout' => [
+                                'plugin.ctp' => '',
+                                'Email' => ['html.php' => ''],
+                            ],
+                            'Cell' => [
+                                'TestPluginCell' => ['bar.ctp' => ''],
+                            ],
                         ],
                     ],
+                ],
+                'PluginWithoutTemplates' => [
+                    'src' => [],
                 ],
             ],
         ];
@@ -102,7 +130,56 @@ class UpgradeCommandTest extends TestCase
     {
         $this->exec('upgrade templates --path ' . $this->fs->url());
 
-        $this->assertTrue($this->fs->hasChild('templates/Pages/home.php'));
-        $this->assertTrue($this->fs->hasChild('plugins/TestPlugin/templates/Element/foo.php'));
+        $ds = [
+            'src' => [],
+            'templates' => [
+                'email' => ['html' => ['def.php' => '']],
+                'element' => ['foo.php' => ''],
+                'layout' => ['default.php' => ''],
+                'cell' => [
+                    'MyCell' => ['display.php' => ''],
+                ],
+                'plugin' => [
+                    'TestPlugin' => [
+                        'layout' => ['email' => ['text.php' => '']],
+                        'element' => ['bar.php' => ''],
+                        'Posts' => ['index.php' => ''],
+                    ],
+                ],
+                'Pages' => [
+                    'home.php' => '',
+                ],
+            ],
+            'plugins' => [
+                'TestPlugin' => [
+                    'src' => [
+                        // This is ensure "src/Cell" does not get renamed.
+                        'Cell' => [
+                            'TestPluginCell.php' => '',
+                        ],
+                    ],
+                    'templates' => [
+                        'element' => [
+                            'foo.php' => '',
+                        ],
+                        'layout' => [
+                            'plugin.php' => '',
+                            'email' => ['html.php' => ''],
+                        ],
+                        'cell' => [
+                            'TestPluginCell' => ['bar.php' => ''],
+                        ],
+                    ],
+                ],
+                'PluginWithoutTemplates' => [
+                    'src' => [],
+                ],
+            ],
+        ];
+
+        $this->assertEquals(
+            ['root' => $ds],
+            vfsStream::inspect(new vfsStreamStructureVisitor())->getStructure()
+        );
     }
 }

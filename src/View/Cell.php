@@ -43,6 +43,13 @@ abstract class Cell implements EventDispatcherInterface
     use ViewVarsTrait;
 
     /**
+     * Constant for folder name containing cell templates.
+     *
+     * @var string
+     */
+    public const TEMPLATE_FOLDER = 'cell';
+
+    /**
      * Instance of the View created during rendering. Won't be set until after
      * Cell::__toString()/render() is called.
      *
@@ -186,7 +193,7 @@ abstract class Cell implements EventDispatcherInterface
             $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
             $name = substr($name, 0, -4);
             if (!$builder->getTemplatePath()) {
-                $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
+                $builder->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
 
             $view = $this->createView();

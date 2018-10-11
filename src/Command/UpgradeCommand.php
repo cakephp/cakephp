@@ -92,7 +92,11 @@ class UpgradeCommand extends Command
     protected function processTemplates()
     {
         if (is_dir($this->path . 'src/Template')) {
-            $this->rename($this->path . 'src/Template', $this->path . 'templates');
+            $this->rename(
+                $this->path . 'src/Template',
+                $this->path . 'templates'
+            );
+            $this->renameSubFolders($this->path . 'templates');
             $this->changeExt($this->path . 'templates');
         }
 
@@ -117,12 +121,49 @@ class UpgradeCommand extends Command
         $iterIter = new RecursiveIteratorIterator($dirIter);
         $templateDirs = new RegexIterator(
             $iterIter,
-            '/Template\/\.$/',
+            '#/Template/\.$#',
             RecursiveRegexIterator::REPLACE
         );
 
         foreach ($templateDirs as $key => $val) {
-            $this->rename($val . 'Template', $val . 'Template/../../templates');
+            $this->rename(
+                $val . '/Template',
+                $val . '/../templates'
+            );
+            $this->renameSubFolders($val . '/../templates');
+        }
+    }
+
+    /**
+     * Rename Layout, Element, Cell, Plugin to layout, element, cell, plugin
+     * respectively.
+     *
+     * @param string $path Path.
+     * @return void
+     */
+    protected function renameSubFolders($path)
+    {
+        $dirIter = new RecursiveDirectoryIterator(
+            $path,
+            RecursiveDirectoryIterator::UNIX_PATHS
+        );
+        $iterIter = new RecursiveIteratorIterator($dirIter);
+
+        $folders = ['Layout', 'Element', 'Cell', 'Email', 'Plugin'];
+
+        foreach ($folders as $folder) {
+            $templateDirs = new RegexIterator(
+                $iterIter,
+                '#/' . $folder . '/\.$#',
+                RecursiveRegexIterator::SPLIT
+            );
+
+            foreach ($templateDirs as $key => $val) {
+                $this->rename(
+                    $val[0] . '/' . $folder,
+                    $val[0] . '/' . strtolower($folder)
+                );
+            }
         }
     }
 
