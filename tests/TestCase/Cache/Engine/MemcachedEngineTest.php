@@ -798,17 +798,14 @@ class MemcachedEngineTest extends TestCase
         ]);
 
         Cache::write('some_value', 'cache1', 'memcached');
-        $result = Cache::clear(true, 'memcached');
-        $this->assertTrue($result);
-        $this->assertEquals('cache1', Cache::read('some_value', 'memcached'));
-
         Cache::write('some_value', 'cache2', 'memcached2');
-        $result = Cache::clear(false, 'memcached');
-        $this->assertTrue($result);
+        sleep(1);
+        $this->assertTrue(Cache::clear('memcached'));
+
         $this->assertFalse(Cache::read('some_value', 'memcached'));
         $this->assertEquals('cache2', Cache::read('some_value', 'memcached2'));
 
-        Cache::clear(false, 'memcached2');
+        Cache::clear('memcached2');
     }
 
     /**

@@ -282,10 +282,13 @@ class MemcachedEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      * @see https://secure.php.net/manual/en/memcache.set.php
      */
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
         $duration = $this->_config['duration'];
         if ($duration > 30 * DAY) {
@@ -325,10 +328,11 @@ class MemcachedEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
+     * @param mixed $default Default value to return if the key does not exist.
      * @return mixed The cached data, or false if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
-    public function read(string $key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
