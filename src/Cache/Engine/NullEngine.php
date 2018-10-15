@@ -35,7 +35,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
         return true;
     }
@@ -51,9 +51,9 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function read(string $key)
+    public function get($key, $default = null)
     {
-        return false;
+        return $default;
     }
 
     /**
@@ -83,7 +83,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         return true;
     }
@@ -99,7 +99,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
         return false;
     }

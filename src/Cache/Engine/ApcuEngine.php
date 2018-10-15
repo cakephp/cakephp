@@ -116,7 +116,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         $key = $this->_key($key);
 
@@ -126,17 +126,12 @@ class ApcuEngine extends CacheEngine
     /**
      * Delete all keys from the cache. This will clear every cache config using APC.
      *
-     * @param bool $check If true, nothing will be cleared, as entries are removed
-     *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         if (class_exists('APCuIterator', false)) {
             $iterator = new APCuIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',

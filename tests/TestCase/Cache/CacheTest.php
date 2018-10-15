@@ -19,10 +19,9 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
-use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use PHPUnit\Framework\Error\Error;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 
@@ -216,8 +215,8 @@ class CacheTest extends TestCase
 
         $this->assertTrue(Cache::clearGroup('integration_group', 'tests'));
 
-        $this->assertFalse(Cache::read('grouped', 'tests'));
-        $this->assertFalse(Cache::read('grouped_2', 'tests_fallback'));
+        $this->assertNull(Cache::read('grouped', 'tests'));
+        $this->assertNull(Cache::read('grouped_2', 'tests_fallback'));
 
         $this->assertSame('worked', Cache::read('grouped_3', 'tests_fallback_final'));
 
@@ -238,7 +237,7 @@ class CacheTest extends TestCase
         $this->_configCache();
 
         $this->assertTrue(Cache::write('no_save', 'Noooo!', 'tests'));
-        $this->assertFalse(Cache::read('no_save', 'tests'));
+        $this->assertNull(Cache::read('no_save', 'tests'));
         $this->assertTrue(Cache::delete('no_save', 'tests'));
     }
 
@@ -347,7 +346,7 @@ class CacheTest extends TestCase
      */
     public function testDecrementNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
     }
 
@@ -549,7 +548,7 @@ class CacheTest extends TestCase
      */
     public function testGroupConfigsThrowsException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         Cache::groupConfigs('bogus');
     }
 
@@ -621,8 +620,8 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey()
     {
-        $this->expectException(CacheInvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache key must be a non-empty string');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('An empty value is not valid as a cache key');
         $this->_configCache();
         Cache::write('', 'not null', 'tests');
     }
@@ -673,11 +672,11 @@ class CacheTest extends TestCase
         Cache::deleteMany(array_keys($data), 'tests');
         $read = Cache::readMany(array_merge(array_keys($data), ['App.keepTest']), 'tests');
 
-        $this->assertFalse($read['App.falseTest']);
-        $this->assertFalse($read['App.trueTest']);
-        $this->assertFalse($read['App.nullTest']);
-        $this->assertFalse($read['App.zeroTest']);
-        $this->assertFalse($read['App.zeroTest2']);
+        $this->assertNull($read['App.falseTest']);
+        $this->assertNull($read['App.trueTest']);
+        $this->assertNull($read['App.nullTest']);
+        $this->assertNull($read['App.zeroTest']);
+        $this->assertNull($read['App.zeroTest2']);
         $this->assertSame($read['App.keepTest'], 'keepMe');
     }
 
@@ -720,13 +719,13 @@ class CacheTest extends TestCase
         Cache::disable();
 
         $this->assertTrue(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
-        $this->assertFalse(Cache::read('key_2', 'test_cache_disable_1'));
+        $this->assertNull(Cache::read('key_2', 'test_cache_disable_1'));
 
         Cache::enable();
 
         $this->assertTrue(Cache::write('key_3', 'hello', 'test_cache_disable_1'));
         $this->assertSame('hello', Cache::read('key_3', 'test_cache_disable_1'));
-        Cache::clear(false, 'test_cache_disable_1');
+        Cache::clear('test_cache_disable_1');
 
         Cache::disable();
         Cache::setConfig('test_cache_disable_2', [
@@ -735,7 +734,7 @@ class CacheTest extends TestCase
         ]);
 
         $this->assertTrue(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
-        $this->assertFalse(Cache::read('key_4', 'test_cache_disable_2'));
+        $this->assertNull(Cache::read('key_4', 'test_cache_disable_2'));
 
         Cache::enable();
 
@@ -744,10 +743,10 @@ class CacheTest extends TestCase
 
         Cache::disable();
         $this->assertTrue(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
-        $this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
+        $this->assertNull(Cache::read('key_6', 'test_cache_disable_2'));
 
         Cache::enable();
-        Cache::clear(false, 'test_cache_disable_2');
+        Cache::clear('test_cache_disable_2');
     }
 
     /**
@@ -775,8 +774,8 @@ class CacheTest extends TestCase
         $result = Cache::clearAll();
         $this->assertTrue($result['configTest']);
         $this->assertTrue($result['anotherConfigTest']);
-        $this->assertFalse(Cache::read('key_1', 'configTest'));
-        $this->assertFalse(Cache::read('key_2', 'anotherConfigTest'));
+        $this->assertNull(Cache::read('key_1', 'configTest'));
+        $this->assertNull(Cache::read('key_2', 'anotherConfigTest'));
         Cache::drop('configTest');
         Cache::drop('anotherConfigTest');
     }

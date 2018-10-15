@@ -213,7 +213,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         $key = $this->_key($key);
 
@@ -223,14 +223,10 @@ class RedisEngine extends CacheEngine
     /**
      * Delete all keys from the cache
      *
-     * @param bool $check If true will check expiration, otherwise delete all.
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         $keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
 
         $result = [];
