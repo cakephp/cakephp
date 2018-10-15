@@ -392,17 +392,17 @@ class RedisEngineTest extends TestCase
         ]);
 
         Cache::write('some_value', 'cache1', 'redis');
-        $result = Cache::clear(true, 'redis');
+        $result = Cache::clear('redis');
         $this->assertTrue($result);
-        $this->assertEquals('cache1', Cache::read('some_value', 'redis'));
+        $this->assertFalse(Cache::read('some_value', 'redis'));
 
         Cache::write('some_value', 'cache2', 'redis2');
-        $result = Cache::clear(false, 'redis');
+        $result = Cache::clear('redis');
         $this->assertTrue($result);
         $this->assertFalse(Cache::read('some_value', 'redis'));
         $this->assertEquals('cache2', Cache::read('some_value', 'redis2'));
 
-        Cache::clear(false, 'redis2');
+        Cache::clear('redis2');
     }
 
     /**

@@ -317,7 +317,7 @@ class Cache
      *
      * @param string $key Identifier for the data
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+     * @return mixed The cached data, or null if the data doesn't exist, has expired, or if there was an error fetching it
      */
     public static function read(string $key, string $config = 'default')
     {
