@@ -35,7 +35,7 @@ class FileEngineTest extends TestCase
         parent::setUp();
         Cache::enable();
         $this->_configCache();
-        Cache::clear(false, 'file_test');
+        Cache::clear('file_test');
     }
 
     /**
@@ -132,7 +132,7 @@ class FileEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'file_test');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'file_test');
@@ -140,7 +140,7 @@ class FileEngineTest extends TestCase
 
         sleep(2);
         $result = Cache::read('other_test', 'file_test');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $this->_configCache(['duration' => '+1 second']);
 
@@ -150,7 +150,7 @@ class FileEngineTest extends TestCase
 
         sleep(2);
         $result = Cache::read('other_test', 'file_test');
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -209,26 +209,11 @@ class FileEngineTest extends TestCase
         $this->assertFileExists(TMP . 'tests/cake_serialize_test2');
         $this->assertFileExists(TMP . 'tests/cake_serialize_test3');
 
-        sleep(1);
-        $result = Cache::clear(true, 'file_test');
+        $result = Cache::clear('file_test');
         $this->assertTrue($result);
         $this->assertFileNotExists(TMP . 'tests/cake_serialize_test1');
         $this->assertFileNotExists(TMP . 'tests/cake_serialize_test2');
         $this->assertFileNotExists(TMP . 'tests/cake_serialize_test3');
-
-        $data = 'this is a test of the emergency broadcasting system';
-        Cache::write('serialize_test1', $data, 'file_test');
-        Cache::write('serialize_test2', $data, 'file_test');
-        Cache::write('serialize_test3', $data, 'file_test');
-        $this->assertFileExists(TMP . 'tests/cake_serialize_test1');
-        $this->assertFileExists(TMP . 'tests/cake_serialize_test2');
-        $this->assertFileExists(TMP . 'tests/cake_serialize_test3');
-
-        $result = Cache::clear(false, 'file_test');
-        $this->assertTrue($result);
-        $this->assertFileNotExists(CACHE . 'cake_serialize_test1');
-        $this->assertFileNotExists(CACHE . 'cake_serialize_test2');
-        $this->assertFileNotExists(CACHE . 'cake_serialize_test3');
     }
 
     /**
@@ -250,15 +235,15 @@ class FileEngineTest extends TestCase
         ]);
 
         $dataOne = $dataTwo = $expected = 'content to cache';
-        $FileOne->write('prefix_one_key_one', $dataOne);
-        $FileTwo->write('prefix_two_key_two', $dataTwo);
+        $FileOne->set('prefix_one_key_one', $dataOne);
+        $FileTwo->set('prefix_two_key_two', $dataTwo);
 
-        $this->assertEquals($expected, $FileOne->read('prefix_one_key_one'));
-        $this->assertEquals($expected, $FileTwo->read('prefix_two_key_two'));
+        $this->assertEquals($expected, $FileOne->get('prefix_one_key_one'));
+        $this->assertEquals($expected, $FileTwo->get('prefix_two_key_two'));
 
-        $FileOne->clear(false);
-        $this->assertEquals($expected, $FileTwo->read('prefix_two_key_two'), 'secondary config was cleared by accident.');
-        $FileTwo->clear(false);
+        $FileOne->clear();
+        $this->assertEquals($expected, $FileTwo->get('prefix_two_key_two'), 'secondary config was cleared by accident.');
+        $FileTwo->clear();
     }
 
     /**
@@ -275,9 +260,9 @@ class FileEngineTest extends TestCase
             'groups' => ['short', 'round'],
         ]);
         $key = 'cake_test_test_key';
-        $engine->write($key, 'it works');
-        $engine->clear(false);
-        $this->assertFalse($engine->read($key), 'Key should have been removed');
+        $engine->set($key, 'it works');
+        $engine->clear();
+        $this->assertNull($engine->get($key), 'Key should have been removed');
     }
 
     /**
@@ -294,8 +279,8 @@ class FileEngineTest extends TestCase
             'groups' => ['one', 'two'],
         ]);
         $key = 'cake_test_test_key';
-        $engine->clear(false);
-        $this->assertFalse($engine->read($key), 'No errors should be found');
+        $engine->clear();
+        $this->assertNull($engine->get($key), 'No errors should be found');
     }
 
     /**
@@ -312,7 +297,7 @@ class FileEngineTest extends TestCase
         $result = Cache::read('views.countries.something', 'file_test');
         $this->assertEquals('here', $result);
 
-        $result = Cache::clear(false, 'file_test');
+        $result = Cache::clear('file_test');
         $this->assertTrue($result);
 
         $result = Cache::write('domain.test.com:8080', 'here', 'file_test');
@@ -526,13 +511,13 @@ class FileEngineTest extends TestCase
         $this->assertEquals('rchavik', Cache::read('user', 'repeat'));
 
         Cache::delete('user', 'repeat');
-        $this->assertFalse(Cache::read('user', 'repeat'));
+        $this->assertNull(Cache::read('user', 'repeat'));
 
         $this->assertTrue(Cache::write('user', 'ADmad', 'repeat'));
         $this->assertEquals('ADmad', Cache::read('user', 'repeat'));
 
         Cache::clearGroup('users', 'repeat');
-        $this->assertFalse(Cache::read('user', 'repeat'));
+        $this->assertNull(Cache::read('user', 'repeat'));
 
         $this->assertTrue(Cache::write('user', 'markstory', 'repeat'));
         $this->assertEquals('markstory', Cache::read('user', 'repeat'));
@@ -556,7 +541,7 @@ class FileEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'file_groups'));
 
-        $this->assertFalse(Cache::read('test_groups', 'file_groups'));
+        $this->assertNull(Cache::read('test_groups', 'file_groups'));
     }
 
     /**
@@ -588,8 +573,8 @@ class FileEngineTest extends TestCase
         $this->assertTrue(Cache::write('test_groups3', 'value 3', 'file_groups3'));
 
         $this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'file_groups'));
-        $this->assertFalse(Cache::read('test_groups2', 'file_groups2'));
+        $this->assertNull(Cache::read('test_groups', 'file_groups'));
+        $this->assertNull(Cache::read('test_groups2', 'file_groups2'));
         $this->assertEquals('value 3', Cache::read('test_groups3', 'file_groups3'));
 
         $this->assertTrue(Cache::write('test_groups4', 'value', 'file_groups'));
@@ -597,8 +582,8 @@ class FileEngineTest extends TestCase
         $this->assertTrue(Cache::write('test_groups6', 'value 3', 'file_groups3'));
 
         $this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
-        $this->assertFalse(Cache::read('test_groups4', 'file_groups'));
-        $this->assertFalse(Cache::read('test_groups5', 'file_groups2'));
+        $this->assertNull(Cache::read('test_groups4', 'file_groups'));
+        $this->assertNull(Cache::read('test_groups5', 'file_groups2'));
         $this->assertEquals('value 3', Cache::read('test_groups6', 'file_groups3'));
     }
 
@@ -618,8 +603,8 @@ class FileEngineTest extends TestCase
         Cache::write('key_1', 'value', 'file_groups');
         Cache::write('key_2', 'value', 'file_groups');
         Cache::clearGroup('group_a', 'file_groups');
-        $this->assertFalse(Cache::read('key_1', 'file_groups'), 'Did not delete');
-        $this->assertFalse(Cache::read('key_2', 'file_groups'), 'Did not delete');
+        $this->assertNull(Cache::read('key_1', 'file_groups'), 'Did not delete');
+        $this->assertNull(Cache::read('key_2', 'file_groups'), 'Did not delete');
     }
 
     /**
