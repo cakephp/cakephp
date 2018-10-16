@@ -295,11 +295,34 @@ abstract class Association
     }
 
     /**
-     * The class name of the target table object
+     * Sets the class name of the target table object.
      *
-     * @return string
+     * @param string $className Class name to set.
+     * @return $this
+     * @throws \InvalidArgumentException In case the class name is set after the target table has been
+     *  resolved, and it doesn't match the target table's class name.
      */
-    public function className(): string
+    public function setClassName(string $className)
+    {
+        if ($this->_targetTable !== null &&
+            get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
+        ) {
+            throw new InvalidArgumentException(
+                'The class name doesn\'t match the target table\'s class name.'
+            );
+        }
+
+        $this->_className = $className;
+
+        return $this;
+    }
+
+    /**
+     * Gets the class name of the target table object.
+     *
+     * @return string|null
+     */
+    public function getClassName(): ?string
     {
         return $this->_className;
     }

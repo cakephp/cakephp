@@ -37,7 +37,7 @@ class CallbackStream extends BaseCallbackStream
      *
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         $callback = $this->detach();
         $result = '';

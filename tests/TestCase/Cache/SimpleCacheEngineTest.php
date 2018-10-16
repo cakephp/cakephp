@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Cache;
 
+use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
@@ -56,6 +57,7 @@ class SimpleCacheEngineTest extends TestCase
             'prefix' => '',
             'path' => TMP . 'tests',
             'duration' => 5,
+            'groups' => ['blog', 'category'],
         ]);
         $this->cache = new SimpleCacheEngine($this->innerEngine);
     }
@@ -292,7 +294,9 @@ class SimpleCacheEngineTest extends TestCase
             'key2' => 'other value',
             'key' => 'a value',
         ];
-        $this->cache->setMultiple($data);
+
+        $result = $this->cache->setMultiple($data);
+        $this->assertTrue($result);
 
         $results = $this->cache->getMultiple(array_keys($data));
         $this->assertEquals($expected, $results);
@@ -431,5 +435,71 @@ class SimpleCacheEngineTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A cache key must be a non-empty string.');
         $this->cache->has('');
+    }
+
+    /**
+     * Test pass through on clearGroup()
+     *
+     * @return void
+     */
+    public function testClearGroup()
+    {
+        $this->cache->set('one', 'val');
+        $this->cache->set('two', 'val 2');
+
+        $this->cache->clearGroup('blog');
+        $this->assertFalse($this->cache->has('one'));
+        $this->assertFalse($this->cache->has('two'));
+    }
+
+    /**
+     * Test pass through on increment()
+     *
+     * @return void
+     */
+    public function testIncrement()
+    {
+        $mock = $this->createMock(CacheEngine::class);
+        $mock->expects($this->once())
+            ->method('increment')
+            ->with('key', 2)
+            ->will($this->returnValue(true));
+
+        $cache = new SimpleCacheEngine($mock);
+        $this->assertTrue($cache->increment('key', 2));
+    }
+
+    /**
+     * Test pass through on decrement()
+     *
+     * @return void
+     */
+    public function testDecrement()
+    {
+        $mock = $this->createMock(CacheEngine::class);
+        $mock->expects($this->once())
+            ->method('decrement')
+            ->with('key', 2)
+            ->will($this->returnValue(true));
+
+        $cache = new SimpleCacheEngine($mock);
+        $this->assertTrue($cache->decrement('key', 2));
+    }
+
+    /**
+     * Test pass through on add()
+     *
+     * @return void
+     */
+    public function testAdd()
+    {
+        $mock = $this->createMock(CacheEngine::class);
+        $mock->expects($this->once())
+            ->method('add')
+            ->with('key', 2)
+            ->will($this->returnValue(true));
+
+        $cache = new SimpleCacheEngine($mock);
+        $this->assertTrue($cache->add('key', 2));
     }
 }

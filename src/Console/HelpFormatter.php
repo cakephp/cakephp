@@ -228,6 +228,6 @@ class HelpFormatter
         }
         $xml->addChild('epilog', $parser->getEpilog());
 
-        return $string ? $xml->asXML() : $xml;
+        return $string ? (string)$xml->asXML() : $xml;
     }
 }

@@ -6,6 +6,7 @@
 
     <rule ref="CakePHP" >
         <exclude name="CakePHP.Formatting.UseInAlphabeticalOrder.UseInAlphabeticalOrder" />
+        <exclude name="Generic.Commenting.Todo.TaskFound" />
     </rule>
 
     <exclude-pattern>tests/*/templates/*</exclude-pattern>

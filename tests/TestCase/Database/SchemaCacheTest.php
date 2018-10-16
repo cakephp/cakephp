@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
@@ -116,7 +116,6 @@ class SchemaCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
         $this->cache->method('write')
             ->will($this->returnValue(true));
-
         $this->cache->expects($this->at(3))
             ->method('write')
             ->with('test_articles')

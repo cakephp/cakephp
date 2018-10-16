@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
+use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -801,17 +802,18 @@ class RouteBuilder
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
-     * @return void
+     * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute
      */
-    public function redirect(string $route, $url, array $options = []): void
+    public function redirect(string $route, $url, array $options = []): Route
     {
         if (!isset($options['routeClass'])) {
-            $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
+            $options['routeClass'] = RedirectRoute::class;
         }
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
-        $this->connect($route, $url, $options);
+
+        return $this->connect($route, $url, $options);
     }
 
     /**

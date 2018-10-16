@@ -35,7 +35,6 @@ use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
-use Cake\Network\Exception\SocketException;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
@@ -359,7 +358,7 @@ class ExceptionRendererTest extends TestCase
     public function testCakeErrorHelpersNotLost()
     {
         static::setAppNamespace();
-        $exception = new SocketException('socket exception');
+        $exception = new NotFoundException();
         $renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
 
         $result = $renderer->render();

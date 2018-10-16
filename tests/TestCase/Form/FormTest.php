@@ -95,22 +95,22 @@ class FormTest extends TestCase
             'body' => 'too short',
         ];
         $this->assertFalse($form->validate($data));
-        $this->assertCount(2, $form->errors());
+        $this->assertCount(2, $form->getErrors());
 
         $data = [
             'email' => 'test@example.com',
             'body' => 'Some content goes here',
         ];
         $this->assertTrue($form->validate($data));
-        $this->assertCount(0, $form->errors());
+        $this->assertCount(0, $form->getErrors());
     }
 
     /**
-     * Test the errors methods.
+     * Test the get errors methods.
      *
      * @return void
      */
-    public function testErrors()
+    public function testGetErrors()
     {
         $form = new Form();
         $form->getValidator()
@@ -128,7 +128,7 @@ class FormTest extends TestCase
             'body' => 'too short',
         ];
         $form->validate($data);
-        $errors = $form->errors();
+        $errors = $form->getErrors();
         $this->assertCount(2, $errors);
         $this->assertEquals('Must be a valid email', $errors['email']['format']);
         $this->assertEquals('Must be so long', $errors['body']['length']);
@@ -147,7 +147,7 @@ class FormTest extends TestCase
         ];
 
         $form->setErrors($expected);
-        $this->assertSame($expected, $form->errors());
+        $this->assertSame($expected, $form->getErrors());
     }
 
     /**

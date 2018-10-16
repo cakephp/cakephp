@@ -38,35 +38,35 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The subdirectory to the template.
      *
-     * @var string
+     * @var string|null
      */
     protected $_templatePath;
 
     /**
      * The template file to render.
      *
-     * @var string
+     * @var string|null
      */
     protected $_template;
 
     /**
      * The plugin name to use.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_plugin;
 
     /**
      * The theme name to use.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_theme;
 
     /**
      * The layout name to render.
      *
-     * @var string
+     * @var string|null|false
      */
     protected $_layout;
 
@@ -80,14 +80,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The layout path to build the view with.
      *
-     * @var string
+     * @var string|null
      */
     protected $_layoutPath;
 
     /**
      * The view variables to use
      *
-     * @var string
+     * @var string|null
      */
     protected $_name;
 
@@ -96,7 +96,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Can either use plugin notation, a short name
      * or a fully namespaced classname.
      *
-     * @var string
+     * @var string|null
      */
     protected $_className;
 
@@ -244,7 +244,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function enableAutoLayout(bool $enable = true): self
     {
-        $this->_autoLayout = (bool)$enable;
+        $this->_autoLayout = $enable;
 
         return $this;
     }

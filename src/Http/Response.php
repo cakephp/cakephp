@@ -637,6 +637,22 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Sets a content type definition into the map.
+     *
+     * E.g.: setTypeMap('xhtml', ['application/xhtml+xml', 'application/xhtml'])
+     *
+     * This is needed for RequestHandlerComponent and recognition of types.
+     *
+     * @param string $type Content type.
+     * @param string|array $mimeType Definition of the mime type.
+     * @return void
+     */
+    public function setTypeMap(string $type, $mimeType)
+    {
+        $this->_mimeTypes[$type] = $mimeType;
+    }
+
+    /**
      * Returns the current content type.
      *
      * @return string
@@ -1155,19 +1171,20 @@ class Response implements ResponseInterface
     {
         $etags = preg_split('/\s*,\s*/', (string)$request->getHeaderLine('If-None-Match'), 0, PREG_SPLIT_NO_EMPTY);
         $responseTag = $this->getHeaderLine('Etag');
+        $etagMatches = null;
         if ($responseTag) {
             $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
         }
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');
+        $timeMatches = null;
         if ($modifiedSince && $this->hasHeader('Last-Modified')) {
             $timeMatches = strtotime($this->getHeaderLine('Last-Modified')) === strtotime($modifiedSince);
         }
-        $checks = compact('etagMatches', 'timeMatches');
-        if (empty($checks)) {
+        if ($etagMatches === null && $timeMatches === null) {
             return false;
         }
-        $notModified = !in_array(false, $checks, true);
+        $notModified = $etagMatches !== false && $timeMatches !== false;
         if ($notModified) {
             $this->notModified();
         }

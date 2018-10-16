@@ -40,15 +40,19 @@ class Request extends Message implements RequestInterface
      */
     public function __construct(string $url = '', string $method = self::METHOD_GET, array $headers = [], $data = null)
     {
-        $this->validateMethod($method);
-        $this->method = $method;
+        $this->setMethod($method);
         $this->uri = $this->createUri($url);
         $headers += [
             'Connection' => 'close',
             'User-Agent' => 'CakePHP',
         ];
         $this->addHeaders($headers);
-        $this->body($data);
+
+        if ($data === null) {
+            $this->stream = new Stream('php://memory', 'rw');
+        } else {
+            $this->body($data);
+        }
     }
 
     /**

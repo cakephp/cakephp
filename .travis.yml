@@ -3,12 +3,15 @@ language: php
 php:
   - 7.1
   - 7.2
+  - 7.3.0RC1
 
-dist: trusty
+sudo: required
+
+dist: xenial
 
 env:
   matrix:
-    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test?init[]=SET sql_mode = "STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"'
     - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
@@ -21,6 +24,9 @@ services:
   - mysql
 
 addons:
+  apt:
+    packages:
+      - libzip4
   postgresql: "9.4"
 
 cache:
@@ -39,7 +45,8 @@ matrix:
       env: STATIC_ANALYSIS=1 DEFAULT=0
 
 before_install:
-  - phpenv config-rm xdebug.ini
+  - echo cakephp version && tail -1 VERSION.txt
+  - if [[ ${TRAVIS_PHP_VERSION} != "7.3.0RC1" ]]; then phpenv config-rm xdebug.ini; fi
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
@@ -49,7 +56,10 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
-  - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - |
+      if [[ ${TRAVIS_PHP_VERSION} != "7.3.0RC1" && ($DEFAULT = 1 || $STATIC_ANALYSIS = 1) ]]; then
+        echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
+      fi
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
   - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi

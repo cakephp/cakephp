@@ -20,6 +20,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\AjaxView;
@@ -28,21 +29,30 @@ use Cake\View\XmlView;
 use TestApp\Controller\RequestHandlerTestController;
 use Zend\Diactoros\Stream;
 
+class RequestHandlerComponentExt extends RequestHandlerComponent
+{
+    public function getExt()
+    {
+        return $this->ext;
+    }
+
+    public function setExt($ext)
+    {
+        $this->ext = $ext;
+    }
+}
+
 /**
  * RequestHandlerComponentTest class
  */
 class RequestHandlerComponentTest extends TestCase
 {
     /**
-     * Controller property
-     *
      * @var RequestHandlerTestController
      */
     public $Controller;
 
     /**
-     * RequestHandler property
-     *
      * @var RequestHandlerComponent
      */
     public $RequestHandler;
@@ -84,10 +94,10 @@ class RequestHandlerComponentTest extends TestCase
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
         $this->Controller = new RequestHandlerTestController($request, $response);
-        $this->RequestHandler = $this->Controller->components()->load('RequestHandler');
+        $this->RequestHandler = $this->Controller->components()->load(RequestHandlerComponentExt::class);
         $this->request = $request;
 
-        Router::scope('/', function ($routes): void {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->setExtensions('json');
             $routes->fallbacks('InflectedRoute');
         });
@@ -147,9 +157,9 @@ class RequestHandlerComponentTest extends TestCase
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json'));
 
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('json', $this->RequestHandler->ext);
+        $this->assertEquals('json', $this->RequestHandler->getExt());
     }
 
     /**
@@ -163,7 +173,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->setRequest($this->request
             ->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01')
             ->withHeader('X-Requested-With', 'XMLHttpRequest'));
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
         Router::extensions('json', false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -194,7 +204,7 @@ class RequestHandlerComponentTest extends TestCase
     {
         Router::reload();
         $this->Controller->setRequest($this->request->withHeader('Accept', 'application/json, application/javascript, */*; q=0.01'));
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
         Router::extensions(['rss', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -230,13 +240,13 @@ class RequestHandlerComponentTest extends TestCase
             'Accept',
             'application/json, application/javascript, application/xml, */*; q=0.01'
         ));
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
         Router::extensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('xml', $this->RequestHandler->ext);
 
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
         Router::extensions(['json', 'xml'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
@@ -255,7 +265,7 @@ class RequestHandlerComponentTest extends TestCase
             'Accept',
             'text/csv;q=1.0, application/json;q=0.8, application/xml;q=0.7'
         ));
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertEquals('json', $this->RequestHandler->ext);
@@ -273,7 +283,7 @@ class RequestHandlerComponentTest extends TestCase
             'HTTP_ACCEPT',
             'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5'
         );
-        $this->RequestHandler->ext = null;
+        $this->RequestHandler->setExt(null);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->assertNull($this->RequestHandler->ext);
@@ -356,7 +366,6 @@ class RequestHandlerComponentTest extends TestCase
     {
         $this->Controller->setRequest($this->request->withHeader('X-Requested-With', 'XMLHttpRequest'));
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->Controller->beforeFilter($event);
         $this->RequestHandler->startup($event);
         $this->assertTrue($this->Controller->getRequest()->getParam('isAjax'));
@@ -372,7 +381,6 @@ class RequestHandlerComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         $this->Controller->setRequest($this->request->withHeader('X-Requested-With', 'XMLHttpRequest'));
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -383,7 +391,6 @@ class RequestHandlerComponentTest extends TestCase
 
         $this->_init();
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'js'));
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $this->assertNotEquals(AjaxView::class, $this->Controller->viewBuilder()->getClassName());
     }
@@ -399,7 +406,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'json'));
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -420,7 +426,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'xml'));
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -441,7 +446,6 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'ajax'));
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
@@ -461,14 +465,33 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['json', 'xml', 'ajax', 'csv'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'csv'));
         $event = new Event('Controller.startup', $this->Controller);
-        $this->RequestHandler->initialize([]);
         $this->RequestHandler->startup($event);
         $this->Controller->getEventManager()->on('Controller.beforeRender', function () {
-            return $this->Controller->response;
+            return $this->Controller->getResponse();
         });
         $this->Controller->render();
         $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
         $this->assertEquals('csv', $this->Controller->viewBuilder()->getLayoutPath());
+    }
+
+    /**
+     * Tests that configured extensions that have no configured mimetype do not silently fallback to HTML.
+     *
+     * @return void
+     * @expectedException \Cake\Http\Exception\NotFoundException
+     * @expectedExceptionMessage Invoked extension not recognized/configured: foo
+     */
+    public function testUnrecognizedExtensionFailure()
+    {
+        Router::extensions(['json', 'foo'], false);
+        $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));
+        $event = new Event('Controller.startup', $this->Controller);
+        $this->RequestHandler->startup($event);
+        $this->Controller->getEventManager()->on('Controller.beforeRender', function () {
+            return $this->Controller->getResponse();
+        });
+        $this->Controller->render();
+        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -765,7 +788,7 @@ XML;
     public function testRenderAsCalledTwice(): void
     {
         $this->Controller->getEventManager()->on('Controller.beforeRender', function (\Cake\Event\EventInterface $e) {
-            return $e->getSubject()->response;
+            return $e->getSubject()->getResponse();
         });
         $this->Controller->render();
 
@@ -821,60 +844,23 @@ XML;
             'Accept',
             'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
         ));
-        $this->assertTrue($this->RequestHandler->isXml());
-        $this->assertFalse($this->RequestHandler->isAtom());
-        $this->assertFalse($this->RequestHandler->isRSS());
+        $this->assertTrue($this->RequestHandler->prefers('xml'));
+        $this->assertFalse($this->RequestHandler->prefers('atom'));
+        $this->assertFalse($this->RequestHandler->prefers('rss'));
 
         $this->Controller->setRequest($this->request->withHeader(
             'Accept',
             'application/atom+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
         ));
-        $this->assertTrue($this->RequestHandler->isAtom());
-        $this->assertFalse($this->RequestHandler->isRSS());
+        $this->assertTrue($this->RequestHandler->prefers('atom'));
+        $this->assertFalse($this->RequestHandler->prefers('rss'));
 
         $this->Controller->setRequest($this->request->withHeader(
             'Accept',
             'application/rss+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
         ));
-        $this->assertFalse($this->RequestHandler->isAtom());
-        $this->assertTrue($this->RequestHandler->isRSS());
-
-        $this->assertFalse($this->RequestHandler->isWap());
-        $this->Controller->setRequest($this->request->withHeader(
-            'Accept',
-            'text/vnd.wap.wml,text/html,text/plain,image/png,*/*'
-        ));
-        $this->assertTrue($this->RequestHandler->isWap());
-    }
-
-    /**
-     * testResponseContentType method
-     *
-     * @return void
-     */
-    public function testResponseContentType(): void
-    {
-        $this->assertEquals('html', $this->RequestHandler->responseType());
-        $this->assertTrue($this->RequestHandler->respondAs('atom'));
-        $this->assertEquals('atom', $this->RequestHandler->responseType());
-    }
-
-    /**
-     * testMobileDeviceDetection method
-     *
-     * @return void
-     */
-    public function testMobileDeviceDetection(): void
-    {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
-            ->setMethods(['is'])
-            ->getMock();
-        $request->expects($this->once())->method('is')
-            ->with('mobile')
-            ->will($this->returnValue(true));
-
-        $this->Controller->setRequest($request);
-        $this->assertTrue($this->RequestHandler->isMobile());
+        $this->assertFalse($this->RequestHandler->prefers('atom'));
+        $this->assertTrue($this->RequestHandler->prefers('rss'));
     }
 
     /**
@@ -929,7 +915,7 @@ XML;
         ));
         $this->assertNotEquals('rss', $this->RequestHandler->prefers());
 
-        $this->RequestHandler->ext = 'rss';
+        $this->RequestHandler->setExt('rss');
         $this->assertEquals('rss', $this->RequestHandler->prefers());
         $this->assertFalse($this->RequestHandler->prefers('xml'));
         $this->assertEquals('xml', $this->RequestHandler->prefers(['js', 'xml', 'xhtml']));
@@ -950,7 +936,7 @@ XML;
         $this->assertFalse($this->RequestHandler->prefers('rss'));
 
         $this->Controller->setRequest($this->request->withEnv('HTTP_ACCEPT', ''));
-        $this->RequestHandler->ext = 'json';
+        $this->RequestHandler->setExt('json');
         $this->assertFalse($this->RequestHandler->prefers('xml'));
     }
 

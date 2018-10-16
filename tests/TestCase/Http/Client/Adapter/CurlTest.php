@@ -109,6 +109,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_TIMEOUT => 5,
             CURLOPT_CAINFO => $this->caFile,
         ];
@@ -174,6 +175,7 @@ class CurlTest extends TestCase
             ],
             CURLOPT_POST => true,
             CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);
@@ -239,6 +241,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_CAINFO => $this->caFile,
@@ -272,6 +275,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_PROXY => '127.0.0.1:8080',
             CURLOPT_PROXYUSERPWD => 'frodo:one_ring',
@@ -303,6 +307,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_USERAGENT => 'Super-secret',
         ];

@@ -84,6 +84,13 @@ class Email implements JsonSerializable, Serializable
     public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
     /**
+     * Constant for folder name containing email templates.
+     *
+     * @var string
+     */
+    public const TEMPLATE_FOLDER = 'email';
+
+    /**
      * Recipient of the email
      *
      * @var array
@@ -942,10 +949,10 @@ class Email implements JsonSerializable, Serializable
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
-            } else {
-                $headers['Message-ID'] = $this->_messageId;
+                $this->_messageId = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             }
+
+            $headers['Message-ID'] = $this->_messageId;
         }
 
         if ($this->_priority) {
@@ -2085,8 +2092,8 @@ class Email implements JsonSerializable, Serializable
         }
 
         foreach ($types as $type) {
-            $View->setTemplatePath('Email' . DIRECTORY_SEPARATOR . $type);
-            $View->setLayoutPath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
+            $View->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
 
             $render = $View->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);

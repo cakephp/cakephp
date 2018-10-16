@@ -10,10 +10,8 @@ parameters:
         - '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$webroot#'
         - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
-        - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
         - '#Access to an undefined property Exception::\$queryString#'
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
-        - '#Method Redis::#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
         - '#Cannot call method lastInsertId\(\) on null#'
         - '#Access to an undefined property Cake\\Mailer\\Email::\$request#'
@@ -24,6 +22,7 @@ parameters:
         - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject#'
         - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
+        - '#Part \$field \(array|string\) of encapsed string cannot be cast to string#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
