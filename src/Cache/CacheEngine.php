@@ -158,6 +158,8 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function getMultiple($keys, $default = null): array
     {
+        $this->ensureValidKeys($keys);
+
         $results = [];
         foreach ($keys as $key) {
             $results[$key] = $this->get($key, $default);
@@ -197,7 +199,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
             return true;
         } finally {
             if (isset($restore)) {
-                $this->innerEngine->setConfig('duration', $restore);
+                $this->setConfig('duration', $restore);
             }
         }
 

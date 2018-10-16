@@ -582,7 +582,7 @@ class Cache
             return $existing;
         }
         $results = call_user_func($callable);
-        self::set($key, $results, $config);
+        self::write($key, $results, $config);
 
         return $results;
     }
