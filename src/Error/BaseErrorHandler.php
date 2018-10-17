@@ -83,10 +83,7 @@ abstract class BaseErrorHandler
             if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
-            $megabytes = Configure::read('Error.extraFatalErrorMemory');
-            if ($megabytes === null) {
-                $megabytes = 4;
-            }
+            $megabytes = $this->_options['extraFatalErrorMemory'] ?? 4;
             if ($megabytes > 0) {
                 $this->increaseMemoryLimit($megabytes * 1024);
             }
