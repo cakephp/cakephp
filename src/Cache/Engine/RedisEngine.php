@@ -140,7 +140,7 @@ class RedisEngine extends CacheEngine
             return $this->_Redis->set($key, $value);
         }
 
-        return $this->_Redis->setex($key, $duration, $value);
+        return $this->_Redis->setEx($key, $duration, $value);
     }
 
     /**
@@ -256,8 +256,8 @@ class RedisEngine extends CacheEngine
             $value = serialize($value);
         }
 
-        // setnx() doesn't have an expiry option, so follow up with an expiry
-        if ($this->_Redis->setnx($key, $value)) {
+        // setNx() doesn't have an expiry option, so follow up with an expiry
+        if ($this->_Redis->setNx($key, $value)) {
             return $this->_Redis->setTimeout($key, $duration);
         }
 
