@@ -359,11 +359,12 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return mixed new value, or false if the data doesn't exist, is not integer,
      *    or if there was an error fetching it.
+     * @throws \Cake\Cache\InvalidArgumentException when offset < 0
      */
     public static function increment(string $key, int $offset = 1, string $config = 'default')
     {
-        if (!is_int($offset) || $offset < 0) {
-            return false;
+        if ($offset < 0) {
+            throw new InvalidArgumentException('Offset cannot be less than 0.');
         }
 
         return static::pool($config)->increment($key, $offset);
@@ -377,11 +378,12 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return mixed new value, or false if the data doesn't exist, is not integer,
      *   or if there was an error fetching it
+     * @throws \Cake\Cache\InvalidArgumentException when offset < 0
      */
     public static function decrement(string $key, int $offset = 1, string $config = 'default')
     {
-        if (!is_int($offset) || $offset < 0) {
-            return false;
+        if ($offset < 0) {
+            throw new InvalidArgumentException('Offset cannot be less than 0.');
         }
 
         return static::pool($config)->decrement($key, $offset);

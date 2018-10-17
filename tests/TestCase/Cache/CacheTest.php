@@ -340,6 +340,17 @@ class CacheTest extends TestCase
     }
 
     /**
+     * Test increment with value < 0
+     *
+     * @return void
+     */
+    public function testIncrementSubZero()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->assertFalse(Cache::increment('key', -1));
+    }
+
+    /**
      * Test write from a config that is undefined.
      *
      * @return void
@@ -348,6 +359,17 @@ class CacheTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::decrement('key', 1, 'totally fake'));
+    }
+
+    /**
+     * Test decrement value < 0
+     *
+     * @return void
+     */
+    public function testDecrementSubZero()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->assertFalse(Cache::decrement('key', -1));
     }
 
     /**
