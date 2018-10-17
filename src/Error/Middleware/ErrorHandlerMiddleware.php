@@ -72,7 +72,7 @@ class ErrorHandlerMiddleware
      * @param string|callable|null $exceptionRenderer The renderer or class name
      *   to use or a callable factory. If null, Configure::read('Error.exceptionRenderer')
      *   will be used.
-     * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
+     * @param array $config Configuration options to use.
      *   will be used.
      */
     public function __construct($exceptionRenderer = null, array $config = [])
@@ -81,7 +81,6 @@ class ErrorHandlerMiddleware
             $this->exceptionRenderer = $exceptionRenderer;
         }
 
-        $config = $config ?: Configure::read('Error');
         $this->setConfig($config);
     }
 
