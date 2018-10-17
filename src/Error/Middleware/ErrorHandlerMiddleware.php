@@ -70,18 +70,22 @@ class ErrorHandlerMiddleware
      * Constructor
      *
      * @param string|callable|null $exceptionRenderer The renderer or class name
-     *   to use or a callable factory. If null, Configure::read('Error.exceptionRenderer')
-     *   will be used.
+     *   to use or a callable factory. If null, value of 'exceptionRenderer' key
+     *   from $config will be used with fallback to Cake\Error\ExceptionRenderer::class.
      * @param array $config Configuration options to use.
      *   will be used.
      */
     public function __construct($exceptionRenderer = null, array $config = [])
     {
+        $this->setConfig($config);
+
         if ($exceptionRenderer) {
             $this->exceptionRenderer = $exceptionRenderer;
+
+            return;
         }
 
-        $this->setConfig($config);
+        $this->exceptionRenderer = $this->getConfig('exceptionRenderer', ExceptionRenderer::class);
     }
 
     /**
@@ -150,10 +154,6 @@ class ErrorHandlerMiddleware
      */
     protected function getRenderer(Throwable $exception, ServerRequestInterface $request): ExceptionRendererInterface
     {
-        if (!$this->exceptionRenderer) {
-            $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
-        }
-
         if (is_string($this->exceptionRenderer)) {
             $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
@@ -165,6 +165,7 @@ class ErrorHandlerMiddleware
 
             return new $class($exception, $request);
         }
+
         $factory = $this->exceptionRenderer;
 
         return $factory($exception, $request);
