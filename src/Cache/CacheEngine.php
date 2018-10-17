@@ -123,7 +123,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     {
         $return = [];
         foreach ($data as $key => $value) {
-            $return[$key] = $this->write($key, $value);
+            $return[$key] = $this->set($key, $value);
         }
 
         return $return;
@@ -141,7 +141,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     {
         $return = [];
         foreach ($keys as $key) {
-            $return[$key] = $this->read($key);
+            $return[$key] = $this->get($key);
         }
 
         return $return;
@@ -152,7 +152,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param iterable $keys A list of keys that can obtained in a single operation.
      * @param mixed $default Default value to return for keys that do not exist.
-     * @return iterable A list of key => value pairs. Cache keys that do not exist or are stale will have $default as value.
+     * @return array A list of key => value pairs. Cache keys that do not exist or are stale will have $default as value.
      * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */

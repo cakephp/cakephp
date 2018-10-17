@@ -490,7 +490,7 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware($request, $response, $next);
 
-        Cache::clear(false, $cacheConfigName);
+        Cache::clear($cacheConfigName);
         Cache::drop($cacheConfigName);
     }
 
@@ -520,7 +520,7 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware($request, $response, $next);
 
-        Cache::clear(false, $cacheConfigName);
+        Cache::clear($cacheConfigName);
         Cache::drop($cacheConfigName);
         Cache::enable();
     }

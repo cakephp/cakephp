@@ -48,7 +48,7 @@ class CacheSessionTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Cache::clear(false, 'session_test');
+        Cache::clear('session_test');
         Cache::drop('session_test');
         unset($this->storage);
     }

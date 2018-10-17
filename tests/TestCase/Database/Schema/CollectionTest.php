@@ -46,7 +46,7 @@ class CollectionTest extends TestCase
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
-        Cache::clear(false, '_cake_model_');
+        Cache::clear('_cake_model_');
         Cache::enable();
     }
 
