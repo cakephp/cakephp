@@ -26,6 +26,8 @@ parameters:
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
+        - '#Method Redis::setex\(\) invoked with 3 parameters, 0 required#'
+        - '#Method Redis::setnx\(\) invoked with 2 parameters, 0 required#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
