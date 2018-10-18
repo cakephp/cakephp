@@ -21,7 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
@@ -765,8 +765,10 @@ class ExtractTask extends Shell
         }
         foreach ($this->_paths as $path) {
             $path = realpath($path) . DIRECTORY_SEPARATOR;
-            $Folder = new Folder($path);
-            $files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
+            $fs = new Filesystem();
+            $files = $fs->findRecursive($path, '/\.php$/');
+            $files = array_keys(iterator_to_array($files));
+            sort($files);
             if (!empty($pattern)) {
                 $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
                 $files = array_values($files);
