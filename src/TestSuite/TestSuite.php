@@ -17,7 +17,10 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
+use SplFileInfo;
+
+
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
 
 /**
@@ -33,13 +36,10 @@ class TestSuite extends BaseTestSuite
      */
     public function addTestDirectory(string $directory = '.'): void
     {
-        $Folder = new Folder($directory);
-        list(, $files) = $Folder->read(true, true, true);
-
-        foreach ($files as $file) {
-            if (substr($file, -4) === '.php') {
-                $this->addTestFile($file);
-            }
+        $fs = new Filesystem();
+        $files = $fs->find($directory, '/\.php$/');
+        foreach ($files as $file => $fileInfo) {
+            $this->addTestFile($file);
         }
     }
 
@@ -51,13 +51,17 @@ class TestSuite extends BaseTestSuite
      */
     public function addTestDirectoryRecursive(string $directory = '.'): void
     {
-        $Folder = new Folder($directory);
-        $files = $Folder->tree(null, true, 'files');
-
-        foreach ($files as $file) {
-            if (substr($file, -4) === '.php') {
-                $this->addTestFile($file);
+        $fs = new Filesystem();
+        $files = $fs->findRecursive($directory, function (SplFileInfo $current) {
+            $file = $current->getFilename();
+            if ($file[0] === '.' || !preg_match('/\.php$/', $file)) {
+                return false;
             }
+
+            return true;
+        });
+        foreach ($files as $file => $fileInfo) {
+            $this->addTestFile($file);
         }
     }
 }

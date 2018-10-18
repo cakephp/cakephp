@@ -18,7 +18,11 @@ namespace Cake\Filesystem;
 
 use CallbackFilterIterator;
 use FilesystemIterator;
+use RecursiveCallbackFilterIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use RegexIterator;
+use SplFileInfo;
 use Traversable;
 
 /**
@@ -29,11 +33,10 @@ class Filesystem
 {
     public function find(string $path, $filter = null, ?int $flags = null): Traversable
     {
-        if ($flags) {
-            $directory = new FilesystemIterator($path, $flags);
-        } else {
-            $directory = new FilesystemIterator($path);
-        }
+        $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
+            | FilesystemIterator::CURRENT_AS_FILEINFO
+            | FilesystemIterator::SKIP_DOTS;
+        $directory = new FilesystemIterator($path, $flags);
 
         if ($filter === null) {
             return $directory;
@@ -44,5 +47,39 @@ class Filesystem
         }
 
         return new CallbackFilterIterator($directory, $filter);
+    }
+
+    public function findRecursive(string $path, $filter = null, ?int $flags = null): Traversable
+    {
+        $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
+            | FilesystemIterator::CURRENT_AS_FILEINFO
+            | FilesystemIterator::SKIP_DOTS;
+        $directory = new RecursiveDirectoryIterator($path, $flags);
+
+        $dirFilter = new RecursiveCallbackFilterIterator(
+            $directory,
+            function (SplFileInfo $current) {
+                if ($current->getFilename()[0] === '.' && $current->isDir()) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
+
+        $flatten = new RecursiveIteratorIterator(
+            $dirFilter,
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        if ($filter === null) {
+            return $flatten;
+        }
+
+        if (is_string($filter)) {
+            return new RegexIterator($flatten, $filter);
+        }
+
+        return new CallbackFilterIterator($flatten, $filter);
     }
 }
