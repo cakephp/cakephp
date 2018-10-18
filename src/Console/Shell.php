@@ -18,8 +18,9 @@ namespace Cake\Console;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\App;
+use Cake\Core\Exception\Exception;
 use Cake\Datasource\ModelAwareTrait;
-use Cake\Filesystem\File;
+use Cake\Filesystem\Filesystem;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
@@ -857,22 +858,18 @@ class Shell
             $this->out(sprintf('Creating file %s', $path));
         }
 
-        $File = new File($path, true);
-
         try {
-            if ($File->exists() && $File->writable()) {
-                $File->write($contents);
-                $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
+            $fs = new Filesystem();
+            $fs->dumpFile($path, $contents);
 
-                return true;
-            }
-
+            $this->_io->out(sprintf('<success>Wrote</success> `%s`', $path));
+        } catch (Exception $e) {
             $this->_io->err(sprintf('<error>Could not write to `%s`</error>.', $path), 2);
 
             return false;
-        } finally {
-            $File->close();
         }
+
+        return true;
     }
 
     /**

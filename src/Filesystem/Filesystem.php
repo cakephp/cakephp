@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Cake\Filesystem;
 
+use Cake\Core\Exception\Exception;
 use CallbackFilterIterator;
 use FilesystemIterator;
 use RecursiveCallbackFilterIterator;
@@ -81,5 +82,42 @@ class Filesystem
         }
 
         return new CallbackFilterIterator($flatten, $filter);
+    }
+
+    public function dumpFile(string $filename, string $content)
+    {
+        $dir = dirname($filename);
+        if (!is_dir($dir)) {
+            $this->mkdir($dir);
+        }
+
+        // @codingStandardsIgnoreStart
+        $tmpFile = @tempnam($dir, basename($filename));
+        if ($tmpFile === false || @file_put_contents($tmpFile, $content) === false) {
+            throw new Exception(sprintf('Failed to write file "%s"', $filename));
+        }
+
+        @chmod($tmpFile, file_exists($filename) ? fileperms($filename) : 0666 & ~umask());
+
+        if (@rename($tmpFile, $filename) === false) {
+            throw new Exception(sprintf('Failed to write file "%s"', $filename));
+        }
+        // @codingStandardsIgnoreEnd
+    }
+
+    public function mkdir(string $dir, int $mode = 0755): void
+    {
+        if (is_dir($dir)) {
+            return;
+        }
+
+        $old = umask(0);
+        // @codingStandardsIgnoreLine
+        if (@mkdir($dir, $mode, true) === false) {
+            umask($old);
+            throw new Exception(sprintf('Failed to create directory "%s"', $dir));
+        }
+
+        umask($old);
     }
 }
