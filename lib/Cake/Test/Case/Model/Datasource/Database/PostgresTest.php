@@ -1218,4 +1218,24 @@ class PostgresTest extends CakeTestCase {
 
 		$this->assertEquals('"col1" uuid', $result);
 	}
+
+/**
+ * Test that postgres describes default columns with functions correctly.
+ *
+ * @return void
+ */
+	public function testDescribeFunctionDefault() {
+		$db = $this->Dbo;
+		$db->execute('CREATE TABLE test_function_default_describe (id integer PRIMARY KEY, year int default date_part(\'year\'::text, now()))');
+		$data = $db->describe('test_function_default_describe');
+
+		$expected = array(
+			'type' => 'integer',
+			'null' => true,
+			'default' => 'date_part(\'year\', now())',
+			'length' => null,
+		);
+		$this->assertSame($expected, $data['year']);
+		$db->execute('DROP TABLE test_function_default_describe');
+	}
 }
