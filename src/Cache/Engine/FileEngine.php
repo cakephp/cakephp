@@ -16,6 +16,7 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
+use CallbackFilterIterator;
 use Exception;
 use LogicException;
 use RecursiveDirectoryIterator;
@@ -470,24 +471,40 @@ class FileEngine extends CacheEngine
     public function clearGroup($group)
     {
         $this->_File = null;
+
+        $prefix = (string)$this->_config['prefix'];
+
         $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
         $contents = new RecursiveIteratorIterator(
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST
         );
-        foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathname(), DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR) !== false;
-            $hasPrefix = true;
-            if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
+        $filtered = new CallbackFilterIterator(
+            $contents,
+            function ($current) use ($group, $prefix) {
+                if (!$current->isFile()) {
+                    return false;
+                }
+
+                $hasPrefix = $prefix === ''
+                    || strpos($current->getBasename(), $prefix) === 0;
+                if ($hasPrefix === false) {
+                    return false;
+                }
+
+                $pos = strpos(
+                    $current->getPathname(),
+                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
+                );
+
+                return $pos !== false;
             }
-            if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathname();
-                $object = null;
-                //@codingStandardsIgnoreStart
-                @unlink($path);
-                //@codingStandardsIgnoreEnd
-            }
+        );
+        foreach ($filtered as $object) {
+            $path = $object->getPathname();
+            $object = null;
+            // @codingStandardsIgnoreLine
+            @unlink($path);
         }
 
         return true;
