@@ -84,25 +84,24 @@ class Filesystem
         return new CallbackFilterIterator($flatten, $filter);
     }
 
-    public function dumpFile(string $filename, string $content)
+    public function dumpFile(string $filename, string $content): void
     {
         $dir = dirname($filename);
         if (!is_dir($dir)) {
             $this->mkdir($dir);
         }
 
-        // @codingStandardsIgnoreStart
-        $tmpFile = @tempnam($dir, basename($filename));
-        if ($tmpFile === false || @file_put_contents($tmpFile, $content) === false) {
-            throw new Exception(sprintf('Failed to write file "%s"', $filename));
+        $exits = file_exists($filename);
+
+        if ($this->isStream($filename)) {
+            file_put_contents($filename, $content);
+        } else {
+            file_put_contents($filename, $content, LOCK_EX);
         }
 
-        @chmod($tmpFile, file_exists($filename) ? fileperms($filename) : 0666 & ~umask());
-
-        if (@rename($tmpFile, $filename) === false) {
-            throw new Exception(sprintf('Failed to write file "%s"', $filename));
+        if (!$exits) {
+            chmod($filename, 0666 & ~umask());
         }
-        // @codingStandardsIgnoreEnd
     }
 
     public function mkdir(string $dir, int $mode = 0755): void
@@ -141,7 +140,7 @@ class Filesystem
             switch ($fileInfo->getType()) {
                 case 'dir':
                     // @codingStandardsIgnoreLine
-                    $result = $result && @rmdir($fileInfo->getRealPath());
+                    $result = $result && @rmdir($fileInfo->getPathname());
                     break;
                 case 'link':
                     // @codingStandardsIgnoreLine
@@ -149,7 +148,7 @@ class Filesystem
                     break;
                 default:
                     // @codingStandardsIgnoreLine
-                    $result = $result && @unlink($fileInfo->getRealPath());
+                    $result = $result && @unlink($fileInfo->getPathname());
             }
         }
 
@@ -173,18 +172,23 @@ class Filesystem
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->isDir()) {
                 $result = $result && $this->copyDir(
-                    $fileInfo->getRealPath(),
+                    $fileInfo->getPathname(),
                     $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
                 );
             } else {
                 // @codingStandardsIgnoreLine
                 $result = $result && @copy(
-                    $fileInfo->getRealPath(),
+                    $fileInfo->getPathname(),
                     $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
                 );
             }
         }
 
         return $result;
+    }
+
+    public function isStream(string $path): bool
+    {
+        return strpos($path, '://') !== false;
     }
 }
