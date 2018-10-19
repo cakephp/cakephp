@@ -29,7 +29,7 @@ class FileSentAs extends ResponseBase
      */
     public function matches($other): bool
     {
-        return $this->response->getFile()->path === $other;
+        return $this->response->getFile()->getPathName() === $other;
     }
 
     /**

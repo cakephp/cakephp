@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Filesystem\File;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
@@ -25,6 +24,7 @@ use DateTimeZone;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use SplFileInfo;
 use Zend\Diactoros\MessageTrait;
 use Zend\Diactoros\Stream;
 
@@ -363,7 +363,7 @@ class Response implements ResponseInterface
     /**
      * File object for file to be read out as response
      *
-     * @var \Cake\Filesystem\File|null
+     * @var \SplFileInfo|null
      */
     protected $_file;
 
@@ -1361,7 +1361,7 @@ class Response implements ResponseInterface
             'download' => null,
         ];
 
-        $extension = strtolower($file->ext());
+        $extension = strtolower($file->getExtension());
         $mapped = $this->getMimeType($extension);
         if ((!$extension || !$mapped) && $options['download'] === null) {
             $options['download'] = true;
@@ -1372,7 +1372,7 @@ class Response implements ResponseInterface
             $new = $new->withType($extension);
         }
 
-        $fileSize = $file->size();
+        $fileSize = $file->getSize();
         if ($options['download']) {
             $agent = env('HTTP_USER_AGENT');
 
@@ -1385,7 +1385,7 @@ class Response implements ResponseInterface
             if (isset($contentType)) {
                 $new = $new->withType($contentType);
             }
-            $name = $options['name'] ?: $file->name;
+            $name = $options['name'] ?: $file->getFileName();
             $new = $new->withDownload($name)
                 ->withHeader('Content-Transfer-Encoding', 'binary');
         }
@@ -1398,7 +1398,7 @@ class Response implements ResponseInterface
             $new = $new->withHeader('Content-Length', (string)$fileSize);
         }
         $new->_file = $file;
-        $new->stream = new Stream($file->path, 'rb');
+        $new->stream = new Stream($file->getPathname(), 'rb');
 
         return $new;
     }
@@ -1423,16 +1423,16 @@ class Response implements ResponseInterface
      *
      * @param string $path The path to the file.
      * @throws \Cake\Http\Exception\NotFoundException
-     * @return \Cake\Filesystem\File
+     * @return \SplFileInfo
      */
-    protected function validateFile(string $path): File
+    protected function validateFile(string $path): SplFileInfo
     {
         if (strpos($path, '../') !== false || strpos($path, '..\\') !== false) {
             throw new NotFoundException(__d('cake', 'The requested file contains `..` and will not be read.'));
         }
 
-        $file = new File($path);
-        if (!$file->exists() || !$file->readable()) {
+        $file = new SplFileInfo($path);
+        if (!$file->isFile() || !$file->isReadable()) {
             if (Configure::read('debug')) {
                 throw new NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
             }
@@ -1445,9 +1445,9 @@ class Response implements ResponseInterface
     /**
      * Get the current file if one exists.
      *
-     * @return \Cake\Filesystem\File|null The file to use in the response or null
+     * @return \SplFileInfo|null The file to use in the response or null
      */
-    public function getFile(): ?File
+    public function getFile(): ?SplFileInfo
     {
         return $this->_file;
     }
@@ -1458,13 +1458,13 @@ class Response implements ResponseInterface
      * If an invalid range is requested a 416 Status code will be used
      * in the response.
      *
-     * @param \Cake\Filesystem\File $file The file to set a range on.
+     * @param \SplFileInfo $file The file to set a range on.
      * @param string $httpRange The range to use.
      * @return void
      */
-    protected function _fileRange(File $file, string $httpRange): void
+    protected function _fileRange(SplFileInfo $file, string $httpRange): void
     {
-        $fileSize = $file->size();
+        $fileSize = $file->getSize();
         $lastByte = $fileSize - 1;
         $start = 0;
         $end = $lastByte;

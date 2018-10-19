@@ -15,8 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
-use Cake\Filesystem\File;
-
 /**
  * Compare a string to the contents of a file
  *
@@ -61,8 +59,7 @@ trait StringCompareTrait
         }
 
         if ($this->_updateComparisons) {
-            $file = new File($path, true);
-            $file->write($result);
+            file_put_contents($result);
         }
 
         $expected = file_get_contents($path);
