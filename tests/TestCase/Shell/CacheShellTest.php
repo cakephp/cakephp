@@ -83,7 +83,7 @@ class CacheShellTest extends ConsoleIntegrationTestCase
         $this->exec('cache clear test');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertFalse(Cache::read('key', 'test'));
+        $this->assertNull(Cache::read('key', 'test'));
     }
 
     /**
@@ -112,7 +112,7 @@ class CacheShellTest extends ConsoleIntegrationTestCase
         $this->exec('cache clear_all');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertFalse(Cache::read('key', 'test'));
-        $this->assertFalse(Cache::read('key', '_cake_core_'));
+        $this->assertNull(Cache::read('key', 'test'));
+        $this->assertNull(Cache::read('key', '_cake_core_'));
     }
 }

@@ -449,11 +449,6 @@ class Cache
      */
     public static function clear(string $config = 'default'): bool
     {
-        if (func_num_args() > 1) {
-            deprecationWarning('The $check parameter has been removed from clear(). Update your usage.');
-            $config = func_get_arg(1);
-        }
-
         return static::pool($config)->clear();
     }
 

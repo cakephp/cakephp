@@ -95,7 +95,7 @@ class CacheSessionTest extends TestCase
         $this->storage->write('test_one', 'Some other value');
         $this->assertTrue($this->storage->destroy('test_one'), 'Value was not deleted.');
 
-        $this->assertFalse(Cache::read('test_one', 'session_test'), 'Value stuck around.');
+        $this->assertNull(Cache::read('test_one', 'session_test'), 'Value stuck around.');
     }
 
     /**

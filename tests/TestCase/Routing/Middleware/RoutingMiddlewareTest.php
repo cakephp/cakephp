@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Cache\Cache;
+use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -512,7 +513,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) use ($cacheConfigName) {
             $routeCollection = Cache::read('routeCollection', $cacheConfigName);
-            $this->assertFalse($routeCollection);
+            $this->assertNull($routeCollection);
 
             return $res;
         };
@@ -532,7 +533,7 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testCacheConfigNotFound()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(CacheInvalidArgumentException::class);
         $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
 
         Cache::setConfig('_cake_router_', [

@@ -1945,7 +1945,7 @@ class QueryTest extends TestCase
 
         $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
-            ->method('read')
+            ->method('get')
             ->with('my_key')
             ->will($this->returnValue($resultSet));
 
@@ -1970,7 +1970,7 @@ class QueryTest extends TestCase
 
         $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with(
                 'my_key',
                 $this->isInstanceOf('Cake\Datasource\ResultSetInterface')

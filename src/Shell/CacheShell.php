@@ -18,9 +18,9 @@ namespace Cake\Shell;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
 use Cake\Cache\Engine\WincacheEngine;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use InvalidArgumentException;
 
 /**
  * Cache Shell.
@@ -76,7 +76,7 @@ class CacheShell extends Shell
     {
         try {
             $engine = Cache::engine($prefix);
-            Cache::clear(false, $prefix);
+            Cache::clear($prefix);
             if ($engine instanceof ApcuEngine) {
                 $this->warn("ApcuEngine detected: Cleared $prefix CLI cache successfully " .
                 "but $prefix web cache must be cleared separately.");

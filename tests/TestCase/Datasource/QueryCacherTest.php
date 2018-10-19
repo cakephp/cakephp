@@ -139,7 +139,7 @@ class QueryCacherTest extends TestCase
     protected function _mockRead($key, $value = false)
     {
         $this->engine->expects($this->any())
-            ->method('read')
+            ->method('get')
             ->with($key)
             ->will($this->returnValue($value));
     }
