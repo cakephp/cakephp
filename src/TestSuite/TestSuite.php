@@ -18,10 +18,8 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Filesystem\Filesystem;
-use SplFileInfo;
-
-
 use PHPUnit\Framework\TestSuite as BaseTestSuite;
+use SplFileInfo;
 
 /**
  * A class to contain test cases and run them with shared fixtures
