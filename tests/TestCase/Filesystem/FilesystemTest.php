@@ -94,7 +94,7 @@ class FilesystemTest extends TestCase
                 ],
                 'AnEmptyFolder' => [],
                 'badlocation.php' => 'some bad content',
-            ]
+            ],
         ];
         vfsStream::create($structure);
 
