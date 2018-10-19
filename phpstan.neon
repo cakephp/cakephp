@@ -23,6 +23,8 @@ parameters:
         - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
         - '#Part \$field \(array|string\) of encapsed string cannot be cast to string#'
+        - '#Method Redis::setex\(\) invoked with 3 parameters, 0 required#'
+        - '#Method Redis::setnx\(\) invoked with 2 parameters, 0 required#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

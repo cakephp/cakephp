@@ -138,8 +138,8 @@ class SqlserverSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
-        if ($col === 'image' || strpos($col, 'binary')) {
-            return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
+        if ($col === 'image' || strpos($col, 'binary') !== false) {
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
         if ($col === 'uniqueidentifier') {
