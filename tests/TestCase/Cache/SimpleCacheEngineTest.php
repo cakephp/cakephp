@@ -80,7 +80,6 @@ class SimpleCacheEngineTest extends TestCase
      * @return void
      * @covers ::get
      * @covers ::__construct
-     * @covers ::ensureValidKey
      */
     public function testGetSuccess()
     {
@@ -108,7 +107,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::get
-     * @covers ::ensureValidKey
      */
     public function testGetInvalidKey()
     {
@@ -155,7 +153,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::set
-     * @covers ::ensureValidKey
      */
     public function testSetInvalidKey()
     {
@@ -183,7 +180,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::delete
-     * @covers ::ensureValidKey
      */
     public function testDeleteInvalidKey()
     {
@@ -234,8 +230,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::getMultiple
-     * @covers ::ensureValidKeys
-     * @covers ::ensureValidKey
      */
     public function testGetMultipleInvalidKey()
     {
@@ -250,7 +244,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::getMultiple
-     * @covers ::ensureValidKeys
      */
     public function testGetMultipleInvalidKeys()
     {
@@ -313,8 +306,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::setMultiple
-     * @covers ::ensureValidKeys
-     * @covers ::ensureValidKey
      */
     public function testSetMultipleInvalidKey()
     {
@@ -331,7 +322,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::setMultiple
-     * @covers ::ensureValidKeys
      */
     public function testSetMultipleWithTtl()
     {
@@ -374,8 +364,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::deleteMultiple
-     * @covers ::ensureValidKeys
-     * @covers ::ensureValidKey
      */
     public function testDeleteMultipleInvalidKey()
     {
@@ -390,7 +378,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::deleteMultiple
-     * @covers ::ensureValidKeys
      */
     public function testDeleteMultipleInvalidKeys()
     {
@@ -434,7 +421,6 @@ class SimpleCacheEngineTest extends TestCase
      *
      * @return void
      * @covers ::has
-     * @covers ::ensureValidKey
      */
     public function testHasInvalidKey()
     {
