@@ -120,4 +120,71 @@ class Filesystem
 
         umask($old);
     }
+
+    public function deleteDir(string $path): bool
+    {
+        if (!file_exists($path)) {
+            return true;
+        }
+
+        if (!is_dir($path)) {
+            throw new Exception(sprintf('"%s" is not a directory', $path));
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        $result = true;
+        foreach ($iterator as $fileInfo) {
+            switch ($fileInfo->getType()) {
+                case 'dir':
+                    // @codingStandardsIgnoreLine
+                    $result = $result && @rmdir($fileInfo->getRealPath());
+                    break;
+                case 'link':
+                    // @codingStandardsIgnoreLine
+                    $result = $result && @unlink($fileInfo->getPathname());
+                    break;
+                default:
+                    // @codingStandardsIgnoreLine
+                    $result = $result && @unlink($fileInfo->getRealPath());
+            }
+        }
+
+        // @codingStandardsIgnoreLine
+        $result = $result && @rmdir($path);
+
+        return $result;
+    }
+
+    public function copyDir(string $source, string $destination): bool
+    {
+        $destination = (new SplFileInfo($destination))->getPathname();
+
+        if (!is_dir($destination)) {
+            $this->mkdir($destination);
+        }
+
+        $iterator = new FilesystemIterator($source);
+
+        $result = true;
+        foreach ($iterator as $fileInfo) {
+            if ($fileInfo->isDir()) {
+                $result = $result && $this->copyDir(
+                    $fileInfo->getRealPath(),
+                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
+                );
+            } else {
+                // @codingStandardsIgnoreLine
+                $result = $result && @copy(
+                    $fileInfo->getRealPath(),
+                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
+                );
+            }
+        }
+
+        return $result;
+    }
 }

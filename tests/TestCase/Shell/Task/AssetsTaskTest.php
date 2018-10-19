@@ -15,8 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -24,6 +25,13 @@ use Cake\TestSuite\TestCase;
  */
 class AssetsTaskTest extends TestCase
 {
+    protected $wwwRoot;
+
+    /**
+     * @var Cake\Filessytem\Filesystem;
+     */
+    protected $fs;
+
     /**
      * setUp method
      *
@@ -46,6 +54,13 @@ class AssetsTaskTest extends TestCase
             ->setMethods(['in', 'out', 'err', '_stop'])
             ->setConstructorArgs([$this->io])
             ->getMock();
+
+        $this->wwwRoot = TMP . 'assets_task_webroot' . DS;
+        Configure::write('App.wwwRoot', $this->wwwRoot);
+
+        $this->fs = new Filesystem();
+        $this->fs->deleteDir($this->wwwRoot);
+        $this->fs->copyDir(WWW_ROOT, $this->wwwRoot);
     }
 
     /**
@@ -71,25 +86,20 @@ class AssetsTaskTest extends TestCase
 
         $this->Task->symlink();
 
-        $path = WWW_ROOT . 'test_plugin';
+        $path = $this->wwwRoot . 'test_plugin';
         $this->assertFileExists($path . DS . 'root.js');
         if (DS === '\\') {
             $this->assertDirectoryExists($path);
-            $folder = new Folder($path);
-            $folder->delete();
         } else {
             $this->assertTrue(is_link($path));
-            unlink($path);
         }
 
-        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         // If "company" directory exists beforehand "test_plugin_three" would
         // be a link. But if the directory is created by the shell itself
         // symlinking fails and the assets folder is copied as fallback.
         $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
-        $folder = new Folder(WWW_ROOT . 'company');
-        $folder->delete();
     }
 
     /**
@@ -101,18 +111,16 @@ class AssetsTaskTest extends TestCase
     {
         $this->loadPlugins(['Company/TestPluginThree']);
 
-        mkdir(WWW_ROOT . 'company');
+        mkdir($this->wwwRoot . 'company');
 
         $this->Task->symlink();
-        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         if (DS === '\\') {
             $this->assertDirectoryExits($path);
         } else {
             $this->assertTrue(is_link($path));
         }
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
-        $folder = new Folder(WWW_ROOT . 'company');
-        $folder->delete();
     }
 
     /**
@@ -129,7 +137,7 @@ class AssetsTaskTest extends TestCase
             ->setConstructorArgs([$this->io])
             ->getMock();
 
-        $this->assertDirectoryExists(WWW_ROOT . 'test_theme');
+        $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
 
         $shell->expects($this->never())->method('_createSymlink');
         $shell->expects($this->never())->method('_copyDirectory');
@@ -146,7 +154,7 @@ class AssetsTaskTest extends TestCase
         $this->loadPlugins(['TestPluginTwo']);
 
         $this->Task->symlink();
-        $this->assertFileNotExists(WWW_ROOT . 'test_plugin_two');
+        $this->assertFileNotExists($this->wwwRoot . 'test_plugin_two');
     }
 
     /**
@@ -160,12 +168,12 @@ class AssetsTaskTest extends TestCase
 
         $this->Task->symlink('TestPlugin');
 
-        $path = WWW_ROOT . 'test_plugin';
+        $path = $this->wwwRoot . 'test_plugin';
         $link = new \SplFileInfo($path);
         $this->assertFileExists($path . DS . 'root.js');
         unlink($path);
 
-        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertDirectoryNotExists($path);
         $this->assertFalse(is_link($path));
     }
@@ -181,19 +189,13 @@ class AssetsTaskTest extends TestCase
 
         $this->Task->copy();
 
-        $path = WWW_ROOT . 'test_plugin';
+        $path = $this->wwwRoot . 'test_plugin';
         $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'root.js');
 
-        $folder = new Folder($path);
-        $folder->delete();
-
-        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertDirectoryExists($path);
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
-
-        $folder = new Folder(WWW_ROOT . 'company');
-        $folder->delete();
     }
 
     /**
@@ -209,7 +211,7 @@ class AssetsTaskTest extends TestCase
 
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
 
-        $path = WWW_ROOT . 'test_plugin';
+        $path = $this->wwwRoot . 'test_plugin';
         $dir = new \SplFileInfo($path);
         $this->assertTrue($dir->isDir());
         $this->assertFileExists($path . DS . 'root.js');
@@ -224,9 +226,6 @@ class AssetsTaskTest extends TestCase
         $this->Task->copy();
 
         $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
-
-        $folder = new Folder($path);
-        $folder->delete();
     }
 
     /**
@@ -244,22 +243,22 @@ class AssetsTaskTest extends TestCase
 
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
-        mkdir(WWW_ROOT . 'company');
+        mkdir($this->wwwRoot . 'company');
 
         $this->Task->symlink();
 
-        $this->assertTrue(is_link(WWW_ROOT . 'test_plugin'));
+        $this->assertTrue(is_link($this->wwwRoot . 'test_plugin'));
 
-        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertTrue(is_link($path));
 
         $this->Task->remove();
 
-        $this->assertFalse(is_link(WWW_ROOT . 'test_plugin'));
+        $this->assertFalse(is_link($this->wwwRoot . 'test_plugin'));
         $this->assertFalse(is_link($path));
-        $this->assertDirectoryExists(WWW_ROOT . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
 
-        rmdir(WWW_ROOT . 'company');
+        rmdir($this->wwwRoot . 'company');
     }
 
     /**
@@ -273,17 +272,17 @@ class AssetsTaskTest extends TestCase
 
         $this->Task->copy();
 
-        $this->assertTrue(is_dir(WWW_ROOT . 'test_plugin'));
+        $this->assertTrue(is_dir($this->wwwRoot . 'test_plugin'));
 
-        $this->assertTrue(is_dir(WWW_ROOT . 'company' . DS . 'test_plugin_three'));
+        $this->assertTrue(is_dir($this->wwwRoot . 'company' . DS . 'test_plugin_three'));
 
         $this->Task->remove();
 
-        $this->assertDirectoryNotExists(WWW_ROOT . 'test_plugin');
-        $this->assertDirectoryNotExists(WWW_ROOT . 'company' . DS . 'test_plugin_three');
-        $this->assertDirectoryExists(WWW_ROOT . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryNotExists($this->wwwRoot . 'test_plugin');
+        $this->assertDirectoryNotExists($this->wwwRoot . 'company' . DS . 'test_plugin_three');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
 
-        rmdir(WWW_ROOT . 'company');
+        rmdir($this->wwwRoot . 'company');
     }
 
     /**
@@ -295,7 +294,7 @@ class AssetsTaskTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
-        $path = WWW_ROOT . 'test_plugin';
+        $path = $this->wwwRoot . 'test_plugin';
 
         mkdir($path);
         $filectime = filectime($path);
@@ -313,13 +312,12 @@ class AssetsTaskTest extends TestCase
         $this->assertTrue($newfilectime !== $filectime);
 
         if (DS === '\\') {
-            $folder = new Folder($path);
-            $folder->delete();
+            $this->fs->deleteDir($path);
         } else {
             unlink($path);
         }
 
-        $path = WWW_ROOT . 'company' . DS . 'test_plugin_three';
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         mkdir($path, 0777, true);
         $filectime = filectime($path);
 
@@ -329,8 +327,5 @@ class AssetsTaskTest extends TestCase
 
         $newfilectime = filectime($path);
         $this->assertTrue($newfilectime > $filectime);
-
-        $folder = new Folder(WWW_ROOT . 'company');
-        $folder->delete();
     }
 }
