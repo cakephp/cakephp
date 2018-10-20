@@ -764,8 +764,6 @@ class Shell extends CakeObject {
  * @link https://book.cakephp.org/2.0/en/console-and-shells.html#Shell::createFile
  */
 	public function createFile($path, $contents) {
-		$path = str_replace(DS . DS, DS, $path);
-
 		$this->out();
 
 		if (is_file($path) && empty($this->params['force']) && $this->interactive === true) {
