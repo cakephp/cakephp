@@ -32,8 +32,22 @@ use Traversable;
  */
 class Filesystem
 {
+    /**
+     * Direcotory type constant
+     *
+     * @var string
+     */
     public const TYPE_DIR = 'dir';
 
+    /**
+     * Find files (non-recursively) in given directory path.
+     *
+     * @param string $path Directory path.
+     * @param mixed $filter If string will be used as regex for filtering using
+     *   `RegexIterator`, if callable will be as callback for `CallbackFilterIterator`.
+     * @param int|null $flags Flags for FilesystemIterator::__construct();
+     * @return \Traversable
+     */
     public function find(string $path, $filter = null, ?int $flags = null): Traversable
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
@@ -52,6 +66,16 @@ class Filesystem
         return new CallbackFilterIterator($directory, $filter);
     }
 
+    /**
+     * Find files recursively in given directory path.
+     *
+     * @param string $path Directory path.
+     * @param mixed $filter If string will be used as regex for filtering using
+     *   `RegexIterator`, if callable will be as callback for `CallbackFilterIterator`.
+     *   Hidden directories (starting with dot e.g. .git) are always skipped.
+     * @param int|null $flags Flags for FilesystemIterator::__construct();
+     * @return \Traversable
+     */
     public function findRecursive(string $path, $filter = null, ?int $flags = null): Traversable
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
@@ -86,6 +110,14 @@ class Filesystem
         return new CallbackFilterIterator($flatten, $filter);
     }
 
+    /**
+     * Dump contents to file.
+     *
+     * @param string $filename File path.
+     * @param string $content Content to dump.
+     * @return void
+     * @throws \Cake\Core\Exception When dumping fails.
+     */
     public function dumpFile(string $filename, string $content): void
     {
         $dir = dirname($filename);
@@ -96,8 +128,10 @@ class Filesystem
         $exits = file_exists($filename);
 
         if ($this->isStream($filename)) {
+            // @codingStandardsIgnoreLine
             $success = @file_put_contents($filename, $content);
         } else {
+            // @codingStandardsIgnoreLine
             $success = @file_put_contents($filename, $content, LOCK_EX);
         }
 
@@ -110,6 +144,14 @@ class Filesystem
         }
     }
 
+    /**
+     * Create directory.
+     *
+     * @param string $dir Directory path.
+     * @param int $mode Octal mode passed to mkdir(). Defaults to 0755.
+     * @return void
+     * @throws \Cake\Core\Exception When directory creation fails.
+     */
     public function mkdir(string $dir, int $mode = 0755): void
     {
         if (is_dir($dir)) {
@@ -126,6 +168,13 @@ class Filesystem
         umask($old);
     }
 
+    /**
+     * Delete directory along with all it's contents.
+     *
+     * @param string $path Directory path.
+     * @return bool
+     * @throws \Cake\Core\Exception If path is not a directory.
+     */
     public function deleteDir(string $path): bool
     {
         if (!file_exists($path)) {
@@ -159,6 +208,13 @@ class Filesystem
         return $result;
     }
 
+    /**
+     * Copies directory with all it's contents.
+     *
+     * @param string $source Source path.
+     * @param string $destination Destination path.
+     * @return bool
+     */
     public function copyDir(string $source, string $destination): bool
     {
         $destination = (new SplFileInfo($destination))->getPathname();
@@ -188,6 +244,12 @@ class Filesystem
         return $result;
     }
 
+    /**
+     * Check whether given path is a stream path.
+     *
+     * @param string $path Path.
+     * @return bool
+     */
     public function isStream(string $path): bool
     {
         return strpos($path, '://') !== false;
