@@ -96,9 +96,13 @@ class Filesystem
         $exits = file_exists($filename);
 
         if ($this->isStream($filename)) {
-            file_put_contents($filename, $content);
+            $success = @file_put_contents($filename, $content);
         } else {
-            file_put_contents($filename, $content, LOCK_EX);
+            $success = @file_put_contents($filename, $content, LOCK_EX);
+        }
+
+        if (!$success) {
+            throw new Exception(sprintf('Failed dumping content to file "%s"', $dir));
         }
 
         if (!$exits) {
