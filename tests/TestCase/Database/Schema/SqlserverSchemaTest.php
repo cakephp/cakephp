@@ -250,21 +250,21 @@ SQL;
                 10,
                 null,
                 null,
-                ['type' => 'binary', 'length' => 10]
+                ['type' => 'binary', 'length' => 10],
             ],
             [
                 'BINARY',
                 20,
                 null,
                 null,
-                ['type' => 'binary', 'length' => 20]
+                ['type' => 'binary', 'length' => 20],
             ],
             [
                 'VARBINARY',
                 30,
                 null,
                 null,
-                ['type' => 'binary', 'length' => 30]
+                ['type' => 'binary', 'length' => 30],
             ],
         ];
     }
