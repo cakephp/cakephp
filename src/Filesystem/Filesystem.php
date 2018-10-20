@@ -32,6 +32,8 @@ use Traversable;
  */
 class Filesystem
 {
+    public const TYPE_DIR = 'dir';
+
     public function find(string $path, $filter = null, ?int $flags = null): Traversable
     {
         $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
@@ -137,19 +139,14 @@ class Filesystem
 
         $result = true;
         foreach ($iterator as $fileInfo) {
-            switch ($fileInfo->getType()) {
-                case 'dir':
-                    // @codingStandardsIgnoreLine
-                    $result = $result && @rmdir($fileInfo->getPathname());
-                    break;
-                case 'link':
-                    // @codingStandardsIgnoreLine
-                    $result = $result && @unlink($fileInfo->getPathname());
-                    break;
-                default:
-                    // @codingStandardsIgnoreLine
-                    $result = $result && @unlink($fileInfo->getPathname());
+            if ($fileInfo->getType() === self::TYPE_DIR) {
+                // @codingStandardsIgnoreLine
+                $result = $result && @rmdir($fileInfo->getPathname());
+                continue;
             }
+
+            // @codingStandardsIgnoreLine
+            $result = $result && @unlink($fileInfo->getPathname());
         }
 
         // @codingStandardsIgnoreLine

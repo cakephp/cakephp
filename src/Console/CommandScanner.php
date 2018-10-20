@@ -143,6 +143,6 @@ class CommandScanner
 
         ksort($shells);
 
-        return $shells;
+        return array_values($shells);
     }
 }
