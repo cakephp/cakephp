@@ -22,6 +22,7 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
+use Cake\Core\Configure;
 use SimpleXMLElement;
 
 /**
@@ -55,7 +56,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     {
         if (!$args->getOption('xml')) {
             $io->out('<info>Current Paths:</info>', 2);
-            $io->out('* app:  ' . APP_DIR);
+            $io->out('* app:  ' . Configure::read('App.dir'));
             $io->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
             $io->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
             $io->out('');
