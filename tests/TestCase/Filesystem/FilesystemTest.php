@@ -21,6 +21,8 @@ use org\bovigo\vfs\vfsStream;
 
 /**
  * Filesystem class
+ *
+ * @coversDefaultClass \Cake\Filesystem\Filesystem
  */
 class FilesystemTest extends TestCase
 {
