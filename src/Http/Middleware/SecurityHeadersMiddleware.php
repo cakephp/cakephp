@@ -130,8 +130,8 @@ class SecurityHeadersMiddleware
      * Referrer-Policy
      *
      * @link https://w3c.github.io/webappsec-referrer-policy
-     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin', 'origin-when-cross-origin',
-     *        'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
+     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin',
+     *     'origin-when-cross-origin', 'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
     public function setReferrerPolicy($policy = self::SAME_ORIGIN)
@@ -144,7 +144,7 @@ class SecurityHeadersMiddleware
             self::SAME_ORIGIN,
             self::STRICT_ORIGIN,
             self::STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
-            self::UNSAFE_URL
+            self::UNSAFE_URL,
         ];
 
         $this->checkValues($policy, $available);
@@ -202,14 +202,19 @@ class SecurityHeadersMiddleware
      * X-Permitted-Cross-Domain-Policies
      *
      * @link https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
-     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
+     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type',
+     *     'by-ftp-filename'
      * @return $this
      */
     public function setCrossDomainPolicy($policy = self::ALL)
     {
-        $this->checkValues($policy,
-            [self::ALL, self::NONE, self::MASTER_ONLY, self::BY_CONTENT_TYPE, self::BY_FTP_FILENAME]
-        );
+        $this->checkValues($policy, [
+            self::ALL,
+            self::NONE,
+            self::MASTER_ONLY,
+            self::BY_CONTENT_TYPE,
+            self::BY_FTP_FILENAME,
+        ]);
         $this->headers['x-permitted-cross-domain-policies'] = $policy;
 
         return $this;
