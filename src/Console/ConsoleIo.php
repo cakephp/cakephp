@@ -540,12 +540,6 @@ class ConsoleIo
      */
     public function createFile($path, $contents, $forceOverwrite = false)
     {
-        $path = str_replace(
-            DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR,
-            DIRECTORY_SEPARATOR,
-            $path
-        );
-
         $this->out();
         $forceOverwrite = $forceOverwrite || $this->forceOverwrite;
 
