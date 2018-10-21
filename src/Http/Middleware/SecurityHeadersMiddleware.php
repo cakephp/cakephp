@@ -16,6 +16,7 @@ namespace Cake\Http\Middleware;
 
 use Cake\Http\Middleware\SecurityHeaders\ContentTypeOption;
 use Cake\Http\Middleware\SecurityHeaders\DownloadOption;
+use Cake\Http\Middleware\SecurityHeaders\ReferrerPolicy;
 use Cake\Http\Middleware\SecurityHeaders\XssProtection;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -26,30 +27,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
-    /** @var string Referrer-Policy no-referrer */
-    const NO_REFERRER = 'no-referrer';
-
-    /** @var string Referrer-Policy no-referrer-when-downgrade */
-    const NO_REFERRER_WHEN_DOWNGRADE = 'no-referrer-when-downgrade';
-
-    /** @var string Referrer-Policy origin */
-    const ORIGIN = 'origin';
-
-    /** @var string Referrer-Policy origin-when-cross-origin */
-    const ORIGIN_WHEN_CROSS_ORIGIN = 'origin-when-cross-origin';
-
-    /** @var string Referrer-Policy same-origin */
-    const SAME_ORIGIN = 'same-origin';
-
-    /** @var string Referrer-Policy strict-origin */
-    const STRICT_ORIGIN = 'strict-origin';
-
-    /** @var string Referrer-Policy strict-origin-when-cross-origin */
-    const STRICT_ORIGIN_WHEN_CROSS_ORIGIN = 'strict-origin-when-cross-origin';
-
-    /** @var string Referrer-Policy unsafe-url */
-    const UNSAFE_URL = 'unsafe-url';
-
     /** @var string X-Frame-Option deny */
     const DENY = 'deny';
 
@@ -119,17 +96,17 @@ class SecurityHeadersMiddleware
      *        'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
-    public function setReferrerPolicy($policy = self::SAME_ORIGIN)
+    public function setReferrerPolicy($policy = ReferrerPolicy::SAME_ORIGIN)
     {
         $available = [
-            self::NO_REFERRER,
-            self::NO_REFERRER_WHEN_DOWNGRADE,
-            self::ORIGIN,
-            self::ORIGIN_WHEN_CROSS_ORIGIN,
-            self::SAME_ORIGIN,
-            self::STRICT_ORIGIN,
-            self::STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
-            self::UNSAFE_URL
+            ReferrerPolicy::NO_REFERRER,
+            ReferrerPolicy::NO_REFERRER_WHEN_DOWNGRADE,
+            ReferrerPolicy::ORIGIN,
+            ReferrerPolicy::ORIGIN_WHEN_CROSS_ORIGIN,
+            ReferrerPolicy::SAME_ORIGIN,
+            ReferrerPolicy::STRICT_ORIGIN,
+            ReferrerPolicy::STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+            ReferrerPolicy::UNSAFE_URL
         ];
 
         $this->checkValues($policy, $available);
