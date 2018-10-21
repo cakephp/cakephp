@@ -14,6 +14,7 @@
  */
 namespace Cake\Http\Middleware;
 
+use Cake\Http\Middleware\SecurityHeaders\XssProtection;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -61,18 +62,6 @@ class SecurityHeadersMiddleware
 
     /** @var string X-Frame-Option allow-from */
     const ALLOW_FROM = 'allow-from';
-
-    /** @var string X-XSS-Protection block, sets enabled with block */
-    const XSS_BLOCK = 'block';
-
-    /** @var string X-XSS-Protection enabled with block */
-    const XSS_ENABLED_BLOCK = '1; mode=block';
-
-    /** @var string X-XSS-Protection enabled */
-    const XSS_ENABLED = '1';
-
-    /** @var string X-XSS-Protection disabled */
-    const XSS_DISABLED = '0';
 
     /** @var string X-Permitted-Cross-Domain-Policy all */
     const ALL = 'all';
@@ -184,15 +173,19 @@ class SecurityHeadersMiddleware
      * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
-    public function setXssProtection($mode = self::XSS_BLOCK)
+    public function setXssProtection($mode = XssProtection::BLOCK)
     {
         $mode = (string)$mode;
 
-        if ($mode === self::XSS_BLOCK) {
-            $mode = self::XSS_ENABLED_BLOCK;
+        if ($mode === XssProtection::BLOCK) {
+            $mode = XssProtection::ENABLED_BLOCK;
         }
 
-        $this->checkValues($mode, [self::XSS_ENABLED, self::XSS_DISABLED, self::XSS_ENABLED_BLOCK]);
+        $this->checkValues($mode, [
+            XssProtection::ENABLED,
+            XssProtection::DISABLED,
+            XssProtection::ENABLED_BLOCK
+        ]);
         $this->headers['x-xss-protection'] = $mode;
 
         return $this;
