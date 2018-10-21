@@ -16,6 +16,7 @@ namespace Cake\Http\Middleware;
 
 use Cake\Http\Middleware\SecurityHeaders\ContentTypeOption;
 use Cake\Http\Middleware\SecurityHeaders\DownloadOption;
+use Cake\Http\Middleware\SecurityHeaders\FrameOption;
 use Cake\Http\Middleware\SecurityHeaders\ReferrerPolicy;
 use Cake\Http\Middleware\SecurityHeaders\XssProtection;
 use InvalidArgumentException;
@@ -27,15 +28,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
-    /** @var string X-Frame-Option deny */
-    const DENY = 'deny';
-
-    /** @var string X-Frame-Option sameorigin */
-    const SAMEORIGIN = 'sameorigin';
-
-    /** @var string X-Frame-Option allow-from */
-    const ALLOW_FROM = 'allow-from';
-
     /** @var string X-Permitted-Cross-Domain-Policy all */
     const ALL = 'all';
 
@@ -123,11 +115,11 @@ class SecurityHeadersMiddleware
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
-    public function setXFrameOptions($option = self::SAMEORIGIN, $url = null)
+    public function setXFrameOptions($option = FrameOption::SAMEORIGIN, $url = null)
     {
-        $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
+        $this->checkValues($option, [FrameOption::DENY, FrameOption::SAMEORIGIN, FrameOption::ALLOW_FROM]);
 
-        if ($option === self::ALLOW_FROM) {
+        if ($option === FrameOption::ALLOW_FROM) {
             if (empty($url)) {
                 throw new InvalidArgumentException('The 2nd arg $url can not be empty when `allow-from` is used');
             }
