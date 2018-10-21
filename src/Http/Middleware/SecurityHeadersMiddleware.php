@@ -14,6 +14,7 @@
  */
 namespace Cake\Http\Middleware;
 
+use Cake\Http\Middleware\SecurityHeaders\ContentTypeOption;
 use Cake\Http\Middleware\SecurityHeaders\XssProtection;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -24,9 +25,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
-    /** @var string X-Content-Type-Option nosniff */
-    const NOSNIFF = 'nosniff';
-
     /** @var string X-Download-Option noopen */
     const NOOPEN = 'noopen';
 
@@ -95,7 +93,7 @@ class SecurityHeadersMiddleware
      */
     public function noSniff()
     {
-        $this->headers['x-content-type-options'] = self::NOSNIFF;
+        $this->headers['x-content-type-options'] = ContentTypeOption::NOSNIFF;
 
         return $this;
     }
