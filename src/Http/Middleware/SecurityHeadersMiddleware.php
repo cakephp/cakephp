@@ -15,6 +15,7 @@
 namespace Cake\Http\Middleware;
 
 use Cake\Http\Middleware\SecurityHeaders\ContentTypeOption;
+use Cake\Http\Middleware\SecurityHeaders\DownloadOption;
 use Cake\Http\Middleware\SecurityHeaders\XssProtection;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -25,9 +26,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
-    /** @var string X-Download-Option noopen */
-    const NOOPEN = 'noopen';
-
     /** @var string Referrer-Policy no-referrer */
     const NO_REFERRER = 'no-referrer';
 
@@ -108,7 +106,7 @@ class SecurityHeadersMiddleware
      */
     public function noOpen()
     {
-        $this->headers['x-download-options'] = self::NOOPEN;
+        $this->headers['x-download-options'] = DownloadOption::NOOPEN;
 
         return $this;
     }
