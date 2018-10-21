@@ -17,6 +17,7 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\Utility\Inflector;
@@ -111,13 +112,14 @@ class AssetsTask extends Shell
             }
 
             $link = Inflector::underscore($plugin);
-            $dir = WWW_ROOT;
+            $wwwRoot = Configure::read('App.wwwRoot');
+            $dir = $wwwRoot;
             $namespaced = false;
             if (strpos($link, '/') !== false) {
                 $namespaced = true;
                 $parts = explode('/', $link);
                 $link = array_pop($parts);
-                $dir = WWW_ROOT . implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
+                $dir = $wwwRoot . implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
             }
 
             $plugins[$plugin] = [
