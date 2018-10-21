@@ -17,6 +17,7 @@ namespace Cake\Http\Middleware;
 use Cake\Http\Middleware\SecurityHeaders\ContentTypeOption;
 use Cake\Http\Middleware\SecurityHeaders\DownloadOption;
 use Cake\Http\Middleware\SecurityHeaders\FrameOption;
+use Cake\Http\Middleware\SecurityHeaders\PermittedCrossDomainPolicy;
 use Cake\Http\Middleware\SecurityHeaders\ReferrerPolicy;
 use Cake\Http\Middleware\SecurityHeaders\XssProtection;
 use InvalidArgumentException;
@@ -28,21 +29,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
-    /** @var string X-Permitted-Cross-Domain-Policy all */
-    const ALL = 'all';
-
-    /** @var string X-Permitted-Cross-Domain-Policy none */
-    const NONE = 'none';
-
-    /** @var string X-Permitted-Cross-Domain-Policy master-only */
-    const MASTER_ONLY = 'master-only';
-
-    /** @var string X-Permitted-Cross-Domain-Policy by-content-type */
-    const BY_CONTENT_TYPE = 'by-content-type';
-
-    /** @var string X-Permitted-Cross-Domain-Policy by-ftp-filename */
-    const BY_FTP_FILENAME = 'by-ftp-filename';
-
     /**
      * Security related headers to set
      *
@@ -163,10 +149,15 @@ class SecurityHeadersMiddleware
      * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
      * @return $this
      */
-    public function setCrossDomainPolicy($policy = self::ALL)
+    public function setCrossDomainPolicy($policy = PermittedCrossDomainPolicy::ALL)
     {
-        $this->checkValues($policy,
-            [self::ALL, self::NONE, self::MASTER_ONLY, self::BY_CONTENT_TYPE, self::BY_FTP_FILENAME]
+        $this->checkValues($policy, [
+                PermittedCrossDomainPolicy::ALL,
+                PermittedCrossDomainPolicy::NONE,
+                PermittedCrossDomainPolicy::MASTER_ONLY,
+                PermittedCrossDomainPolicy::BY_CONTENT_TYPE,
+                PermittedCrossDomainPolicy::BY_FTP_FILENAME
+            ]
         );
         $this->headers['x-permitted-cross-domain-policies'] = $policy;
 
