@@ -158,8 +158,7 @@ class SecurityHeadersMiddleware
                 PermittedCrossDomainPolicy::MASTER_ONLY,
                 PermittedCrossDomainPolicy::BY_CONTENT_TYPE,
                 PermittedCrossDomainPolicy::BY_FTP_FILENAME,
-            ]
-        );
+            ]);
         $this->headers['x-permitted-cross-domain-policies'] = $policy;
 
         return $this;
