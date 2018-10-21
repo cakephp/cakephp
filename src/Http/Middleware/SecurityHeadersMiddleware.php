@@ -70,8 +70,8 @@ class SecurityHeadersMiddleware
      * Referrer-Policy
      *
      * @link https://w3c.github.io/webappsec-referrer-policy
-     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin', 'origin-when-cross-origin',
-     *        'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
+     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin',
+     *     'origin-when-cross-origin', 'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
     public function setReferrerPolicy($policy = ReferrerPolicy::SAME_ORIGIN)
@@ -84,7 +84,7 @@ class SecurityHeadersMiddleware
             ReferrerPolicy::SAME_ORIGIN,
             ReferrerPolicy::STRICT_ORIGIN,
             ReferrerPolicy::STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
-            ReferrerPolicy::UNSAFE_URL
+            ReferrerPolicy::UNSAFE_URL,
         ];
 
         $this->checkValues($policy, $available);
@@ -135,7 +135,7 @@ class SecurityHeadersMiddleware
         $this->checkValues($mode, [
             XssProtection::ENABLED,
             XssProtection::DISABLED,
-            XssProtection::ENABLED_BLOCK
+            XssProtection::ENABLED_BLOCK,
         ]);
         $this->headers['x-xss-protection'] = $mode;
 
@@ -146,7 +146,8 @@ class SecurityHeadersMiddleware
      * X-Permitted-Cross-Domain-Policies
      *
      * @link https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
-     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
+     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type',
+     *     'by-ftp-filename'
      * @return $this
      */
     public function setCrossDomainPolicy($policy = PermittedCrossDomainPolicy::ALL)
@@ -156,7 +157,7 @@ class SecurityHeadersMiddleware
                 PermittedCrossDomainPolicy::NONE,
                 PermittedCrossDomainPolicy::MASTER_ONLY,
                 PermittedCrossDomainPolicy::BY_CONTENT_TYPE,
-                PermittedCrossDomainPolicy::BY_FTP_FILENAME
+                PermittedCrossDomainPolicy::BY_FTP_FILENAME,
             ]
         );
         $this->headers['x-permitted-cross-domain-policies'] = $policy;
