@@ -40,7 +40,7 @@ class Filesystem
     public const TYPE_DIR = 'dir';
 
     /**
-     * Find files (non-recursively) in given directory path.
+     * Find files / directories (non-recursively) in given directory path.
      *
      * @param string $path Directory path.
      * @param mixed $filter If string will be used as regex for filtering using
@@ -59,15 +59,11 @@ class Filesystem
             return $directory;
         }
 
-        if (is_string($filter)) {
-            return new RegexIterator($directory, $filter);
-        }
-
-        return new CallbackFilterIterator($directory, $filter);
+        return $this->filterIterator($directory, $filter);
     }
 
     /**
-     * Find files recursively in given directory path.
+     * Find files/ directories recursively in given directory path.
      *
      * @param string $path Directory path.
      * @param mixed $filter If string will be used as regex for filtering using
@@ -103,11 +99,23 @@ class Filesystem
             return $flatten;
         }
 
+        return $this->filterIterator($flatten, $filter);
+    }
+
+    /**
+     * Wrap iterator in additional filtering iterator.
+     *
+     * @param \Traversable $iterator Iterator
+     * @param mixed $filter Regex string or callback.
+     * @return \Traversable
+     */
+    protected function filterIterator(Traversable $iterator, $filter): Traversable
+    {
         if (is_string($filter)) {
-            return new RegexIterator($flatten, $filter);
+            return new RegexIterator($iterator, $filter);
         }
 
-        return new CallbackFilterIterator($flatten, $filter);
+        return new CallbackFilterIterator($iterator, $filter);
     }
 
     /**
