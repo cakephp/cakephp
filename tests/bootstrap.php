@@ -30,7 +30,7 @@ if (!defined('DS')) {
 define('ROOT', dirname(__DIR__));
 define('APP_DIR', 'TestApp');
 
-define('TMP', sys_get_temp_dir() . DS);
+define('TMP', (getenv('TMP_PATH') ?: sys_get_temp_dir()) . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
 define('SESSIONS', TMP . 'sessions' . DS);

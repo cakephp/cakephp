@@ -30,6 +30,7 @@ init:
   - SET COMPOSER_NO_INTERACTION=1
   - SET PHP=1 # This var is connected to PHP install cache
   - SET ANSICON=121x90 (121x90)
+  - SET TMP_PATH=C:\projects\cakephp\tmp
 
 install:
   - IF EXIST C:\php (SET PHP=0)
@@ -98,4 +99,5 @@ before_test:
 test_script:
   - sqlcmd -S ".\SQL2012SP1" -U sa -P Password12! -Q "create database cakephp;"
   - cd C:\projects\cakephp
+  - mkdir tmp
   - vendor\bin\phpunit.bat
