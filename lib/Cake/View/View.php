@@ -120,9 +120,9 @@ class View extends CakeObject {
 	public $view = null;
 
 /**
- * Name of layout to use with this View.
+ * Name of layout to use with this View. If `false` then no layout is rendered.
  *
- * @var string
+ * @var string|bool
  */
 	public $layout = 'default';
 
