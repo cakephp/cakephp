@@ -28,32 +28,8 @@ class UpgradeCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
-    /**
-     * pluginPaths
-     *
-     * @var array
-     */
-    protected $pluginPaths = [];
-
-    /**
-     * Namespace
-     *
-     * @var string
-     */
-    protected $namespace = '';
-
-    /**
-     * setup method
-     *
-     * @return void
-     */
-    public function setUp()
-    {
-        parent::setUp();
-
-        $this->useCommandRunner(true);
-
-        $ds = [
+    protected $dirStructure = [
+        'forTemplate' => [
             'src' => [
                 'Template' => [
                     'Email' => ['html' => ['def.php' => '']],
@@ -99,12 +75,75 @@ class UpgradeCommandTest extends TestCase
                     'src' => [],
                 ],
             ],
-        ];
+        ],
+        'forLocale' => [
+            'src' => [
+                'Locale' => [
+                    'default.pot' => '',
+                    'en' => [
+                        'default.po' => '',
+                    ],
+                ],
+            ],
+            'plugins' => [
+                'TestVendor' => [
+                    'TestPlugin' => [
+                        'src' => [
+                            'Locale' => [
+                                'default.pot' => '',
+                                'fr' => [
+                                    'default.po' => '',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'TestPluginWithLocale' => [
+                    'src' => [],
+                ],
+            ],
+        ],
+    ];
 
-        $this->fs = vfsStream::setup('root', 444, $ds);
+    /**
+     * pluginPaths
+     *
+     * @var array
+     */
+    protected $pluginPaths = [];
+
+    /**
+     * localePaths
+     *
+     * @var array
+     */
+    protected $localePaths = [];
+
+    /**
+     * Namespace
+     *
+     * @var string
+     */
+    protected $namespace = '';
+
+    /**
+     * setup method
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->useCommandRunner(true);
+
+        $this->fs = vfsStream::setup('root');
 
         $this->pluginPaths = Configure::read('App.paths.plugins');
         Configure::write('App.paths.plugins', [$this->fs->url() . '/plugins'], true);
+
+        $this->localePaths = Configure::read('App.paths.locales');
+        Configure::write('App.paths.locales', [$this->fs->url() . '/src/Locale'], true);
 
         $this->namespace = Configure::read('App.namespace');
         Configure::write('App.namespace', 'TestApp');
@@ -118,16 +157,19 @@ class UpgradeCommandTest extends TestCase
     public function tearDown()
     {
         Configure::write('App.paths.plugins', $this->pluginPaths);
+        Configure::write('App.paths.locales', $this->localePaths);
         Configure::write('App.namespace', $this->namespace);
     }
 
     /**
-     * testExecute
+     * testUpgradeTemplate
      *
      * @return void
      */
-    public function testExecute()
+    public function testUpgradeTemplate()
     {
+        vfsStream::create($this->dirStructure['forTemplate']);
+
         $this->exec('upgrade templates --path ' . $this->fs->url());
 
         $ds = [
@@ -172,6 +214,53 @@ class UpgradeCommandTest extends TestCase
                     ],
                 ],
                 'PluginWithoutTemplates' => [
+                    'src' => [],
+                ],
+            ],
+        ];
+
+        $this->assertEquals(
+            ['root' => $ds],
+            vfsStream::inspect(new vfsStreamStructureVisitor())->getStructure()
+        );
+    }
+
+    /**
+     * testUpgradeLocale
+     *
+     * @return void
+     */
+    public function testUpgradeLocale()
+    {
+        vfsStream::create($this->dirStructure['forLocale']);
+
+        $this->exec('upgrade locales --path ' . $this->fs->url());
+
+        $ds = [
+            'src' => [],
+            'resources' => [
+                'locales' => [
+                    'default.pot' => '',
+                    'en' => [
+                        'default.po' => '',
+                    ],
+                ],
+            ],
+            'plugins' => [
+                'TestVendor' => [
+                    'TestPlugin' => [
+                        'src' => [],
+                        'resources' => [
+                            'locales' => [
+                                'default.pot' => '',
+                                'fr' => [
+                                    'default.po' => '',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'TestPluginWithLocale' => [
                     'src' => [],
                 ],
             ],
