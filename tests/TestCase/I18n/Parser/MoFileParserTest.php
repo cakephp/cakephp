@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\I18n\Parser;
 
+use Cake\Core\Configure;
 use Cake\I18n\Parser\MoFileParser;
 use Cake\TestSuite\TestCase;
 
@@ -24,6 +25,25 @@ use Cake\TestSuite\TestCase;
 class MoFileParserTest extends TestCase
 {
     /**
+     * Locale folder path
+     *
+     * @var string
+     */
+    protected $path;
+
+    /**
+     * Setup
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->path = Configure::read('App.paths.locales.0');
+    }
+
+    /**
      * Tests parsing a file with plurals and message context
      *
      * @return void
@@ -31,7 +51,7 @@ class MoFileParserTest extends TestCase
     public function testParse()
     {
         $parser = new MoFileParser();
-        $file = APP . 'Locale' . DS . 'rule_1_mo' . DS . 'core.mo';
+        $file = $this->path . 'rule_1_mo' . DS . 'core.mo';
         $messages = $parser->parse($file);
         $this->assertCount(3, $messages);
         $expected = [
@@ -53,7 +73,7 @@ class MoFileParserTest extends TestCase
     public function testParse0()
     {
         $parser = new MoFileParser();
-        $file = APP . 'Locale' . DS . 'rule_0_mo' . DS . 'core.mo';
+        $file = $this->path . 'rule_0_mo' . DS . 'core.mo';
         $messages = $parser->parse($file);
         $this->assertCount(3, $messages);
         $expected = [
@@ -74,7 +94,7 @@ class MoFileParserTest extends TestCase
     public function testParse2()
     {
         $parser = new MoFileParser();
-        $file = APP . 'Locale' . DS . 'rule_9_mo' . DS . 'core.mo';
+        $file = $this->path . 'rule_9_mo' . DS . 'core.mo';
         $messages = $parser->parse($file);
         $this->assertCount(3, $messages);
         $expected = [
@@ -97,7 +117,7 @@ class MoFileParserTest extends TestCase
     public function testParseFull()
     {
         $parser = new MoFileParser();
-        $file = APP . 'Locale' . DS . 'rule_0_mo' . DS . 'default.mo';
+        $file = $this->path . 'rule_0_mo' . DS . 'default.mo';
         $messages = $parser->parse($file);
         $this->assertCount(5, $messages);
         $expected = [

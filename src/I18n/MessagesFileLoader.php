@@ -63,21 +63,21 @@ class MessagesFileLoader
      *
      * ### Examples:
      *
-     * Load and parse src/Locale/fr/validation.po
+     * Load and parse resources/locales/fr/validation.po
      *
      * ```
      * $loader = new MessagesFileLoader('validation', 'fr_FR', 'po');
      * $package = $loader();
      * ```
      *
-     * Load and parse src/Locale/fr_FR/validation.mo
+     * Load and parse resources/locales/fr_FR/validation.mo
      *
      * ```
      * $loader = new MessagesFileLoader('validation', 'fr_FR', 'mo');
      * $package = $loader();
      * ```
      *
-     * Load the plugins/MyPlugin/src/Locale/fr/my_plugin.po file:
+     * Load the plugins/MyPlugin/resources/locales/fr/my_plugin.po file:
      *
      * ```
      * $loader = new MessagesFileLoader('my_plugin', 'fr_FR', 'mo');
@@ -161,7 +161,7 @@ class MessagesFileLoader
 
         $localePaths = App::path('Locale');
         if (empty($localePaths) && defined('APP')) {
-            $localePaths[] = APP . 'Locale' . DIRECTORY_SEPARATOR;
+            $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
         }
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {
@@ -172,7 +172,7 @@ class MessagesFileLoader
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
         if (Plugin::isLoaded($pluginName)) {
-            $basePath = Plugin::classPath($pluginName) . 'Locale' . DIRECTORY_SEPARATOR;
+            $basePath = Plugin::path($pluginName) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
             }
