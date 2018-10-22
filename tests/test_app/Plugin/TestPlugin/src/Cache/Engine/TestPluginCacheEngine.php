@@ -25,11 +25,11 @@ use Cake\Cache\CacheEngine;
 
 class TestPluginCacheEngine extends CacheEngine
 {
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
     }
 
-    public function read(string $key)
+    public function get($key, $default = null)
     {
     }
 
@@ -41,11 +41,11 @@ class TestPluginCacheEngine extends CacheEngine
     {
     }
 
-    public function delete(string $key): bool
+    public function delete($key)
     {
     }
 
-    public function clear(bool $check): bool
+    public function clear()
     {
     }
 

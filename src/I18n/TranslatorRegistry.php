@@ -146,10 +146,10 @@ class TranslatorRegistry extends TranslatorLocator
         }
 
         $key = "translations.$name.$locale";
-        $translator = $this->_cacher->read($key);
+        $translator = $this->_cacher->get($key);
         if (!$translator || !$translator->getPackage()) {
             $translator = $this->_getTranslator($name, $locale);
-            $this->_cacher->write($key, $translator);
+            $this->_cacher->set($key, $translator);
         }
 
         return $this->registry[$name][$locale] = $translator;

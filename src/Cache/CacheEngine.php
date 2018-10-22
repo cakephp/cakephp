@@ -16,14 +16,14 @@ declare(strict_types=1);
 namespace Cake\Cache;
 
 use Cake\Core\InstanceConfigTrait;
-use InvalidArgumentException;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Storage engine for CakePHP caching
  *
  * @mixin \Cake\Core\InstanceConfigTrait
  */
-abstract class CacheEngine
+abstract class CacheEngine implements CacheInterface, CacheEngineInterface
 {
     use InstanceConfigTrait;
 
@@ -49,7 +49,7 @@ abstract class CacheEngine
     ];
 
     /**
-     * Contains the compiled string with all groups
+     * Contains the compiled string with all group
      * prefixes to be prepended to every key in this cache engine
      *
      * @var string
@@ -81,37 +81,53 @@ abstract class CacheEngine
     }
 
     /**
-     * Write value for a key into cache
+     * Ensure the validity of the given cache key.
      *
-     * @param string $key Identifier for the data
-     * @param mixed $value Data to be cached
-     * @return bool True if the data was successfully cached, false on failure
+     * @param string $key Key to check.
+     * @return void
+     * @throws \Cake\Cache\InvalidArgumentException When the key is not valid.
      */
-    abstract public function write(string $key, $value): bool;
+    protected function ensureValidKey($key)
+    {
+        if (!is_string($key) || strlen($key) === 0) {
+            throw new InvalidArgumentException('A cache key must be a non-empty string.');
+        }
+    }
+
+    /**
+     * Ensure the validity of the given cache keys.
+     *
+     * @param mixed $keys The keys to check.
+     * @return void
+     * @throws \Cake\Cache\InvalidArgumentException When the keys are not valid.
+     */
+    protected function ensureValidKeys($keys)
+    {
+        if (!is_array($keys) && !($keys instanceof \Traversable)) {
+            throw new InvalidArgumentException('A cache key set must be either an array or a Traversable.');
+        }
+
+        foreach ($keys as $key) {
+            $this->ensureValidKey($key);
+        }
+    }
 
     /**
      * Write data for many keys into cache
      *
      * @param array $data An array of data to be stored in the cache
      * @return array of bools for each key provided, true if the data was successfully cached, false on failure
+     * @deprecated To be removed soon
      */
     public function writeMany(array $data): array
     {
         $return = [];
         foreach ($data as $key => $value) {
-            $return[$key] = $this->write($key, $value);
+            $return[$key] = $this->set($key, $value);
         }
 
         return $return;
     }
-
-    /**
-     * Read a key from the cache
-     *
-     * @param string $key Identifier for the data
-     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
-     */
-    abstract public function read(string $key);
 
     /**
      * Read multiple keys from the cache
@@ -119,16 +135,139 @@ abstract class CacheEngine
      * @param array $keys An array of identifiers for the data
      * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
      * exist, has expired, or if there was an error fetching it
+     * @deprecated To be removed soon
      */
     public function readMany(array $keys): array
     {
         $return = [];
         foreach ($keys as $key) {
-            $return[$key] = $this->read($key);
+            $return[$key] = $this->get($key);
         }
 
         return $return;
     }
+
+    /**
+     * Obtains multiple cache items by their unique keys.
+     *
+     * @param iterable $keys A list of keys that can obtained in a single operation.
+     * @param mixed $default Default value to return for keys that do not exist.
+     * @return array A list of key => value pairs. Cache keys that do not exist or are stale will have $default as value.
+     * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
+     *   or if any of the $keys are not a legal value.
+     */
+    public function getMultiple($keys, $default = null): array
+    {
+        $this->ensureValidKeys($keys);
+
+        $results = [];
+        foreach ($keys as $key) {
+            $results[$key] = $this->get($key, $default);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Persists a set of key => value pairs in the cache, with an optional TTL.
+     *
+     * @param iterable $values A list of key => value pairs for a multiple-set operation.
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
+     * @throws \Cake\Cache\InvalidArgumentException If $values is neither an array nor a Traversable,
+     *   or if any of the $values are not a legal value.
+     */
+    public function setMultiple($values, $ttl = null): bool
+    {
+        $this->ensureValidKeys(array_keys($values));
+
+        if ($ttl !== null) {
+            $restore = $this->getConfig('duration');
+            $this->setConfig('duration', $ttl);
+        }
+        try {
+            $return = [];
+            foreach ($values as $key => $value) {
+                $success = $this->set($key, $value);
+                if ($success === false) {
+                    return false;
+                }
+            }
+
+            return true;
+        } finally {
+            if (isset($restore)) {
+                $this->setConfig('duration', $restore);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletes multiple cache items in a single operation.
+     *
+     * @param iterable $keys A list of string-based keys to be deleted.
+     * @return bool True if the items were successfully removed. False if there was an error.
+     * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
+     *   or if any of the $keys are not a legal value.
+     */
+    public function deleteMultiple($keys): bool
+    {
+        $this->ensureValidKeys($keys);
+
+        foreach ($keys as $key) {
+            $result = $this->delete($key);
+            if ($result === false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Determines whether an item is present in the cache.
+     *
+     * NOTE: It is recommended that has() is only to be used for cache warming type purposes
+     * and not to be used within your live applications operations for get/set, as this method
+     * is subject to a race condition where your has() will return true and immediately after,
+     * another script can remove it making the state of your app out of date.
+     *
+     * @param string $key The cache item key.
+     * @return bool
+     * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
+     */
+    public function has($key)
+    {
+        return $this->get($key) !== null;
+    }
+
+    /**
+     * Fetches the value for a given key from the cache.
+     *
+     * @param string $key The unique key of this item in the cache.
+     * @param mixed $default Default value to return if the key does not exist.
+     * @return mixed The value of the item from the cache, or $default in case of cache miss.
+     * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
+     */
+    abstract public function get($key, $default = null);
+
+    /**
+     * Persists data in the cache, uniquely referenced by the given key with an optional expiration TTL time.
+     *
+     * @param string $key The key of the item to store.
+     * @param mixed $value The value of the item to store, must be serializable.
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
+     * @throws \Cake\Cache\InvalidArgumentException
+     *   MUST be thrown if the $key string is not a legal value.
+     */
+    abstract public function set($key, $value, $ttl = null);
 
     /**
      * Increment a number under the key and return incremented value
@@ -154,15 +293,14 @@ abstract class CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    abstract public function delete(string $key): bool;
+    abstract public function delete($key);
 
     /**
      * Delete all keys from the cache
      *
-     * @param bool $check if true will check expiration, otherwise delete all
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    abstract public function clear(bool $check): bool;
+    abstract public function clear();
 
     /**
      * Deletes keys from the cache
@@ -170,6 +308,7 @@ abstract class CacheEngine
      * @param array $keys An array of identifiers for the data
      * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
      * false if it didn't exist or couldn't be removed
+     * @deprecated To be removed soon
      */
     public function deleteMany(array $keys): array
     {
@@ -193,9 +332,9 @@ abstract class CacheEngine
      */
     public function add(string $key, $value): bool
     {
-        $cachedValue = $this->read($key);
-        if ($cachedValue === false) {
-            return $this->write($key, $value);
+        $cachedValue = $this->get($key);
+        if ($cachedValue === null) {
+            return $this->set($key, $value);
         }
 
         return false;
@@ -243,7 +382,11 @@ abstract class CacheEngine
             $prefix = md5(implode('_', $this->groups()));
         }
 
-        $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key))));
+        $key = preg_replace(
+            '/[\s]+/',
+            '_',
+            strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key)))
+        );
 
         return $prefix . $key;
     }
@@ -253,7 +396,7 @@ abstract class CacheEngine
      *
      * @param string $key the key passed over
      * @return mixed string $key or false
-     * @throws \InvalidArgumentException If key's value is empty
+     * @throws \Cake\Cache\InvalidArgumentException If key's value is empty
      */
     protected function _key(string $key)
     {

@@ -53,10 +53,13 @@ class ApcuEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
-     * @return bool True if the data was successfully cached, false on failure
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
         $duration = $this->_config['duration'];
@@ -68,11 +71,12 @@ class ApcuEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
+     * @param mixed $default Default value in case the cache misses.
      * @return mixed The cached data, or false if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
-    public function read(string $key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
@@ -116,7 +120,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         $key = $this->_key($key);
 
@@ -126,17 +130,12 @@ class ApcuEngine extends CacheEngine
     /**
      * Delete all keys from the cache. This will clear every cache config using APC.
      *
-     * @param bool $check If true, nothing will be cleared, as entries are removed
-     *    from APC as they expired. This flag is really only used by FileEngine.
      * @return bool True Returns true.
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         if (class_exists('APCuIterator', false)) {
             $iterator = new APCuIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',

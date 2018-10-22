@@ -233,7 +233,7 @@ class ApcuEngineTest extends TestCase
         apcu_store('not_cake', 'survive');
         Cache::write('some_value', 'value', 'apcu');
 
-        $result = Cache::clear(false, 'apcu');
+        $result = Cache::clear('apcu');
         $this->assertTrue($result);
         $this->assertFalse(Cache::read('some_value', 'apcu'));
         $this->assertEquals('survive', apcu_fetch('not_cake'));

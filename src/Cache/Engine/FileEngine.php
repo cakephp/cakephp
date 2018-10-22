@@ -109,9 +109,12 @@ class FileEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $data Data to be cached
-     * @return bool True if the data was successfully cached, false on failure
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
      */
-    public function write(string $key, $data): bool
+    public function set($key, $data, $ttl = null)
     {
         if ($data === '' || !$this->_init) {
             return false;
@@ -162,15 +165,16 @@ class FileEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
-     * @return mixed The cached data, or false if the data doesn't exist, has
+     * @param mixed $default Default value to return if the key does not exist.
+     * @return mixed The cached data, or null if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
-    public function read(string $key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
 
         if (!$this->_init || $this->_setKey($key) === false) {
-            return false;
+            return null;
         }
 
         if ($this->_config['lock']) {
@@ -186,7 +190,7 @@ class FileEngine extends CacheEngine
                 $this->_File->flock(LOCK_UN);
             }
 
-            return false;
+            return null;
         }
 
         $data = '';
@@ -219,7 +223,7 @@ class FileEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         $key = $this->_key($key);
 
@@ -238,23 +242,16 @@ class FileEngine extends CacheEngine
     /**
      * Delete all values from the cache
      *
-     * @param bool $check Optional - only delete expired cache items
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
         if (!$this->_init) {
             return false;
         }
         $this->_File = null;
 
-        $threshold = $now = 0;
-        if ($check) {
-            $now = time();
-            $threshold = $now - $this->_config['duration'];
-        }
-
-        $this->_clearDirectory($this->_config['path'], $now, $threshold);
+        $this->_clearDirectory($this->_config['path']);
 
         $directory = new RecursiveDirectoryIterator($this->_config['path']);
         $contents = new RecursiveIteratorIterator(
@@ -269,7 +266,7 @@ class FileEngine extends CacheEngine
 
             $path = $path->getRealPath() . DIRECTORY_SEPARATOR;
             if (!in_array($path, $cleared)) {
-                $this->_clearDirectory($path, $now, $threshold);
+                $this->_clearDirectory($path);
                 $cleared[] = $path;
             }
         }
@@ -281,11 +278,9 @@ class FileEngine extends CacheEngine
      * Used to clear a directory of matching files.
      *
      * @param string $path The path to search.
-     * @param int $now The current timestamp
-     * @param int $threshold Any file not modified after this value will be deleted.
      * @return void
      */
-    protected function _clearDirectory(string $path, int $now, int $threshold): void
+    protected function _clearDirectory(string $path): void
     {
         if (!is_dir($path)) {
             return;
@@ -304,17 +299,6 @@ class FileEngine extends CacheEngine
                 continue;
             }
 
-            if ($threshold) {
-                $mtime = $file->getMTime();
-                if ($mtime > $threshold) {
-                    continue;
-                }
-
-                $expires = (int)$file->current();
-                if ($expires > $now) {
-                    continue;
-                }
-            }
             if ($file->isFile()) {
                 $filePath = $file->getRealPath();
                 $file = null;

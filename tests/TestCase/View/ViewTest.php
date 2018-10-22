@@ -1003,7 +1003,7 @@ class ViewTest extends TestCase
             'path' => CACHE . 'views/',
             'prefix' => '',
         ]);
-        Cache::clear(false, 'test_view');
+        Cache::clear('test_view');
 
         $View = $this->PostsController->createView();
         $View->setElementCache('test_view');
@@ -1040,7 +1040,7 @@ class ViewTest extends TestCase
         $result = Cache::read('element__test_element_param_foo', 'test_view');
         $this->assertEquals($expected, $result);
 
-        Cache::clear(true, 'test_view');
+        Cache::clear('test_view');
         Cache::drop('test_view');
     }
 

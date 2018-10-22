@@ -45,38 +45,6 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
     }
 
     /**
-     * Ensure the validity of the given cache key.
-     *
-     * @param string $key Key to check.
-     * @return void
-     * @throws \Cake\Cache\InvalidArgumentException When the key is not valid.
-     */
-    protected function ensureValidKey($key)
-    {
-        if (!is_string($key) || strlen($key) === 0) {
-            throw new InvalidArgumentException('A cache key must be a non-empty string.');
-        }
-    }
-
-    /**
-     * Ensure the validity of the given cache keys.
-     *
-     * @param mixed $keys The keys to check.
-     * @return void
-     * @throws \Cake\Cache\InvalidArgumentException When the keys are not valid.
-     */
-    protected function ensureValidKeys($keys)
-    {
-        if (!is_array($keys) && !($keys instanceof \Traversable)) {
-            throw new InvalidArgumentException('A cache key set must be either an array or a Traversable.');
-        }
-
-        foreach ($keys as $key) {
-            $this->ensureValidKey($key);
-        }
-    }
-
-    /**
      * Fetches the value for a given key from the cache.
      *
      * @param string $key The unique key of this item in the cache.
@@ -86,13 +54,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function get($key, $default = null)
     {
-        $this->ensureValidKey($key);
-        $result = $this->innerEngine->read($key);
-        if ($result === false) {
-            return $default;
-        }
-
-        return $result;
+        return $this->innerEngine->get($key, $default);
     }
 
     /**
@@ -109,20 +71,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function set($key, $value, $ttl = null)
     {
-        $this->ensureValidKey($key);
-        if ($ttl !== null) {
-            $restore = $this->innerEngine->getConfig('duration');
-            $this->innerEngine->setConfig('duration', $ttl);
-        }
-        try {
-            $result = $this->innerEngine->write($key, $value);
-
-            return (bool)$result;
-        } finally {
-            if (isset($restore)) {
-                $this->innerEngine->setConfig('duration', $restore);
-            }
-        }
+        return $this->innerEngine->set($key, $value, $ttl);
     }
 
     /**
@@ -134,8 +83,6 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function delete($key)
     {
-        $this->ensureValidKey($key);
-
         return $this->innerEngine->delete($key);
     }
 
@@ -146,7 +93,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function clear()
     {
-        return $this->innerEngine->clear(false);
+        return $this->innerEngine->clear();
     }
 
     /**
@@ -160,16 +107,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function getMultiple($keys, $default = null)
     {
-        $this->ensureValidKeys($keys);
-
-        $results = $this->innerEngine->readMany($keys);
-        foreach ($results as $key => $value) {
-            if ($value === false) {
-                $results[$key] = $default;
-            }
-        }
-
-        return $results;
+        return $this->innerEngine->getMultiple($keys, $default);
     }
 
     /**
@@ -185,28 +123,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function setMultiple($values, $ttl = null)
     {
-        $this->ensureValidKeys(array_keys($values));
-
-        if ($ttl !== null) {
-            $restore = $this->innerEngine->getConfig('duration');
-            $this->innerEngine->setConfig('duration', $ttl);
-        }
-        try {
-            $result = $this->innerEngine->writeMany($values);
-            foreach ($result as $key => $success) {
-                if ($success === false) {
-                    return false;
-                }
-            }
-
-            return true;
-        } finally {
-            if (isset($restore)) {
-                $this->innerEngine->setConfig('duration', $restore);
-            }
-        }
-
-        return false;
+        return $this->innerEngine->setMultiple($values, $ttl);
     }
 
     /**
@@ -219,16 +136,7 @@ class SimpleCacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteMultiple($keys)
     {
-        $this->ensureValidKeys($keys);
-
-        $result = $this->innerEngine->deleteMany($keys);
-        foreach ($result as $key => $success) {
-            if ($success === false) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->innerEngine->deleteMultiple($keys);
     }
 
     /**
