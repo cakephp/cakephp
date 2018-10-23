@@ -418,19 +418,15 @@ class FileEngine extends CacheEngine
      * @param string $key the key passed over
      * @return mixed string $key or false
      */
-    public function key(string $key)
+    protected function _key(string $key)
     {
-        if (empty($key)) {
-            return false;
-        }
+        $key = parent::_key($key);
 
-        $key = Inflector::underscore(str_replace(
+        return Inflector::underscore(str_replace(
             [DIRECTORY_SEPARATOR, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
             '_',
             (string)$key
         ));
-
-        return $key;
     }
 
     /**
