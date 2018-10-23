@@ -295,33 +295,26 @@ class MemcachedEngine extends CacheEngine
             $duration = 0;
         }
 
-        $key = $this->_key($key);
-
-        return $this->_Memcached->set($key, $value, $duration);
+        return $this->_Memcached->set($this->_key($key), $value, $duration);
     }
 
     /**
      * Write many cache entries to the cache at once
      *
      * @param array $data An array of data to be stored in the cache
-     * @return array of bools for each key provided, true if the data was
-     *   successfully cached, false on failure
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
+     * @return bool Whether the write was successful or not.
      */
-    public function writeMany(array $data): array
+    public function setMultiple($data, $ttl = null): bool
     {
         $cacheData = [];
         foreach ($data as $key => $value) {
             $cacheData[$this->_key($key)] = $value;
         }
 
-        $success = $this->_Memcached->setMulti($cacheData);
-
-        $return = [];
-        foreach (array_keys($data) as $key) {
-            $return[$key] = $success;
-        }
-
-        return $return;
+        return (bool)$this->_Memcached->setMulti($cacheData);
     }
 
     /**
@@ -343,21 +336,21 @@ class MemcachedEngine extends CacheEngine
      * Read many keys from the cache at once
      *
      * @param array $keys An array of identifiers for the data
+     * @param mixed $default Default value to return for keys that do not exist.
      * @return array An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.
      */
-    public function readMany(array $keys): array
+    public function getMultiple($keys, $default = null): array
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
-            $cacheKeys[] = $this->_key($key);
+            $cacheKeys[$key] = $this->_key($key);
         }
 
         $values = $this->_Memcached->getMulti($cacheKeys);
         $return = [];
-        foreach ($keys as &$key) {
-            $return[$key] = array_key_exists($this->_key($key), $values) ?
-                $values[$this->_key($key)] : false;
+        foreach ($cacheKeys as $original => $prefixed) {
+            $return[$original] = $values[$prefixed] ?? $default;
         }
 
         return $return;
@@ -372,9 +365,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1)
     {
-        $key = $this->_key($key);
-
-        return $this->_Memcached->increment($key, $offset);
+        return $this->_Memcached->increment($this->_key($key), $offset);
     }
 
     /**
@@ -386,9 +377,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1)
     {
-        $key = $this->_key($key);
-
-        return $this->_Memcached->decrement($key, $offset);
+        return $this->_Memcached->decrement($this->_key($key), $offset);
     }
 
     /**
@@ -400,33 +389,24 @@ class MemcachedEngine extends CacheEngine
      */
     public function delete($key)
     {
-        $key = $this->_key($key);
-
-        return $this->_Memcached->delete($key);
+        return $this->_Memcached->delete($this->_key($key));
     }
 
     /**
      * Delete many keys from the cache at once
      *
      * @param array $keys An array of identifiers for the data
-     * @return array of boolean values that are true if the key was successfully
+     * @return bool of boolean values that are true if the key was successfully
      *   deleted, false if it didn't exist or couldn't be removed.
      */
-    public function deleteMany(array $keys): array
+    public function deleteMultiple($keys): bool
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
             $cacheKeys[] = $this->_key($key);
         }
 
-        $success = $this->_Memcached->deleteMulti($cacheKeys);
-
-        $return = [];
-        foreach ($keys as $key) {
-            $return[$key] = $success;
-        }
-
-        return $return;
+        return (bool)$this->_Memcached->deleteMulti($cacheKeys);
     }
 
     /**
