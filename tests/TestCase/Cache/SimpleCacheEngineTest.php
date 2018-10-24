@@ -20,8 +20,8 @@ use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
-use Psr\SimpleCache\InvalidArgumentException;
 use DirectoryIterator;
+use Psr\SimpleCache\InvalidArgumentException;
 
 /**
  * SimpleCacheEngine class
