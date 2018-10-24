@@ -21,6 +21,7 @@ use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\SimpleCacheEngine;
 use Cake\TestSuite\TestCase;
 use Psr\SimpleCache\InvalidArgumentException;
+use DirectoryIterator;
 
 /**
  * SimpleCacheEngine class
@@ -57,6 +58,7 @@ class SimpleCacheEngineTest extends TestCase
             'prefix' => '',
             'path' => TMP . 'tests',
             'duration' => 5,
+            'lock' => false,
             'groups' => ['blog', 'category'],
         ]);
         $this->cache = new SimpleCacheEngine($this->innerEngine);
@@ -72,6 +74,23 @@ class SimpleCacheEngineTest extends TestCase
         parent::tearDown();
 
         $this->innerEngine->clear(false);
+
+        $cleaner = function ($path) use (&$cleaner) {
+            $dir = new DirectoryIterator($path);
+            foreach ($dir as $info) {
+                if ($info->isDot()) {
+                    continue;
+                }
+                if ($info->isDir() && $info->getPath() !== $path) {
+                    $cleaner($info->getPath());
+                    rmdir($info->getPath());
+                }
+                if ($info->isFile()) {
+                    unlink($info->getPath());
+                }
+            }
+        };
+        $cleaner(TMP . 'tests');
     }
 
     /**
