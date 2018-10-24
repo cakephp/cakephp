@@ -201,7 +201,10 @@ class ErrorHandlerMiddlewareTest extends TestCase
                 $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('ErrorHandlerMiddlewareTest->testHandleException'),
                 $this->stringContains('Request URL: /target/url'),
-                $this->stringContains('Referer URL: /other/path')
+                $this->stringContains('Referer URL: /other/path'),
+                $this->logicalNot(
+                    $this->stringContains('Previous: ')
+                )
             ));
 
         $request = ServerRequestFactory::fromGlobals([
@@ -212,6 +215,39 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
         $next = function ($req, $res) {
             throw new \Cake\Http\Exception\NotFoundException('Kaboom!');
+        };
+        $result = $middleware($request, $response, $next);
+        $this->assertNotSame($result, $response);
+        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertContains('was not found', '' . $result->getBody());
+    }
+
+    /**
+     * Test rendering an error page logs errors with previous
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogAndTraceWithPrevious()
+    {
+        $this->logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('Previous: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
+                $this->stringContains('ErrorHandlerMiddlewareTest->testHandleException'),
+                $this->stringContains('Request URL: /target/url'),
+                $this->stringContains('Referer URL: /other/path')
+            ));
+
+        $request = ServerRequestFactory::fromGlobals([
+            'REQUEST_URI' => '/target/url',
+            'HTTP_REFERER' => '/other/path'
+        ]);
+        $response = new Response();
+        $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);
+        $next = function ($req, $res) {
+            $previous = new \Cake\Datasource\Exception\RecordNotFoundException('Previous logged');
+            throw new \Cake\Http\Exception\NotFoundException('Kaboom!', null, $previous);
         };
         $result = $middleware($request, $response, $next);
         $this->assertNotSame($result, $response);

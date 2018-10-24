@@ -210,8 +210,32 @@ class ErrorHandlerMiddleware
      */
     protected function getMessage($request, $exception)
     {
+        $message = $this->getMessageForException($exception);
+
+        $message .= "\nRequest URL: " . $request->getRequestTarget();
+        $referer = $request->getHeaderLine('Referer');
+        if ($referer) {
+            $message .= "\nReferer URL: " . $referer;
+        }
+        if ($this->getConfig('trace')) {
+            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
+
+        return $message;
+    }
+
+    /**
+     * Generate the message for the exception
+     *
+     * @param \Exception $exception The exception to log a message for.
+     * @param bool $isPrevious False for original exception, true for previous
+     * @return string Error message
+     */
+    protected function getMessageForException($exception, $isPrevious = false)
+    {
         $message = sprintf(
-            '[%s] %s',
+            '%s[%s] %s',
+            $isPrevious ? "\nPrevious: " : '',
             get_class($exception),
             $exception->getMessage()
         );
@@ -223,13 +247,10 @@ class ErrorHandlerMiddleware
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
         }
-        $message .= "\nRequest URL: " . $request->getRequestTarget();
-        $referer = $request->getHeaderLine('Referer');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
-        if ($this->getConfig('trace')) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+
+        $previous = $exception->getPrevious();
+        if ($previous) {
+            $message .= $this->getMessageForException($previous, true);
         }
 
         return $message;
