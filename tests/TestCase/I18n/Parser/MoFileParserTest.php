@@ -12,7 +12,6 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Test\TestCase\I18n\Parser;
 
 use Cake\I18n\Parser\MoFileParser;
