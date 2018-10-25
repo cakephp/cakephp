@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Utility\Inflector;
+use Cake\Cache\InvalidArgumentException;
 use CallbackFilterIterator;
 use Exception;
 use LogicException;
@@ -422,11 +422,14 @@ class FileEngine extends CacheEngine
     {
         $key = parent::_key($key);
 
-        return Inflector::underscore(str_replace(
-            [DIRECTORY_SEPARATOR, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
-            '_',
-            (string)$key
-        ));
+        if (preg_match('/[\/\\<>?:|*"]/', (string)$key)) {
+            throw new InvalidArgumentException(
+                "Cache key `{$key}` contains invalid characters. " .
+                'You cannot use /, \\, <, >, ?, :, |, *, or " in cache keys.'
+            );
+        }
+
+        return $key;
     }
 
     /**
