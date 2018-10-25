@@ -106,7 +106,7 @@ class I18n
      *
      * You can also use the `Cake\I18n\MessagesFileLoader` class to load a specific
      * file from a folder. For example for loading a `my_translations.po` file from
-     * the `src/Locale/custom` folder, you would do:
+     * the `resources/locales/custom` folder, you would do:
      *
      * ```
      * I18n::setTranslator(
@@ -179,7 +179,7 @@ class I18n
      * ```
      *  use Cake\I18n\MessagesFileLoader;
      *  I18n::config('my_domain', function ($name, $locale) {
-     *      // Load src/Locale/$locale/filename.po
+     *      // Load resources/locales/$locale/filename.po
      *      $fileLoader = new MessagesFileLoader('filename', $locale, 'po');
      *      return $fileLoader();
      *  });

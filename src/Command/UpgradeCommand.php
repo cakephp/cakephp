@@ -59,6 +59,24 @@ class UpgradeCommand extends Command
     protected $io;
 
     /**
+     * Holds info of file types to move.
+     *
+     * @var array
+     */
+    protected $types = [
+        'templates' => [
+            'regex' => '#/Template/\.$#',
+            'from' => '/Template',
+            'to' => '/../templates',
+        ],
+        'locales' => [
+            'regex' => '#/Locale/\.$#',
+            'from' => '/Locale',
+            'to' => '/../resources/locales',
+        ],
+    ];
+
+    /**
      * Execute.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -79,8 +97,13 @@ class UpgradeCommand extends Command
 
         $this->git = is_dir($this->path . '.git');
 
-        if ($args->hasArgument('templates')) {
-            $this->processTemplates();
+        switch ($args->getArgument('type')) {
+            case 'templates':
+                $this->processTemplates();
+                break;
+            case 'locales':
+                $this->processLocales();
+                break;
         }
     }
 
@@ -101,19 +124,41 @@ class UpgradeCommand extends Command
         }
 
         foreach ((array)Configure::read('App.paths.plugins') as $path) {
-            $this->moveDir($path);
+            $this->moveDir($path, 'templates');
             $this->changeExt($path);
         }
     }
 
     /**
-     * Recursively move "src/Template" to "templates"
+     * Move locale files to new location.
      *
-     * @param string $path Path
      * @return void
      */
-    protected function moveDir($path)
+    protected function processLocales()
     {
+        if (is_dir($this->path . 'src/Locale')) {
+            $this->rename(
+                $this->path . 'src/Locale',
+                $this->path . 'resources/locales'
+            );
+        }
+
+        foreach ((array)Configure::read('App.paths.plugins') as $path) {
+            $this->moveDir($path, 'locales');
+        }
+    }
+
+    /**
+     * Recursively move directories.
+     *
+     * @param string $path Path
+     * @param string $type Type
+     * @return void
+     */
+    protected function moveDir($path, $type)
+    {
+        $info = $this->types[$type];
+
         $dirIter = new RecursiveDirectoryIterator(
             $path,
             RecursiveDirectoryIterator::UNIX_PATHS
@@ -121,16 +166,19 @@ class UpgradeCommand extends Command
         $iterIter = new RecursiveIteratorIterator($dirIter);
         $templateDirs = new RegexIterator(
             $iterIter,
-            '#/Template/\.$#',
+            $info['regex'],
             RecursiveRegexIterator::REPLACE
         );
 
         foreach ($templateDirs as $key => $val) {
             $this->rename(
-                $val . '/Template',
-                $val . '/../templates'
+                $val . $info['from'],
+                $val . $info['to']
             );
-            $this->renameSubFolders($val . '/../templates');
+
+            if ($type === 'templates') {
+                $this->renameSubFolders($val . '/../templates');
+            }
         }
     }
 
@@ -206,6 +254,13 @@ class UpgradeCommand extends Command
             return;
         }
 
+        $parent = dirname($dest);
+        if (!is_dir($parent)) {
+            $old = umask(0);
+            mkdir($parent, 0755, true);
+            umask($old);
+        }
+
         if ($this->git) {
             exec("git mv $source $dest");
         } else {
@@ -222,15 +277,17 @@ class UpgradeCommand extends Command
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser
-            ->addArgument('templates', [
-                'help' => 'Move templates to new location and change extension.',
+            ->addArgument('type', [
+                'choices' => ['templates', 'locales'],
+                'required' => true,
+                'help' => 'Specify file type to move.',
             ])
             ->addOption('path', [
                 'help' => 'App/plugin path',
             ])
             ->addOption('dry-run', [
                 'help' => 'Dry run.',
-                'boolean' => false,
+                'boolean' => true,
             ]);
 
         return $parser;

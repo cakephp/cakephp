@@ -76,7 +76,7 @@ Configure::write('App', [
     'paths' => [
         'plugins' => [TEST_APP . 'Plugin' . DS],
         'templates' => [TEST_APP . 'templates' . DS],
-        'locales' => [APP . 'Locale' . DS],
+        'locales' => [TEST_APP . 'resources' . DS . 'locales' . DS],
     ],
 ]);
 
