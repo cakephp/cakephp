@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
-use Cake\Cache\InvalidArgumentException;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
