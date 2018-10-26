@@ -436,4 +436,21 @@ class ResultSetTest extends TestCase
         $this->assertEquals($minExpected, $min);
         $this->assertEquals($maxExpected, $max);
     }
+
+    /**
+     * Test that ResultSet
+     *
+     * @return void
+     */
+    public function testCollectionMinAndMaxWithAggregateField()
+    {
+        $query = $this->table->find();
+        $query->select(['count' => 'length(title)']);
+
+        $min = $query->min('count');
+        $max = $query->max('count');
+
+        $this->assertEquals(13, $min->count);
+        $this->assertEquals(14, $max->count);
+    }
 }
