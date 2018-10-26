@@ -91,6 +91,7 @@ class SimpleCacheEngineTest extends TestCase
             }
         };
         $cleaner(TMP . 'tests');
+        clearstatcache(true);
     }
 
     /**
