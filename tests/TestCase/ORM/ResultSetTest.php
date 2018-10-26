@@ -419,32 +419,21 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * Test that ResultSet implements the CollectionInterface min method
+     * Test that ResultSet
      *
      * @return void
      */
-    public function testCollectionMin()
+    public function testCollectionMinAndMax()
     {
         $query = $this->table->find('all');
 
-        $result = $query->min('id');
-        $expected = $this->table->get(1);
+        $min = $query->min('id');
+        $minExpected = $this->table->get(1);
 
-        $this->assertEquals($expected, $result);
-    }
+        $max = $query->max('id');
+        $maxExpected = $this->table->get(3);
 
-    /**
-     * Test that ResultSet implements the CollectionInterface max method
-     *
-     * @return void
-     */
-    public function testCollectionMax()
-    {
-        $query = $this->table->find('all');
-
-        $result = $query->max('id');
-        $expected = $this->table->get(3);
-
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($minExpected, $min);
+        $this->assertEquals($maxExpected, $max);
     }
 }
