@@ -21,6 +21,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Entity\Article;
 
 /**
  * ResultSet test case.
@@ -415,5 +416,35 @@ class ResultSetTest extends TestCase
         $res = $query->all();
         $res->isEmpty();
         $this->assertCount(6, $res->toArray());
+    }
+
+    /**
+     * Test that ResultSet implements the CollectionInterface min method
+     *
+     * @return void
+     */
+    public function testCollectionMin()
+    {
+        $query = $this->table->find('all');
+
+        $result = $query->min('id');
+        $expected = $this->table->get(1);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that ResultSet implements the CollectionInterface max method
+     *
+     * @return void
+     */
+    public function testCollectionMax()
+    {
+        $query = $this->table->find('all');
+
+        $result = $query->max('id');
+        $expected = $this->table->get(3);
+
+        $this->assertEquals($expected, $result);
     }
 }
