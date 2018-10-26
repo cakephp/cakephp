@@ -676,10 +676,9 @@ class CollectionTest extends TestCase
     public function testMaxCallable($items)
     {
         $collection = new Collection($items);
-        $callback = function ($e) {
+        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
             return $e['a']['b']['c'] * - 1;
-        };
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
+        }));
     }
 
     /**
