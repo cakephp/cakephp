@@ -19,6 +19,8 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
+use Cake\ORM\Entity;
+use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use NoRewindIterator;
 
@@ -676,10 +678,29 @@ class CollectionTest extends TestCase
     public function testMaxCallable($items)
     {
         $collection = new Collection($items);
-        $callback = function ($e) {
+        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
             return $e['a']['b']['c'] * - 1;
-        };
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
+        }));
+    }
+
+    /**
+     * Test max with a collection of Entities
+     *
+     * @return void
+     */
+    public function testMaxWithEntities()
+    {
+        $collection = new Collection([
+            new Entity(['id' => 1, 'count' => 18]),
+            new Entity(['id' => 2, 'count' => 9]),
+            new Entity(['id' => 3, 'count' => 42]),
+            new Entity(['id' => 4, 'count' => 4]),
+            new Entity(['id' => 5, 'count' => 22])
+        ]);
+
+        $expected = new Entity(['id' => 3, 'count' => 42]);
+
+        $this->assertEquals($expected, $collection->max('count'));
     }
 
     /**
@@ -692,6 +713,26 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->min('a.b.c'));
+    }
+
+    /**
+     * Test min with a collection of Entities
+     *
+     * @return void
+     */
+    public function testMinWithEntities()
+    {
+        $collection = new Collection([
+            new Entity(['id' => 1, 'count' => 18]),
+            new Entity(['id' => 2, 'count' => 9]),
+            new Entity(['id' => 3, 'count' => 42]),
+            new Entity(['id' => 4, 'count' => 4]),
+            new Entity(['id' => 5, 'count' => 22])
+        ]);
+
+        $expected = new Entity(['id' => 4, 'count' => 4]);
+
+        $this->assertEquals($expected, $collection->min('count'));
     }
 
     /**
