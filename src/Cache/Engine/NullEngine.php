@@ -43,9 +43,9 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function writeMany(array $data): array
+    public function setMultiple($data, $ttl = null): bool
     {
-        return [];
+        return false;
     }
 
     /**
@@ -59,7 +59,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function readMany(array $keys): array
+    public function getMultiple($keys, $default = null): array
     {
         return [];
     }
@@ -91,9 +91,9 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function deleteMany(array $keys): array
+    public function deleteMultiple($keys): bool
     {
-        return [];
+        return false;
     }
 
     /**

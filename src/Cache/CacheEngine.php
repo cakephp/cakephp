@@ -113,41 +113,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     }
 
     /**
-     * Write data for many keys into cache
-     *
-     * @param array $data An array of data to be stored in the cache
-     * @return array of bools for each key provided, true if the data was successfully cached, false on failure
-     * @deprecated To be removed soon
-     */
-    public function writeMany(array $data): array
-    {
-        $return = [];
-        foreach ($data as $key => $value) {
-            $return[$key] = $this->set($key, $value);
-        }
-
-        return $return;
-    }
-
-    /**
-     * Read multiple keys from the cache
-     *
-     * @param array $keys An array of identifiers for the data
-     * @return array For each cache key (given as the array key) the cache data associated or false if the data doesn't
-     * exist, has expired, or if there was an error fetching it
-     * @deprecated To be removed soon
-     */
-    public function readMany(array $keys): array
-    {
-        $return = [];
-        foreach ($keys as $key) {
-            $return[$key] = $this->get($key);
-        }
-
-        return $return;
-    }
-
-    /**
      * Obtains multiple cache items by their unique keys.
      *
      * @param iterable $keys A list of keys that can obtained in a single operation.
@@ -303,24 +268,6 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     abstract public function clear();
 
     /**
-     * Deletes keys from the cache
-     *
-     * @param array $keys An array of identifiers for the data
-     * @return array For each provided cache key (given back as the array key) true if the value was successfully deleted,
-     * false if it didn't exist or couldn't be removed
-     * @deprecated To be removed soon
-     */
-    public function deleteMany(array $keys): array
-    {
-        $return = [];
-        foreach ($keys as $key) {
-            $return[$key] = $this->delete($key);
-        }
-
-        return $return;
-    }
-
-    /**
      * Add a key to the cache if it does not already exist.
      *
      * Defaults to a non-atomic implementation. Subclasses should
@@ -366,46 +313,26 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     }
 
     /**
-     * Generates a safe key for use with cache engine storage engines.
+     * Generates a key for cache backend usage.
+     *
+     * If the requested key is valid, the group prefix value and engine prefix are applied.
+     * Whitespace in keys will be replaced.
      *
      * @param string $key the key passed over
-     * @return bool|string string key or false
+     * @return string Prefixed key with potentially unsafe characters replaced.
+     * @throws \Cake\Cache\InvalidArgumentException If key's value is invalid.
      */
-    public function key(string $key)
+    protected function _key(string $key)
     {
-        if (!$key) {
-            return false;
-        }
+        $this->ensureValidKey($key);
 
         $prefix = '';
         if ($this->_groupPrefix) {
             $prefix = md5(implode('_', $this->groups()));
         }
+        $key = preg_replace('/[\s]+/', '_', (string)$key);
 
-        $key = preg_replace(
-            '/[\s]+/',
-            '_',
-            strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key)))
-        );
-
-        return $prefix . $key;
-    }
-
-    /**
-     * Generates a safe key, taking account of the configured key prefix
-     *
-     * @param string $key the key passed over
-     * @return mixed string $key or false
-     * @throws \Cake\Cache\InvalidArgumentException If key's value is empty
-     */
-    protected function _key(string $key)
-    {
-        $key = $this->key($key);
-        if ($key === false) {
-            throw new InvalidArgumentException('An empty value is not valid as a cache key');
-        }
-
-        return $this->_config['prefix'] . $key;
+        return $this->_config['prefix'] . $prefix . $key;
     }
 
     /**

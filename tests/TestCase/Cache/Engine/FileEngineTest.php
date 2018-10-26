@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Cache\InvalidArgumentException;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
@@ -292,21 +293,37 @@ class FileEngineTest extends TestCase
     {
         $result = Cache::write('views.countries.something', 'here', 'file_test');
         $this->assertTrue($result);
-        $this->assertFileExists(TMP . 'tests/cake_views_countries_something');
+        $this->assertFileExists(TMP . 'tests/cake_views.countries.something');
 
         $result = Cache::read('views.countries.something', 'file_test');
         $this->assertEquals('here', $result);
 
         $result = Cache::clear('file_test');
         $this->assertTrue($result);
+    }
 
-        $result = Cache::write('domain.test.com:8080', 'here', 'file_test');
-        $this->assertTrue($result);
-        $this->assertFileExists(TMP . 'tests/cake_domain_test_com_8080');
+    /**
+     * Test invalid key() containing :
+     *
+     * @return void
+     */
+    public function testInvalidKeyColon()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('contains invalid characters');
+        Cache::write('domain.test.com:8080', 'here', 'file_test');
+    }
 
-        $result = Cache::write('command>dir|more', 'here', 'file_test');
-        $this->assertTrue($result);
-        $this->assertFileExists(TMP . 'tests/cake_command_dir_more');
+    /**
+     * Test invalid key() containing >
+     *
+     * @return void
+     */
+    public function testInvalidKeyAngleBracket()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('contains invalid characters');
+        Cache::write('command>dir|more', 'here', 'file_test');
     }
 
     /**

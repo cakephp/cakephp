@@ -643,7 +643,7 @@ class CacheTest extends TestCase
     public function testWriteEmptyKey()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('An empty value is not valid as a cache key');
+        $this->expectExceptionMessage('A cache key must be a non-empty string');
         $this->_configCache();
         Cache::write('', 'not null', 'tests');
     }

@@ -498,7 +498,7 @@ class MemcachedEngineTest extends TestCase
         $this->assertNull($read['App.nullTest']);
         $this->assertSame($read['App.zeroTest'], 0);
         $this->assertSame($read['App.zeroTest2'], '0');
-        $this->assertFalse($read['App.doesNotExist']);
+        $this->assertNull($read['App.doesNotExist']);
     }
 
     /**
