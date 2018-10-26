@@ -35,12 +35,24 @@ class MoFileParserTest extends TestCase
         $messages = $parser->parse($file);
         $this->assertCount(3, $messages);
         $expected = [
-            '%d = 1 (from core)' => '%d = 1 (from core translated)',
-            '%d = 0 or > 1 (from core)' => [
-                '%d = 1 (from core translated)',
-                '%d = 0 or > 1 (from core translated)'
+            '%d = 1 (from core)' => [
+                '_context' => [
+                    '' => '%d = 1 (from core translated)'
+                ]
             ],
-            'Plural Rule 1 (from core)' => 'Plural Rule 1 (from core translated)'
+            '%d = 0 or > 1 (from core)' => [
+                '_context' => [
+                    '' => [
+                        '%d = 1 (from core translated)',
+                        '%d = 0 or > 1 (from core translated)'
+                    ]
+                ]
+            ],
+            'Plural Rule 1 (from core)' => [
+                '_context' => [
+                    '' => 'Plural Rule 1 (from core translated)'
+                ]
+            ]
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -57,10 +69,22 @@ class MoFileParserTest extends TestCase
         $messages = $parser->parse($file);
         $this->assertCount(3, $messages);
         $expected = [
-            'Plural Rule 1 (from core)' => 'Plural Rule 0 (from core translated)',
-            '%d = 1 (from core)' => '%d ends with any # (from core translated)',
+            'Plural Rule 1 (from core)' => [
+                '_context' => [
+                    '' => 'Plural Rule 0 (from core translated)'
+                ]
+            ],
+            '%d = 1 (from core)' => [
+                '_context' => [
+                    '' => '%d ends with any # (from core translated)'
+                ]
+            ],
             '%d = 0 or > 1 (from core)' => [
-                '%d ends with any # (from core translated)',
+                '_context' => [
+                    '' => [
+                        '%d ends with any # (from core translated)',
+                    ]
+                ]
             ],
         ];
         $this->assertEquals($expected, $messages);
@@ -78,13 +102,25 @@ class MoFileParserTest extends TestCase
         $messages = $parser->parse($file);
         $this->assertCount(3, $messages);
         $expected = [
-            '%d = 1 (from core)' => '%d is 1 (from core translated)',
-            '%d = 0 or > 1 (from core)' => [
-                '%d is 1 (from core translated)',
-                '%d ends in 2-4, not 12-14 (from core translated)',
-                '%d everything else (from core translated)'
+            '%d = 1 (from core)' => [
+                '_context' => [
+                    '' => '%d is 1 (from core translated)'
+                ]
             ],
-            'Plural Rule 1 (from core)' => 'Plural Rule 9 (from core translated)'
+            '%d = 0 or > 1 (from core)' => [
+                '_context' => [
+                    '' => [
+                        '%d is 1 (from core translated)',
+                        '%d ends in 2-4, not 12-14 (from core translated)',
+                        '%d everything else (from core translated)'
+                    ]
+                ]
+            ],
+            'Plural Rule 1 (from core)' => [
+                '_context' => [
+                    '' => 'Plural Rule 9 (from core translated)'
+                ]
+            ]
         ];
         $this->assertEquals($expected, $messages);
     }
@@ -101,7 +137,11 @@ class MoFileParserTest extends TestCase
         $messages = $parser->parse($file);
         $this->assertCount(5, $messages);
         $expected = [
-            'Plural Rule 1' => 'Plural Rule 1 (translated)',
+            'Plural Rule 1' => [
+                '_context' => [
+                    '' => 'Plural Rule 1 (translated)'
+                ]
+            ],
             '%d = 1' => [
                 '_context' => [
                     'This is the context' => 'First Context trasnlation',
@@ -116,10 +156,18 @@ class MoFileParserTest extends TestCase
                     ]
                 ]
             ],
-            '%-5d = 1' => '%-5d = 1 (translated)',
+            '%-5d = 1' => [
+                '_context' => [
+                    '' => '%-5d = 1 (translated)'
+                ]
+            ],
             '%-5d = 0 or > 1' => [
-                '%-5d = 1 (translated)',
-                '%-5d = 0 or > 1 (translated)'
+                '_context' => [
+                    '' => [
+                        '%-5d = 1 (translated)',
+                        '%-5d = 0 or > 1 (translated)'
+                    ]
+                ]
             ]
         ];
         $this->assertEquals($expected, $messages);
