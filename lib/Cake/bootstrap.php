@@ -87,13 +87,6 @@ if (!defined('IMAGES')) {
 }
 
 /**
- * Path to the tests directory.
- */
-if (!defined('TESTS')) {
-	define('TESTS', APP . 'Test' . DS);
-}
-
-/**
  * Path to the temporary files directory.
  */
 if (!defined('TMP')) {
