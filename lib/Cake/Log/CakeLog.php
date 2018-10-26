@@ -22,7 +22,7 @@ App::uses('LogEngineCollection', 'Log');
 
 /**
  * Logs messages to configured Log adapters.
- * 
+ *
  * One or more adapters
  * can be configured using CakeLogs's methods.
  *
@@ -84,7 +84,7 @@ class CakeLog {
 /**
  * Default log levels as detailed in RFC 5424
  * http://tools.ietf.org/html/rfc5424
- * 
+ *
  * Windows has fewer levels, thus notice, info and debug are the same.
  * https://bugs.php.net/bug.php?id=18090
  *
@@ -398,7 +398,7 @@ class CakeLog {
  *
  * @param int|string $type Type of message being written. When value is an integer
  *    or a string matching the recognized levels, then it will
- *    be treated log levels. Otherwise it's treated as scope.
+ *    be treated as a log level. Otherwise it's treated as a scope.
  * @param string $message Message content to log
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See CakeLog::config() for more information on logging scopes.

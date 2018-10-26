@@ -183,7 +183,7 @@ class Debugger {
  * @param mixed $var Variable or content to log
  * @param int|string $level Type of log to use. Defaults to LOG_DEBUG. When value is an integer
  *    or a string matching the recognized levels, then it will
- *    be treated log levels. Otherwise it's treated as scope.
+ *    be treated as a log level. Otherwise it's treated as a scope.
  * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @link https://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
