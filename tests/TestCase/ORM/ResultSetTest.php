@@ -445,12 +445,12 @@ class ResultSetTest extends TestCase
     public function testCollectionMinAndMaxWithAggregateField()
     {
         $query = $this->table->find();
-        $query->select(['count' => 'length(title)']);
+        $query->select(['count' => 'author_id + 2']);
 
         $min = $query->min('count');
         $max = $query->max('count');
 
-        $this->assertEquals(13, $min->count);
-        $this->assertEquals(14, $max->count);
+        $this->assertEquals(3, $min->count);
+        $this->assertEquals(5, $max->count);
     }
 }
