@@ -19,7 +19,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
@@ -233,8 +233,8 @@ class AssetsTask extends Shell
             }
         }
 
-        $folder = new Folder($dest);
-        if ($folder->delete()) {
+        $fs = new Filesystem();
+        if ($fs->deleteDir($dest)) {
             $this->out('Deleted ' . $dest);
 
             return true;
@@ -301,8 +301,8 @@ class AssetsTask extends Shell
      */
     protected function _copyDirectory(string $source, string $destination): bool
     {
-        $folder = new Folder($source);
-        if ($folder->copy($destination)) {
+        $fs = new Filesystem();
+        if ($fs->copyDir($source, $destination)) {
             $this->out('Copied assets to directory ' . $destination);
 
             return true;

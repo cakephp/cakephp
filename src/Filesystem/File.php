@@ -20,6 +20,8 @@ use SplFileInfo;
 
 /**
  * Convenience class for reading, writing and appending to files.
+ *
+ * @deprecated 4.0.0 Will be removed in 5.0.
  */
 class File
 {

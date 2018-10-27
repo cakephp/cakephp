@@ -18,7 +18,7 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use ReflectionClass;
@@ -113,18 +113,19 @@ class CommandTask extends Shell
      */
     protected function _scanDir(string $dir): array
     {
-        $dir = new Folder($dir);
-        $contents = $dir->read(true, true);
-        if (empty($contents[1])) {
+        if (!is_dir($dir)) {
             return [];
         }
+
+        $fs = new Filesystem();
+        $files = $fs->find($dir, '/\.php$/');
+
         $shells = [];
-        foreach ($contents[1] as $file) {
-            if (substr($file, -4) !== '.php') {
-                continue;
-            }
-            $shells[] = substr($file, 0, -4);
+        foreach ($files as $file) {
+            $shells[] = $file->getBasename('.php');
         }
+
+        sort($shells);
 
         return $shells;
     }
