@@ -13,7 +13,6 @@ declare(strict_types=1);
  * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\Filesystem;
 
 use Cake\Core\Exception\Exception;
@@ -33,7 +32,7 @@ use Traversable;
 class Filesystem
 {
     /**
-     * Direcotory type constant
+     * Directory type constant
      *
      * @var string
      */
@@ -133,7 +132,7 @@ class Filesystem
             $this->mkdir($dir);
         }
 
-        $exits = file_exists($filename);
+        $exists = file_exists($filename);
 
         if ($this->isStream($filename)) {
             // @codingStandardsIgnoreLine
@@ -147,7 +146,7 @@ class Filesystem
             throw new Exception(sprintf('Failed dumping content to file "%s"', $dir));
         }
 
-        if (!$exits) {
+        if (!$exists) {
             chmod($filename, 0666 & ~umask());
         }
     }
@@ -253,7 +252,7 @@ class Filesystem
     }
 
     /**
-     * Check whether given path is a stream path.
+     * Check whether the given path is a stream path.
      *
      * @param string $path Path.
      * @return bool
