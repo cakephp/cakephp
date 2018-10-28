@@ -223,7 +223,7 @@ class Cache
      */
     public static function pool(string $config)
     {
-        return new SimpleCacheEngine(static::engine($config));
+        return static::engine($config);
     }
 
     /**
