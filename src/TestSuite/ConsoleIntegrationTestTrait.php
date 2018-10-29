@@ -37,35 +37,35 @@ trait ConsoleIntegrationTestTrait
      *
      * @var bool
      */
-    private $useCommandRunner = false;
+    protected $_useCommandRunner = false;
 
     /**
      * Last exit code
      *
      * @var int|null
      */
-    private $exitCode;
+    protected $_exitCode;
 
     /**
      * Console output stub
      *
      * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $out;
+    protected $_out;
 
     /**
      * Console error output stub
      *
      * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $err;
+    protected $_err;
 
     /**
      * Console input mock
      *
      * @var \Cake\Console\ConsoleInput|\PHPUnit_Framework_MockObject_MockObject|null
      */
-    private $in;
+    protected $_in;
 
     /**
      * Runs cli integration test
@@ -78,28 +78,28 @@ trait ConsoleIntegrationTestTrait
     {
         $runner = $this->makeRunner();
 
-        $this->out = new ConsoleOutput();
-        $this->err = new ConsoleOutput();
-        $this->in = $this->getMockBuilder(ConsoleInput::class)
+        $this->_out = new ConsoleOutput();
+        $this->_err = new ConsoleOutput();
+        $this->_in = $this->getMockBuilder(ConsoleInput::class)
             ->disableOriginalConstructor()
             ->setMethods(['read'])
             ->getMock();
 
         $i = 0;
         foreach ($input as $in) {
-            $this->in
+            $this->_in
                 ->expects($this->at($i++))
                 ->method('read')
                 ->will($this->returnValue($in));
         }
 
         $args = $this->commandStringToArgs("cake $command");
-        $io = new ConsoleIo($this->out, $this->err, $this->in);
+        $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
         try {
-            $this->exitCode = $runner->run($args, $io);
+            $this->_exitCode = $runner->run($args, $io);
         } catch (StopException $exception) {
-            $this->exitCode = $exception->getCode();
+            $this->_exitCode = $exception->getCode();
         }
     }
 
@@ -112,11 +112,11 @@ trait ConsoleIntegrationTestTrait
     {
         parent::tearDown();
 
-        $this->exitCode = null;
-        $this->out = null;
-        $this->err = null;
-        $this->in = null;
-        $this->useCommandRunner = false;
+        $this->_exitCode = null;
+        $this->_out = null;
+        $this->_err = null;
+        $this->_in = null;
+        $this->_useCommandRunner = false;
     }
 
     /**
@@ -127,7 +127,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function useCommandRunner()
     {
-        $this->useCommandRunner = true;
+        $this->_useCommandRunner = true;
     }
 
     /**
@@ -139,7 +139,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertExitCode($expected, $message = '')
     {
-        $this->assertThat($expected, new ExitCode($this->exitCode), $message);
+        $this->assertThat($expected, new ExitCode($this->_exitCode), $message);
     }
 
     /**
@@ -150,7 +150,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputEmpty($message = '')
     {
-        $this->assertThat(null, new ContentsEmpty($this->out->messages(), 'output'), $message);
+        $this->assertThat(null, new ContentsEmpty($this->_out->messages(), 'output'), $message);
     }
 
     /**
@@ -162,7 +162,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputContains($expected, $message = '')
     {
-        $this->assertThat($expected, new ContentsContain($this->out->messages(), 'output'), $message);
+        $this->assertThat($expected, new ContentsContain($this->_out->messages(), 'output'), $message);
     }
     /**
      * Asserts `stdout` does not contain expected output
@@ -173,7 +173,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputNotContains($expected, $message = '')
     {
-        $this->assertThat($expected, new ContentsNotContain($this->out->messages(), 'output'), $message);
+        $this->assertThat($expected, new ContentsNotContain($this->_out->messages(), 'output'), $message);
     }
 
     /**
@@ -185,7 +185,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertOutputRegExp($pattern, $message = '')
     {
-        $this->assertThat($pattern, new ContentsRegExp($this->out->messages(), 'output'), $message);
+        $this->assertThat($pattern, new ContentsRegExp($this->_out->messages(), 'output'), $message);
     }
 
     /**
@@ -197,7 +197,7 @@ trait ConsoleIntegrationTestTrait
      */
     protected function assertOutputContainsRow(array $row, $message = '')
     {
-        $this->assertThat($row, new ContentsContainRow($this->out->messages(), 'output'), $message);
+        $this->assertThat($row, new ContentsContainRow($this->_out->messages(), 'output'), $message);
     }
 
     /**
@@ -209,7 +209,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertErrorContains($expected, $message = '')
     {
-        $this->assertThat($expected, new ContentsContain($this->err->messages(), 'error output'), $message);
+        $this->assertThat($expected, new ContentsContain($this->_err->messages(), 'error output'), $message);
     }
 
     /**
@@ -221,7 +221,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertErrorRegExp($pattern, $message = '')
     {
-        $this->assertThat($pattern, new ContentsRegExp($this->err->messages(), 'error output'), $message);
+        $this->assertThat($pattern, new ContentsRegExp($this->_err->messages(), 'error output'), $message);
     }
 
     /**
@@ -232,7 +232,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertErrorEmpty($message = '')
     {
-        $this->assertThat(null, new ContentsEmpty($this->err->messages(), 'error output'), $message);
+        $this->assertThat(null, new ContentsEmpty($this->_err->messages(), 'error output'), $message);
     }
 
     /**
@@ -242,7 +242,7 @@ trait ConsoleIntegrationTestTrait
      */
     protected function makeRunner()
     {
-        if ($this->useCommandRunner) {
+        if ($this->_useCommandRunner) {
             $applicationClassName = Configure::read('App.namespace') . '\Application';
 
             return new CommandRunner(new $applicationClassName(CONFIG));
