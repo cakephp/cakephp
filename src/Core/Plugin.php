@@ -381,12 +381,14 @@ class Plugin
      * Forgets a loaded plugin or all of them if first parameter is null
      *
      * @param string|null $plugin name of the plugin to forget
+     * @deprecated 3.7 This method will be removed in 4.0.0. Use PluginCollection::remove() or clear() instead.
      * @return void
      */
     public static function unload($plugin = null)
     {
+        deprecationWarning('Plugin::unload() will be removed in 4.0. Use PluginCollection::remove() or clear()');
         if ($plugin === null) {
-            static::$plugins = null;
+            static::getCollection()->clear();
         } else {
             static::getCollection()->remove($plugin);
         }

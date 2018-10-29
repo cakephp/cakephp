@@ -32,7 +32,7 @@ class PluginTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -43,7 +43,7 @@ class PluginTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -91,26 +91,29 @@ class PluginTest extends TestCase
     /**
      * Tests unloading plugins
      *
+     * @deprecated
      * @return void
      */
     public function testUnload()
     {
-        $this->loadPlugins(['TestPlugin' => ['bootstrap' => false, 'routes' => false]]);
-        $expected = ['TestPlugin'];
-        $this->assertEquals($expected, Plugin::loaded());
-        $this->assertTrue(Plugin::isLoaded('TestPlugin'));
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPlugin' => ['bootstrap' => false, 'routes' => false]]);
+            $expected = ['TestPlugin'];
+            $this->assertEquals($expected, Plugin::loaded());
+            $this->assertTrue(Plugin::isLoaded('TestPlugin'));
 
-        Plugin::unload('TestPlugin');
-        $this->assertEquals([], Plugin::loaded());
-        $this->assertFalse(Plugin::isLoaded('TestPlugin'));
+            Plugin::unload('TestPlugin');
+            $this->assertEquals([], Plugin::loaded());
+            $this->assertFalse(Plugin::isLoaded('TestPlugin'));
 
-        $this->loadPlugins(['TestPlugin' => ['bootstrap' => false, 'routes' => false]]);
-        $expected = ['TestPlugin'];
-        $this->assertEquals($expected, Plugin::loaded());
+            $this->loadPlugins(['TestPlugin' => ['bootstrap' => false, 'routes' => false]]);
+            $expected = ['TestPlugin'];
+            $this->assertEquals($expected, Plugin::loaded());
 
-        Plugin::unload('TestFakePlugin');
-        $this->assertEquals($expected, Plugin::loaded());
-        $this->assertFalse(Plugin::isLoaded('TestFakePlugin'));
+            Plugin::unload('TestFakePlugin');
+            $this->assertEquals($expected, Plugin::loaded());
+            $this->assertFalse(Plugin::isLoaded('TestFakePlugin'));
+        });
     }
 
     /**

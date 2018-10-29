@@ -60,7 +60,7 @@ class UrlHelperTest extends TestCase
         parent::tearDown();
         Configure::delete('Asset');
 
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         unset($this->Helper, $this->View);
     }
 
@@ -287,7 +287,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css', 'plugin' => false]);
         $this->assertEquals('TestPlugin.style.css', $result);
 
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
     }
 
     /**

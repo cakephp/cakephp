@@ -61,7 +61,7 @@ class DispatcherTest extends TestCase
     {
         error_reporting($this->errorLevel);
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

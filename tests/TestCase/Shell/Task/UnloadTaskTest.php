@@ -67,7 +67,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
     {
         parent::tearDown();
         unset($this->shell);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
 
         file_put_contents($this->bootstrap, $this->originalBootstrapContent);
         file_put_contents($this->app, $this->originalAppContent);

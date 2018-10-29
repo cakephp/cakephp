@@ -127,6 +127,6 @@ class HelperRegistryTest extends TestCase
 
         $result = $this->helpers->loaded();
         $this->assertEquals(['SimpleAliased', 'SomeHelper'], $result, 'loaded() results are wrong.');
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 }

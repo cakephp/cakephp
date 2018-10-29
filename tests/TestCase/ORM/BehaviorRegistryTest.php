@@ -46,7 +46,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         unset($this->Table, $this->EventManager, $this->Behaviors);
         parent::tearDown();
     }

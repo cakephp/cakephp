@@ -324,7 +324,7 @@ class ViewTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         unset($this->View);
         unset($this->PostsController);
         unset($this->Controller);
