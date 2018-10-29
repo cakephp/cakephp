@@ -219,11 +219,11 @@ class Cache
      * Get a SimpleCacheEngine object for the named cache pool.
      *
      * @param string $config The name of the configured cache backend.
-     * @return \Cake\Cache\SimpleCacheEngine
+     * @return \Cake\Cache\CacheEngine
      */
     public static function pool(string $config)
     {
-        return new SimpleCacheEngine(static::engine($config));
+        return static::engine($config);
     }
 
     /**
