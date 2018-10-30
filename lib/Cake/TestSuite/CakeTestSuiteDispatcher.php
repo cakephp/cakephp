@@ -16,8 +16,24 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
+/**
+ * Path to the tests directory of the app.
+ */
+if (!defined('TESTS')) {
+	define('TESTS', APP . 'Test' . DS);
+}
+
+/**
+ * Path to the test cases directory of CakePHP.
+ */
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');
-define('APP_TEST_CASES', TESTS . 'Case');
+
+/**
+ * Path to the test cases directory of the app.
+ */
+if (!defined('APP_TEST_CASES')) {
+	define('APP_TEST_CASES', TESTS . 'Case');
+}
 
 App::uses('CakeTestSuiteCommand', 'TestSuite');
 

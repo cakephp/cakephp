@@ -360,23 +360,19 @@ class TestShell extends Shell {
 		}
 
 		$testFile = $testCase = null;
-
+		$testCaseFolder = str_replace(APP, '', APP_TEST_CASES);
 		if (preg_match('@Test[\\\/]@', $file)) {
-
 			if (substr($file, -8) === 'Test.php') {
-
 				$testCase = substr($file, 0, -8);
 				$testCase = str_replace(DS, '/', $testCase);
-
-				if ($testCase = preg_replace('@.*Test\/Case\/@', '', $testCase)) {
-
+				$testCaseFolderEscaped = str_replace('/', '\/', $testCaseFolder);
+				$testCase = preg_replace('@.*' . $testCaseFolderEscaped . '\/@', '', $testCase);
+				if (!empty($testCase)) {
 					if ($category === 'core') {
 						$testCase = str_replace('lib/Cake', '', $testCase);
 					}
-
 					return $testCase;
 				}
-
 				throw new Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
 			}
 		}
@@ -397,11 +393,11 @@ class TestShell extends Shell {
 		}
 
 		if ($category === 'app') {
-			$testFile = str_replace(APP, APP . 'Test/Case/', $file) . 'Test.php';
+			$testFile = str_replace(APP, APP_TEST_CASES . '/', $file) . 'Test.php';
 		} else {
 			$testFile = preg_replace(
 				"@((?:plugins|Plugin)[\\/]{$category}[\\/])(.*)$@",
-				'\1Test/Case/\2Test.php',
+				'\1' . $testCaseFolder . '/\2Test.php',
 				$file
 			);
 		}
@@ -412,8 +408,7 @@ class TestShell extends Shell {
 
 		$testCase = substr($testFile, 0, -8);
 		$testCase = str_replace(DS, '/', $testCase);
-		$testCase = preg_replace('@.*Test/Case/@', '', $testCase);
-
+		$testCase = preg_replace('@.*' . $testCaseFolder . '/@', '', $testCase);
 		return $testCase;
 	}
 
