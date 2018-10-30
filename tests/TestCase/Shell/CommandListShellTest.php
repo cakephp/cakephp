@@ -44,7 +44,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

@@ -57,7 +57,7 @@ class AssetsTaskTest extends TestCase
     {
         parent::tearDown();
         unset($this->Task);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

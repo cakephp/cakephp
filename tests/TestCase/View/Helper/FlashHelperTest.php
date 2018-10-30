@@ -106,7 +106,7 @@ class FlashHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->View, $this->Flash);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
