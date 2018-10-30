@@ -413,7 +413,9 @@ class Plugin
     /**
      * Get the shared plugin collection.
      *
-     * @internal
+     * This method should generally not be used during application
+     * runtime as plugins should be set during Application startup.
+     *
      * @return \Cake\Core\PluginCollection
      */
     public static function getCollection()
