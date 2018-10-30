@@ -78,7 +78,7 @@
  */
 	public function delete($id = null) {
 		$this->BakeArticle->id = $id;
-		if (!$this->BakeArticle->exists()) {
+		if (!$this->BakeArticle->exists($id)) {
 			throw new NotFoundException(__('Invalid bake article'));
 		}
 		$this->request->allowMethod('post', 'delete');
