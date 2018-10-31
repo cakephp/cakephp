@@ -174,7 +174,7 @@ abstract class IntegrationTestCase extends TestCase
 
     /**
      * Allow router reloading to be disabled.
-     * 
+     *
      * @var bool
      */
     protected $_disableRouterReload = false;
