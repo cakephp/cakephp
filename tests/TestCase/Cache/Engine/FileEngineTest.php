@@ -70,6 +70,23 @@ class FileEngineTest extends TestCase
     }
 
     /**
+     * Test get with default value
+     *
+     * @return void
+     */
+    public function testGetDefaultValue()
+    {
+        $file = Cache::pool('file_test');
+        $this->assertFalse($file->get('nope', false));
+        $this->assertNull($file->get('nope', null));
+        $this->assertTrue($file->get('nope', true));
+        $this->assertSame(0, $file->get('nope', 0));
+
+        $file->set('yep', 0);
+        $this->assertSame(0, $file->get('yep', false));
+    }
+
+    /**
      * testReadAndWriteCache method
      *
      * @return void
@@ -88,7 +105,7 @@ class FileEngineTest extends TestCase
      *
      * @return void
      */
-    public function testReadAndwrite()
+    public function testReadAndWrite()
     {
         $result = Cache::read('test', 'file_test');
         $expecting = '';
@@ -141,7 +158,8 @@ class FileEngineTest extends TestCase
 
         sleep(2);
         $result = Cache::read('other_test', 'file_test');
-        $this->assertNull($result);
+        $this->assertNull($result, 'Expired key no result.');
+        $this->assertSame(0, Cache::pool('file_test')->get('other_test', 0), 'expired values get default.');
 
         $this->_configCache(['duration' => '+1 second']);
 

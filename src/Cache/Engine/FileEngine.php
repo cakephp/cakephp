@@ -174,7 +174,7 @@ class FileEngine extends CacheEngine
         $key = $this->_key($key);
 
         if (!$this->_init || $this->_setKey($key) === false) {
-            return null;
+            return $default;
         }
 
         if ($this->_config['lock']) {
@@ -190,7 +190,7 @@ class FileEngine extends CacheEngine
                 $this->_File->flock(LOCK_UN);
             }
 
-            return null;
+            return $default;
         }
 
         $data = '';
