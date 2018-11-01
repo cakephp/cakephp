@@ -397,4 +397,18 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals(['Html'], $builder->getHelpers());
         $this->assertEquals('JsonView', $builder->getClassName());
     }
+
+    /**
+     * testDisableAutoLayout
+     *
+     * @return void
+     */
+    public function testDisableAutoLayout()
+    {
+        $builder = new ViewBuilder();
+        $this->assertNull($builder->isAutoLayoutEnabled());
+
+        $builder->disableAutoLayout();
+        $this->assertFalse($builder->isAutoLayoutEnabled());
+    }
 }
