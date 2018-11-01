@@ -27,6 +27,7 @@ namespace Cake\Datasource;
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
  * @method $this enableQueryLogging($value)
  * @method $this disableQueryLogging()
+ * @method $this disableSavePoints()
  * @method bool isQueryLoggingEnabled()
  * @method string quote($value, $type = null)
  */

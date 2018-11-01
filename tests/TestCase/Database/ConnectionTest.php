@@ -62,7 +62,7 @@ class ConnectionTest extends TestCase
     public function tearDown()
     {
         Log::reset();
-        $this->connection->enableSavePoints(false);
+        $this->connection->disableSavePoints();
         $this->connection->setLogger(null);
         unset($this->connection);
         parent::tearDown();
