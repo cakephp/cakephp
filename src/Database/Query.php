@@ -2070,6 +2070,22 @@ class Query implements ExpressionInterface, IteratorAggregate
     }
 
     /**
+     * Disables buffered results.
+     *
+     * Disabling buffering will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function disableBufferedResults()
+    {
+        $this->_dirty();
+        $this->_useBufferedResults = false;
+
+        return $this;
+    }
+
+    /**
      * Returns whether buffered results are enabled/disabled.
      *
      * When enabled the results returned by this Query will be

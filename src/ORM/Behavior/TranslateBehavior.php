@@ -334,7 +334,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
                 'foreign_key' => $key,
                 'model' => $model
             ])
-            ->enableBufferedResults(false)
+            ->disableBufferedResults()
             ->all()
             ->indexBy('field');
 
@@ -753,7 +753,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             ->select(['id', 'num' => 0])
             ->where(current($ruleSet))
             ->disableHydration()
-            ->enableBufferedResults(false);
+            ->disableBufferedResults();
 
         unset($ruleSet[0]);
         foreach ($ruleSet as $i => $conditions) {
