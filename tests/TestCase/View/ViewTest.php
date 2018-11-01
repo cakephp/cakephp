@@ -2093,6 +2093,23 @@ TEXT;
         $this->assertSame($autoLayout, true);
     }
 
+
+    /**
+     * testDisableAutoLayout
+     *
+     * @return void
+     */
+    public function testDisableAutoLayout()
+    {
+        $this->assertTrue($this->View->isAutoLayoutEnabled());
+
+        $result = $this->View->disableAutoLayout();
+        $this->assertSame($this->View, $result);
+
+        $autoLayout = $this->View->isAutoLayoutEnabled();
+        $this->assertFalse($this->View->isAutoLayoutEnabled());
+    }
+
     /**
      * Test getTheme() and setTheme().
      *
