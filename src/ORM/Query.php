@@ -1011,6 +1011,22 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Disable hydrating entities.
+     *
+     * Disabling hydration will cause array results to be returned for the query
+     * instead of entities.
+     *
+     * @return $this
+     */
+    public function disableHydration()
+    {
+        $this->_dirty();
+        $this->_hydrate = false;
+
+        return $this;
+    }
+
+    /**
      * Returns the current hydration mode.
      *
      * @return bool
