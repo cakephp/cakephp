@@ -363,6 +363,19 @@ abstract class Driver implements DriverInterface
     }
 
     /**
+     * Disable auto quoting of identifiers in queries.
+     *
+     * @return $this
+     */
+
+    public function disableAutoQuoting()
+    {
+        $this->_autoQuoting = false;
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function isAutoQuotingEnabled()
