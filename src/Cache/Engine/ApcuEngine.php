@@ -78,9 +78,12 @@ class ApcuEngine extends CacheEngine
      */
     public function get($key, $default = null)
     {
-        $key = $this->_key($key);
+        $value = apcu_fetch($this->_key($key), $success);
+        if ($success === false) {
+            return $default;
+        }
 
-        return apcu_fetch($key);
+        return $value;
     }
 
     /**
