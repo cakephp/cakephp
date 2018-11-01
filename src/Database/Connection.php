@@ -876,6 +876,18 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Disable query logging
+     *
+     * @return $this
+     */
+    public function disableQueryLogging()
+    {
+        $this->_logQueries = false;
+
+        return $this;
+    }
+
+    /**
      * Check if query logging is enabled.
      *
      * @return bool

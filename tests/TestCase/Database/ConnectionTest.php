@@ -965,7 +965,7 @@ class ConnectionTest extends TestCase
         $this->connection->enableQueryLogging(true);
         $this->assertTrue($this->connection->isQueryLoggingEnabled());
 
-        $this->connection->enableQueryLogging(false);
+        $this->connection->disableQueryLogging();
         $this->assertFalse($this->connection->isQueryLoggingEnabled());
     }
 
