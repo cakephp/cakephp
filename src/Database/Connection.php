@@ -601,7 +601,6 @@ class Connection implements ConnectionInterface
     /**
      * Disables the usage of savepoints.
      *
-     * @param bool $enable Whether or not save points should be used.
      * @return $this
      */
     public function disableSavePoints()

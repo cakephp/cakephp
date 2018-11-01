@@ -367,7 +367,6 @@ abstract class Driver implements DriverInterface
      *
      * @return $this
      */
-
     public function disableAutoQuoting()
     {
         $this->_autoQuoting = false;
