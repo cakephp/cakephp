@@ -328,8 +328,12 @@ class MemcachedEngine extends CacheEngine
     public function get($key, $default = null)
     {
         $key = $this->_key($key);
+        $value = $this->_Memcached->get($key);
+        if ($this->_Memcached->getResultCode() == Memcached::RES_NOTFOUND) {
+            return $default;
+        }
 
-        return $this->_Memcached->get($key);
+        return $value;
     }
 
     /**
