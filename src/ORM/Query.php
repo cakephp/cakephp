@@ -1375,6 +1375,18 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
+     * Disables automatically appending fields.
+     *
+     * @return $this
+     */
+    public function disableAutoFields()
+    {
+        $this->_autoFields = false;
+
+        return $this;
+    }
+
+    /**
      * Gets whether or not the ORM should automatically append fields.
      *
      * By default calling select() will disable auto-fields. You can re-enable
