@@ -2093,7 +2093,6 @@ TEXT;
         $this->assertSame($autoLayout, true);
     }
 
-
     /**
      * testDisableAutoLayout
      *
