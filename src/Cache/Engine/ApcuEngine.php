@@ -72,15 +72,18 @@ class ApcuEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $default Default value in case the cache misses.
-     * @return mixed The cached data, or false if the data doesn't exist,
+     * @return mixed The cached data, or default if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
     public function get($key, $default = null)
     {
-        $key = $this->_key($key);
+        $value = apcu_fetch($this->_key($key), $success);
+        if ($success === false) {
+            return $default;
+        }
 
-        return apcu_fetch($key);
+        return $value;
     }
 
     /**

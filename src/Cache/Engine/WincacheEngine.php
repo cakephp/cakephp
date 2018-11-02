@@ -74,14 +74,18 @@ class WincacheEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $default Default value to return if the key does not exist.
-     * @return mixed The cached data, or false if the data doesn't exist,
+     * @return mixed The cached data, or default value if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      */
     public function get($key, $default = null)
     {
-        $key = $this->_key($key);
+        $success = null;
+        $value = wincache_ucache_get($this->_key($key), $success);
+        if ($success === false) {
+            return $default;
+        }
 
-        return wincache_ucache_get($key);
+        return $value;
     }
 
     /**

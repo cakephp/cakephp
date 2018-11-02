@@ -473,6 +473,23 @@ class MemcachedEngineTest extends TestCase
     }
 
     /**
+     * Test get with default value
+     *
+     * @return void
+     */
+    public function testGetDefaultValue()
+    {
+        $memcache = Cache::pool('memcached');
+        $this->assertFalse($memcache->get('nope', false));
+        $this->assertNull($memcache->get('nope', null));
+        $this->assertTrue($memcache->get('nope', true));
+        $this->assertSame(0, $memcache->get('nope', 0));
+
+        $memcache->set('yep', 0);
+        $this->assertSame(0, $memcache->get('yep', false));
+    }
+
+    /**
      * testReadMany method
      *
      * @return void
@@ -535,7 +552,7 @@ class MemcachedEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'memcached');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'memcached');
@@ -543,7 +560,7 @@ class MemcachedEngineTest extends TestCase
 
         sleep(2);
         $result = Cache::read('other_test', 'memcached');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $this->_configCache(['duration' => '+1 second']);
 
@@ -553,10 +570,10 @@ class MemcachedEngineTest extends TestCase
 
         sleep(3);
         $result = Cache::read('other_test', 'memcached');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $result = Cache::read('other_test', 'memcached');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $this->_configCache(['duration' => '+29 days']);
         $data = 'this is a test of the emergency broadcasting system';
@@ -607,12 +624,12 @@ class MemcachedEngineTest extends TestCase
 
         Cache::deleteMany(array_merge(array_keys($data), ['App.doesNotExist']), 'memcached');
 
-        $this->assertFalse(Cache::read('App.falseTest', 'memcached'));
-        $this->assertFalse(Cache::read('App.trueTest', 'memcached'));
-        $this->assertFalse(Cache::read('App.nullTest', 'memcached'));
-        $this->assertFalse(Cache::read('App.zeroTest', 'memcached'));
-        $this->assertFalse(Cache::read('App.zeroTest2', 'memcached'));
-        $this->assertSame(Cache::read('App.keepTest', 'memcached'), 'keepMe');
+        $this->assertNull(Cache::read('App.falseTest', 'memcached'));
+        $this->assertNull(Cache::read('App.trueTest', 'memcached'));
+        $this->assertNull(Cache::read('App.nullTest', 'memcached'));
+        $this->assertNull(Cache::read('App.zeroTest', 'memcached'));
+        $this->assertNull(Cache::read('App.zeroTest2', 'memcached'));
+        $this->assertSame('keepMe', Cache::read('App.keepTest', 'memcached'));
     }
 
     /**
@@ -713,8 +730,8 @@ class MemcachedEngineTest extends TestCase
 
         sleep(1);
 
-        $this->assertFalse(Cache::read('test_increment', 'memcached'));
-        $this->assertFalse(Cache::read('test_decrement', 'memcached'));
+        $this->assertNull(Cache::read('test_increment', 'memcached'));
+        $this->assertNull(Cache::read('test_decrement', 'memcached'));
     }
 
     /**
@@ -777,8 +794,8 @@ class MemcachedEngineTest extends TestCase
         $this->assertEquals('yay', Cache::read('duration_test', 'long_memcached'), 'Value was not read %s');
 
         usleep(3000000);
-        $this->assertFalse(Cache::read('short_duration_test', 'short_memcached'), 'Cache was not invalidated %s');
-        $this->assertFalse(Cache::read('duration_test', 'long_memcached'), 'Value did not expire %s');
+        $this->assertNull(Cache::read('short_duration_test', 'short_memcached'), 'Cache was not invalidated %s');
+        $this->assertNull(Cache::read('duration_test', 'long_memcached'), 'Value did not expire %s');
 
         Cache::delete('duration_test', 'long_memcached');
         Cache::delete('short_duration_test', 'short_memcached');
@@ -802,7 +819,7 @@ class MemcachedEngineTest extends TestCase
         sleep(1);
         $this->assertTrue(Cache::clear('memcached'));
 
-        $this->assertFalse(Cache::read('some_value', 'memcached'));
+        $this->assertNull(Cache::read('some_value', 'memcached'));
         $this->assertEquals('cache2', Cache::read('some_value', 'memcached2'));
 
         Cache::clear('memcached2');
@@ -847,12 +864,12 @@ class MemcachedEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'memcached_groups'));
 
         Cache::increment('group_a', 1, 'memcached_helper');
-        $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
+        $this->assertNull(Cache::read('test_groups', 'memcached_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'memcached_groups'));
         $this->assertEquals('value2', Cache::read('test_groups', 'memcached_groups'));
 
         Cache::increment('group_b', 1, 'memcached_helper');
-        $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
+        $this->assertNull(Cache::read('test_groups', 'memcached_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'memcached_groups'));
         $this->assertEquals('value3', Cache::read('test_groups', 'memcached_groups'));
     }
@@ -873,7 +890,7 @@ class MemcachedEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'memcached_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'memcached_groups'));
 
-        $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
+        $this->assertNull(Cache::read('test_groups', 'memcached_groups'));
     }
 
     /**
@@ -891,11 +908,11 @@ class MemcachedEngineTest extends TestCase
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'memcached_groups'));
         $this->assertTrue(Cache::clearGroup('group_a', 'memcached_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
+        $this->assertNull(Cache::read('test_groups', 'memcached_groups'));
 
         $this->assertTrue(Cache::write('test_groups', 'value2', 'memcached_groups'));
         $this->assertTrue(Cache::clearGroup('group_b', 'memcached_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'memcached_groups'));
+        $this->assertNull(Cache::read('test_groups', 'memcached_groups'));
     }
 
     /**
