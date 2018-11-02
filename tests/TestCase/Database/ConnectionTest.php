@@ -62,7 +62,7 @@ class ConnectionTest extends TestCase
     public function tearDown()
     {
         Log::reset();
-        $this->connection->enableSavePoints(false);
+        $this->connection->disableSavePoints();
         $this->connection->setLogger(null);
         unset($this->connection);
         parent::tearDown();
@@ -965,7 +965,7 @@ class ConnectionTest extends TestCase
         $this->connection->enableQueryLogging(true);
         $this->assertTrue($this->connection->isQueryLoggingEnabled());
 
-        $this->connection->enableQueryLogging(false);
+        $this->connection->disableQueryLogging();
         $this->assertFalse($this->connection->isQueryLoggingEnabled());
     }
 

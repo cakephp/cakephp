@@ -402,7 +402,7 @@ class FixtureManager
 
             if ($logQueries && !$this->_debug) {
                 if ($newMethods) {
-                    $db->enableQueryLogging(false);
+                    $db->disableQueryLogging();
                 } else {
                     $db->logQueries(false);
                 }

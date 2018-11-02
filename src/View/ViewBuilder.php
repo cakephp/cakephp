@@ -280,6 +280,21 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Turns off CakePHP's conventional mode of applying layout files.
+     *
+     * Setting to off means that layouts will not be automatically applied to
+     * rendered views.
+     *
+     * @return $this
+     */
+    public function disableAutoLayout()
+    {
+        $this->_autoLayout = false;
+
+        return $this;
+    }
+
+    /**
      * Returns if CakePHP's conventional mode of applying layout files is enabled.
      * Disabled means that layouts will not be automatically applied to rendered views.
      *

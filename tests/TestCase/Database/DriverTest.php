@@ -198,7 +198,7 @@ class DriverTest extends TestCase
         $this->assertSame($this->driver, $this->driver->enableAutoQuoting(true));
         $this->assertTrue($this->driver->isAutoQuotingEnabled());
 
-        $this->driver->enableAutoQuoting(false);
+        $this->driver->disableAutoQuoting();
         $this->assertFalse($this->driver->isAutoQuotingEnabled());
 
         $this->driver->enableAutoQuoting('string');

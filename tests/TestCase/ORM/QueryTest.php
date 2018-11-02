@@ -571,7 +571,7 @@ class QueryTest extends TestCase
         ]);
         $query = new Query($this->connection, $table);
 
-        $results = $query->select()->contain('Tags')->enableHydration(false)->toArray();
+        $results = $query->select()->contain('Tags')->disableHydration()->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -632,7 +632,7 @@ class QueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
-            ->enableHydration(false)
+            ->disableHydration()
             ->toArray();
         $expected = [
             [
@@ -685,7 +685,7 @@ class QueryTest extends TestCase
 
         $results = $query->repository($table)
             ->select()
-            ->enableHydration(false)
+            ->disableHydration()
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })

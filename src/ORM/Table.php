@@ -1797,7 +1797,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ->select(['existing' => 1])
             ->where($conditions)
             ->limit(1)
-            ->enableHydration(false)
+            ->disableHydration()
             ->toArray()
         );
     }

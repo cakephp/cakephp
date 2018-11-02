@@ -396,7 +396,7 @@ class SelectLoader
     protected function _buildSubquery($query)
     {
         $filterQuery = clone $query;
-        $filterQuery->enableAutoFields(false);
+        $filterQuery->disableAutoFields();
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);
