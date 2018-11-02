@@ -153,18 +153,20 @@ class RedisEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $default Default value to return if the key does not exist.
-     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+     * @return mixed The cached data, or the default if the data doesn't exist, has
+     *   expired, or if there was an error fetching it
      */
     public function get($key, $default = null)
     {
-        $key = $this->_key($key);
-
-        $value = $this->_Redis->get($key);
+        $value = $this->_Redis->get($this->_key($key));
+        if ($value === false) {
+            return $default;
+        }
         $isString = is_string($value);
         if ($isString && preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
         }
-        if ($value !== false && $isString) {
+        if ($isString) {
             return unserialize($value);
         }
 
