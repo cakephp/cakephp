@@ -166,7 +166,7 @@ class FileEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $default Default value to return if the key does not exist.
-     * @return mixed The cached data, or null if the data doesn't exist, has
+     * @return mixed The cached data, or default value if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
     public function get($key, $default = null)
