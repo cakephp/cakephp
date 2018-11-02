@@ -77,12 +77,11 @@
  * @return void
  */
 	public function delete($id = null) {
-		$this->BakeArticle->id = $id;
-		if (!$this->BakeArticle->exists()) {
+		if (!$this->BakeArticle->exists($id)) {
 			throw new NotFoundException(__('Invalid bake article'));
 		}
 		$this->request->allowMethod('post', 'delete');
-		if ($this->BakeArticle->delete()) {
+		if ($this->BakeArticle->delete($id)) {
 			$this->Flash->success(__('The bake article has been deleted.'));
 		} else {
 			$this->Flash->error(__('The bake article could not be deleted. Please, try again.'));

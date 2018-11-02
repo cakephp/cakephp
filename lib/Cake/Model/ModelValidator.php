@@ -257,7 +257,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			}
 		}
 
-		$exists = $model->exists();
+		$exists = $model->exists($model->getID());
 		$methods = $this->getMethods();
 		$fields = $this->_validationList($fieldList);
 

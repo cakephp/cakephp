@@ -131,12 +131,11 @@
  * @return void
  */
 	public function <?php echo $admin; ?>delete($id = null) {
-		$this-><?php echo $currentModelName; ?>->id = $id;
-		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
 			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
 		$this->request->allowMethod('post', 'delete');
-		if ($this-><?php echo $currentModelName; ?>->delete()) {
+		if ($this-><?php echo $currentModelName; ?>->delete($id)) {
 <?php if ($wannaUseSession): ?>
 			$this->Flash->success(__('The <?php echo strtolower($singularHumanName); ?> has been deleted.'));
 		} else {

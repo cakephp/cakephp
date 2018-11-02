@@ -225,7 +225,7 @@ class TreeBehavior extends ModelBehavior {
 		}
 		$parentIsSet = array_key_exists($parent, $Model->data[$Model->alias]);
 
-		if (!$Model->id || !$Model->exists()) {
+		if (!$Model->id || !$Model->exists($Model->getID())) {
 			if ($parentIsSet && $Model->data[$Model->alias][$parent]) {
 				$parentNode = $this->_getNode($Model, $Model->data[$Model->alias][$parent]);
 				if (!$parentNode) {

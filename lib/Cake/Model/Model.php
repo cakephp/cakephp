@@ -1824,7 +1824,7 @@ class Model extends CakeObject implements CakeEventListener {
 			}
 		}
 
-		$exists = $this->exists();
+		$exists = $this->exists($this->getID());
 		$dateFields = array('modified', 'updated');
 
 		if (!$exists) {
@@ -2696,7 +2696,7 @@ class Model extends CakeObject implements CakeEventListener {
 			return false;
 		}
 
-		if (!$this->exists()) {
+		if (!$this->exists($this->getID())) {
 			return false;
 		}
 
