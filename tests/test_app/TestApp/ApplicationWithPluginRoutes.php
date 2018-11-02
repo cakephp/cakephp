@@ -16,15 +16,24 @@ namespace TestApp;
 
 use Cake\Http\BaseApplication;
 use Cake\Routing\Middleware\RoutingMiddleware;
+use Cake\Routing\RouteBuilder;
 
 class ApplicationWithPluginRoutes extends BaseApplication
 {
+    /**
+     * @return void
+     */
     public function bootstrap()
     {
         parent::bootstrap();
         $this->addPlugin('TestPlugin');
     }
 
+    /**
+     * @param \Cake\Http\MiddlewareQueue $middleware
+     *
+     * @return \Cake\Http\MiddlewareQueue
+     */
     public function middleware($middleware)
     {
         $middleware->add(new RoutingMiddleware($this));
@@ -40,7 +49,7 @@ class ApplicationWithPluginRoutes extends BaseApplication
      */
     public function routes($routes)
     {
-        $routes->scope('/app', function ($routes) {
+        $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
         $routes->loadPlugin('TestPlugin');

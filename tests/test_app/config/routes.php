@@ -12,10 +12,12 @@
  * @since         2.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 
 Router::extensions('json');
-Router::scope('/', function ($routes) {
+Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/', ['controller' => 'pages', 'action' => 'display', 'home']);
     $routes->connect(
         '/some_alias',
