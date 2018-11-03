@@ -644,12 +644,12 @@ class Inflector
     public static function humanize($string, $delimiter = '_')
     {
         $delimiters = $delimiter;
-        if(is_array($delimiter)){
+        if(is_array($delimiter))
+        {
             $delimiters = implode("_", $delimiter);
         }
         
         $cacheKey = __FUNCTION__ . $delimiters;
-
         $result = static::_cache($cacheKey, $string);
 
         if ($result === false) {
