@@ -625,7 +625,7 @@ class Inflector
      * Also replaces underscores with dashes
      *
      * @param string $string The string to dasherize.
-     * @return string Dashed version of the input string
+     * @return mixed Dashed version of the input string
      */
     public static function dasherize($string)
     {
@@ -643,6 +643,11 @@ class Inflector
      */
     public static function humanize($string, $delimiter = '_')
     {
+        $delimiters = $delimiter;
+        if(is_array($delimiter)){
+            $delimiters = implode("_", $delimiter);
+        }
+        
         $cacheKey = __FUNCTION__ . $delimiter;
 
         $result = static::_cache($cacheKey, $string);
