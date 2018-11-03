@@ -644,8 +644,7 @@ class Inflector
     public static function humanize($string, $delimiter = '_')
     {
         $delimiters = $delimiter;
-        if(is_array($delimiter))
-        {
+        if(is_array($delimiter)) {
             $delimiters = implode("_", $delimiter);
         }
         
