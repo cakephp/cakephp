@@ -607,6 +607,7 @@ class InflectorTest extends TestCase
         $this->assertSame('', Inflector::humanize(false));
         $this->assertSame('Hello Wörld', Inflector::humanize('hello_wörld'));
         $this->assertSame('福岡 City', Inflector::humanize('福岡_city'));
+        $this->assertSame('User Is Active', Inflector::humanize('user.is_active',['.','_']));
     }
 
     /**
