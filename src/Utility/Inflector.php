@@ -625,7 +625,7 @@ class Inflector
      * Also replaces underscores with dashes
      *
      * @param string $string The string to dasherize.
-     * @return mixed Dashed version of the input string
+     * @return string|array Dashed version of the input string or multiple strings
      */
     public static function dasherize($string)
     {
