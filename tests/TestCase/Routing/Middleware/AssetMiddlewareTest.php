@@ -44,7 +44,7 @@ class AssetMiddlewareTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         parent::tearDown();
     }
 

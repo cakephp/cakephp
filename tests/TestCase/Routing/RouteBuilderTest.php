@@ -49,7 +49,7 @@ class RouteBuilderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -586,7 +586,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesPathOption()
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', ['path' => 'posts'], function ($routes) {
+        $routes->resources('Articles', ['path' => 'posts'], function (RouteBuilder $routes) {
             $routes->resources('Comments');
         });
         $all = $this->collection->routes();

@@ -51,7 +51,7 @@ class RouterTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         Router::reload();
         Router::defaultRouteClass('Cake\Routing\Route\Route');
     }
@@ -2412,7 +2412,7 @@ class RouterTest extends TestCase
             ['routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+']
         );
         $this->assertTrue(true); // Just to make sure the connect do not throw exception
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
     }
 
     /**

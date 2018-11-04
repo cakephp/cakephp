@@ -54,6 +54,7 @@ class IntegrationTestTraitTest extends TestCase
         static::setAppNamespace();
 
         Router::reload();
+        Router::extensions(['json']);
         Router::scope('/', function ($routes) {
             $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
             $routes->applyMiddleware('cookie');
@@ -262,7 +263,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         // first clean routes to have Router::$initailized === false
         Router::reload();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithPluginRoutes', null);
 
@@ -527,6 +528,18 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertTemplate('index');
         $this->assertLayout('default');
         $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Tests URLs containing extensions.
+     *
+     * @return void
+     */
+    public function testRequestWithExt()
+    {
+        $this->get(['controller' => 'Posts', 'action' => 'ajax', '_ext' => 'json']);
+
+        $this->assertResponseCode(200);
     }
 
     /**

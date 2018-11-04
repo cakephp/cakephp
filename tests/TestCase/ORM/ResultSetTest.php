@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Entity\Article;
 
 /**
  * ResultSet test case.
@@ -397,7 +398,7 @@ class ResultSetTest extends TestCase
         })->first();
         $this->assertEquals('TestPlugin.Comments', $result->getSource());
         $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -416,5 +417,42 @@ class ResultSetTest extends TestCase
         $res = $query->all();
         $res->isEmpty();
         $this->assertCount(6, $res->toArray());
+    }
+
+    /**
+     * Test that ResultSet
+     *
+     * @return void
+     */
+    public function testCollectionMinAndMax()
+    {
+        $query = $this->table->find('all');
+
+        $min = $query->min('id');
+        $minExpected = $this->table->get(1);
+
+        $max = $query->max('id');
+        $maxExpected = $this->table->get(3);
+
+        $this->assertEquals($minExpected, $min);
+        $this->assertEquals($maxExpected, $max);
+    }
+
+    /**
+     * Test that ResultSet
+     *
+     * @return void
+     */
+    public function testCollectionMinAndMaxWithAggregateField()
+    {
+        $query = $this->table->find();
+        $query->select([
+            'counter' => 'COUNT(*)'
+        ])->group('author_id');
+
+        $min = $query->min('counter');
+        $max = $query->max('counter');
+
+        $this->assertTrue($max > $min);
     }
 }

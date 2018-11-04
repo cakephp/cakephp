@@ -183,7 +183,7 @@ class ExceptionRendererTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         if ($this->_restoreError) {
             restore_error_handler();
         }
@@ -924,7 +924,6 @@ class ExceptionRendererTest extends TestCase
         $body = (string)$response->getBody();
         $this->assertContains('test plugin error500', $body);
         $this->assertContains('Not Found', $body);
-        Plugin::unload();
     }
 
     /**

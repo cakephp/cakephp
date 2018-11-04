@@ -56,7 +56,7 @@ class I18nTest extends TestCase
         I18n::clear();
         I18n::setDefaultFormatter('default');
         I18n::setLocale($this->locale);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         Cache::clear('_cake_core_');
     }
 

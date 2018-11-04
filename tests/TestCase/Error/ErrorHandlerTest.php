@@ -109,7 +109,7 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         if ($this->_restoreError) {
             restore_error_handler();
             restore_exception_handler();

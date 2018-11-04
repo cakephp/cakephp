@@ -546,7 +546,7 @@ class QueryRegressionTest extends TestCase
             $result->author->id,
             'No SQL error and author exists.'
         );
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

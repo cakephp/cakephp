@@ -317,7 +317,7 @@ class ViewTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         unset($this->View);
         unset($this->PostsController);
         unset($this->Controller);
@@ -2063,6 +2063,22 @@ TEXT;
         $this->View->enableAutoLayout();
         $autoLayout = $this->View->isAutoLayoutEnabled();
         $this->assertSame($autoLayout, true);
+    }
+
+    /**
+     * testDisableAutoLayout
+     *
+     * @return void
+     */
+    public function testDisableAutoLayout()
+    {
+        $this->assertTrue($this->View->isAutoLayoutEnabled());
+
+        $result = $this->View->disableAutoLayout();
+        $this->assertSame($this->View, $result);
+
+        $autoLayout = $this->View->isAutoLayoutEnabled();
+        $this->assertFalse($this->View->isAutoLayoutEnabled());
     }
 
     /**

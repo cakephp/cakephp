@@ -68,7 +68,7 @@ class ConnectionManagerTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         ConnectionManager::drop('test_variant');
         ConnectionManager::dropAlias('other_name');
     }

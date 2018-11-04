@@ -24,6 +24,72 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class SecurityHeadersMiddleware
 {
+    /** @var string X-Content-Type-Option nosniff */
+    const NOSNIFF = 'nosniff';
+
+    /** @var string X-Download-Option noopen */
+    const NOOPEN = 'noopen';
+
+    /** @var string Referrer-Policy no-referrer */
+    const NO_REFERRER = 'no-referrer';
+
+    /** @var string Referrer-Policy no-referrer-when-downgrade */
+    const NO_REFERRER_WHEN_DOWNGRADE = 'no-referrer-when-downgrade';
+
+    /** @var string Referrer-Policy origin */
+    const ORIGIN = 'origin';
+
+    /** @var string Referrer-Policy origin-when-cross-origin */
+    const ORIGIN_WHEN_CROSS_ORIGIN = 'origin-when-cross-origin';
+
+    /** @var string Referrer-Policy same-origin */
+    const SAME_ORIGIN = 'same-origin';
+
+    /** @var string Referrer-Policy strict-origin */
+    const STRICT_ORIGIN = 'strict-origin';
+
+    /** @var string Referrer-Policy strict-origin-when-cross-origin */
+    const STRICT_ORIGIN_WHEN_CROSS_ORIGIN = 'strict-origin-when-cross-origin';
+
+    /** @var string Referrer-Policy unsafe-url */
+    const UNSAFE_URL = 'unsafe-url';
+
+    /** @var string X-Frame-Option deny */
+    const DENY = 'deny';
+
+    /** @var string X-Frame-Option sameorigin */
+    const SAMEORIGIN = 'sameorigin';
+
+    /** @var string X-Frame-Option allow-from */
+    const ALLOW_FROM = 'allow-from';
+
+    /** @var string X-XSS-Protection block, sets enabled with block */
+    const XSS_BLOCK = 'block';
+
+    /** @var string X-XSS-Protection enabled with block */
+    const XSS_ENABLED_BLOCK = '1; mode=block';
+
+    /** @var string X-XSS-Protection enabled */
+    const XSS_ENABLED = '1';
+
+    /** @var string X-XSS-Protection disabled */
+    const XSS_DISABLED = '0';
+
+    /** @var string X-Permitted-Cross-Domain-Policy all */
+    const ALL = 'all';
+
+    /** @var string X-Permitted-Cross-Domain-Policy none */
+    const NONE = 'none';
+
+    /** @var string X-Permitted-Cross-Domain-Policy master-only */
+    const MASTER_ONLY = 'master-only';
+
+    /** @var string X-Permitted-Cross-Domain-Policy by-content-type */
+    const BY_CONTENT_TYPE = 'by-content-type';
+
+    /** @var string X-Permitted-Cross-Domain-Policy by-ftp-filename */
+    const BY_FTP_FILENAME = 'by-ftp-filename';
+
     /**
      * Security related headers to set
      *
@@ -41,7 +107,7 @@ class SecurityHeadersMiddleware
      */
     public function noSniff(): self
     {
-        $this->headers['x-content-type-options'] = 'nosniff';
+        $this->headers['x-content-type-options'] = self::NOSNIFF;
 
         return $this;
     }
@@ -56,7 +122,7 @@ class SecurityHeadersMiddleware
      */
     public function noOpen(): self
     {
-        $this->headers['x-download-options'] = 'noopen';
+        $this->headers['x-download-options'] = self::NOOPEN;
 
         return $this;
     }
@@ -65,17 +131,21 @@ class SecurityHeadersMiddleware
      * Referrer-Policy
      *
      * @link https://w3c.github.io/webappsec-referrer-policy
-     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin', 'origin-when-cross-origin',
-     *        'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
+     * @param string $policy Policy value. Available Value: 'no-referrer', 'no-referrer-when-downgrade', 'origin',
+     *     'origin-when-cross-origin', 'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
-    public function setReferrerPolicy(string $policy = 'same-origin'): self
+    public function setReferrerPolicy($policy = self::SAME_ORIGIN): self
     {
         $available = [
-            'no-referrer', 'no-referrer-when-downgrade', 'origin',
-            'origin-when-cross-origin',
-            'same-origin', 'strict-origin', 'strict-origin-when-cross-origin',
-            'unsafe-url',
+            self::NO_REFERRER,
+            self::NO_REFERRER_WHEN_DOWNGRADE,
+            self::ORIGIN,
+            self::ORIGIN_WHEN_CROSS_ORIGIN,
+            self::SAME_ORIGIN,
+            self::STRICT_ORIGIN,
+            self::STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+            self::UNSAFE_URL,
         ];
 
         $this->checkValues($policy, $available);
@@ -92,11 +162,11 @@ class SecurityHeadersMiddleware
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
-    public function setXFrameOptions(string $option = 'sameorigin', ?string $url = null): self
+    public function setXFrameOptions($option = self::SAMEORIGIN, ?string $url = null): self
     {
-        $this->checkValues($option, ['deny', 'sameorigin', 'allow-from']);
+        $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
 
-        if ($option === 'allow-from') {
+        if ($option === self::ALLOW_FROM) {
             if (empty($url)) {
                 throw new InvalidArgumentException('The 2nd arg $url can not be empty when `allow-from` is used');
             }
@@ -115,15 +185,15 @@ class SecurityHeadersMiddleware
      * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
-    public function setXssProtection(string $mode = 'block'): self
+    public function setXssProtection(string $mode = self::XSS_BLOCK): self
     {
         $mode = (string)$mode;
 
-        if ($mode === 'block') {
-            $mode = '1; mode=block';
+        if ($mode === self::XSS_BLOCK) {
+            $mode = self::XSS_ENABLED_BLOCK;
         }
 
-        $this->checkValues($mode, ['1', '0', '1; mode=block']);
+        $this->checkValues($mode, [self::XSS_ENABLED, self::XSS_DISABLED, self::XSS_ENABLED_BLOCK]);
         $this->headers['x-xss-protection'] = $mode;
 
         return $this;
@@ -133,12 +203,19 @@ class SecurityHeadersMiddleware
      * X-Permitted-Cross-Domain-Policies
      *
      * @link https://www.adobe.com/devnet/adobe-media-server/articles/cross-domain-xml-for-streaming.html
-     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename'
+     * @param string $policy Policy value. Available Values: 'all', 'none', 'master-only', 'by-content-type',
+     *     'by-ftp-filename'
      * @return $this
      */
-    public function setCrossDomainPolicy(string $policy = 'all'): self
+    public function setCrossDomainPolicy($policy = self::ALL): self
     {
-        $this->checkValues($policy, ['all', 'none', 'master-only', 'by-content-type', 'by-ftp-filename']);
+        $this->checkValues($policy, [
+            self::ALL,
+            self::NONE,
+            self::MASTER_ONLY,
+            self::BY_CONTENT_TYPE,
+            self::BY_FTP_FILENAME,
+        ]);
         $this->headers['x-permitted-cross-domain-policies'] = $policy;
 
         return $this;

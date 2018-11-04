@@ -92,7 +92,7 @@ class HtmlHelperTest extends TestCase
     {
         parent::tearDown();
         Router::reload();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         unset($this->Html, $this->View);
     }
 
@@ -604,7 +604,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('TestPlugin.style', ['plugin' => false]);
         $expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
         $this->assertHtml($expected, $result);
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
 
         $result = $this->Html->css('my.css.library');
         $expected['link']['href'] = 'preg:/.*css\/my\.css\.library\.css/';
@@ -742,7 +742,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[1]);
         $this->assertCount(2, $result);
 
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
     }
 
     /**
@@ -828,7 +828,7 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
     }
 
     /**
@@ -902,7 +902,7 @@ class HtmlHelperTest extends TestCase
         unlink($pluginJsPath . DS . '__cake_js_test.js');
         Configure::write('Asset.timestamp', false);
 
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
     }
 
     /**
@@ -1071,7 +1071,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        Plugin::unload('TestPlugin');
+        Plugin::getCollection()->remove('TestPlugin');
     }
 
     /**

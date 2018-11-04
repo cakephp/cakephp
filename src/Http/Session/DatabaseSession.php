@@ -115,7 +115,7 @@ class DatabaseSession implements SessionHandlerInterface
             ->find('all')
             ->select(['data'])
             ->where([$this->_table->getPrimaryKey() => $id])
-            ->enableHydration(false)
+            ->disableHydration()
             ->first();
 
         if (empty($result)) {

@@ -308,6 +308,8 @@ class FileEngine extends CacheEngine
                 //@codingStandardsIgnoreEnd
             }
         }
+
+        $dir->close();
     }
 
     /**

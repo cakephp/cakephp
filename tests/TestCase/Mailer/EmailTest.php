@@ -1662,7 +1662,7 @@ class EmailTest extends TestCase
         $this->assertContains('Message-ID: ', $result['headers']);
         $this->assertContains('To: ', $result['headers']);
         $this->assertContains('/test_theme/img/test.jpg', $result['message']);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -1845,7 +1845,7 @@ class EmailTest extends TestCase
         $result = $this->Email->send();
         $this->assertContains('Here is your value: 12345', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

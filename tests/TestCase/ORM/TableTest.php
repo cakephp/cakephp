@@ -127,7 +127,7 @@ class TableTest extends TestCase
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

@@ -425,7 +425,7 @@ class TestCaseTest extends TestCase
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

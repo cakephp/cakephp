@@ -38,7 +38,7 @@ class HelpCommandTest extends TestCase
         parent::setUp();
         $this->setAppNamespace();
         $this->useCommandRunner(true);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
             ['']
@@ -54,7 +54,7 @@ class HelpCommandTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -67,7 +67,7 @@ class HelpCommandTest extends TestCase
         $this->exec('help');
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertCommandList();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

@@ -45,7 +45,7 @@ class FixtureManagerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
