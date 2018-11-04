@@ -408,7 +408,7 @@ class ViewBuilderTest extends TestCase
     public function testDisableAutoLayout()
     {
         $builder = new ViewBuilder();
-        $this->assertNull($builder->isAutoLayoutEnabled());
+        $this->assertTrue($builder->isAutoLayoutEnabled());
 
         $builder->disableAutoLayout();
         $this->assertFalse($builder->isAutoLayoutEnabled());
