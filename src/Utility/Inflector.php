@@ -625,7 +625,7 @@ class Inflector
      * Also replaces underscores with dashes
      *
      * @param string $string The string to dasherize.
-     * @return string|array Dashed version of the input string or multiple strings
+     * @return string Dashed version of the input string
      */
     public static function dasherize($string)
     {
@@ -637,7 +637,7 @@ class Inflector
      * (Underscores are replaced by spaces and capitalized following words.)
      *
      * @param string $string String to be humanized
-     * @param string $delimiter the character to replace with a space
+     * @param string|array $delimiter the character or multiple characters to replace with a space
      * @return string Human-readable string
      * @link https://book.cakephp.org/3.0/en/core-libraries/inflector.html#creating-human-readable-forms
      */
