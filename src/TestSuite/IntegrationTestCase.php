@@ -173,6 +173,13 @@ abstract class IntegrationTestCase extends TestCase
     protected $_cookieEncryptionKey;
 
     /**
+     * Allow router reloading to be disabled.
+     *
+     * @var bool
+     */
+    protected $_disableRouterReload = false;
+
+    /**
      * Auto-detect if the HTTP middleware stack should be used.
      *
      * @return void
@@ -207,6 +214,7 @@ abstract class IntegrationTestCase extends TestCase
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
         $this->_useHttpServer = false;
+        $this->_disableRouterReload = true;
     }
 
     /**
@@ -518,7 +526,7 @@ abstract class IntegrationTestCase extends TestCase
     protected function _makeDispatcher()
     {
         if ($this->_useHttpServer) {
-            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
+            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs, $this->_disableRouterReload);
         }
 
         return new LegacyRequestDispatcher($this);
