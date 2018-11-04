@@ -296,6 +296,6 @@ class CommandCollectionTest extends TestCase
             'Long names are stored as well'
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 }

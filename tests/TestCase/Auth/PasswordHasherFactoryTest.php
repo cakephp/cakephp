@@ -44,7 +44,7 @@ class PasswordHasherFactoryTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $hasher = PasswordHasherFactory::build('TestPlugin.Legacy');
         $this->assertInstanceof('TestPlugin\Auth\LegacyPasswordHasher', $hasher);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

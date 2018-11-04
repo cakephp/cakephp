@@ -15,6 +15,7 @@ namespace Cake\TestSuite;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
@@ -218,6 +219,33 @@ abstract class TestCase extends BaseTestCase
         $app->pluginRoutes($builder);
 
         return $app;
+    }
+
+    /**
+     * Remove plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @return void
+     */
+    public function removePlugins(array $plugins = [])
+    {
+        $collection = Plugin::getCollection();
+        foreach ($plugins as $plugin) {
+            $collection->remove($plugin);
+        }
+    }
+
+    /**
+     * Clear all plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @return void
+     */
+    public function clearPlugins()
+    {
+        Plugin::getCollection()->clear();
     }
 
     /**

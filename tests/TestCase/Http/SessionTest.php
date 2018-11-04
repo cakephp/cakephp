@@ -88,7 +88,7 @@ class SessionTest extends TestCase
     {
         unset($_SESSION);
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

@@ -257,7 +257,7 @@ class ControllerTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
