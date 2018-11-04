@@ -647,7 +647,7 @@ class Inflector
         if (is_array($delimiter)) {
             $delimiters = implode('_', $delimiter);
         }
-        
+
         $cacheKey = __FUNCTION__ . $delimiters;
         $result = static::_cache($cacheKey, $string);
 
