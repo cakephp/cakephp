@@ -19,6 +19,7 @@ use Cake\Core\Plugin;
 use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\TestSuite\IntegrationTestCase;
@@ -44,7 +45,8 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         static::setAppNamespace();
 
         Router::reload();
-        Router::scope('/', function ($routes) {
+        Router::extensions(['json']);
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->setRouteClass(InflectedRoute::class);
             $routes->get('/get/:controller/:action', []);
             $routes->head('/head/:controller/:action', []);
@@ -587,6 +589,18 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->assertTemplate('index');
         $this->assertLayout('default');
         $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Tests URLs containing extensions.
+     *
+     * @return void
+     */
+    public function testRequestWithExt()
+    {
+        $this->get(['controller' => 'Posts', 'action' => 'ajax', '_ext' => 'json']);
+
+        $this->assertResponseCode(200);
     }
 
     /**
