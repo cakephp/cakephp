@@ -737,7 +737,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[1]);
         $this->assertCount(2, $result);
 
-        $this->removePlugin(['TestPlugin']);
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**

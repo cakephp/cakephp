@@ -226,6 +226,7 @@ abstract class TestCase extends BaseTestCase
      *
      * Useful in test case teardown methods.
      *
+     * @param array $plugins A list of plugins you want to remove.
      * @return void
      */
     public function removePlugins(array $plugins = [])
