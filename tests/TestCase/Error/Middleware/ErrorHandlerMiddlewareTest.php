@@ -243,7 +243,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/target/url',
-            'HTTP_REFERER' => '/other/path'
+            'HTTP_REFERER' => '/other/path',
         ]);
         $response = new Response();
         $middleware = new ErrorHandlerMiddleware(null, ['log' => true, 'trace' => true]);

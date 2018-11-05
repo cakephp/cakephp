@@ -25,70 +25,70 @@ use Psr\Http\Message\ServerRequestInterface;
 class SecurityHeadersMiddleware
 {
     /** @var string X-Content-Type-Option nosniff */
-    const NOSNIFF = 'nosniff';
+    public const NOSNIFF = 'nosniff';
 
     /** @var string X-Download-Option noopen */
-    const NOOPEN = 'noopen';
+    public const NOOPEN = 'noopen';
 
     /** @var string Referrer-Policy no-referrer */
-    const NO_REFERRER = 'no-referrer';
+    public const NO_REFERRER = 'no-referrer';
 
     /** @var string Referrer-Policy no-referrer-when-downgrade */
-    const NO_REFERRER_WHEN_DOWNGRADE = 'no-referrer-when-downgrade';
+    public const NO_REFERRER_WHEN_DOWNGRADE = 'no-referrer-when-downgrade';
 
     /** @var string Referrer-Policy origin */
-    const ORIGIN = 'origin';
+    public const ORIGIN = 'origin';
 
     /** @var string Referrer-Policy origin-when-cross-origin */
-    const ORIGIN_WHEN_CROSS_ORIGIN = 'origin-when-cross-origin';
+    public const ORIGIN_WHEN_CROSS_ORIGIN = 'origin-when-cross-origin';
 
     /** @var string Referrer-Policy same-origin */
-    const SAME_ORIGIN = 'same-origin';
+    public const SAME_ORIGIN = 'same-origin';
 
     /** @var string Referrer-Policy strict-origin */
-    const STRICT_ORIGIN = 'strict-origin';
+    public const STRICT_ORIGIN = 'strict-origin';
 
     /** @var string Referrer-Policy strict-origin-when-cross-origin */
-    const STRICT_ORIGIN_WHEN_CROSS_ORIGIN = 'strict-origin-when-cross-origin';
+    public const STRICT_ORIGIN_WHEN_CROSS_ORIGIN = 'strict-origin-when-cross-origin';
 
     /** @var string Referrer-Policy unsafe-url */
-    const UNSAFE_URL = 'unsafe-url';
+    public const UNSAFE_URL = 'unsafe-url';
 
     /** @var string X-Frame-Option deny */
-    const DENY = 'deny';
+    public const DENY = 'deny';
 
     /** @var string X-Frame-Option sameorigin */
-    const SAMEORIGIN = 'sameorigin';
+    public const SAMEORIGIN = 'sameorigin';
 
     /** @var string X-Frame-Option allow-from */
-    const ALLOW_FROM = 'allow-from';
+    public const ALLOW_FROM = 'allow-from';
 
     /** @var string X-XSS-Protection block, sets enabled with block */
-    const XSS_BLOCK = 'block';
+    public const XSS_BLOCK = 'block';
 
     /** @var string X-XSS-Protection enabled with block */
-    const XSS_ENABLED_BLOCK = '1; mode=block';
+    public const XSS_ENABLED_BLOCK = '1; mode=block';
 
     /** @var string X-XSS-Protection enabled */
-    const XSS_ENABLED = '1';
+    public const XSS_ENABLED = '1';
 
     /** @var string X-XSS-Protection disabled */
-    const XSS_DISABLED = '0';
+    public const XSS_DISABLED = '0';
 
     /** @var string X-Permitted-Cross-Domain-Policy all */
-    const ALL = 'all';
+    public const ALL = 'all';
 
     /** @var string X-Permitted-Cross-Domain-Policy none */
-    const NONE = 'none';
+    public const NONE = 'none';
 
     /** @var string X-Permitted-Cross-Domain-Policy master-only */
-    const MASTER_ONLY = 'master-only';
+    public const MASTER_ONLY = 'master-only';
 
     /** @var string X-Permitted-Cross-Domain-Policy by-content-type */
-    const BY_CONTENT_TYPE = 'by-content-type';
+    public const BY_CONTENT_TYPE = 'by-content-type';
 
     /** @var string X-Permitted-Cross-Domain-Policy by-ftp-filename */
-    const BY_FTP_FILENAME = 'by-ftp-filename';
+    public const BY_FTP_FILENAME = 'by-ftp-filename';
 
     /**
      * Security related headers to set

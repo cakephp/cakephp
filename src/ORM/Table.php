@@ -151,14 +151,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @var string
      */
-    const RULES_CLASS = RulesChecker::class;
+    public const RULES_CLASS = RulesChecker::class;
 
     /**
      * The IsUnique class name that is used.
      *
      * @var string
      */
-    const IS_UNIQUE_CLASS = IsUnique::class;
+    public const IS_UNIQUE_CLASS = IsUnique::class;
 
     /**
      * Name of the table as it can be found in the database
