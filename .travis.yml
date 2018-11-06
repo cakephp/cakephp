@@ -11,6 +11,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 
 env:
   matrix:
@@ -41,13 +42,21 @@ matrix:
 
     - php: 7.2
       env: DB=mysql PHPUNIT=5.7.19
+
+    - php: 7.3
+      env: DB=mysql PHPUNIT=5.7.19
+  allow_failures:
+    - php: 7.3
+      env: DB=mysql PHPUNIT=5.7.19
   exclude:
     - php: 7.2
+      env: DB=mysql
+    - php: 7.3
       env: DB=mysql
 
 
 before_script:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.2" ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} =~ ^7\.[23]$ ]] ; then pear config-set preferred_state snapshot && yes "" | pecl install mcrypt ; fi
   - composer require "phpunit/phpunit=$PHPUNIT"
   - echo "require_once 'vendors/autoload.php';" >> app/Config/bootstrap.php
   - sudo locale-gen de_DE
