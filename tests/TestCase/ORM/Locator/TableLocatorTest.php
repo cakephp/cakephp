@@ -68,7 +68,7 @@ class TableLocatorTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         parent::tearDown();
     }
 

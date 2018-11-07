@@ -141,7 +141,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -170,7 +170,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

@@ -74,7 +74,7 @@ class CompletionShellTest extends TestCase
         parent::tearDown();
         unset($this->Shell);
         static::setAppNamespace('App');
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

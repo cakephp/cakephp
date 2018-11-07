@@ -398,7 +398,7 @@ class ResultSetTest extends TestCase
         })->first();
         $this->assertEquals('TestPlugin.Comments', $result->getSource());
         $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

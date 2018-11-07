@@ -290,7 +290,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     {
         // first clean routes to have Router::$initailized === false
         Router::reload();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithPluginRoutes', null);
 

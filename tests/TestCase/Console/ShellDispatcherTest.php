@@ -49,7 +49,7 @@ class ShellDispatcherTest extends TestCase
     {
         parent::tearDown();
         ShellDispatcher::resetAliases();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

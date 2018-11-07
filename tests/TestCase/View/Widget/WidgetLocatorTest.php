@@ -99,7 +99,7 @@ class WidgetLocatorTestCase extends TestCase
         ];
         $inputs = new WidgetLocator($this->templates, $this->view, $widgets);
         $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $inputs->get('text'));
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

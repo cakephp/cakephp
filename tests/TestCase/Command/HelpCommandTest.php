@@ -34,7 +34,6 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         parent::setUp();
         $this->setAppNamespace();
         $this->useCommandRunner(true);
-        Plugin::getCollection()->clear();
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
             ['']
@@ -50,7 +49,7 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -63,7 +62,7 @@ class HelpCommandTest extends ConsoleIntegrationTestCase
         $this->exec('help');
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertCommandList();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
