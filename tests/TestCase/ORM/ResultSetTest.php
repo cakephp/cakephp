@@ -22,7 +22,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use TestApp\Model\Entity\Article;
 
 /**
  * ResultSet test case.
@@ -447,7 +446,7 @@ class ResultSetTest extends TestCase
     {
         $query = $this->table->find();
         $query->select([
-            'counter' => 'COUNT(*)'
+            'counter' => 'COUNT(*)',
         ])->group('author_id');
 
         $min = $query->min('counter');

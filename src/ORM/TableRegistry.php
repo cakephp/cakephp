@@ -97,7 +97,7 @@ class TableRegistry
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the table with.
      * @return \Cake\ORM\Table
-     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::get() instead.
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::get() instead. Will be removed in 5.0
      */
     public static function get(string $alias, array $options = []): Table
     {
@@ -109,7 +109,7 @@ class TableRegistry
      *
      * @param string $alias The alias to check for.
      * @return bool
-     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::exists() instead.
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::exists() instead. Will be removed in 5.0
      */
     public static function exists(string $alias): bool
     {
@@ -122,7 +122,7 @@ class TableRegistry
      * @param string $alias The alias to set.
      * @param \Cake\ORM\Table $object The table to set.
      * @return \Cake\ORM\Table
-     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::set() instead.
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::set() instead. Will be removed in 5.0
      */
     public static function set(string $alias, Table $object): Table
     {
@@ -134,7 +134,7 @@ class TableRegistry
      *
      * @param string $alias The alias to remove.
      * @return void
-     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::remove() instead.
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::remove() instead. Will be removed in 5.0
      */
     public static function remove(string $alias): void
     {
@@ -145,7 +145,7 @@ class TableRegistry
      * Clears the registry of configuration and instances.
      *
      * @return void
-     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::clear() instead.
+     * @deprecated 3.6.0 Use \Cake\ORM\Locator\TableLocator::clear() instead. Will be removed in 5.0
      */
     public static function clear(): void
     {

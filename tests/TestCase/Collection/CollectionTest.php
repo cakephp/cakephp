@@ -21,7 +21,6 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use Cake\ORM\Entity;
-use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use NoRewindIterator;
 
@@ -715,7 +714,7 @@ class CollectionTest extends TestCase
             new Entity(['id' => 2, 'count' => 9]),
             new Entity(['id' => 3, 'count' => 42]),
             new Entity(['id' => 4, 'count' => 4]),
-            new Entity(['id' => 5, 'count' => 22])
+            new Entity(['id' => 5, 'count' => 22]),
         ]);
 
         $expected = new Entity(['id' => 3, 'count' => 42]);
@@ -747,7 +746,7 @@ class CollectionTest extends TestCase
             new Entity(['id' => 2, 'count' => 9]),
             new Entity(['id' => 3, 'count' => 42]),
             new Entity(['id' => 4, 'count' => 4]),
-            new Entity(['id' => 5, 'count' => 22])
+            new Entity(['id' => 5, 'count' => 22]),
         ]);
 
         $expected = new Entity(['id' => 4, 'count' => 4]);
