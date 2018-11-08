@@ -136,6 +136,28 @@ class WincacheEngineTest extends TestCase
     }
 
     /**
+     * test set ttl parameter
+     *
+     * @return void
+     */
+    public function testSetWithTtl()
+    {
+        $this->_configCache(['duration' => 99]);
+        $engine = Cache::pool('wincache');
+        $this->assertNull($engine->get('test'));
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $this->assertTrue($engine->set('default_ttl', $data));
+        $this->assertTrue($engine->set('int_ttl', $data, 1));
+        $this->assertTrue($engine->set('interval_ttl', $data, new DateInterval('PT1S')));
+
+        sleep(2);
+        $this->assertNull($engine->get('int_ttl'));
+        $this->assertNull($engine->get('interval_ttl'));
+        $this->assertSame($data, $engine->get('default_ttl'));
+    }
+
+    /**
      * testDeleteCache method
      *
      * @return void

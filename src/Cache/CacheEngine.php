@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Cache;
 
 use Cake\Core\InstanceConfigTrait;
+use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -349,5 +350,27 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
         }
 
         triggerWarning($message);
+    }
+
+    /**
+     * Convert the various expressions of a TTL value into duration in seconds
+     *
+     * @param null|int|\DateInterval $ttl The TTL value of this item. If null is sent, the
+     *   driver's default duration will be used.
+     * @return int
+     */
+    protected function duration($ttl): int
+    {
+        if ($ttl === null) {
+            return $this->_config['duration'];
+        }
+        if (is_int($ttl)) {
+            return $ttl;
+        }
+        if ($ttl instanceof DateInterval) {
+            return (int)$ttl->format('%s');
+        }
+
+        throw new InvalidArgumentException('TTL values must be one of null, int, \DateInterval');
     }
 }

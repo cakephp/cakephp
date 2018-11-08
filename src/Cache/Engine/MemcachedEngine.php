@@ -290,7 +290,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function set($key, $value, $ttl = null)
     {
-        $duration = $this->_config['duration'];
+        $duration = $this->duration($ttl);
         if ($duration > 30 * DAY) {
             $duration = 0;
         }
@@ -313,8 +313,12 @@ class MemcachedEngine extends CacheEngine
         foreach ($data as $key => $value) {
             $cacheData[$this->_key($key)] = $value;
         }
+        $duration = $this->duration($ttl);
+        if ($duration > 30 * DAY) {
+            $duration = 0;
+        }
 
-        return (bool)$this->_Memcached->setMulti($cacheData);
+        return (bool)$this->_Memcached->setMulti($cacheData, $duration);
     }
 
     /**

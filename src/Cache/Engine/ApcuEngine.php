@@ -62,7 +62,7 @@ class ApcuEngine extends CacheEngine
     public function set($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
-        $duration = $this->_config['duration'];
+        $duration = $this->duration($ttl);
 
         return apcu_store($key, $value, $duration);
     }

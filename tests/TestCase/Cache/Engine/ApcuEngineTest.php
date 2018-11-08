@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
+use DateInterval;
 
 /**
  * ApcuEngineTest class
@@ -178,6 +179,28 @@ class ApcuEngineTest extends TestCase
         $result = Cache::read('other_test', 'apcu');
         $this->assertNull($result);
         $this->assertSame(0, Cache::pool('apcu')->get('other_test', 0), 'expired values get default.');
+    }
+
+    /**
+     * test set ttl parameter
+     *
+     * @return void
+     */
+    public function testSetWithTtl()
+    {
+        $this->_configCache(['duration' => 99]);
+        $engine = Cache::pool('apcu');
+        $this->assertNull($engine->get('test'));
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $this->assertTrue($engine->set('default_ttl', $data));
+        $this->assertTrue($engine->set('int_ttl', $data, 1));
+        $this->assertTrue($engine->set('interval_ttl', $data, new DateInterval('PT1S')));
+
+        sleep(2);
+        $this->assertNull($engine->get('int_ttl'));
+        $this->assertNull($engine->get('interval_ttl'));
+        $this->assertSame($data, $engine->get('default_ttl'));
     }
 
     /**

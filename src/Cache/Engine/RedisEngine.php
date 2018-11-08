@@ -140,7 +140,7 @@ class RedisEngine extends CacheEngine
             $value = serialize($value);
         }
 
-        $duration = $this->_config['duration'];
+        $duration = $this->duration($ttl);
         if ($duration === 0) {
             return $this->_Redis->set($key, $value);
         }
