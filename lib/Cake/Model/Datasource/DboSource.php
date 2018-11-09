@@ -368,7 +368,7 @@ class DboSource extends DataSource {
 		}
 
 		if (strpos($column, "enum")===0){
-			preg_match("/(enum\()(.*)(\))/",$column, $acceptingValues);
+			preg_match("/(enum\()(.*)(\))/", $column, $acceptingValues);
 			$firstValue = explode(",", $acceptingValues[2])[0];
 			if (is_string($firstValue)){
 				$isStringEnum = true;
