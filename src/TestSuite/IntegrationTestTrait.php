@@ -617,7 +617,7 @@ trait IntegrationTestTrait
         ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
-        list ($url, $query) = $this->_url($url);
+        list($url, $query) = $this->_url($url);
         $tokenUrl = $url;
 
         if ($query) {
