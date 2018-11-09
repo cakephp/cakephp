@@ -396,7 +396,7 @@ class DboSource extends DataSource {
 					strpos($data, ',') === false &&
 					$data[0] != '0' &&
 					strpos($data, 'e') === false)
-					) && empty($isStringEnum)
+					) && !$isStringEnum
 				) {
 					return $data;
 				}
