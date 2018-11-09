@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
+use DateInterval;
 
 /**
  * WincacheEngineTest class
