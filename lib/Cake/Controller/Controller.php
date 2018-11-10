@@ -47,16 +47,19 @@ App::uses('CakeEventManager', 'Event');
  * @property      AclComponent $Acl
  * @property      string $action The action handling the current request. Deprecated, use CakeRequest::$action instead.
  * @property      AuthComponent $Auth
+ * @property      string $base Base URL path. Deprecated, use CakeRequest::$base instead.
  * @property      CookieComponent $Cookie
  * @property      array $data POST data. Deprecated, use CakeRequest::$data instead.
  * @property      EmailComponent $Email
  * @property      PaginatorComponent $Paginator
  * @property      array $params Array of parameters parsed from the URL. Deprecated, use CakeRequest::$params instead.
  * @property      string $here The full address to the current request. Deprecated, use CakeRequest::$here instead.
+ * @property      array $paginate Pagination settings.
  * @property      RequestHandlerComponent $RequestHandler
  * @property      SecurityComponent $Security
  * @property      SessionComponent $Session
  * @property      FlashComponent $Flash
+ * @property      string $webroot Webroot path segment for the request.
  * @link          https://book.cakephp.org/2.0/en/controllers.html
  */
 class Controller extends CakeObject implements CakeEventListener {
@@ -393,15 +396,19 @@ class Controller extends CakeObject implements CakeEventListener {
  * @return mixed The requested value for valid variables/aliases else null
  */
 	public function __get($name) {
+		$message = "Property $name is deprecated. Use CakeRequest::$name instead.";
 		switch ($name) {
 			case 'base':
 			case 'here':
 			case 'webroot':
 			case 'data':
+				trigger_error($message, E_USER_DEPRECATED);
 				return $this->request->{$name};
 			case 'action':
+				trigger_error($message, E_USER_DEPRECATED);
 				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
 			case 'params':
+				trigger_error($message, E_USER_DEPRECATED);
 				return $this->request;
 			case 'paginate':
 				return $this->Components->load('Paginator')->settings;
