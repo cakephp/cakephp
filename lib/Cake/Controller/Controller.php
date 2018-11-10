@@ -160,9 +160,9 @@ class Controller extends CakeObject implements CakeEventListener {
 /**
  * The name of the layout file to render the view inside of. The name specified
  * is the filename of the layout in /app/View/Layouts without the .ctp
- * extension.
+ * extension. If `false` then no layout is rendered.
  *
- * @var string
+ * @var string|bool
  */
 	public $layout = 'default';
 
@@ -846,7 +846,7 @@ class Controller extends CakeObject implements CakeEventListener {
  * Saves a variable for use inside a view template.
  *
  * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
+ * @param mixed $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  * @link https://book.cakephp.org/2.0/en/controllers.html#interacting-with-views
