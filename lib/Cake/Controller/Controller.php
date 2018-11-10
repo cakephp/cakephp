@@ -87,7 +87,7 @@ class Controller extends CakeObject implements CakeEventListener {
  *
  * The default value is `true`.
  *
- * @var mixed
+ * @var bool|array
  * @link https://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
  */
 	public $uses = true;
@@ -580,7 +580,7 @@ class Controller extends CakeObject implements CakeEventListener {
 		if ($this->uses === true) {
 			$this->uses = array($pluginDot . $this->modelClass);
 		}
-		if (isset($appVars['uses']) && $appVars['uses'] === $this->uses) {
+		if (is_array($this->uses) && isset($appVars['uses']) && $appVars['uses'] === $this->uses) {
 			array_unshift($this->uses, $pluginDot . $this->modelClass);
 		}
 		if ($pluginController) {
