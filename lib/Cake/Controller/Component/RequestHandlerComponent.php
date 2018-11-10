@@ -75,7 +75,7 @@ class RequestHandlerComponent extends Component {
 /**
  * Array of parameters parsed from the URL.
  *
- * @var array
+ * @var array|null
  */
 	public $params = null;
 

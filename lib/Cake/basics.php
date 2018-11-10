@@ -226,6 +226,7 @@ if (!function_exists('h')) {
 		}
 		if (is_string($double)) {
 			$charset = $double;
+			$double = true;
 		}
 		return htmlspecialchars($text, ENT_QUOTES, ($charset) ? $charset : $defaultCharset, $double);
 	}
