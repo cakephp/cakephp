@@ -317,7 +317,7 @@ class Controller extends CakeObject implements CakeEventListener {
  * @deprecated Use CakeRequest::$params instead.
  * @var array
  */
-	public $params = array();
+	public $params = null;
 
 /**
  * The full address to the current request
