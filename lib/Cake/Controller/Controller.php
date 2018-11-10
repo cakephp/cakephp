@@ -932,7 +932,7 @@ class Controller extends CakeObject implements CakeEventListener {
 /**
  * Instantiates the correct view class, hands it its data, and uses it to render the view output.
  *
- * @param string $view View to use for rendering
+ * @param bool|string $view View to use for rendering
  * @param string $layout Layout to use
  * @return CakeResponse A response object containing the rendered view.
  * @triggers Controller.beforeRender $this
