@@ -402,13 +402,10 @@ class Controller extends CakeObject implements CakeEventListener {
 			case 'here':
 			case 'webroot':
 			case 'data':
-				CakeLog::write(E_USER_DEPRECATED, $message);
 				return $this->request->{$name};
 			case 'action':
-				CakeLog::write(E_USER_DEPRECATED, $message);
 				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
 			case 'params':
-				CakeLog::write(E_USER_DEPRECATED, $message);
 				return $this->request;
 			case 'paginate':
 				return $this->Components->load('Paginator')->settings;
