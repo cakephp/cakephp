@@ -73,6 +73,13 @@ class RequestHandlerComponent extends Component {
 	public $ext = null;
 
 /**
+ * Array of parameters parsed from the URL.
+ *
+ * @var array
+ */
+	public $params = null;
+
+/**
  * The template to use when rendering the given content type.
  *
  * @var string
