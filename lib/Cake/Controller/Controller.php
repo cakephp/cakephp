@@ -294,8 +294,9 @@ class Controller extends CakeObject implements CakeEventListener {
 
 /**
  * Holds any validation errors produced by the last call of the validateErrors() method.
+ * Contains `false` if no validation errors happened.
  *
- * @var array
+ * @var array|bool
  */
 	public $validationErrors = null;
 
