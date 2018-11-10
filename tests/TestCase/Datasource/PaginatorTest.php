@@ -248,6 +248,43 @@ class PaginatorTest extends TestCase
     }
 
     /**
+     * Tests that flat default pagination parameters work for multi order.
+     *
+     * @return void
+     */
+    public function testDefaultPaginateParamsMultiOrder()
+    {
+        $settings = [
+            'order' => ['PaginatorPosts.id' => 'DESC', 'PaginatorPosts.title' => 'ASC'],
+        ];
+
+        $table = $this->_getMockPosts(['query']);
+        $query = $this->_getMockFindQuery();
+
+        $table->expects($this->once())
+            ->method('query')
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())
+            ->method('applyOptions')
+            ->with([
+                'limit' => 20,
+                'page' => 1,
+                'order' => $settings['order'],
+                'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'scope' => null,
+                'sort' => null,
+            ]);
+
+        $this->Paginator->paginate($table, [], $settings);
+
+        $pagingParams = $this->Paginator->getPagingParams();
+        $this->assertNull($pagingParams['PaginatorPosts']['direction']);
+        $this->assertFalse($pagingParams['PaginatorPosts']['sortDefault']);
+        $this->assertFalse($pagingParams['PaginatorPosts']['directionDefault']);
+    }
+
+    /**
      * test that default sort and default direction are injected into request
      *
      * @return void
