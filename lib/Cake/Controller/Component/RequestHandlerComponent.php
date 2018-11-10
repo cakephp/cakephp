@@ -132,7 +132,7 @@ class RequestHandlerComponent extends Component {
 		if (empty($this->ext) || $this->ext === 'html') {
 			$this->_setExtension();
 		}
-		$this->params = $controller->params;
+		$this->params = $controller->request->params;
 		if (!empty($this->settings['viewClassMap'])) {
 			$this->viewClassMap($this->settings['viewClassMap']);
 		}
