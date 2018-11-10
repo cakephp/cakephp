@@ -606,10 +606,7 @@ class Controller extends CakeObject implements CakeEventListener {
  * @return void
  */
 	protected function _mergeUses($merge) {
-		if (!isset($merge['uses'])) {
-			return;
-		}
-		if ($merge['uses'] === true) {
+		if (!isset($merge['uses']) || $merge['uses'] === true || !is_array($this->uses)) {
 			return;
 		}
 		$this->uses = array_merge(

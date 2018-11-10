@@ -467,7 +467,7 @@ class View extends CakeObject {
 			return null;
 		}
 
-		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
+		if ($view !== false && is_string($view) && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = static::TYPE_VIEW;
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
