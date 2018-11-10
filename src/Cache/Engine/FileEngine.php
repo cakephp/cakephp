@@ -140,8 +140,7 @@ class FileEngine extends CacheEngine
             }
         }
 
-        $duration = $this->_config['duration'];
-        $expires = time() + $duration;
+        $expires = time() + $this->duration($ttl);
         $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
 
         if ($this->_config['lock']) {
