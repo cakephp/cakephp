@@ -43,6 +43,41 @@ class CakeRequest implements ArrayAccess {
 	);
 
 /**
+ * The plugin handling the request. Will be `null` when there is no plugin.
+ *
+ * @var string
+ */
+	public $plugin = null;
+
+/**
+ * The controller handling the current request.
+ *
+ * @var string
+ */
+	public $controller = null;
+
+/**
+ * The action handling the current request.
+ *
+ * @var string
+ */
+	public $action = null;
+
+/**
+ * Array of named parameters parsed from the URL.
+ *
+ * @var array
+ */
+	public $named = array();
+
+/**
+ * Array of passed arguments parsed from the URL.
+ *
+ * @var array
+ */
+	public $pass = array();
+
+/**
  * Array of POST data. Will contain form data as well as uploaded files.
  * Inputs prefixed with 'data' will have the data prefix removed. If there is
  * overlap between an input prefixed with data and one without, the 'data' prefixed

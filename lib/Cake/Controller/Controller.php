@@ -293,6 +293,41 @@ class Controller extends CakeObject implements CakeEventListener {
 	public $validationErrors = null;
 
 /**
+ * The action handling the current request.
+ *
+ * @deprecated Use CakeRequest::$action instead.
+ * @var string
+ */
+	public $action = null;
+
+/**
+ * Array of POST data. Will contain form data as well as uploaded files.
+ * Inputs prefixed with 'data' will have the data prefix removed. If there is
+ * overlap between an input prefixed with data and one without, the 'data' prefixed
+ * value will take precedence.
+ *
+ * @deprecated Use CakeRequest::$data instead.
+ * @var array
+ */
+	public $data = array();
+
+/**
+ * Array of parameters parsed from the URL.
+ *
+ * @deprecated Use CakeRequest::$params instead.
+ * @var array
+ */
+	public $params = array();
+
+/**
+ * The full address to the current request
+ *
+ * @deprecated Use CakeRequest::$here instead.
+ * @var string
+ */
+	public $here = null;
+
+/**
  * The class name of the parent class you wish to merge with.
  * Typically this is AppController, but you may wish to merge vars with a different
  * parent class.
@@ -1018,7 +1053,7 @@ class Controller extends CakeObject implements CakeEventListener {
 	}
 
 /**
- * Converts POST'ed form data to a model conditions array. 
+ * Converts POST'ed form data to a model conditions array.
  *
  * If combined with SecurityComponent these conditions could be suitable
  * for use in a Model::find() call. Without SecurityComponent this method
