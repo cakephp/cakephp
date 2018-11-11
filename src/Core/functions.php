@@ -69,6 +69,7 @@ if (!function_exists('h')) {
                 'Use the 3rd argument instead.'
             );
             $charset = $double;
+            $double = true;
         }
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
