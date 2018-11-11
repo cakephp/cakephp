@@ -45,20 +45,20 @@ App::uses('CakeEventManager', 'Event');
  *
  * @package       Cake.Controller
  * @property      AclComponent $Acl
- * @property      string $action The action handling the current request. Deprecated, use CakeRequest::$action instead.
  * @property      AuthComponent $Auth
- * @property      string $base Base URL path. Deprecated, use CakeRequest::$base instead.
  * @property      CookieComponent $Cookie
- * @property      array $data POST data. Deprecated, use CakeRequest::$data instead.
  * @property      EmailComponent $Email
+ * @property      FlashComponent $Flash
  * @property      PaginatorComponent $Paginator
- * @property      array $params Array of parameters parsed from the URL. Deprecated, use CakeRequest::$params instead.
- * @property      string $here The full address to the current request. Deprecated, use CakeRequest::$here instead.
- * @property      array $paginate Pagination settings.
  * @property      RequestHandlerComponent $RequestHandler
  * @property      SecurityComponent $Security
  * @property      SessionComponent $Session
- * @property      FlashComponent $Flash
+ * @property      string $action  The action handling the current request. Deprecated, use CakeRequest::$action instead.
+ * @property      string $base    Base URL path. Deprecated, use CakeRequest::$base instead.
+ * @property      array $data     POST data. Deprecated, use CakeRequest::$data instead.
+ * @property      string $here    The full address to the current request. Deprecated, use CakeRequest::$here instead.
+ * @property      array $paginate Pagination settings.
+ * @property      array $params   Array of parameters parsed from the URL. Deprecated, use CakeRequest::$params instead.
  * @property      string $webroot Webroot path segment for the request.
  * @link          https://book.cakephp.org/2.0/en/controllers.html
  */
