@@ -455,7 +455,7 @@ class View extends CakeObject {
  * a plugin view/layout can be used instead of the app ones. If the chosen plugin is not found
  * the view will be located along the regular view path cascade.
  *
- * @param bool|string $view Name of view file to use.
+ * @param false|string $view Name of view file to use.
  * @param string $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
  * @triggers View.beforeRender $this, array($viewFileName)
@@ -467,7 +467,7 @@ class View extends CakeObject {
 			return null;
 		}
 
-		if ($view !== false && !is_bool($view) && $viewFileName = $this->_getViewFileName($view)) {
+		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = static::TYPE_VIEW;
 			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
