@@ -224,7 +224,7 @@ class ModelTask extends BakeTask {
 		if (!array_key_exists('id', $fields)) {
 			$primaryKey = $this->findPrimaryKey($fields);
 		}
-
+		$displayField = null;
 		if ($knownToExist) {
 			$displayField = $tempModel->hasField(array('name', 'title'));
 			if (!$displayField) {
