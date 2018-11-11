@@ -7623,11 +7623,6 @@ class MultibyteTest extends CakeTestCase {
 		$expected = 'ԀԂԄԆԈԊԌԎԐԒ';
 		$this->assertEquals($expected, $result);
 
-		$string = 'աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև';
-		$result = mb_strtoupper($string);
-		$expected = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
-		$this->assertEquals($expected, $result);
-
 		$string = 'ႠႡႢႣႤႥႦႧႨႩႪႫႬႭႮႯႰႱႲႳႴႵႶႷႸႹႺႻႼႽႾႿჀჁჂჃჄჅ';
 		$result = mb_strtoupper($string);
 		$expected = 'ႠႡႢႣႤႥႦႧႨႩႪႫႬႭႮႯႰႱႲႳႴႵႶႷႸႹႺႻႼႽႾႿჀჁჂჃჄჅ';
@@ -7646,6 +7641,18 @@ class MultibyteTest extends CakeTestCase {
 		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$result = mb_strtoupper($string);
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testUsingMbStrtoupperArmenian method
+ *
+ * @return void
+ */
+	public function testUsingMbStrtoupperArmenian() {
+		$string = 'աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև';
+		$result = mb_strtoupper($string);
+		$expected = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
 		$this->assertEquals($expected, $result);
 	}
 
