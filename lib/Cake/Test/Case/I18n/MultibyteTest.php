@@ -7632,11 +7632,6 @@ class MultibyteTest extends CakeTestCase {
 		$result = mb_strtoupper($string);
 		$expected = 'ΩKÅ';
 		$this->assertEquals($expected, $result);
-
-		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
-		$result = mb_strtoupper($string);
-		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
-		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -7652,7 +7647,7 @@ class MultibyteTest extends CakeTestCase {
 	}
 
 /**
- * testUsingMbStrtoupperArmenian method
+ * testUsingMbStrtoupperDiacritic method
  *
  * @return void
  */
@@ -7660,6 +7655,18 @@ class MultibyteTest extends CakeTestCase {
 		$string = 'ḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ';
 		$result = mb_strtoupper($string);
 		$expected = 'ḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẖẗẘẙẚẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testUsingMbStrtoupperLigatures method
+ *
+ * @return void
+ */
+	public function testUsingMbStrtoupperLigatures() {
+		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
+		$result = mb_strtoupper($string);
+		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$this->assertEquals($expected, $result);
 	}
 
