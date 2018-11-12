@@ -494,16 +494,26 @@ class TestCaseTest extends TestCase
         $entity = new Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
-        
-        $Mock = $this->getMockForModel(
+
+        $allMethodsStubs = $this->getMockForModel(
+            'Table',
+            [],
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEmpty([], $allMethodsStubs->getAlias());
+
+        $allMethodsMocks = $this->getMockForModel(
             'Table',
             null,
             ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
         );
-
         $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('Comments', $Mock->getAlias());
+        $this->assertEquals('Comments', $allMethodsMocks->getAlias());
+
+        $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);
     }
 
     /**
