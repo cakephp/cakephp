@@ -71,7 +71,10 @@ before_script:
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.3" ]] ; then pecl install timezonedb ; fi
   - sh -c "if [ '$PHPCS' = '1' ]; then composer require 'cakephp/cakephp-codesniffer:1.*'; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then vendors/bin/phpcs --config-set installed_paths vendors/cakephp/cakephp-codesniffer; fi"
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - |
+      if [[ ${TRAVIS_PHP_VERSION} != "7.3" ]]; then
+        echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
+      fi
   - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install apcu-5.1.3 || true; fi
   - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
   - echo -e "extension = apcu.so\napc.enable_cli=1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

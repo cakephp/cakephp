@@ -891,7 +891,7 @@ class App {
 /**
  * Increases the PHP "memory_limit" ini setting by the specified amount
  * in kilobytes
- *  
+ *
  * @param string $additionalKb Number in kilobytes
  * @return void
  */

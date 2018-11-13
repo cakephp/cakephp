@@ -7623,26 +7623,47 @@ class MultibyteTest extends CakeTestCase {
 		$expected = 'ԀԂԄԆԈԊԌԎԐԒ';
 		$this->assertEquals($expected, $result);
 
-		$string = 'աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև';
-		$result = mb_strtoupper($string);
-		$expected = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
-		$this->assertEquals($expected, $result);
-
 		$string = 'ႠႡႢႣႤႥႦႧႨႩႪႫႬႭႮႯႰႱႲႳႴႵႶႷႸႹႺႻႼႽႾႿჀჁჂჃჄჅ';
 		$result = mb_strtoupper($string);
 		$expected = 'ႠႡႢႣႤႥႦႧႨႩႪႫႬႭႮႯႰႱႲႳႴႵႶႷႸႹႺႻႼႽႾႿჀჁჂჃჄჅ';
-		$this->assertEquals($expected, $result);
-
-		$string = 'ḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ';
-		$result = mb_strtoupper($string);
-		$expected = 'ḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẖẗẘẙẚẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ';
 		$this->assertEquals($expected, $result);
 
 		$string = 'ωkå';
 		$result = mb_strtoupper($string);
 		$expected = 'ΩKÅ';
 		$this->assertEquals($expected, $result);
+	}
 
+/**
+ * testUsingMbStrtoupperArmenian method
+ *
+ * @return void
+ */
+	public function testUsingMbStrtoupperArmenian() {
+		$string = 'աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև';
+		$result = mb_strtoupper($string);
+		$expected = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testUsingMbStrtoupperDiacritic method
+ *
+ * @return void
+ */
+	public function testUsingMbStrtoupperDiacritic() {
+		$string = 'ḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ';
+		$result = mb_strtoupper($string);
+		$expected = 'ḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẖẗẘẙẚẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testUsingMbStrtoupperLigatures method
+ *
+ * @return void
+ */
+	public function testUsingMbStrtoupperLigatures() {
 		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$result = mb_strtoupper($string);
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';

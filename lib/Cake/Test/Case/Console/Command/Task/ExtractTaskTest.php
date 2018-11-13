@@ -380,25 +380,12 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
-
-		$pattern = preg_quote('#Model/PersisterOne.php:validation for field title#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = preg_quote('#Model/PersisterOne.php:validation for field body#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post title is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "You may enter up to %s chars \(minimum is %s chars\)"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is super required"#';
-		$this->assertRegExp($pattern, $result);
-
+		$this->assertContains('Model/PersisterOne.php:validation for field title', $result);
+		$this->assertContains('Model/PersisterOne.php:validation for field body', $result);
+		$this->assertContains('msgid "Post title is required"', $result);
+		$this->assertContains('msgid "You may enter up to %s chars (minimum is %s chars)"', $result);
+		$this->assertContains('msgid "Post body is required"', $result);
+		$this->assertContains('msgid "Post body is super required"', $result);
 		$this->assertContains('msgid "double \\"quoted\\" validation"', $result, 'Strings with quotes not handled correctly');
 		$this->assertContains("msgid \"single 'quoted' validation\"", $result, 'Strings with quotes not handled correctly');
 	}
@@ -429,21 +416,11 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
-
-		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post title is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is super required"#';
-		$this->assertRegExp($pattern, $result);
+		$this->assertContains('Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title', $result);
+		$this->assertContains('Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body', $result);
+		$this->assertContains('msgid "Post title is required"', $result);
+		$this->assertContains('msgid "Post body is required"', $result);
+		$this->assertContains('msgid "Post body is super required"', $result);
 	}
 
 /**
@@ -468,24 +445,12 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
-
-		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field title#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field body#', '\\');
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post title is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#msgid "Post body is super required"#';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#';
-		$this->assertNotRegExp($pattern, $result);
+		$this->assertContains('Model/TestPluginPost.php:validation for field title', $result);
+		$this->assertContains('Model/TestPluginPost.php:validation for field body', $result);
+		$this->assertContains('msgid "Post title is required"', $result);
+		$this->assertContains('msgid "Post body is required"', $result);
+		$this->assertContains('msgid "Post body is super required"', $result);
+		$this->assertNotContains('Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title', $result);
 	}
 
 /**
