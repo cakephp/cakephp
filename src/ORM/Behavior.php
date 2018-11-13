@@ -307,8 +307,8 @@ class Behavior implements EventListenerInterface
      *  ]
      * ```
      *
-     * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
-     * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
+     * With the above example, a call to `$table->find('this')` will call `$behavior->findThis()`
+     * and a call to `$table->find('alias')` will call `$behavior->findMethodName()`
      *
      * It is recommended, though not required, to define implementedFinders in the config property
      * of child classes such that it is not necessary to use reflections to derive the available
@@ -335,12 +335,12 @@ class Behavior implements EventListenerInterface
      * ```
      *  [
      *    'method' => 'method',
-     *    'aliasedmethod' => 'somethingElse'
+     *    'aliasedMethod' => 'somethingElse'
      *  ]
      * ```
      *
-     * With the above example, a call to `$Table->method()` will call `$Behavior->method()`
-     * and a call to `$Table->aliasedmethod()` will call `$Behavior->somethingElse()`
+     * With the above example, a call to `$table->method()` will call `$behavior->method()`
+     * and a call to `$table->aliasedMethod()` will call `$behavior->somethingElse()`
      *
      * It is recommended, though not required, to define implementedFinders in the config property
      * of child classes such that it is not necessary to use reflections to derive the available

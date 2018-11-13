@@ -74,16 +74,16 @@ class Helper implements EventListenerInterface
     /**
      * Default Constructor
      *
-     * @param \Cake\View\View $View The View this helper is being attached to.
+     * @param \Cake\View\View $view The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
      */
-    public function __construct(View $View, array $config = [])
+    public function __construct(View $view, array $config = [])
     {
-        $this->_View = $View;
+        $this->_View = $view;
         $this->setConfig($config);
 
         if (!empty($this->helpers)) {
-            $this->_helperMap = $View->helpers()->normalizeArray($this->helpers);
+            $this->_helperMap = $view->helpers()->normalizeArray($this->helpers);
         }
 
         $this->initialize($config);

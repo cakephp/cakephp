@@ -106,7 +106,7 @@ class Hash
      *  - `>`, `<`, `>=`, `<=` Value comparison.
      *  - `=/.../` Regular expression pattern match.
      *
-     * Given a set of User array data, from a `$User->find('all')` call:
+     * Given a set of User array data, from a `$usersTable->find('all')` call:
      *
      * - `1.User.name` Get the name of the user at index 1.
      * - `{n}.User.name` Get the name of every user in the set of users.

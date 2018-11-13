@@ -207,29 +207,29 @@ class ShellDispatcher
      */
     protected function _dispatch(array $extra = [])
     {
-        $shell = $this->shiftArgs();
+        $shellName = $this->shiftArgs();
 
-        if (!$shell) {
+        if (!$shellName) {
             $this->help();
 
             return false;
         }
-        if (in_array($shell, ['help', '--help', '-h'])) {
+        if (in_array($shellName, ['help', '--help', '-h'])) {
             $this->help();
 
             return true;
         }
-        if (in_array($shell, ['version', '--version'])) {
+        if (in_array($shellName, ['version', '--version'])) {
             $this->version();
 
             return true;
         }
 
-        $Shell = $this->findShell($shell);
+        $shell = $this->findShell($shellName);
 
-        $Shell->initialize();
+        $shell->initialize();
 
-        return $Shell->runCommand($this->args, true, $extra);
+        return $shell->runCommand($this->args, true, $extra);
     }
 
     /**

@@ -129,12 +129,12 @@ class HtmlHelper extends Helper
      *
      * Using the `templates` option you can redefine the tag HtmlHelper will use.
      *
-     * @param \Cake\View\View $View The View this helper is being attached to.
+     * @param \Cake\View\View $view The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
      */
-    public function __construct(View $View, array $config = [])
+    public function __construct(View $view, array $config = [])
     {
-        parent::__construct($View, $config);
+        parent::__construct($view, $config);
         $this->response = $this->_View->getResponse() ?: new Response();
     }
 

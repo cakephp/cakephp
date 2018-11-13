@@ -169,13 +169,13 @@ class CommandTask extends Shell
      */
     public function subCommands(string $commandName): array
     {
-        $Shell = $this->getShell($commandName);
+        $shell = $this->getShell($commandName);
 
-        if (!$Shell) {
+        if (!$shell) {
             return [];
         }
 
-        $taskMap = $this->Tasks->normalizeArray((array)$Shell->tasks);
+        $taskMap = $this->Tasks->normalizeArray((array)$shell->tasks);
         $return = array_keys($taskMap);
         $return = array_map('Cake\Utility\Inflector::underscore', $return);
 
@@ -183,7 +183,7 @@ class CommandTask extends Shell
 
         $baseClasses = ['Object', 'Shell', 'AppShell'];
 
-        $Reflection = new ReflectionClass($Shell);
+        $Reflection = new ReflectionClass($shell);
         $methods = $Reflection->getMethods(ReflectionMethod::IS_PUBLIC);
         $methodNames = [];
         foreach ($methods as $method) {
@@ -239,12 +239,12 @@ class CommandTask extends Shell
             return false;
         }
 
-        /* @var \Cake\Console\Shell $Shell */
-        $Shell = new $class();
-        $Shell->plugin = trim($pluginDot, '.');
-        $Shell->initialize();
+        /* @var \Cake\Console\Shell $shell */
+        $shell = new $class();
+        $shell->plugin = trim($pluginDot, '.');
+        $shell->initialize();
 
-        return $Shell;
+        return $shell;
     }
 
     /**
@@ -257,18 +257,18 @@ class CommandTask extends Shell
      */
     public function options(string $commandName, string $subCommandName = ''): array
     {
-        $Shell = $this->getShell($commandName);
+        $shell = $this->getShell($commandName);
 
-        if (!$Shell) {
+        if (!$shell) {
             return [];
         }
 
-        $parser = $Shell->getOptionParser();
+        $parser = $shell->getOptionParser();
 
         if (!empty($subCommandName)) {
             $subCommandName = Inflector::camelize($subCommandName);
-            if ($Shell->hasTask($subCommandName)) {
-                $parser = $Shell->{$subCommandName}->getOptionParser();
+            if ($shell->hasTask($subCommandName)) {
+                $parser = $shell->{$subCommandName}->getOptionParser();
             } else {
                 return [];
             }
