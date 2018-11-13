@@ -221,7 +221,7 @@ class Paginator implements PaginatorInterface
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
             'sort' => $options['sort'],
-            'direction' => current($order),
+            'direction' => isset($options['sort']) ? current($order) : null,
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,

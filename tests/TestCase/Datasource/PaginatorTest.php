@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 
 class PaginatorTest extends TestCase
 {
-
     /**
      * fixtures property
      *
@@ -41,6 +40,11 @@ class PaginatorTest extends TestCase
      * @var bool
      */
     public $autoFixtures = false;
+
+    /**
+     * @var \Cake\Datasource\Paginator
+     */
+    public $Paginator;
 
     /**
      * setup
@@ -245,6 +249,43 @@ class PaginatorTest extends TestCase
             ]);
 
         $this->Paginator->paginate($table, [], $settings);
+    }
+
+    /**
+     * Tests that flat default pagination parameters work for multi order.
+     *
+     * @return void
+     */
+    public function testDefaultPaginateParamsMultiOrder()
+    {
+        $settings = [
+            'order' => ['PaginatorPosts.id' => 'DESC', 'PaginatorPosts.title' => 'ASC'],
+        ];
+
+        $table = $this->_getMockPosts(['query']);
+        $query = $this->_getMockFindQuery();
+
+        $table->expects($this->once())
+            ->method('query')
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())
+            ->method('applyOptions')
+            ->with([
+                'limit' => 20,
+                'page' => 1,
+                'order' => $settings['order'],
+                'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'scope' => null,
+                'sort' => null,
+            ]);
+
+        $this->Paginator->paginate($table, [], $settings);
+
+        $pagingParams = $this->Paginator->getPagingParams();
+        $this->assertNull($pagingParams['PaginatorPosts']['direction']);
+        $this->assertFalse($pagingParams['PaginatorPosts']['sortDefault']);
+        $this->assertFalse($pagingParams['PaginatorPosts']['directionDefault']);
     }
 
     /**
@@ -878,6 +919,9 @@ class PaginatorTest extends TestCase
         $this->assertEquals($expected, $result['order']);
     }
 
+    /**
+     * @return \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
     protected function getMockRepository()
     {
         $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
@@ -890,6 +934,9 @@ class PaginatorTest extends TestCase
         return $model;
     }
 
+    /**
+     * @return \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
     protected function mockAliasHasFieldModel()
     {
         $model = $this->getMockRepository();
@@ -1335,7 +1382,7 @@ class PaginatorTest extends TestCase
      * Helper method for making mocks.
      *
      * @param array $methods
-     * @return \Cake\ORM\Table
+     * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockPosts($methods = [])
     {
@@ -1359,10 +1406,12 @@ class PaginatorTest extends TestCase
     /**
      * Helper method for mocking queries.
      *
-     * @return \Cake\ORM\Query
+     * @param string|null $table
+     * @return \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function _getMockFindQuery($table = null)
     {
+        /** @var \Cake\ORM\Query|\PHPUnit\Framework\MockObject\MockObject $query */
         $query = $this->getMockBuilder('Cake\ORM\Query')
             ->setMethods(['total', 'all', 'count', 'applyOptions'])
             ->disableOriginalConstructor()
