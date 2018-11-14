@@ -265,10 +265,10 @@ class FormHelper extends Helper
     /**
      * Construct the widgets and binds the default context providers
      *
-     * @param \Cake\View\View $View The View this helper is being attached to.
+     * @param \Cake\View\View $view The View this helper is being attached to.
      * @param array $config Configuration settings for the helper.
      */
-    public function __construct(View $View, array $config = [])
+    public function __construct(View $view, array $config = [])
     {
         $locator = null;
         $widgets = $this->_defaultWidgets;
@@ -289,7 +289,7 @@ class FormHelper extends Helper
             unset($config['groupedInputTypes']);
         }
 
-        parent::__construct($View, $config);
+        parent::__construct($view, $config);
 
         if (!$locator) {
             $locator = new WidgetLocator($this->templater(), $this->_View, $widgets);

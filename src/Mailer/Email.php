@@ -1953,25 +1953,25 @@ class Email implements JsonSerializable, Serializable
             return $rendered;
         }
 
-        $View = $this->createView();
+        $view = $this->createView();
 
-        list($templatePlugin) = pluginSplit($View->getTemplate());
-        list($layoutPlugin) = pluginSplit((string)$View->getLayout());
+        list($templatePlugin) = pluginSplit($view->getTemplate());
+        list($layoutPlugin) = pluginSplit((string)$view->getLayout());
         if ($templatePlugin) {
-            $View->setPlugin($templatePlugin);
+            $view->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {
-            $View->setPlugin($layoutPlugin);
+            $view->setPlugin($layoutPlugin);
         }
 
-        if ($View->get('content') === null) {
-            $View->set('content', $content);
+        if ($view->get('content') === null) {
+            $view->set('content', $content);
         }
 
         foreach ($types as $type) {
-            $View->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
-            $View->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
+            $view->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
+            $view->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
 
-            $render = $View->render();
+            $render = $view->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);
             $rendered[$type] = $this->_encodeString($render, $this->charset);
         }

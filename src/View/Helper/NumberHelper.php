@@ -54,13 +54,13 @@ class NumberHelper extends Helper
      * - `engine` Class name to use to replace Cake\I18n\Number functionality
      *            The class needs to be placed in the `Utility` directory.
      *
-     * @param \Cake\View\View $View The View this helper is being attached to.
+     * @param \Cake\View\View $view The View this helper is being attached to.
      * @param array $config Configuration settings for the helper
      * @throws \Cake\Core\Exception\Exception When the engine class could not be found.
      */
-    public function __construct(View $View, array $config = [])
+    public function __construct(View $view, array $config = [])
     {
-        parent::__construct($View, $config);
+        parent::__construct($view, $config);
 
         $config = $this->_config;
 
