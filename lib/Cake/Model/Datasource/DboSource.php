@@ -367,18 +367,18 @@ class DboSource extends DataSource {
 			$column = $this->introspectType($data);
 		}
 
+		$isStringEnum = false;
 		if (strpos($column, "enum") === 0) {
-			preg_match("/(enum\()(.*)(\))/", $column, $acceptingValues);
+			$firstValue = null;
 			if(preg_match("/(enum\()(.*)(\))/",$column, $acceptingValues)){
-			    $values = explode(",", $acceptingValues[2]);
-			    $firstValue = $value[0];
+				$values = explode(",", $acceptingValues[2]);
+				$firstValue = $value[0];
 			}
 			if (is_string($firstValue)) {
 				$isStringEnum = true;
 			}
 		}
 
-		
 		switch ($column) {
 			case 'binary':
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
