@@ -135,7 +135,7 @@ if (!function_exists('stackTrace')) {
  * - `start` - The stack frame to start generating a trace from. Defaults to 1
  *
  * @param array $options Format for outputting stack trace
- * @return mixed Formatted stack trace
+ * @return void Outputs formatted stack trace.
  * @see Debugger::trace()
  */
 	function stackTrace(array $options = array()) {
@@ -167,17 +167,16 @@ if (!function_exists('sortByKey')) {
 		if (!is_array($array)) {
 			return null;
 		}
-
+		$sa = array();
 		foreach ($array as $key => $val) {
 			$sa[$key] = $val[$sortBy];
 		}
-
 		if ($order === 'asc') {
 			asort($sa, $type);
 		} else {
 			arsort($sa, $type);
 		}
-
+		$out = array();
 		foreach ($sa as $key => $val) {
 			$out[] = $array[$key];
 		}
@@ -194,9 +193,9 @@ if (!function_exists('h')) {
  * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
  *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
  *    implement a `__toString` method. Otherwise the class name will be used.
- * @param bool $double Encode existing html entities
+ * @param bool|string $double Boolean - encode existing html entities. String - character set to use when escaping.
  * @param string $charset Character set to use when escaping. Defaults to config value in 'App.encoding' or 'UTF-8'
- * @return string|array|object Wrapped text, Wrapped Array or Wrapped Object
+ * @return string|array|bool|object Wrapped text, Wrapped Array or Wrapped Object.
  * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#h
  */
 	function h($text, $double = true, $charset = null) {
@@ -227,6 +226,7 @@ if (!function_exists('h')) {
 		}
 		if (is_string($double)) {
 			$charset = $double;
+			$double = true;
 		}
 		return htmlspecialchars($text, ENT_QUOTES, ($charset) ? $charset : $defaultCharset, $double);
 	}
@@ -431,7 +431,7 @@ if (!function_exists('cache')) {
 		if (!is_numeric($expires)) {
 			$expires = strtotime($expires, $now);
 		}
-
+		$filename = '';
 		switch (strtolower($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
@@ -484,7 +484,7 @@ if (!function_exists('clearCache')) {
  *   all files in app/tmp/cache/views will be deleted
  * @param string $type Directory in tmp/cache defaults to view directory
  * @param string $ext The file extension you are deleting
- * @return true if files found and deleted false otherwise
+ * @return bool `true` if files found and deleted, `false` otherwise.
  */
 	function clearCache($params = null, $type = 'views', $ext = '.php') {
 		if (is_string($params) || $params === null) {
@@ -551,8 +551,8 @@ if (!function_exists('stripslashes_deep')) {
 /**
  * Recursively strips slashes from all values in an array
  *
- * @param array $values Array of values to strip slashes
- * @return mixed What is returned from calling stripslashes
+ * @param array|string $values Array of values or a string to strip slashes.
+ * @return array|string What is returned from calling stripslashes.
  * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#stripslashes_deep
  */
 	function stripslashes_deep($values) {
@@ -1025,14 +1025,13 @@ if (!function_exists('fileExistsInPath')) {
  * Searches include path for files.
  *
  * @param string $file File to look for
- * @return string Full path to file if exists, otherwise false
+ * @return bool|string Full path to file if exists, otherwise `false`.
  * @link https://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
  */
 	function fileExistsInPath($file) {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
 		foreach ($paths as $path) {
 			$fullPath = $path . DS . $file;
-
 			if (file_exists($fullPath)) {
 				return $fullPath;
 			} elseif (file_exists($file)) {

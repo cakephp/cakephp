@@ -455,7 +455,7 @@ class View extends CakeObject {
  * a plugin view/layout can be used instead of the app ones. If the chosen plugin is not found
  * the view will be located along the regular view path cascade.
  *
- * @param string $view Name of view file to use
+ * @param false|string $view Name of view file to use.
  * @param string $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
  * @triggers View.beforeRender $this, array($viewFileName)

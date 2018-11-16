@@ -25,6 +25,11 @@ App::uses('Hash', 'Utility');
  *
  * `$request['controller']` or `$request->controller`.
  *
+ * @property string $plugin     The plugin handling the request. Will be `null` when there is no plugin.
+ * @property string $controller The controller handling the current request.
+ * @property string $action     The action handling the current request.
+ * @property array $named       Array of named parameters parsed from the URL.
+ * @property array $pass        Array of passed arguments parsed from the URL.
  * @package       Cake.Network
  */
 class CakeRequest implements ArrayAccess {
