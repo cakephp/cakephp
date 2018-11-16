@@ -1276,6 +1276,9 @@ class ServerRequestTest extends TestCase
         $request = $request->withEnv('TEST_VAR', 'wrong value');
         $this->assertFalse($request->isBanana());
 
+        $request = $request->withEnv('HTTP_USER_AGENT', 'Mozilla/5.0 (Linux; Android 8.1.0; Nexus 5X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.80 Mobile Safari/537.36');
+        $this->assertTrue($request->isMobile());
+
         ServerRequest::addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Imagination']]);
         $request = $request->withEnv('HTTP_USER_AGENT', 'Imagination land');
         $this->assertTrue($request->isMobile());
