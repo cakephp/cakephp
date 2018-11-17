@@ -1318,9 +1318,6 @@ class CakeResponse {
 				continue;
 			}
 			$original = $domain;
-			if (strpos($domain, '://') === false) {
-				$preg = ($requestIsSSL ? 'https://' : 'http://') . $domain;
-			}
 			$preg = '@' . str_replace('*', '.*', $domain) . '@';
 			$result[] = compact('original', 'preg');
 		}
