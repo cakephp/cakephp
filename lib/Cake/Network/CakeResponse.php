@@ -374,7 +374,7 @@ class CakeResponse {
  * Holds all the cache directives that will be converted
  * into headers when sending the request
  *
- * @var string
+ * @var array
  */
 	protected $_cacheDirectives = array();
 
@@ -672,8 +672,9 @@ class CakeResponse {
  *
  *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
  *
- * @return mixed associative array of the HTTP codes as keys, and the message
- *    strings as values, or null of the given $code does not exist.
+ * @return array|null|true associative array of the HTTP codes as keys, and the message
+ *    strings as values, or null of the given $code does not exist. `true` if `$code` is
+ *    an array of valid codes.
  * @throws CakeException If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
@@ -717,7 +718,7 @@ class CakeResponse {
  *
  * e.g `type(array('jpg' => 'text/plain'));`
  *
- * @param string $contentType Content type key.
+ * @param array|string $contentType Content type key.
  * @return mixed current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
@@ -854,7 +855,7 @@ class CakeResponse {
 		}
 
 		$this->maxAge($time);
-		if (!$time) {
+		if ($time === null) {
 			$this->_setCacheControl();
 		}
 		return (bool)$public;
@@ -1160,7 +1161,11 @@ class CakeResponse {
  * @return bool whether the response was marked as not modified or not.
  */
 	public function checkNotModified(CakeRequest $request) {
-		$etags = preg_split('/\s*,\s*/', $request->header('If-None-Match'), null, PREG_SPLIT_NO_EMPTY);
+		$ifNoneMatchHeader = $request->header('If-None-Match');
+		$etags = array();
+		if (is_string($ifNoneMatchHeader)) {
+			$etags = preg_split('/\s*,\s*/', $ifNoneMatchHeader, null, PREG_SPLIT_NO_EMPTY);
+		}
 		$modifiedSince = $request->header('If-Modified-Since');
 		$checks = array();
 		if ($responseTag = $this->etag()) {
@@ -1224,7 +1229,7 @@ class CakeResponse {
  *
  * `$this->cookie((array) $options)`
  *
- * @param array $options Either null to get all cookies, string for a specific cookie
+ * @param array|string $options Either null to get all cookies, string for a specific cookie
  *  or array to set cookie.
  * @return mixed
  */
@@ -1312,8 +1317,7 @@ class CakeResponse {
 				$result[] = array('preg' => '@.@', 'original' => '*');
 				continue;
 			}
-
-			$original = $preg = $domain;
+			$original = $domain;
 			if (strpos($domain, '://') === false) {
 				$preg = ($requestIsSSL ? 'https://' : 'http://') . $domain;
 			}
@@ -1464,7 +1468,7 @@ class CakeResponse {
 		$file->open('rb');
 
 		$end = $start = false;
-		if ($range) {
+		if (!empty($range)) {
 			list($start, $end) = $range;
 		}
 		if ($start !== false) {

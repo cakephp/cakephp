@@ -712,7 +712,7 @@ class Controller extends CakeObject implements CakeEventListener {
  *            800 => 'Unexpected Minotaur'
  *        )); // sets these new values, and returns true
  *
- * @return array Associative array of the HTTP codes as keys, and the message
+ * @return array|null|true Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
  * @deprecated 3.0.0 Since 2.4. Will be removed in 3.0. Use CakeResponse::httpCodes().
  */
@@ -757,7 +757,7 @@ class Controller extends CakeObject implements CakeEventListener {
  *
  * @param string|array $url A string or array-based URL pointing to another location within the app,
  *     or an absolute URL
- * @param int|array|null $status HTTP status code (eg: 301). Defaults to 302 when null is passed.
+ * @param int|array|null|string $status HTTP status code (eg: 301). Defaults to 302 when null is passed.
  * @param bool $exit If true, exit() will be called after the redirect
  * @return CakeResponse|null
  * @triggers Controller.beforeRedirect $this, array($url, $status, $exit)
@@ -905,7 +905,7 @@ class Controller extends CakeObject implements CakeEventListener {
  *
  * `$errors = $this->validateErrors($this->Article, $this->User);`
  *
- * @return array Validation errors, or false if none
+ * @return array|false Validation errors, or false if none
  * @deprecated 3.0.0 This method will be removed in 3.0
  */
 	public function validateErrors() {
