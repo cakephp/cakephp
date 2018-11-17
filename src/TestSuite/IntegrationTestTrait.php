@@ -194,13 +194,6 @@ trait IntegrationTestTrait
     protected $_cookieEncryptionKey;
 
     /**
-     * Allow router reloading to be disabled.
-     *
-     * @var bool
-     */
-    protected $_disableRouterReload = false;
-
-    /**
      * Auto-detect if the HTTP middleware stack should be used.
      *
      * @return void
@@ -547,7 +540,7 @@ trait IntegrationTestTrait
     protected function _makeDispatcher()
     {
         if ($this->_useHttpServer) {
-            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs, $this->_disableRouterReload);
+            return new MiddlewareDispatcher($this, $this->_appClass, $this->_appArgs);
         }
 
         return new LegacyRequestDispatcher($this);

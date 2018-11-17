@@ -515,6 +515,30 @@ class Router
     }
 
     /**
+     * Reset routes and related state.
+     *
+     * Similar to reload() except that this doesn't reset all global state,
+     * as that leads to incorrect behavior in some plugin test case scenarios.
+     *
+     * This method will reset:
+     *
+     * - routes
+     * - URL Filters
+     * - the initialized property
+     *
+     * Extensions and default route classes will not be modified
+     *
+     * @internal
+     * @return void
+     */
+    public static function resetRoutes()
+    {
+        static::$_collection = new RouteCollection();
+        static::$_urlFilters = [];
+        static::$initialized = false;
+    }
+
+    /**
      * Add a URL filter to Router.
      *
      * URL filter functions are applied to every array $url provided to
