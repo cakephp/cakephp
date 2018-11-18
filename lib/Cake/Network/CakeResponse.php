@@ -331,7 +331,7 @@ class CakeResponse {
  * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
  * or a complete mime-type
  *
- * @var int
+ * @var string
  */
 	protected $_contentType = 'text/html';
 
@@ -718,8 +718,8 @@ class CakeResponse {
  *
  * e.g `type(array('jpg' => 'text/plain'));`
  *
- * @param array|string $contentType Content type key.
- * @return mixed current content type or false if supplied an invalid content type
+ * @param array|string|null $contentType Content type key.
+ * @return string|false current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
 		if ($contentType === null) {
