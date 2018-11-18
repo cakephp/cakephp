@@ -855,7 +855,7 @@ class CakeResponse {
 		}
 
 		$this->maxAge($time);
-		if ($time === null) {
+		if ((int)$time === 0) {
 			$this->_setCacheControl();
 		}
 		return (bool)$public;
