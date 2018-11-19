@@ -183,7 +183,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $canBeEmpty = $this->_canBeEmpty($field, $context);
 
-            $flags = self::EMPTY_ALL;
+            $flags = static::EMPTY_ALL;
             if (isset($this->_allowEmptyFlags[$name])) {
                 $flags = $this->_allowEmptyFlags[$name];
             }
@@ -2319,7 +2319,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function _fieldIsEmpty($data)
     {
-        return $this->isEmpty($data, self::EMPTY_ALL);
+        return $this->isEmpty($data, static::EMPTY_ALL);
     }
 
     /**
