@@ -39,7 +39,7 @@ class RoutingMiddleware
     /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Core\HttpApplicationInterface
+     * @var \Cake\Http\BaseApplication|null
      */
     protected $app;
 
@@ -47,17 +47,17 @@ class RoutingMiddleware
      * The cache configuration name to use for route collection caching,
      * null to disable caching
      *
-     * @var string
+     * @var string|null
      */
     protected $cacheConfig;
 
     /**
      * Constructor
      *
-     * @param \Cake\Core\HttpApplicationInterface|null $app The application instance that routes are defined on.
+     * @param \Cake\Http\BaseApplication|null $app The application instance that routes are defined on.
      * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(HttpApplicationInterface $app = null, $cacheConfig = null)
+    public function __construct(BaseApplication $app = null, $cacheConfig = null)
     {
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;
