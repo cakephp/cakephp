@@ -217,9 +217,7 @@ class ErrorHandlerMiddleware
         if ($referer) {
             $message .= "\nReferer URL: " . $referer;
         }
-        if ($this->getConfig('trace')) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
-        }
+        $message .= "\n\n";
 
         return $message;
     }
@@ -235,7 +233,7 @@ class ErrorHandlerMiddleware
     {
         $message = sprintf(
             '%s[%s] %s',
-            $isPrevious ? "\nPrevious: " : '',
+            $isPrevious ? "\nCaused by: " : '',
             get_class($exception),
             $exception->getMessage()
         );
@@ -246,6 +244,10 @@ class ErrorHandlerMiddleware
             if ($attributes) {
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
+        }
+
+        if ($this->getConfig('trace')) {
+            $message .= "\n" . $exception->getTraceAsString();
         }
 
         $previous = $exception->getPrevious();
