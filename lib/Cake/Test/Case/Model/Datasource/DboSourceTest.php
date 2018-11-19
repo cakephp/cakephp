@@ -1048,6 +1048,35 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test for MySQL enum datatype for a list of Integer stored as String
+ *
+ * @return void
+ */
+	public function testIntValueAsStringOnEnum() {
+		if (!$this->db instanceof Mysql) {
+			$this->markTestSkipped('This test can only run on MySQL');
+		}
+		$name = $this->db->fullTableName('enum_tests');
+		$query = "CREATE TABLE {$name} (faya ENUM('10','20','30','40') NOT NULL);";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
+		$EnumTest = ClassRegistry::init('EnumTest');
+		$enumResult = $EnumTest->save(array('faya' => '20'));
+
+		$query = "DROP TABLE {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
+		$this->assertEquals(array(
+			'EnumTest' => array(
+				'faya' => '20',
+				'id' => '1'
+			)
+		), $enumResult);
+	}
+        
+/**
  * test order to generate query order clause for virtual fields
  *
  * @return void
