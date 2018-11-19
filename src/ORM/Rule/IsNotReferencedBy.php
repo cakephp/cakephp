@@ -57,8 +57,9 @@ class IsNotReferencedBy
      */
     public function __invoke(EntityInterface $entity, array $options)
     {
-        if (is_string($options))
-        $assoc = $options['repository']->association($this->_repository);
+        if (is_string($options)) {
+            $assoc = $options['repository']->association($this->_repository);
+        }
 
         if (!$assoc) {
             throw new RuntimeException(sprintf(
