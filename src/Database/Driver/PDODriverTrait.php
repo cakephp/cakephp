@@ -17,9 +17,12 @@ namespace Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
+use PDOException;
 
 /**
  * PDO driver trait
+ *
+ * @deprecated 3.6.0 The methods of this trait have been added to `Driver` class.
  */
 trait PDODriverTrait
 {
@@ -90,7 +93,7 @@ trait PDODriverTrait
         } else {
             try {
                 $connected = $this->_connection->query('SELECT 1');
-            } catch (\PDOException $e) {
+            } catch (PDOException $e) {
                 $connected = false;
             }
         }
@@ -155,7 +158,7 @@ trait PDODriverTrait
             return false;
         }
 
-        return $this->_connection->rollback();
+        return $this->_connection->rollBack();
     }
 
     /**

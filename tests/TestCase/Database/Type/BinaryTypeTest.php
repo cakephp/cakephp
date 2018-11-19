@@ -71,6 +71,10 @@ class BinaryTypeTest extends TestCase
      */
     public function testToPHPSqlserver()
     {
+        if (version_compare(PHP_VERSION, '7.0', '>')) {
+            $this->markTestSkipped('PHP 7 MSSQL Drivers does not return binary fields as hexadecimal.');
+        }
+
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
             ->disableOriginalConstructor()
             ->getMock();
@@ -82,11 +86,11 @@ class BinaryTypeTest extends TestCase
     /**
      * Test exceptions on invalid data.
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Unable to convert array into binary.
      */
     public function testToPHPFailure()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('Unable to convert array into binary.');
         $this->type->toPHP([], $this->driver);
     }
 

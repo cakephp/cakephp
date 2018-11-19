@@ -16,6 +16,7 @@ namespace Cake\ORM\Association;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\DependentDeleteHelper;
 use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
@@ -28,9 +29,6 @@ use Cake\Utility\Inflector;
  */
 class HasOne extends Association
 {
-
-    use DependentDeleteTrait;
-
     /**
      * Valid strategies for this type of association
      *
@@ -97,8 +95,7 @@ class HasOne extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array|\ArrayObject $options options to be passed to the save method in
-     * the target table
+     * @param array $options options to be passed to the save method in the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
@@ -128,7 +125,7 @@ class HasOne extends Association
     /**
      * {@inheritDoc}
      *
-     * @return callable
+     * @return \Closure
      */
     public function eagerLoader(array $options)
     {
@@ -144,5 +141,15 @@ class HasOne extends Association
         ]);
 
         return $loader->buildEagerLoader($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    {
+        $helper = new DependentDeleteHelper();
+
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }

@@ -14,7 +14,6 @@
 
 namespace Cake\Test\TestCase\ORM\Locator;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -38,15 +37,42 @@ class LocatorAwareTraitTest extends TestCase
     /**
      * Tests tableLocator method
      *
+     * @group deprecated
      * @return void
      */
     public function testTableLocator()
     {
-        $tableLocator = $this->subject->tableLocator();
-        $this->assertSame(TableRegistry::locator(), $tableLocator);
+        $this->deprecated(function () {
+            $tableLocator = $this->subject->tableLocator();
+            $this->assertSame($this->getTableLocator(), $tableLocator);
 
+            $newLocator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
+            $subjectLocator = $this->subject->tableLocator($newLocator);
+            $this->assertSame($newLocator, $subjectLocator);
+        });
+    }
+
+    /**
+     * Tests testGetTableLocator method
+     *
+     * @return void
+     */
+    public function testGetTableLocator()
+    {
+        $tableLocator = $this->subject->getTableLocator();
+        $this->assertSame($this->getTableLocator(), $tableLocator);
+    }
+
+    /**
+     * Tests testSetTableLocator method
+     *
+     * @return void
+     */
+    public function testSetTableLocator()
+    {
         $newLocator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
-        $subjectLocator = $this->subject->tableLocator($newLocator);
+        $this->subject->setTableLocator($newLocator);
+        $subjectLocator = $this->subject->getTableLocator();
         $this->assertSame($newLocator, $subjectLocator);
     }
 }

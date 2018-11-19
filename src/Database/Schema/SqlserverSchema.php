@@ -81,64 +81,72 @@ class SqlserverSchema extends BaseSchema
     protected function _convertColumn($col, $length = null, $precision = null, $scale = null)
     {
         $col = strtolower($col);
+        $length = (int)$length;
+        $precision = (int)$precision;
+        $scale = (int)$scale;
+
         if (in_array($col, ['date', 'time'])) {
             return ['type' => $col, 'length' => null];
         }
         if (strpos($col, 'datetime') !== false) {
-            return ['type' => 'timestamp', 'length' => null];
+            return ['type' => TableSchema::TYPE_TIMESTAMP, 'length' => null];
         }
 
-        if ($col === 'int' || $col === 'integer') {
-            return ['type' => 'integer', 'length' => $precision ?: 10];
-        }
-        if ($col === 'bigint') {
-            return ['type' => 'biginteger', 'length' => $precision ?: 20];
+        if ($col === 'tinyint') {
+            return ['type' => TableSchema::TYPE_TINYINTEGER, 'length' => $precision ?: 3];
         }
         if ($col === 'smallint') {
-            return ['type' => 'integer', 'length' => $precision ?: 5];
+            return ['type' => TableSchema::TYPE_SMALLINTEGER, 'length' => $precision ?: 5];
         }
-        if ($col === 'tinyint') {
-            return ['type' => 'integer', 'length' => $precision ?: 3];
+        if ($col === 'int' || $col === 'integer') {
+            return ['type' => TableSchema::TYPE_INTEGER, 'length' => $precision ?: 10];
+        }
+        if ($col === 'bigint') {
+            return ['type' => TableSchema::TYPE_BIGINTEGER, 'length' => $precision ?: 20];
         }
         if ($col === 'bit') {
-            return ['type' => 'boolean', 'length' => null];
+            return ['type' => TableSchema::TYPE_BOOLEAN, 'length' => null];
         }
         if (strpos($col, 'numeric') !== false ||
             strpos($col, 'money') !== false ||
             strpos($col, 'decimal') !== false
         ) {
-            return ['type' => 'decimal', 'length' => $precision, 'precision' => $scale];
+            return ['type' => TableSchema::TYPE_DECIMAL, 'length' => $precision, 'precision' => $scale];
         }
 
         if ($col === 'real' || $col === 'float') {
-            return ['type' => 'float', 'length' => null];
+            return ['type' => TableSchema::TYPE_FLOAT, 'length' => null];
         }
-
+        // SqlServer schema reflection returns double length for unicode
+        // columns because internally it uses UTF16/UCS2
+        if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
+            $length /= 2;
+        }
         if (strpos($col, 'varchar') !== false && $length < 0) {
-            return ['type' => 'text', 'length' => null];
+            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
         if (strpos($col, 'varchar') !== false) {
-            return ['type' => 'string', 'length' => $length ?: 255];
+            return ['type' => TableSchema::TYPE_STRING, 'length' => $length ?: 255];
         }
 
         if (strpos($col, 'char') !== false) {
-            return ['type' => 'string', 'fixed' => true, 'length' => $length];
+            return ['type' => TableSchema::TYPE_STRING, 'fixed' => true, 'length' => $length];
         }
 
         if (strpos($col, 'text') !== false) {
-            return ['type' => 'text', 'length' => null];
+            return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
-        if ($col === 'image' || strpos($col, 'binary')) {
-            return ['type' => 'binary', 'length' => null];
+        if ($col === 'image' || strpos($col, 'binary') !== false) {
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
         if ($col === 'uniqueidentifier') {
-            return ['type' => 'uuid'];
+            return ['type' => TableSchema::TYPE_UUID];
         }
 
-        return ['type' => 'string', 'length' => null];
+        return ['type' => TableSchema::TYPE_STRING, 'length' => null];
     }
 
     /**
@@ -158,7 +166,7 @@ class SqlserverSchema extends BaseSchema
         if (!empty($row['autoincrement'])) {
             $field['autoIncrement'] = true;
         }
-        if ($field['type'] === 'boolean') {
+        if ($field['type'] === TableSchema::TYPE_BOOLEAN) {
             $row['default'] = (int)$row['default'];
         }
 
@@ -222,19 +230,19 @@ class SqlserverSchema extends BaseSchema
      */
     public function convertIndexDescription(TableSchema $schema, $row)
     {
-        $type = Table::INDEX_INDEX;
+        $type = TableSchema::INDEX_INDEX;
         $name = $row['index_name'];
         if ($row['is_primary_key']) {
-            $name = $type = Table::CONSTRAINT_PRIMARY;
+            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
-        if ($row['is_unique_constraint'] && $type === Table::INDEX_INDEX) {
-            $type = Table::CONSTRAINT_UNIQUE;
+        if ($row['is_unique_constraint'] && $type === TableSchema::INDEX_INDEX) {
+            $type = TableSchema::CONSTRAINT_UNIQUE;
         }
 
-        if ($type === Table::INDEX_INDEX) {
-            $existing = $schema->index($name);
+        if ($type === TableSchema::INDEX_INDEX) {
+            $existing = $schema->getIndex($name);
         } else {
-            $existing = $schema->constraint($name);
+            $existing = $schema->getConstraint($name);
         }
 
         $columns = [$row['column_name']];
@@ -242,7 +250,7 @@ class SqlserverSchema extends BaseSchema
             $columns = array_merge($existing['columns'], $columns);
         }
 
-        if ($type === Table::CONSTRAINT_PRIMARY || $type === Table::CONSTRAINT_UNIQUE) {
+        if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
             $schema->addConstraint($name, [
                 'type' => $type,
                 'columns' => $columns
@@ -284,7 +292,7 @@ class SqlserverSchema extends BaseSchema
     public function convertForeignKeyDescription(TableSchema $schema, $row)
     {
         $data = [
-            'type' => Table::CONSTRAINT_FOREIGN,
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
             'columns' => [$row['column']],
             'references' => [$row['reference_table'], $row['reference_column']],
             'update' => $this->_convertOnClause($row['update_type']),
@@ -301,7 +309,7 @@ class SqlserverSchema extends BaseSchema
     {
         $parent = parent::_foreignOnClause($on);
 
-        return $parent === 'RESTRICT' ? parent::_foreignOnClause(Table::ACTION_SET_NULL) : $parent;
+        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_SET_NULL) : $parent;
     }
 
     /**
@@ -311,16 +319,16 @@ class SqlserverSchema extends BaseSchema
     {
         switch ($clause) {
             case 'NO_ACTION':
-                return Table::ACTION_NO_ACTION;
+                return TableSchema::ACTION_NO_ACTION;
             case 'CASCADE':
-                return Table::ACTION_CASCADE;
+                return TableSchema::ACTION_CASCADE;
             case 'SET_NULL':
-                return Table::ACTION_SET_NULL;
+                return TableSchema::ACTION_SET_NULL;
             case 'SET_DEFAULT':
-                return Table::ACTION_SET_DEFAULT;
+                return TableSchema::ACTION_SET_DEFAULT;
         }
 
-        return Table::ACTION_SET_NULL;
+        return TableSchema::ACTION_SET_NULL;
     }
 
     /**
@@ -328,48 +336,58 @@ class SqlserverSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, $name)
     {
-        $data = $schema->column($name);
+        $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
-            'integer' => ' INTEGER',
-            'biginteger' => ' BIGINT',
-            'boolean' => ' BIT',
-            'float' => ' FLOAT',
-            'decimal' => ' DECIMAL',
-            'date' => ' DATE',
-            'time' => ' TIME',
-            'datetime' => ' DATETIME',
-            'timestamp' => ' DATETIME',
-            'uuid' => ' UNIQUEIDENTIFIER',
-            'json' => ' NVARCHAR(MAX)',
+            TableSchema::TYPE_TINYINTEGER => ' TINYINT',
+            TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
+            TableSchema::TYPE_INTEGER => ' INTEGER',
+            TableSchema::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchema::TYPE_BINARY_UUID => ' UNIQUEIDENTIFIER',
+            TableSchema::TYPE_BOOLEAN => ' BIT',
+            TableSchema::TYPE_FLOAT => ' FLOAT',
+            TableSchema::TYPE_DECIMAL => ' DECIMAL',
+            TableSchema::TYPE_DATE => ' DATE',
+            TableSchema::TYPE_TIME => ' TIME',
+            TableSchema::TYPE_DATETIME => ' DATETIME',
+            TableSchema::TYPE_TIMESTAMP => ' DATETIME',
+            TableSchema::TYPE_UUID => ' UNIQUEIDENTIFIER',
+            TableSchema::TYPE_JSON => ' NVARCHAR(MAX)',
         ];
 
         if (isset($typeMap[$data['type']])) {
             $out .= $typeMap[$data['type']];
         }
 
-        if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
+        if ($data['type'] === TableSchema::TYPE_INTEGER || $data['type'] === TableSchema::TYPE_BIGINTEGER) {
             if ([$name] === $schema->primaryKey() || $data['autoIncrement'] === true) {
                 unset($data['null'], $data['default']);
                 $out .= ' IDENTITY(1, 1)';
             }
         }
 
-        if ($data['type'] === 'text' && $data['length'] !== Table::LENGTH_TINY) {
+        if ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' NVARCHAR(MAX)';
         }
 
-        if ($data['type'] === 'binary') {
-            $out .= ' VARBINARY';
+        if ($data['type'] === TableSchema::TYPE_BINARY) {
+            if (!isset($data['length'])
+                || in_array($data['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)) {
+                $data['length'] = 'MAX';
+            }
 
-            if ($data['length'] !== Table::LENGTH_TINY) {
-                $out .= '(MAX)';
+            if ($data['length'] === 1) {
+                $out .= ' BINARY(1)';
             } else {
-                $out .= sprintf('(%s)', Table::LENGTH_TINY);
+                $out .= ' VARBINARY';
+
+                $out .= sprintf('(%s)', $data['length']);
             }
         }
 
-        if ($data['type'] === 'string' || ($data['type'] === 'text' && $data['length'] === Table::LENGTH_TINY)) {
+        if ($data['type'] === TableSchema::TYPE_STRING ||
+            ($data['type'] === TableSchema::TYPE_TEXT && $data['length'] === TableSchema::LENGTH_TINY)
+        ) {
             $type = ' NVARCHAR';
 
             if (!empty($data['fixed'])) {
@@ -383,16 +401,16 @@ class SqlserverSchema extends BaseSchema
             $out .= sprintf('%s(%d)', $type, $data['length']);
         }
 
-        $hasCollate = ['text', 'string'];
+        $hasCollate = [TableSchema::TYPE_TEXT, TableSchema::TYPE_STRING];
         if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
             $out .= ' COLLATE ' . $data['collate'];
         }
 
-        if ($data['type'] === 'float' && isset($data['precision'])) {
+        if ($data['type'] === TableSchema::TYPE_FLOAT && isset($data['precision'])) {
             $out .= '(' . (int)$data['precision'] . ')';
         }
 
-        if ($data['type'] === 'decimal' &&
+        if ($data['type'] === TableSchema::TYPE_DECIMAL &&
             (isset($data['length']) || isset($data['precision']))
         ) {
             $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
@@ -403,8 +421,9 @@ class SqlserverSchema extends BaseSchema
         }
 
         if (isset($data['default']) &&
-            in_array($data['type'], ['timestamp', 'datetime']) &&
-            strtolower($data['default']) === 'current_timestamp') {
+            in_array($data['type'], [TableSchema::TYPE_TIMESTAMP, TableSchema::TYPE_DATETIME]) &&
+            strtolower($data['default']) === 'current_timestamp'
+        ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($data['default'])) {
             $default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
@@ -425,8 +444,8 @@ class SqlserverSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
-            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+            $constraint = $schema->getConstraint($name);
+            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $sql[] = sprintf($sqlPattern, $tableName, $this->constraintSql($schema, $name));
             }
@@ -444,8 +463,8 @@ class SqlserverSchema extends BaseSchema
         $sql = [];
 
         foreach ($schema->constraints() as $name) {
-            $constraint = $schema->constraint($name);
-            if ($constraint['type'] === Table::CONSTRAINT_FOREIGN) {
+            $constraint = $schema->getConstraint($name);
+            if ($constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $tableName = $this->_driver->quoteIdentifier($schema->name());
                 $constraintName = $this->_driver->quoteIdentifier($name);
                 $sql[] = sprintf($sqlPattern, $tableName, $constraintName);
@@ -460,7 +479,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, $name)
     {
-        $data = $schema->index($name);
+        $data = $schema->getIndex($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
@@ -479,12 +498,12 @@ class SqlserverSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, $name)
     {
-        $data = $schema->constraint($name);
+        $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
-        if ($data['type'] === Table::CONSTRAINT_PRIMARY) {
+        if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
         }
-        if ($data['type'] === Table::CONSTRAINT_UNIQUE) {
+        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
         }
 
@@ -504,7 +523,7 @@ class SqlserverSchema extends BaseSchema
             [$this->_driver, 'quoteIdentifier'],
             $data['columns']
         );
-        if ($data['type'] === Table::CONSTRAINT_FOREIGN) {
+        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),
@@ -548,7 +567,7 @@ class SqlserverSchema extends BaseSchema
         // Restart identity sequences
         $pk = $schema->primaryKey();
         if (count($pk) === 1) {
-            $column = $schema->column($pk[0]);
+            $column = $schema->getColumn($pk[0]);
             if (in_array($column['type'], ['integer', 'biginteger'])) {
                 $queries[] = sprintf(
                     "DBCC CHECKIDENT('%s', RESEED, 0)",

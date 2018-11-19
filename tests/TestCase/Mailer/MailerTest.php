@@ -38,7 +38,7 @@ class MailerTest extends TestCase
         $email = $mailer->getEmailForAssertion();
 
         $mailer->set(['foo' => 'bar']);
-        $this->assertNotEquals($email->viewVars(), $mailer->reset()->getEmailForAssertion()->viewVars());
+        $this->assertNotEquals($email->getViewVars(), $mailer->reset()->getEmailForAssertion()->getViewVars());
     }
 
     public function testGetName()
@@ -46,14 +46,6 @@ class MailerTest extends TestCase
         $result = (new TestMailer())->getName();
         $expected = 'Test';
         $this->assertEquals($expected, $result);
-    }
-
-    public function testLayout()
-    {
-        $result = (new TestMailer())->layout('foo');
-        $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
-        $this->assertEquals('foo', $result->viewBuilder()->layout());
-        $this->assertEquals('foo', $result->getLayout());
     }
 
     public function testProxies()
@@ -72,13 +64,13 @@ class MailerTest extends TestCase
         $result = (new TestMailer($email))->addHeaders(['X-Something' => 'very nice', 'X-Other' => 'cool']);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
 
-        $email = $this->getMockForEmail('attachments');
+        $email = $this->getMockForEmail('setAttachments');
         $email->expects($this->once())
-            ->method('attachments')
+            ->method('setAttachments')
             ->with([
                 ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
             ]);
-        $result = (new TestMailer($email))->attachments([
+        $result = (new TestMailer($email))->setAttachments([
             ['file' => CAKE . 'basics.php', 'mimetype' => 'text/plain']
         ]);
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $result);
@@ -92,7 +84,7 @@ class MailerTest extends TestCase
     public function testGetSetProxies()
     {
         $mailer = new TestMailer();
-        $result = $mailer->setLayout('custom')
+        $result = $mailer
             ->setTo('test@example.com')
             ->setCc('cc@example.com');
         $this->assertSame($result, $mailer);
@@ -133,9 +125,7 @@ class MailerTest extends TestCase
             ->method('test')
             ->with('foo', 'bar');
 
-        $mailer->template('foobar');
         $mailer->send('test', ['foo', 'bar']);
-        $this->assertEquals($mailer->template, 'foobar');
     }
 
     public function testSendWithUnsetTemplateDefaultsToActionName()
@@ -204,18 +194,16 @@ class MailerTest extends TestCase
             ->method('test')
             ->with('foo', 'bar');
 
-        $mailer->template('test');
         $mailer->send('test', ['foo', 'bar']);
-        $this->assertEquals($mailer->template, 'test');
-        $this->assertEquals('cakephp', $mailer->viewBuilder()->template());
+        $this->assertEquals('cakephp', $mailer->viewBuilder()->getTemplate());
     }
 
     /**
-     * @expectedException \Cake\Mailer\Exception\MissingActionException
-     * @expectedExceptionMessage Mail TestMailer::test() could not be found, or is not accessible.
      */
     public function testMissingActionThrowsException()
     {
+        $this->expectException(\Cake\Mailer\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Mail TestMailer::test() could not be found, or is not accessible.');
         (new TestMailer())->send('test');
     }
 }

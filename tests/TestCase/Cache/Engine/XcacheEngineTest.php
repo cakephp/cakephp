@@ -37,7 +37,7 @@ class XcacheEngineTest extends TestCase
             $this->markTestSkipped('Xcache is not installed or configured properly');
         }
         Cache::enable();
-        Cache::config('xcache', ['engine' => 'Xcache', 'prefix' => 'cake_']);
+        Cache::setConfig('xcache', ['engine' => 'Xcache', 'prefix' => 'cake_']);
     }
 
     /**
@@ -53,7 +53,7 @@ class XcacheEngineTest extends TestCase
             'prefix' => 'cake_',
         ];
         Cache::drop('xcache');
-        Cache::config('xcache', array_merge($defaults, $config));
+        Cache::setConfig('xcache', array_merge($defaults, $config));
     }
 
     /**
@@ -75,15 +75,15 @@ class XcacheEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::engine('xcache')->config();
+        $config = Cache::engine('xcache')->getConfig();
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
             'probability' => 100,
             'groups' => [],
         ];
-        $this->assertTrue(isset($config['PHP_AUTH_USER']));
-        $this->assertTrue(isset($config['PHP_AUTH_PW']));
+        $this->assertArrayHasKey('PHP_AUTH_USER', $config);
+        $this->assertArrayHasKey('PHP_AUTH_PW', $config);
 
         unset($config['PHP_AUTH_USER'], $config['PHP_AUTH_PW']);
         $this->assertEquals($config, $expecting);
@@ -250,7 +250,7 @@ class XcacheEngineTest extends TestCase
      */
     public function testGroupsReadWrite()
     {
-        Cache::config('xcache_groups', [
+        Cache::setConfig('xcache_groups', [
             'engine' => 'Xcache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
@@ -277,7 +277,7 @@ class XcacheEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('xcache_groups', [
+        Cache::setConfig('xcache_groups', [
             'engine' => 'Xcache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
@@ -297,7 +297,7 @@ class XcacheEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('xcache_groups', [
+        Cache::setConfig('xcache_groups', [
             'engine' => 'Xcache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],

@@ -62,6 +62,8 @@ use InvalidArgumentException;
  *
  * When using the `for` or `when` matchers, conditions will be re-checked on the before and after
  * callback as the conditions could change during the dispatch cycle.
+ *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 class DispatcherFilter implements EventListenerInterface
 {
@@ -162,7 +164,7 @@ class DispatcherFilter implements EventListenerInterface
         if (!empty($this->_config['for'])) {
             $len = strlen('preg:');
             $for = $this->_config['for'];
-            $url = $request->here(false);
+            $url = $request->getRequestTarget();
             if (substr($for, 0, $len) === 'preg:') {
                 $pass = (bool)preg_match(substr($for, $len), $url);
             } else {

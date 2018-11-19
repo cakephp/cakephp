@@ -40,7 +40,7 @@ class TranslateTraitTest extends TestCase
         $entity->translation('eng')->set('title', 'My Title');
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
 
-        $this->assertTrue($entity->dirty('_translations'));
+        $this->assertTrue($entity->isDirty('_translations'));
 
         $entity->translation('spa')->set('body', 'Contenido');
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
@@ -95,6 +95,6 @@ class TranslateTraitTest extends TestCase
         ]);
         $entity->clean();
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
-        $this->assertTrue($entity->dirty('_translations'));
+        $this->assertTrue($entity->isDirty('_translations'));
     }
 }

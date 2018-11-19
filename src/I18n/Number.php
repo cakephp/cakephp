@@ -243,7 +243,7 @@ class Number
      * @param string|bool|null $currency Default currency string to be used by currency()
      * if $currency argument is not provided. If boolean false is passed, it will clear the
      * currently stored value
-     * @return string Currency
+     * @return string|null Currency
      */
     public static function defaultCurrency($currency = null)
     {

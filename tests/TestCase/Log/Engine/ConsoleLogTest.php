@@ -76,13 +76,13 @@ class ConsoleLogTest extends TestCase
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
         $output->expects($this->at(0))
-            ->method('outputAs')
+            ->method('setOutputAs')
             ->with($expected);
 
         $log = new ConsoleLog([
             'stream' => $output,
         ]);
-        $config = $log->config();
+        $config = $log->getConfig();
         $this->assertEquals($expected, $config['outputAs']);
     }
 }

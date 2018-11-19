@@ -20,8 +20,8 @@ use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Entity\Article;
 
 /**
  * ResultSet test case.
@@ -29,7 +29,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
 
-    public $fixtures = ['core.articles', 'core.authors', 'core.comments'];
+    public $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**
      * setup
@@ -78,7 +78,7 @@ class ResultSetTest extends TestCase
      */
     public function testRewindStreaming()
     {
-        $query = $this->table->find('all')->bufferResults(false);
+        $query = $this->table->find('all')->enableBufferedResults(false);
         $results = $query->all();
         $first = $second = [];
         foreach ($results as $result) {
@@ -118,7 +118,7 @@ class ResultSetTest extends TestCase
      */
     public function testIteratorAfterSerializationNoHydration()
     {
-        $query = $this->table->find('all')->hydrate(false);
+        $query = $this->table->find('all')->enableHydration(false);
         $results = unserialize(serialize($query->all()));
 
         // Use a loop to test Iterator implementation
@@ -141,7 +141,7 @@ class ResultSetTest extends TestCase
         foreach ($results as $i => $row) {
             $expected = new Entity($this->fixtureData[$i]);
             $expected->isNew(false);
-            $expected->source($this->table->alias());
+            $expected->setSource($this->table->getAlias());
             $expected->clean();
             $this->assertEquals($expected, $row, "Row $i does not match");
         }
@@ -169,7 +169,7 @@ class ResultSetTest extends TestCase
     public function testFirst()
     {
         $query = $this->table->find('all');
-        $results = $query->hydrate(false)->all();
+        $results = $query->enableHydration(false)->all();
 
         $row = $results->first();
         $this->assertEquals($this->fixtureData[0], $row);
@@ -186,7 +186,7 @@ class ResultSetTest extends TestCase
     public function testFirstAfterSerialize()
     {
         $query = $this->table->find('all');
-        $results = $query->hydrate(false)->all();
+        $results = $query->enableHydration(false)->all();
         $results = unserialize(serialize($results));
 
         $row = $results->first();
@@ -235,7 +235,7 @@ class ResultSetTest extends TestCase
         $options = [
             'markNew' => false,
             'markClean' => true,
-            'source' => $this->table->alias()
+            'source' => $this->table->getAlias()
         ];
         $expected = [
             1 => [
@@ -271,7 +271,7 @@ class ResultSetTest extends TestCase
      */
     public function testBelongsToEagerLoaderLeavesEmptyAssociation()
     {
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $comments->belongsTo('Articles');
 
         // Clear the articles table so we can trigger an empty belongsTo
@@ -279,7 +279,7 @@ class ResultSetTest extends TestCase
 
         $comment = $comments->find()->where(['Comments.id' => 1])
             ->contain(['Articles'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
         $this->assertEquals(1, $comment['id']);
         $this->assertNotEmpty($comment['comment']);
@@ -299,12 +299,12 @@ class ResultSetTest extends TestCase
      */
     public function testBelongsToEagerLoaderWithAutoFieldsFalse()
     {
-        $authors = TableRegistry::get('Authors');
+        $authors = $this->getTableLocator()->get('Authors');
 
         $author = $authors->newEntity(['name' => null]);
         $authors->save($author);
 
-        $articles = TableRegistry::get('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Authors');
 
         $article = $articles->newEntity([
@@ -317,8 +317,8 @@ class ResultSetTest extends TestCase
             ->select(['Articles.id', 'Articles.title', 'Authors.name'])
             ->contain(['Authors'])
             ->where(['Articles.id' => $article->id])
-            ->autoFields(false)
-            ->hydrate(false)
+            ->enableAutoFields(false)
+            ->enableHydration(false)
             ->first();
 
         $this->assertNotNull($result['author']);
@@ -334,7 +334,7 @@ class ResultSetTest extends TestCase
         $this->table->hasOne('Comments');
 
         // Clear the comments table so we can trigger an empty hasOne.
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $comments->deleteAll([]);
 
         $article = $this->table->get(1, ['contain' => ['Comments']]);
@@ -344,7 +344,7 @@ class ResultSetTest extends TestCase
 
         $article = $this->table->find()->where(['articles.id' => 1])
             ->contain(['Comments'])
-            ->hydrate(false)
+            ->enableHydration(false)
             ->first();
         $this->assertNull($article['comment']);
         $this->assertEquals(1, $article['id']);
@@ -359,9 +359,9 @@ class ResultSetTest extends TestCase
      */
     public function testFetchMissingDefaultAlias()
     {
-        $comments = TableRegistry::get('Comments');
+        $comments = $this->getTableLocator()->get('Comments');
         $query = $comments->find()->select(['Other__field' => 'test']);
-        $query->autoFields(false);
+        $query->enableAutoFields(false);
 
         $row = ['Other__field' => 'test'];
         $statement = $this->getMockBuilder('Cake\Database\StatementInterface')->getMock();
@@ -383,21 +383,22 @@ class ResultSetTest extends TestCase
      */
     public function testSourceOnContainAssociations()
     {
-        Plugin::load('TestPlugin');
-        $comments = TableRegistry::get('TestPlugin.Comments');
+        $this->loadPlugins(['TestPlugin']);
+        $comments = $this->getTableLocator()->get('TestPlugin.Comments');
         $comments->belongsTo('Authors', [
             'className' => 'TestPlugin.Authors',
             'foreignKey' => 'user_id'
         ]);
         $result = $comments->find()->contain(['Authors'])->first();
-        $this->assertEquals('TestPlugin.Comments', $result->source());
-        $this->assertEquals('TestPlugin.Authors', $result->author->source());
+        $this->assertEquals('TestPlugin.Comments', $result->getSource());
+        $this->assertEquals('TestPlugin.Authors', $result->author->getSource());
 
         $result = $comments->find()->matching('Authors', function ($q) {
             return $q->where(['Authors.id' => 1]);
         })->first();
-        $this->assertEquals('TestPlugin.Comments', $result->source());
-        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->source());
+        $this->assertEquals('TestPlugin.Comments', $result->getSource());
+        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
+        $this->clearPlugins();
     }
 
     /**
@@ -408,7 +409,7 @@ class ResultSetTest extends TestCase
      */
     public function testIsEmptyDoesNotConsumeData()
     {
-        $table = TableRegistry::get('Comments');
+        $table = $this->getTableLocator()->get('Comments');
         $query = $table->find()
             ->formatResults(function ($results) {
                 return $results;
@@ -416,5 +417,42 @@ class ResultSetTest extends TestCase
         $res = $query->all();
         $res->isEmpty();
         $this->assertCount(6, $res->toArray());
+    }
+
+    /**
+     * Test that ResultSet
+     *
+     * @return void
+     */
+    public function testCollectionMinAndMax()
+    {
+        $query = $this->table->find('all');
+
+        $min = $query->min('id');
+        $minExpected = $this->table->get(1);
+
+        $max = $query->max('id');
+        $maxExpected = $this->table->get(3);
+
+        $this->assertEquals($minExpected, $min);
+        $this->assertEquals($maxExpected, $max);
+    }
+
+    /**
+     * Test that ResultSet
+     *
+     * @return void
+     */
+    public function testCollectionMinAndMaxWithAggregateField()
+    {
+        $query = $this->table->find();
+        $query->select([
+            'counter' => 'COUNT(*)'
+        ])->group('author_id');
+
+        $min = $query->min('counter');
+        $max = $query->max('counter');
+
+        $this->assertTrue($max > $min);
     }
 }

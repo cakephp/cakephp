@@ -52,8 +52,10 @@ class UrlHelper extends Helper
         }
         $options += $defaults;
 
+        /** @var string $url */
         $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
+            /** @var string $url */
             $url = h($url);
         }
 
@@ -71,6 +73,10 @@ class UrlHelper extends Helper
      *   `fullBase` Return full URL with domain name
      *   `pathPrefix` Path prefix for relative URLs
      *   `plugin` False value will prevent parsing path as a plugin
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *        Set to false to skip timestamp generation.
+     *        Set to true to apply timestamps when debug is true. Set to 'force' to always
+     *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
     public function image($path, array $options = [])
@@ -92,6 +98,10 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *        Set to false to skip timestamp generation.
+     *        Set to true to apply timestamps when debug is true. Set to 'force' to always
+     *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
     public function css($path, array $options = [])
@@ -114,6 +124,10 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *        Set to false to skip timestamp generation.
+     *        Set to true to apply timestamps when debug is true. Set to 'force' to always
+     *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
     public function script($path, array $options = [])
@@ -136,6 +150,10 @@ class UrlHelper extends Helper
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
+     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *        Set to false to skip timestamp generation.
+     *        Set to true to apply timestamps when debug is true. Set to 'force' to always
+     *        enable timestamping regardless of debug value.
      * @return string Generated URL
      */
     public function assetUrl($path, array $options = [])
@@ -143,8 +161,12 @@ class UrlHelper extends Helper
         if (is_array($path)) {
             return $this->build($path, !empty($options['fullBase']));
         }
+        // data URIs only require HTML escaping
+        if (preg_match('/^data:[a-z]+\/[a-z]+;/', $path)) {
+            return h($path);
+        }
         if (strpos($path, '://') !== false || preg_match('/^[a-z]+:/i', $path)) {
-            return $path;
+            return ltrim($this->build($path), '/');
         }
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
             list($plugin, $path) = $this->_View->pluginSplit($path, false);
@@ -159,12 +181,19 @@ class UrlHelper extends Helper
             $path .= $options['ext'];
         }
         if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
-            return $path;
+            return $this->build($path);
         }
         if (isset($plugin)) {
             $path = Inflector::underscore($plugin) . '/' . $path;
         }
-        $path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
+
+        $optionTimestamp = null;
+        if (array_key_exists('timestamp', $options)) {
+            $optionTimestamp = $options['timestamp'];
+        }
+        $webPath = $this->assetTimestamp($this->webroot($path), $optionTimestamp);
+
+        $path = $this->_encodeUrl($webPath);
 
         if (!empty($options['fullBase'])) {
             $path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
@@ -186,7 +215,10 @@ class UrlHelper extends Helper
         $parts = array_map('rawurlencode', $parts);
         $encoded = implode('/', $parts);
 
-        return h(str_replace($path, $encoded, $url));
+        /** @var string $url */
+        $url = h(str_replace($path, $encoded, $url));
+
+        return $url;
     }
 
     /**
@@ -195,32 +227,33 @@ class UrlHelper extends Helper
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
+     * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
-    public function assetTimestamp($path)
+    public function assetTimestamp($path, $timestamp = null)
     {
-        $stamp = Configure::read('Asset.timestamp');
-        $timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug'));
+        if ($timestamp === null) {
+            $timestamp = Configure::read('Asset.timestamp');
+        }
+        $timestampEnabled = $timestamp === 'force' || ($timestamp === true && Configure::read('debug'));
         if ($timestampEnabled && strpos($path, '?') === false) {
             $filepath = preg_replace(
-                '/^' . preg_quote($this->request->getAttribute('webroot'), '/') . '/',
+                '/^' . preg_quote($this->_View->getRequest()->getAttribute('webroot'), '/') . '/',
                 '',
                 urldecode($path)
             );
             $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (file_exists($webrootPath)) {
-                //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($webrootPath);
-                //@codingStandardsIgnoreEnd
+                return $path . '?' . filemtime($webrootPath);
             }
             $segments = explode('/', ltrim($filepath, '/'));
             $plugin = Inflector::camelize($segments[0]);
-            if (Plugin::loaded($plugin)) {
+            if (Plugin::isLoaded($plugin)) {
                 unset($segments[0]);
                 $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
-                //@codingStandardsIgnoreStart
-                return $path . '?' . @filemtime($pluginPath);
-                //@codingStandardsIgnoreEnd
+                if (file_exists($pluginPath)) {
+                    return $path . '?' . filemtime($pluginPath);
+                }
             }
         }
 
@@ -235,26 +268,28 @@ class UrlHelper extends Helper
      */
     public function webroot($file)
     {
+        $request = $this->_View->getRequest();
+
         $asset = explode('?', $file);
         $asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
-        $webPath = $this->request->getAttribute('webroot') . $asset[0];
+        $webPath = $request->getAttribute('webroot') . $asset[0];
         $file = $asset[0];
 
-        if (!empty($this->theme)) {
+        if (!empty($this->_View->getTheme())) {
             $file = trim($file, '/');
-            $theme = $this->_inflectThemeName($this->theme) . '/';
+            $theme = $this->_inflectThemeName($this->_View->getTheme()) . '/';
 
             if (DIRECTORY_SEPARATOR === '\\') {
                 $file = str_replace('/', '\\', $file);
             }
 
             if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
-                $webPath = $this->request->getAttribute('webroot') . $theme . $asset[0];
+                $webPath = $request->getAttribute('webroot') . $theme . $asset[0];
             } else {
-                $themePath = Plugin::path($this->theme);
+                $themePath = Plugin::path($this->_View->getTheme());
                 $path = $themePath . 'webroot/' . $file;
                 if (file_exists($path)) {
-                    $webPath = $this->request->getAttribute('webroot') . $theme . $asset[0];
+                    $webPath = $request->getAttribute('webroot') . $theme . $asset[0];
                 }
             }
         }

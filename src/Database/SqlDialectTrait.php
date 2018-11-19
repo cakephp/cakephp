@@ -33,42 +33,46 @@ trait SqlDialectTrait
     {
         $identifier = trim($identifier);
 
-        if ($identifier === '*') {
-            return '*';
-        }
-
-        if ($identifier === '') {
-            return '';
+        if ($identifier === '*' || $identifier === '') {
+            return $identifier;
         }
 
         // string
-        if (preg_match('/^[\w-]+$/', $identifier)) {
+        if (preg_match('/^[\w-]+$/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.[^ \*]*$/', $identifier)) {
-// string.string
+        // string.string
+        if (preg_match('/^[\w-]+\.[^ \*]*$/u', $identifier)) {
             $items = explode('.', $identifier);
 
             return $this->_startQuote . implode($this->_endQuote . '.' . $this->_startQuote, $items) . $this->_endQuote;
         }
 
-        if (preg_match('/^[\w-]+\.\*$/', $identifier)) {
-// string.*
+        // string.*
+        if (preg_match('/^[\w-]+\.\*$/u', $identifier)) {
             return $this->_startQuote . str_replace('.*', $this->_endQuote . '.*', $identifier);
         }
 
+        // Functions
         if (preg_match('/^([\w-]+)\((.*)\)$/', $identifier, $matches)) {
-// Functions
             return $matches[1] . '(' . $this->quoteIdentifier($matches[2]) . ')';
         }
 
         // Alias.field AS thing
-        if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+AS\s*([\w-]+)$/i', $identifier, $matches)) {
+        if (preg_match('/^([\w-]+(\.[\w\s-]+|\(.*\))*)\s+AS\s*([\w-]+)$/ui', $identifier, $matches)) {
             return $this->quoteIdentifier($matches[1]) . ' AS ' . $this->quoteIdentifier($matches[3]);
         }
 
-        if (preg_match('/^[\w-_\s]*[\w-_]+/', $identifier)) {
+        // string.string with spaces
+        if (preg_match('/^([\w-]+\.[\w][\w\s\-]*[\w])(.*)/u', $identifier, $matches)) {
+            $items = explode('.', $matches[1]);
+            $field = implode($this->_endQuote . '.' . $this->_startQuote, $items);
+
+            return $this->_startQuote . $field . $this->_endQuote . $matches[2];
+        }
+
+        if (preg_match('/^[\w_\s-]*[\w_-]+/u', $identifier)) {
             return $this->_startQuote . $identifier . $this->_endQuote;
         }
 
@@ -91,6 +95,7 @@ trait SqlDialectTrait
                 $query = (new IdentifierQuoter($this))->quote($query);
             }
 
+            /** @var \Cake\ORM\Query $query */
             $query = $this->{'_' . $type . 'QueryTranslator'}($query);
             $translators = $this->_expressionTranslators();
             if (!$translators) {

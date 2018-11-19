@@ -14,6 +14,8 @@
  */
 namespace Cake\I18n\Parser;
 
+use Cake\I18n\Translator;
+
 /**
  * Parses file in PO format
  *
@@ -23,7 +25,6 @@ namespace Cake\I18n\Parser;
  */
 class PoFileParser
 {
-
     /**
      * Parses portable object (PO) format.
      *
@@ -59,7 +60,6 @@ class PoFileParser
      *
      * This parser sacrifices some features of the reference implementation the
      * differences to that implementation are as follows.
-     * - No support for comments spanning multiple lines.
      * - Translator and extracted comments are treated as being the same type.
      * - Message IDs are allowed to have other encodings as just US-ASCII.
      *
@@ -80,6 +80,7 @@ class PoFileParser
 
         $messages = [];
         $item = $defaults;
+        $stage = null;
 
         while ($line = fgets($stream)) {
             $line = trim($line);
@@ -88,28 +89,36 @@ class PoFileParser
                 // Whitespace indicated current item is done
                 $this->_addMessage($messages, $item);
                 $item = $defaults;
+                $stage = null;
             } elseif (substr($line, 0, 7) === 'msgid "') {
                 // We start a new msg so save previous
                 $this->_addMessage($messages, $item);
                 $item['ids']['singular'] = substr($line, 7, -1);
+                $stage = ['ids', 'singular'];
             } elseif (substr($line, 0, 8) === 'msgstr "') {
                 $item['translated'] = substr($line, 8, -1);
+                $stage = ['translated'];
             } elseif (substr($line, 0, 9) === 'msgctxt "') {
                 $item['context'] = substr($line, 9, -1);
+                $stage = ['context'];
             } elseif ($line[0] === '"') {
-                $continues = isset($item['translated']) ? 'translated' : 'ids';
+                switch (count($stage)) {
+                    case 2:
+                        $item[$stage[0]][$stage[1]] .= substr($line, 1, -1);
+                        break;
 
-                if (is_array($item[$continues])) {
-                    end($item[$continues]);
-                    $item[$continues][key($item[$continues])] .= substr($line, 1, -1);
-                } else {
-                    $item[$continues] .= substr($line, 1, -1);
+                    case 1:
+                        $item[$stage[0]] .= substr($line, 1, -1);
+                        break;
                 }
             } elseif (substr($line, 0, 14) === 'msgid_plural "') {
                 $item['ids']['plural'] = substr($line, 14, -1);
+                $stage = ['ids', 'plural'];
             } elseif (substr($line, 0, 7) === 'msgstr[') {
                 $size = strpos($line, ']');
-                $item['translated'][(int)substr($line, 7, 1)] = substr($line, $size + 3, -1);
+                $row = (int)substr($line, 7, 1);
+                $item['translated'][$row] = substr($line, $size + 3, -1);
+                $stage = ['translated', $row];
             }
         }
         // save last item
@@ -142,9 +151,9 @@ class PoFileParser
 
         $translation = stripcslashes($translation);
 
-        if ($context !== null) {
+        if ($context !== null && !isset($messages[$singular]['_context'][$context])) {
             $messages[$singular]['_context'][$context] = $translation;
-        } else {
+        } elseif (!isset($messages[$singular]['_context'][''])) {
             $messages[$singular]['_context'][''] = $translation;
         }
 
@@ -166,9 +175,9 @@ class PoFileParser
             $key = stripcslashes($item['ids']['plural']);
 
             if ($context !== null) {
-                $messages[$key]['_context'][$context] = $plurals;
+                $messages[Translator::PLURAL_PREFIX . $key]['_context'][$context] = $plurals;
             } else {
-                $messages[$key]['_context'][''] = $plurals;
+                $messages[Translator::PLURAL_PREFIX . $key]['_context'][''] = $plurals;
             }
         }
     }

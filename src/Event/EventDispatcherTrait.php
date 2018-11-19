@@ -24,7 +24,7 @@ trait EventDispatcherTrait
      * Instance of the Cake\Event\EventManager this object is using
      * to dispatch inner events.
      *
-     * @var \Cake\Event\EventManager
+     * @var \Cake\Event\EventManagerInterface|\Cake\Event\EventManager
      */
     protected $_eventManager;
 
@@ -33,7 +33,7 @@ trait EventDispatcherTrait
      *
      * @var string
      */
-    protected $_eventClass = '\Cake\Event\Event';
+    protected $_eventClass = Event::class;
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.
@@ -43,16 +43,52 @@ trait EventDispatcherTrait
      *
      * @param \Cake\Event\EventManager|null $eventManager the eventManager to set
      * @return \Cake\Event\EventManager
+     * @deprecated 3.5.0 Use getEventManager()/setEventManager() instead.
      */
     public function eventManager(EventManager $eventManager = null)
     {
+        deprecationWarning(
+            'EventDispatcherTrait::eventManager() is deprecated. ' .
+            'Use EventDispatcherTrait::setEventManager()/getEventManager() instead.'
+        );
         if ($eventManager !== null) {
-            $this->_eventManager = $eventManager;
-        } elseif ($this->_eventManager === null) {
+            $this->setEventManager($eventManager);
+        }
+
+        return $this->getEventManager();
+    }
+
+    /**
+     * Returns the Cake\Event\EventManager manager instance for this object.
+     *
+     * You can use this instance to register any new listeners or callbacks to the
+     * object events, or create your own events and trigger them at will.
+     *
+     * @return \Cake\Event\EventManager
+     */
+    public function getEventManager()
+    {
+        if ($this->_eventManager === null) {
             $this->_eventManager = new EventManager();
         }
 
         return $this->_eventManager;
+    }
+
+    /**
+     * Returns the Cake\Event\EventManager manager instance for this object.
+     *
+     * You can use this instance to register any new listeners or callbacks to the
+     * object events, or create your own events and trigger them at will.
+     *
+     * @param \Cake\Event\EventManager $eventManager the eventManager to set
+     * @return $this
+     */
+    public function setEventManager(EventManager $eventManager)
+    {
+        $this->_eventManager = $eventManager;
+
+        return $this;
     }
 
     /**
@@ -75,7 +111,7 @@ trait EventDispatcherTrait
         }
 
         $event = new $this->_eventClass($name, $subject, $data);
-        $this->eventManager()->dispatch($event);
+        $this->getEventManager()->dispatch($event);
 
         return $event;
     }

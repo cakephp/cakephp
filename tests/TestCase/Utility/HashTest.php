@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Utility;
 
 use ArrayObject;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
@@ -410,23 +411,23 @@ class HashTest extends TestCase
     /**
      * Test get() for invalid $data type
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
      * @return void
      */
     public function testGetInvalidData()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
         Hash::get('string', 'path');
     }
 
     /**
      * Test get() with an invalid path
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testGetInvalidPath()
     {
+        $this->expectException(\InvalidArgumentException::class);
         Hash::get(['one' => 'two'], true);
     }
 
@@ -937,12 +938,12 @@ class HashTest extends TestCase
     /**
      * Test passing invalid argument type
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid data type, must be an array or \ArrayAccess instance.
      * @return void
      */
     public function testExtractInvalidArgument()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid data type, must be an array or \ArrayAccess instance.');
         Hash::extract('foo', '');
     }
 
@@ -1188,7 +1189,7 @@ class HashTest extends TestCase
     }
 
     /**
-     * Test the attribute presense selector.
+     * Test the attribute presence selector.
      *
      * @dataProvider articleDataSets
      * @return void
@@ -1421,6 +1422,36 @@ class HashTest extends TestCase
     }
 
     /**
+     * Test extracting attributes with string
+     *
+     * @return void
+     */
+    public function testExtractAttributeString()
+    {
+        $data = [
+            ['value' => 0],
+            ['value' => 3],
+            ['value' => 'string-value'],
+            ['value' => new Time('2010-01-05 01:23:45')],
+        ];
+
+        // check _matches does not work as `0 == 'string-value'`
+        $expected = [$data[2]];
+        $result = Hash::extract($data, '{n}[value=string-value]');
+        $this->assertSame($expected, $result);
+
+        // check _matches work with object implements __toString()
+        $expected = [$data[3]];
+        $result = Hash::extract($data, sprintf('{n}[value=%s]', $data[3]['value']));
+        $this->assertSame($expected, $result);
+
+        // check _matches does not work as `3 == '3 people'`
+        $unexpected = $data[1];
+        $result = Hash::extract($data, '{n}[value=3people]');
+        $this->assertNotContains($unexpected, $result);
+    }
+
+    /**
      * Test that uneven keys are handled correctly.
      *
      * @return void
@@ -1486,6 +1517,32 @@ class HashTest extends TestCase
 
         $data['Level1']['Level2'] = ['test1', 'test2'];
         $this->assertEquals($expected, Hash::extract($data, 'Level1.Level2bis'));
+    }
+
+    /**
+     * Tests that objects as values handled correctly.
+     *
+     * @return void
+     */
+    public function testExtractObjects()
+    {
+        $data = [
+            'root' => [
+                'array' => new ArrayObject([
+                    'foo' => 'bar',
+                ]),
+                'created' => new Time('2010-01-05'),
+            ],
+        ];
+
+        $result = Hash::extract($data, 'root.created');
+        $this->assertSame([$data['root']['created']], $result);
+
+        $result = Hash::extract($data, 'root.array');
+        $this->assertSame(['foo' => 'bar'], $result);
+
+        $result = Hash::extract($data, 'root.array.foo');
+        $this->assertSame(['bar'], $result);
     }
 
     /**
@@ -2100,6 +2157,43 @@ class HashTest extends TestCase
         $this->assertEquals($expected, $result);
         $result = Hash::remove($array, '{n}.{n}.part');
         $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => 'string',
+        ];
+        $expected = $array;
+        $result = Hash::remove($array, 'foo.bar');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => 'string',
+            'bar' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+        ];
+        $expected = [
+            'foo' => 'string',
+            'bar' => [
+                1 => 'b',
+            ],
+        ];
+        $result = Hash::remove($array, '{s}.0');
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            'foo' => [
+                0 => 'a',
+                1 => 'b',
+            ],
+        ];
+        $expected = [
+            'foo' => [
+                1 => 'b',
+            ],
+        ];
+        $result = Hash::remove($array, 'foo[1=b].0');
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -2217,11 +2311,11 @@ class HashTest extends TestCase
     /**
      * test combine() giving errors on key/value length mismatches.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testCombineErrorMissingValue()
     {
+        $this->expectException(\RuntimeException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['name' => 'jose']],
@@ -2232,11 +2326,11 @@ class HashTest extends TestCase
     /**
      * test combine() giving errors on key/value length mismatches.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testCombineErrorMissingKey()
     {
+        $this->expectException(\RuntimeException::class);
         $data = [
             ['User' => ['id' => 1, 'name' => 'mark']],
             ['User' => ['id' => 2]],
@@ -2917,11 +3011,11 @@ class HashTest extends TestCase
     /**
      * Tests that nest() throws an InvalidArgumentException when providing an invalid input.
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testNestInvalid()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $input = [
             [
                 'ParentCategory' => [

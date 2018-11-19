@@ -13,7 +13,7 @@
  */
 namespace TestApp\Controller;
 
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 
 /**
  * RequestActionController class
@@ -35,9 +35,7 @@ class RequestActionController extends AppController
      */
     public function test_request_action()
     {
-        $this->response->body('This is a test');
-
-        return $this->response;
+        return $this->response->withStringBody('This is a test');
     }
 
     /**
@@ -49,9 +47,7 @@ class RequestActionController extends AppController
      */
     public function another_ra_test($id, $other)
     {
-        $this->response->body($id + $other);
-
-        return $this->response;
+        return $this->response->withStringBody($id + $other);
     }
 
     /**
@@ -61,9 +57,7 @@ class RequestActionController extends AppController
      */
     public function normal_request_action()
     {
-        $this->response->body('Hello World');
-
-        return $this->response;
+        return $this->response->withStringBody('Hello World');
     }
 
     /**
@@ -73,9 +67,7 @@ class RequestActionController extends AppController
      */
     public function return_here()
     {
-        $this->response->body($this->here);
-
-        return $this->response;
+        return $this->response->withStringBody($this->here);
     }
 
     /**
@@ -96,9 +88,7 @@ class RequestActionController extends AppController
      */
     public function post_pass()
     {
-        $this->response->body(json_encode($this->request->data));
-
-        return $this->response;
+        return $this->response->withStringBody(json_encode($this->request->getData()));
     }
 
     /**
@@ -108,9 +98,7 @@ class RequestActionController extends AppController
      */
     public function query_pass()
     {
-        $this->response->body(json_encode($this->request->query));
-
-        return $this->response;
+        return $this->response->withStringBody(json_encode($this->request->getQueryParams()));
     }
 
     /**
@@ -120,9 +108,7 @@ class RequestActionController extends AppController
      */
     public function cookie_pass()
     {
-        $this->response->body(json_encode($this->request->cookies));
-
-        return $this->response;
+        return $this->response->withStringBody(json_encode($this->request->getCookieParams()));
     }
 
     /**
@@ -132,18 +118,15 @@ class RequestActionController extends AppController
      */
     public function params_pass()
     {
-        $this->response->body(json_encode([
-            'params' => $this->request->params,
-            'base' => $this->request->base,
-            'here' => $this->request->here,
-            'webroot' => $this->request->webroot,
-            'params' => $this->request->params,
-            'query' => $this->request->query,
-            'url' => $this->request->url,
+        return $this->response->withStringBody(json_encode([
+            'params' => $this->request->getAttribute('params'),
+            'base' => $this->request->getAttribute('base'),
+            'here' => $this->request->getRequestTarget(),
+            'webroot' => $this->request->getAttribute('webroot'),
+            'query' => $this->request->getQueryParams(),
+            'url' => $this->request->getUri()->getPath(),
             'contentType' => $this->request->contentType(),
         ]));
-
-        return $this->response;
     }
 
     /**
@@ -155,12 +138,11 @@ class RequestActionController extends AppController
     {
         $this->autoRender = false;
         $content = '';
-        if (isset($this->request->params[0])) {
+        if ($this->request->getParam('0')) {
             $content = 'return found';
         }
-        $this->response->body($content);
 
-        return $this->response;
+        return $this->response->withStringBody($content);
     }
 
     /**
@@ -170,9 +152,7 @@ class RequestActionController extends AppController
      */
     public function session_test()
     {
-        $this->response->body($this->request->session()->read('foo'));
-
-        return $this->response;
+        return $this->response->withStringBody($this->request->getSession()->read('foo'));
     }
 
     /**
@@ -182,15 +162,15 @@ class RequestActionController extends AppController
      */
     public function input_test()
     {
-        $this->response->body($this->request->input('json_decode')->hello);
+        $text = $this->request->input('json_decode')->hello;
 
-        return $this->response;
+        return $this->response->withStringBody($text);
     }
 
     /**
      * Tests exception handling
      *
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      * @return void
      */
     public function error_method()

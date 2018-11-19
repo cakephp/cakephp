@@ -180,7 +180,7 @@ class StringTemplate
             }
 
             $template = str_replace('%', '%%', $template);
-            preg_match_all('#\{\{([\w\d\._]+)\}\}#', $template, $matches);
+            preg_match_all('#\{\{([\w\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
                 $matches[1]
@@ -315,6 +315,9 @@ class StringTemplate
         }
         $truthy = [1, '1', true, 'true', $key];
         $isMinimized = isset($this->_compactAttributes[$key]);
+        if (!preg_match('/\A(\w|[.-])+\z/', $key)) {
+            $key = h($key);
+        }
         if ($isMinimized && in_array($value, $truthy, true)) {
             return "$key=\"$key\"";
         }

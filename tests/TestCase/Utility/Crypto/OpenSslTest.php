@@ -42,11 +42,11 @@ class OpenSslTest extends TestCase
     /**
      * testRijndael method
      *
-     * @expectedException \LogicException
      * @return void
      */
     public function testRijndael()
     {
+        $this->expectException(\LogicException::class);
         $txt = 'The quick brown fox jumped over the lazy dog.';
         $key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
 

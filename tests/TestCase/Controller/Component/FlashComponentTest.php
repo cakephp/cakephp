@@ -18,7 +18,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\Controller;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Exception;
 
@@ -113,7 +113,7 @@ class FlashComponentTest extends TestCase
     {
         $this->assertNull($this->Session->read('Flash.flash'));
 
-        $this->Flash->config('duplicate', false);
+        $this->Flash->setConfig('duplicate', false);
         $this->Flash->set('This test message should appear once only');
         $this->Flash->set('This test message should appear once only');
         $result = $this->Session->read('Flash.flash');

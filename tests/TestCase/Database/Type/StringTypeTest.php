@@ -69,11 +69,11 @@ class StringTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException \InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalidArray()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
 

@@ -163,7 +163,7 @@ class Debugger
      * Returns a reference to the Debugger singleton object instance.
      *
      * @param string|null $class Class name.
-     * @return object|\Cake\Error\Debugger
+     * @return \Cake\Error\Debugger
      */
     public static function getInstance($class = null)
     {
@@ -486,7 +486,7 @@ class Debugger
      * This is done to protect database credentials, which could be accidentally
      * shown in an error message if CakePHP is deployed in development mode.
      *
-     * @param string $var Variable to convert.
+     * @param mixed $var Variable to convert.
      * @param int $depth The depth to output to. Defaults to 3.
      * @return string Variable as a formatted string
      */
@@ -651,8 +651,36 @@ class Debugger
     }
 
     /**
+     * Get the output format for Debugger error rendering.
+     *
+     * @return string Returns the current format when getting.
+     */
+    public static function getOutputFormat()
+    {
+        return Debugger::getInstance()->_outputFormat;
+    }
+
+    /**
+     * Set the output format for Debugger error rendering.
+     *
+     * @param string $format The format you want errors to be output as.
+     * @return void
+     * @throws \InvalidArgumentException When choosing a format that doesn't exist.
+     */
+    public static function setOutputFormat($format)
+    {
+        $self = Debugger::getInstance();
+
+        if (!isset($self->_templates[$format])) {
+            throw new InvalidArgumentException('Invalid Debugger output format.');
+        }
+        $self->_outputFormat = $format;
+    }
+
+    /**
      * Get/Set the output format for Debugger error rendering.
      *
+     * @deprecated 3.5.0 Use getOutputFormat()/setOutputFormat() instead.
      * @param string|null $format The format you want errors to be output as.
      *   Leave null to get the current format.
      * @return string|null Returns null when setting. Returns the current format when getting.
@@ -660,6 +688,9 @@ class Debugger
      */
     public static function outputAs($format = null)
     {
+        deprecationWarning(
+            'Debugger::outputAs() is deprecated. Use Debugger::getOutputFormat()/setOutputFormat() instead.'
+        );
         $self = Debugger::getInstance();
         if ($format === null) {
             return $self->_outputFormat;
@@ -738,7 +769,7 @@ class Debugger
     /**
      * Takes a processed array of data from an error and displays it in the chosen format.
      *
-     * @param string $data Data to output.
+     * @param array $data Data to output.
      * @return void
      */
     public function outputError($data)
@@ -764,7 +795,7 @@ class Debugger
             $file = $files[1];
         }
         if ($file) {
-            $code = static::excerpt($file['file'], $file['line'] - 1, 1);
+            $code = static::excerpt($file['file'], $file['line'], 1);
         }
         $trace = static::trace(['start' => $data['start'], 'depth' => '20']);
         $insertOpts = ['before' => '{:', 'after' => '}'];
@@ -886,7 +917,7 @@ class Debugger
             $file = str_replace($search, '', $file);
         }
         $html = <<<HTML
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 %s
 <pre class="cake-debug">
 %s
@@ -928,7 +959,7 @@ TEXT;
      */
     public static function checkSecurityKeys()
     {
-        if (Security::salt() === '__SALT__') {
+        if (Security::getSalt() === '__SALT__') {
             trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
         }
     }

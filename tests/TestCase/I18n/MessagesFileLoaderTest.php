@@ -64,4 +64,19 @@ class MessagesFileLoaderTest extends TestCase
         $messages = $package->getMessages();
         $this->assertEquals('Po (translated) from custom folder', $messages['Plural Rule 1']['_context']['']);
     }
+
+    /**
+     * Test reading MO files
+     * @return void
+     */
+    public function testLoadingMoFiles()
+    {
+        $loader = new MessagesFileLoader('empty', 'es', 'mo');
+        $package = $loader();
+        $this->assertNotFalse($package);
+
+        $loader = new MessagesFileLoader('missing', 'es', 'mo');
+        $package = $loader();
+        $this->assertFalse($package);
+    }
 }

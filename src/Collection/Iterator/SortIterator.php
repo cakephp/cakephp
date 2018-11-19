@@ -57,21 +57,20 @@ class SortIterator extends Collection
      * @param int $type the type of comparison to perform, either SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      */
-    public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC)
+    public function __construct($items, $callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC)
     {
-        if (is_array($items)) {
-            $items = new Collection($items);
+        if (!is_array($items)) {
+            $items = iterator_to_array((new Collection($items))->unwrap(), false);
         }
 
-        $items = iterator_to_array($items, false);
         $callback = $this->_propertyExtractor($callback);
         $results = [];
-        foreach ($items as $key => $value) {
-            $value = $callback($value);
-            if ($value instanceof DateTimeInterface && $type === SORT_NUMERIC) {
-                $value = $value->format('U');
+        foreach ($items as $key => $val) {
+            $val = $callback($val);
+            if ($val instanceof DateTimeInterface && $type === \SORT_NUMERIC) {
+                $val = $val->format('U');
             }
-            $results[$key] = $value;
+            $results[$key] = $val;
         }
 
         $dir === SORT_DESC ? arsort($results, $type) : asort($results, $type);
@@ -80,5 +79,15 @@ class SortIterator extends Collection
             $results[$key] = $items[$key];
         }
         parent::__construct($results);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Iterator
+     */
+    public function unwrap()
+    {
+        return $this->getInnerIterator();
     }
 }

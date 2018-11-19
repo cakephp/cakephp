@@ -28,7 +28,11 @@ $this->start('subheading');
     <?= sprintf('The template %s</em> was not found.', h($file)); ?>
 <?php else: ?>
     <strong>Error: </strong>
-    <?= sprintf('The view for <em>%sController::%s()</em> was not found.', h(Inflector::camelize($this->request->controller)), h($this->request->action)); ?>
+    <?= sprintf(
+        'The view for <em>%sController::%s()</em> was not found.',
+        h(Inflector::camelize($this->request->getParam('controller'))),
+        h($this->request->getParam('action'))
+    ); ?>
 <?php endif ?>
 <?php $this->end() ?>
 

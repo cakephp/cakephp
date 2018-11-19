@@ -21,7 +21,7 @@ use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
-use Cake\ORM\TableRegistry;
+use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
 use Cake\Test\Fixture\FixturizedTestCase;
 
@@ -49,10 +49,10 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
      */
     public function testEventFiredMisconfiguredEventList()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFired('my.event', $manager);
     }
@@ -60,10 +60,10 @@ class TestCaseTest extends TestCase
     /**
      * tests trying to assertEventFired without configuring an event list
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
      */
     public function testEventFiredWithMisconfiguredEventList()
     {
+        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
         $manager = EventManager::instance();
         $this->assertEventFiredWith('my.event', 'some', 'data', $manager);
     }
@@ -139,6 +139,26 @@ class TestCaseTest extends TestCase
     }
 
     /**
+     * tests loadFixtures loads all fixtures on the test
+     *
+     * @return void
+     */
+    public function testLoadAllFixtures()
+    {
+        $test = new FixturizedTestCase('testLoadAllFixtures');
+        $test->autoFixtures = false;
+        $manager = new FixtureManager();
+        $manager->fixturize($test);
+        $test->fixtureManager = $manager;
+
+        $result = $test->run();
+
+        $this->assertEquals(0, $result->errorCount());
+        $this->assertCount(1, $result->passed());
+        $this->assertFalse($test->autoFixtures);
+    }
+
+    /**
      * testSkipIf
      *
      * @return void
@@ -152,6 +172,77 @@ class TestCaseTest extends TestCase
         $test = new FixturizedTestCase('testSkipIfFalse');
         $result = $test->run();
         $this->assertEquals(0, $result->skippedCount());
+    }
+
+    /**
+     * test withErrorReporting
+     *
+     * @return void
+     */
+    public function testWithErrorReporting()
+    {
+        $errorLevel = error_reporting();
+        $this->withErrorReporting(E_USER_WARNING, function () {
+              $this->assertSame(E_USER_WARNING, error_reporting());
+        });
+        $this->assertSame($errorLevel, error_reporting());
+    }
+
+    /**
+     * test withErrorReporting with exceptions
+     *
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
+     * @return void
+     */
+    public function testWithErrorReportingWithException()
+    {
+        $errorLevel = error_reporting();
+        try {
+            $this->withErrorReporting(E_USER_WARNING, function () {
+                $this->assertSame(1, 2);
+            });
+        } finally {
+            $this->assertSame($errorLevel, error_reporting());
+        }
+    }
+
+    /**
+     * testDeprecated
+     *
+     * @return void
+     */
+    public function testDeprecated()
+    {
+        $value = 'custom';
+        $setter = 'setLayout';
+        $getter = 'getLayout';
+        $property = 'layout';
+        $controller = new \Cake\Controller\Controller();
+        $controller->viewBuilder()->{$setter}($value);
+        $this->deprecated(function () use ($value, $getter, $controller, $property) {
+              $this->assertSame($value, $controller->$property);
+              $this->assertSame($value, $controller->viewBuilder()->{$getter}());
+        });
+    }
+
+    /**
+     * testDeprecated
+     *
+     * @expectedException \PHPUnit\Framework\AssertionFailedError
+     * @return void
+     */
+    public function testDeprecatedWithException()
+    {
+        $value = 'custom';
+        $setter = 'setLayout';
+        $getter = 'getLayout';
+        $property = 'layout';
+        $controller = new \Cake\Controller\Controller();
+        $controller->viewBuilder()->{$setter}($value);
+        $this->deprecated(function () use ($value, $getter, $controller, $property) {
+              $this->assertSame($value, $controller->$property);
+              $this->assertSame('Derp', $controller->viewBuilder()->{$getter}());
+        });
     }
 
     /**
@@ -311,21 +402,21 @@ class TestCaseTest extends TestCase
 
         $this->assertInstanceOf('TestApp\Model\Table\PostsTable', $Posts);
         $this->assertNull($Posts->save($entity));
-        $this->assertNull($Posts->table());
+        $this->assertNull($Posts->getTable());
 
         $Posts = $this->getMockForModel('Posts', ['save']);
         $Posts->expects($this->at(0))
             ->method('save')
             ->will($this->returnValue('mocked'));
         $this->assertEquals('mocked', $Posts->save($entity));
-        $this->assertEquals('\Cake\ORM\Entity', $Posts->entityClass());
+        $this->assertEquals('Cake\ORM\Entity', $Posts->getEntityClass());
 
         $Posts = $this->getMockForModel('Posts', ['doSomething']);
-        $this->assertInstanceOf('Cake\Database\Connection', $Posts->connection());
-        $this->assertEquals('test', $Posts->connection()->configName());
+        $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
+        $this->assertEquals('test', $Posts->getConnection()->configName());
 
         $Tags = $this->getMockForModel('Tags', ['doSomething']);
-        $this->assertEquals('TestApp\Model\Entity\Tag', $Tags->entityClass());
+        $this->assertEquals('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
     }
 
     /**
@@ -338,7 +429,7 @@ class TestCaseTest extends TestCase
         ConnectionManager::alias('test', 'secondary');
 
         $post = $this->getMockForModel(__NAMESPACE__ . '\SecondaryPostsTable', ['save']);
-        $this->assertEquals('test', $post->connection()->configName());
+        $this->assertEquals('test', $post->getConnection()->configName());
     }
 
     /**
@@ -349,17 +440,17 @@ class TestCaseTest extends TestCase
     public function testGetMockForModelWithPlugin()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
-        $result = TableRegistry::get('TestPlugin.TestPluginComments');
+        $result = $this->getTableLocator()->get('TestPlugin.TestPluginComments');
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $result);
         $this->assertSame($TestPluginComment, $result);
 
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', ['save']);
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
-        $this->assertEquals('\Cake\ORM\Entity', $TestPluginComment->entityClass());
+        $this->assertEquals('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
         $TestPluginComment->expects($this->at(0))
             ->method('save')
             ->will($this->returnValue(true));
@@ -373,7 +464,8 @@ class TestCaseTest extends TestCase
 
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
-        $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->entityClass());
+        $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
+        $this->clearPlugins();
     }
 
     /**
@@ -389,9 +481,9 @@ class TestCaseTest extends TestCase
             ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
         );
 
-        $result = TableRegistry::get('Comments');
+        $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
-        $this->assertEquals('Comments', $Mock->alias());
+        $this->assertEquals('Comments', $Mock->getAlias());
 
         $Mock->expects($this->at(0))
             ->method('save')
@@ -403,6 +495,26 @@ class TestCaseTest extends TestCase
         $entity = new Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
+
+        $allMethodsStubs = $this->getMockForModel(
+            'Table',
+            [],
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEmpty([], $allMethodsStubs->getAlias());
+
+        $allMethodsMocks = $this->getMockForModel(
+            'Table',
+            null,
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('Comments', $allMethodsMocks->getAlias());
+
+        $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);
     }
 
     /**
@@ -415,9 +527,9 @@ class TestCaseTest extends TestCase
         static::setAppNamespace();
 
         $I18n = $this->getMockForModel('I18n', ['doSomething']);
-        $this->assertEquals('custom_i18n_table', $I18n->table());
+        $this->assertEquals('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['doSomething']);
-        $this->assertEquals('tags', $Tags->table());
+        $this->assertEquals('tags', $Tags->getTable());
     }
 }

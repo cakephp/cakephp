@@ -153,6 +153,49 @@ class RadioWidgetTest extends TestCase
     }
 
     /**
+     * Test rendering the activeClass template var
+     *
+     * @return void
+     */
+    public function testRenderSimpleActiveTemplateVar()
+    {
+        $this->templates->add([
+            'nestingLabel' => '<label class="{{activeClass}}"{{attrs}}>{{text}}</label>',
+            'radioWrapper' => '{{input}}{{label}}'
+        ]);
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'Crayons[color]',
+            'val' => 'r',
+            'options' => ['r' => 'Red', 'b' => 'Black']
+        ];
+        $result = $radio->render($data, $this->context);
+        $expected = [
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Crayons[color]',
+                'value' => 'r',
+                'id' => 'crayons-color-r',
+                'checked' => 'checked',
+            ]],
+            ['label' => ['class' => 'active', 'for' => 'crayons-color-r']],
+            'Red',
+            '/label',
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Crayons[color]',
+                'value' => 'b',
+                'id' => 'crayons-color-b'
+            ]],
+            ['label' => ['class' => '', 'for' => 'crayons-color-b']],
+            'Black',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test rendering inputs with the complex option form.
      *
      * @return void

@@ -82,7 +82,7 @@ Configure::write('App', [
     ]
 ]);
 
-Cache::config([
+Cache::setConfig([
     '_cake_core_' => [
         'engine' => 'File',
         'prefix' => 'cake_core_',
@@ -100,14 +100,14 @@ if (!getenv('db_dsn')) {
     putenv('db_dsn=sqlite:///:memory:');
 }
 
-ConnectionManager::config('test', ['url' => getenv('db_dsn')]);
-ConnectionManager::config('test_custom_i18n_datasource', ['url' => getenv('db_dsn')]);
+ConnectionManager::setConfig('test', ['url' => getenv('db_dsn')]);
+ConnectionManager::setConfig('test_custom_i18n_datasource', ['url' => getenv('db_dsn')]);
 
 Configure::write('Session', [
     'defaults' => 'php'
 ]);
 
-Log::config([
+Log::setConfig([
     // 'queries' => [
     //     'className' => 'Console',
     //     'stream' => 'php://stderr',
@@ -117,24 +117,24 @@ Log::config([
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['notice', 'info', 'debug'],
         'file' => 'debug',
+        'path' => LOGS,
     ],
     'error' => [
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         'file' => 'error',
+        'path' => LOGS,
     ]
 ]);
 
 Chronos::setTestNow(Chronos::now());
-MutableDateTime::setTestNow(MutableDateTime::now());
-Date::setTestNow(Date::now());
-MutableDate::setTestNow(MutableDate::now());
 
 ini_set('intl.default_locale', 'en_US');
+ini_set('session.gc_divisor', '1');
 
-if (class_exists('PHPUnit_Runner_Version')) {
-    class_alias('PHPUnit_Framework_TestResult', 'PHPUnit\Framework\TestResult');
-    class_alias('PHPUnit_Framework_Error', 'PHPUnit\Framework\Error\Error');
-    class_alias('PHPUnit_Framework_Error_Warning', 'PHPUnit\Framework\Error\Warning');
-    class_alias('PHPUnit_Framework_ExpectationFailedException', 'PHPUnit\Framework\ExpectationFailedException');
-}
+loadPHPUnitAliases();
+
+// Fixate sessionid early on, as php7.2+
+// does not allow the sessionid to be set after stdout
+// has been written to.
+session_id('cli');

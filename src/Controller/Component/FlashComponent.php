@@ -16,7 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Network\Exception\InternalErrorException;
+use Cake\Http\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -34,7 +34,7 @@ class FlashComponent extends Component
     /**
      * The Session object instance
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
      */
     protected $_session;
 
@@ -60,7 +60,7 @@ class FlashComponent extends Component
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         parent::__construct($registry, $config);
-        $this->_session = $registry->getController()->request->session();
+        $this->_session = $registry->getController()->getRequest()->getSession();
     }
 
     /**
@@ -86,7 +86,7 @@ class FlashComponent extends Component
      */
     public function set($message, array $options = [])
     {
-        $options += $this->getConfig();
+        $options += (array)$this->getConfig();
 
         if ($message instanceof Exception) {
             if (!isset($options['params']['code'])) {
@@ -150,7 +150,7 @@ class FlashComponent extends Component
      * @param string $name Element name to use.
      * @param array $args Parameters to pass when calling `FlashComponent::set()`.
      * @return void
-     * @throws \Cake\Network\Exception\InternalErrorException If missing the flash message.
+     * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
     public function __call($name, $args)
     {

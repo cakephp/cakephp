@@ -55,10 +55,10 @@ class FloatTypeTest extends TestCase
         parent::setUp();
         $this->type = Type::build('float');
         $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
-        $this->localeString = I18n::locale();
+        $this->localeString = I18n::getLocale();
         $this->numberClass = FloatType::$numberClass;
 
-        I18n::locale($this->localeString);
+        I18n::setLocale($this->localeString);
     }
 
     /**
@@ -69,7 +69,7 @@ class FloatTypeTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        I18n::locale($this->localeString);
+        I18n::setLocale($this->localeString);
         FloatType::$numberClass = $this->numberClass;
     }
 
@@ -82,17 +82,36 @@ class FloatTypeTest extends TestCase
     {
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
-        $result = $this->type->toPHP('some data', $this->driver);
-        $this->assertSame(0.0, $result);
-
         $result = $this->type->toPHP('2', $this->driver);
         $this->assertSame(2.0, $result);
 
-        $result = $this->type->toPHP('2 bears', $this->driver);
-        $this->assertSame(2.0, $result);
+        $result = $this->type->toPHP('15.3', $this->driver);
+        $this->assertSame(15.3, $result);
+    }
 
-        $result = $this->type->toPHP(['3', '4'], $this->driver);
-        $this->assertSame(1.0, $result);
+    /**
+     * Test converting string float to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2.3',
+            'c' => '15',
+            'd' => '0.0',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => 2.3,
+            'c' => 15,
+            'd' => 0.0,
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**
@@ -129,7 +148,7 @@ class FloatTypeTest extends TestCase
     public function testMarshal()
     {
         $result = $this->type->marshal('some data');
-        $this->assertSame('some data', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal('');
         $this->assertNull($result);
@@ -138,10 +157,10 @@ class FloatTypeTest extends TestCase
         $this->assertSame(2.51, $result);
 
         $result = $this->type->marshal('3.5 bears');
-        $this->assertSame('3.5 bears', $result);
+        $this->assertNull($result);
 
         $result = $this->type->marshal(['3', '4']);
-        $this->assertSame(1.0, $result);
+        $this->assertNull($result);
     }
 
     /**
@@ -151,19 +170,19 @@ class FloatTypeTest extends TestCase
      */
     public function testMarshalWithLocaleParsing()
     {
-        I18n::locale('de_DE');
+        I18n::setLocale('de_DE');
         $this->type->useLocaleParser();
         $expected = 1234.53;
         $result = $this->type->marshal('1.234,53');
         $this->assertEquals($expected, $result);
 
-        I18n::locale('en_US');
+        I18n::setLocale('en_US');
         $this->type->useLocaleParser();
         $expected = 1234;
         $result = $this->type->marshal('1,234');
         $this->assertEquals($expected, $result);
 
-        I18n::locale('pt_BR');
+        I18n::setLocale('pt_BR');
         $this->type->useLocaleParser();
         $expected = 5987123.231;
         $result = $this->type->marshal('5.987.123,231');
@@ -173,11 +192,11 @@ class FloatTypeTest extends TestCase
     /**
      * Test that exceptions are raised on invalid parsers.
      *
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testUseLocaleParsingInvalid()
     {
+        $this->expectException(\RuntimeException::class);
         FloatType::$numberClass = 'stdClass';
         $this->type->useLocaleParser();
     }

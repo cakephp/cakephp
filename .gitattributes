@@ -1,5 +1,5 @@
 # Define the line ending behavior of the different file extensions
-# Set default behaviour, in case users don't have core.autocrlf set.
+# Set default behavior, in case users don't have core.autocrlf set.
 * text=auto
 * text eol=lf
 
@@ -8,13 +8,18 @@
 *.php text
 *.default text
 *.ctp text
+*.sql text
 *.md text
 *.po text
 *.js text
 *.css text
 *.ini text
+*.properties text
 *.txt text
 *.xml text
+*.svg text
+*.yml text
+.htaccess text
 
 # Declare files that will always have CRLF line endings on checkout.
 *.bat eol=crlf
@@ -28,6 +33,13 @@
 *.gif binary
 *.ico binary
 *.mo binary
+*.pdf binary
+*.phar binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
 
 # Remove files for archives generated using `git archive`
 appveyor.yml export-ignore

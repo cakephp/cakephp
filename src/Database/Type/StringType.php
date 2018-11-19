@@ -49,7 +49,10 @@ class StringType extends Type implements OptionalConvertInterface, TypeInterface
             return (string)$value;
         }
 
-        throw new InvalidArgumentException('Cannot convert value to string');
+        throw new InvalidArgumentException(sprintf(
+            'Cannot convert value of type `%s` to string',
+            getTypeName($value)
+        ));
     }
 
     /**

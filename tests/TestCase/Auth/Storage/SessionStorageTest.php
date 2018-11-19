@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Auth\Storage;
 use Cake\Auth\Storage\SessionStorage;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Session;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 
 /**

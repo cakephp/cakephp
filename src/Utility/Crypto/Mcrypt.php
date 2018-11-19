@@ -33,7 +33,8 @@ class Mcrypt
      * @param string $key Key to use as the encryption key for encrypted data.
      * @param string $operation Operation to perform, encrypt or decrypt
      * @throws \LogicException When there are errors.
-     * @return string Encrytped binary string data, or decrypted data depending on operation.
+     * @return string Encrypted binary string data, or decrypted data depending on operation.
+     * @deprecated 3.3.0 This method will be removed in 4.0.0.
      */
     public static function rijndael($text, $key, $operation)
     {
@@ -65,9 +66,14 @@ class Mcrypt
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
+     * @deprecated 3.3.0 Use Cake\Utility\Crypto\OpenSsl::encrypt() instead.
      */
     public static function encrypt($plain, $key)
     {
+        deprecationWarning(
+            'Mcrypt::encrypt() is deprecated. ' .
+            'Use Cake\Utility\Crypto\OpenSsl::encrypt() instead.'
+        );
         $algorithm = MCRYPT_RIJNDAEL_128;
         $mode = MCRYPT_MODE_CBC;
 
@@ -88,9 +94,14 @@ class Mcrypt
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
      * @return string Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
+     * @deprecated 3.3.0 Use Cake\Utility\Crypto\OpenSsl::decrypt() instead.
      */
     public static function decrypt($cipher, $key)
     {
+        deprecationWarning(
+            'Mcrypt::decrypt() is deprecated. ' .
+            'Use Cake\Utility\Crypto\OpenSsl::decrypt() instead.'
+        );
         $algorithm = MCRYPT_RIJNDAEL_128;
         $mode = MCRYPT_MODE_CBC;
         $ivSize = mcrypt_get_iv_size($algorithm, $mode);

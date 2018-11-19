@@ -88,11 +88,11 @@ class MapReduceTest extends TestCase
     /**
      * Tests that a reducer is required when there are intermediate results
      *
-     * @expectedException \LogicException
      * @return void
      */
     public function testReducerRequired()
     {
+        $this->expectException(\LogicException::class);
         $data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
         $mapper = function ($row, $key, $mr) {
             foreach ($row as $number) {

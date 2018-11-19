@@ -60,7 +60,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel();
         $this->assertInstanceOf('Cake\ORM\Table', $result);
@@ -83,7 +83,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel('TestPlugin.Comments');
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
@@ -120,9 +120,36 @@ class ModelAwareTraitTest extends TestCase
     /**
      * test alternate default model type.
      *
+     * @group deprecated
      * @return void
      */
     public function testModelType()
+    {
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('Articles');
+
+            FactoryLocator::add('Test', function ($name) {
+                $mock = new \StdClass();
+                $mock->name = $name;
+
+                return $mock;
+            });
+            $stub->modelType('Test');
+
+            $result = $stub->loadModel('Magic');
+            $this->assertInstanceOf('\StdClass', $result);
+            $this->assertInstanceOf('\StdClass', $stub->Magic);
+            $this->assertEquals('Magic', $stub->Magic->name);
+        });
+    }
+
+    /**
+     * test getModelType() and setModelType()
+     *
+     * @return void
+     */
+    public function testGetSetModelType()
     {
         $stub = new Stub();
         $stub->setProps('Articles');
@@ -133,23 +160,19 @@ class ModelAwareTraitTest extends TestCase
 
             return $mock;
         });
-        $stub->modelType('Test');
-
-        $result = $stub->loadModel('Magic');
-        $this->assertInstanceOf('\StdClass', $result);
-        $this->assertInstanceOf('\StdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
+        $stub->setModelType('Test');
+        $this->assertSame('Test', $stub->getModelType());
     }
 
     /**
      * test MissingModelException being thrown
      *
      * @return void
-     * @expectedException \Cake\Datasource\Exception\MissingModelException
-     * @expectedExceptionMessage Model class "Magic" of type "Test" could not be found.
      */
     public function testMissingModelException()
     {
+        $this->expectException(\Cake\Datasource\Exception\MissingModelException::class);
+        $this->expectExceptionMessage('Model class "Magic" of type "Test" could not be found.');
         $stub = new Stub();
 
         FactoryLocator::add('Test', function ($name) {

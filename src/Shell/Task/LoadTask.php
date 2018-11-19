@@ -52,35 +52,72 @@ class LoadTask extends Shell
             return false;
         }
 
-        return $this->_modifyBootstrap(
-            $plugin,
-            $this->params['bootstrap'],
-            $this->params['routes'],
-            $this->params['autoload']
-        );
+        $options = $this->makeOptions();
+
+        $app = APP . 'Application.php';
+        if (file_exists($app) && !$this->param('no_app')) {
+            $this->modifyApplication($app, $plugin, $options);
+
+            return true;
+        }
+
+        return $this->_modifyBootstrap($plugin, $options);
+    }
+
+    /**
+     * Create options string for the load call.
+     *
+     * @return string
+     */
+    protected function makeOptions()
+    {
+        $autoloadString = $this->param('autoload') ? "'autoload' => true" : '';
+        $bootstrapString = $this->param('bootstrap') ? "'bootstrap' => true" : '';
+        $routesString = $this->param('routes') ? "'routes' => true" : '';
+
+        return implode(', ', array_filter([$autoloadString, $bootstrapString, $routesString]));
+    }
+
+    /**
+     * Modify the application class
+     *
+     * @param string $app The Application file to modify.
+     * @param string $plugin The plugin name to add.
+     * @param string $options The plugin options to add
+     * @return void
+     */
+    protected function modifyApplication($app, $plugin, $options)
+    {
+        $file = new File($app, false);
+        $contents = $file->read();
+
+        $append = "\n        \$this->addPlugin('%s', [%s]);\n";
+        $insert = str_replace(', []', '', sprintf($append, $plugin, $options));
+
+        if (!preg_match('/function bootstrap\(\)/m', $contents)) {
+            $this->abort('Your Application class does not have a bootstrap() method. Please add one.');
+        } else {
+            $contents = preg_replace('/(function bootstrap\(\)(?:\s+)\{)/m', '$1' . $insert, $contents);
+        }
+        $file->write($contents);
+
+        $this->out('');
+        $this->out(sprintf('%s modified', $app));
     }
 
     /**
      * Update the applications bootstrap.php file.
      *
      * @param string $plugin Name of plugin.
-     * @param bool $hasBootstrap Whether or not bootstrap should be loaded.
-     * @param bool $hasRoutes Whether or not routes should be loaded.
-     * @param bool $hasAutoloader Whether or not there is an autoloader configured for
-     * the plugin.
+     * @param string $options The options string
      * @return bool If modify passed.
      */
-    protected function _modifyBootstrap($plugin, $hasBootstrap, $hasRoutes, $hasAutoloader)
+    protected function _modifyBootstrap($plugin, $options)
     {
         $bootstrap = new File($this->bootstrap, false);
         $contents = $bootstrap->read();
         if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $autoloadString = $hasAutoloader ? "'autoload' => true" : '';
-            $bootstrapString = $hasBootstrap ? "'bootstrap' => true" : '';
-            $routesString = $hasRoutes ? "'routes' => true" : '';
-
             $append = "\nPlugin::load('%s', [%s]);\n";
-            $options = implode(', ', array_filter([$autoloadString, $bootstrapString, $routesString]));
 
             $bootstrap->append(str_replace(', []', '', sprintf($append, $plugin, $options)));
             $this->out('');
@@ -121,6 +158,11 @@ class LoadTask extends Shell
                 ])
                 ->addOption('cli', [
                     'help' => 'Use the bootstrap_cli file.',
+                    'boolean' => true,
+                    'default' => false,
+                ])
+                ->addOption('no_app', [
+                    'help' => 'Do not update the Application if it exist. Forces config/bootstrap.php to be updated.',
                     'boolean' => true,
                     'default' => false,
                 ])

@@ -20,6 +20,9 @@ use Cake\Routing\Exception\MissingDispatcherFilterException;
 /**
  * A factory for creating dispatchers with all the desired middleware
  * connected.
+ *
+ * @deprecated 3.6.0 This class is part of the deprecated dispatcher system.
+ *   Use Http\Server instead.
  */
 class DispatcherFactory
 {

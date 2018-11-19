@@ -17,6 +17,11 @@ namespace Cake\Datasource;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
+ *
+ * @method $this setAlias(string $alias)
+ * @method string getAlias()
+ * @method $this setRegistryAlias(string $alias)
+ * @method string getRegistryAlias()
  */
 interface RepositoryInterface
 {
@@ -24,6 +29,7 @@ interface RepositoryInterface
     /**
      * Returns the table alias or sets a new one
      *
+     * @deprecated 3.4.0 Use setAlias()/getAlias() instead.
      * @param string|null $alias the new table alias
      * @return string
      */
@@ -41,14 +47,9 @@ interface RepositoryInterface
      * Creates a new Query for this repository and applies some defaults based on the
      * type of search that was selected.
      *
-     * ### Model.beforeFind event
-     *
-     * Each find() will trigger a `Model.beforeFind` event for all attached
-     * listeners. Any listener can set a valid result set using $query
-     *
      * @param string $type the type of query to perform
      * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
-     * @return \Cake\ORM\Query
+     * @return \Cake\Datasource\QueryInterface
      */
     public function find($type = 'all', $options = []);
 
@@ -77,7 +78,7 @@ interface RepositoryInterface
     /**
      * Creates a new Query instance for this repository
      *
-     * @return \Cake\ORM\Query
+     * @return \Cake\Datasource\QueryInterface
      */
     public function query();
 
@@ -128,7 +129,7 @@ interface RepositoryInterface
      *
      * @param \Cake\Datasource\EntityInterface $entity the entity to be saved
      * @param array|\ArrayAccess $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface|bool
+     * @return \Cake\Datasource\EntityInterface|false
      */
     public function save(EntityInterface $entity, $options = []);
 
@@ -178,7 +179,7 @@ interface RepositoryInterface
      *
      * @param array $data The data to build an entity with.
      * @param array $options A list of options for the objects hydration.
-     * @return array An array of hydrated records.
+     * @return \Cake\Datasource\EntityInterface[] An array of hydrated records.
      */
     public function newEntities(array $data, array $options = []);
 
@@ -213,11 +214,11 @@ interface RepositoryInterface
      * $article = $this->Articles->patchEntities($articles, $this->request->getData());
      * ```
      *
-     * @param array|\Traversable $entities the entities that will get the
+     * @param \Cake\Datasource\EntityInterface[]|\Traversable $entities the entities that will get the
      * data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options A list of options for the objects hydration.
-     * @return array
+     * @return \Cake\Datasource\EntityInterface[]
      */
     public function patchEntities($entities, array $data, array $options = []);
 }

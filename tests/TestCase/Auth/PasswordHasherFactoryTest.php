@@ -39,22 +39,23 @@ class PasswordHasherFactoryTest extends TestCase
             'hashOptions' => ['foo' => 'bar']
         ]);
         $this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
-        $this->assertEquals(['foo' => 'bar'], $hasher->config('hashOptions'));
+        $this->assertEquals(['foo' => 'bar'], $hasher->getConfig('hashOptions'));
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $hasher = PasswordHasherFactory::build('TestPlugin.Legacy');
         $this->assertInstanceof('TestPlugin\Auth\LegacyPasswordHasher', $hasher);
+        $this->clearPlugins();
     }
 
     /**
      * test build() throws exception for non existent hasher
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Password hasher class "FooBar" was not found.
      * @return void
      */
     public function testBuildException()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Password hasher class "FooBar" was not found.');
         $hasher = PasswordHasherFactory::build('FooBar');
     }
 }

@@ -18,10 +18,16 @@ namespace Cake\Datasource;
 /**
  * The basis for every query object
  *
- * @package Cake\Datasource
+ * @method $this andWhere($conditions, $types = [])
+ * @method $this select($fields = [], $overwrite = false)
+ * @method \Cake\Datasource\RepositoryInterface getRepository()
  */
 interface QueryInterface
 {
+
+    const JOIN_TYPE_INNER = 'INNER';
+    const JOIN_TYPE_LEFT = 'LEFT';
+    const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -33,7 +39,7 @@ interface QueryInterface
      *
      * @param string $field The field to alias
      * @param string|null $alias the alias used to prefix the field
-     * @return array
+     * @return string
      */
     public function aliasField($field, $alias = null);
 
@@ -43,7 +49,7 @@ interface QueryInterface
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array
+     * @return string[]
      */
     public function aliasFields($fields, $defaultAlias = null);
 
@@ -234,12 +240,13 @@ interface QueryInterface
      * in the record set you want as results. If empty the limit will default to
      * the existing limit clause, and if that too is empty, then `25` will be used.
      *
-     * Pages should start at 1.
+     * Pages must start at 1.
      *
      * @param int $num The page number you want.
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
+     * @throws \InvalidArgumentException If page number < 1.
      */
     public function page($num, $limit = null);
 

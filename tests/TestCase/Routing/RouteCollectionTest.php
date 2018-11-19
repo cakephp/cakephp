@@ -38,11 +38,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test parse() throws an error on unknown routes.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/" could not be found
      */
     public function testParseMissingRoute()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
@@ -54,11 +54,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test parse() throws an error on known routes called with unknown methods.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A "POST" route matching "/b" could not be found
      */
     public function testParseMissingRouteMethod()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A "POST" route matching "/b" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles', '_method' => ['GET']]);
 
@@ -128,6 +128,67 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test parsing routes with and without _name.
+     *
+     * @return void
+     */
+    public function testParseWithNameParameter()
+    {
+        $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
+        $routes->connect('/', ['controller' => 'Articles']);
+        $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
+        $routes->connect('/media/search/*', ['controller' => 'Media', 'action' => 'search'], ['_name' => 'media_search']);
+
+        $result = $this->collection->parse('/b/');
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'index',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '_matchedRoute' => '/b',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/the-thing?one=two');
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'id' => 'the-thing',
+            'pass' => [],
+            'plugin' => null,
+            'key' => 'value',
+            '?' => ['one' => 'two'],
+            '_matchedRoute' => '/b/:id',
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/media/search');
+        $expected = [
+            'key' => 'value',
+            'pass' => [],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
+        ];
+        $this->assertEquals($expected, $result);
+
+        $result = $this->collection->parse('/b/media/search/thing');
+        $expected = [
+            'key' => 'value',
+            'pass' => ['thing'],
+            'plugin' => null,
+            'controller' => 'Media',
+            'action' => 'search',
+            '_matchedRoute' => '/b/media/search/*',
+            '_name' => 'media_search'
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test that parse decodes URL data before matching.
      * This is important for multibyte URLs that pass through URL rewriting.
      *
@@ -184,11 +245,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test parseRequest() throws an error on unknown routes.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/" could not be found
      */
     public function testParseRequestMissingRoute()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/" could not be found');
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->connect('/', ['controller' => 'Articles']);
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
@@ -269,11 +330,11 @@ class RouteCollectionTest extends TestCase
      * Test parseRequest() checks host conditions
      *
      * @dataProvider hostProvider
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "/fallback" could not be found
      */
     public function testParseRequestCheckHostConditionFail($host)
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "/fallback" could not be found');
         $routes = new RouteBuilder($this->collection, '/');
         $routes->connect(
             '/fallback',
@@ -382,11 +443,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test match() throws an error on unknown routes.
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A route matching "array (
      */
     public function testMatchError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A route matching "array (');
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -450,11 +511,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test match() throws an error on named routes that fail to match
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
-     * @expectedExceptionMessage A named route was found for "fail", but matching failed
      */
     public function testMatchNamedError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
+        $this->expectExceptionMessage('A named route was found for "fail", but matching failed');
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -469,11 +530,11 @@ class RouteCollectionTest extends TestCase
     /**
      * Test matching routes with names and failing
      *
-     * @expectedException \Cake\Routing\Exception\MissingRouteException
      * @return void
      */
     public function testMatchNamedMissingError()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $context = [
             '_base' => '/',
             '_scheme' => 'http',
@@ -579,12 +640,12 @@ class RouteCollectionTest extends TestCase
     /**
      * Test the add() with some _name.
      *
-     * @expectedException \Cake\Routing\Exception\DuplicateNamedRouteException
      *
      * @return void
      */
     public function testAddingDuplicateNamedRoutes()
     {
+        $this->expectException(\Cake\Routing\Exception\DuplicateNamedRouteException::class);
         $one = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
         $two = new Route('/', ['controller' => 'Dashboards', 'action' => 'display']);
         $this->collection->add($one, ['_name' => 'test']);
@@ -592,21 +653,117 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
-     * Test basic get/set of extensions.
+     * Test combined get/set method.
      *
+     * @group deprecated
      * @return void
      */
     public function testExtensions()
     {
-        $this->assertEquals([], $this->collection->extensions());
+        $this->deprecated(function () {
+            $this->assertEquals([], $this->collection->extensions());
 
-        $this->collection->extensions('json');
-        $this->assertEquals(['json'], $this->collection->extensions());
+            $this->collection->extensions('json');
+            $this->assertEquals(['json'], $this->collection->extensions());
 
-        $this->collection->extensions(['rss', 'xml']);
-        $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
+            $this->collection->extensions(['rss', 'xml']);
+            $this->assertEquals(['json', 'rss', 'xml'], $this->collection->extensions());
 
-        $this->collection->extensions(['csv'], false);
-        $this->assertEquals(['csv'], $this->collection->extensions());
+            $this->collection->extensions(['csv'], false);
+            $this->assertEquals(['csv'], $this->collection->extensions());
+        });
+    }
+
+    /**
+     * Test basic setExtension and its getter.
+     *
+     * @return void
+     */
+    public function testSetExtensions()
+    {
+        $this->assertEquals([], $this->collection->getExtensions());
+
+        $this->collection->setExtensions(['json']);
+        $this->assertEquals(['json'], $this->collection->getExtensions());
+
+        $this->collection->setExtensions(['rss', 'xml']);
+        $this->assertEquals(['json', 'rss', 'xml'], $this->collection->getExtensions());
+
+        $this->collection->setExtensions(['csv'], false);
+        $this->assertEquals(['csv'], $this->collection->getExtensions());
+    }
+
+    /**
+     * Test adding middleware to the collection.
+     *
+     * @return void
+     */
+    public function testRegisterMiddleware()
+    {
+        $result = $this->collection->registerMiddleware('closure', function () {
+        });
+        $this->assertSame($result, $this->collection);
+
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
+        $this->assertSame($result, $this->collection);
+
+        $this->assertTrue($this->collection->hasMiddleware('closure'));
+        $this->assertTrue($this->collection->hasMiddleware('callable'));
+
+        $this->collection->registerMiddleware('class', 'Dumb');
+    }
+
+    /**
+     * Test adding a middleware group to the collection.
+     *
+     * @return void
+     */
+    public function testMiddlewareGroup()
+    {
+        $this->collection->registerMiddleware('closure', function () {
+        });
+
+        $mock = $this->getMockBuilder('\stdClass')
+            ->setMethods(['__invoke'])
+            ->getMock();
+        $result = $this->collection->registerMiddleware('callable', $mock);
+        $this->collection->registerMiddleware('callable', $mock);
+
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+
+        $this->assertTrue($this->collection->hasMiddlewareGroup('group'));
+    }
+
+    /**
+     * Test adding a middleware group with the same name overwrites the original list
+     *
+     * @return void
+     */
+    public function testMiddlewareGroupOverwrite()
+    {
+        $stub = function () {
+        };
+        $this->collection->registerMiddleware('closure', $stub);
+        $result = $this->collection->registerMiddleware('callable', $stub);
+        $this->collection->registerMiddleware('callable', $stub);
+
+        $this->collection->middlewareGroup('group', ['callable']);
+        $this->collection->middlewareGroup('group', ['closure', 'callable']);
+        $this->assertSame([$stub, $stub], $this->collection->getMiddleware(['group']));
+    }
+
+    /**
+     * Test adding ab unregistered middleware to a middleware group fails.
+     *
+     * @return void
+     */
+    public function testMiddlewareGroupUnregisteredMiddleware()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
+        $this->collection->middlewareGroup('group', ['bad']);
     }
 }

@@ -43,6 +43,7 @@ class SqliteTest extends TestCase
             'password' => null,
             'flags' => [],
             'init' => [],
+            'mask' => 420,
         ];
 
         $expected['flags'] += [
@@ -68,10 +69,11 @@ class SqliteTest extends TestCase
             'database' => 'bar.db',
             'flags' => [1 => true, 2 => false],
             'encoding' => 'a-language',
-            'init' => ['Execute this', 'this too']
+            'init' => ['Execute this', 'this too'],
+            'mask' => 0666
         ];
         $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlite:bar.db';
@@ -93,7 +95,7 @@ class SqliteTest extends TestCase
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
         $driver->connect($config);
     }
@@ -136,7 +138,7 @@ class SqliteTest extends TestCase
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
         $this->assertEquals($expected, $driver->schemaValue($input));
     }
 }

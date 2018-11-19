@@ -25,13 +25,14 @@ if (!function_exists('h')) {
     /**
      * Convenience method for htmlspecialchars.
      *
-     * @param string|array|object $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
+     * @param mixed $text Text to wrap through htmlspecialchars. Also works with arrays, and objects.
      *    Arrays will be mapped and have all their elements escaped. Objects will be string cast if they
      *    implement a `__toString` method. Otherwise the class name will be used.
+     *    Other scalar types will be returned unchanged.
      * @param bool $double Encode existing html entities.
      * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
      * or 'UTF-8'.
-     * @return string Wrapped text.
+     * @return mixed Wrapped text.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */
     function h($text, $double = true, $charset = null)
@@ -51,7 +52,7 @@ if (!function_exists('h')) {
             } else {
                 $text = '(object)' . get_class($text);
             }
-        } elseif (is_bool($text) || is_null($text) || is_int($text)) {
+        } elseif ($text === null || is_scalar($text)) {
             return $text;
         }
 
@@ -63,7 +64,12 @@ if (!function_exists('h')) {
             }
         }
         if (is_string($double)) {
+            deprecationWarning(
+                'Passing charset string for 2nd argument is deprecated. ' .
+                'Use the 3rd argument instead.'
+            );
             $charset = $double;
+            $double = true;
         }
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
@@ -189,7 +195,7 @@ if (!function_exists('env')) {
      *
      * @param string $key Environment variable name.
      * @param string|null $default Specify a default value in case the environment variable is not defined.
-     * @return string|null Environment variable setting.
+     * @return string|bool|null Environment variable setting.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#env
      */
     function env($key, $default = null)
@@ -202,10 +208,8 @@ if (!function_exists('env')) {
             return (strpos((string)env('SCRIPT_URI'), 'https://') === 0);
         }
 
-        if ($key === 'SCRIPT_NAME') {
-            if (env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
-                $key = 'SCRIPT_URL';
-            }
+        if ($key === 'SCRIPT_NAME' && env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
+            $key = 'SCRIPT_URL';
         }
 
         $val = null;
@@ -247,4 +251,76 @@ if (!function_exists('env')) {
         return $default;
     }
 
+}
+
+if (!function_exists('triggerWarning')) {
+    /**
+     * Triggers an E_USER_WARNING.
+     *
+     * @param string $message The warning message.
+     * @return void
+     */
+    function triggerWarning($message)
+    {
+        $stackFrame = 1;
+        $trace = debug_backtrace();
+        if (isset($trace[$stackFrame])) {
+            $frame = $trace[$stackFrame];
+            $frame += ['file' => '[internal]', 'line' => '??'];
+            $message = sprintf(
+                '%s - %s, line: %s',
+                $message,
+                $frame['file'],
+                $frame['line']
+            );
+        }
+        trigger_error($message, E_USER_WARNING);
+    }
+}
+
+if (!function_exists('deprecationWarning')) {
+    /**
+     * Helper method for outputting deprecation warnings
+     *
+     * @param string $message The message to output as a deprecation warning.
+     * @param int $stackFrame The stack frame to include in the error. Defaults to 1
+     *   as that should point to application/plugin code.
+     * @return void
+     */
+    function deprecationWarning($message, $stackFrame = 1)
+    {
+        if (!(error_reporting() & E_USER_DEPRECATED)) {
+            return;
+        }
+
+        $trace = debug_backtrace();
+        if (isset($trace[$stackFrame])) {
+            $frame = $trace[$stackFrame];
+            $frame += ['file' => '[internal]', 'line' => '??'];
+
+            $message = sprintf(
+                '%s - %s, line: %s' . "\n" .
+                ' You can disable deprecation warnings by setting `Error.errorLevel` to' .
+                ' `E_ALL & ~E_USER_DEPRECATED` in your config/app.php.',
+                $message,
+                $frame['file'],
+                $frame['line']
+            );
+        }
+
+        trigger_error($message, E_USER_DEPRECATED);
+    }
+}
+
+if (!function_exists('getTypeName')) {
+    /**
+     * Returns the objects class or var type of it's not an object
+     *
+     * @param mixed $var Variable to check
+     * @return string Returns the class name or variable type
+     */
+    function getTypeName($var)
+    {
+        return is_object($var) ? get_class($var) : gettype($var);
+    }
 }

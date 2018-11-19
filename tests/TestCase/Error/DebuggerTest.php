@@ -103,12 +103,12 @@ class DebuggerTest extends TestCase
     public function testExcerpt()
     {
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertCount(5, $result);
         $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
-        $this->assertTrue(is_array($result));
+        $this->assertInternalType('array', $result);
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
@@ -141,23 +141,62 @@ class DebuggerTest extends TestCase
     /**
      * Test that outputAs works.
      *
+     * @group deprecated
      * @return void
      */
     public function testOutputAs()
     {
-        Debugger::outputAs('html');
-        $this->assertEquals('html', Debugger::outputAs());
+        $this->deprecated(function () {
+            Debugger::outputAs('html');
+            $this->assertEquals('html', Debugger::outputAs());
+        });
+    }
+
+    /**
+     * Test that setOutputFormat works.
+     *
+     * @return void
+     */
+    public function testSetOutputFormat()
+    {
+        Debugger::setOutputFormat('html');
+        $this->assertEquals('html', Debugger::getOutputFormat());
     }
 
     /**
      * Test that choosing a non-existent format causes an exception
      *
-     * @expectedException \InvalidArgumentException
+     * @group deprecated
      * @return void
      */
     public function testOutputAsException()
     {
-        Debugger::outputAs('Invalid junk');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->deprecated(function () {
+            Debugger::outputAs('Invalid junk');
+        });
+    }
+
+    /**
+     * Test that getOutputFormat/setOutputFormat works.
+     *
+     * @return void
+     */
+    public function testGetSetOutputFormat()
+    {
+        Debugger::setOutputFormat('html');
+        $this->assertEquals('html', Debugger::getOutputFormat());
+    }
+
+    /**
+     * Test that choosing a non-existent format causes an exception
+     *
+     * @return void
+     */
+    public function testSetOutputAsException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Debugger::setOutputFormat('Invalid junk');
     }
 
     /**
@@ -167,7 +206,7 @@ class DebuggerTest extends TestCase
      */
     public function testOutputErrorDescriptionEncoding()
     {
-        Debugger::outputAs('html');
+        Debugger::setOutputFormat('html');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -185,6 +224,31 @@ class DebuggerTest extends TestCase
     }
 
     /**
+     * Tests that the correct line is being highlighted.
+     *
+     * @return void
+     */
+    public function testOutputErrorLineHighlight()
+    {
+        Debugger::setOutputFormat('js');
+
+        ob_start();
+        $debugger = Debugger::getInstance();
+        $data = [
+            'level' => E_NOTICE,
+            'code' => E_NOTICE,
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'description' => 'Error description',
+            'start' => 1
+        ];
+        $debugger->outputError($data);
+        $result = ob_get_clean();
+
+        $this->assertRegExp('#^\<span class\="code\-highlight"\>.*outputError.*\</span\>$#m', $result);
+    }
+
+    /**
      * Tests that changes in output formats using Debugger::output() change the templates used.
      *
      * @return void
@@ -195,7 +259,7 @@ class DebuggerTest extends TestCase
             'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
                 '&line={:line}">{:path}</a>, line {:line}'
         ]);
-        Debugger::outputAs('js');
+        Debugger::setOutputFormat('js');
 
         $result = Debugger::trace();
         $this->assertRegExp('/' . preg_quote('txmt://open?url=file://', '/') . '(\/|[A-Z]:\\\\)' . '/', $result);
@@ -204,7 +268,7 @@ class DebuggerTest extends TestCase
             'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
                 '{:description}</error>',
         ]);
-        Debugger::outputAs('xml');
+        Debugger::setOutputFormat('xml');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -236,7 +300,7 @@ class DebuggerTest extends TestCase
     public function testAddFormatCallback()
     {
         Debugger::addFormat('callback', ['callback' => [$this, 'customFormat']]);
-        Debugger::outputAs('callback');
+        Debugger::setOutputFormat('callback');
 
         ob_start();
         $debugger = Debugger::getInstance();
@@ -292,26 +356,9 @@ class DebuggerTest extends TestCase
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) {
-	Blocks => object(Cake\View\ViewBlock) {}
-	plugin => null
-	name => ''
 	passedArgs => []
-	helpers => [
-		(int) 0 => 'Html',
-		(int) 1 => 'Form'
-	]
-	templatePath => null
-	template => null
-	layout => 'default'
-	layoutPath => null
-	autoLayout => true
-	subDir => null
-	theme => null
 	hasRendered => false
 	uuids => []
-	request => object(Cake\Http\ServerRequest) {}
-	response => object(Cake\Http\Response) {}
-	elementCache => 'default'
 	viewClass => null
 	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
@@ -320,7 +367,24 @@ object(Cake\View\View) {
 	float => (float) 1.333
 	string => '  '
 	[protected] _helpers => object(Cake\View\HelperRegistry) {}
+	[protected] Blocks => object(Cake\View\ViewBlock) {}
+	[protected] plugin => null
+	[protected] name => ''
+	[protected] helpers => [
+		(int) 0 => 'Html',
+		(int) 1 => 'Form'
+	]
+	[protected] templatePath => null
+	[protected] template => null
+	[protected] layout => 'default'
+	[protected] layoutPath => null
+	[protected] autoLayout => true
 	[protected] _ext => '.ctp'
+	[protected] subDir => ''
+	[protected] theme => null
+	[protected] request => object(Cake\Http\ServerRequest) {}
+	[protected] response => object(Cake\Http\Response) {}
+	[protected] elementCache => 'default'
 	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
@@ -340,8 +404,9 @@ object(Cake\View\View) {
 	[protected] _current => null
 	[protected] _currentType => ''
 	[protected] _stack => []
+	[protected] _viewBlockClass => 'Cake\View\ViewBlock'
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
-	[protected] _eventClass => '\Cake\Event\Event'
+	[protected] _eventClass => 'Cake\Event\Event'
 	[protected] _viewBuilder => null
 }
 TEXT;
@@ -426,7 +491,7 @@ TEXT;
         $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->getMock();
-        Log::config('test', ['engine' => $mock]);
+        Log::setConfig('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
             ->method('log')
@@ -460,7 +525,7 @@ TEXT;
         $mock = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->getMock();
-        Log::config('test', ['engine' => $mock]);
+        Log::setConfig('test', ['engine' => $mock]);
 
         $mock->expects($this->at(0))
             ->method('log')
@@ -668,7 +733,7 @@ EXPECTED;
         Debugger::printVar($value, ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -682,7 +747,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -696,7 +761,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', [], true);
         $result = ob_get_clean();
         $expected = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -710,7 +775,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>', ['file' => __FILE__, 'line' => __LINE__]);
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 <span><strong>%s</strong> (line <strong>%d</strong>)</span>
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;
@@ -735,7 +800,7 @@ EXPECTED;
         Debugger::printVar('<div>this-is-a-test</div>');
         $result = ob_get_clean();
         $expectedHtml = <<<EXPECTED
-<div class="cake-debug-output">
+<div class="cake-debug-output" style="direction:ltr">
 
 <pre class="cake-debug">
 &#039;&lt;div&gt;this-is-a-test&lt;/div&gt;&#039;

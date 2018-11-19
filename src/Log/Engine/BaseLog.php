@@ -21,6 +21,8 @@ use Psr\Log\AbstractLogger;
 
 /**
  * Base log engine class.
+ *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class BaseLog extends AbstractLogger
 {

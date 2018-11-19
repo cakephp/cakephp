@@ -100,7 +100,7 @@ class TreeBehavior extends Behavior
         $config = $this->getConfig();
         $parent = $entity->get($config['parent']);
         $primaryKey = $this->_getPrimaryKey();
-        $dirty = $entity->dirty($config['parent']);
+        $dirty = $entity->isDirty($config['parent']);
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) == $parent) {
@@ -224,12 +224,16 @@ class TreeBehavior extends Behavior
         $diff = $right - $left + 1;
 
         if ($diff > 2) {
-            $this->_table->deleteAll(function ($exp) use ($config, $left, $right) {
-                /* @var \Cake\Database\Expression\QueryExpression $exp */
-                return $exp
-                    ->gte($config['leftField'], $left + 1)
-                    ->lte($config['leftField'], $right - 1);
-            });
+            $query = $this->_scope($this->_table->query())
+                ->delete()
+                ->where(function ($exp) use ($config, $left, $right) {
+                    /* @var \Cake\Database\Expression\QueryExpression $exp */
+                    return $exp
+                        ->gte($config['leftField'], $left + 1)
+                        ->lte($config['leftField'], $right - 1);
+                });
+            $statement = $query->execute();
+            $statement->closeCursor();
         }
 
         $this->_sync($diff, '-', "> {$right}");
@@ -345,7 +349,7 @@ class TreeBehavior extends Behavior
             function ($exp) use ($config) {
                 /* @var \Cake\Database\Expression\QueryExpression $exp */
                 $leftInverse = clone $exp;
-                $leftInverse->type('*')->add('-1');
+                $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
 
                 return $exp
@@ -585,7 +589,7 @@ class TreeBehavior extends Behavior
         $this->_table->updateAll($node->extract($fields), [$primary => $node->get($primary)]);
 
         foreach ($fields as $field) {
-            $node->dirty($field, false);
+            $node->setDirty($field, false);
         }
 
         return $node;
@@ -675,8 +679,8 @@ class TreeBehavior extends Behavior
         $node->set($left, $targetLeft);
         $node->set($right, $targetLeft + ($nodeRight - $nodeLeft));
 
-        $node->dirty($left, false);
-        $node->dirty($right, false);
+        $node->setDirty($left, false);
+        $node->setDirty($right, false);
 
         return $node;
     }
@@ -765,8 +769,8 @@ class TreeBehavior extends Behavior
         $node->set($left, $targetRight - ($nodeRight - $nodeLeft));
         $node->set($right, $targetRight);
 
-        $node->dirty($left, false);
-        $node->dirty($right, false);
+        $node->setDirty($left, false);
+        $node->setDirty($right, false);
 
         return $node;
     }
@@ -833,7 +837,7 @@ class TreeBehavior extends Behavior
             ->select([$aliasedPrimaryKey])
             ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
             ->order($order)
-            ->enableHydration(false);
+            ->disableHydration();
 
         $leftCounter = $counter;
         $nextLevel = $level + 1;
@@ -901,7 +905,7 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement->add($field)->add("$shift")->setConjunction($dir);
+            $movement->add($field)->add((string)$shift)->setConjunction($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?
@@ -928,13 +932,13 @@ class TreeBehavior extends Behavior
      */
     protected function _scope($query)
     {
-        $config = $this->getConfig();
+        $scope = $this->getConfig('scope');
 
-        if (is_array($config['scope'])) {
-            return $query->where($config['scope']);
+        if (is_array($scope)) {
+            return $query->where($scope);
         }
-        if (is_callable($config['scope'])) {
-            return $config['scope']($query);
+        if (is_callable($scope)) {
+            return $scope($query);
         }
 
         return $query;
@@ -960,7 +964,7 @@ class TreeBehavior extends Behavior
         $entity->set($fresh->extract($fields), ['guard' => false]);
 
         foreach ($fields as $field) {
-            $entity->dirty($field, false);
+            $entity->setDirty($field, false);
         }
     }
 

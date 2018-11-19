@@ -20,6 +20,8 @@ use Cake\Event\EventDispatcherInterface;
  *
  * Once collected context data can be passed to another object.
  * This is done in Controller, TemplateTask and View for example.
+ *
+ * @property array $_validViewOptions
  */
 trait ViewVarsTrait
 {
@@ -27,7 +29,7 @@ trait ViewVarsTrait
     /**
      * The name of default View class.
      *
-     * @var string
+     * @var string|null
      * @deprecated 3.1.0 Use `$this->viewBuilder()->getClassName()`/`$this->viewBuilder()->setClassName()` instead.
      */
     public $viewClass;
@@ -36,6 +38,7 @@ trait ViewVarsTrait
      * Variables for the view
      *
      * @var array
+     * @deprecated 3.7.0 Use `$this->set()` instead.
      */
     public $viewVars = [];
 
@@ -72,12 +75,13 @@ trait ViewVarsTrait
         $builder = $this->viewBuilder();
         if ($viewClass === null && $builder->getClassName() === null) {
             $builder->setClassName($this->viewClass);
+            $this->viewClass = null;
         }
         if ($viewClass) {
             $builder->setClassName($viewClass);
         }
 
-        $validViewOptions = $this->viewOptions();
+        $validViewOptions = isset($this->_validViewOptions) ? $this->_validViewOptions : [];
         $viewOptions = [];
         foreach ($validViewOptions as $option) {
             if (property_exists($this, $option)) {
@@ -86,27 +90,29 @@ trait ViewVarsTrait
         }
 
         $deprecatedOptions = [
-            'layout' => 'layout',
-            'view' => 'template',
-            'theme' => 'theme',
-            'autoLayout' => 'autoLayout',
-            'viewPath' => 'templatePath',
-            'layoutPath' => 'layoutPath',
+            'layout' => 'setLayout',
+            'view' => 'setTemplate',
+            'theme' => 'setTheme',
+            'autoLayout' => 'enableAutoLayout',
+            'viewPath' => 'setTemplatePath',
+            'layoutPath' => 'setLayoutPath',
         ];
         foreach ($deprecatedOptions as $old => $new) {
             if (property_exists($this, $old)) {
                 $builder->{$new}($this->{$old});
-                trigger_error(sprintf(
+                $message = sprintf(
                     'Property $%s is deprecated. Use $this->viewBuilder()->%s() instead in beforeRender().',
                     $old,
                     $new
-                ), E_USER_DEPRECATED);
+                );
+                deprecationWarning($message);
             }
         }
 
         foreach (['name', 'helpers', 'plugin'] as $prop) {
             if (isset($this->{$prop})) {
-                $builder->{$prop}($this->{$prop});
+                $method = 'set' . ucfirst($prop);
+                $builder->{$method}($this->{$prop});
             }
         }
         $builder->setOptions($viewOptions);
@@ -115,7 +121,7 @@ trait ViewVarsTrait
             $this->viewVars,
             isset($this->request) ? $this->request : null,
             isset($this->response) ? $this->response : null,
-            $this instanceof EventDispatcherInterface ? $this->eventManager() : null
+            $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
         );
     }
 
@@ -152,9 +158,14 @@ trait ViewVarsTrait
      * @param bool $merge Whether to merge with or override existing valid View options.
      *   Defaults to `true`.
      * @return array The updated view options as an array.
+     * @deprecated 3.7.0 Use ViewBuilder::setOptions() or any one of it's setter methods instead.
      */
     public function viewOptions($options = null, $merge = true)
     {
+        deprecationWarning(
+            'ViewVarsTrait::viewOptions() is deprecated, used ViewBuilder::setOptions() instead.'
+        );
+
         if (!isset($this->_validViewOptions)) {
             $this->_validViewOptions = [];
         }

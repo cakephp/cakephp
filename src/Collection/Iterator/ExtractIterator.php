@@ -14,7 +14,9 @@
  */
 namespace Cake\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 
 /**
  * Creates an iterator from another iterator that extract the requested column
@@ -68,5 +70,38 @@ class ExtractIterator extends Collection
         $extractor = $this->_extractor;
 
         return $extractor(parent::current());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * We perform here some strictness analysis so that the
+     * iterator logic is bypassed entirely.
+     *
+     * @return \Iterator
+     */
+    public function unwrap()
+    {
+        $iterator = $this->getInnerIterator();
+
+        if ($iterator instanceof CollectionInterface) {
+            $iterator = $iterator->unwrap();
+        }
+
+        if (get_class($iterator) !== ArrayIterator::class) {
+            return $this;
+        }
+
+        // ArrayIterator can be traversed strictly.
+        // Let's do that for performance gains
+
+        $callback = $this->_extractor;
+        $res = [];
+
+        foreach ($iterator->getArrayCopy() as $k => $v) {
+            $res[$k] = $callback($v);
+        }
+
+        return new ArrayIterator($res);
     }
 }

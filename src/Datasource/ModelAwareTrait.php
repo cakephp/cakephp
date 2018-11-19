@@ -90,7 +90,7 @@ trait ModelAwareTrait
             $modelClass = $this->modelClass;
         }
         if ($modelType === null) {
-            $modelType = $this->modelType();
+            $modelType = $this->getModelType();
 
             if ($modelType === null) {
                 throw new UnexpectedValueException('No model type has been defined');
@@ -130,14 +130,43 @@ trait ModelAwareTrait
     }
 
     /**
+     * Get the model type to be used by this class
+     *
+     * @return string
+     */
+    public function getModelType()
+    {
+        return $this->_modelType;
+    }
+
+    /**
+     * Set the model type to be used by this class
+     *
+     * @param string $modelType The model type
+     *
+     * @return $this
+     */
+    public function setModelType($modelType)
+    {
+        $this->_modelType = $modelType;
+
+        return $this;
+    }
+
+    /**
      * Set or get the model type to be used by this class
      *
+     * @deprecated 3.5.0 Use getModelType()/setModelType() instead.
      * @param string|null $modelType The model type or null to retrieve the current
      *
      * @return string|$this
      */
     public function modelType($modelType = null)
     {
+        deprecationWarning(
+            get_called_class() . '::modelType() is deprecated. ' .
+            'Use setModelType()/getModelType() instead.'
+        );
         if ($modelType === null) {
             return $this->_modelType;
         }

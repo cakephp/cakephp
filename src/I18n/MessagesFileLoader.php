@@ -101,13 +101,12 @@ class MessagesFileLoader
      * Loads the translation file and parses it. Returns an instance of a translations
      * package containing the messages loaded from the file.
      *
-     * @return \Aura\Intl\Package
+     * @return \Aura\Intl\Package|false
      * @throws \RuntimeException if no file parser class could be found for the specified
      * file extension.
      */
     public function __invoke()
     {
-        $package = new Package('default');
         $folders = $this->translationsFolders();
         $ext = $this->_extension;
         $file = false;
@@ -126,7 +125,7 @@ class MessagesFileLoader
         }
 
         if (!$file) {
-            return $package;
+            return false;
         }
 
         $name = ucfirst($ext);
@@ -137,6 +136,7 @@ class MessagesFileLoader
         }
 
         $messages = (new $class)->parse($file);
+        $package = new Package('default');
         $package->setMessages($messages);
 
         return $package;
@@ -171,7 +171,7 @@ class MessagesFileLoader
 
         // If space is not added after slash, the character after it remains lowercased
         $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
-        if (Plugin::loaded($pluginName)) {
+        if (Plugin::isLoaded($pluginName)) {
             $basePath = Plugin::classPath($pluginName) . 'Locale' . DIRECTORY_SEPARATOR;
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;

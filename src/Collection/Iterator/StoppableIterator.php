@@ -14,7 +14,9 @@
  */
 namespace Cake\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 
 /**
  * Creates an iterator from another iterator that will verify a condition on each
@@ -77,5 +79,41 @@ class StoppableIterator extends Collection
         $condition = $this->_condition;
 
         return !$condition($current, $key, $this->_innerIterator);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * We perform here some strictness analysis so that the
+     * iterator logic is bypassed entirely.
+     *
+     * @return \Iterator
+     */
+    public function unwrap()
+    {
+        $iterator = $this->_innerIterator;
+
+        if ($iterator instanceof CollectionInterface) {
+            $iterator = $iterator->unwrap();
+        }
+
+        if (get_class($iterator) !== ArrayIterator::class) {
+            return $this;
+        }
+
+        // ArrayIterator can be traversed strictly.
+        // Let's do that for performance gains
+
+        $callback = $this->_condition;
+        $res = [];
+
+        foreach ($iterator as $k => $v) {
+            if ($callback($v, $k, $iterator)) {
+                break;
+            }
+            $res[$k] = $v;
+        }
+
+        return new ArrayIterator($res);
     }
 }

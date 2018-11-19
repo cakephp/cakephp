@@ -66,6 +66,11 @@ trait StringTemplateTrait
      */
     public function templates($templates = null)
     {
+        deprecationWarning(
+            'StringTemplateTrait::templates() is deprecated. ' .
+            'Use setTemplates()/getTemplates() instead.'
+        );
+
         if ($templates === null || is_string($templates)) {
             return $this->templater()->get($templates);
         }

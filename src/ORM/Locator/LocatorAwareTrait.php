@@ -35,14 +35,43 @@ trait LocatorAwareTrait
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator LocatorInterface instance.
      * @return \Cake\ORM\Locator\LocatorInterface
+     * @deprecated 3.5.0 Use getTableLocator()/setTableLocator() instead.
      */
     public function tableLocator(LocatorInterface $tableLocator = null)
     {
+        deprecationWarning(
+            get_called_class() . '::tableLocator() is deprecated. ' .
+            'Use getTableLocator()/setTableLocator() instead.'
+        );
         if ($tableLocator !== null) {
-            $this->_tableLocator = $tableLocator;
+            $this->setTableLocator($tableLocator);
         }
+
+        return $this->getTableLocator();
+    }
+
+    /**
+     * Sets the table locator.
+     *
+     * @param \Cake\ORM\Locator\LocatorInterface $tableLocator LocatorInterface instance.
+     * @return $this
+     */
+    public function setTableLocator(LocatorInterface $tableLocator)
+    {
+        $this->_tableLocator = $tableLocator;
+
+        return $this;
+    }
+
+    /**
+     * Gets the table locator.
+     *
+     * @return \Cake\ORM\Locator\LocatorInterface
+     */
+    public function getTableLocator()
+    {
         if (!$this->_tableLocator) {
-            $this->_tableLocator = TableRegistry::locator();
+            $this->_tableLocator = TableRegistry::getTableLocator();
         }
 
         return $this->_tableLocator;

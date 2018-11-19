@@ -19,8 +19,8 @@ loadPHPUnitAliases();
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\TableSchemaInterface;
 use Cake\Utility\Inflector;
 use PDOException;
 use UnexpectedValueException;
@@ -189,20 +189,44 @@ class FixtureManager
                 } elseif ($type === 'plugin') {
                     list($plugin, $name) = explode('.', $pathName);
                     // Flip vendored plugin separators
-                    $path = implode('\\', explode('/', $plugin));
+                    $path = str_replace('/', '\\', $plugin);
+                    $uninflected = $path;
                     $baseNamespace = Inflector::camelize(str_replace('\\', '\ ', $path));
+                    if ($baseNamespace !== $uninflected) {
+                        deprecationWarning(sprintf(
+                            'Declaring fixtures in underscored format in TestCase::$fixtures is deprecated.' . "\n" .
+                            'Expected "%s" instead in "%s".',
+                            str_replace('\\', '/', $baseNamespace),
+                            get_class($test)
+                        ));
+                    }
                     $additionalPath = null;
                 } else {
                     $baseNamespace = '';
                     $name = $fixture;
                 }
 
+                $uninflected = $name;
                 // Tweak subdirectory names, so camelize() can make the correct name
                 if (strpos($name, '/') > 0) {
-                    $name = implode('\\ ', explode('/', $name));
+                    $name = str_replace('/', '\\', $name);
+                    $uninflected = $name;
+                    $name = str_replace('\\', '\ ', $name);
                 }
 
                 $name = Inflector::camelize($name);
+                if ($name !== $uninflected) {
+                    deprecationWarning(sprintf(
+                        'Declaring fixtures in underscored format in TestCase::$fixtures is deprecated.' . "\n" .
+                        'Found "%s.%s" in "%s". Expected "%s.%s" instead.',
+                        $type,
+                        $uninflected,
+                        get_class($test),
+                        $type,
+                        str_replace('\\', '/', $name)
+                    ));
+                }
+
                 $nameSegments = [
                     $baseNamespace,
                     'Test\Fixture',
@@ -250,9 +274,9 @@ class FixtureManager
         $table = $fixture->sourceName();
         $exists = in_array($table, $sources);
 
-        if (($drop && $exists) ||
-            ($exists && !$isFixtureSetup && $fixture instanceof TableSchemaInterface && $fixture->schema() instanceof TableSchema)
-        ) {
+        $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
+
+        if (($drop && $exists) || ($exists && !$isFixtureSetup && $hasSchema)) {
             $fixture->drop($db);
             $fixture->create($db);
         } elseif (!$exists) {
@@ -284,13 +308,13 @@ class FixtureManager
 
         try {
             $createTables = function ($db, $fixtures) use ($test) {
-                $tables = $db->schemaCollection()->listTables();
+                $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 if (!isset($this->_insertionMap[$configName])) {
                     $this->_insertionMap[$configName] = [];
                 }
 
-                foreach ($fixtures as $name => $fixture) {
+                foreach ($fixtures as $fixture) {
                     if (in_array($fixture->table, $tables)) {
                         try {
                             $fixture->dropConstraints($db);
@@ -301,7 +325,7 @@ class FixtureManager
                                 get_class($test),
                                 $e->getMessage()
                             );
-                            throw new Exception($msg);
+                            throw new Exception($msg, null, $e);
                         }
                     }
                 }
@@ -314,7 +338,7 @@ class FixtureManager
                     }
                 }
 
-                foreach ($fixtures as $name => $fixture) {
+                foreach ($fixtures as $fixture) {
                     try {
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {
@@ -324,7 +348,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg);
+                        throw new Exception($msg, null, $e);
                     }
                 }
             };
@@ -342,7 +366,7 @@ class FixtureManager
                             get_class($test),
                             $e->getMessage()
                         );
-                        throw new Exception($msg);
+                        throw new Exception($msg, null, $e);
                     }
                 }
             };
@@ -353,7 +377,7 @@ class FixtureManager
                 get_class($test),
                 $e->getMessage()
             );
-            throw new Exception($msg);
+            throw new Exception($msg, null, $e);
         }
     }
 
@@ -369,9 +393,19 @@ class FixtureManager
         $dbs = $this->_fixtureConnections($fixtures);
         foreach ($dbs as $connection => $fixtures) {
             $db = ConnectionManager::get($connection);
-            $logQueries = $db->logQueries();
+            $newMethods = method_exists($db, 'isQueryLoggingEnabled');
+            if ($newMethods) {
+                $logQueries = $db->isQueryLoggingEnabled();
+            } else {
+                $logQueries = $db->logQueries();
+            }
+
             if ($logQueries && !$this->_debug) {
-                $db->logQueries(false);
+                if ($newMethods) {
+                    $db->disableQueryLogging();
+                } else {
+                    $db->logQueries(false);
+                }
             }
             $db->transactional(function ($db) use ($fixtures, $operation) {
                 $db->disableConstraints(function ($db) use ($fixtures, $operation) {
@@ -379,7 +413,11 @@ class FixtureManager
                 });
             });
             if ($logQueries) {
-                $db->logQueries(true);
+                if ($newMethods) {
+                    $db->enableQueryLogging(true);
+                } else {
+                    $db->logQueries(true);
+                }
             }
         }
     }
@@ -453,7 +491,7 @@ class FixtureManager
         }
 
         if (!$this->isFixtureSetup($db->configName(), $fixture)) {
-            $sources = $db->schemaCollection()->listTables();
+            $sources = $db->getSchemaCollection()->listTables();
             $this->_setupTable($fixture, $db, $sources, $dropTables);
         }
 

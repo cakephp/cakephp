@@ -16,6 +16,7 @@ namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
+use Cake\Validation\Validator;
 
 /**
  * Provides a basic array based context provider for FormHelper.
@@ -29,7 +30,8 @@ use Cake\Utility\Hash;
  *   will be used when there is no request data set. Data should be nested following
  *   the dot separated paths you access your fields with.
  * - `required` A nested array of fields, relationships and boolean
- *   flags to indicate a field is required.
+ *   flags to indicate a field is required. The value can also be a string to be used
+ *   as the required error message
  * - `schema` An array of data that emulate the column structures that
  *   Cake\Database\Schema\Schema uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
@@ -53,7 +55,12 @@ use Cake\Utility\Hash;
  *    'defaults' => [
  *      'id' => 1,
  *      'title' => 'First post!',
- *    ]
+ *    ],
+ *    'required' => [
+ *      'id' => true, // will use default required message
+ *      'title' => 'Please enter a title',
+ *      'body' => false,
+ *    ],
  *  ];
  *  ```
  */
@@ -177,7 +184,12 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        return Hash::get($this->_context['defaults'], $field);
+        // Using Hash::check here incase the default value is actually null
+        if (Hash::check($this->_context['defaults'], $field)) {
+            return Hash::get($this->_context['defaults'], $field);
+        }
+
+        return Hash::get($this->_context['defaults'], $this->stripNesting($field));
     }
 
     /**
@@ -190,12 +202,31 @@ class ArrayContext implements ContextInterface
      */
     public function isRequired($field)
     {
+        return (bool)$this->getRequiredMessage($field);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
         if (!is_array($this->_context['required'])) {
-            return false;
+            return null;
         }
         $required = Hash::get($this->_context['required'], $field);
+        if ($required === null) {
+            $required = Hash::get($this->_context['required'], $this->stripNesting($field));
+        }
 
-        return (bool)$required;
+        if ($required === false) {
+            return null;
+        }
+
+        if ($required === true) {
+            $required = __d('cake', 'This field is required');
+        }
+
+        return $required;
     }
 
     /**
@@ -221,7 +252,11 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['schema'])) {
             return null;
         }
+
         $schema = Hash::get($this->_context['schema'], $field);
+        if ($schema === null) {
+            $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
+        }
 
         return isset($schema['type']) ? $schema['type'] : null;
     }
@@ -237,10 +272,13 @@ class ArrayContext implements ContextInterface
         if (!is_array($this->_context['schema'])) {
             return [];
         }
-        $schema = (array)Hash::get($this->_context['schema'], $field);
+        $schema = Hash::get($this->_context['schema'], $field);
+        if ($schema === null) {
+            $schema = Hash::get($this->_context['schema'], $this->stripNesting($field));
+        }
         $whitelist = ['length' => null, 'precision' => null];
 
-        return array_intersect_key($schema, $whitelist);
+        return array_intersect_key((array)$schema, $whitelist);
     }
 
     /**
@@ -271,6 +309,19 @@ class ArrayContext implements ContextInterface
             return [];
         }
 
-        return Hash::get($this->_context['errors'], $field);
+        return (array)Hash::get($this->_context['errors'], $field);
+    }
+
+    /**
+     * Strips out any numeric nesting
+     *
+     * For example users.0.age will output as users.age
+     *
+     * @param string $field A dot separated path
+     * @return string A string with stripped numeric nesting
+     */
+    protected function stripNesting($field)
+    {
+        return preg_replace('/\.\d*\./', '.', $field);
     }
 }

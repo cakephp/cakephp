@@ -15,7 +15,6 @@ namespace TestApp\Model\Table;
 
 use Cake\ORM\Query;
 use Cake\ORM\Table;
-use Cake\Utility\Hash;
 
 /**
  * PaginatorPostsTable class
@@ -30,7 +29,7 @@ class PaginatorPostsTable extends Table
      */
     public function initialize(array $config)
     {
-        $this->table('posts');
+        $this->setTable('posts');
         $this->belongsTo('PaginatorAuthor', [
             'foreignKey' => 'author_id'
         ]);
@@ -41,7 +40,7 @@ class PaginatorPostsTable extends Table
      */
     public function findPopular(Query $query, array $options)
     {
-        $field = $this->alias() . '.' . $this->primaryKey();
+        $field = $this->getAlias() . '.' . $this->getPrimaryKey();
         $query->where([$field . ' >' => '1']);
 
         return $query;

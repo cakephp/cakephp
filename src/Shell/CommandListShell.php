@@ -19,12 +19,13 @@ use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * Shows a list of commands available from the console.
  *
  * @property \Cake\Shell\Task\CommandTask $Command
+ * @deprecated 3.5.0 Replaced by Cake\Shell\HelpShell
  */
 class CommandListShell extends Shell
 {
@@ -35,6 +36,22 @@ class CommandListShell extends Shell
      * @var array
      */
     public $tasks = ['Command'];
+
+    /**
+     * Displays a header for the shell
+     *
+     * @return void
+     */
+    protected function _welcome()
+    {
+        $this->out();
+        $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+        $this->hr();
+        $this->out(sprintf('App : %s', APP_DIR));
+        $this->out(sprintf('Path: %s', APP));
+        $this->out(sprintf('PHP : %s', PHP_VERSION));
+        $this->hr();
+    }
 
     /**
      * startup
@@ -111,7 +128,7 @@ class CommandListShell extends Shell
     protected function _asXml($shellList)
     {
         $plugins = Plugin::loaded();
-        $shells = new SimpleXmlElement('<shells></shells>');
+        $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($shellList as $plugin => $commands) {
             foreach ($commands as $command) {
                 $callable = $command;
@@ -126,7 +143,7 @@ class CommandListShell extends Shell
                 $shell->addAttribute('help', $callable . ' -h');
             }
         }
-        $this->_io->outputAs(ConsoleOutput::RAW);
+        $this->_io->setOutputAs(ConsoleOutput::RAW);
         $this->out($shells->saveXML());
     }
 
@@ -145,7 +162,7 @@ class CommandListShell extends Shell
             'help' => 'Get the listing as XML.',
             'boolean' => true
         ])->addOption('version', [
-            'help' => 'Prints the currently installed version of CakePHP.',
+            'help' => 'Prints the currently installed version of CakePHP. (deprecated - use `cake --version` instead)',
             'boolean' => true
         ]);
 

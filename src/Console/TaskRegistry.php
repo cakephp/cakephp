@@ -59,6 +59,7 @@ class TaskRegistry extends ObjectRegistry
      * Throws an exception when a task is missing.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
      * @param string $plugin The plugin the task is missing in.
@@ -85,6 +86,6 @@ class TaskRegistry extends ObjectRegistry
      */
     protected function _create($class, $alias, $settings)
     {
-        return new $class($this->_Shell->io());
+        return new $class($this->_Shell->getIo());
     }
 }

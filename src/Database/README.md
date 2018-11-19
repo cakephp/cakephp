@@ -55,7 +55,7 @@ directly in the options array:
 use Cake\Database\Connection;
 
 $connection = new Connection([
-	'driver' => 'Cake\Database\Driver\Sqlite'
+	'driver' => 'Cake\Database\Driver\Sqlite',
 	'database' => '/path/to/file.db'
 ]);
 ```
@@ -240,9 +240,6 @@ $query->where(['id >' => 1, 'title' => 'My title']);
 It is possible to generate `OR` conditions as well
 
 ```php
-$query->where(['id >' => 1])->orWhere(['title' => 'My Title']);
-
-// Equivalent to
 $query->where(['OR' => ['id >' => 1, 'title' => 'My title']]);
 ```
 

@@ -32,12 +32,45 @@ ConnectionManager::setConfig('default', [
 	'database' => 'test',
 	'username' => 'root',
 	'password' => 'secret',
-	'cacheMetadata' => false // If set to `true` you need to install the optional "cakephp/cache" package.
+	'cacheMetadata' => true,
+	'quoteIdentifiers' => false,
 ]);
 ```
 
 Once a 'default' connection is registered, it will be used by all the Table
 mappers if no explicit connection is defined.
+
+## Using Table Locator
+
+In order to access table instances you need to use a *Table Locator*.
+
+```php
+use Cake\ORM\Locator\TableLocator;
+
+$locator = new TableLocator();
+$articles = $locator->get('Articles');
+```
+
+You can also use a trait for easy access to the locator instance:
+
+```php
+use Cake\ORM\Locator\LocatorAwareTrait;
+
+$articles = $this->getTableLocator()->get('Articles');
+```
+
+By default classes using `LocatorAwareTrait` will share a global locator instance.
+You can inject your own locator instance into the object:
+
+```php
+use Cake\ORM\Locator\TableLocator;
+use Cake\ORM\Locator\LocatorAwareTrait;
+
+$locator = new TableLocator();
+$this->setTableLocator($locator);
+
+$articles = $this->getTableLocator()->get('Articles');
+```
 
 ## Creating Associations
 
@@ -58,9 +91,9 @@ complete examples.
 Once you've defined some table classes you can read existing data in your tables:
 
 ```php
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
-$articles = TableRegistry::get('Articles');
+$articles = $this->getTableLocator()->get('Articles');
 foreach ($articles->find() as $article) {
 	echo $article->title;
 }
@@ -76,7 +109,7 @@ Table objects provide ways to convert request data into entities, and then persi
 those entities to the database:
 
 ```php
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 $data = [
 	'title' => 'My first article',
@@ -91,7 +124,7 @@ $data = [
 	]
 ];
 
-$articles = TableRegistry::get('Articles');
+$articles = $this->getTableLocator()->get('Articles');
 $article = $articles->newEntity($data, [
 	'associated' => ['Tags', 'Comments']
 ]);
@@ -109,10 +142,95 @@ for more in-depth examples.
 Once you have a reference to an entity, you can use it to delete data:
 
 ```php
-$articles = TableRegistry::get('Articles');
+$articles = $this->getTableLocator()->get('Articles');
 $article = $articles->get(2);
 $articles->delete($article);
 ```
+
+## Meta Data Cache
+
+It is recommended to enable meta data cache for production systems to avoid performance issues.
+For e.g. file system strategy your bootstrap file could look like this:
+```php
+use Cake\Cache\Engine\FileEngine;
+
+$cacheConfig = [
+   'className' => FileEngine::class,
+   'duration' => '+1 year',
+   'serialize' => true,
+   'prefix'    => 'orm_',
+],
+Cache::setConfig('_cake_model_', $cacheConfig);
+```
+
+## Creating Custom Table and Entity Classes
+
+By default, the Cake ORM uses the `\Cake\ORM\Table` and `\Cake\ORM\Entity` classes to
+interact with the database. While using the default classes makes sense for
+quick scripts and small applications, you will often want to use your own
+classes for adding your custom logic.
+
+When using the ORM as a standalone package, you are free to choose where to
+store these classes. For example, you could use the `Data` folder for this:
+
+```php
+<?php
+// in src/Data/Table/ArticlesTable.php
+namespace Acme\Data\Table;
+
+use Acme\Data\Entity\Article;
+use Acme\Data\Table\UsersTable;
+use Cake\ORM\Table;
+
+class ArticlesTable extends Table
+{
+    public function initialize()
+    {
+        $this->setEntityClass(Article::class);
+        $this->belongsTo('Users', ['className' => UsersTable::class]);
+    }
+}
+```
+
+This table class is now setup to connect to the `articles` table in your
+database and return instances of `Article` when fetching results. In order to
+get an instance of this class, as shown before, you can use the `TableLocator`:
+
+```php
+<?php
+use Acme\Data\Table\ArticlesTable;
+use Cake\ORM\Locator\TableLocator;
+
+$locator = new TableLocator();
+$articles = $locator->get('Articles', ['className' => ArticlesTable::class]);
+```
+
+### Using Conventions-Based Loading
+
+It may get quite tedious having to specify each time the class name to load. So
+the Cake ORM can do most of the work for you if you give it some configuration.
+
+The convention is to have all ORM related classes inside the `src/Model` folder,
+that is the `Model` sub-namespace for your app. So you will usually have the
+`src/Model/Table` and `src/Model/Entity` folders in your project. But first, we
+need to inform Cake of the namespace your application lives in:
+
+```php
+<?php
+use Cake\Core\Configure;
+
+Configure::write('App.namespace', 'Acme');
+```
+
+You can also set a longer namaspace up to the place where the `Model` folder is:
+
+```php
+<?php
+use Cake\Core\Configure;
+
+Configure::write('App.namespace', 'My\Log\SubNamespace');
+```
+
 
 ## Additional Documentation
 

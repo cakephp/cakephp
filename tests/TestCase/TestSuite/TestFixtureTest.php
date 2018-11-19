@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\Fixture\TestFixture;
@@ -150,7 +150,7 @@ class TestFixtureTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.posts'];
+    public $fixtures = ['core.Posts'];
 
     /**
      * Set up
@@ -189,8 +189,8 @@ class TestFixtureTest extends TestCase
         $Fixture->init();
         $this->assertEquals('articles', $Fixture->table);
 
-        $schema = $Fixture->schema();
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $schema);
+        $schema = $Fixture->getTableSchema();
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
 
         $fields = $Fixture->fields;
         unset($fields['_constraints'], $fields['_indexes']);
@@ -225,7 +225,7 @@ class TestFixtureTest extends TestCase
             'body',
             'published',
         ];
-        $this->assertEquals($expected, $fixture->schema()->columns());
+        $this->assertEquals($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
@@ -250,19 +250,19 @@ class TestFixtureTest extends TestCase
             'body',
             'published',
         ];
-        $this->assertEquals($expected, $fixture->schema()->columns());
+        $this->assertEquals($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
      * test schema reflection without $import or $fields and without the table existing
      * it will throw an exception
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.
      * @return void
      */
     public function testInitNoImportNoFieldsException()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.');
         $fixture = new LettersFixture();
         $fixture->init();
     }
@@ -275,7 +275,7 @@ class TestFixtureTest extends TestCase
     public function testInitNoImportNoFields()
     {
         $db = ConnectionManager::get('test');
-        $table = new Table('letters', [
+        $table = new TableSchema('letters', [
             'id' => ['type' => 'integer'],
             'letter' => ['type' => 'string', 'length' => 1]
         ]);
@@ -288,7 +288,7 @@ class TestFixtureTest extends TestCase
 
         $fixture = new LettersFixture();
         $fixture->init();
-        $this->assertEquals(['id', 'letter'], $fixture->schema()->columns());
+        $this->assertEquals(['id', 'letter'], $fixture->getTableSchema()->columns());
 
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['prepare', 'execute'])
@@ -317,14 +317,14 @@ class TestFixtureTest extends TestCase
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
             ->will($this->returnValue(['sql', 'sql']));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $statement = $this->getMockBuilder('\PDOStatement')
             ->setMethods(['execute', 'closeCursor'])
@@ -340,23 +340,23 @@ class TestFixtureTest extends TestCase
     /**
      * test create method, trigger error
      *
-     * @expectedException \PHPUnit\Framework\Error\Error
      * @return void
      */
     public function testCreateError()
     {
+        $this->expectException(\PHPUnit\Framework\Error\Error::class);
         $fixture = new ArticlesFixture();
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
             ->method('createSql')
             ->with($db)
             ->will($this->throwException(new Exception('oh noes')));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $fixture->create($db);
     }
@@ -545,14 +545,14 @@ class TestFixtureTest extends TestCase
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
             ->method('dropSql')
             ->with($db)
             ->will($this->returnValue(['sql']));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $this->assertTrue($fixture->drop($db));
     }
@@ -577,14 +577,14 @@ class TestFixtureTest extends TestCase
             ->with('sql')
             ->will($this->returnValue($statement));
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['articles'])
             ->getMock();
         $table->expects($this->once())
             ->method('truncateSql')
             ->with($db)
             ->will($this->returnValue(['sql']));
-        $fixture->schema($table);
+        $fixture->setTableSchema($table);
 
         $this->assertTrue($fixture->truncate($db));
     }

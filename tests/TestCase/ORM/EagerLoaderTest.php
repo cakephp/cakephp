@@ -20,8 +20,8 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\Query;
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * Tests EagerLoader
@@ -61,14 +61,14 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $this->table = $table = TableRegistry::get('foo', ['schema' => $schema]);
-        $clients = TableRegistry::get('clients', ['schema' => $schema1]);
-        $orders = TableRegistry::get('orders', ['schema' => $schema2]);
-        $companies = TableRegistry::get('companies', ['schema' => $schema, 'table' => 'organizations']);
-        $orderTypes = TableRegistry::get('orderTypes', ['schema' => $schema]);
-        $stuff = TableRegistry::get('stuff', ['schema' => $schema, 'table' => 'things']);
-        $stuffTypes = TableRegistry::get('stuffTypes', ['schema' => $schema]);
-        $categories = TableRegistry::get('categories', ['schema' => $schema]);
+        $this->table = $table = $this->getTableLocator()->get('foo', ['schema' => $schema]);
+        $clients = $this->getTableLocator()->get('clients', ['schema' => $schema1]);
+        $orders = $this->getTableLocator()->get('orders', ['schema' => $schema2]);
+        $companies = $this->getTableLocator()->get('companies', ['schema' => $schema, 'table' => 'organizations']);
+        $orderTypes = $this->getTableLocator()->get('orderTypes', ['schema' => $schema]);
+        $stuff = $this->getTableLocator()->get('stuff', ['schema' => $schema, 'table' => 'things']);
+        $stuffTypes = $this->getTableLocator()->get('stuffTypes', ['schema' => $schema]);
+        $categories = $this->getTableLocator()->get('categories', ['schema' => $schema]);
 
         $table->belongsTo('clients');
         $clients->hasOne('orders');
@@ -135,7 +135,7 @@ class EagerLoaderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -163,7 +163,7 @@ class EagerLoaderTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
-        $query->typeMap($this->clientsTypeMap);
+        $query->setTypeMap($this->clientsTypeMap);
 
         $query->expects($this->at(0))->method('join')
             ->with(['clients' => [
@@ -171,7 +171,7 @@ class EagerLoaderTest extends TestCase
                 'type' => 'LEFT',
                 'conditions' => new QueryExpression([
                     ['clients.id' => new IdentifierExpression('foo.client_id')],
-                ], new TypeMap($this->clientsTypeMap->defaults()))
+                ], new TypeMap($this->clientsTypeMap->getDefaults()))
             ]])
             ->will($this->returnValue($query));
 
@@ -235,9 +235,9 @@ class EagerLoaderTest extends TestCase
             ]])
             ->will($this->returnValue($query));
 
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain($contains);
-        $query->select('foo.id')->eagerLoader($loader)->sql();
+        $query->select('foo.id')->setEagerLoader($loader)->sql();
     }
 
     /**
@@ -248,7 +248,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainDotNotation()
     {
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff',
             'clients.companies.categories' => ['conditions' => ['a >' => 1]]
@@ -265,7 +265,7 @@ class EagerLoaderTest extends TestCase
                 ]
             ]
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
         $loader->contain([
             'clients.orders' => ['fields' => ['a', 'b']],
             'clients' => ['sort' => ['a' => 'desc']],
@@ -273,7 +273,7 @@ class EagerLoaderTest extends TestCase
 
         $expected['clients']['orders'] += ['fields' => ['a', 'b']];
         $expected['clients'] += ['sort' => ['a' => 'desc']];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -283,7 +283,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainKeyValueNotation()
     {
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients',
             'companies' => 'categories',
@@ -296,7 +296,7 @@ class EagerLoaderTest extends TestCase
                 ],
             ],
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -308,7 +308,7 @@ class EagerLoaderTest extends TestCase
     {
         $builder = function ($query) {
         };
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff' => ['fields' => ['a']],
             'clients' => $builder
@@ -322,14 +322,56 @@ class EagerLoaderTest extends TestCase
                 'queryBuilder' => $builder
             ]
         ];
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
 
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients.orders.stuff' => ['fields' => ['a']],
             'clients' => ['queryBuilder' => $builder]
         ]);
-        $this->assertEquals($expected, $loader->contain());
+        $this->assertEquals($expected, $loader->getContain());
+    }
+
+    /**
+     * Tests using the same signature as matching with contain
+     *
+     * @return void
+     */
+    public function testContainSecondSignature()
+    {
+        $builder = function ($query) {
+        };
+        $loader = new EagerLoader();
+        $loader->contain('clients', $builder);
+
+        $expected = [
+            'clients' => [
+                'queryBuilder' => $builder
+            ]
+        ];
+        $this->assertEquals($expected, $loader->getContain());
+    }
+
+    /**
+     * Tests passing an array of associations with a query builder
+     *
+     * @return void
+     */
+    public function testContainSecondSignatureInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $builder = function ($query) {
+        };
+        $loader = new EagerLoader();
+        $loader->contain(['clients'], $builder);
+
+        $expected = [
+            'clients' => [
+                'queryBuilder' => $builder
+            ]
+        ];
+        $this->assertEquals($expected, $loader->getContain());
     }
 
     /**
@@ -339,7 +381,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainMergeBuilders()
     {
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain([
             'clients' => function ($query) {
                 return $query->select(['a']);
@@ -350,8 +392,8 @@ class EagerLoaderTest extends TestCase
                 return $query->select(['b']);
             }
         ]);
-        $builder = $loader->contain()['clients']['queryBuilder'];
-        $table = TableRegistry::get('foo');
+        $builder = $loader->getContain()['clients']['queryBuilder'];
+        $table = $this->getTableLocator()->get('foo');
         $query = new Query($this->connection, $table);
         $query = $builder($query);
         $this->assertEquals(['a', 'b'], $query->clause('select'));
@@ -373,9 +415,9 @@ class EagerLoaderTest extends TestCase
             ]
         ];
 
-        $table = TableRegistry::get('foo');
+        $table = $this->getTableLocator()->get('foo');
         $query = new Query($this->connection, $table);
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain($contains);
         $query->select('foo.id');
         $loader->attachAssociations($query, $table, true);
@@ -460,7 +502,7 @@ class EagerLoaderTest extends TestCase
             ->setConstructorArgs([$this->connection, $this->table])
             ->getMock();
 
-        $loader = new EagerLoader;
+        $loader = new EagerLoader();
         $loader->contain($contains);
         $normalized = $loader->normalized($this->table);
         $this->assertEquals('clients', $normalized['clients']->aliasPath());
@@ -508,12 +550,41 @@ class EagerLoaderTest extends TestCase
 
         $loader = new EagerLoader();
         $loader->contain($contains);
-        $loader->matching('clients.addresses');
+        $loader->setMatching('clients.addresses');
 
         $this->assertNull($loader->clearContain());
         $result = $loader->normalized($this->table);
         $this->assertEquals([], $result);
-        $this->assertArrayHasKey('clients', $loader->matching());
+        $this->assertArrayHasKey('clients', $loader->getMatching());
+    }
+
+    /**
+     * Test for autoFields()
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testAutoFields()
+    {
+        $this->deprecated(function () {
+            $loader = new EagerLoader();
+            $this->assertTrue($loader->autoFields());
+            $this->assertFalse($loader->autoFields(false));
+            $this->assertFalse($loader->autoFields());
+        });
+    }
+
+    /**
+     * Test for enableAutoFields()
+     *
+     * @return void
+     */
+    public function testEnableAutoFields()
+    {
+        $loader = new EagerLoader();
+        $this->assertTrue($loader->isAutoFieldsEnabled());
+        $this->assertSame($loader, $loader->enableAutoFields(false));
+        $this->assertFalse($loader->isAutoFieldsEnabled());
     }
 
     /**
@@ -525,9 +596,9 @@ class EagerLoaderTest extends TestCase
      */
     protected function _quoteArray($elements)
     {
-        if ($this->connection->driver()->autoQuoting()) {
+        if ($this->connection->getDriver()->isAutoQuotingEnabled()) {
             $quoter = function ($e) {
-                return $this->connection->driver()->quoteIdentifier($e);
+                return $this->connection->getDriver()->quoteIdentifier($e);
             };
 
             return array_combine(
@@ -542,6 +613,26 @@ class EagerLoaderTest extends TestCase
     /**
      * Asserts that matching('something') and setMatching('something') return consistent type.
      *
+     * @group deprecated
+     * @return void
+     */
+    public function testMatchingReturnType()
+    {
+        $this->deprecated(function () {
+            $loader = new EagerLoader();
+            $result = $loader->setMatching('clients');
+            $this->assertInstanceOf(EagerLoader::class, $result);
+            $this->assertArrayHasKey('clients', $loader->getMatching());
+
+            $result = $loader->matching('customers');
+            $this->assertArrayHasKey('customers', $result);
+            $this->assertArrayHasKey('customers', $loader->getMatching());
+        });
+    }
+
+    /**
+     * Asserts that matching('something') and setMatching('something') return consistent type.
+     *
      * @return void
      */
     public function testSetMatchingReturnType()
@@ -550,9 +641,5 @@ class EagerLoaderTest extends TestCase
         $result = $loader->setMatching('clients');
         $this->assertInstanceOf(EagerLoader::class, $result);
         $this->assertArrayHasKey('clients', $loader->getMatching());
-
-        $result = $loader->matching('customers');
-        $this->assertArrayHasKey('customers', $result);
-        $this->assertArrayHasKey('customers', $loader->getMatching());
     }
 }

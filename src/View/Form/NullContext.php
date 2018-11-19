@@ -86,6 +86,14 @@ class NullContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
+    public function getRequiredMessage($field)
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldNames()
     {
         return [];

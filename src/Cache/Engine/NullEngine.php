@@ -17,7 +17,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 
 /**
- * Null cache engine, all operations return false.
+ * Null cache engine, all operations appear to work, but do nothing.
  *
  * This is used internally for when Cache::disable() has been called.
  */
@@ -37,7 +37,6 @@ class NullEngine extends CacheEngine
      */
     public function gc($expires = null)
     {
-        return false;
     }
 
     /**
@@ -45,13 +44,7 @@ class NullEngine extends CacheEngine
      */
     public function write($key, $value)
     {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function writeMany($data)
-    {
+        return true;
     }
 
     /**
@@ -75,6 +68,7 @@ class NullEngine extends CacheEngine
      */
     public function increment($key, $offset = 1)
     {
+        return true;
     }
 
     /**
@@ -82,6 +76,7 @@ class NullEngine extends CacheEngine
      */
     public function decrement($key, $offset = 1)
     {
+        return true;
     }
 
     /**
@@ -89,6 +84,7 @@ class NullEngine extends CacheEngine
      */
     public function delete($key)
     {
+        return true;
     }
 
     /**

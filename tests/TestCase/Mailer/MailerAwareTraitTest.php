@@ -51,11 +51,11 @@ class MailerAwareTraitTest extends TestCase
     /**
      * Test exception thrown by getMailer.
      *
-     * @expectedException \Cake\Mailer\Exception\MissingMailerException
-     * @expectedExceptionMessage Mailer class "Test" could not be found.
      */
     public function testGetMailerThrowsException()
     {
+        $this->expectException(\Cake\Mailer\Exception\MissingMailerException::class);
+        $this->expectExceptionMessage('Mailer class "Test" could not be found.');
         $stub = new Stub();
         $stub->getMailer('Test');
     }

@@ -28,6 +28,7 @@ use Cake\View\View;
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\Helper\NumberHelper $Number
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Cake\View\Helper\FormHelper $Form
  * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html
  */
 class PaginatorHelper extends Helper
@@ -40,7 +41,7 @@ class PaginatorHelper extends Helper
      *
      * @var array
      */
-    public $helpers = ['Url', 'Number', 'Html'];
+    public $helpers = ['Url', 'Number', 'Html', 'Form'];
 
     /**
      * Default config for this class
@@ -99,11 +100,11 @@ class PaginatorHelper extends Helper
     {
         parent::__construct($View, $config);
 
-        $query = $this->request->getQueryParams();
+        $query = $this->_View->getRequest()->getQueryParams();
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
         $this->setConfig(
             'options.url',
-            array_merge($this->request->getParam('pass'), ['?' => $query])
+            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query])
         );
     }
 
@@ -115,14 +116,16 @@ class PaginatorHelper extends Helper
      */
     public function params($model = null)
     {
+        $request = $this->_View->getRequest();
+
         if (empty($model)) {
             $model = $this->defaultModel();
         }
-        if (!$this->request->getParam('paging') || !$this->request->getParam('paging.' . $model)) {
+        if (!$request->getParam('paging') || !$request->getParam('paging.' . $model)) {
             return [];
         }
 
-        return $this->request->getParam('paging.' . $model);
+        return $request->getParam('paging.' . $model);
     }
 
     /**
@@ -151,22 +154,27 @@ class PaginatorHelper extends Helper
      */
     public function options(array $options = [])
     {
+        $request = $this->_View->getRequest();
+
         if (!empty($options['paging'])) {
-            if (!$this->request->getParam('paging')) {
-                $this->request->params['paging'] = [];
-            }
-            $this->request->params['paging'] = $options['paging'] + $this->request->getParam('paging');
+            $request = $request->withParam(
+                'paging',
+                $options['paging'] + $request->getParam('paging', [])
+            );
             unset($options['paging']);
         }
-        $model = $this->defaultModel();
 
+        $model = $this->defaultModel();
         if (!empty($options[$model])) {
-            if (!$this->request->getParam('paging.' . $model)) {
-                $this->request->params['paging'][$model] = [];
-            }
-            $this->request->params['paging'][$model] = $options[$model] + $this->request->getParam('paging.' . $model);
+            $request = $request->withParam(
+                'paging.' . $model,
+                $options[$model] + (array)$request->getParam('paging.' . $model, [])
+            );
             unset($options[$model]);
         }
+
+        $this->_View->setRequest($request);
+
         $this->_config['options'] = array_filter($options + $this->_config['options']);
         if (empty($this->_config['options']['url'])) {
             $this->_config['options']['url'] = [];
@@ -435,6 +443,7 @@ class PaginatorHelper extends Helper
 
             $title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
         }
+
         $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
         unset($options['direction']);
 
@@ -470,7 +479,7 @@ class PaginatorHelper extends Helper
         }
 
         $url = array_merge(
-            ['sort' => $key, 'direction' => $dir],
+            ['sort' => $key, 'direction' => $dir, 'page' => 1],
             $url,
             ['order' => null]
         );
@@ -493,14 +502,20 @@ class PaginatorHelper extends Helper
      *
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
-     * @param array|bool $urlOptions Array of options or bool `fullBase` for BC reasons.
+     * @param array $urlOptions Array of options
+     * The bool version of this argument is *deprecated* and will be removed in 4.0.0
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], $model = null, $urlOptions = false)
+    public function generateUrl(array $options = [], $model = null, $urlOptions = [])
     {
-        if (!is_array($urlOptions)) {
+        if (is_bool($urlOptions)) {
             $urlOptions = ['fullBase' => $urlOptions];
+            deprecationWarning(
+                'Passing a boolean value as third argument into PaginatorHelper::generateUrl() is deprecated ' .
+                'and will be removed in 4.0.0 . ' .
+                'Pass an array instead.'
+            );
         }
         $urlOptions += [
             'escape' => true,
@@ -535,7 +550,7 @@ class PaginatorHelper extends Helper
         }
 
         $url = array_filter($url, function ($value) {
-            return ($value || is_numeric($value));
+            return ($value || is_numeric($value) || $value === false);
         });
         $url = array_merge($url, $options);
 
@@ -552,6 +567,12 @@ class PaginatorHelper extends Helper
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             $currentParams = $this->_config['options']['url'];
+
+            if (isset($url['#'])) {
+                $currentParams['#'] = $url['#'];
+                unset($url['#']);
+            }
+
             // Merge existing query parameters in the scope.
             if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
                 $url += $currentParams['?'][$scope];
@@ -640,10 +661,10 @@ class PaginatorHelper extends Helper
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
-        if (!$this->request->getParam('paging')) {
+        if (!$this->_View->getRequest()->getParam('paging')) {
             return null;
         }
-        list($this->_defaultModel) = array_keys($this->request->getParam('paging'));
+        list($this->_defaultModel) = array_keys($this->_View->getRequest()->getParam('paging'));
 
         return $this->_defaultModel;
     }
@@ -679,14 +700,6 @@ class PaginatorHelper extends Helper
         if (!$paging['pageCount']) {
             $paging['pageCount'] = 1;
         }
-        $start = 0;
-        if ($paging['count'] >= 1) {
-            $start = (($paging['page'] - 1) * $paging['perPage']) + 1;
-        }
-        $end = $start + $paging['perPage'] - 1;
-        if ($paging['count'] < $end) {
-            $end = $paging['count'];
-        }
 
         switch ($options['format']) {
             case 'range':
@@ -702,8 +715,8 @@ class PaginatorHelper extends Helper
             'pages' => $paging['pageCount'],
             'current' => $paging['current'],
             'count' => $paging['count'],
-            'start' => $start,
-            'end' => $end
+            'start' => $paging['start'],
+            'end' => $paging['end']
         ]);
 
         $map += [
@@ -898,7 +911,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the first number for the paginator numbers() method.
      *
-     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param string $ellipsis Ellipsis character.
      * @param array $params Params from the numbers() method.
      * @param int $start Start number.
      * @param array $options Options from the numbers() method.
@@ -922,7 +935,7 @@ class PaginatorHelper extends Helper
     /**
      * Generates the last number for the paginator numbers() method.
      *
-     * @param \Cake\View\StringTemplate $ellipsis StringTemplate instance.
+     * @param string $ellipsis Ellipsis character.
      * @param array $params Params from the numbers() method.
      * @param int $end End number.
      * @param array $options Options from the numbers() method.
@@ -1143,19 +1156,19 @@ class PaginatorHelper extends Helper
         $links = [];
 
         if ($options['prev'] && $this->hasPrev()) {
-            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, true));
+            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, ['fullBase' => true]));
         }
 
         if ($options['next'] && $this->hasNext()) {
-            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, true));
+            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, ['fullBase' => true]));
         }
 
         if ($options['first']) {
-            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, true));
+            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, ['fullBase' => true]));
         }
 
         if ($options['last']) {
-            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, true));
+            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, ['fullBase' => true]));
         }
 
         $out = implode($links);
@@ -1181,5 +1194,42 @@ class PaginatorHelper extends Helper
     public function implementedEvents()
     {
         return [];
+    }
+
+    /**
+     * Dropdown select for pagination limit.
+     * This will generate a wrapping form.
+     *
+     * @param array $limits The options array.
+     * @param int|null $default Default option for pagination limit. Defaults to `$this->param('perPage')`.
+     * @param array $options Options for Select tag attributes like class, id or event
+     * @return string html output.
+     */
+    public function limitControl(array $limits = [], $default = null, array $options = [])
+    {
+        $out = $this->Form->create(null, ['type' => 'get']);
+
+        if (empty($default) || !is_numeric($default)) {
+            $default = $this->param('perPage');
+        }
+
+        if (empty($limits)) {
+            $limits = [
+                '20' => '20',
+                '50' => '50',
+                '100' => '100'
+            ];
+        }
+
+        $out .= $this->Form->control('limit', $options + [
+                'type' => 'select',
+                'label' => __('View'),
+                'value' => $default,
+                'options' => $limits,
+                'onChange' => 'this.form.submit()'
+            ]);
+        $out .= $this->Form->end();
+
+        return $out;
     }
 }

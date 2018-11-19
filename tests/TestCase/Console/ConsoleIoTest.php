@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
@@ -44,6 +45,20 @@ class ConsoleIoTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
+    }
+
+    /**
+     * teardown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        if (is_dir(TMP . 'shell_test')) {
+            $folder = new Folder(TMP . 'shell_test');
+            $folder->delete();
+        }
     }
 
     /**
@@ -467,7 +482,7 @@ class ConsoleIoTest extends TestCase
 
         $this->assertNotEmpty(Log::engine('stderr'));
         $engine = Log::engine('stdout');
-        $this->assertEquals(['notice', 'info', 'debug'], $engine->config('levels'));
+        $this->assertEquals(['notice', 'info', 'debug'], $engine->getConfig('levels'));
     }
 
     /**
@@ -496,5 +511,209 @@ class ConsoleIoTest extends TestCase
         $helper = $this->io->helper('simple');
         $this->assertInstanceOf('Cake\Console\Helper', $helper);
         $helper->output(['well', 'ish']);
+    }
+
+    /**
+     * Provider for output helpers
+     *
+     * @return array
+     */
+    public function outHelperProvider()
+    {
+        return [['info'], ['success']];
+    }
+
+    /**
+     * Provider for err helpers
+     *
+     * @return array
+     */
+    public function errHelperProvider()
+    {
+        return [['warning'], ['error']];
+    }
+
+    /**
+     * test out helper methods
+     *
+     * @dataProvider outHelperProvider
+     * @return void
+     */
+    public function testOutHelpers($method)
+    {
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with("<{$method}>Just a test</{$method}>", 1);
+
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+
+        $this->io->{$method}('Just a test');
+        $this->io->{$method}(['Just', 'a test']);
+    }
+
+    /**
+     * test err helper methods
+     *
+     * @dataProvider errHelperProvider
+     * @return void
+     */
+    public function testErrHelpers($method)
+    {
+        $this->err->expects($this->at(0))
+            ->method('write')
+            ->with("<{$method}>Just a test</{$method}>", 1);
+
+        $this->err->expects($this->at(1))
+            ->method('write')
+            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+
+        $this->io->{$method}('Just a test');
+        $this->io->{$method}(['Just', 'a test']);
+    }
+
+    /**
+     * Test that createFile
+     *
+     * @return void
+     */
+    public function testCreateFileSuccess()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        $contents = 'some content';
+        $result = $this->io->createFile($file, $contents);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, $contents);
+    }
+
+    /**
+     * Test that createFile with permissions error.
+     *
+     * @return void
+     */
+    public function testCreateFilePermissionsError()
+    {
+        $this->skipIf(DS === '\\', 'Cant perform operations using permissions on windows.');
+
+        $path = TMP . 'shell_test';
+        $file = $path . DS . 'no_perms';
+
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+        chmod($path, 0444);
+
+        $this->io->createFile($file, 'testing');
+        $this->assertFileNotExists($file);
+
+        chmod($path, 0744);
+        rmdir($path);
+    }
+
+    /**
+     * Test that `q` raises an error.
+     *
+     * @expectedException \Cake\Console\Exception\StopException
+     * @return void
+     */
+    public function testCreateFileOverwriteQuit()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        touch($file);
+
+        $this->in->expects($this->once())
+            ->method('read')
+            ->will($this->returnValue('q'));
+
+        $this->io->createFile($file, 'some content');
+    }
+
+    /**
+     * Test that `n` raises an error.
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteNo()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        file_put_contents($file, 'original');
+        touch($file);
+
+        $this->in->expects($this->once())
+            ->method('read')
+            ->will($this->returnValue('n'));
+
+        $contents = 'new content';
+        $result = $this->io->createFile($file, $contents);
+
+        $this->assertFalse($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, 'original');
+    }
+
+    /**
+     * Test the forceOverwrite parameter
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteParam()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        file_put_contents($file, 'original');
+        touch($file);
+
+        $contents = 'new content';
+        $result = $this->io->createFile($file, $contents, true);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, $contents);
+    }
+
+    /**
+     * Test the `a` response
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteAll()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        file_put_contents($file, 'original');
+        touch($file);
+
+        $this->in->expects($this->once())
+            ->method('read')
+            ->will($this->returnValue('a'));
+
+        $this->io->createFile($file, 'new content');
+        $this->assertStringEqualsFile($file, 'new content');
+
+        $this->io->createFile($file, 'newer content');
+        $this->assertStringEqualsFile($file, 'newer content');
+
+        $this->io->createFile($file, 'newest content', false);
+        $this->assertStringEqualsFile(
+            $file,
+            'newest content',
+            'overwrite state replaces parameter'
+        );
     }
 }

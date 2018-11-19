@@ -18,6 +18,7 @@ use Cake\Routing\Exception\DuplicateNamedRouteException;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Route\Route;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 /**
  * Contains a collection of routes.
@@ -57,6 +58,27 @@ class RouteCollection
      * @var array
      */
     protected $_paths = [];
+
+    /**
+     * A map of middleware names and the related objects.
+     *
+     * @var array
+     */
+    protected $_middleware = [];
+
+    /**
+     * A map of middleware group names and the related middleware names.
+     *
+     * @var array
+     */
+    protected $_middlewareGroups = [];
+
+    /**
+     * A map of paths and the list of applicable middleware.
+     *
+     * @var array
+     */
+    protected $_middlewarePaths = [];
 
     /**
      * Route extensions
@@ -99,15 +121,11 @@ class RouteCollection
 
         // Index path prefixes (for parsing)
         $path = $route->staticPath();
-        if (empty($this->_paths[$path])) {
-            $this->_paths[$path] = [];
-            krsort($this->_paths);
-        }
         $this->_paths[$path][] = $route;
 
         $extensions = $route->getExtensions();
         if (count($extensions) > 0) {
-            $this->extensions($extensions);
+            $this->setExtensions($extensions);
         }
     }
 
@@ -122,7 +140,12 @@ class RouteCollection
     public function parse($url, $method = '')
     {
         $decoded = urldecode($url);
-        foreach (array_keys($this->_paths) as $path) {
+
+        // Sort path segments matching longest paths first.
+        $paths = array_keys($this->_paths);
+        rsort($paths);
+
+        foreach ($paths as $path) {
             if (strpos($decoded, $path) !== 0) {
                 continue;
             }
@@ -159,7 +182,7 @@ class RouteCollection
     /**
      * Takes the ServerRequestInterface, iterates the routes until one is able to parse the route.
      *
-     * @param \Psr\Http\Messages\ServerRequestInterface $request The request to parse route data from.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to parse route data from.
      * @return array An array of request parameters parsed from the URL.
      * @throws \Cake\Routing\Exception\MissingRouteException When a URL has no matching route.
      */
@@ -167,7 +190,12 @@ class RouteCollection
     {
         $uri = $request->getUri();
         $urlPath = urldecode($uri->getPath());
-        foreach (array_keys($this->_paths) as $path) {
+
+        // Sort path segments matching longest paths first.
+        $paths = array_keys($this->_paths);
+        rsort($paths);
+
+        foreach ($paths as $path) {
             if (strpos($urlPath, $path) !== 0) {
                 continue;
             }
@@ -347,21 +375,178 @@ class RouteCollection
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return array The valid extensions.
+     * @deprecated 3.5.0 Use getExtensions()/setExtensions() instead.
      */
     public function extensions($extensions = null, $merge = true)
     {
-        if ($extensions === null) {
-            return $this->_extensions;
+        deprecationWarning(
+            'RouteCollection::extensions() is deprecated. ' .
+            'Use RouteCollection::setExtensions()/getExtensions() instead.'
+        );
+        if ($extensions !== null) {
+            $this->setExtensions((array)$extensions, $merge);
         }
 
-        $extensions = (array)$extensions;
+        return $this->getExtensions();
+    }
+
+    /**
+     * Get the extensions that can be handled.
+     *
+     * @return array The valid extensions.
+     */
+    public function getExtensions()
+    {
+        return $this->_extensions;
+    }
+
+    /**
+     * Set the extensions that the route collection can handle.
+     *
+     * @param array $extensions The list of extensions to set.
+     * @param bool $merge Whether to merge with or override existing extensions.
+     *   Defaults to `true`.
+     * @return $this
+     */
+    public function setExtensions(array $extensions, $merge = true)
+    {
         if ($merge) {
             $extensions = array_unique(array_merge(
                 $this->_extensions,
                 $extensions
             ));
         }
+        $this->_extensions = $extensions;
 
-        return $this->_extensions = $extensions;
+        return $this;
+    }
+
+    /**
+     * Register a middleware with the RouteCollection.
+     *
+     * Once middleware has been registered, it can be applied to the current routing
+     * scope or any child scopes that share the same RouteCollection.
+     *
+     * @param string $name The name of the middleware. Used when applying middleware to a scope.
+     * @param callable|string $middleware The middleware callable or class name to register.
+     * @return $this
+     */
+    public function registerMiddleware($name, $middleware)
+    {
+        $this->_middleware[$name] = $middleware;
+
+        return $this;
+    }
+
+    /**
+     * Add middleware to a middleware group
+     *
+     * @param string $name Name of the middleware group
+     * @param array $middlewareNames Names of the middleware
+     * @return $this
+     */
+    public function middlewareGroup($name, array $middlewareNames)
+    {
+        if ($this->hasMiddleware($name)) {
+            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            throw new RuntimeException($message);
+        }
+
+        foreach ($middlewareNames as $middlewareName) {
+            if (!$this->hasMiddleware($middlewareName)) {
+                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                throw new RuntimeException($message);
+            }
+        }
+
+        $this->_middlewareGroups[$name] = $middlewareNames;
+
+        return $this;
+    }
+
+    /**
+     * Check if the named middleware group has been created.
+     *
+     * @param string $name The name of the middleware group to check.
+     * @return bool
+     */
+    public function hasMiddlewareGroup($name)
+    {
+        return array_key_exists($name, $this->_middlewareGroups);
+    }
+
+    /**
+     * Check if the named middleware has been registered.
+     *
+     * @param string $name The name of the middleware to check.
+     * @return bool
+     */
+    public function hasMiddleware($name)
+    {
+        return isset($this->_middleware[$name]);
+    }
+
+    /**
+     * Check if the named middleware or middleware group has been registered.
+     *
+     * @param string $name The name of the middleware to check.
+     * @return bool
+     */
+    public function middlewareExists($name)
+    {
+        return $this->hasMiddleware($name) || $this->hasMiddlewareGroup($name);
+    }
+
+    /**
+     * Apply a registered middleware(s) for the provided path
+     *
+     * @param string $path The URL path to register middleware for.
+     * @param string[] $middleware The middleware names to add for the path.
+     * @return $this
+     */
+    public function applyMiddleware($path, array $middleware)
+    {
+        foreach ($middleware as $name) {
+            if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
+                $message = "Cannot apply '$name' middleware or middleware group to path '$path'. It has not been registered.";
+                throw new RuntimeException($message);
+            }
+        }
+        // Matches route element pattern in Cake\Routing\Route
+        $path = '#^' . preg_quote($path, '#') . '#';
+        $path = preg_replace('/\\\\:([a-z0-9-_]+(?<![-_]))/i', '[^/]+', $path);
+
+        if (!isset($this->_middlewarePaths[$path])) {
+            $this->_middlewarePaths[$path] = [];
+        }
+        $this->_middlewarePaths[$path] = array_merge($this->_middlewarePaths[$path], $middleware);
+
+        return $this;
+    }
+
+    /**
+     * Get an array of middleware given a list of names
+     *
+     * @param array $names The names of the middleware or groups to fetch
+     * @return array An array of middleware. If any of the passed names are groups,
+     *   the groups middleware will be flattened into the returned list.
+     * @throws \RuntimeException when a requested middleware does not exist.
+     */
+    public function getMiddleware(array $names)
+    {
+        $out = [];
+        foreach ($names as $name) {
+            if ($this->hasMiddlewareGroup($name)) {
+                $out = array_merge($out, $this->getMiddleware($this->_middlewareGroups[$name]));
+                continue;
+            }
+            if (!$this->hasMiddleware($name)) {
+                $message = "The middleware named '$name' has not been registered. Use registerMiddleware() to define it.";
+                throw new RuntimeException($message);
+            }
+            $out[] = $this->_middleware[$name];
+        }
+
+        return $out;
     }
 }

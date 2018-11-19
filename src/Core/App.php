@@ -48,7 +48,7 @@ class App
      * @param string $class Class name
      * @param string $type Type of class
      * @param string $suffix Class name suffix
-     * @return bool|string False if the class is not found or namespaced class name
+     * @return false|string False if the class is not found or namespaced class name
      */
     public static function className($class, $type = '', $suffix = '')
     {

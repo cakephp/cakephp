@@ -109,6 +109,7 @@ use ReflectionMethod;
  *
  * @see \Cake\ORM\Table::addBehavior()
  * @see \Cake\Event\EventManager
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Behavior implements EventListenerInterface
 {
@@ -314,6 +315,7 @@ class Behavior implements EventListenerInterface
      * method list. See core behaviors for examples
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function implementedFinders()
     {
@@ -345,6 +347,7 @@ class Behavior implements EventListenerInterface
      * method list. See core behaviors for examples
      *
      * @return array
+     * @throws \ReflectionException
      */
     public function implementedMethods()
     {
@@ -364,6 +367,7 @@ class Behavior implements EventListenerInterface
      * declared on Cake\ORM\Behavior
      *
      * @return array
+     * @throws \ReflectionException
      */
     protected function _reflectionCache()
     {

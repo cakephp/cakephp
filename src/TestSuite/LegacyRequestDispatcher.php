@@ -15,6 +15,7 @@ namespace Cake\TestSuite;
 
 use Cake\Http\ServerRequest;
 use Cake\Routing\DispatcherFactory;
+use Cake\Routing\Router;
 use Cake\TestSuite\Stub\Response;
 
 /**
@@ -42,6 +43,17 @@ class LegacyRequestDispatcher
     }
 
     /**
+     * Resolve the user provided URL into the actual request URL.
+     *
+     * @param array|string $url The URL array/string to resolve.
+     * @return string
+     */
+    public function resolveUrl($url)
+    {
+        return Router::url($url);
+    }
+
+    /**
      * Run a request and get the response.
      *
      * @param array $request The request context to execute.
@@ -52,7 +64,7 @@ class LegacyRequestDispatcher
         $request = new ServerRequest($request);
         $response = new Response();
         $dispatcher = DispatcherFactory::create();
-        $dispatcher->eventManager()->on(
+        $dispatcher->getEventManager()->on(
             'Dispatcher.invokeController',
             ['priority' => 999],
             [$this->_test, 'controllerSpy']

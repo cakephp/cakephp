@@ -15,7 +15,6 @@
 namespace Cake\Mailer;
 
 use BadMethodCallException;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Filesystem\File;
@@ -33,7 +32,7 @@ use LogicException;
 use PDO;
 use RuntimeException;
 use Serializable;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * CakePHP Email class.
@@ -87,7 +86,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string
      */
-    const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-.]+)$/ui';
+    const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
     /**
      * Recipient of the email
@@ -242,6 +241,27 @@ class Email implements JsonSerializable, Serializable
     public $headerCharset;
 
     /**
+     * The email transfer encoding used.
+     * If null, the $charset property is used for determined the transfer encoding.
+     *
+     * @var string|null
+     */
+    protected $transferEncoding;
+
+    /**
+     * Available encoding to be set for transfer.
+     *
+     * @var array
+     */
+    protected $_transferEncodingAvailable = [
+        '7bit',
+        '8bit',
+        'base64',
+        'binary',
+        'quoted-printable'
+    ];
+
+    /**
      * The application wide charset, used to encode headers and body
      *
      * @var string|null
@@ -272,22 +292,13 @@ class Email implements JsonSerializable, Serializable
     protected $_priority;
 
     /**
-     * An array mapping url schemes to fully qualified Transport class names
+     * An array mapping url schemes to fully qualified Transport class names.
+     * Unused.
      *
      * @var array
+     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
-    protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
-    ];
-
-    /**
-     * Configuration profiles for transports.
-     *
-     * @var array
-     */
-    protected static $_transportConfig = [];
+    protected static $_dsnClassMap = [];
 
     /**
      * A copy of the configuration profile for this
@@ -326,7 +337,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Constructor
      *
-     * @param array|string|null $config Array of configs, or string to load configs from email.php
+     * @param array|string|null $config Array of configs, or string to load configs from app.php
      */
     public function __construct($config = null)
     {
@@ -402,6 +413,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function from($email = null, $name = null)
     {
+        deprecationWarning('Email::from() is deprecated. Use Email::setFrom() or Email::getFrom() instead.');
         if ($email === null) {
             return $this->getFrom();
         }
@@ -445,6 +457,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function sender($email = null, $name = null)
     {
+        deprecationWarning('Email::sender() is deprecated. Use Email::setSender() or Email::getSender() instead.');
+
         if ($email === null) {
             return $this->getSender();
         }
@@ -488,6 +502,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function replyTo($email = null, $name = null)
     {
+        deprecationWarning('Email::replyTo() is deprecated. Use Email::setReplyTo() or Email::getReplyTo() instead.');
+
         if ($email === null) {
             return $this->getReplyTo();
         }
@@ -531,6 +547,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function readReceipt($email = null, $name = null)
     {
+        deprecationWarning('Email::readReceipt() is deprecated. Use Email::setReadReceipt() or Email::getReadReceipt() instead.');
+
         if ($email === null) {
             return $this->getReadReceipt();
         }
@@ -574,6 +592,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function returnPath($email = null, $name = null)
     {
+        deprecationWarning('Email::returnPath() is deprecated. Use Email::setReturnPath() or Email::getReturnPath() instead.');
         if ($email === null) {
             return $this->getReturnPath();
         }
@@ -615,6 +634,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function to($email = null, $name = null)
     {
+        deprecationWarning('Email::to() is deprecated. Use Email::setTo() or Email::getTo() instead.');
+
         if ($email === null) {
             return $this->getTo();
         }
@@ -669,6 +690,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function cc($email = null, $name = null)
     {
+        deprecationWarning('Email::cc() is deprecated. Use Email::setCc() or Email::getCc() instead.');
+
         if ($email === null) {
             return $this->getCc();
         }
@@ -723,6 +746,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function bcc($email = null, $name = null)
     {
+        deprecationWarning('Email::bcc() is deprecated. Use Email::setBcc() or Email::getBcc() instead.');
+
         if ($email === null) {
             return $this->getBcc();
         }
@@ -778,6 +803,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function charset($charset = null)
     {
+        deprecationWarning('Email::charset() is deprecated. Use Email::setCharset() or Email::getCharset() instead.');
+
         if ($charset === null) {
             return $this->getCharset();
         }
@@ -818,6 +845,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function headerCharset($charset = null)
     {
+        deprecationWarning('Email::headerCharset() is deprecated. Use Email::setHeaderCharset() or Email::getHeaderCharset() instead.');
+
         if ($charset === null) {
             return $this->getHeaderCharset();
         }
@@ -825,6 +854,38 @@ class Email implements JsonSerializable, Serializable
         $this->setHeaderCharset($charset);
 
         return $this->headerCharset;
+    }
+
+    /**
+     * TransferEncoding setter.
+     *
+     * @param string|null $encoding Encoding set.
+     * @return $this
+     */
+    public function setTransferEncoding($encoding)
+    {
+        $encoding = strtolower($encoding);
+        if (!in_array($encoding, $this->_transferEncodingAvailable)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Transfer encoding not available. Can be : %s.',
+                    implode(', ', $this->_transferEncodingAvailable)
+                )
+            );
+        }
+        $this->transferEncoding = $encoding;
+
+        return $this;
+    }
+
+    /**
+     * TransferEncoding getter.
+     *
+     * @return string|null Encoding
+     */
+    public function getTransferEncoding()
+    {
+        return $this->transferEncoding;
     }
 
     /**
@@ -862,6 +923,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function emailPattern($regex = false)
     {
+        deprecationWarning('Email::emailPattern() is deprecated. Use Email::setEmailPattern() or Email::getEmailPattern() instead.');
+
         if ($regex === false) {
             return $this->getEmailPattern();
         }
@@ -941,6 +1004,12 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _setEmailSingle($varName, $email, $name, $throwMessage)
     {
+        if ($email === []) {
+            $this->{$varName} = $email;
+
+            return $this;
+        }
+
         $current = $this->{$varName};
         $this->_setEmail($varName, $email, $name);
         if (count($this->{$varName}) !== 1) {
@@ -1017,6 +1086,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function subject($subject = null)
     {
+        deprecationWarning('Email::subject() is deprecated. Use Email::setSubject() or Email::getSubject() instead.');
+
         if ($subject === null) {
             return $this->getSubject();
         }
@@ -1124,10 +1195,10 @@ class Email implements JsonSerializable, Serializable
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
-            } else {
-                $headers['Message-ID'] = $this->_messageId;
+                $this->_messageId = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             }
+
+            $headers['Message-ID'] = $this->_messageId;
         }
 
         if ($this->_priority) {
@@ -1189,6 +1260,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTemplate($template)
     {
+        deprecationWarning(
+            'Email::setTemplate() is deprecated. Use $email->viewBuilder()->setTemplate() instead.'
+        );
+
         $this->viewBuilder()->setTemplate($template ?: '');
 
         return $this;
@@ -1201,6 +1276,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getTemplate()
     {
+        deprecationWarning(
+            'Email::getTemplate() is deprecated. Use $email->viewBuilder()->getTemplate() instead.'
+        );
+
         return $this->viewBuilder()->getTemplate();
     }
 
@@ -1212,6 +1291,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setLayout($layout)
     {
+        deprecationWarning(
+            'Email::setLayout() is deprecated. Use $email->viewBuilder()->setLayout() instead.'
+        );
+
         $this->viewBuilder()->setLayout($layout ?: false);
 
         return $this;
@@ -1224,6 +1307,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getLayout()
     {
+        deprecationWarning(
+            'Email::getLayout() is deprecated. Use $email->viewBuilder()->getLayout() instead.'
+        );
+
         return $this->viewBuilder()->getLayout();
     }
 
@@ -1237,6 +1324,12 @@ class Email implements JsonSerializable, Serializable
      */
     public function template($template = false, $layout = false)
     {
+        deprecationWarning(
+            'Email::template() is deprecated. ' .
+            'Use $email->viewBuilder()->getTemplate()/setTemplate() ' .
+            'and $email->viewBuilder()->getLayout()/setLayout() instead.'
+        );
+
         if ($template === false) {
             return [
                 'template' => $this->getTemplate(),
@@ -1283,6 +1376,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function viewRender($viewClass = null)
     {
+        deprecationWarning('Email::viewRender() is deprecated. Use Email::setViewRenderer() or Email::getViewRenderer() instead.');
+
         if ($viewClass === null) {
             return $this->getViewRenderer();
         }
@@ -1323,6 +1418,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function viewVars($viewVars = null)
     {
+        deprecationWarning('Email::viewVars() is deprecated. Use Email::setViewVars() or Email::getViewVars() instead.');
+
         if ($viewVars === null) {
             return $this->getViewVars();
         }
@@ -1338,6 +1435,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setTheme($theme)
     {
+        deprecationWarning(
+            'Email::setTheme() is deprecated. Use $email->viewBuilder()->setTheme() instead.'
+        );
+
         $this->viewBuilder()->setTheme($theme);
 
         return $this;
@@ -1350,6 +1451,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getTheme()
     {
+        deprecationWarning(
+            'Email::getTheme() is deprecated. Use $email->viewBuilder()->getTheme() instead.'
+        );
+
         return $this->viewBuilder()->getTheme();
     }
 
@@ -1362,6 +1467,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function theme($theme = null)
     {
+        deprecationWarning(
+            'Email::theme() is deprecated. Use $email->viewBuilder()->getTheme()/setTheme() instead.'
+        );
+
         if ($theme === null) {
             return $this->getTheme();
         }
@@ -1377,6 +1486,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function setHelpers(array $helpers)
     {
+        deprecationWarning(
+            'Email::setHelpers() is deprecated. Use $email->viewBuilder()->setHelpers() instead.'
+        );
+
         $this->viewBuilder()->setHelpers($helpers, false);
 
         return $this;
@@ -1389,6 +1502,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function getHelpers()
     {
+        deprecationWarning(
+            'Email::getHelpers() is deprecated. Use $email->viewBuilder()->getHelpers() instead.'
+        );
+
         return $this->viewBuilder()->getHelpers();
     }
 
@@ -1401,6 +1518,10 @@ class Email implements JsonSerializable, Serializable
      */
     public function helpers($helpers = null)
     {
+        deprecationWarning(
+            'Email::helpers() is deprecated. Use $email->viewBuilder()->getHelpers()/setHelpers() instead.'
+        );
+
         if ($helpers === null) {
             return $this->getHelpers();
         }
@@ -1445,6 +1566,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function emailFormat($format = null)
     {
+        deprecationWarning('Email::emailFormat() is deprecated. Use Email::setEmailFormat() or Email::getEmailFormat() instead.');
+
         if ($format === null) {
             return $this->getEmailFormat();
         }
@@ -1467,7 +1590,7 @@ class Email implements JsonSerializable, Serializable
     public function setTransport($name)
     {
         if (is_string($name)) {
-            $transport = $this->_constructTransport($name);
+            $transport = TransportFactory::get($name);
         } elseif (is_object($name)) {
             $transport = $name;
         } else {
@@ -1509,59 +1632,13 @@ class Email implements JsonSerializable, Serializable
      */
     public function transport($name = null)
     {
+        deprecationWarning('Email::transport() is deprecated. Use Email::setTransport() or Email::getTransport() instead.');
+
         if ($name === null) {
             return $this->getTransport();
         }
 
         return $this->setTransport($name);
-    }
-
-    /**
-     * Build a transport instance from configuration data.
-     *
-     * @param string $name The transport configuration name to build.
-     * @return \Cake\Mailer\AbstractTransport
-     * @throws \InvalidArgumentException When transport configuration is missing or invalid.
-     */
-    protected function _constructTransport($name)
-    {
-        if (!isset(static::$_transportConfig[$name])) {
-            throw new InvalidArgumentException(sprintf('Transport config "%s" is missing.', $name));
-        }
-
-        if (!isset(static::$_transportConfig[$name]['className'])) {
-            throw new InvalidArgumentException(
-                sprintf('Transport config "%s" is invalid, the required `className` option is missing', $name)
-            );
-        }
-
-        $config = static::$_transportConfig[$name];
-
-        if (is_object($config['className'])) {
-            return $config['className'];
-        }
-
-        $className = App::className($config['className'], 'Mailer/Transport', 'Transport');
-        if (!$className) {
-            $className = App::className($config['className'], 'Network/Email', 'Transport');
-            if ($className) {
-                trigger_error(
-                    'Transports in "Network/Email" are deprecated, use "Mailer/Transport" instead.',
-                    E_USER_DEPRECATED
-                );
-            }
-        }
-
-        if (!$className) {
-            throw new InvalidArgumentException(sprintf('Transport class "%s" not found.', $config['className']));
-        }
-        if (!method_exists($className, 'send')) {
-            throw new InvalidArgumentException(sprintf('The "%s" does not have a send() method.', $className));
-        }
-
-        unset($config['className']);
-
-        return new $className($config);
     }
 
     /**
@@ -1605,6 +1682,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function messageId($message = null)
     {
+        deprecationWarning('Email::messageId() is deprecated. Use Email::setMessageId() or Email::getMessageId() instead.');
+
         if ($message === null) {
             return $this->getMessageId();
         }
@@ -1646,6 +1725,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function domain($domain = null)
     {
+        deprecationWarning('Email::domain() is deprecated. Use Email::setDomain() or Email::getDomain() instead.');
+
         if ($domain === null) {
             return $this->getDomain();
         }
@@ -1661,19 +1742,19 @@ class Email implements JsonSerializable, Serializable
      * Attach a single file:
      *
      * ```
-     * $email->attachments('path/to/file');
+     * $email->setAttachments('path/to/file');
      * ```
      *
      * Attach a file with a different filename:
      *
      * ```
-     * $email->attachments(['custom_name.txt' => 'path/to/file.txt']);
+     * $email->setAttachments(['custom_name.txt' => 'path/to/file.txt']);
      * ```
      *
      * Attach a file and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'file' => 'path/to/file',
      *      'mimetype' => 'image/png',
      *      'contentId' => 'abc123',
@@ -1685,7 +1766,7 @@ class Email implements JsonSerializable, Serializable
      * Attach a file from string and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'data' => file_get_contents('path/to/file'),
      *      'mimetype' => 'image/png'
      *    ]
@@ -1727,7 +1808,7 @@ class Email implements JsonSerializable, Serializable
                     $name = basename($fileInfo['file']);
                 }
             }
-            if (!isset($fileInfo['mimetype']) && function_exists('mime_content_type')) {
+            if (!isset($fileInfo['mimetype']) && isset($fileInfo['file']) && function_exists('mime_content_type')) {
                 $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
             }
             if (!isset($fileInfo['mimetype'])) {
@@ -1758,19 +1839,19 @@ class Email implements JsonSerializable, Serializable
      * Attach a single file:
      *
      * ```
-     * $email->attachments('path/to/file');
+     * $email->setAttachments('path/to/file');
      * ```
      *
      * Attach a file with a different filename:
      *
      * ```
-     * $email->attachments(['custom_name.txt' => 'path/to/file.txt']);
+     * $email->setAttachments(['custom_name.txt' => 'path/to/file.txt']);
      * ```
      *
      * Attach a file and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'file' => 'path/to/file',
      *      'mimetype' => 'image/png',
      *      'contentId' => 'abc123',
@@ -1782,7 +1863,7 @@ class Email implements JsonSerializable, Serializable
      * Attach a file from string and specify additional properties:
      *
      * ```
-     * $email->attachments(['custom_name.png' => [
+     * $email->setAttachments(['custom_name.png' => [
      *      'data' => file_get_contents('path/to/file'),
      *      'mimetype' => 'image/png'
      *    ]
@@ -1802,6 +1883,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function attachments($attachments = null)
     {
+        deprecationWarning('Email::attachments() is deprecated. Use Email::setAttachments() or Email::getAttachments() instead.');
+
         if ($attachments === null) {
             return $this->getAttachments();
         }
@@ -1830,7 +1913,7 @@ class Email implements JsonSerializable, Serializable
      * Get generated message (used by transport classes)
      *
      * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
-     * @return string|array String if have type, array if type is null
+     * @return string|array String if type is given, array if type is null
      */
     public function message($type = null)
     {
@@ -1886,33 +1969,13 @@ class Email implements JsonSerializable, Serializable
      * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
      *   data, or a transport instance. Null when using key as array.
      * @return void
-     * @throws \BadMethodCallException When modifying an existing configuration.
+     * @deprecated 3.7.0 Use TransportFactory::setConfig() instead.
      */
     public static function setConfigTransport($key, $config = null)
     {
-        if (is_array($key)) {
-            foreach ($key as $name => $settings) {
-                static::setConfigTransport($name, $settings);
-            }
+        deprecationWarning('Email::setConfigTransport() is deprecated. Use TransportFactory::setConfig() instead.');
 
-            return;
-        }
-
-        if (isset(static::$_transportConfig[$key])) {
-            throw new BadMethodCallException(sprintf('Cannot modify an existing config "%s"', $key));
-        }
-
-        if (is_object($config)) {
-            $config = ['className' => $config];
-        }
-
-        if (isset($config['url'])) {
-            $parsed = static::parseDsn($config['url']);
-            unset($config['url']);
-            $config = $parsed + $config;
-        }
-
-        static::$_transportConfig[$key] = $config;
+        TransportFactory::setConfig($key, $config);
     }
 
     /**
@@ -1920,10 +1983,13 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string $key The configuration name to read.
      * @return array|null Transport config.
+     * @deprecated 3.7.0 Use TransportFactory::getConfig() instead.
      */
     public static function getConfigTransport($key)
     {
-        return isset(static::$_transportConfig[$key]) ? static::$_transportConfig[$key] : null;
+        deprecationWarning('Email::getConfigTransport() is deprecated. Use TransportFactory::getConfig() instead.');
+
+        return TransportFactory::getConfig($key);
     }
 
     /**
@@ -1940,7 +2006,7 @@ class Email implements JsonSerializable, Serializable
      * The `className` is used to define the class to use for a transport.
      * It can either be a short name, or a fully qualified classname
      *
-     * @deprecated 3.4.0 Use setConfigTransport()/getConfigTransport() instead.
+     * @deprecated 3.4.0 Use TransportFactory::setConfig()/getConfig() instead.
      * @param string|array $key The configuration name to read/write. Or
      *   an array of multiple transports to set.
      * @param array|\Cake\Mailer\AbstractTransport|null $config Either an array of configuration
@@ -1950,26 +2016,31 @@ class Email implements JsonSerializable, Serializable
      */
     public static function configTransport($key, $config = null)
     {
+        deprecationWarning('Email::configTransport() is deprecated. Use TransportFactory::setConfig() or TransportFactory::getConfig() instead.');
+
         if ($config === null && is_string($key)) {
-            return static::getConfigTransport($key);
+            return TransportFactory::getConfig($key);
         }
         if ($config === null && is_array($key)) {
-            static::setConfigTransport($key);
+            TransportFactory::setConfig($key);
 
             return null;
         }
 
-        static::setConfigTransport($key, $config);
+        TransportFactory::setConfig($key, $config);
     }
 
     /**
      * Returns an array containing the named transport configurations
      *
      * @return array Array of configurations.
+     * @deprecated 3.7.0 Use TransportFactory::configured() instead.
      */
     public static function configuredTransport()
     {
-        return array_keys(static::$_transportConfig);
+        deprecationWarning('Email::configuredTransport() is deprecated. Use TransportFactory::configured().');
+
+        return TransportFactory::configured();
     }
 
     /**
@@ -1977,10 +2048,13 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string $key The transport name to remove.
      * @return void
+     * @deprecated 3.7.0 Use TransportFactory::drop() instead.
      */
     public static function dropTransport($key)
     {
-        unset(static::$_transportConfig[$key]);
+        deprecationWarning('Email::dropTransport() is deprecated. Use TransportFactory::drop().');
+
+        TransportFactory::drop($key);
     }
 
     /**
@@ -2020,6 +2094,8 @@ class Email implements JsonSerializable, Serializable
      */
     public function profile($config = null)
     {
+        deprecationWarning('Email::profile() is deprecated. Use Email::setProfile() or Email::getProfile() instead.');
+
         if ($config === null) {
             return $this->getProfile();
         }
@@ -2084,9 +2160,20 @@ class Email implements JsonSerializable, Serializable
         }
         Log::write(
             $config['level'],
-            PHP_EOL . $contents['headers'] . PHP_EOL . PHP_EOL . $contents['message'],
+            PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
             $config['scope']
         );
+    }
+
+    /**
+     * Converts given value to string
+     *
+     * @param string|array $value The value to convert
+     * @return string
+     */
+    protected function flatten($value)
+    {
+        return is_array($value) ? implode(';', $value) : (string)$value;
     }
 
     /**
@@ -2095,20 +2182,20 @@ class Email implements JsonSerializable, Serializable
      * @param string|array|null $to Address to send (see Cake\Mailer\Email::to()). If null, will try to use 'to' from transport config
      * @param string|null $subject String of subject or null to use 'subject' from transport config
      * @param string|array|null $message String with message or array with variables to be used in render
-     * @param string|array $transportConfig String to use config from EmailConfig or array with configs
+     * @param string|array $config String to use Email delivery profile from app.php or array with configs
      * @param bool $send Send the email or just return the instance pre-configured
      * @return static Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
-    public static function deliver($to = null, $subject = null, $message = null, $transportConfig = 'default', $send = true)
+    public static function deliver($to = null, $subject = null, $message = null, $config = 'default', $send = true)
     {
         $class = __CLASS__;
 
-        if (is_array($transportConfig) && !isset($transportConfig['transport'])) {
-            $transportConfig['transport'] = 'default';
+        if (is_array($config) && !isset($config['transport'])) {
+            $config['transport'] = 'default';
         }
         /* @var \Cake\Mailer\Email $instance */
-        $instance = new $class($transportConfig);
+        $instance = new $class($config);
         if ($to !== null) {
             $instance->setTo($to);
         }
@@ -2156,7 +2243,7 @@ class Email implements JsonSerializable, Serializable
         ];
         foreach ($simpleMethods as $method) {
             if (isset($config[$method])) {
-                $this->$method($config[$method]);
+                $this->{'set' . ucfirst($method)}($config[$method]);
             }
         }
 
@@ -2172,7 +2259,7 @@ class Email implements JsonSerializable, Serializable
         ];
         foreach ($viewBuilderMethods as $method) {
             if (array_key_exists($method, $config)) {
-                $this->viewBuilder()->$method($config[$method]);
+                $this->viewBuilder()->{'set' . ucfirst($method)}($config[$method]);
             }
         }
 
@@ -2207,12 +2294,13 @@ class Email implements JsonSerializable, Serializable
         $this->_headers = [];
         $this->_textMessage = '';
         $this->_htmlMessage = '';
-        $this->_message = '';
+        $this->_message = [];
         $this->_emailFormat = 'text';
         $this->_transport = null;
         $this->_priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
+        $this->transferEncoding = null;
         $this->_attachments = [];
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
@@ -2308,7 +2396,7 @@ class Email implements JsonSerializable, Serializable
             if (!preg_match('/<[a-z]+.*>/i', $line)) {
                 $formatted = array_merge(
                     $formatted,
-                    explode("\n", wordwrap($line, $wrapLength, "\n", $cut))
+                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut))
                 );
                 continue;
             }
@@ -2329,7 +2417,7 @@ class Email implements JsonSerializable, Serializable
                             if ($tmpLineLength > 0) {
                                 $formatted = array_merge(
                                     $formatted,
-                                    explode("\n", wordwrap(trim($tmpLine), $wrapLength, "\n", $cut))
+                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut))
                                 );
                                 $tmpLine = '';
                                 $tmpLineLength = 0;
@@ -2612,12 +2700,12 @@ class Email implements JsonSerializable, Serializable
 
         $View = $this->createView();
 
-        list($templatePlugin) = pluginSplit($View->template());
-        list($layoutPlugin) = pluginSplit($View->layout());
+        list($templatePlugin) = pluginSplit($View->getTemplate());
+        list($layoutPlugin) = pluginSplit($View->getLayout());
         if ($templatePlugin) {
-            $View->plugin = $templatePlugin;
+            $View->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {
-            $View->plugin = $layoutPlugin;
+            $View->setPlugin($layoutPlugin);
         }
 
         if ($View->get('content') === null) {
@@ -2626,8 +2714,8 @@ class Email implements JsonSerializable, Serializable
 
         foreach ($types as $type) {
             $View->hasRendered = false;
-            $View->templatePath('Email' . DIRECTORY_SEPARATOR . $type);
-            $View->layoutPath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->setTemplatePath('Email' . DIRECTORY_SEPARATOR . $type);
+            $View->setLayoutPath('Email' . DIRECTORY_SEPARATOR . $type);
 
             $render = $View->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);
@@ -2644,12 +2732,17 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Return the Content-Transfer Encoding value based on the set charset
+     * Return the Content-Transfer Encoding value based
+     * on the set transferEncoding or set charset.
      *
      * @return string
      */
     protected function _getContentTransferEncoding()
     {
+        if ($this->transferEncoding) {
+            return $this->transferEncoding;
+        }
+
         $charset = strtoupper($this->charset);
         if (in_array($charset, $this->_charset8bit)) {
             return '8bit';
@@ -2683,7 +2776,7 @@ class Email implements JsonSerializable, Serializable
      * It has certain limitations for viewVars that are good to know:
      *
      *    - ORM\Query executed and stored as resultset
-     *    - SimpleXmlElements stored as associative array
+     *    - SimpleXMLElements stored as associative array
      *    - Exceptions stored as strings
      *    - Resources, \Closure and \PDO are not supported.
      *
@@ -2773,7 +2866,7 @@ class Email implements JsonSerializable, Serializable
     {
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key) {
-            if ($item instanceof SimpleXmlElement) {
+            if ($item instanceof SimpleXMLElement) {
                 $item = json_decode(json_encode((array)$item), true);
             }
         });

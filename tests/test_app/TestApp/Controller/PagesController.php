@@ -19,7 +19,7 @@
 namespace TestApp\Controller;
 
 use Cake\Core\Configure;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 
@@ -45,7 +45,7 @@ class PagesController extends AppController
      *
      * @param mixed What page to display
      * @return \Cake\Http\Response|null
-     * @throws \Cake\Network\Exception\NotFoundException When the view file could not be found
+     * @throws \Cake\Http\Exception\NotFoundException When the view file could not be found
      *  or Cake\View\Exception\MissingTemplateException in debug mode.
      */
     public function display()

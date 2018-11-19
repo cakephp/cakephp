@@ -46,6 +46,7 @@ class ServerShellTest extends TestCase
         $options = $parser->options();
         $this->assertArrayHasKey('host', $options);
         $this->assertArrayHasKey('port', $options);
+        $this->assertArrayHasKey('ini_path', $options);
         $this->assertArrayHasKey('document_root', $options);
     }
 }

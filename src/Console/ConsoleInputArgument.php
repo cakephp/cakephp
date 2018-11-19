@@ -15,7 +15,7 @@
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
-use SimpleXmlElement;
+use SimpleXMLElement;
 
 /**
  * An object to represent a single argument used in the command line.
@@ -178,10 +178,10 @@ class ConsoleInputArgument
     /**
      * Append this arguments XML representation to the passed in SimpleXml object.
      *
-     * @param \SimpleXmlElement $parent The parent element.
-     * @return \SimpleXmlElement The parent with this argument appended.
+     * @param \SimpleXMLElement $parent The parent element.
+     * @return \SimpleXMLElement The parent with this argument appended.
      */
-    public function xml(SimpleXmlElement $parent)
+    public function xml(SimpleXMLElement $parent)
     {
         $option = $parent->addChild('argument');
         $option->addAttribute('name', $this->_name);

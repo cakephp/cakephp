@@ -33,8 +33,18 @@ class AssetMiddlewareTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->clearPlugins();
+        parent::tearDown();
     }
 
     /**
@@ -130,7 +140,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware($request, $response, $next);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals(file_get_contents($expectedFile), $body);
+        $this->assertStringEqualsFile($expectedFile, $body);
     }
 
     /**
@@ -223,6 +233,42 @@ class AssetMiddlewareTest extends TestCase
     public function test404OnDoubleDot()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/../webroot/root.js']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+
+        $middleware = new AssetMiddleware();
+        $res = $middleware($request, $response, $next);
+        $this->assertEmpty($res->getBody()->getContents());
+    }
+
+    /**
+     * Test that hidden filenames result in a 404
+     *
+     * @return void
+     */
+    public function test404OnHiddenFile()
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfile']);
+        $response = new Response();
+        $next = function ($req, $res) {
+            return $res;
+        };
+
+        $middleware = new AssetMiddleware();
+        $res = $middleware($request, $response, $next);
+        $this->assertEmpty($res->getBody()->getContents());
+    }
+
+    /**
+     * Test that hidden filenames result in a 404
+     *
+     * @return void
+     */
+    public function test404OnHiddenFolder()
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfolder/some.js']);
         $response = new Response();
         $next = function ($req, $res) {
             return $res;

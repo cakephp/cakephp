@@ -278,7 +278,7 @@ class Oauth
      */
     protected function _normalizedParams($request, $oauthValues)
     {
-        $query = parse_url($request->url(), PHP_URL_QUERY);
+        $query = parse_url($request->getUri(), PHP_URL_QUERY);
         parse_str($query, $queryArgs);
 
         $post = [];
@@ -360,13 +360,9 @@ class Oauth
      */
     protected function _encode($value)
     {
-        return str_replace(
-            '+',
-            ' ',
-            str_replace('%7E', '~', rawurlencode($value))
-        );
+        return str_replace(['%7E', '+'], ['~', ' '], rawurlencode($value));
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Auth\Oauth', 'Cake\Network\Http\Auth\Oauth');

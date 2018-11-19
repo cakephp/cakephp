@@ -134,6 +134,10 @@ class ValuesExpression implements ExpressionInterface
      */
     public function columns($cols = null)
     {
+        deprecationWarning(
+            'ValuesExpression::columns() is deprecated. ' .
+            'Use ValuesExpression::setColumns()/getColumns() instead.'
+        );
         if ($cols !== null) {
             return $this->setColumns($cols);
         }
@@ -200,6 +204,10 @@ class ValuesExpression implements ExpressionInterface
      */
     public function values($values = null)
     {
+        deprecationWarning(
+            'ValuesExpression::values() is deprecated. ' .
+            'Use ValuesExpression::setValues()/getValues() instead.'
+        );
         if ($values !== null) {
             return $this->setValues($values);
         }
@@ -225,7 +233,7 @@ class ValuesExpression implements ExpressionInterface
      * Gets the query object to be used as the values expression to be evaluated
      * to insert records in the table.
      *
-     * @return \Cake\Database\Query
+     * @return \Cake\Database\Query|null
      */
     public function getQuery()
     {
@@ -243,6 +251,10 @@ class ValuesExpression implements ExpressionInterface
      */
     public function query(Query $query = null)
     {
+        deprecationWarning(
+            'ValuesExpression::query() is deprecated. ' .
+            'Use ValuesExpression::setQuery()/getQuery() instead.'
+        );
         if ($query !== null) {
             return $this->setQuery($query);
         }

@@ -17,6 +17,7 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -25,7 +26,7 @@ use PDO;
  *
  * Use to convert integer data between PHP and the database types.
  */
-class IntegerType extends Type implements TypeInterface
+class IntegerType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -63,8 +64,11 @@ class IntegerType extends Type implements TypeInterface
             return null;
         }
 
-        if (!is_scalar($value)) {
-            throw new InvalidArgumentException('Cannot convert value to integer');
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to integer',
+                getTypeName($value)
+            ));
         }
 
         return (int)$value;
@@ -80,10 +84,35 @@ class IntegerType extends Type implements TypeInterface
     public function toPHP($value, Driver $driver)
     {
         if ($value === null) {
-            return null;
+            return $value;
         }
 
         return (int)$value;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
+
+            if (!is_numeric($values[$field])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot convert value of type `%s` to integer',
+                    getTypeName($values[$field])
+                ));
+            }
+
+            $values[$field] = (int)$values[$field];
+        }
+
+        return $values;
     }
 
     /**
@@ -109,11 +138,8 @@ class IntegerType extends Type implements TypeInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value) || ctype_digit($value)) {
+        if (is_numeric($value)) {
             return (int)$value;
-        }
-        if (is_array($value)) {
-            return 1;
         }
 
         return null;

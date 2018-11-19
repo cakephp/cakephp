@@ -75,7 +75,27 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     public function setTable(Table $table)
     {
         $this->_table = $table;
-        $this->eventManager($table->eventManager());
+        $eventManager = $table->getEventManager();
+        if ($eventManager !== null) {
+            $this->setEventManager($eventManager);
+        }
+    }
+
+    /**
+     * Resolve a behavior classname.
+     *
+     * @param string $class Partial classname to resolve.
+     * @return string|null Either the correct classname or null.
+     * @since 3.5.7
+     */
+    public static function className($class)
+    {
+        $result = App::className($class, 'Model/Behavior', 'Behavior');
+        if (!$result) {
+            $result = App::className($class, 'ORM/Behavior', 'Behavior');
+        }
+
+        return $result ?: null;
     }
 
     /**
@@ -88,18 +108,14 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     protected function _resolveClassName($class)
     {
-        $result = App::className($class, 'Model/Behavior', 'Behavior');
-        if (!$result) {
-            $result = App::className($class, 'ORM/Behavior', 'Behavior');
-        }
-
-        return $result;
+        return static::className($class) ?: false;
     }
 
     /**
      * Throws an exception when a behavior is missing.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
+     * and Cake\Core\ObjectRegistry::unload()
      *
      * @param string $class The classname that is missing.
      * @param string $plugin The plugin the behavior is missing in.
@@ -130,7 +146,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $instance = new $class($this->_table, $config);
         $enable = isset($config['enabled']) ? $config['enabled'] : true;
         if ($enable) {
-            $this->eventManager()->on($instance);
+            $this->getEventManager()->on($instance);
         }
         $methods = $this->_getMethods($instance, $class, $alias);
         $this->_methodMap += $methods['methods'];

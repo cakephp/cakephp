@@ -16,6 +16,9 @@ namespace Cake\Database;
 
 /**
  * Represents an expression that is known to return a specific type
+ *
+ * @method string getReturnType()
+ * @method $this setReturnType($type)
  */
 interface TypedResultInterface
 {
@@ -24,6 +27,7 @@ interface TypedResultInterface
      * Sets the type of the value this object will generate.
      * If called without arguments, returns the current known type
      *
+     * @deprecated 3.5.0 Use getReturnType()/setReturnType() instead.
      * @param string|null $type The name of the type that is to be returned
      * @return string|$this
      */

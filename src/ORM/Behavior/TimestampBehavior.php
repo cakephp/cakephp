@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
@@ -21,6 +22,9 @@ use Cake\ORM\Behavior;
 use DateTime;
 use UnexpectedValueException;
 
+/**
+ * Class TimestampBehavior
+ */
 class TimestampBehavior extends Behavior
 {
 
@@ -57,7 +61,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \DateTime
+     * @var \Cake\I18n\Time
      */
     protected $_ts;
 
@@ -132,7 +136,7 @@ class TimestampBehavior extends Behavior
      *
      * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
-     * @return \DateTime
+     * @return \Cake\I18n\Time
      */
     public function timestamp(DateTime $ts = null, $refreshTimestamp = false)
     {
@@ -172,7 +176,7 @@ class TimestampBehavior extends Behavior
         foreach ($events[$eventName] as $field => $when) {
             if (in_array($when, ['always', 'existing'])) {
                 $return = true;
-                $entity->dirty($field, false);
+                $entity->setDirty($field, false);
                 $this->_updateField($entity, $field, $refresh);
             }
         }
@@ -190,9 +194,29 @@ class TimestampBehavior extends Behavior
      */
     protected function _updateField($entity, $field, $refreshTimestamp)
     {
-        if ($entity->dirty($field)) {
+        if ($entity->isDirty($field)) {
             return;
         }
-        $entity->set($field, $this->timestamp(null, $refreshTimestamp));
+
+        $ts = $this->timestamp(null, $refreshTimestamp);
+
+        $columnType = $this->getTable()->getSchema()->getColumnType($field);
+        if (!$columnType) {
+            return;
+        }
+
+        /** @var \Cake\Database\Type\DateTimeType $type */
+        $type = Type::build($columnType);
+
+        if (!$type instanceof Type\DateTimeType) {
+            deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
+            $entity->set($field, (string)$ts);
+
+            return;
+        }
+
+        $class = $type->getDateTimeClassName();
+
+        $entity->set($field, new $class($ts));
     }
 }

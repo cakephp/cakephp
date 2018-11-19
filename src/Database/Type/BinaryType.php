@@ -79,7 +79,10 @@ class BinaryType extends Type implements TypeInterface
         if ($value === null) {
             return null;
         }
-        if (is_string($value) && $driver instanceof Sqlserver) {
+        if (is_string($value)
+            && $driver instanceof Sqlserver
+            && version_compare(PHP_VERSION, '7.0', '<')
+        ) {
             $value = pack('H*', $value);
         }
         if (is_string($value)) {

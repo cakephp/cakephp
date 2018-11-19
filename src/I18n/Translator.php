@@ -9,104 +9,20 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- *
- * This file contains sections from the Aura Project
- * @license https://github.com/auraphp/Aura.Intl/blob/3.x/LICENSE
- *
- * The Aura Project for PHP.
- *
- * @package Aura.Intl
- * @license https://opensource.org/licenses/bsd-license.php BSD
  */
 namespace Cake\I18n;
 
-use Aura\Intl\FormatterInterface;
-use Aura\Intl\Package;
-use Aura\Intl\TranslatorInterface;
-use Cake\I18n\PluralRules;
+use Aura\Intl\Translator as BaseTranslator;
 
 /**
  * Provides missing message behavior for CakePHP internal message formats.
  *
  * @internal
  */
-class Translator implements TranslatorInterface
+class Translator extends BaseTranslator
 {
-    /**
-     * A fallback translator.
-     *
-     * @var \Aura\Intl\TranslatorInterface
-     */
-    protected $fallback;
 
-    /**
-     * The formatter to use when translating messages.
-     *
-     * @var \Aura\Intl\FormatterInterface
-     */
-    protected $formatter;
-
-    /**
-     * The locale being used for translations.
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
-     * The Package containing keys and translations.
-     *
-     * @var \Aura\Intl\Package
-     */
-    protected $package;
-
-    /**
-     * Constructor
-     *
-     * @param string $locale The locale being used.
-     * @param \Aura\Intl\Package $package The Package containing keys and translations.
-     * @param \Aura\Intl\FormatterInterface $formatter A message formatter.
-     * @param \Aura\Intl\TranslatorInterface|null $fallback A fallback translator.
-     */
-    public function __construct(
-        $locale,
-        Package $package,
-        FormatterInterface $formatter,
-        TranslatorInterface $fallback = null
-    ) {
-        $this->locale = $locale;
-        $this->package = $package;
-        $this->formatter = $formatter;
-        $this->fallback = $fallback;
-    }
-
-    /**
-     * Gets the message translation by its key.
-     *
-     * @param string $key The message key.
-     * @return string|bool The message translation string, or false if not found.
-     */
-    protected function getMessage($key)
-    {
-        $message = $this->package->getMessage($key);
-        if ($message) {
-            return $message;
-        }
-
-        if ($this->fallback) {
-            // get the message from the fallback translator
-            $message = $this->fallback->getMessage($key);
-            if ($message) {
-                // speed optimization: retain locally
-                $this->package->addMessage($key, $message);
-                // done!
-                return $message;
-            }
-        }
-
-        // no local message, no fallback
-        return false;
-    }
+    const PLURAL_PREFIX = 'p:';
 
     /**
      * Translates the message formatting any placeholders
@@ -119,7 +35,18 @@ class Translator implements TranslatorInterface
      */
     public function translate($key, array $tokensValues = [])
     {
-        $message = $this->getMessage($key);
+        if (isset($tokensValues['_count'])) {
+            $message = $this->getMessage(static::PLURAL_PREFIX . $key);
+            if (!$message) {
+                $message = $this->getMessage($key);
+            }
+        } else {
+            $message = $this->getMessage($key);
+            if (!$message) {
+                $message = $this->getMessage(static::PLURAL_PREFIX . $key);
+            }
+        }
+
         if (!$message) {
             // Fallback to the message key
             $message = $key;
@@ -187,15 +114,5 @@ class Translator implements TranslatorInterface
         }
 
         return $message['_context'][$context];
-    }
-
-    /**
-     * An object of type Package
-     *
-     * @return \Aura\Intl\Package
-     */
-    public function getPackage()
-    {
-        return $this->package;
     }
 }

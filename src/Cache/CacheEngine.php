@@ -19,6 +19,8 @@ use InvalidArgumentException;
 
 /**
  * Storage engine for CakePHP caching
+ *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class CacheEngine
 {
@@ -36,6 +38,8 @@ abstract class CacheEngine
      *    with either another cache config or another application.
      * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
      *    cache::gc from ever being called automatically.
+     * - `warnOnWriteFailures` Some engines, such as ApcuEngine, may raise warnings on
+     *    write failures.
      *
      * @var array
      */
@@ -43,7 +47,8 @@ abstract class CacheEngine
         'duration' => 3600,
         'groups' => [],
         'prefix' => 'cake_',
-        'probability' => 100
+        'probability' => 100,
+        'warnOnWriteFailures' => true,
     ];
 
     /**
@@ -250,7 +255,7 @@ abstract class CacheEngine
 
         $prefix = '';
         if ($this->_groupPrefix) {
-            $prefix = vsprintf($this->_groupPrefix, $this->groups());
+            $prefix = md5(implode('_', $this->groups()));
         }
 
         $key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DIRECTORY_SEPARATOR, '/', '.'], '_', (string)$key))));
@@ -273,5 +278,21 @@ abstract class CacheEngine
         }
 
         return $this->_config['prefix'] . $key;
+    }
+
+    /**
+     * Cache Engines may trigger warnings if they encounter failures during operation,
+     * if option warnOnWriteFailures is set to true.
+     *
+     * @param string $message The warning message.
+     * @return void
+     */
+    protected function warning($message)
+    {
+        if ($this->getConfig('warnOnWriteFailures') !== true) {
+            return;
+        }
+
+        triggerWarning($message);
     }
 }

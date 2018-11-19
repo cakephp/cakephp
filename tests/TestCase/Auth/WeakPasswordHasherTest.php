@@ -33,7 +33,7 @@ class WeakPasswordHasherTest extends TestCase
     {
         parent::setUp();
 
-        Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+        Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
     }
 
     /**
@@ -58,12 +58,12 @@ class WeakPasswordHasherTest extends TestCase
     public function testHashAndCheck()
     {
         $hasher = new WeakPasswordHasher();
-        $hasher->config('hashType', 'md5');
+        $hasher->setConfig('hashType', 'md5');
         $password = $hasher->hash('foo');
         $this->assertTrue($hasher->check('foo', $password));
         $this->assertFalse($hasher->check('bar', $password));
 
-        $hasher->config('hashType', 'sha1');
+        $hasher->setConfig('hashType', 'sha1');
         $this->assertFalse($hasher->check('foo', $password));
     }
 }

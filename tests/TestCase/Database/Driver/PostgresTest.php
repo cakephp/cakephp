@@ -32,7 +32,7 @@ class PostgresTest extends TestCase
     public function testConnectionConfigDefault()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
@@ -72,7 +72,7 @@ class PostgresTest extends TestCase
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $driver->connect();
@@ -99,7 +99,7 @@ class PostgresTest extends TestCase
             'init' => ['Execute this', 'this too']
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection', 'setConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
@@ -129,11 +129,11 @@ class PostgresTest extends TestCase
         $connection->expects($this->at(7))->method('exec')->with('SET timezone = Antarctica');
         $connection->expects($this->exactly(5))->method('exec');
 
-        $driver->connection($connection);
+        $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
 
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $driver->connect();
@@ -147,7 +147,7 @@ class PostgresTest extends TestCase
     public function testInsertReturning()
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([[]])
             ->getMock();
         $connection = $this

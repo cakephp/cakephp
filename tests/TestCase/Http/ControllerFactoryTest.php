@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\ControllerFactory;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
@@ -179,12 +178,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Abstract could not be found.
      * @return void
      */
     public function testAbstractClassFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Abstract could not be found.');
         $request = new ServerRequest([
             'url' => 'abstract/index',
             'params' => [
@@ -196,12 +195,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Interface could not be found.
      * @return void
      */
     public function testInterfaceFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Interface could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -213,12 +212,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Invisible could not be found.
      * @return void
      */
     public function testMissingClassFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Invisible could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -230,12 +229,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class Admin/Posts could not be found.
      * @return void
      */
     public function testSlashedControllerFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class Admin/Posts could not be found.');
         $request = new ServerRequest([
             'url' => 'admin/posts/index',
             'params' => [
@@ -247,12 +246,12 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Routing\Exception\MissingControllerException
-     * @expectedExceptionMessage Controller class TestApp\Controller\CakesController could not be found.
      * @return void
      */
     public function testAbsoluteReferenceFailure()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingControllerException::class);
+        $this->expectExceptionMessage('Controller class TestApp\Controller\CakesController could not be found.');
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
@@ -261,5 +260,24 @@ class ControllerFactoryTest extends TestCase
             ]
         ]);
         $this->factory->create($request, $this->response);
+    }
+
+    /**
+     * Test building controller name when passing no controller name
+     *
+     * @return void
+     */
+    public function testGetControllerClassNoControllerName()
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/ovens/index',
+            'params' => [
+                'plugin' => 'Company/TestPluginThree',
+                'controller' => 'Ovens',
+                'action' => 'index',
+            ]
+        ]);
+        $result = $this->factory->getControllerClass($request);
+        $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);
     }
 }

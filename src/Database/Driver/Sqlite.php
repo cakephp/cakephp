@@ -21,14 +21,18 @@ use Cake\Database\Statement\PDOStatement;
 use Cake\Database\Statement\SqliteStatement;
 use PDO;
 
+/**
+ * Class Sqlite
+ */
 class Sqlite extends Driver
 {
 
-    use PDODriverTrait;
     use SqliteDialectTrait;
 
     /**
      * Base configuration settings for Sqlite driver
+     *
+     * - `mask` The mask used for created database
      *
      * @var array
      */
@@ -38,6 +42,7 @@ class Sqlite extends Driver
         'password' => null,
         'database' => ':memory:',
         'encoding' => 'utf8',
+        'mask' => 0644,
         'flags' => [],
         'init' => [],
     ];
@@ -59,12 +64,20 @@ class Sqlite extends Driver
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ];
 
+        $databaseExists = file_exists($config['database']);
+
         $dsn = "sqlite:{$config['database']}";
         $this->_connect($dsn, $config);
 
+        if (!$databaseExists && $config['database'] != ':memory:') {
+            //@codingStandardsIgnoreStart
+            @chmod($config['database'], $config['mask']);
+            //@codingStandardsIgnoreEnd
+        }
+
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
-                $this->connection()->exec($command);
+                $this->getConnection()->exec($command);
             }
         }
 

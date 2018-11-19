@@ -125,11 +125,11 @@ class RunnerTest extends TestCase
     /**
      * Test that exceptions bubble up.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage A bad thing
      */
     public function testRunExceptionInMiddleware()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('A bad thing');
         $this->stack->add($this->ok)->add($this->fail);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
         $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();

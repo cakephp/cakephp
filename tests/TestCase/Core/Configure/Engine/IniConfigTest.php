@@ -65,7 +65,7 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path);
         $config = $engine->read('acl');
 
-        $this->assertTrue(isset($config['admin']));
+        $this->assertArrayHasKey('admin', $config);
         $this->assertTrue(isset($config['paul']['groups']));
         $this->assertEquals('ads', $config['admin']['deny']);
     }
@@ -95,7 +95,7 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path, 'admin');
         $config = $engine->read('acl');
 
-        $this->assertTrue(isset($config['groups']));
+        $this->assertArrayHasKey('groups', $config);
         $this->assertEquals('administrators', $config['groups']);
     }
 
@@ -158,11 +158,11 @@ class IniConfigTest extends TestCase
     /**
      * Test an exception is thrown by reading files that exist without .ini extension.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadWithExistentFileWithoutExtension()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new IniConfig($this->path);
         $engine->read('no_ini_extension');
     }
@@ -170,11 +170,11 @@ class IniConfigTest extends TestCase
     /**
      * Test an exception is thrown by reading files that don't exist.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadWithNonExistentFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new IniConfig($this->path);
         $engine->read('fake_values');
     }
@@ -194,11 +194,11 @@ class IniConfigTest extends TestCase
     /**
      * Test reading keys with ../ doesn't work.
      *
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testReadWithDots()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $engine = new IniConfig($this->path);
         $engine->read('../empty');
     }
@@ -210,7 +210,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadPluginValue()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $engine = new IniConfig($this->path);
         $result = $engine->read('TestPlugin.nested');
 
@@ -221,7 +221,7 @@ class IniConfigTest extends TestCase
 
         $result = $engine->read('TestPlugin.nested');
         $this->assertEquals('foo', $result['database']['db']['password']);
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

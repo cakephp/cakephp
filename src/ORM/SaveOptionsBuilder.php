@@ -107,7 +107,7 @@ class SaveOptionsBuilder extends ArrayObject
             }
             $this->_checkAssociation($table, $key);
             if (isset($associated['associated'])) {
-                $this->_associated($table->association($key)->getTarget(), $associated['associated']);
+                $this->_associated($table->getAssociation($key)->getTarget(), $associated['associated']);
                 continue;
             }
         }
@@ -149,7 +149,7 @@ class SaveOptionsBuilder extends ArrayObject
      */
     public function validate($validate)
     {
-        $this->_table->validator($validate);
+        $this->_table->getValidator($validate);
         $this->_options['validate'] = $validate;
 
         return $this;

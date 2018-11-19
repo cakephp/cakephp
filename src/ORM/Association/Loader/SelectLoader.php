@@ -116,7 +116,7 @@ class SelectLoader
      * iterator. The options accepted by this method are the same as `Association::eagerLoader()`
      *
      * @param array $options Same options as `Association::eagerLoader()`
-     * @return callable
+     * @return \Closure
      */
     public function buildEagerLoader(array $options)
     {
@@ -163,6 +163,7 @@ class SelectLoader
             $options['fields'] = [];
         }
 
+        /* @var \Cake\ORM\Query $query */
         $query = $finder();
         if (isset($options['finder'])) {
             list($finderName, $opts) = $this->_extractFinder($options['finder']);
@@ -234,7 +235,7 @@ class SelectLoader
      * @param \Cake\ORM\Query $fetchQuery The association fetching query
      * @param array $key The foreign key fields to check
      * @return void
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     protected function _assertFieldsPresent($fetchQuery, $key)
     {
@@ -254,7 +255,7 @@ class SelectLoader
 
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
-            $driver = $fetchQuery->getConnection()->driver();
+            $driver = $fetchQuery->getConnection()->getDriver();
             $quoted = array_map([$driver, 'quoteIdentifier'], $key);
             $missingFields = $missingKey($select, $quoted);
         }
@@ -275,7 +276,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string $key the fields that should be used for filtering
+     * @param string|array $key the fields that should be used for filtering
      * @param \Cake\ORM\Query $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query
      */
@@ -293,13 +294,14 @@ class SelectLoader
         }
         $subquery->select($filter, true);
 
+        $conditions = null;
         if (is_array($key)) {
             $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
         } else {
             $filter = current($filter);
         }
 
-        $conditions = isset($conditions) ? $conditions : $query->newExpr([$key => $filter]);
+        $conditions = $conditions ?: $query->newExpr([$key => $filter]);
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
@@ -312,8 +314,8 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query $query Target table's query
-     * @param string|array $key the fields that should be used for filtering
-     * @param mixed $filter the value that should be used to match for $key
+     * @param string|array $key The fields that should be used for filtering
+     * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query
      */
     protected function _addFilteringCondition($query, $key, $filter)
@@ -394,11 +396,11 @@ class SelectLoader
     protected function _buildSubquery($query)
     {
         $filterQuery = clone $query;
-        $filterQuery->enableAutoFields(false);
+        $filterQuery->disableAutoFields();
         $filterQuery->mapReduce(null, null, true);
         $filterQuery->formatResults(null, true);
         $filterQuery->contain([], true);
-        $filterQuery->valueBinder(new ValueBinder());
+        $filterQuery->setValueBinder(new ValueBinder());
 
         if (!$filterQuery->clause('limit')) {
             $filterQuery->limit(null);

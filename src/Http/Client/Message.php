@@ -18,6 +18,8 @@ namespace Cake\Http\Client;
  *
  * Defines some common helper methods, constants
  * and properties.
+ *
+ * @property array $headers
  */
 class Message
 {
@@ -42,6 +44,20 @@ class Message
      * @var int
      */
     const STATUS_ACCEPTED = 202;
+
+    /**
+     * HTTP 203 code
+     *
+     * @var int
+     */
+    const STATUS_NON_AUTHORITATIVE_INFORMATION = 203;
+
+    /**
+     * HTTP 204 code
+     *
+     * @var int
+     */
+    const STATUS_NO_CONTENT = 204;
 
     /**
      * HTTP 301 code
@@ -149,6 +165,11 @@ class Message
      */
     public function headers()
     {
+        deprecationWarning(
+            'Message::headers() is deprecated. ' .
+            'Use getHeaders() instead.'
+        );
+
         return $this->headers;
     }
 
@@ -179,5 +200,5 @@ class Message
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Message', 'Cake\Network\Http\Message');

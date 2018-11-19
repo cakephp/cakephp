@@ -2,7 +2,6 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
-use Cake\Network\Exception\NotFoundException;
 
 /**
  * CakesController class
@@ -23,9 +22,7 @@ class CakesController extends Controller
      */
     public function index()
     {
-        $this->response->body('Hello Jane');
-
-        return $this->response;
+        return $this->response->withStringBody('Hello Jane');
     }
 
     /**
@@ -36,13 +33,13 @@ class CakesController extends Controller
     public function noRender()
     {
         $this->autoRender = false;
-        $this->response->body('autoRender false body');
+        $this->response = $this->response->withStringBody('autoRender false body');
     }
 
     /**
      * invalid method
      *
-     * @return \Cake\Http\Response
+     * @return string
      */
     public function invalid()
     {
@@ -55,10 +52,8 @@ class CakesController extends Controller
     public function startupProcess()
     {
         parent::startupProcess();
-        if ($this->request->param('stop') === 'startup') {
-            $this->response->body('startup stop');
-
-            return $this->response;
+        if ($this->request->getParam('stop') === 'startup') {
+            return $this->response->withStringBody('startup stop');
         }
     }
 
@@ -68,10 +63,8 @@ class CakesController extends Controller
     public function shutdownProcess()
     {
         parent::shutdownProcess();
-        if ($this->request->param('stop') === 'shutdown') {
-            $this->response->body('shutdown stop');
-
-            return $this->response;
+        if ($this->request->getParam('stop') === 'shutdown') {
+            return $this->response->withStringBody('shutdown stop');
         }
     }
 }

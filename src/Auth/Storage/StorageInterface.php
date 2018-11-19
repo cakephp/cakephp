@@ -23,7 +23,7 @@ interface StorageInterface
     /**
      * Read user record.
      *
-     * @return array|null
+     * @return \ArrayAccess|array|null
      */
     public function read();
 

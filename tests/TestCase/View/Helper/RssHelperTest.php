@@ -24,6 +24,8 @@ use Cake\View\View;
 
 /**
  * RssHelperTest class
+ *
+ * @group deprecated
  */
 class RssHelperTest extends TestCase
 {
@@ -41,8 +43,13 @@ class RssHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+
+        $oldLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+
         $this->View = new View();
         $this->Rss = new RssHelper($this->View);
+
+        error_reporting($oldLevel);
     }
 
     /**
@@ -260,7 +267,11 @@ class RssHelperTest extends TestCase
             ['title' => 'title3', 'guid' => 'http://www.example.com/guid3', 'link' => 'http://www.example.com/link3', 'description' => 'description3']
         ];
 
-        $result = $this->Rss->items($items, create_function('$v', '$v[\'title\'] = $v[\'title\'] . \'-transformed\'; return $v;'));
+        $result = $this->Rss->items($items, function ($v) {
+            $v['title'] = $v['title'] . '-transformed';
+
+            return $v;
+        });
         $expected = [
             '<item',
                 '<title', 'title1-transformed', '/title',

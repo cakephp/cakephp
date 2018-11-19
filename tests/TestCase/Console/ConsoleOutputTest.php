@@ -36,7 +36,7 @@ class ConsoleOutputTest extends TestCase
         $this->output = $this->getMockBuilder('Cake\Console\ConsoleOutput')
             ->setMethods(['_write'])
             ->getMock();
-        $this->output->outputAs(ConsoleOutput::COLOR);
+        $this->output->setOutputAs(ConsoleOutput::COLOR);
     }
 
     /**
@@ -144,7 +144,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingSimple()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("\033[91mError:\033[0m Something bad");
+            ->with("\033[31mError:\033[0m Something bad");
 
         $this->output->write('<error>Error:</error> Something bad', false);
     }
@@ -203,7 +203,7 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingMultipleStylesName()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("\033[91mBad\033[0m \033[33mWarning\033[0m Regular");
+            ->with("\033[31mBad\033[0m \033[33mWarning\033[0m Regular");
 
         $this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', false);
     }
@@ -216,9 +216,27 @@ class ConsoleOutputTest extends TestCase
     public function testFormattingMultipleSameTags()
     {
         $this->output->expects($this->once())->method('_write')
-            ->with("\033[91mBad\033[0m \033[91mWarning\033[0m Regular");
+            ->with("\033[31mBad\033[0m \033[31mWarning\033[0m Regular");
 
         $this->output->write('<error>Bad</error> <error>Warning</error> Regular', false);
+    }
+
+    /**
+     * test deprecated outputAs
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testOutputAsPlain()
+    {
+        $this->deprecated(function () {
+            $this->output->outputAs(ConsoleOutput::PLAIN);
+            $this->assertSame(ConsoleOutput::PLAIN, $this->output->outputAs());
+            $this->output->expects($this->once())->method('_write')
+                ->with('Bad Regular');
+
+            $this->output->write('<error>Bad</error> Regular', false);
+        });
     }
 
     /**
@@ -226,9 +244,9 @@ class ConsoleOutputTest extends TestCase
      *
      * @return void
      */
-    public function testOutputAsRaw()
+    public function testSetOutputAsRaw()
     {
-        $this->output->outputAs(ConsoleOutput::RAW);
+        $this->output->setOutputAs(ConsoleOutput::RAW);
         $this->output->expects($this->once())->method('_write')
             ->with('<error>Bad</error> Regular');
 
@@ -240,9 +258,9 @@ class ConsoleOutputTest extends TestCase
      *
      * @return void
      */
-    public function testOutputAsPlain()
+    public function testSetOutputAsPlain()
     {
-        $this->output->outputAs(ConsoleOutput::PLAIN);
+        $this->output->setOutputAs(ConsoleOutput::PLAIN);
         $this->output->expects($this->once())->method('_write')
             ->with('Bad Regular');
 
@@ -250,13 +268,38 @@ class ConsoleOutputTest extends TestCase
     }
 
     /**
+     * test set plain output.
+     *
+     * @return void
+     */
+    public function testSetSetOutputAsPlain()
+    {
+        $this->output->setOutputAs(ConsoleOutput::PLAIN);
+        $this->output->expects($this->once())->method('_write')
+            ->with('Bad Regular');
+
+        $this->output->write('<error>Bad</error> Regular', false);
+    }
+
+    /**
+     * test set wrong type.
+     *
+     */
+    public function testSetOutputWrongType()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid output type "Foo".');
+        $this->output->setOutputAs('Foo');
+    }
+
+    /**
      * test plain output only strips tags used for formatting.
      *
      * @return void
      */
-    public function testOutputAsPlainSelectiveTagRemoval()
+    public function testSetOutputAsPlainSelectiveTagRemoval()
     {
-        $this->output->outputAs(ConsoleOutput::PLAIN);
+        $this->output->setOutputAs(ConsoleOutput::PLAIN);
         $this->output->expects($this->once())->method('_write')
             ->with('Bad Regular <b>Left</b> <i>behind</i> <name>');
 

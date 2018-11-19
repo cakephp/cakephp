@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
  */
 class DispatcherFactoryTest extends TestCase
 {
+    protected $errorLevel;
 
     /**
      * setup function
@@ -34,6 +35,18 @@ class DispatcherFactoryTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         DispatcherFactory::clear();
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+    }
+
+    /**
+     * teardown function
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        error_reporting($this->errorLevel);
     }
 
     /**
@@ -64,11 +77,11 @@ class DispatcherFactoryTest extends TestCase
     /**
      * Test add filter missing
      *
-     * @expectedException \Cake\Routing\Exception\MissingDispatcherFilterException
      * @return void
      */
     public function testAddFilterMissing()
     {
+        $this->expectException(\Cake\Routing\Exception\MissingDispatcherFilterException::class);
         DispatcherFactory::add('NopeSauce');
     }
 
@@ -82,8 +95,8 @@ class DispatcherFactoryTest extends TestCase
         $config = ['config' => 'value', 'priority' => 999];
         $result = DispatcherFactory::add('Routing', $config);
         $this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
-        $this->assertEquals($config['config'], $result->config('config'));
-        $this->assertEquals($config['priority'], $result->config('priority'));
+        $this->assertEquals($config['config'], $result->getConfig('config'));
+        $this->assertEquals($config['priority'], $result->getConfig('priority'));
     }
 
     /**
@@ -121,12 +134,16 @@ class DispatcherFactoryTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')
             ->setMethods(['send'])
             ->getMock();
+
+        $response->expects($this->once())
+            ->method('send')
+            ->will($this->returnSelf());
+
         DispatcherFactory::add('ControllerFactory');
         DispatcherFactory::add('Append');
 
         $dispatcher = DispatcherFactory::create();
         $result = $dispatcher->dispatch($url, $response);
-        $this->assertNull($result);
-        $this->assertEquals('posts index appended content', $response->body());
+        $this->assertEquals('posts index appended content', $result->body());
     }
 }

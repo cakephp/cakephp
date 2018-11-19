@@ -24,6 +24,23 @@ use Cake\Core\Exception\Exception;
  *
  * Files compatible with PhpConfig should return an array that
  * contains all of the configuration data contained in the file.
+ *
+ * An example configuration file would look like::
+ *
+ * ```
+ * <?php
+ * return [
+ *     'debug' => 0,
+ *     'Security' => [
+ *         'salt' => 'its-secret'
+ *     ],
+ *     'App' => [
+ *         'namespace' => 'App'
+ *     ]
+ * ];
+ * ```
+ *
+ * @see Cake\Core\Configure::load() for how to load custom configuration files.
  */
 class PhpConfig implements ConfigEngineInterface
 {
@@ -76,6 +93,10 @@ class PhpConfig implements ConfigEngineInterface
         if (!isset($config)) {
             throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
         }
+        deprecationWarning(sprintf(
+            'PHP configuration files like "%s" should not set `$config`. Instead return an array.',
+            $key . '.php'
+        ));
 
         return $config;
     }

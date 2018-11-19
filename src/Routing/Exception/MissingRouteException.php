@@ -36,7 +36,7 @@ class MissingRouteException extends Exception
     /**
      * {@inheritDoc}
      */
-    public function __construct($message, $code = 404)
+    public function __construct($message, $code = 404, $previous = null)
     {
         if (is_array($message)) {
             if (isset($message['message'])) {
@@ -45,6 +45,6 @@ class MissingRouteException extends Exception
                 $this->_messageTemplate = $this->_messageTemplateWithMethod;
             }
         }
-        parent::__construct($message, $code);
+        parent::__construct($message, $code, $previous);
     }
 }

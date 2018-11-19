@@ -28,14 +28,42 @@ trait TypedResultTrait
     protected $_returnType = 'string';
 
     /**
+     * Gets the type of the value this object will generate.
+     *
+     * @return string
+     */
+    public function getReturnType()
+    {
+        return $this->_returnType;
+    }
+
+    /**
+     * Sets the type of the value this object will generate.
+     *
+     * @param string $type The name of the type that is to be returned
+     * @return $this
+     */
+    public function setReturnType($type)
+    {
+        $this->_returnType = $type;
+
+        return $this;
+    }
+
+    /**
      * Sets the type of the value this object will generate.
      * If called without arguments, returns the current known type
      *
+     * @deprecated 3.5.0 Use getReturnType()/setReturnType() instead.
      * @param string|null $type The name of the type that is to be returned
      * @return string|$this
      */
     public function returnType($type = null)
     {
+        deprecationWarning(
+            'TypedResultTrait::returnType() is deprecated. ' .
+            'Use TypedResultTrait::setReturnType()/getReturnType() instead.'
+        );
         if ($type !== null) {
             $this->_returnType = $type;
 

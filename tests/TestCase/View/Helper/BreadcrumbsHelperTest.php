@@ -270,10 +270,10 @@ class BreadcrumbsHelperTest extends TestCase
     /**
      * Test adding crumbs to a specific index
      *
-     * @expectedException \LogicException
      */
     public function testInsertAtIndexOutOfBounds()
     {
+        $this->expectException(\LogicException::class);
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
             ->insertAt(2, 'Insert At Again', ['controller' => 'Insert', 'action' => 'at_again']);

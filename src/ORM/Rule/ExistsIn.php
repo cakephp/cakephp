@@ -35,7 +35,7 @@ class ExistsIn
     /**
      * The repository where the field will be looked for
      *
-     * @var array
+     * @var \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string
      */
     protected $_repository;
 
@@ -53,9 +53,11 @@ class ExistsIn
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
-     * @param object|string $repository The repository where the field will be looked for,
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $repository The repository where the field will be looked for,
      * or the association name for the repository.
      * @param array $options The options that modify the rules behavior.
+     *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
+     *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
      */
     public function __construct($fields, $repository, array $options = [])
     {
@@ -78,8 +80,7 @@ class ExistsIn
     public function __invoke(EntityInterface $entity, array $options)
     {
         if (is_string($this->_repository)) {
-            $repository = $options['repository']->association($this->_repository);
-            if (!$repository) {
+            if (!$options['repository']->hasAssociation($this->_repository)) {
                 throw new RuntimeException(sprintf(
                     "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
                     implode(', ', $this->_fields),
@@ -87,9 +88,11 @@ class ExistsIn
                     get_class($options['repository'])
                 ));
             }
+            $repository = $options['repository']->getAssociation($this->_repository);
             $this->_repository = $repository;
         }
 
+        $fields = $this->_fields;
         $source = $target = $this->_repository;
         $isAssociation = $target instanceof Association;
         $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
@@ -116,9 +119,9 @@ class ExistsIn
 
         if ($this->_options['allowNullableNulls']) {
             $schema = $source->getSchema();
-            foreach ($this->_fields as $i => $field) {
-                if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
-                    unset($bindingKey[$i], $this->_fields[$i]);
+            foreach ($fields as $i => $field) {
+                if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                    unset($bindingKey[$i], $fields[$i]);
                 }
             }
         }
@@ -129,7 +132,7 @@ class ExistsIn
         );
         $conditions = array_combine(
             $primary,
-            $entity->extract($this->_fields)
+            $entity->extract($fields)
         );
 
         return $target->exists($conditions);
@@ -147,7 +150,7 @@ class ExistsIn
         $nulls = 0;
         $schema = $source->getSchema();
         foreach ($this->_fields as $field) {
-            if ($schema->column($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+            if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                 $nulls++;
             }
         }

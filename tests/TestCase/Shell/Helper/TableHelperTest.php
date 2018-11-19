@@ -25,17 +25,17 @@ use Cake\TestSuite\TestCase;
 class TableHelperTest extends TestCase
 {
     /**
-     * @var ConsoleOutput
+     * @var \Cake\Console\ConsoleOutput
      */
     public $stub;
 
     /**
-     * @var ConsoleIo
+     * @var \Cake\Console\ConsoleIo
      */
     public $io;
 
     /**
-     * @var TableHelper
+     * @var \Cake\Shell\Helper\TableHelper
      */
     public $helper;
 
@@ -211,7 +211,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['headerStyle' => false]);
+        $this->helper->setConfig(['headerStyle' => false]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -235,7 +235,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['headerStyle' => 'error']);
+        $this->helper->setConfig(['headerStyle' => 'error']);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -259,7 +259,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['headers' => false]);
+        $this->helper->setConfig(['headers' => false]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -282,7 +282,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value']
         ];
-        $this->helper->config(['rowSeparator' => true]);
+        $this->helper->setConfig(['rowSeparator' => true]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -308,7 +308,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['rowSeparator' => true]);
+        $this->helper->setConfig(['rowSeparator' => true]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -353,7 +353,7 @@ class TableHelperTest extends TestCase
      */
     public function testOutputHeaderDisabledNoData()
     {
-        $this->helper->config(['header' => false]);
+        $this->helper->setConfig(['header' => false]);
         $this->helper->output([]);
         $this->assertEquals([], $this->stub->messages());
     }

@@ -20,8 +20,6 @@ use Countable;
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
  * be a database result
- *
- * @return void
  */
 class ResultSetDecorator extends Collection implements ResultSetInterface
 {

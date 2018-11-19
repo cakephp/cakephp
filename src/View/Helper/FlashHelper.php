@@ -29,7 +29,7 @@ class FlashHelper extends Helper
     /**
      * Used to render the message set in FlashComponent::set()
      *
-     * In your view: $this->Flash->render('somekey');
+     * In your template file: $this->Flash->render('somekey');
      * Will default to flash if no param is passed
      *
      * You can pass additional information into the flash message generation. This allows you
@@ -70,18 +70,20 @@ class FlashHelper extends Helper
      */
     public function render($key = 'flash', array $options = [])
     {
-        if (!$this->request->session()->check("Flash.$key")) {
+        $session = $this->_View->getRequest()->getSession();
+
+        if (!$session->check("Flash.$key")) {
             return null;
         }
 
-        $flash = $this->request->session()->read("Flash.$key");
+        $flash = $session->read("Flash.$key");
         if (!is_array($flash)) {
             throw new UnexpectedValueException(sprintf(
                 'Value for flash setting key "%s" must be an array.',
                 $key
             ));
         }
-        $this->request->session()->delete("Flash.$key");
+        $session->delete("Flash.$key");
 
         $out = '';
         foreach ($flash as $message) {

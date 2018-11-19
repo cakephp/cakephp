@@ -15,6 +15,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use DirectoryIterator;
@@ -94,13 +95,13 @@ class I18nShell extends Shell
             $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
-        $this->_paths = [APP];
+        $this->_paths = App::path('Locale');
         if ($this->param('plugin')) {
             $plugin = Inflector::camelize($this->param('plugin'));
-            $this->_paths = [Plugin::classPath($plugin)];
+            $this->_paths = App::path('Locale', $plugin);
         }
 
-        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
+        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
         $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {

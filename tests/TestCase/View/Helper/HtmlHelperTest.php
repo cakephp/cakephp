@@ -64,16 +64,17 @@ class HtmlHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->View = $this->getMockBuilder('Cake\View\View')
-            ->setMethods(['append'])
-            ->getMock();
-        $this->Html = new HtmlHelper($this->View);
-        $this->Html->request = new ServerRequest([
+
+        $request = new ServerRequest([
             'webroot' => '',
         ]);
-        $this->Html->Url->request = $this->Html->request;
+        $this->View = $this->getMockBuilder('Cake\View\View')
+            ->setMethods(['append'])
+            ->setConstructorArgs([$request])
+            ->getMock();
+        $this->Html = new HtmlHelper($this->View);
 
-        Plugin::load(['TestTheme']);
+        $this->loadPlugins(['TestTheme']);
         static::setAppNamespace();
         Configure::write('Asset.timestamp', false);
     }
@@ -86,7 +87,7 @@ class HtmlHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestTheme');
+        $this->clearPlugins();
         unset($this->Html, $this->View);
     }
 
@@ -117,7 +118,7 @@ class HtmlHelperTest extends TestCase
     {
         Router::connect('/:controller/:action/*');
 
-        $this->Html->request->webroot = '';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', ''));
 
         $result = $this->Html->link('/home');
         $expected = ['a' => ['href' => '/home'], 'preg:/\/home/', '/a'];
@@ -146,6 +147,17 @@ class HtmlHelperTest extends TestCase
             '/a'
         ];
         $this->assertHtml($expected, $result);
+
+        $this->Html->setTemplates(['confirmJs' => 'if (confirm({{confirmMessage}})) { window.location="/";};']);
+        $result = $this->Html->link('Home', '/home', ['confirm' => 'Are you sure you want to do this?']);
+        $expected = [
+            'a' => ['href' => '/home', 'onclick' => 'preg:/if \(confirm\(&quot;Are you sure you want to do this\?&quot;\)\) \{ window\.location=&quot;\/&quot;;\};/'],
+            'Home',
+            '/a'
+        ];
+
+        $this->assertHtml($expected, $result);
+        $this->Html->setTemplates(['confirmJs' => '{{confirm}}']);
 
         $result = $this->Html->link('Home', '/home', ['escape' => false, 'confirm' => 'Confirm\'s "nightmares"']);
         $expected = [
@@ -310,6 +322,14 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->link('say hello to 0123465-798', 'sms:0123465-798?body=hello "cakephp"');
         $expected = ['a' => ['href' => 'sms:0123465-798?body=hello &quot;cakephp&quot;'], 'say hello to 0123465-798', '/a'];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->link('Home', '/', ['fullBase' => true]);
+        $expected = ['a' => ['href' => 'http://localhost/'], 'Home', '/a'];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->link('Home', '/', ['fullBase' => false]);
+        $expected = ['a' => ['href' => '/'], 'Home', '/a'];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -321,8 +341,6 @@ class HtmlHelperTest extends TestCase
     {
         Router::connect('/:controller', ['action' => 'index']);
         Router::connect('/:controller/:action/*');
-
-        $this->Html->request->webroot = '';
 
         $result = $this->Html->image('test.gif');
         $expected = ['img' => ['src' => 'img/test.gif', 'alt' => '']];
@@ -346,6 +364,39 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->image('cid:cakephp_logo');
         $expected = ['img' => ['src' => 'cid:cakephp_logo', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image('x:"><script>alert(1)</script>');
+        $expected = ['img' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->image('//google.com/"><script>alert(1)</script>');
+        $expected = ['img' => ['src' => '//google.com/&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', 'alt' => '']];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Ensure that data URIs don't get base paths set.
+     *
+     * @return void
+     */
+    public function testImageDataUriBaseDir()
+    {
+        $request = $this->View->getRequest()
+            ->withAttribute('base', 'subdir')
+            ->withAttribute('webroot', 'subdir/');
+        $this->View->setRequest($request);
+        Router::pushRequest($request);
+
+        $data = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4' .
+            '/8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==';
+        $result = $this->Html->image($data);
+        $expected = ['img' => ['src' => $data, 'alt' => '']];
+        $this->assertHtml($expected, $result);
+
+        $data = 'data:image/png;base64,<evil>';
+        $result = $this->Html->image($data);
+        $expected = ['img' => ['src' => h($data), 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -414,14 +465,13 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $request = $this->Html->request;
-        $request->webroot = '/myproject/';
-        $request->base = '/myproject';
-        Router::pushRequest($request);
+        $this->View->setRequest($this->View->getRequest()
+            ->withAttribute('webroot', '/myproject/')
+            ->withAttribute('base', '/myproject'));
 
         $result = $this->Html->image('sub/test.gif', ['fullBase' => true]);
         $here = $this->Html->Url->build('/', true);
-        $expected = ['img' => ['src' => $here . 'img/sub/test.gif', 'alt' => '']];
+        $expected = ['img' => ['src' => $here . 'myproject/img/sub/test.gif', 'alt' => '']];
         $this->assertHtml($expected, $result);
     }
 
@@ -434,7 +484,7 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('Asset.timestamp', 'force');
 
-        $this->Html->request->webroot = '/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
         $result = $this->Html->image('cake.icon.png');
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
@@ -446,7 +496,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['img' => ['src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '']];
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/longer/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
         $result = $this->Html->image('cake.icon.png');
         $expected = [
             'img' => ['src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => '']
@@ -469,25 +519,26 @@ class HtmlHelperTest extends TestCase
         Configure::write('Asset.timestamp', true);
         Configure::write('debug', true);
 
-        $this->Html->Url->request->webroot = '/';
-        $this->Html->Url->theme = 'TestTheme';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->image('__cake_test_image.gif');
         $expected = [
             'img' => [
                 'src' => 'preg:/\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
                 'alt' => ''
-            ]];
-            $this->assertHtml($expected, $result);
+            ]
+        ];
+        $this->assertHtml($expected, $result);
 
-            $this->Html->Url->request->webroot = '/testing/';
-            $result = $this->Html->image('__cake_test_image.gif');
-            $expected = [
-            'img' => [
-                'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
-                'alt' => ''
-            ]];
-            $this->assertHtml($expected, $result);
-            $File->delete();
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
+        $result = $this->Html->image('__cake_test_image.gif');
+        $expected = [
+        'img' => [
+            'src' => 'preg:/\/testing\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
+            'alt' => ''
+        ]];
+        $this->assertHtml($expected, $result);
+        $File->delete();
     }
 
     /**
@@ -499,14 +550,14 @@ class HtmlHelperTest extends TestCase
     {
         Configure::write('App.wwwRoot', TEST_APP . 'webroot/');
 
-        $this->Html->Url->theme = 'TestTheme';
+        $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->css('webroot_test');
         $expected = [
             'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/webroot_test\.css/']
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->theme = 'TestTheme';
+        $this->Html->getView()->setTheme('TestTheme');
         $result = $this->Html->css('theme_webroot');
         $expected = [
             'link' => ['rel' => 'stylesheet', 'href' => 'preg:/.*test_theme\/css\/theme_webroot\.css/']
@@ -544,11 +595,11 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('screen.css', ['once' => false]);
         $this->assertHtml($expected, $result);
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Html->css('TestPlugin.style', ['plugin' => false]);
         $expected['link']['href'] = 'preg:/.*css\/TestPlugin\.style\.css/';
         $this->assertHtml($expected, $result);
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
 
         $result = $this->Html->css('my.css.library');
         $expected['link']['href'] = 'preg:/.*css\/my\.css\.library\.css/';
@@ -560,6 +611,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->css('screen.css?with=param&other=param');
         $expected['link']['href'] = 'css/screen.css?with=param&amp;other=param';
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->css('x:"><script>alert(1)</script>');
+        $expected['link']['href'] = 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
         $this->assertHtml($expected, $result);
 
         $result = $this->Html->css('http://whatever.com/screen.css?1234');
@@ -653,7 +708,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssLink()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Html->css('TestPlugin.test_plugin_asset');
         $expected = [
@@ -682,7 +737,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[1]);
         $this->assertCount(2, $result);
 
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**
@@ -715,12 +770,12 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/longer/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
         $result = $this->Html->css('cake.generic', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
@@ -733,7 +788,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginCssTimestamping()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         Configure::write('debug', true);
         Configure::write('Asset.timestamp', true);
@@ -758,17 +813,17 @@ class HtmlHelperTest extends TestCase
         $expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/longer/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/longer/'));
         $result = $this->Html->css('TestPlugin.test_plugin_asset', ['once' => false]);
         $expected['link']['href'] = 'preg:/\/testing\/longer\/test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
         $this->assertHtml($expected, $result);
 
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**
@@ -820,7 +875,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginScriptTimestamping()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $pluginPath = Plugin::path('TestPlugin');
         $pluginJsPath = $pluginPath . 'webroot/js';
@@ -842,7 +897,7 @@ class HtmlHelperTest extends TestCase
         unlink($pluginJsPath . DS . '__cake_js_test.js');
         Configure::write('Asset.timestamp', false);
 
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**
@@ -904,6 +959,12 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
+        $result = $this->Html->script('x:"><script>alert(1)</script>');
+        $expected = [
+            'script' => ['src' => 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;']
+        ];
+        $this->assertHtml($expected, $result);
+
         $result = $this->Html->script('foo2', ['pathPrefix' => '/my/custom/path/']);
         $expected = [
             'script' => ['src' => '/my/custom/path/foo2.js']
@@ -949,7 +1010,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testPluginScript()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Html->script('TestPlugin.foo');
         $expected = [
@@ -1005,7 +1066,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**
@@ -1067,8 +1128,8 @@ class HtmlHelperTest extends TestCase
         $testfile = WWW_ROOT . '/test_theme/js/__test_js.js';
         $File = new File($testfile, true);
 
-        $this->Html->Url->request->webroot = '/';
-        $this->Html->Url->theme = 'TestTheme';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/'));
+        $this->Html->Url->getView()->setTheme('TestTheme');
         $result = $this->Html->script('__test_js.js');
         $expected = [
             'script' => ['src' => '/test_theme/js/__test_js.js']
@@ -1235,135 +1296,141 @@ class HtmlHelperTest extends TestCase
     /**
      * testGetCrumb and addCrumb method
      *
+     * @group deprecated
      * @return void
      */
     public function testBreadcrumb()
     {
-        $this->assertNull($this->Html->getCrumbs());
+        $this->deprecated(function () {
+            $this->assertNull($this->Html->getCrumbs());
 
-        $this->Html->addCrumb('First', '#first');
-        $this->Html->addCrumb('Second', '#second');
-        $this->Html->addCrumb('Third', '#third');
+            $this->Html->addCrumb('First', '#first');
+            $this->Html->addCrumb('Second', '#second');
+            $this->Html->addCrumb('Third', '#third');
 
-        $result = $this->Html->getCrumbs();
-        $expected = [
-            ['a' => ['href' => '#first']],
-            'First',
-            '/a',
-            '&raquo;',
-            ['a' => ['href' => '#second']],
-            'Second',
-            '/a',
-            '&raquo;',
-            ['a' => ['href' => '#third']],
-            'Third',
-            '/a',
-        ];
-        $this->assertHtml($expected, $result);
+            $result = $this->Html->getCrumbs();
+            $expected = [
+                ['a' => ['href' => '#first']],
+                'First',
+                '/a',
+                '&raquo;',
+                ['a' => ['href' => '#second']],
+                'Second',
+                '/a',
+                '&raquo;',
+                ['a' => ['href' => '#third']],
+                'Third',
+                '/a',
+            ];
+            $this->assertHtml($expected, $result);
 
-        $result = $this->Html->getCrumbs(' &gt; ');
-        $expected = [
-            ['a' => ['href' => '#first']],
-            'First',
-            '/a',
-            ' &gt; ',
-            ['a' => ['href' => '#second']],
-            'Second',
-            '/a',
-            ' &gt; ',
-            ['a' => ['href' => '#third']],
-            'Third',
-            '/a',
-        ];
-        $this->assertHtml($expected, $result);
+            $result = $this->Html->getCrumbs(' &gt; ');
+            $expected = [
+                ['a' => ['href' => '#first']],
+                'First',
+                '/a',
+                ' &gt; ',
+                ['a' => ['href' => '#second']],
+                'Second',
+                '/a',
+                ' &gt; ',
+                ['a' => ['href' => '#third']],
+                'Third',
+                '/a',
+            ];
+            $this->assertHtml($expected, $result);
 
-        $this->Html->addCrumb('Fourth', null);
+            $this->Html->addCrumb('Fourth', null);
 
-        $result = $this->Html->getCrumbs();
-        $expected = [
-            ['a' => ['href' => '#first']],
-            'First',
-            '/a',
-            '&raquo;',
-            ['a' => ['href' => '#second']],
-            'Second',
-            '/a',
-            '&raquo;',
-            ['a' => ['href' => '#third']],
-            'Third',
-            '/a',
-            '&raquo;',
-            'Fourth'
-        ];
-        $this->assertHtml($expected, $result);
+            $result = $this->Html->getCrumbs();
+            $expected = [
+                ['a' => ['href' => '#first']],
+                'First',
+                '/a',
+                '&raquo;',
+                ['a' => ['href' => '#second']],
+                'Second',
+                '/a',
+                '&raquo;',
+                ['a' => ['href' => '#third']],
+                'Third',
+                '/a',
+                '&raquo;',
+                'Fourth'
+            ];
+            $this->assertHtml($expected, $result);
 
-        $this->Html->addCrumb('Fifth', [
-            'plugin' => false,
-            'controller' => 'controller',
-            'action' => 'action',
-        ]);
-        $result = $this->Html->getCrumbs('-', 'Start');
-        $expected = [
-            ['a' => ['href' => '/']],
-            'Start',
-            '/a',
-            '-',
-            ['a' => ['href' => '#first']],
-            'First',
-            '/a',
-            '-',
-            ['a' => ['href' => '#second']],
-            'Second',
-            '/a',
-            '-',
-            ['a' => ['href' => '#third']],
-            'Third',
-            '/a',
-            '-',
-            'Fourth',
-            '-',
-            ['a' => ['href' => '/controller/action']],
-            'Fifth',
-            '/a',
-        ];
-        $this->assertHtml($expected, $result);
+            $this->Html->addCrumb('Fifth', [
+                'plugin' => false,
+                'controller' => 'controller',
+                'action' => 'action',
+            ]);
+            $result = $this->Html->getCrumbs('-', 'Start');
+            $expected = [
+                ['a' => ['href' => '/']],
+                'Start',
+                '/a',
+                '-',
+                ['a' => ['href' => '#first']],
+                'First',
+                '/a',
+                '-',
+                ['a' => ['href' => '#second']],
+                'Second',
+                '/a',
+                '-',
+                ['a' => ['href' => '#third']],
+                'Third',
+                '/a',
+                '-',
+                'Fourth',
+                '-',
+                ['a' => ['href' => '/controller/action']],
+                'Fifth',
+                '/a',
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
      * Test the array form of $startText
      *
+     * @group deprecated
      * @return void
      */
     public function testGetCrumbFirstLink()
     {
-        $result = $this->Html->getCrumbList([], 'Home');
-        $expected = [
-            '<ul',
-            ['li' => ['class' => 'first']],
-            ['a' => ['href' => '/']], 'Home', '/a',
-            '/li',
-            '/ul'
-        ];
-        $this->assertHtml($expected, $result);
+        $this->deprecated(function () {
+            $result = $this->Html->getCrumbList([], 'Home');
+            $expected = [
+                '<ul',
+                ['li' => ['class' => 'first']],
+                ['a' => ['href' => '/']], 'Home', '/a',
+                '/li',
+                '/ul'
+            ];
+            $this->assertHtml($expected, $result);
 
-        $this->Html->addCrumb('First', '#first');
-        $this->Html->addCrumb('Second', '#second');
+            $this->Html->addCrumb('First', '#first');
+            $this->Html->addCrumb('Second', '#second');
 
-        $result = $this->Html->getCrumbs(' - ', ['url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false]);
-        $expected = [
-            ['a' => ['href' => '/home']],
-            'img' => ['src' => '/home.png'],
-            '/a',
-            ' - ',
-            ['a' => ['href' => '#first']],
-            'First',
-            '/a',
-            ' - ',
-            ['a' => ['href' => '#second']],
-            'Second',
-            '/a',
-        ];
-        $this->assertHtml($expected, $result);
+            $result = $this->Html->getCrumbs(' - ', ['url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false]);
+            $expected = [
+                ['a' => ['href' => '/home']],
+                'img' => ['src' => '/home.png'],
+                '/a',
+                ' - ',
+                ['a' => ['href' => '#first']],
+                'First',
+                '/a',
+                ' - ',
+                ['a' => ['href' => '#second']],
+                'Second',
+                '/a',
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
@@ -1716,7 +1783,25 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $result = $this->Html->meta('icon', 'x:"><script>alert(1)</script>');
+        $url = 'x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;';
+        $expected = [
+            'link' => [
+                'href' => $url,
+                'type' => 'image/x-icon',
+                'rel' => 'icon'
+            ],
+            [
+                'link' => [
+                    'href' => $url,
+                    'type' => 'image/x-icon',
+                    'rel' => 'shortcut icon'
+                ]
+            ]
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
@@ -1732,7 +1817,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testMetaIconWithTheme()
     {
-        $this->Html->Url->theme = 'TestTheme';
+        $this->Html->Url->getView()->setTheme('TestTheme');
 
         $result = $this->Html->meta('icon', 'favicon.ico');
         $expected = [
@@ -1748,7 +1833,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->Html->request->webroot = '/testing/';
+        $this->View->setRequest($this->View->getRequest()->withAttribute('webroot', '/testing/'));
         $result = $this->Html->meta('icon');
         $expected = [
             'link' => ['href' => '/testing/test_theme/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'],
@@ -1956,6 +2041,12 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->div('class-name', '<text>', ['escape' => true]);
         $expected = ['div' => ['class' => 'class-name'], '&lt;text&gt;', '/div'];
         $this->assertHtml($expected, $result);
+
+        $evilKey = "><script>alert(1)</script>";
+        $options = [$evilKey => 'some value'];
+        $result = $this->Html->div('class-name', '', $options);
+        $expected = '<div &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value" class="class-name"></div>';
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -1975,6 +2066,10 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->para('class-name', '<text>', ['escape' => true]);
         $expected = ['p' => ['class' => 'class-name'], '&lt;text&gt;', '/p'];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Html->para('class-name', 'text"', ['escape' => false]);
+        $expected = ['p' => ['class' => 'class-name'], 'text"', '/p'];
         $this->assertHtml($expected, $result);
     }
 
@@ -2049,140 +2144,152 @@ class HtmlHelperTest extends TestCase
     /**
      * testCrumbList method
      *
+     * @group deprecated
      * @return void
      */
     public function testCrumbList()
     {
-        $this->assertNull($this->Html->getCrumbList());
+        $this->deprecated(function () {
+            $this->assertNull($this->Html->getCrumbList());
 
-        $this->Html->addCrumb('Home', '/', ['class' => 'home']);
-        $this->Html->addCrumb('Some page', '/some_page');
-        $this->Html->addCrumb('Another page');
-        $result = $this->Html->getCrumbList(
-            ['class' => 'breadcrumbs']
-        );
-        $expected = [
-            ['ul' => ['class' => 'breadcrumbs']],
-            ['li' => ['class' => 'first']],
-            ['a' => ['class' => 'home', 'href' => '/']], 'Home', '/a',
-            '/li',
-            '<li',
-            ['a' => ['href' => '/some_page']], 'Some page', '/a',
-            '/li',
-            ['li' => ['class' => 'last']],
-            'Another page',
-            '/li',
-            '/ul'
-        ];
-        $this->assertHtml($expected, $result);
+            $this->Html->addCrumb('Home', '/', ['class' => 'home']);
+            $this->Html->addCrumb('Some page', '/some_page');
+            $this->Html->addCrumb('Another page');
+            $result = $this->Html->getCrumbList(
+                ['class' => 'breadcrumbs']
+            );
+            $expected = [
+                ['ul' => ['class' => 'breadcrumbs']],
+                ['li' => ['class' => 'first']],
+                ['a' => ['class' => 'home', 'href' => '/']], 'Home', '/a',
+                '/li',
+                '<li',
+                ['a' => ['href' => '/some_page']], 'Some page', '/a',
+                '/li',
+                ['li' => ['class' => 'last']],
+                'Another page',
+                '/li',
+                '/ul'
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
      * Test getCrumbList startText
      *
+     * @group deprecated
      * @return void
      */
     public function testCrumbListFirstLink()
     {
-        $this->Html->addCrumb('First', '#first');
-        $this->Html->addCrumb('Second', '#second');
+        $this->deprecated(function () {
+            $this->Html->addCrumb('First', '#first');
+            $this->Html->addCrumb('Second', '#second');
 
-        $result = $this->Html->getCrumbList([], 'Home');
-        $expected = [
-            '<ul',
-            ['li' => ['class' => 'first']],
-            ['a' => ['href' => '/']], 'Home', '/a',
-            '/li',
-            '<li',
-            ['a' => ['href' => '#first']], 'First', '/a',
-            '/li',
-            ['li' => ['class' => 'last']],
-            ['a' => ['href' => '#second']], 'Second', '/a',
-            '/li',
-            '/ul'
-        ];
-        $this->assertHtml($expected, $result);
+            $result = $this->Html->getCrumbList([], 'Home');
+            $expected = [
+                '<ul',
+                ['li' => ['class' => 'first']],
+                ['a' => ['href' => '/']], 'Home', '/a',
+                '/li',
+                '<li',
+                ['a' => ['href' => '#first']], 'First', '/a',
+                '/li',
+                ['li' => ['class' => 'last']],
+                ['a' => ['href' => '#second']], 'Second', '/a',
+                '/li',
+                '/ul'
+            ];
+            $this->assertHtml($expected, $result);
 
-        $result = $this->Html->getCrumbList([], ['url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false]);
-        $expected = [
-            '<ul',
-            ['li' => ['class' => 'first']],
-            ['a' => ['href' => '/home']], 'img' => ['src' => '/home.png'], '/a',
-            '/li',
-            '<li',
-            ['a' => ['href' => '#first']], 'First', '/a',
-            '/li',
-            ['li' => ['class' => 'last']],
-            ['a' => ['href' => '#second']], 'Second', '/a',
-            '/li',
-            '/ul'
-        ];
-        $this->assertHtml($expected, $result);
+            $result = $this->Html->getCrumbList([], ['url' => '/home', 'text' => '<img src="/home.png" />', 'escape' => false]);
+            $expected = [
+                '<ul',
+                ['li' => ['class' => 'first']],
+                ['a' => ['href' => '/home']], 'img' => ['src' => '/home.png'], '/a',
+                '/li',
+                '<li',
+                ['a' => ['href' => '#first']], 'First', '/a',
+                '/li',
+                ['li' => ['class' => 'last']],
+                ['a' => ['href' => '#second']], 'Second', '/a',
+                '/li',
+                '/ul'
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
      * test getCrumbList() in Twitter Bootstrap style.
      *
+     * @group deprecated
      * @return void
      */
     public function testCrumbListBootstrapStyle()
     {
-        $this->Html->addCrumb('Home', '/', ['class' => 'home']);
-        $this->Html->addCrumb('Library', '/lib');
-        $this->Html->addCrumb('Data');
-        $result = $this->Html->getCrumbList([
-            'class' => 'breadcrumb',
-            'separator' => '<span class="divider">-</span>',
-            'firstClass' => false,
-            'lastClass' => 'active'
-        ]);
-        $expected = [
-            ['ul' => ['class' => 'breadcrumb']],
-            '<li',
-            ['a' => ['class' => 'home', 'href' => '/']], 'Home', '/a',
-            ['span' => ['class' => 'divider']], '-', '/span',
-            '/li',
-            '<li',
-            ['a' => ['href' => '/lib']], 'Library', '/a',
-            ['span' => ['class' => 'divider']], '-', '/span',
-            '/li',
-            ['li' => ['class' => 'active']], 'Data', '/li',
-            '/ul'
-        ];
-        $this->assertHtml($expected, $result);
+        $this->deprecated(function () {
+            $this->Html->addCrumb('Home', '/', ['class' => 'home']);
+            $this->Html->addCrumb('Library', '/lib');
+            $this->Html->addCrumb('Data');
+            $result = $this->Html->getCrumbList([
+                'class' => 'breadcrumb',
+                'separator' => '<span class="divider">-</span>',
+                'firstClass' => false,
+                'lastClass' => 'active'
+            ]);
+            $expected = [
+                ['ul' => ['class' => 'breadcrumb']],
+                '<li',
+                ['a' => ['class' => 'home', 'href' => '/']], 'Home', '/a',
+                ['span' => ['class' => 'divider']], '-', '/span',
+                '/li',
+                '<li',
+                ['a' => ['href' => '/lib']], 'Library', '/a',
+                ['span' => ['class' => 'divider']], '-', '/span',
+                '/li',
+                ['li' => ['class' => 'active']], 'Data', '/li',
+                '/ul'
+            ];
+            $this->assertHtml($expected, $result);
+        });
     }
 
     /**
      * Test GetCrumbList using style of Zurb Foundation.
      *
+     * @group deprecated
      * @return void
      */
     public function testCrumbListZurbStyle()
     {
-        $this->Html->addCrumb('Home', '#');
-        $this->Html->addCrumb('Features', '#');
-        $this->Html->addCrumb('Gene Splicing', '#');
-        $this->Html->addCrumb('Home', '#');
-        $result = $this->Html->getCrumbList(
-            ['class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current']
-        );
-        $expected = [
-            ['ul' => ['class' => 'breadcrumbs']],
-            '<li',
-            ['a' => ['href' => '#']], 'Home', '/a',
-            '/li',
-            '<li',
-            ['a' => ['href' => '#']], 'Features', '/a',
-            '/li',
-            '<li',
-            ['a' => ['href' => '#']], 'Gene Splicing', '/a',
-            '/li',
-            ['li' => ['class' => 'current']],
-            ['a' => ['href' => '#']], 'Home', '/a',
-            '/li',
-            '/ul'
-        ];
-        $this->assertHtml($expected, $result, true);
+        $this->deprecated(function () {
+            $this->Html->addCrumb('Home', '#');
+            $this->Html->addCrumb('Features', '#');
+            $this->Html->addCrumb('Gene Splicing', '#');
+            $this->Html->addCrumb('Home', '#');
+            $result = $this->Html->getCrumbList(
+                ['class' => 'breadcrumbs', 'firstClass' => false, 'lastClass' => 'current']
+            );
+            $expected = [
+                ['ul' => ['class' => 'breadcrumbs']],
+                '<li',
+                ['a' => ['href' => '#']], 'Home', '/a',
+                '/li',
+                '<li',
+                ['a' => ['href' => '#']], 'Features', '/a',
+                '/li',
+                '<li',
+                ['a' => ['href' => '#']], 'Gene Splicing', '/a',
+                '/li',
+                ['li' => ['class' => 'current']],
+                ['a' => ['href' => '#']], 'Home', '/a',
+                '/li',
+                '/ul'
+            ];
+            $this->assertHtml($expected, $result, true);
+        });
     }
 
     /**

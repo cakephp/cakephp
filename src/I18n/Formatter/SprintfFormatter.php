@@ -15,7 +15,6 @@
 namespace Cake\I18n\Formatter;
 
 use Aura\Intl\FormatterInterface;
-use Cake\I18n\PluralRules;
 
 /**
  * A formatter that will interpolate variables using sprintf and

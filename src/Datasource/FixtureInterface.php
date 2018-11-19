@@ -41,7 +41,7 @@ interface FixtureInterface
      * Should insert all the records into the test database.
      *
      * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection into which the records will be inserted.
-     * @return bool on success or if there are no records to insert, or false on failure.
+     * @return \Cake\Database\StatementInterface|bool on success or if there are no records to insert, or false on failure.
      */
     public function insert(ConnectionInterface $db);
 

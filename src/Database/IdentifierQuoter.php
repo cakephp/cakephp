@@ -52,8 +52,8 @@ class IdentifierQuoter
      */
     public function quote(Query $query)
     {
-        $binder = $query->valueBinder();
-        $query->valueBinder(false);
+        $binder = $query->getValueBinder();
+        $query->setValueBinder(false);
 
         if ($query->type() === 'insert') {
             $this->_quoteInsert($query);
@@ -64,7 +64,7 @@ class IdentifierQuoter
         }
 
         $query->traverseExpressions([$this, 'quoteExpression']);
-        $query->valueBinder($binder);
+        $query->setValueBinder($binder);
 
         return $query;
     }

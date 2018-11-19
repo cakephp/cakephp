@@ -16,6 +16,7 @@ namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
+use CallbackFilterIterator;
 use Exception;
 use LogicException;
 use RecursiveDirectoryIterator;
@@ -336,6 +337,8 @@ class FileEngine extends CacheEngine
                 //@codingStandardsIgnoreEnd
             }
         }
+
+        $dir->close();
     }
 
     /**
@@ -383,6 +386,7 @@ class FileEngine extends CacheEngine
         if (!is_dir($dir)) {
             mkdir($dir, 0775, true);
         }
+
         $path = new SplFileInfo($dir . $key);
 
         if (!$createKey && !$path->isFile()) {
@@ -412,7 +416,7 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Determine is cache directory is writable
+     * Determine if cache directory is writable
      *
      * @return bool
      */
@@ -420,21 +424,23 @@ class FileEngine extends CacheEngine
     {
         $dir = new SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
+        $success = true;
         if (!is_dir($path)) {
-            mkdir($path, 0775, true);
+            //@codingStandardsIgnoreStart
+            $success = @mkdir($path, 0775, true);
+            //@codingStandardsIgnoreEnd
         }
 
-        if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
+        $isWritableDir = ($dir->isDir() && $dir->isWritable());
+        if (!$success || ($this->_init && !$isWritableDir)) {
             $this->_init = false;
             trigger_error(sprintf(
                 '%s is not writable',
                 $this->_config['path']
             ), E_USER_WARNING);
-
-            return false;
         }
 
-        return true;
+        return $success;
     }
 
     /**
@@ -467,24 +473,40 @@ class FileEngine extends CacheEngine
     public function clearGroup($group)
     {
         $this->_File = null;
+
+        $prefix = (string)$this->_config['prefix'];
+
         $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
         $contents = new RecursiveIteratorIterator(
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST
         );
-        foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathname(), DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR) !== false;
-            $hasPrefix = true;
-            if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
+        $filtered = new CallbackFilterIterator(
+            $contents,
+            function (SplFileInfo $current) use ($group, $prefix) {
+                if (!$current->isFile()) {
+                    return false;
+                }
+
+                $hasPrefix = $prefix === ''
+                    || strpos($current->getBasename(), $prefix) === 0;
+                if ($hasPrefix === false) {
+                    return false;
+                }
+
+                $pos = strpos(
+                    $current->getPathname(),
+                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
+                );
+
+                return $pos !== false;
             }
-            if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathname();
-                $object = null;
-                //@codingStandardsIgnoreStart
-                @unlink($path);
-                //@codingStandardsIgnoreEnd
-            }
+        );
+        foreach ($filtered as $object) {
+            $path = $object->getPathname();
+            $object = null;
+            // @codingStandardsIgnoreLine
+            @unlink($path);
         }
 
         return true;

@@ -49,6 +49,15 @@ class MiddlewareQueueTest extends TestCase
         static::setAppNamespace($this->appNamespace);
     }
 
+    public function testConstructorAddingMiddleware()
+    {
+        $cb = function () {
+        };
+        $queue = new MiddlewareQueue([$cb]);
+        $this->assertCount(1, $queue);
+        $this->assertSame($cb, $queue->get(0));
+    }
+
     /**
      * Test get()
      *
@@ -283,12 +292,12 @@ class MiddlewareQueueTest extends TestCase
     /**
      * Test insertBefore an invalid classname
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage No middleware matching 'InvalidClassName' could be found.
      * @return void
      */
     public function testInsertBeforeInvalid()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('No middleware matching \'InvalidClassName\' could be found.');
         $one = function () {
         };
         $two = new SampleMiddleware();

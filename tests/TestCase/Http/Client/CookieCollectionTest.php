@@ -19,6 +19,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * HTTP cookies test.
+ *
+ * @group deprecated
  */
 class CookieCollectionTest extends TestCase
 {
@@ -31,7 +33,9 @@ class CookieCollectionTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->cookies = new CookieCollection();
+        $this->deprecated(function () {
+            $this->cookies = new CookieCollection();
+        });
     }
 
     /**
@@ -58,13 +62,19 @@ class CookieCollectionTest extends TestCase
                 'name' => 'first',
                 'value' => '1',
                 'path' => '/some/path',
-                'domain' => 'example.com'
+                'domain' => 'example.com',
+                'secure' => false,
+                'httponly' => false,
+                'expires' => 0,
             ],
             [
                 'name' => 'second',
                 'value' => '2',
                 'path' => '/',
-                'domain' => '.foo.example.com'
+                'domain' => '.foo.example.com',
+                'secure' => false,
+                'httponly' => false,
+                'expires' => 0,
             ],
         ];
         $this->assertEquals($expected, $result);
@@ -93,7 +103,10 @@ class CookieCollectionTest extends TestCase
                 'name' => 'first',
                 'value' => '1',
                 'path' => '/some/path',
-                'domain' => 'example.com'
+                'domain' => 'example.com',
+                'secure' => false,
+                'httponly' => false,
+                'expires' => 0,
             ],
             [
                 'name' => 'second',
@@ -102,6 +115,7 @@ class CookieCollectionTest extends TestCase
                 'domain' => 'example.com',
                 'secure' => true,
                 'httponly' => true,
+                'expires' => 0,
             ],
         ];
         $this->assertEquals($expected, $result);
@@ -159,7 +173,10 @@ class CookieCollectionTest extends TestCase
                 'name' => 'second',
                 'value' => '2',
                 'path' => '/',
-                'domain' => 'example.com'
+                'domain' => 'example.com',
+                'expires' => 0,
+                'secure' => false,
+                'httponly' => false,
             ],
         ];
         $this->assertEquals($expected, $result);

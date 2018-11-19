@@ -158,12 +158,12 @@ class StringTemplateTest extends TestCase
     /**
      * Test formatting a missing template.
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot find template named 'missing'
      * @return void
      */
     public function testFormatMissingTemplate()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot find template named \'missing\'');
         $templates = [
             'text' => '{{text}}',
         ];
@@ -192,19 +192,20 @@ class StringTemplateTest extends TestCase
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->assertNull($this->template->load('TestPlugin.test_templates'));
         $this->assertEquals('<em>{{text}}</em>', $this->template->get('italic'));
+        $this->clearPlugins();
     }
 
     /**
      * Test that loading non-existing templates causes errors.
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Could not load configuration file
      */
     public function testLoadErrorNoFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }
 
@@ -262,6 +263,15 @@ class StringTemplateTest extends TestCase
         $result = $this->template->formatAttributes($attrs, ['name']);
         $this->assertEquals(
             ' data-hero="&lt;batman&gt;"',
+            $result
+        );
+
+        $evilKey = "><script>alert(1)</script>";
+        $attrs = [$evilKey => 'some value'];
+
+        $result = $this->template->formatAttributes($attrs);
+        $this->assertEquals(
+            ' &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value"',
             $result
         );
     }

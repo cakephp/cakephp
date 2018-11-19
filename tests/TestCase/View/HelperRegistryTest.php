@@ -56,7 +56,7 @@ class HelperRegistryTest extends TestCase
     {
         parent::setUp();
         $this->View = new View();
-        $this->Events = $this->View->eventManager();
+        $this->Events = $this->View->getEventManager();
         $this->Helpers = new HelperRegistry($this->View);
     }
 
@@ -67,7 +67,7 @@ class HelperRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::unload();
+        $this->clearPlugins();
         unset($this->Helpers, $this->View);
         parent::tearDown();
     }
@@ -100,8 +100,8 @@ class HelperRegistryTest extends TestCase
         $result = $this->Helpers->Form;
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
-        $this->View->plugin = 'TestPlugin';
-        Plugin::load(['TestPlugin']);
+        $this->View->setPlugin('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->OtherHelper;
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
     }
@@ -109,11 +109,11 @@ class HelperRegistryTest extends TestCase
     /**
      * test lazy loading of helpers
      *
-     * @expectedException \Cake\View\Exception\MissingHelperException
      * @return void
      */
     public function testLazyLoadException()
     {
+        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
         $this->Helpers->NotAHelper;
     }
 
@@ -154,7 +154,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadWithAliasAndPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Helpers->load('SomeOther', ['className' => 'TestPlugin.OtherHelper']);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);
@@ -180,11 +180,11 @@ class HelperRegistryTest extends TestCase
     /**
      * test missinghelper exception
      *
-     * @expectedException \Cake\View\Exception\MissingHelperException
      * @return void
      */
     public function testLoadMissingHelper()
     {
+        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
         $this->Helpers->load('ThisHelperShouldAlwaysBeMissing');
     }
 
@@ -195,7 +195,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadPluginHelper()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helpers->load('TestPlugin.OtherHelper');
         $this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
@@ -209,7 +209,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadPluginHelperDottedAlias()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helpers->load('thing.helper', [
             'className' => 'TestPlugin.OtherHelper',
@@ -268,8 +268,20 @@ class HelperRegistryTest extends TestCase
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
-        $this->assertNull($this->Helpers->unload('EventListenerTest'), 'No return expected');
+        $this->assertSame($this->Helpers, $this->Helpers->unload('EventListenerTest'));
         $this->assertCount(0, $this->Events->listeners('View.beforeRender'));
+    }
+
+    /**
+     * Test that unloading a none existing helper triggers an error.
+     *
+     * @return void
+     */
+    public function testUnloadUnknown()
+    {
+        $this->expectException(\Cake\View\Exception\MissingHelperException::class);
+        $this->expectExceptionMessage('Helper class FooHelper could not be found.');
+        $this->Helpers->unload('Foo');
     }
 
     /**
@@ -317,12 +329,12 @@ class HelperRegistryTest extends TestCase
     /**
      * Loading a helper with different config, should throw an exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The "Html" alias has already been loaded with the following
      * @return void
      */
     public function testLoadMultipleTimesDifferentConfigured()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
         $this->Helpers->load('Html');
         $this->Helpers->load('Html', ['same' => 'stuff']);
     }
@@ -330,13 +342,90 @@ class HelperRegistryTest extends TestCase
     /**
      * Loading a helper with different config, should throw an exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage The "Html" alias has already been loaded with the following
      * @return void
      */
     public function testLoadMultipleTimesDifferentConfigValues()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('The "Html" alias has already been loaded with the following');
         $this->Helpers->load('Html', ['key' => 'value']);
         $this->Helpers->load('Html', ['key' => 'new value']);
+    }
+
+    /**
+     * Test ObjectRegistry normalizeArray
+     *
+     * @return void
+     */
+    public function testArrayIsNormalized()
+    {
+        $config = [
+            'SomeHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ],
+            'Plugin.SomeOtherHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ]
+        ];
+        $result = $this->Helpers->normalizeArray($config);
+        $expected = [
+            'SomeHelper' => [
+                'class' => 'SomeHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+            'SomeOtherHelper' => [
+                'class' => 'Plugin.SomeOtherHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that calling normalizeArray multiple times does
+     * not nest the configuration.
+     *
+     * @return void
+     */
+    public function testArrayIsNormalizedAfterMultipleCalls()
+    {
+        $config = [
+            'SomeHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ],
+            'Plugin.SomeOtherHelper' => [
+                'value' => 1,
+                'value2' => 2
+            ]
+        ];
+
+        $result1 = $this->Helpers->normalizeArray($config);
+        $result2 = $this->Helpers->normalizeArray($result1);
+        $expected = [
+            'SomeHelper' => [
+                'class' => 'SomeHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+            'SomeOtherHelper' => [
+                'class' => 'Plugin.SomeOtherHelper',
+                'config' => [
+                    'value' => 1,
+                    'value2' => 2
+                ]
+            ],
+        ];
+        $this->assertEquals($expected, $result2);
     }
 }
