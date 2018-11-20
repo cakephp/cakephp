@@ -88,12 +88,6 @@ use Zend\Diactoros\Stream;
  * ```
  * $content = $response->getStatusCode();
  * ```
- *
- * You can also use object access:
- *
- * ```
- * $content = $response->code;
- * ```
  */
 class Response extends Message implements ResponseInterface
 {
@@ -647,6 +641,13 @@ class Response extends Message implements ResponseInterface
             return $this->{$key}();
         }
 
+        if ($key === 'code') {
+            deprecationWarning(
+                'Response::code() is deprecated. ' .
+                'Use Response::getStatusCode() instead.'
+            );
+        }
+
         return $this->{$key};
     }
 
@@ -666,6 +667,13 @@ class Response extends Message implements ResponseInterface
             $val = $this->{$key}();
 
             return $val !== null;
+        }
+
+        if ($key === 'code') {
+            deprecationWarning(
+                'Response::code() is deprecated. ' .
+                'Use Response::getStatusCode() instead.'
+            );
         }
 
         return isset($this->{$key});
