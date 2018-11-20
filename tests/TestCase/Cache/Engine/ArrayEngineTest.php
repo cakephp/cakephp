@@ -158,16 +158,16 @@ class ArrayEngineTest extends TestCase
         $this->assertTrue($result);
 
         $result = Cache::increment('test_increment', 1, 'array');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::read('test_increment', 'array');
-        $this->assertEquals(6, $result);
+        $this->assertSame(6, $result);
 
         $result = Cache::increment('test_increment', 2, 'array');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
 
         $result = Cache::read('test_increment', 'array');
-        $this->assertEquals(8, $result);
+        $this->assertSame(8, $result);
     }
 
     /**

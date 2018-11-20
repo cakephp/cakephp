@@ -94,7 +94,7 @@ class ArrayEngine extends CacheEngine
         $key = $this->_key($key);
         $this->data[$key][1] += $offset;
 
-        return true;
+        return $this->data[$key][1];
     }
 
     /**
@@ -112,7 +112,7 @@ class ArrayEngine extends CacheEngine
         $key = $this->_key($key);
         $this->data[$key][1] -= $offset;
 
-        return true;
+        return $this->data[$key][1];
     }
 
     /**
