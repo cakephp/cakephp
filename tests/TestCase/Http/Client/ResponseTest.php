@@ -77,9 +77,8 @@ class ResponseTest extends TestCase
 
         $this->assertEquals(
             'text/html;charset="UTF-8"',
-            $response->headers['Content-Type']
+            $response->getHeaderLine('Content-Type')
         );
-        $this->assertTrue(isset($response->headers));
 
         $headers = [
             'HTTP/1.0 200',
@@ -109,8 +108,9 @@ class ResponseTest extends TestCase
 
         $result = $response->body('json_decode');
         $this->assertEquals($data['property'], $result->property);
-        $this->assertEquals($encoded, $response->body);
-        $this->assertTrue(isset($response->body));
+        $stream = $response->getBody();
+        $stream->rewind();
+        $this->assertEquals($encoded, $stream->getContents());
     }
 
     /**
@@ -125,28 +125,27 @@ class ResponseTest extends TestCase
         ];
         $encoded = json_encode($data);
         $response = new Response([], $encoded);
-        $this->assertTrue(isset($response->json));
-        $this->assertEquals($data['property'], $response->json['property']);
+        $this->assertEquals($data['property'], $response->getJson()['property']);
 
         $data = '';
         $response = new Response([], $data);
-        $this->assertNull($response->json);
+        $this->assertNull($response->getJson());
 
         $data = json_encode([]);
         $response = new Response([], $data);
-        $this->assertInternalType('array', $response->json);
+        $this->assertInternalType('array', $response->getJson());
 
         $data = json_encode(null);
         $response = new Response([], $data);
-        $this->assertNull($response->json);
+        $this->assertNull($response->getJson());
 
         $data = json_encode(false);
         $response = new Response([], $data);
-        $this->assertFalse($response->json);
+        $this->assertFalse($response->getJson());
 
         $data = json_encode('');
         $response = new Response([], $data);
-        $this->assertSame('', $response->json);
+        $this->assertSame('', $response->getJson());
     }
 
     /**
@@ -162,7 +161,7 @@ class ResponseTest extends TestCase
         $encoded = json_encode($data);
         $response = new Response([], '');
         $response->getBody()->write($encoded);
-        $this->assertEquals($data, $response->json);
+        $this->assertEquals($data, $response->getJson());
     }
 
     /**
@@ -179,12 +178,11 @@ class ResponseTest extends TestCase
 </root>
 XML;
         $response = new Response([], $data);
-        $this->assertTrue(isset($response->xml));
-        $this->assertEquals('Test', (string)$response->xml->test);
+        $this->assertEquals('Test', (string)$response->getXml()->test);
 
         $data = '';
         $response = new Response([], $data);
-        $this->assertFalse(isset($response->xml));
+        $this->assertNull($response->getXml());
     }
 
     /**
@@ -501,6 +499,6 @@ XML;
         ];
         $body = base64_decode('H4sIAAAAAAAAA/NIzcnJVyjPL8pJUQQAlRmFGwwAAAA=');
         $response = new Response($headers, $body);
-        $this->assertEquals('Hello world!', $response->body);
+        $this->assertEquals('Hello world!', $response->getBody()->getContents());
     }
 }

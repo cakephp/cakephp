@@ -44,14 +44,6 @@ use Zend\Diactoros\Stream;
  * $response->getHeaders();
  * ```
  *
- * You can also get at the headers using object access. When getting
- * headers with object access, you have to use case-sensitive header
- * names:
- *
- * ```
- * $val = $response->headers['Content-Type'];
- * ```
- *
  * ### Get the response body
  *
  * You can access the response body stream using:
@@ -60,11 +52,10 @@ use Zend\Diactoros\Stream;
  * $content = $response->getBody();
  * ```
  *
- * You can also use object access to get the string version
- * of the response body:
+ * You can get the body string using:
  *
  * ```
- * $content = $response->body;
+ * $content = $response->getBody()->getContents();
  * ```
  *
  * If your response body is in XML or JSON you can use
@@ -74,9 +65,9 @@ use Zend\Diactoros\Stream;
  *
  * ```
  * // Get as xml
- * $content = $response->xml
+ * $content = $response->getXml()
  * // Get as json
- * $content = $response->json
+ * $content = $response->getJson()
  * ```
  *
  * If the response cannot be decoded, null will be returned.
@@ -140,6 +131,20 @@ class Response extends Message implements ResponseInterface
         'json' => '_getJson',
         'xml' => '_getXml',
         'headers' => '_getHeaders',
+    ];
+
+    /**
+     * Map of deprecated magic properties.
+     *
+     * @var array
+     * @internal
+     */
+    protected $_deprecatedMagicProperties = [
+        'cookies' => 'getCookies()',
+        'body' => 'getBody()->getContents()',
+        'json' => 'getJson()',
+        'xml' => 'getXml()',
+        'headers' => 'getHeaders()',
     ];
 
     /**
@@ -568,6 +573,16 @@ class Response extends Message implements ResponseInterface
      *
      * @return array|null
      */
+    public function getJson()
+    {
+        return $this->_getJson();
+    }
+
+    /**
+     * Get the response body as JSON decoded data.
+     *
+     * @return array|null
+     */
     protected function _getJson()
     {
         if ($this->_json) {
@@ -575,6 +590,16 @@ class Response extends Message implements ResponseInterface
         }
 
         return $this->_json = json_decode($this->_getBody(), true);
+    }
+
+    /**
+     * Get the response body as XML decoded data.
+     *
+     * @return null|\SimpleXMLElement
+     */
+    public function getXml()
+    {
+        return $this->_getXml();
     }
 
     /**
@@ -638,6 +663,12 @@ class Response extends Message implements ResponseInterface
         }
         $key = $this->_exposedProperties[$name];
         if (substr($key, 0, 4) === '_get') {
+            deprecationWarning(sprintf(
+                'Response::%s is deprecated. Use Response::%s instead.',
+                $name,
+                $this->_deprecatedMagicProperties[$name]
+            ));
+
             return $this->{$key}();
         }
 
@@ -664,6 +695,12 @@ class Response extends Message implements ResponseInterface
         }
         $key = $this->_exposedProperties[$name];
         if (substr($key, 0, 4) === '_get') {
+            deprecationWarning(sprintf(
+                'Response::%s is deprecated. Use Response::%s instead.',
+                $name,
+                $this->_deprecatedMagicProperties[$name]
+            ));
+
             $val = $this->{$key}();
 
             return $val !== null;
