@@ -281,7 +281,7 @@ class RouteBuilder
      * });
      * ```
      *
-     * Plugins will create lower_case underscored resource routes. e.g
+     * Plugins will create lowercase dasherized resource routes. e.g
      * `/comments/comments`
      *
      * Connect resource routes for the Articles controller in the
@@ -293,7 +293,7 @@ class RouteBuilder
      * });
      * ```
      *
-     * Prefixes will create lower_case underscored resource routes. e.g
+     * Prefixes will create lowercase dasherized resource routes. e.g
      * `/admin/posts`
      *
      * You can create nested resources by passing a callback in:
@@ -320,7 +320,7 @@ class RouteBuilder
      * You can use the `inflect` option to change how path segments are generated:
      *
      * ```
-     * $routes->resources('PaymentTypes', ['inflect' => 'dasherize']);
+     * $routes->resources('PaymentTypes', ['inflect' => 'underscore']);
      * ```
      *
      * Will generate routes like `/payment-types` instead of `/payment_types`
@@ -329,7 +329,7 @@ class RouteBuilder
      *
      * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
      *    integer values and UUIDs.
-     * - 'inflect' - Choose the inflection method used on the resource name. Defaults to 'underscore'.
+     * - 'inflect' - Choose the inflection method used on the resource name. Defaults to 'dasherize'.
      * - 'only' - Only connect the specific list of actions.
      * - 'actions' - Override the method names used for connecting actions.
      * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
@@ -354,7 +354,7 @@ class RouteBuilder
         }
         $options += [
             'connectOptions' => [],
-            'inflect' => 'underscore',
+            'inflect' => 'dasherize',
             'id' => static::ID . '|' . static::UUID,
             'only' => [],
             'actions' => [],
@@ -857,8 +857,8 @@ class RouteBuilder
             $callback = $params;
             $params = [];
         }
+        $path = '/' . Inflector::dasherize($name);
         $name = Inflector::underscore($name);
-        $path = '/' . $name;
         if (isset($params['path'])) {
             $path = $params['path'];
             unset($params['path']);
@@ -897,7 +897,7 @@ class RouteBuilder
         }
         $params = ['plugin' => $name] + $this->_params;
         if (empty($options['path'])) {
-            $options['path'] = '/' . Inflector::underscore($name);
+            $options['path'] = '/' . Inflector::dasherize($name);
         }
         $this->scope($options['path'], $params, $callback);
     }

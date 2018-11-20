@@ -860,7 +860,7 @@ class RouterTest extends TestCase
             });
         });
         $result = Router::url(['prefix' => 'admin', 'plugin' => 'MyPlugin', 'controller' => 'Forms', 'action' => 'edit', 2]);
-        $expected = '/admin/my_plugin/forms/edit/2';
+        $expected = '/admin/my-plugin/forms/edit/2';
         $this->assertEquals($expected, $result);
     }
 
@@ -2877,8 +2877,8 @@ class RouterTest extends TestCase
             $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
         });
 
-        Router::prefix('CustomPath', ['path' => '/custom-path'], function (RouteBuilder $routes) {
-            $this->assertEquals('/custom-path', $routes->path());
+        Router::prefix('CustomPath', ['path' => '/custom_path'], function (RouteBuilder $routes) {
+            $this->assertEquals('/custom_path', $routes->path());
             $this->assertEquals(['prefix' => 'custom_path'], $routes->params());
         });
     }
@@ -2891,7 +2891,7 @@ class RouterTest extends TestCase
     public function testPlugin()
     {
         Router::plugin('DebugKit', function (RouteBuilder $routes) {
-            $this->assertEquals('/debug_kit', $routes->path());
+            $this->assertEquals('/debug-kit', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
         });
     }

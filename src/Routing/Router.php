@@ -796,7 +796,7 @@ class Router
      * For example a path of `admin` would result in `'prefix' => 'admin'` being
      * applied to all connected routes.
      *
-     * The prefix name will be inflected to the underscore version to create
+     * The prefix name will be inflected to the dasherized version to create
      * the routing path. If you want a custom path name, use the `path` option.
      *
      * You can re-open a prefix as many times as necessary, as well as nest prefixes.
@@ -816,16 +816,15 @@ class Router
             $callback = $params;
             $params = [];
         }
-        $name = Inflector::underscore($name);
 
         if (empty($params['path'])) {
-            $path = '/' . $name;
+            $path = '/' . Inflector::dasherize($name);
         } else {
             $path = $params['path'];
             unset($params['path']);
         }
 
-        $params = array_merge($params, ['prefix' => $name]);
+        $params = array_merge($params, ['prefix' => Inflector::underscore($name)]);
         static::scope($path, $params, $callback);
     }
 
@@ -835,7 +834,7 @@ class Router
      * This method creates a scoped route collection that includes
      * relevant plugin information.
      *
-     * The plugin name will be inflected to the underscore version to create
+     * The plugin name will be inflected to the dasherized version to create
      * the routing path. If you want a custom path name, use the `path` option.
      *
      * Routes connected in the scoped collection will have the correct path segment
@@ -856,7 +855,7 @@ class Router
         }
         $params = ['plugin' => $name];
         if (empty($options['path'])) {
-            $options['path'] = '/' . Inflector::underscore($name);
+            $options['path'] = '/' . Inflector::dasherize($name);
         }
         if (isset($options['_namePrefix'])) {
             $params['_namePrefix'] = $options['_namePrefix'];
