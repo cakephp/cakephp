@@ -224,7 +224,7 @@ class Paginator implements PaginatorInterface
             'direction' => isset($options['sort']) ? current($order) : null,
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
-            'directionDefault' => $directionDefault,
+            'directionDefault' => $directionDefault ? strtolower($directionDefault) : $directionDefault,
             'scope' => $options['scope'],
             'completeSort' => $order,
         ];
@@ -363,7 +363,12 @@ class Paginator implements PaginatorInterface
             if (!in_array($direction, ['asc', 'desc'])) {
                 $direction = 'asc';
             }
+
             $order = (isset($options['order']) && is_array($options['order'])) ? $options['order'] : [];
+            if ($order && $options['sort'] && strpos($options['sort'], '.') === false) {
+                $order = $this->_removeAliases($order, $object->getAlias());
+            }
+
             $options['order'] = [$options['sort'] => $direction] + $order;
         } else {
             $options['sort'] = null;
@@ -399,6 +404,35 @@ class Paginator implements PaginatorInterface
         $options['order'] = $this->_prefix($object, $options['order'], $inWhitelist);
 
         return $options;
+    }
+
+    /**
+     * Remove alias if needed.
+     *
+     * @param array $fields Current fields
+     * @param string $model Current model alias
+     * @return array $fields Unaliased fields where applicable
+     */
+    protected function _removeAliases($fields, $model)
+    {
+        $result = [];
+        foreach ($fields as $field => $sort) {
+            if (strpos($field, '.') === false) {
+                $result[$field] = $sort;
+                continue;
+            }
+
+            list ($alias, $currentField) = explode('.', $field);
+
+            if ($alias !== $model) {
+                $result[$field] = $sort;
+                continue;
+            }
+
+            $result[$currentField] = $sort;
+        }
+
+        return $result;
     }
 
     /**
