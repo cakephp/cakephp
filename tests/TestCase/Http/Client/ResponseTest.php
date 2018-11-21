@@ -96,21 +96,35 @@ class ResponseTest extends TestCase
      */
     public function testBody()
     {
-        $data = [
-            'property' => 'value'
-        ];
-        $encoded = json_encode($data);
+        $this->deprecated(function () {
+            $data = [
+                'property' => 'value'
+            ];
+            $encoded = json_encode($data);
 
-        $response = new Response([], $encoded);
+            $response = new Response([], $encoded);
 
-        $this->assertEquals($encoded, $response->getBody()->getContents());
-        $this->assertEquals($encoded, $response->body());
+            $this->assertEquals($encoded, $response->getBody()->getContents());
+            $this->assertEquals($encoded, $response->body());
 
-        $result = $response->body('json_decode');
-        $this->assertEquals($data['property'], $result->property);
-        $stream = $response->getBody();
-        $stream->rewind();
-        $this->assertEquals($encoded, $stream->getContents());
+            $result = $response->body('json_decode');
+            $this->assertEquals($data['property'], $result->property);
+            $stream = $response->getBody();
+            $stream->rewind();
+            $this->assertEquals($encoded, $stream->getContents());
+        });
+    }
+
+    /**
+     * Test getStringBody()
+     *
+     * @return void
+     */
+    public function getStringBody()
+    {
+        $response = new Response([], 'string');
+
+        $this->assertEquals('string', $response->getStringBody());
     }
 
     /**

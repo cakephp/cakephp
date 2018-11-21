@@ -55,7 +55,7 @@ use Zend\Diactoros\Stream;
  * You can get the body string using:
  *
  * ```
- * $content = $response->getBody()->getContents();
+ * $content = $response->getStringBody();
  * ```
  *
  * If your response body is in XML or JSON you can use
@@ -141,7 +141,7 @@ class Response extends Message implements ResponseInterface
      */
     protected $_deprecatedMagicProperties = [
         'cookies' => 'getCookies()',
-        'body' => 'getBody()->getContents()',
+        'body' => 'getStringBody()',
         'json' => 'getJson()',
         'xml' => 'getXml()',
         'headers' => 'getHeaders()',
@@ -556,9 +556,14 @@ class Response extends Message implements ResponseInterface
      * @param callable|null $parser The callback to use to decode
      *   the response body.
      * @return mixed The response body.
+     * @deprecated 3.7.0 Use getStringBody()/getJson()/getXml() instead.
      */
     public function body($parser = null)
     {
+        deprecationWarning(
+            'Response::body() is deprecated. Use getStringBody()/getJson()/getXml() instead.'
+        );
+
         $stream = $this->stream;
         $stream->rewind();
         if ($parser) {
@@ -566,6 +571,16 @@ class Response extends Message implements ResponseInterface
         }
 
         return $stream->getContents();
+    }
+
+    /**
+     * Get the response body as string.
+     *
+     * @return string
+     */
+    public function getStringBody()
+    {
+        return $this->_getBody();
     }
 
     /**
@@ -641,7 +656,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Provides magic __get() support.
      *
-     * @return array
+     * @return string
      */
     protected function _getBody()
     {
