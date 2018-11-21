@@ -1056,20 +1056,20 @@ class DboSourceTest extends CakeTestCase {
 		if (!$this->db instanceof Mysql) {
 			$this->markTestSkipped('This test can only run on MySQL');
 		}
-		$name = $this->db->fullTableName('enum_tests_faya');
-		$query = "CREATE TABLE {$name} (faya ENUM('10','20','30','40') NOT NULL);";
+		$name = $this->db->fullTableName('enum_faya_tests');
+		$query = "CREATE TABLE {$name} (faya enum('10','20','30','40') NOT NULL);";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
 
-		$EnumTest = ClassRegistry::init('EnumTest');
-		$enumResult = $EnumTest->save(array('faya' => '20'));
+		$EnumFayaTest = ClassRegistry::init('EnumFayaTest');
+		$enumResult = $EnumFayaTest->save(array('faya' => '20'));
 
 		$query = "DROP TABLE {$name};";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
 
 		$this->assertEquals(array(
-			'EnumTest' => array(
+			'EnumFayaTest' => array(
 				'faya' => '20',
 				'id' => '1'
 			)
