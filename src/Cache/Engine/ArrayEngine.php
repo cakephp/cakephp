@@ -33,7 +33,7 @@ class ArrayEngine extends CacheEngine
      *
      * Structured as [key => [expiration, value]]
      *
-     * @var aray
+     * @var array
      */
     protected $data = [];
 
