@@ -363,7 +363,7 @@ class PaginatorComponentTest extends TestCase
 
         $this->Paginator->paginate($table, $settings);
         $this->assertEquals('PaginatorPosts.id', $this->controller->request->getParam('paging.PaginatorPosts.sortDefault'));
-        $this->assertEquals('desc', $this->controller->request->getParam('paging.PaginatorPosts.directionDefault'));
+        $this->assertEquals('DESC', $this->controller->request->getParam('paging.PaginatorPosts.directionDefault'));
     }
 
     /**

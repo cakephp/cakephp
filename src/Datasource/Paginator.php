@@ -224,7 +224,7 @@ class Paginator implements PaginatorInterface
             'direction' => isset($options['sort']) ? current($order) : null,
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
-            'directionDefault' => $directionDefault ? strtolower($directionDefault) : $directionDefault,
+            'directionDefault' => $directionDefault,
             'scope' => $options['scope'],
             'completeSort' => $order,
         ];
@@ -424,12 +424,12 @@ class Paginator implements PaginatorInterface
 
             list ($alias, $currentField) = explode('.', $field);
 
-            if ($alias !== $model) {
-                $result[$field] = $sort;
+            if ($alias === $model) {
+                $result[$currentField] = $sort;
                 continue;
             }
 
-            $result[$currentField] = $sort;
+            $result[$field] = $sort;
         }
 
         return $result;

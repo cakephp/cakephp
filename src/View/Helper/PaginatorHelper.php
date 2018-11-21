@@ -528,7 +528,7 @@ class PaginatorHelper extends Helper
             $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
         }
         if (!empty($paging['sortDefault']) && !empty($options['sort']) && strpos($options['sort'], '.') === false) {
-            $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model = null);
+            $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
         }
 
         $url = [
@@ -554,7 +554,7 @@ class PaginatorHelper extends Helper
 
         if (isset($paging['sortDefault'], $paging['directionDefault'], $url['sort'], $url['direction']) &&
             $url['sort'] === $paging['sortDefault'] &&
-            $url['direction'] === $paging['directionDefault']
+            strtolower($url['direction']) === strtolower($paging['directionDefault'])
         ) {
             $url['sort'] = $url['direction'] = null;
         }

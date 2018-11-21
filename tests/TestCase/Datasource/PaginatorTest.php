@@ -321,7 +321,7 @@ class PaginatorTest extends TestCase
         $this->Paginator->paginate($table, [], $settings);
         $pagingParams = $this->Paginator->getPagingParams();
         $this->assertEquals('PaginatorPosts.id', $pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertEquals('desc', $pagingParams['PaginatorPosts']['directionDefault']);
+        $this->assertEquals('DESC', $pagingParams['PaginatorPosts']['directionDefault']);
     }
 
     /**
