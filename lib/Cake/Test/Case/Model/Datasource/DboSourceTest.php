@@ -1056,7 +1056,7 @@ class DboSourceTest extends CakeTestCase {
 		if (!$this->db instanceof Mysql) {
 			$this->markTestSkipped('This test can only run on MySQL');
 		}
-		$name = $this->db->fullTableName('enum_tests');
+		$name = $this->db->fullTableName('enum_tests_faya');
 		$query = "CREATE TABLE {$name} (faya ENUM('10','20','30','40') NOT NULL);";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
@@ -1075,7 +1075,7 @@ class DboSourceTest extends CakeTestCase {
 			)
 		), $enumResult);
 	}
-        
+
 /**
  * test order to generate query order clause for virtual fields
  *
