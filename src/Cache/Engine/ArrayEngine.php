@@ -31,7 +31,7 @@ class ArrayEngine extends CacheEngine
     /**
      * Cached data.
      *
-     * Structured as [key => [expiration, value]]
+     * Structured as [key => [exp => expiration, val => value]]
      *
      * @var array
      */
@@ -48,7 +48,7 @@ class ArrayEngine extends CacheEngine
     {
         $key = $this->_key($key);
         $expires = time() + $this->_config['duration'];
-        $this->data[$key] = [$expires, $value];
+        $this->data[$key] = ['exp' => $expires, 'val' => $value];
 
         return true;
     }
@@ -70,13 +70,13 @@ class ArrayEngine extends CacheEngine
 
         // Check expiration
         $now = time();
-        if ($data[0] <= $now) {
+        if ($data['exp'] <= $now) {
             unset($this->data[$key]);
 
             return false;
         }
 
-        return $data[1];
+        return $data['val'];
     }
 
     /**
@@ -92,9 +92,9 @@ class ArrayEngine extends CacheEngine
             $this->write($key, 0);
         }
         $key = $this->_key($key);
-        $this->data[$key][1] += $offset;
+        $this->data[$key]['val'] += $offset;
 
-        return $this->data[$key][1];
+        return $this->data[$key]['val'];
     }
 
     /**
@@ -110,9 +110,9 @@ class ArrayEngine extends CacheEngine
             $this->write($key, 0);
         }
         $key = $this->_key($key);
-        $this->data[$key][1] -= $offset;
+        $this->data[$key]['val'] -= $offset;
 
-        return $this->data[$key][1];
+        return $this->data[$key]['val'];
     }
 
     /**
@@ -155,9 +155,9 @@ class ArrayEngine extends CacheEngine
         foreach ($this->_config['groups'] as $group) {
             $key = $this->_config['prefix'] . $group;
             if (!isset($this->data[$key])) {
-                $this->data[$key] = [PHP_INT_MAX, 1];
+                $this->data[$key] = ['exp' => PHP_INT_MAX, 'val' => 1];
             }
-            $value = $this->data[$key][1];
+            $value = $this->data[$key]['val'];
             $result[] = $group . $value;
         }
 
@@ -175,7 +175,7 @@ class ArrayEngine extends CacheEngine
     {
         $key = $this->_config['prefix'] . $group;
         if (isset($this->data[$key])) {
-            $this->data[$key][1] += 1;
+            $this->data[$key]['val'] += 1;
         }
 
         return true;
