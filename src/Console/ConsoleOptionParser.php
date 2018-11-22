@@ -41,20 +41,20 @@ use LogicException;
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
  * cane either include an `=` or leave it out.
  *
- * `cake myshell command --connection default --name=something`
+ * `cake my_command --connection default --name=something`
  *
  * Short options can be defined singly or in groups.
  *
- * `cake myshell command -cn`
+ * `cake my_command -cn`
  *
  * Short options can be combined into groups as seen above. Each letter in a group
  * will be treated as a separate option. The previous example is equivalent to:
  *
- * `cake myshell command -c -n`
+ * `cake my_command -c -n`
  *
  * Short options can also accept values:
  *
- * `cake myshell command -c default`
+ * `cake my_command -c default`
  *
  * ### Positional arguments
  *

@@ -118,8 +118,8 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         }
         $io->out('');
 
-        $io->out('To run a command, type <info>`cake shell_name [args|options]`</info>');
-        $io->out('To get help on a specific command, type <info>`cake shell_name --help`</info>', 2);
+        $io->out('To run a command, type <info>`cake command_name [args|options]`</info>');
+        $io->out('To get help on a specific command, type <info>`cake command_name --help`</info>', 2);
     }
 
     /**
@@ -136,7 +136,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = get_class($class);
             }
-            $command = $commands->addChild('shell');
+            $command = $commands->addChild('command');
             $command->addAttribute('name', $name);
             $command->addAttribute('call_as', $name);
             $command->addAttribute('provider', $class);
