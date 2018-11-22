@@ -224,7 +224,7 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function exists(string $alias): bool
     {
@@ -232,7 +232,7 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function set(string $alias, Table $object): Table
     {
@@ -240,7 +240,7 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function clear(): void
     {
@@ -263,7 +263,7 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function remove(string $alias): void
     {

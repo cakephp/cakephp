@@ -120,7 +120,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isPrimaryKey(string $field): bool
     {
@@ -205,7 +205,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getRequiredMessage(string $field): ?string
     {
@@ -229,7 +229,7 @@ class ArrayContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fieldNames(): array
     {

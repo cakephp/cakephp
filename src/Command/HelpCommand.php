@@ -38,7 +38,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     protected $commands;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setCommandCollection(CommandCollection $commands): void
     {

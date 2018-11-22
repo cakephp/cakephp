@@ -21,7 +21,7 @@ use Throwable;
 class ConflictException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 409;
 

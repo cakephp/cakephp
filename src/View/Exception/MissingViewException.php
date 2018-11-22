@@ -23,7 +23,7 @@ use Cake\Core\Exception\Exception;
 class MissingViewException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'View class "%s" is missing.';
 }

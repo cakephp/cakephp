@@ -30,7 +30,7 @@ use RuntimeException;
 class SubjectFilterDecorator extends AbstractDecorator
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

@@ -21,12 +21,12 @@ use Cake\Core\Exception\Exception;
 class PageOutOfBoundsException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'Page number %s could not be found.';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 404;
 }

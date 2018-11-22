@@ -600,7 +600,7 @@ class HasMany extends Association
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function defaultRowValue(array $row, bool $joined): array
     {
@@ -651,7 +651,7 @@ class HasMany extends Association
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {

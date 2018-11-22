@@ -43,7 +43,7 @@ trait CollectionTrait
     use ExtractTrait;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function each(callable $c): CollectionInterface
     {
@@ -83,7 +83,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function every(callable $c): bool
     {
@@ -97,7 +97,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function some(callable $c): bool
     {
@@ -111,7 +111,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function contains($value): bool
     {
@@ -135,7 +135,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function reduce(callable $c, $zero = null)
     {
@@ -158,7 +158,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function extract($matcher): CollectionInterface
     {
@@ -175,7 +175,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function max($callback, int $type = \SORT_NUMERIC)
     {
@@ -183,7 +183,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function min($callback, int $type = \SORT_NUMERIC)
     {
@@ -191,7 +191,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function avg($matcher = null)
     {
@@ -214,7 +214,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function median($matcher = null)
     {
@@ -240,7 +240,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sortBy($callback, int $dir = \SORT_DESC, int $type = \SORT_NUMERIC): CollectionInterface
     {
@@ -248,7 +248,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function groupBy($callback): CollectionInterface
     {
@@ -262,7 +262,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function indexBy($callback): CollectionInterface
     {
@@ -276,7 +276,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function countBy($callback): CollectionInterface
     {
@@ -294,7 +294,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sumOf($matcher = null): int
     {
@@ -312,7 +312,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function shuffle(): CollectionInterface
     {
@@ -323,7 +323,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sample(int $size = 10): CollectionInterface
     {
@@ -331,7 +331,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function take(int $size = 1, int $from = 0): CollectionInterface
     {
@@ -339,7 +339,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function skip(int $howMany): CollectionInterface
     {
@@ -347,7 +347,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function match(array $conditions): CollectionInterface
     {
@@ -355,7 +355,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function firstMatch(array $conditions)
     {
@@ -363,7 +363,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function first()
     {
@@ -374,7 +374,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function last()
     {
@@ -400,7 +400,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function takeLast(int $howMany): CollectionInterface
     {
@@ -499,7 +499,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function append($items): CollectionInterface
     {
@@ -511,7 +511,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function appendItem($item, $key = null): CollectionInterface
     {
@@ -525,7 +525,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function prepend($items): CollectionInterface
     {
@@ -533,7 +533,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function prependItem($item, $key = null): CollectionInterface
     {
@@ -547,7 +547,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function combine($keyPath, $valuePath, $groupPath = null): CollectionInterface
     {
@@ -586,7 +586,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function nest($idPath, $parentPath, $nestingKey = 'children'): CollectionInterface
     {
@@ -642,7 +642,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function toArray(bool $preserveKeys = true): array
     {
@@ -662,7 +662,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function toList(): array
     {
@@ -670,7 +670,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function jsonSerialize()
     {
@@ -678,7 +678,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function compile(bool $preserveKeys = true): CollectionInterface
     {
@@ -686,7 +686,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function lazy()
     {
@@ -744,7 +744,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function unfold(?callable $transformer = null): CollectionInterface
     {
@@ -763,7 +763,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function through(callable $handler): CollectionInterface
     {
@@ -773,7 +773,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function zip(iterable $items): CollectionInterface
     {
@@ -781,7 +781,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function zipWith(iterable $items, $callable): CollectionInterface
     {
@@ -796,7 +796,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function chunk(int $chunkSize): CollectionInterface
     {
@@ -815,7 +815,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function chunkWithKeys(int $chunkSize, bool $preserveKeys = true): CollectionInterface
     {
@@ -842,7 +842,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isEmpty(): bool
     {
@@ -854,7 +854,7 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function unwrap(): Traversable
     {

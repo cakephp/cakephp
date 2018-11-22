@@ -179,7 +179,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withName(string $name): CookieInterface
     {
@@ -191,7 +191,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getId(): string
     {
@@ -199,7 +199,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -228,7 +228,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getValue()
     {
@@ -236,7 +236,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getStringValue()
     {
@@ -248,7 +248,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withValue($value): CookieInterface
     {
@@ -271,7 +271,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withPath(string $path): CookieInterface
     {
@@ -282,7 +282,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getPath(): string
     {
@@ -290,7 +290,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withDomain(string $domain): CookieInterface
     {
@@ -301,7 +301,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getDomain(): string
     {
@@ -309,7 +309,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isSecure(): bool
     {
@@ -317,7 +317,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withSecure(bool $secure): CookieInterface
     {
@@ -328,7 +328,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withHttpOnly(bool $httpOnly): CookieInterface
     {
@@ -339,7 +339,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isHttpOnly(): bool
     {
@@ -347,7 +347,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withExpiry($dateTime): CookieInterface
     {
@@ -358,7 +358,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getExpiry()
     {
@@ -366,7 +366,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getExpiresTimestamp(): ?string
     {
@@ -378,7 +378,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getFormattedExpires(): string
     {
@@ -390,7 +390,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isExpired($time = null): bool
     {
@@ -403,7 +403,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withNeverExpire(): CookieInterface
     {
@@ -414,7 +414,7 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function withExpired(): CookieInterface
     {

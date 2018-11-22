@@ -27,7 +27,7 @@ use RuntimeException;
 class ConditionDecorator extends AbstractDecorator
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __invoke()
     {

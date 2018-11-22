@@ -22,12 +22,12 @@ use Cake\Core\Exception\Exception;
 class MissingControllerException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'Controller class %s could not be found.';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct($message, $code = 404, $previous = null)
     {

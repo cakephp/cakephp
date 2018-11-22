@@ -78,7 +78,7 @@ abstract class BaseApplication implements
     abstract public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
@@ -90,7 +90,7 @@ abstract class BaseApplication implements
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addPlugin($name, array $config = []): PluginApplicationInterface
     {
@@ -154,7 +154,7 @@ abstract class BaseApplication implements
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function bootstrap(): void
     {
@@ -162,7 +162,7 @@ abstract class BaseApplication implements
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function pluginBootstrap(): void
     {
@@ -188,7 +188,7 @@ abstract class BaseApplication implements
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function pluginRoutes(RouteBuilder $routes): RouteBuilder
     {
@@ -214,7 +214,7 @@ abstract class BaseApplication implements
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function pluginConsole(CommandCollection $commands): CommandCollection
     {

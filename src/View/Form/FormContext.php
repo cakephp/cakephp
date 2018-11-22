@@ -56,7 +56,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function primaryKey(): array
     {
@@ -64,7 +64,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isPrimaryKey(string $field): bool
     {
@@ -72,7 +72,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isCreate(): bool
     {
@@ -80,7 +80,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function val(string $field, array $options = [])
     {
@@ -124,7 +124,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isRequired(string $field): bool
     {
@@ -140,7 +140,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getRequiredMessage(string $field): ?string
     {
@@ -168,7 +168,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fieldNames(): array
     {
@@ -176,7 +176,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function type(string $field): ?string
     {
@@ -184,7 +184,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function attributes(string $field): array
     {
@@ -195,7 +195,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function hasError(string $field): bool
     {
@@ -205,7 +205,7 @@ class FormContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function error(string $field): array
     {

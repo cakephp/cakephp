@@ -23,7 +23,7 @@ use Cake\Database\Exception;
 class PostgresSchema extends BaseSchema
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function listTablesSql(array $config): array
     {
@@ -34,7 +34,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
@@ -143,7 +143,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
@@ -208,7 +208,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeIndexSql(string $tableName, array $config): array
     {
@@ -236,7 +236,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
@@ -287,7 +287,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
@@ -315,7 +315,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
@@ -330,7 +330,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function _convertOnClause(string $clause): ?string
     {
@@ -348,7 +348,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
@@ -441,7 +441,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addConstraintSql(TableSchema $schema): array
     {
@@ -460,7 +460,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dropConstraintSql(TableSchema $schema): array
     {
@@ -480,7 +480,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
@@ -499,7 +499,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
@@ -543,7 +543,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
@@ -572,7 +572,7 @@ class PostgresSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function truncateTableSql(TableSchema $schema): array
     {

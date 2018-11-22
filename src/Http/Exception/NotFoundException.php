@@ -21,7 +21,7 @@ use Throwable;
 class NotFoundException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 404;
 

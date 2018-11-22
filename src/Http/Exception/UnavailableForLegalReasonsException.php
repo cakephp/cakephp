@@ -21,7 +21,7 @@ use Throwable;
 class UnavailableForLegalReasonsException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 451;
 

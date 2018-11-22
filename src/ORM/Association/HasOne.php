@@ -145,7 +145,7 @@ class HasOne extends Association
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {

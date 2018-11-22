@@ -69,7 +69,7 @@ script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.2 ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
-  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev "phpstan/phpstan:^0.10" && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src; fi
+  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev "phpstan/phpstan:^0.10" && vendor/bin/phpstan analyse -c phpstan.neon -l 3 src; fi
   - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev vimeo/psalm:^2.0 && vendor/bin/psalm --show-info=false; fi
 
 after_success:

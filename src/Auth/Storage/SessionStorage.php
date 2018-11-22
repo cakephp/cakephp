@@ -121,7 +121,7 @@ class SessionStorage implements StorageInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function redirectUrl($url = null)
     {

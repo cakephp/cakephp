@@ -83,7 +83,7 @@ class BasicWidget implements WidgetInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function secureFields(array $data): array
     {

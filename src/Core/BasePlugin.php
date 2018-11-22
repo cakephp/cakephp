@@ -122,7 +122,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -137,7 +137,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getPath(): string
     {
@@ -157,7 +157,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getConfigPath(): string
     {
@@ -170,7 +170,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getClassPath(): string
     {
@@ -183,7 +183,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getTemplatePath(): string
     {
@@ -196,7 +196,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function enable(string $hook): PluginInterface
     {
@@ -207,7 +207,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function disable(string $hook): PluginInterface
     {
@@ -218,7 +218,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function isEnabled(string $hook): bool
     {
@@ -244,7 +244,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function routes(RouteBuilder $routes): void
     {
@@ -255,7 +255,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
@@ -266,7 +266,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function console(CommandCollection $commands): CommandCollection
     {
@@ -274,7 +274,7 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {

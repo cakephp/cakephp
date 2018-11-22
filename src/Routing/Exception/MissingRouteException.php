@@ -22,7 +22,7 @@ use Cake\Core\Exception\Exception;
 class MissingRouteException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'A route matching "%s" could not be found.';
 
@@ -34,7 +34,7 @@ class MissingRouteException extends Exception
     protected $_messageTemplateWithMethod = 'A "%s" route matching "%s" could not be found.';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct($message, $code = 404, $previous = null)
     {

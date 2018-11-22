@@ -21,7 +21,7 @@ use Throwable;
 class ForbiddenException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 403;
 

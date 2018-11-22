@@ -30,7 +30,7 @@ class MysqlSchema extends BaseSchema
     protected $_driver;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function listTablesSql(array $config): array
     {
@@ -38,7 +38,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
@@ -46,7 +46,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeIndexSql(string $tableName, array $config): array
     {
@@ -54,7 +54,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeOptionsSql(string $tableName, array $config): array
     {
@@ -62,7 +62,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertOptionsDescription(TableSchema $schema, array $row): void
     {
@@ -168,7 +168,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
@@ -186,7 +186,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
@@ -242,7 +242,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
@@ -258,7 +258,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
@@ -274,7 +274,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function truncateTableSql(TableSchema $schema): array
     {
@@ -282,7 +282,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
@@ -304,7 +304,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
@@ -453,7 +453,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
@@ -480,7 +480,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addConstraintSql(TableSchema $schema): array
     {
@@ -499,7 +499,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dropConstraintSql(TableSchema $schema): array
     {
@@ -519,7 +519,7 @@ class MysqlSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function indexSql(TableSchema $schema, string $name): string
     {

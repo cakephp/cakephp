@@ -21,7 +21,7 @@ use Throwable;
 class UnauthorizedException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 401;
 

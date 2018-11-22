@@ -19,12 +19,12 @@ namespace Cake\Http\Exception;
 class NotImplementedException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = '%s is not implemented.';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 501;
 }

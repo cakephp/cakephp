@@ -146,7 +146,7 @@ class Mysql extends Driver
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function schema(): string
     {
@@ -154,7 +154,7 @@ class Mysql extends Driver
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function supportsDynamicConstraints(): bool
     {

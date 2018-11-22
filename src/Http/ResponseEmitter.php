@@ -38,7 +38,7 @@ use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 class ResponseEmitter implements EmitterInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function emit(ResponseInterface $response, $maxBufferLength = 8192): bool
     {

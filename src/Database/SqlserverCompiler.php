@@ -31,7 +31,7 @@ class SqlserverCompiler extends QueryCompiler
     protected $_orderedUnion = false;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_templates = [
         'delete' => 'DELETE',
@@ -44,7 +44,7 @@ class SqlserverCompiler extends QueryCompiler
     ];
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'offset',

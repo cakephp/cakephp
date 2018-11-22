@@ -156,7 +156,7 @@ class Sqlserver extends Driver
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function supportsDynamicConstraints(): bool
     {

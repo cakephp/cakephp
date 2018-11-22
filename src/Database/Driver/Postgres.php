@@ -124,7 +124,7 @@ class Postgres extends Driver
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function supportsDynamicConstraints(): bool
     {

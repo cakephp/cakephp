@@ -98,7 +98,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function bindValue($column, $value, $type = 'string'): void
     {
@@ -106,7 +106,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function closeCursor(): void
     {
@@ -114,7 +114,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function columnCount(): int
     {
@@ -122,7 +122,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function errorCode()
     {
@@ -130,7 +130,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function errorInfo(): array
     {
@@ -138,7 +138,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function execute(?array $params = null): bool
     {
@@ -149,7 +149,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function fetchColumn(int $position)
     {
@@ -173,7 +173,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function bind(array $params, array $types): void
     {
@@ -181,7 +181,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function lastInsertId(?string $table = null, ?string $column = null)
     {
@@ -223,7 +223,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     public function fetchAssoc()
     {
@@ -254,7 +254,7 @@ class BufferedStatement implements Iterator, StatementInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function rowCount(): int
     {

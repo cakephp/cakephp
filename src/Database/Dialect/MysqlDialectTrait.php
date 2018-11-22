@@ -68,7 +68,7 @@ trait MysqlDialectTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function disableForeignKeySQL(): string
     {
@@ -76,7 +76,7 @@ trait MysqlDialectTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function enableForeignKeySQL(): string
     {

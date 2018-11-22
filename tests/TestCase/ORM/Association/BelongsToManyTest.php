@@ -45,7 +45,7 @@ class BelongsToManyTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->tag = $this->getMockBuilder('Cake\ORM\Table')
+        $this->tag = $this->getMockBuilder(Table::class)
             ->setMethods(['find', 'delete'])
             ->setConstructorArgs([['alias' => 'Tags', 'table' => 'tags']])
             ->getMock();
@@ -56,7 +56,7 @@ class BelongsToManyTest extends TestCase
                 'primary' => ['type' => 'primary', 'columns' => ['id']],
             ],
         ]);
-        $this->article = $this->getMockBuilder('Cake\ORM\Table')
+        $this->article = $this->getMockBuilder(Table::class)
             ->setMethods(['find', 'delete'])
             ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles']])
             ->getMock();
@@ -283,7 +283,7 @@ class BelongsToManyTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid save strategy "depsert"');
-        $assoc = new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
+        new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
     }
 
     /**
@@ -293,7 +293,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testCascadeDelete()
     {
-        $articleTag = $this->getMockBuilder('Cake\ORM\Table')
+        $articleTag = $this->getMockBuilder(Table::class)
             ->setMethods(['deleteAll'])
             ->getMock();
         $config = [
@@ -325,7 +325,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testCascadeDeleteDependent()
     {
-        $articleTag = $this->getMockBuilder('Cake\ORM\Table')
+        $articleTag = $this->getMockBuilder(Table::class)
             ->setMethods(['delete', 'deleteAll'])
             ->getMock();
         $config = [
@@ -500,7 +500,7 @@ class BelongsToManyTest extends TestCase
     public function testLinkSuccessWithMocks()
     {
         $connection = ConnectionManager::get('test');
-        $joint = $this->getMockBuilder('Cake\ORM\Table')
+        $joint = $this->getMockBuilder(Table::class)
             ->setMethods(['save', 'getPrimaryKey'])
             ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
             ->getMock();
@@ -555,7 +555,7 @@ class BelongsToManyTest extends TestCase
     public function testLinkSetSourceToJunctionEntities()
     {
         $connection = ConnectionManager::get('test');
-        $joint = $this->getMockBuilder('\Cake\ORM\Table')
+        $joint = $this->getMockBuilder(Table::class)
             ->setMethods(['save', 'getPrimaryKey'])
             ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
             ->getMock();
@@ -872,7 +872,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetSuccess($value)
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
@@ -901,7 +901,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedEmptySetUpdateSuccess($value)
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
@@ -933,7 +933,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplace()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
@@ -963,7 +963,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplaceReturnFalse()
     {
-        $table = $this->getMockBuilder('Cake\ORM\Table')
+        $table = $this->getMockBuilder(Table::class)
             ->setMethods(['table'])
             ->getMock();
         $table->setSchema([]);
@@ -994,7 +994,7 @@ class BelongsToManyTest extends TestCase
     public function testSaveAssociatedOnlyEntitiesAppend()
     {
         $connection = ConnectionManager::get('test');
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->setMethods(['saveAssociated', 'schema'])
             ->setConstructorArgs([['table' => 'tags', 'connection' => $connection]])
             ->getMock();
@@ -1087,7 +1087,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testPropertyNoPlugin()
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [

@@ -1574,7 +1574,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function updateAll($fields, $conditions): int
     {
@@ -1589,7 +1589,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function deleteAll($conditions): int
     {
@@ -1603,7 +1603,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function exists($conditions): bool
     {
@@ -2729,7 +2729,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function validationMethodExists(string $method): bool
     {

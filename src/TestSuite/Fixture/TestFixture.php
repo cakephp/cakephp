@@ -80,7 +80,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * The schema for this fixture.
      *
-     * @var \Cake\Database\Schema\TableSchema
+     * @var \Cake\Database\Schema\TableSchemaInterface
      */
     protected $_schema;
 
@@ -113,7 +113,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function connection(): string
     {
@@ -121,7 +121,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sourceName(): string
     {
@@ -263,7 +263,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function create(ConnectionInterface $db): bool
     {
@@ -298,7 +298,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function drop(ConnectionInterface $db): bool
     {
@@ -323,7 +323,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function insert(ConnectionInterface $db)
     {
@@ -346,7 +346,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function createConstraints(ConnectionInterface $db): bool
     {
@@ -372,7 +372,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dropConstraints(ConnectionInterface $db): bool
     {
@@ -422,7 +422,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function truncate(ConnectionInterface $db): bool
     {
@@ -435,7 +435,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getTableSchema(): TableSchemaInterface
     {
@@ -443,7 +443,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setTableSchema(TableSchemaInterface $schema)
     {

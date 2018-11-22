@@ -29,7 +29,7 @@ class PersistenceFailedException extends Exception
     protected $_entity;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'Entity %s failure.';
 

@@ -161,7 +161,7 @@ class Server implements EventDispatcherInterface
     /**
      * Get the application's event manager or the global one.
      *
-     * @return \Cake\Event\EventManager
+     * @return \Cake\Event\EventManagerInterface
      */
     public function getEventManager(): EventManagerInterface
     {

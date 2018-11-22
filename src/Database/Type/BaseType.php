@@ -42,7 +42,7 @@ abstract class BaseType implements TypeInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -50,7 +50,7 @@ abstract class BaseType implements TypeInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getBaseType(): string
     {
@@ -58,7 +58,7 @@ abstract class BaseType implements TypeInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function toStatement($value, Driver $driver)
     {
@@ -70,7 +70,7 @@ abstract class BaseType implements TypeInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function newId()
     {

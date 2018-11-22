@@ -26,6 +26,11 @@ use Cake\TestSuite\TestCase;
 class BehaviorRegistryTest extends TestCase
 {
     /**
+     * @var \Cake\ORM\BehaviorRegistry
+     */
+    protected $Behaviors;
+
+    /**
      * setup method.
      *
      * @return void
