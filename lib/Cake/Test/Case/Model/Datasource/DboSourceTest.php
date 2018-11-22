@@ -1029,7 +1029,7 @@ class DboSourceTest extends CakeTestCase {
 		}
 		$name = $this->db->fullTableName('enum_tests');
 
-		$query = "DROP TABLE {$name};";
+		$query = "DROP TABLE IF EXISTS {$name};";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
 
