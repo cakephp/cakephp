@@ -1028,6 +1028,11 @@ class DboSourceTest extends CakeTestCase {
 			$this->markTestSkipped('This test can only run on MySQL');
 		}
 		$name = $this->db->fullTableName('enum_tests');
+
+		$query = "DROP TABLE {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
 		$query = "CREATE TABLE {$name} (mood ENUM('','happy','sad','ok') NOT NULL);";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
@@ -1057,6 +1062,11 @@ class DboSourceTest extends CakeTestCase {
 			$this->markTestSkipped('This test can only run on MySQL');
 		}
 		$name = $this->db->fullTableName('enum_faya_tests');
+
+		$query = "DROP TABLE IF EXISTS {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
 		$query = "CREATE TABLE {$name} (faya enum('10','20','30','40') NOT NULL);";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
