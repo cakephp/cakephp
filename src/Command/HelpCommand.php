@@ -46,7 +46,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     }
 
     /**
-     * Main function Prints out the list of shells.
+     * Main function Prints out the list of commands.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
@@ -131,19 +131,19 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      */
     protected function asXml($io, $commands): void
     {
-        $shells = new SimpleXMLElement('<shells></shells>');
+        $commands = new SimpleXMLElement('<commands></commands>');
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
                 $class = get_class($class);
             }
-            $shell = $shells->addChild('shell');
-            $shell->addAttribute('name', $name);
-            $shell->addAttribute('call_as', $name);
-            $shell->addAttribute('provider', $class);
-            $shell->addAttribute('help', $name . ' -h');
+            $command = $commands->addChild('shell');
+            $command->addAttribute('name', $name);
+            $command->addAttribute('call_as', $name);
+            $command->addAttribute('provider', $class);
+            $command->addAttribute('help', $name . ' -h');
         }
         $io->setOutputAs(ConsoleOutput::RAW);
-        $io->out($shells->saveXML());
+        $io->out($commands->saveXML());
     }
 
     /**
@@ -155,7 +155,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            'Get the list of available shells for this application.'
+            'Get the list of available commands for this application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,
