@@ -44,6 +44,7 @@ class NullEngine extends CacheEngine
      */
     public function write($key, $value)
     {
+        return true;
     }
 
     /**
