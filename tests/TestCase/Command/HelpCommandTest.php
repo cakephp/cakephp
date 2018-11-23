@@ -112,7 +112,7 @@ class HelpCommandTest extends TestCase
     {
         $this->exec('help --xml');
         $this->assertExitCode(Command::CODE_SUCCESS);
-        $this->assertOutputContains('<commands>');
+        $this->assertOutputContains('<shells>');
 
         $find = '<command name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
         $this->assertOutputContains($find);

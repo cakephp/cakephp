@@ -131,19 +131,19 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      */
     protected function asXml($io, $commands): void
     {
-        $commands = new SimpleXMLElement('<commands></commands>');
+        $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
                 $class = get_class($class);
             }
-            $command = $commands->addChild('command');
-            $command->addAttribute('name', $name);
-            $command->addAttribute('call_as', $name);
-            $command->addAttribute('provider', $class);
-            $command->addAttribute('help', $name . ' -h');
+            $shell = $shells->addChild('shell');
+            $shell->addAttribute('name', $name);
+            $shell->addAttribute('call_as', $name);
+            $shell->addAttribute('provider', $class);
+            $shell->addAttribute('help', $name . ' -h');
         }
         $io->setOutputAs(ConsoleOutput::RAW);
-        $io->out($commands->saveXML());
+        $io->out($shells->saveXML());
     }
 
     /**
