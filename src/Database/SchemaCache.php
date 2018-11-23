@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionInterface;
 
 /**
  * Schema Cache.
@@ -38,9 +37,9 @@ class SchemaCache
     /**
      * Constructor
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection Connection name to get the schema for or a connection instance
+     * @param \Cake\Database\Connection $connection Connection name to get the schema for or a connection instance
      */
-    public function __construct(ConnectionInterface $connection)
+    public function __construct(Connection $connection)
     {
         $this->_schema = $this->getSchema($connection);
     }
@@ -90,11 +89,11 @@ class SchemaCache
     /**
      * Helper method to get the schema collection.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection Connection object
+     * @param \Cake\Database\Connection $connection Connection object
      * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
      * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
-    public function getSchema(ConnectionInterface $connection)
+    public function getSchema(Connection $connection)
     {
         $config = $connection->config();
         if (empty($config['cacheMetadata'])) {
