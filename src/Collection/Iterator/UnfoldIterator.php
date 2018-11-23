@@ -38,7 +38,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
     /**
      * A reference to the internal iterator this object is wrapping.
      *
-     * @var \Iterator
+     * @var \Traversable
      */
     protected $_innerIterator;
 
