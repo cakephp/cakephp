@@ -106,7 +106,7 @@ class TestController extends ControllerTestAppController
         return 'I am from the controller.';
     }
 
-    //@codingStandardsIgnoreStart
+    // phpcs:disable
     protected function protected_m()
     {
     }
@@ -118,7 +118,7 @@ class TestController extends ControllerTestAppController
     public function _hidden()
     {
     }
-    //@codingStandardsIgnoreEnd
+    // phpcs:enable
 
     public function admin_add(): void
     {

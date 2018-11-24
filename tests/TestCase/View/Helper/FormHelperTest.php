@@ -4917,7 +4917,7 @@ class FormHelperTest extends TestCase
         ]);
 
         $result = $this->Form->radio('Model.field', ['option A', 'option B']);
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             ['input' => [
                 'type' => 'hidden',
@@ -4943,7 +4943,7 @@ class FormHelperTest extends TestCase
                 'option B',
             '/label',
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
     }
 
@@ -8347,7 +8347,7 @@ class FormHelperTest extends TestCase
         $article = new Article(['comments' => [$comment]]);
         $this->Form->create([$article]);
         $result = $this->Form->control('0.comments.1.comment');
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             'div' => ['class' => 'input textarea'],
                 'label' => ['for' => '0-comments-1-comment'],
@@ -8361,11 +8361,11 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->control('0.comments.0.comment');
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             'div' => ['class' => 'input textarea'],
                 'label' => ['for' => '0-comments-0-comment'],
@@ -8380,12 +8380,12 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
 
         $comment->setError('comment', ['Not valid']);
         $result = $this->Form->control('0.comments.0.comment');
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             'div' => ['class' => 'input textarea error'],
                 'label' => ['for' => '0-comments-0-comment'],
@@ -8404,14 +8404,14 @@ class FormHelperTest extends TestCase
                 '/div',
             '/div'
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
 
         $this->getTableLocator()->get('Comments')
             ->getValidator('default')
             ->allowEmpty('comment', false);
         $result = $this->Form->control('0.comments.1.comment');
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         $expected = [
             'div' => ['class' => 'input textarea required'],
                 'label' => ['for' => '0-comments-1-comment'],
@@ -8428,7 +8428,7 @@ class FormHelperTest extends TestCase
                 '/textarea',
             '/div'
         ];
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $this->assertHtml($expected, $result);
     }
 

@@ -619,7 +619,7 @@ abstract class TestCase extends BaseTestCase
         return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 
     /**
      * Compatibility function to test if a value is between an acceptable range.
@@ -684,7 +684,7 @@ abstract class TestCase extends BaseTestCase
         return $condition;
     }
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
     /**
      * Mock a model, maintain fixtures and table association
