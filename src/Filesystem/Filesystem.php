@@ -135,10 +135,10 @@ class Filesystem
         $exists = file_exists($filename);
 
         if ($this->isStream($filename)) {
-            // @codingStandardsIgnoreLine
+            // phpcs:ignore
             $success = @file_put_contents($filename, $content);
         } else {
-            // @codingStandardsIgnoreLine
+            // phpcs:ignore
             $success = @file_put_contents($filename, $content, LOCK_EX);
         }
 
@@ -166,7 +166,7 @@ class Filesystem
         }
 
         $old = umask(0);
-        // @codingStandardsIgnoreLine
+        // phpcs:ignore
         if (@mkdir($dir, $mode, true) === false) {
             umask($old);
             throw new Exception(sprintf('Failed to create directory "%s"', $dir));
@@ -200,16 +200,16 @@ class Filesystem
         $result = true;
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->getType() === self::TYPE_DIR) {
-                // @codingStandardsIgnoreLine
+                // phpcs:ignore
                 $result = $result && @rmdir($fileInfo->getPathname());
                 continue;
             }
 
-            // @codingStandardsIgnoreLine
+            // phpcs:ignore
             $result = $result && @unlink($fileInfo->getPathname());
         }
 
-        // @codingStandardsIgnoreLine
+        // phpcs:ignore
         $result = $result && @rmdir($path);
 
         return $result;
@@ -240,7 +240,7 @@ class Filesystem
                     $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
                 );
             } else {
-                // @codingStandardsIgnoreLine
+                // phpcs:ignore
                 $result = $result && @copy(
                     $fileInfo->getPathname(),
                     $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()

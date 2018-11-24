@@ -447,9 +447,9 @@ class Folder
         }
 
         if ($recursive === false && is_dir($path)) {
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             if (@chmod($path, intval($mode, 8))) {
-                //@codingStandardsIgnoreEnd
+                // phpcs:enable
                 $this->_messages[] = sprintf('%s changed to %s', $path, $mode);
 
                 return true;
@@ -472,9 +472,9 @@ class Folder
                         continue;
                     }
 
-                    //@codingStandardsIgnoreStart
+                    // phpcs:disable
                     if (@chmod($fullpath, intval($mode, 8))) {
-                        //@codingStandardsIgnoreEnd
+                        // phpcs:enable
                         $this->_messages[] = sprintf('%s changed to %s', $fullpath, $mode);
                     } else {
                         $this->_errors[] = sprintf('%s NOT changed to %s', $fullpath, $mode);
@@ -707,17 +707,17 @@ class Folder
             foreach ($iterator as $item) {
                 $filePath = $item->getPathname();
                 if ($item->isFile() || $item->isLink()) {
-                    //@codingStandardsIgnoreStart
+                    // phpcs:disable
                     if (@unlink($filePath)) {
-                        //@codingStandardsIgnoreEnd
+                        // phpcs:enable
                         $this->_messages[] = sprintf('%s removed', $filePath);
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
                     }
                 } elseif ($item->isDir() && !$item->isDot()) {
-                    //@codingStandardsIgnoreStart
+                    // phpcs:disable
                     if (@rmdir($filePath)) {
-                        //@codingStandardsIgnoreEnd
+                        // phpcs:enable
                         $this->_messages[] = sprintf('%s removed', $filePath);
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
@@ -728,9 +728,9 @@ class Folder
             }
 
             $path = rtrim($path, DIRECTORY_SEPARATOR);
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             if (@rmdir($path)) {
-                //@codingStandardsIgnoreEnd
+                // phpcs:enable
                 $this->_messages[] = sprintf('%s removed', $path);
             } else {
                 $this->_errors[] = sprintf('%s NOT removed', $path);
@@ -791,9 +791,9 @@ class Folder
         }
 
         $exceptions = array_merge(['.', '..', '.svn'], $options['skip']);
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         if ($handle = @opendir($fromDir)) {
-            //@codingStandardsIgnoreEnd
+            // phpcs:enable
             while (($item = readdir($handle)) !== false) {
                 $to = Folder::addPathElement($toDir, $item);
                 if (($options['scheme'] !== Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
