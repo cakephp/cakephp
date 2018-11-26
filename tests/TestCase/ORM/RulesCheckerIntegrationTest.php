@@ -489,6 +489,12 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
     }
 
+    /**
+     * Add a custom condition to the isUnique rule to only check uniqueness against non-published articles
+     *
+     * @group save
+     * @return void
+     */
     public function testIsUniqueWithCustomConditions()
     {
         $entity = new Entity(['author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'N']);
