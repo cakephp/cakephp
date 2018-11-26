@@ -99,6 +99,7 @@ class Mysql extends Driver
         }
 
         if (empty($config['unix_socket'])) {
+            // phpcs:ignore Generic.Files.LineLength
             $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
         } else {
             $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";

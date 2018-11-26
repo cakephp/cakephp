@@ -162,7 +162,10 @@ class Cache
             }
 
             if ($config['fallback'] === $name) {
-                throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), 0, $e);
+                throw new InvalidArgumentException(sprintf(
+                    '"%s" cache configuration cannot fallback to itself.',
+                    $name
+                ), 0, $e);
             }
 
             $fallbackEngine = clone static::engine($config['fallback']);
@@ -317,7 +320,8 @@ class Cache
      *
      * @param string $key Identifier for the data
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return mixed The cached data, or null if the data doesn't exist, has expired, or if there was an error fetching it
+     * @return mixed The cached data, or null if the data doesn't exist, has expired,
+     *  or if there was an error fetching it.
      */
     public static function read(string $key, string $config = 'default')
     {
@@ -343,8 +347,8 @@ class Cache
      *
      * @param array $keys an array of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return array An array containing, for each of the given $keys, the cached data or false if cached data could not be
-     * retrieved.
+     * @return array An array containing, for each of the given $keys,
+     *   the cached data or false if cached data could not be retrieved.
      */
     public static function readMany(array $keys, string $config = 'default'): array
     {

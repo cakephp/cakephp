@@ -119,12 +119,19 @@ trait ValidatorAwareTrait
         $validator = new $this->_validatorClass();
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
-            $event = defined(self::class . '::BUILD_VALIDATOR_EVENT') ? self::BUILD_VALIDATOR_EVENT : 'Model.buildValidator';
+            $event = defined(self::class . '::BUILD_VALIDATOR_EVENT')
+                ? self::BUILD_VALIDATOR_EVENT
+                : 'Model.buildValidator';
             $this->dispatchEvent($event, compact('validator', 'name'));
         }
 
         if (!$validator instanceof Validator) {
-            throw new RuntimeException(sprintf('The %s::%s() validation method must return an instance of %s.', __CLASS__, $method, Validator::class));
+            throw new RuntimeException(sprintf(
+                'The %s::%s() validation method must return an instance of %s.',
+                __CLASS__,
+                $method,
+                Validator::class
+            ));
         }
 
         return $validator;

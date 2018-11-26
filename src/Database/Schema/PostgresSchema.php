@@ -291,6 +291,7 @@ class PostgresSchema extends BaseSchema
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
+        // phpcs:disable Generic.Files.LineLength
         $sql = 'SELECT
         c.conname AS name,
         c.contype AS type,
@@ -308,6 +309,7 @@ class PostgresSchema extends BaseSchema
         WHERE n.nspname = ?
         AND cl.relname = ?
         ORDER BY name, a.attnum, ab.attnum DESC';
+        // phpcs:enable Generic.Files.LineLength
 
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
 

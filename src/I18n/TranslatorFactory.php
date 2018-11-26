@@ -54,7 +54,7 @@ class TranslatorFactory extends BaseTranslatorFactory
         $class = $this->class;
         if ($fallback !== null && get_class($fallback) !== $class) {
             throw new RuntimeException(sprintf(
-                'Translator fallback class %s does not match Cake\I18n\Translator, try clearing your _cake_core_ cache.',
+                'Translator fallback class %s does not match Cake\I18n\Translator, try clearing your _cake_core_ cache',
                 get_class($fallback)
             ));
         }

@@ -813,7 +813,11 @@ trait IntegrationTestTrait
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $message);
 
         if ($url) {
-            $this->assertThat(Router::url($url, ['_full' => true]), new HeaderEquals($this->_response, 'Location'), $message);
+            $this->assertThat(
+                Router::url($url, ['_full' => true]),
+                new HeaderEquals($this->_response, 'Location'),
+                $message
+            );
         }
     }
 
@@ -1151,12 +1155,20 @@ trait IntegrationTestTrait
      * @return void
      * @see \Cake\Utility\CookieCryptTrait::_encrypt()
      */
-    public function assertCookieEncrypted(string $expected, string $name, $encrypt = 'aes', $key = null, $message = ''): void
-    {
+    public function assertCookieEncrypted(
+        string $expected,
+        string $name,
+        $encrypt = 'aes',
+        $key = null,
+        $message = ''
+    ): void {
         $this->assertThat($name, new CookieSet($this->_response), $message);
 
         $this->_cookieEncryptionKey = $key;
-        $this->assertThat($expected, new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey()));
+        $this->assertThat(
+            $expected,
+            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey())
+        );
     }
 
     /**

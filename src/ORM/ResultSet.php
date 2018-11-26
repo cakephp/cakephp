@@ -237,7 +237,8 @@ class ResultSet implements ResultSetInterface
         }
 
         if (!$this->_useBuffering) {
-            $msg = 'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
+            $msg = 'You cannot rewind an un-buffered ResultSet. '
+                . 'Use Query::bufferResults() to get a buffered ResultSet.';
             throw new Exception($msg);
         }
 
@@ -306,7 +307,8 @@ class ResultSet implements ResultSetInterface
     public function serialize(): string
     {
         if (!$this->_useBuffering) {
-            $msg = 'You cannot serialize an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
+            $msg = 'You cannot serialize an un-buffered ResultSet. '
+                . 'Use Query::bufferResults() to get a buffered ResultSet.';
             throw new Exception($msg);
         }
 

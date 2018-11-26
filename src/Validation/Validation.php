@@ -154,11 +154,11 @@ class Validation
      * Returns true if $check is in the proper credit card format.
      *
      * @param mixed $check credit card number to validate
-     * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of most major credit cards
-     *    if an array is used only the values of the array are checked.
+     * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of
+     *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
-     * @param string|null $regex A custom regex can also be passed, this will be used instead of the defined regex values
+     * @param string|null $regex A custom regex, this will be used instead of the defined regex values.
      * @return bool Success
      * @see \Cake\Validation\Validation::luhn()
      */
@@ -188,10 +188,12 @@ class Validation
                 'maestro' => '/^(?:5020|6\\d{3})\\d{12}$/',
                 'mc' => '/^(5[1-5]\\d{14})|(2(?:22[1-9]|2[3-9][0-9]|[3-6][0-9]{2}|7[0-1][0-9]|720)\\d{12})$/',
                 'solo' => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
+                // phpcs:ignore Generic.Files.LineLength
                 'switch' => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
                 'visa' => '/^4\\d{12}(\\d{3})?$/',
                 'voyager' => '/^8699[0-9]{11}$/',
             ],
+            // phpcs:ignore Generic.Files.LineLength
             'fast' => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/',
         ];
 
@@ -426,6 +428,7 @@ class Validation
         $twoDigitYear = '([0-9]{2})';
         $year = '(?:' . $fourDigitYear . '|' . $twoDigitYear . ')';
 
+        // phpcs:disable Generic.Files.LineLength
         $regex['dmy'] = '%^(?:(?:31(\\/|-|\\.|\\x20)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)' .
             $separator . '(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29' .
             $separator . '0?2\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])' .
@@ -445,6 +448,7 @@ class Validation
 
         $regex['My'] = '%^(Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)' .
             $separator . '((1[6-9]|[2-9]\\d)\\d{2})$%';
+        // phpcs:enable Generic.Files.LineLength
 
         $regex['my'] = '%^(' . $month . $separator . $year . ')$%';
         $regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
@@ -467,7 +471,8 @@ class Validation
      *
      * @param string|\DateTimeInterface $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
-     * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
+     * @param string|null $regex Regex for the date part. If a custom regular expression is used
+     *   this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
      * @see \Cake\Validation\Validation::date()
      * @see \Cake\Validation\Validation::time()
@@ -516,6 +521,7 @@ class Validation
             return false;
         }
 
+        // phpcs:ignore Generic.Files.LineLength
         return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
     }
 
@@ -676,6 +682,7 @@ class Validation
         }
 
         if ($regex === null) {
+            // phpcs:ignore Generic.Files.LineLength
             $regex = '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
         }
         $return = static::_check($check, $regex);
@@ -978,11 +985,13 @@ class Validation
         $subDelimiters = preg_quote('/!"$&\'()*+,-.@_:;=~[]', '/');
         $path = '([' . $subDelimiters . $alpha . ']|' . $hex . ')';
         $fragmentAndQuery = '([\?' . $subDelimiters . $alpha . ']|' . $hex . ')';
+        // phpcs:disable Generic.Files.LineLength
         $regex = '/^(?:(?:https?|ftps?|sftp|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
             '(?:' . static::$_pattern['IPv4'] . '|\[' . static::$_pattern['IPv6'] . '\]|' . static::$_pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
             '(?:\/' . $path . '*)?' .
             '(?:\?' . $fragmentAndQuery . '*)?' .
             '(?:#' . $fragmentAndQuery . '*)?$/iu';
+        // phpcs:enable Generic.Files.LineLength
 
         return static::_check($check, $regex);
     }
@@ -1239,10 +1248,14 @@ class Validation
         if ($options['optional'] && $error === UPLOAD_ERR_NO_FILE) {
             return true;
         }
-        if (isset($options['minSize']) && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])) {
+        if (isset($options['minSize'])
+            && !static::fileSize($file, static::COMPARE_GREATER_OR_EQUAL, $options['minSize'])
+        ) {
             return false;
         }
-        if (isset($options['maxSize']) && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])) {
+        if (isset($options['maxSize'])
+            && !static::fileSize($file, static::COMPARE_LESS_OR_EQUAL, $options['maxSize'])
+        ) {
             return false;
         }
         if (isset($options['types']) && !static::mimeType($file, $options['types'])) {
@@ -1262,7 +1275,9 @@ class Validation
     public static function imageSize($file, array $options): bool
     {
         if (!isset($options['height']) && !isset($options['width'])) {
-            throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
+            throw new InvalidArgumentException(
+                'Invalid image size validation parameters! Missing `width` and / or `height`.'
+            );
         }
 
         $file = static::getFilename($file);
@@ -1579,6 +1594,7 @@ class Validation
      */
     protected static function _populateIp(): void
     {
+        // phpcs:disable Generic.Files.LineLength
         if (!isset(static::$_pattern['IPv6'])) {
             $pattern = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
             $pattern .= '(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})';
@@ -1601,6 +1617,7 @@ class Validation
             $pattern = '(?:(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])';
             static::$_pattern['IPv4'] = $pattern;
         }
+        // phpcs:enable Generic.Files.LineLength
     }
 
     /**

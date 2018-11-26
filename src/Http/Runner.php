@@ -44,8 +44,11 @@ class Runner
      * @param \Psr\Http\Message\ResponseInterface $response The response
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
-    public function run(MiddlewareQueue $middleware, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    public function run(
+        MiddlewareQueue $middleware,
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
         $this->middleware = $middleware;
         $this->index = 0;
 

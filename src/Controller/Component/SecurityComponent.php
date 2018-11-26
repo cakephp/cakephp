@@ -103,7 +103,10 @@ class SecurityComponent extends Component
             $isNotRequestAction = !$request->getParam('requested');
 
             if ($this->_action === $this->_config['blackHoleCallback']) {
-                throw new AuthSecurityException(sprintf('Action %s is defined as the blackhole callback.', $this->_action));
+                throw new AuthSecurityException(sprintf(
+                    'Action %s is defined as the blackhole callback.',
+                    $this->_action
+                ));
             }
 
             if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
@@ -464,12 +467,18 @@ class SecurityComponent extends Component
      * @param array $dataFields Fields array, containing the POST data fields
      * @param array $expectedFields Fields array, containing the expected fields we should have in POST
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
-     * @param string|null $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @param string|null $stringKeyMessage Message string if tampered found in
+     *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
      * @return array Messages
      */
-    protected function _debugCheckFields(array $dataFields, array $expectedFields = [], string $intKeyMessage = '', ?string $stringKeyMessage = '', string $missingMessage = ''): array
-    {
+    protected function _debugCheckFields(
+        array $dataFields,
+        array $expectedFields = [],
+        string $intKeyMessage = '',
+        ?string $stringKeyMessage = '',
+        string $missingMessage = ''
+    ): array {
         $messages = $this->_matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
         $expectedFieldsMessage = $this->_debugExpectedFields($expectedFields, $missingMessage);
         if ($expectedFieldsMessage !== null) {
@@ -533,11 +542,16 @@ class SecurityComponent extends Component
      * @param array $dataFields Fields array, containing the POST data fields
      * @param array $expectedFields Fields array, containing the expected fields we should have in POST
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
-     * @param string|null $stringKeyMessage Message string if tampered found in data fields indexed by string (protected)
+     * @param string|null $stringKeyMessage Message string if tampered found in
+     *   data fields indexed by string (protected)
      * @return array Error messages
      */
-    protected function _matchExistingFields(array $dataFields, array &$expectedFields, string $intKeyMessage, ?string $stringKeyMessage): array
-    {
+    protected function _matchExistingFields(
+        array $dataFields,
+        array &$expectedFields,
+        string $intKeyMessage,
+        ?string $stringKeyMessage
+    ): array {
         $messages = [];
         foreach ((array)$dataFields as $key => $value) {
             if (is_int($key)) {

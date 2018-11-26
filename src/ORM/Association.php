@@ -392,7 +392,8 @@ abstract class Association
 
                 if (!$this->_targetTable instanceof $className) {
                     $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
-                    $errorMessage .= 'You can\'t have an association of the same name with a different target "className" option anywhere in your app.';
+                    $errorMessage .= 'You can\'t have an association of the same name with a different target ';
+                    $errorMessage .= '"className" option anywhere in your app.';
 
                     throw new RuntimeException(sprintf(
                         $errorMessage,

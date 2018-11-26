@@ -34,7 +34,9 @@ class DebugTransport extends AbstractTransport
      */
     public function send(Email $email): array
     {
-        $headers = $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']);
+        $headers = $email->getHeaders(
+            ['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']
+        );
         $headers = $this->_headersToString($headers);
         $message = implode("\r\n", (array)$email->message());
 

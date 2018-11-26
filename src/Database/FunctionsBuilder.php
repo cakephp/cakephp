@@ -34,8 +34,12 @@ class FunctionsBuilder
      * @param string $return The return type of the function expression
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    protected function _build(string $name, array $params = [], array $types = [], string $return = 'string'): FunctionExpression
-    {
+    protected function _build(
+        string $name,
+        array $params = [],
+        array $types = [],
+        string $return = 'string'
+    ): FunctionExpression {
         return new FunctionExpression($name, $params, $types, $return);
     }
 
@@ -49,8 +53,12 @@ class FunctionsBuilder
      * @param string $return The return type for the function
      * @return \Cake\Database\Expression\FunctionExpression
      */
-    protected function _literalArgumentFunction(string $name, $expression, $types = [], $return = 'string'): FunctionExpression
-    {
+    protected function _literalArgumentFunction(
+        string $name,
+        $expression,
+        $types = [],
+        $return = 'string'
+    ): FunctionExpression {
         if (!is_string($expression)) {
             $expression = [$expression];
         } else {

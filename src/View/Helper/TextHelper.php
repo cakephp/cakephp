@@ -118,6 +118,7 @@ class TextHelper extends Helper
         $this->_placeholders = [];
         $options += ['escape' => true];
 
+        // phpcs:disable Generic.Files.LineLength
         $pattern = '/(?:(?<!href="|src="|">)
             (?>
                 (
@@ -132,17 +133,20 @@ class TextHelper extends Helper
                 (?<url_bare>(?P>url)) # A bare URL. Use subroutine
             )
             )/ixu';
+        // phpcs:enable Generic.Files.LineLength
 
         $text = preg_replace_callback(
             $pattern,
             [&$this, '_insertPlaceHolder'],
             $text
         );
+        // phpcs:disable Generic.Files.LineLength
         $text = preg_replace_callback(
             '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ <](?<!\))#i',
             [&$this, '_insertPlaceHolder'],
             $text
         );
+        // phpcs:enable Generic.Files.LineLength
         if ($options['escape']) {
             $text = h($text);
         }

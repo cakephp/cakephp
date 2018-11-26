@@ -73,7 +73,9 @@ class I18nShell extends Shell
 
                 return;
             default:
-                $this->out('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.');
+                $this->out(
+                    'You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.'
+                );
         }
         $this->hr();
         $this->main();

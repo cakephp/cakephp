@@ -734,8 +734,12 @@ class EagerLoader
      * If not passed, the default property for the association will be used.
      * @return void
      */
-    public function addToJoinsMap(string $alias, Association $assoc, bool $asMatching = false, ?string $targetProperty = null): void
-    {
+    public function addToJoinsMap(
+        string $alias,
+        Association $assoc,
+        bool $asMatching = false,
+        ?string $targetProperty = null
+    ): void {
         $this->_joinsMap[$alias] = new EagerLoadable($alias, [
             'aliasPath' => $alias,
             'instance' => $assoc,
