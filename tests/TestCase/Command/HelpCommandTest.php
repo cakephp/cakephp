@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Console\Shell;
+use Cake\Console\Command;
 use Cake\Core\Plugin;
 use Cake\Http\BaseApplication;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
@@ -37,7 +37,7 @@ class HelpCommandTest extends TestCase
     {
         parent::setUp();
         $this->setAppNamespace();
-        $this->useCommandRunner(true);
+        $this->useCommandRunner();
         Plugin::getCollection()->clear();
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
@@ -65,7 +65,7 @@ class HelpCommandTest extends TestCase
     public function testMainNoCommandsFallback()
     {
         $this->exec('help');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertCommandList();
         Plugin::getCollection()->clear();
     }
@@ -78,7 +78,7 @@ class HelpCommandTest extends TestCase
     public function testMain()
     {
         $this->exec('help');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertCommandList();
     }
 
@@ -111,7 +111,7 @@ class HelpCommandTest extends TestCase
     public function testMainAsXml()
     {
         $this->exec('help --xml');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('<shells>');
 
         $find = '<shell name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
