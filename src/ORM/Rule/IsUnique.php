@@ -79,6 +79,10 @@ class IsUnique
             }
         }
 
+        if (array_key_exists('conditions', $options)) {
+            $conditions += $options['conditions'];
+        }
+
         return !$options['repository']->exists($conditions);
     }
 

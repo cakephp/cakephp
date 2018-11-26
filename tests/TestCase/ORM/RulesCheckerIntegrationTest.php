@@ -489,6 +489,15 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
     }
 
+    public function testIsUniqueWithCustomConditions()
+    {
+        $entity = new Entity(['author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'N']);
+        $table = $this->getTableLocator()->get('Articles');
+        $rules = $table->rulesChecker();
+        $rules->add($rules->isUnique(['title'], 'Nope'), ['conditions' => ['published' => 'N']]);
+        $this->assertSame($entity, $table->save($entity));
+    }
+
     /**
      * Tests the existsIn domain rule
      *
