@@ -916,8 +916,7 @@ trait CollectionTrait
 
             for ($changeIndex = $lastIndex;
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;
-                $changeIndex--
-            ) {
+                $changeIndex--) {
                 $currentIndexes[$changeIndex] = 0;
                 $currentIndexes[$changeIndex - 1]++;
             }

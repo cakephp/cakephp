@@ -201,7 +201,10 @@ class SelectBoxWidget extends BasicWidget
     protected function _renderOptgroup(
         string $label,
         $optgroup,
-        ?array $disabled, $selected, $templateVars, $escape
+        ?array $disabled,
+        $selected,
+        $templateVars,
+        $escape
     ): string {
         $opts = $optgroup;
         $attrs = [];

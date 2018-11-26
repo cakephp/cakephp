@@ -467,12 +467,17 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
             throw new Exception(sprintf(
-                'Invalid index type "%s" in index "%s" in table "%s".', $attrs['type'], $name, $this->_table
+                'Invalid index type "%s" in index "%s" in table "%s".',
+                $attrs['type'],
+                $name,
+                $this->_table
             ));
         }
         if (empty($attrs['columns'])) {
             throw new Exception(sprintf(
-                'Index "%s" in table "%s" must have at least one column.', $name, $this->_table
+                'Index "%s" in table "%s" must have at least one column.',
+                $name,
+                $this->_table
             ));
         }
         $attrs['columns'] = (array)$attrs['columns'];
@@ -626,12 +631,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         if (!in_array($attrs['update'], static::$_validForeignKeyActions)) {
             throw new Exception(sprintf(
-                'Update action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)
+                'Update action is invalid. Must be one of %s',
+                implode(',', static::$_validForeignKeyActions)
             ));
         }
         if (!in_array($attrs['delete'], static::$_validForeignKeyActions)) {
             throw new Exception(sprintf(
-                'Delete action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)
+                'Delete action is invalid. Must be one of %s',
+                implode(',', static::$_validForeignKeyActions)
             ));
         }
 

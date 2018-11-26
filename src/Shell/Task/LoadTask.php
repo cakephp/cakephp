@@ -97,7 +97,8 @@ class LoadTask extends Shell
             $this->abort('Your Application class does not have a bootstrap() method. Please add one.');
         } else {
             $contents = preg_replace(
-                '/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m', '$1' . $insert,
+                '/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m',
+                '$1' . $insert,
                 $contents
             );
         }

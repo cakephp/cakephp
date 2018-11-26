@@ -129,7 +129,8 @@ class RoutingMiddleware
      */
     public function __invoke(
         ServerRequestInterface $request,
-        ResponseInterface $response, callable $next
+        ResponseInterface $response,
+        callable $next
     ): ResponseInterface {
         $this->loadRoutes();
         try {
