@@ -79,7 +79,7 @@ class IsUnique
             }
         }
 
-        if (array_key_exists('conditions', $options)) {
+        if (isset($options['conditions'])) {
             $conditions += $options['conditions'];
         }
 
