@@ -57,6 +57,12 @@ class IsUnique
     /**
      * Performs the uniqueness check
      *
+     * * ### Options
+     *
+     * - `conditions` A set of extra conditions to use when checking if the entity already exists
+     *   in the database. For example, to only check for existence of any 'active' items, the
+     *   condition: ['active' => true] could be set.
+     *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      *   where the `repository` key is required.
      * @param array $options Options passed to the check,
