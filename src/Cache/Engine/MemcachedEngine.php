@@ -23,8 +23,8 @@ use Memcached;
  * control you have over expire times far in the future. See MemcachedEngine::write() for
  * more information.
  *
- * Memcached engine support binary protocol and igbinary
- * serialization (if memcached extension compiled with --enable-igbinary).
+ * Memcached engine supports binary protocol and igbinary
+ * serialization (if memcached extension is compiled with --enable-igbinary).
  * Compressed keys can also be incremented/decremented.
  */
 class MemcachedEngine extends CacheEngine
