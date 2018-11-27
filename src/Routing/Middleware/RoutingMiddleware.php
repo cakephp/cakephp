@@ -59,6 +59,12 @@ class RoutingMiddleware
      */
     public function __construct(HttpApplicationInterface $app = null, $cacheConfig = null)
     {
+        if ($app === null) {
+            deprecationWarning(
+                'RoutingMiddleware should be passed an application instance. ' .
+                'Failing to do so can cause plugin routes to not behave correctly.'
+            );
+        }
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;
     }

@@ -48,7 +48,7 @@ class Application extends BaseApplication
      */
     public function middleware($middleware)
     {
-        $middleware->add(new RoutingMiddleware());
+        $middleware->add(new RoutingMiddleware($this));
         $middleware->add(function ($req, $res, $next) {
             /** @var \Cake\Http\ServerRequest $res */
             $res = $next($req, $res);
@@ -69,6 +69,7 @@ class Application extends BaseApplication
     {
         $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
+            $routes->fallbacks();
         });
     }
 }

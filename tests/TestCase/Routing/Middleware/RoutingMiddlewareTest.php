@@ -61,7 +61,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $response = $middleware($request, $response, $next);
 
         $this->assertEquals(301, $response->getStatusCode());
@@ -82,7 +82,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response('php://memory', 200, ['X-testing' => 'Yes']);
         $next = function ($req, $res) {
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $response = $middleware($request, $response, $next);
 
         $this->assertEquals(301, $response->getStatusCode());
@@ -109,7 +109,7 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $middleware($request, $response, $next);
     }
 
@@ -134,7 +134,7 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $middleware($request, $response, $next);
     }
 
@@ -207,7 +207,7 @@ class RoutingMiddlewareTest extends TestCase
         $next = function ($req, $res) {
             $this->assertEquals(['controller' => 'Articles'], $req->getAttribute('params'));
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $middleware($request, $response, $next);
     }
 
@@ -222,7 +222,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = new Response();
         $next = function ($req, $res) {
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $middleware($request, $response, $next);
     }
 
@@ -259,7 +259,7 @@ class RoutingMiddlewareTest extends TestCase
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertEquals('PATCH', $req->getMethod());
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $middleware($request, $response, $next);
     }
 
@@ -299,7 +299,7 @@ class RoutingMiddlewareTest extends TestCase
 
             return $res;
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
         $this->assertSame($response, $result, 'Should return result');
         $this->assertSame(['second', 'first', 'last'], $this->log);
@@ -344,7 +344,7 @@ class RoutingMiddlewareTest extends TestCase
         $next = function ($req, $res) {
             $this->fail('Should not be invoked as first should be ignored.');
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
 
         $this->assertSame($response, $result, 'Should return result');
@@ -387,7 +387,7 @@ class RoutingMiddlewareTest extends TestCase
         $next = function ($req, $res) {
             $this->fail('Should not be invoked as second should be ignored.');
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
 
         $this->assertSame($response, $result, 'Should return result');
@@ -438,7 +438,7 @@ class RoutingMiddlewareTest extends TestCase
 
             return $res;
         };
-        $middleware = new RoutingMiddleware();
+        $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
         $this->assertSame($response, $result, 'Should return result');
         $this->assertSame($expected, $this->log);
@@ -542,5 +542,21 @@ class RoutingMiddlewareTest extends TestCase
         $middleware($request, $response, $next);
 
         Cache::drop('_cake_router_');
+    }
+
+    /**
+     * Create a stub application for testing.
+     *
+     * @return \Cake\Core\HttpApplicationInterface
+     */
+    protected function app()
+    {
+        $mock = $this->createMock(Application::class);
+        $mock->method('routes')
+            ->will($this->returnCallback(function ($routes) {
+                return $routes;
+            }));
+
+        return $mock;
     }
 }

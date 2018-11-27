@@ -624,6 +624,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     public function testArrayUrls()
     {
         $this->post(['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
+        $this->assertResponseOk();
         $this->assertEquals('value', $this->viewVariable('test'));
     }
 
@@ -638,6 +639,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->assertFalse(Router::$initialized);
 
         $this->post(['controller' => 'Posts', 'action' => 'index']);
+        $this->assertResponseOk();
         $this->assertEquals('value', $this->viewVariable('test'));
     }
 
