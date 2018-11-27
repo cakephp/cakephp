@@ -225,20 +225,22 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $mainTableFields = $this->mainFields();
         $joinRequired = false;
 
-        $clause->iterateParts(function ($c, &$field) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
-            if (!is_string($field) || strpos($field, '.')) {
+        $clause->iterateParts(
+            function ($c, &$field) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
+                if (!is_string($field) || strpos($field, '.')) {
+                    return $c;
+                }
+
+                if (in_array($field, $fields)) {
+                    $joinRequired = true;
+                    $field = "$alias.$field";
+                } elseif (in_array($field, $mainTableFields)) {
+                    $field = "$mainTableAlias.$field";
+                }
+
                 return $c;
             }
-
-            if (in_array($field, $fields)) {
-                $joinRequired = true;
-                $field = "$alias.$field";
-            } elseif (in_array($field, $mainTableFields)) {
-                $field = "$mainTableAlias.$field";
-            }
-
-            return $c;
-        });
+        );
 
         return $joinRequired;
     }
@@ -268,26 +270,28 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $mainTableFields = $this->mainFields();
         $joinRequired = false;
 
-        $clause->traverse(function ($expression) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
-            if (!($expression instanceof FieldInterface)) {
-                return;
-            }
-            $field = $expression->getField();
-            if (!is_string($field) || strpos($field, '.')) {
-                return;
-            }
+        $clause->traverse(
+            function ($expression) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
+                if (!($expression instanceof FieldInterface)) {
+                    return;
+                }
+                $field = $expression->getField();
+                if (!is_string($field) || strpos($field, '.')) {
+                    return;
+                }
 
-            if (in_array($field, $fields)) {
-                $joinRequired = true;
-                $expression->setField("$alias.$field");
+                if (in_array($field, $fields)) {
+                    $joinRequired = true;
+                    $expression->setField("$alias.$field");
 
-                return;
-            }
+                    return;
+                }
 
-            if (in_array($field, $mainTableFields)) {
-                $expression->setField("$mainTableAlias.$field");
+                if (in_array($field, $mainTableFields)) {
+                    $expression->setField("$mainTableAlias.$field");
+                }
             }
-        });
+        );
 
         return $joinRequired;
     }

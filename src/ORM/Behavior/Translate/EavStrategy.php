@@ -202,7 +202,9 @@ class EavStrategy implements TranslateStrategyInterface
             );
 
             if ($changeFilter) {
-                $filter = $options['filterByCurrentLocale'] ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT;
+                $filter = $options['filterByCurrentLocale']
+                    ? QueryInterface::JOIN_TYPE_INNER
+                    : QueryInterface::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }
