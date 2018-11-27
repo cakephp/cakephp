@@ -23,10 +23,9 @@ use Memcached;
  * control you have over expire times far in the future. See MemcachedEngine::write() for
  * more information.
  *
- * Main advantage of this Memcached engine over the memcached engine is
- * support of binary protocol, and igbinary serialization
- * (if memcached extension compiled with --enable-igbinary)
- * Compressed keys can also be incremented/decremented
+ * Memcached engine supports binary protocol and igbinary
+ * serialization (if memcached extension is compiled with --enable-igbinary).
+ * Compressed keys can also be incremented/decremented.
  */
 class MemcachedEngine extends CacheEngine
 {
