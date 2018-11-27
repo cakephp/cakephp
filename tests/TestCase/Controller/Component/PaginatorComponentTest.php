@@ -57,8 +57,8 @@ class PaginatorComponentTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.posts', 'core.articles', 'core.articles_tags',
-        'core.authors', 'core.authors_tags', 'core.tags',
+        'core.Posts', 'core.Articles', 'core.ArticlesTags',
+        'core.Authors', 'core.AuthorsTags', 'core.Tags',
     ];
 
     /**

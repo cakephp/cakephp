@@ -49,7 +49,7 @@ class RouteBuilderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -428,6 +428,10 @@ class RouteBuilderTest extends TestCase
 
         $this->assertInstanceOf(RedirectRoute::class, $route);
         $this->assertEquals('/forums', $route->redirect[0]);
+
+        $route = $routes->redirect('/old', '/forums');
+        $this->assertInstanceOf(RedirectRoute::class, $route);
+        $this->assertSame($route, $this->collection->routes()[2]);
     }
 
     /**
@@ -582,7 +586,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesPathOption()
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', ['path' => 'posts'], function ($routes) {
+        $routes->resources('Articles', ['path' => 'posts'], function (RouteBuilder $routes) {
             $routes->resources('Comments');
         });
         $all = $this->collection->routes();
@@ -912,6 +916,27 @@ class RouteBuilderTest extends TestCase
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
         });
+    }
+
+    /**
+     * Test adding a scope with action in the scope
+     *
+     * @return void
+     */
+    public function testScopeWithAction()
+    {
+        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
+        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function ($routes) {
+            $routes->connect('/shared', ['shared' => true]);
+            $routes->get('/exclusive', ['exclusive' => true]);
+        });
+        $all = $this->collection->routes();
+        $this->assertCount(2, $all);
+        $this->assertSame('view', $all[0]->defaults['action']);
+        $this->assertArrayHasKey('shared', $all[0]->defaults);
+
+        $this->assertSame('view', $all[1]->defaults['action']);
+        $this->assertArrayHasKey('exclusive', $all[1]->defaults);
     }
 
     /**

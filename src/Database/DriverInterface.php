@@ -19,6 +19,8 @@ use Cake\Database\Schema\BaseSchema;
 
 /**
  * Interface for database driver.
+ *
+ * @method $this disableAutoQuoting()
  */
 interface DriverInterface
 {

@@ -21,6 +21,7 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
@@ -46,7 +47,7 @@ class RequestHandlerComponent extends Component
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
-    public $ext;
+    protected $ext;
 
     /**
      * The template to use when rendering the given content type.
@@ -229,9 +230,9 @@ class RequestHandlerComponent extends Component
      * - If Router::extensions() is enabled, the layout and template type are
      *   switched based on the parsed extension or `Accept` header. For example,
      *   if `controller/action.xml` is requested, the view path becomes
-     *   `app/View/Controller/xml/action.ctp`. Also if `controller/action` is
+     *   `templates/Controller/xml/action.php`. Also if `controller/action` is
      *   requested with `Accept: application/xml` in the headers the view
-     *   path will become `app/View/Controller/xml/action.ctp`. Layout and template
+     *   path will become `templates/Controller/xml/action.php`. Layout and template
      *   types will only switch to mime-types recognized by Cake\Http\Response.
      *   If you need to declare additional mime-types, you can do so using
      *   Cake\Http\Response::type() in your controller's beforeFilter() method.
@@ -242,6 +243,7 @@ class RequestHandlerComponent extends Component
      *
      * @param \Cake\Event\EventInterface $event The Controller.beforeRender event.
      * @return void
+     * @throws \Cake\Http\Exception\NotFoundException If invoked extension is not configured.
      */
     public function beforeRender(EventInterface $event)
     {
@@ -255,8 +257,11 @@ class RequestHandlerComponent extends Component
             !in_array($this->ext, ['html', 'htm']) &&
             $response->getMimeType($this->ext)
         );
+        if ($this->ext && !$isRecognized) {
+            throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
+        }
 
-        if ($this->ext && $isRecognized) {
+        if ($this->ext) {
             $this->renderAs($controller, $this->ext);
             $response = $controller->getResponse();
         } else {
@@ -272,59 +277,6 @@ class RequestHandlerComponent extends Component
             return;
         }
         $controller->setResponse($response);
-    }
-
-    /**
-     * Returns true if the current call accepts an XML response, false otherwise
-     *
-     * @return bool True if client accepts an XML response
-     */
-    public function isXml(): bool
-    {
-        return $this->prefers('xml');
-    }
-
-    /**
-     * Returns true if the current call accepts an RSS response, false otherwise
-     *
-     * @return bool True if client accepts an RSS response
-     */
-    public function isRss(): bool
-    {
-        return $this->prefers('rss');
-    }
-
-    /**
-     * Returns true if the current call accepts an Atom response, false otherwise
-     *
-     * @return bool True if client accepts an RSS response
-     */
-    public function isAtom(): bool
-    {
-        return $this->prefers('atom');
-    }
-
-    /**
-     * Returns true if user agent string matches a mobile web browser, or if the
-     * client accepts WAP content.
-     *
-     * @return bool True if user agent is a mobile web browser
-     */
-    public function isMobile(): bool
-    {
-        $request = $this->getController()->getRequest();
-
-        return $request->is('mobile') || $this->accepts('wap');
-    }
-
-    /**
-     * Returns true if the client accepts WAP content
-     *
-     * @return bool
-     */
-    public function isWap(): bool
-    {
-        return $this->prefers('wap');
     }
 
     /**
@@ -594,19 +546,6 @@ class RequestHandlerComponent extends Component
         $controller->setResponse($response);
 
         return true;
-    }
-
-    /**
-     * Returns the current response type (Content-type header), or null if not alias exists
-     *
-     * @return mixed A string content type alias, or raw content type if no alias map exists,
-     *  otherwise null
-     */
-    public function responseType()
-    {
-        $response = $this->getController()->getResponse();
-
-        return $response->mapType($response->getType());
     }
 
     /**

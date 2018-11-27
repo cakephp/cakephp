@@ -40,7 +40,7 @@ class XmlTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.users',
+        'core.Articles', 'core.Users',
     ];
 
     /**

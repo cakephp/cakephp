@@ -81,6 +81,20 @@ class Plugin
     }
 
     /**
+     * Returns the filesystem path for plugin's folder containing template files.
+     *
+     * @param string $name name of the plugin in CamelCase format.
+     * @return string Path to the plugin folder container config files.
+     * @throws \Cake\Core\Exception\MissingPluginException If plugin has not been loaded.
+     */
+    public static function templatePath(string $name): string
+    {
+        $plugin = static::getCollection()->get($name);
+
+        return $plugin->getTemplatePath();
+    }
+
+    /**
      * Returns true if the plugin $plugin is already loaded.
      *
      * @param string $plugin Plugin name.
@@ -108,24 +122,11 @@ class Plugin
     }
 
     /**
-     * Forgets a loaded plugin or all of them if first parameter is null
-     *
-     * @param string|null $plugin name of the plugin to forget
-     * @return void
-     */
-    public static function unload(?string $plugin = null): void
-    {
-        if ($plugin === null) {
-            static::$plugins = null;
-        } else {
-            static::getCollection()->remove($plugin);
-        }
-    }
-
-    /**
      * Get the shared plugin collection.
      *
-     * @internal
+     * This method should generally not be used during application
+     * runtime as plugins should be set during Application startup.
+     *
      * @return \Cake\Core\PluginCollection
      */
     public static function getCollection(): PluginCollection

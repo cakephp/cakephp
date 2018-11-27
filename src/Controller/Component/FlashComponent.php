@@ -86,7 +86,7 @@ class FlashComponent extends Component
      */
     public function set($message, array $options = []): void
     {
-        $options += $this->getConfig();
+        $options += (array)$this->getConfig();
 
         if ($message instanceof Exception) {
             if (!isset($options['params']['code'])) {
@@ -134,7 +134,7 @@ class FlashComponent extends Component
      * Magic method for verbose flash methods based on element names.
      *
      * For example: $this->Flash->success('My message') would use the
-     * success.ctp element under `src/Template/Element/Flash` for rendering the
+     * `success.php` element under `templates/Element/Flash` for rendering the
      * flash message.
      *
      * If you make consecutive calls to this method, the messages will stack (if they are
@@ -144,7 +144,7 @@ class FlashComponent extends Component
      * specific element from a plugin, you should set the `plugin` option in $args.
      *
      * For example: `$this->Flash->warning('My message', ['plugin' => 'PluginName'])` would
-     * use the warning.ctp element under `plugins/PluginName/src/Template/Element/Flash` for
+     * use the `warning.php` element under `plugins/PluginName/templates/Element/Flash` for
      * rendering the flash message.
      *
      * @param string $name Element name to use.

@@ -18,7 +18,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 
 /**
- * Null cache engine, all operations return false.
+ * Null cache engine, all operations appear to work, but do nothing.
  *
  * This is used internally for when Cache::disable() has been called.
  */
@@ -35,7 +35,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
         return true;
     }
@@ -43,15 +43,7 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function writeMany(array $data): array
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function read(string $key)
+    public function setMultiple($data, $ttl = null): bool
     {
         return false;
     }
@@ -59,7 +51,15 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function readMany(array $keys): array
+    public function get($key, $default = null)
+    {
+        return $default;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMultiple($keys, $default = null): array
     {
         return [];
     }
@@ -69,6 +69,7 @@ class NullEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1)
     {
+        return true;
     }
 
     /**
@@ -76,12 +77,13 @@ class NullEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1)
     {
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         return true;
     }
@@ -89,15 +91,15 @@ class NullEngine extends CacheEngine
     /**
      * {@inheritDoc}
      */
-    public function deleteMany(array $keys): array
+    public function deleteMultiple($keys): bool
     {
-        return [];
+        return false;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
         return false;
     }

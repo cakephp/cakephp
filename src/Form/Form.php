@@ -185,7 +185,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array Last set validation errors.
      */
-    public function errors(): array
+    public function getErrors()
     {
         return $this->_errors;
     }
@@ -283,7 +283,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     {
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
-            '_errors' => $this->errors(),
+            '_errors' => $this->getErrors(),
             '_validator' => $this->getValidator()->__debugInfo(),
         ];
 

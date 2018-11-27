@@ -223,7 +223,7 @@ class UrlHelper extends Helper
      * Configure. If Asset.timestamp is true and debug is true, or Asset.timestamp === 'force'
      * a timestamp will be added.
      *
-     * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
+     * @param string $path The file path to timestamp, the path must be inside `App.wwwRoot` in Configure.
      * @param bool|string $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
@@ -239,7 +239,7 @@ class UrlHelper extends Helper
                 '',
                 urldecode($path)
             );
-            $webrootPath = WWW_ROOT . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+            $webrootPath = Configure::read('App.wwwRoot') . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (file_exists($webrootPath)) {
                 return $path . '?' . filemtime($webrootPath);
             }

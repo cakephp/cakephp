@@ -31,7 +31,7 @@ class SchemaCacheShellTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.tags'];
+    public $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * setup method
@@ -105,11 +105,11 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testBuildNoArgs()
     {
-        $this->cache->method('write')
+        $this->cache->expects($this->any())
+            ->method('set')
             ->will($this->returnValue(true));
-
         $this->cache->expects($this->at(3))
-            ->method('write')
+            ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
 
@@ -125,11 +125,12 @@ class SchemaCacheShellTest extends TestCase
     public function testBuildNamedModel()
     {
         $this->cache->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
         $this->cache->expects($this->never())
-            ->method('delete');
+            ->method('delete')
+            ->will($this->returnValue(false));
 
         $this->shell->params['connection'] = 'test';
         $this->shell->build('articles');
@@ -143,13 +144,14 @@ class SchemaCacheShellTest extends TestCase
     public function testBuildOverwritesExistingData()
     {
         $this->cache->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
         $this->cache->expects($this->never())
-            ->method('read');
+            ->method('get');
         $this->cache->expects($this->never())
-            ->method('delete');
+            ->method('delete')
+            ->will($this->returnValue(false));
 
         $this->shell->params['connection'] = 'test';
         $this->shell->build('articles');
@@ -186,6 +188,8 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testClearNoArgs()
     {
+        $this->cache->method('delete')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->at(3))
             ->method('delete')
             ->with('test_articles');
@@ -202,11 +206,12 @@ class SchemaCacheShellTest extends TestCase
     public function testClearNamedModel()
     {
         $this->cache->expects($this->never())
-            ->method('write')
+            ->method('set')
             ->will($this->returnValue(true));
         $this->cache->expects($this->once())
             ->method('delete')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(false));
 
         $this->shell->params['connection'] = 'test';
         $this->shell->clear('articles');

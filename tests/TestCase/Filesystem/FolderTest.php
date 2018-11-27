@@ -266,7 +266,7 @@ class FolderTest extends TestCase
      */
     public function testOperations()
     {
-        $path = CAKE . 'Template';
+        $path = ROOT . DS . 'templates';
         $Folder = new Folder($path);
 
         $result = $Folder->pwd();
@@ -739,7 +739,7 @@ class FolderTest extends TestCase
         $this->assertSame(array_diff($expected, $result), []);
 
         $result = $Folder->find('.*', true);
-        $expected = ['bootstrap.php', 'cacert.pem', 'config.php'];
+        $expected = ['bootstrap.php', 'config.php'];
         $this->assertSame($expected, $result);
 
         $result = $Folder->find('.*\.php');

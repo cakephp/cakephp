@@ -65,7 +65,7 @@ class ExtractTaskTest extends TestCase
 
         $Folder = new Folder($this->path);
         $Folder->delete();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -75,7 +75,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExecute()
     {
-        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['paths'] = TEST_APP . 'templates' . DS . 'Pages';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
         $this->Task->params['merge'] = 'no';
@@ -91,19 +91,19 @@ class ExtractTaskTest extends TestCase
 
         $this->assertFileNotExists($this->path . DS . 'cake.pot');
 
-        // extract.ctp
-        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+;\d+\n';
+        // extract.php
+        $pattern = '/\#: [\/\\\\]extract\.php:\d+;\d+\n';
         $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
         $this->assertRegExp($pattern, $result);
 
         $pattern = '/msgid "You have %d new message."\nmsgstr ""/';
         $this->assertNotRegExp($pattern, $result, 'No duplicate msgid');
 
-        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
+        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
         $this->assertRegExp($pattern, $result);
 
-        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\nmsgid "';
+        $pattern = '/\#: [\/\\\\]extract\.php:\d+\nmsgid "';
         $pattern .= 'Hot features!';
         $pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
         $pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
@@ -114,17 +114,17 @@ class ExtractTaskTest extends TestCase
         $this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
+        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
         $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);
 
-        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
+        $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgctxt "alphabet"\n';
         $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);
 
-        // extract.ctp - reading the domain.pot
+        // extract.php - reading the domain.pot
         $result = file_get_contents($this->path . DS . 'domain.pot');
 
         $pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
@@ -145,7 +145,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExecuteMerge()
     {
-        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['paths'] = TEST_APP . 'templates' . DS . 'Pages';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
         $this->Task->params['merge'] = 'yes';
@@ -170,7 +170,7 @@ class ExtractTaskTest extends TestCase
     {
         $this->Task->interactive = false;
 
-        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['paths'] = TEST_APP . 'templates';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['exclude'] = 'Pages,Layout';
         $this->Task->params['extract-core'] = 'no';
@@ -182,10 +182,10 @@ class ExtractTaskTest extends TestCase
         $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
-        $pattern = '/\#: .*extract\.ctp:\d+\n/';
+        $pattern = '/\#: .*extract\.php:\d+\n/';
         $this->assertNotRegExp($pattern, $result);
 
-        $pattern = '/\#: .*default\.ctp:\d+\n/';
+        $pattern = '/\#: .*default\.php:\d+\n/';
         $this->assertNotRegExp($pattern, $result);
     }
 
@@ -196,7 +196,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractWithoutLocations()
     {
-        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['paths'] = TEST_APP . 'templates';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['exclude'] = 'Pages,Layout';
         $this->Task->params['extract-core'] = 'no';
@@ -225,8 +225,8 @@ class ExtractTaskTest extends TestCase
         $this->Task->interactive = false;
 
         $this->Task->params['paths'] =
-            TEST_APP . 'TestApp/Template/Pages,' .
-            TEST_APP . 'TestApp/Template/Posts';
+            TEST_APP . 'templates/Pages,' .
+            TEST_APP . 'templates/Posts';
 
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
@@ -286,7 +286,7 @@ class ExtractTaskTest extends TestCase
         $this->Task->main();
         $result = file_get_contents($this->path . DS . 'default.pot');
         $this->assertNotRegExp('#Pages#', $result);
-        $this->assertRegExp('/translate\.ctp:\d+/', $result);
+        $this->assertRegExp('/translate\.php:\d+/', $result);
         $this->assertContains('This is a translatable string', $result);
     }
 
@@ -311,7 +311,7 @@ class ExtractTaskTest extends TestCase
         $this->Task->main();
         $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
         $this->assertNotRegExp('#Pages#', $result);
-        $this->assertRegExp('/default\.ctp:\d+/', $result);
+        $this->assertRegExp('/default\.php:\d+/', $result);
         $this->assertContains('A vendor message', $result);
     }
 
@@ -374,13 +374,13 @@ class ExtractTaskTest extends TestCase
         $this->Task->method('err')
             ->will($this->returnCallback([$this, 'echoTest']));
 
-        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['paths'] = TEST_APP . 'templates' . DS . 'Pages';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
         $this->Task->params['merge'] = 'no';
         $this->Task->params['marker-error'] = true;
 
-        $this->expectOutputRegex('/.*Invalid marker content in .*extract\.ctp.*/');
+        $this->expectOutputRegex('/.*Invalid marker content in .*extract\.php.*/');
         $this->Task->main();
     }
 
@@ -403,7 +403,7 @@ class ExtractTaskTest extends TestCase
     {
         $this->Task->interactive = false;
 
-        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['paths'] = TEST_APP . 'templates';
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['extract-core'] = 'no';
         $this->Task->params['relative-paths'] = true;
@@ -415,7 +415,7 @@ class ExtractTaskTest extends TestCase
         $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
-        $expected = '#: ./tests/test_app/TestApp/Template/Pages/extract.ctp:';
+        $expected = '#: ./tests/test_app/templates/Pages/extract.php:';
         $this->assertContains($expected, $result);
     }
 }

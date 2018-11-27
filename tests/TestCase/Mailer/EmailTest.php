@@ -107,7 +107,7 @@ class TestEmail extends Email
  */
 class EmailTest extends TestCase
 {
-    public $fixtures = ['core.users'];
+    public $fixtures = ['core.Users'];
 
     /**
      * @var \Cake\Test\TestCase\Mailer\TestEmail
@@ -615,6 +615,15 @@ class EmailTest extends TestCase
 
         $result = $this->Email->getMessageId();
         $this->assertSame('<my-email@localhost>', $result);
+    }
+
+    public function testAutoMessageIdIsIdempotent()
+    {
+        $headers = $this->Email->getHeaders();
+        $this->assertArrayHasKey('Message-ID', $headers);
+
+        $regeneratedHeaders = $this->Email->getHeaders();
+        $this->assertSame($headers['Message-ID'], $regeneratedHeaders['Message-ID']);
     }
 
     /**
@@ -1653,7 +1662,7 @@ class EmailTest extends TestCase
         $this->assertContains('Message-ID: ', $result['headers']);
         $this->assertContains('To: ', $result['headers']);
         $this->assertContains('/test_theme/img/test.jpg', $result['message']);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -1836,7 +1845,7 @@ class EmailTest extends TestCase
         $result = $this->Email->send();
         $this->assertContains('Here is your value: 12345', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -2880,29 +2889,5 @@ XML;
                 'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST'
             );
         }
-    }
-
-    /**
-     * Test deprecated methods
-     *
-     * @return void
-     */
-    public function testDeprecatedMethods()
-    {
-        $this->deprecated(function () {
-            $this->Email
-                ->setTemplate('foo')
-                ->setLayout('bar')
-                ->setTheme('baz')
-                ->setHelpers(['A', 'B']);
-
-            $this->assertSame('foo', $this->Email->getTemplate());
-            $this->assertSame('bar', $this->Email->getLayout());
-            $this->assertSame('baz', $this->Email->getTheme());
-            $this->assertSame(['A', 'B'], $this->Email->getHelpers());
-
-            $this->Email->setLayout('');
-            $this->assertFalse($this->Email->getLayout());
-        });
     }
 }

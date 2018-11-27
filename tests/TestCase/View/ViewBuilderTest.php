@@ -399,4 +399,18 @@ class ViewBuilderTest extends TestCase
         $this->assertInternalType('array', $result);
         $this->assertEmpty($result);
     }
+
+    /**
+     * testDisableAutoLayout
+     *
+     * @return void
+     */
+    public function testDisableAutoLayout()
+    {
+        $builder = new ViewBuilder();
+        $this->assertTrue($builder->isAutoLayoutEnabled());
+
+        $builder->disableAutoLayout();
+        $this->assertFalse($builder->isAutoLayoutEnabled());
+    }
 }

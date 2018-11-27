@@ -18,7 +18,7 @@ namespace Cake\Shell\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use ReflectionClass;
@@ -113,18 +113,19 @@ class CommandTask extends Shell
      */
     protected function _scanDir(string $dir): array
     {
-        $dir = new Folder($dir);
-        $contents = $dir->read(true, true);
-        if (empty($contents[1])) {
+        if (!is_dir($dir)) {
             return [];
         }
+
+        $fs = new Filesystem();
+        $files = $fs->find($dir, '/\.php$/');
+
         $shells = [];
-        foreach ($contents[1] as $file) {
-            if (substr($file, -4) !== '.php') {
-                continue;
-            }
-            $shells[] = substr($file, 0, -4);
+        foreach ($files as $file) {
+            $shells[] = $file->getBasename('.php');
         }
+
+        sort($shells);
 
         return $shells;
     }
@@ -168,13 +169,13 @@ class CommandTask extends Shell
      */
     public function subCommands(string $commandName): array
     {
-        $Shell = $this->getShell($commandName);
+        $shell = $this->getShell($commandName);
 
-        if (!$Shell) {
+        if (!$shell) {
             return [];
         }
 
-        $taskMap = $this->Tasks->normalizeArray((array)$Shell->tasks);
+        $taskMap = $this->Tasks->normalizeArray((array)$shell->tasks);
         $return = array_keys($taskMap);
         $return = array_map('Cake\Utility\Inflector::underscore', $return);
 
@@ -182,7 +183,7 @@ class CommandTask extends Shell
 
         $baseClasses = ['Object', 'Shell', 'AppShell'];
 
-        $Reflection = new ReflectionClass($Shell);
+        $Reflection = new ReflectionClass($shell);
         $methods = $Reflection->getMethods(ReflectionMethod::IS_PUBLIC);
         $methodNames = [];
         foreach ($methods as $method) {
@@ -238,12 +239,12 @@ class CommandTask extends Shell
             return false;
         }
 
-        /* @var \Cake\Console\Shell $Shell */
-        $Shell = new $class();
-        $Shell->plugin = trim($pluginDot, '.');
-        $Shell->initialize();
+        /* @var \Cake\Console\Shell $shell */
+        $shell = new $class();
+        $shell->plugin = trim($pluginDot, '.');
+        $shell->initialize();
 
-        return $Shell;
+        return $shell;
     }
 
     /**
@@ -256,18 +257,18 @@ class CommandTask extends Shell
      */
     public function options(string $commandName, string $subCommandName = ''): array
     {
-        $Shell = $this->getShell($commandName);
+        $shell = $this->getShell($commandName);
 
-        if (!$Shell) {
+        if (!$shell) {
             return [];
         }
 
-        $parser = $Shell->getOptionParser();
+        $parser = $shell->getOptionParser();
 
         if (!empty($subCommandName)) {
             $subCommandName = Inflector::camelize($subCommandName);
-            if ($Shell->hasTask($subCommandName)) {
-                $parser = $Shell->{$subCommandName}->getOptionParser();
+            if ($shell->hasTask($subCommandName)) {
+                $parser = $shell->{$subCommandName}->getOptionParser();
             } else {
                 return [];
             }

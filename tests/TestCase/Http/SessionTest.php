@@ -74,7 +74,7 @@ class SessionTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.cake_sessions', 'core.sessions'];
+    public $fixtures = ['core.CakeSessions', 'core.Sessions'];
 
     /**
      * tearDown method
@@ -85,7 +85,7 @@ class SessionTest extends TestCase
     {
         unset($_SESSION);
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

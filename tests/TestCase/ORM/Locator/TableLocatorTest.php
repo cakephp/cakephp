@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Locator;
 
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
@@ -57,6 +58,17 @@ class TableLocatorTest extends TestCase
         static::setAppNamespace();
 
         $this->_locator = new TableLocator();
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        Plugin::getCollection()->clear();
+        parent::tearDown();
     }
 
     /**

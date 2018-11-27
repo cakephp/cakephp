@@ -94,6 +94,13 @@ interface ConnectionInterface
     public function enableQueryLogging(bool $value);
 
     /**
+     * Disable query logging
+     *
+     * @return $this
+     */
+    public function disableQueryLogging();
+
+    /**
      * Check if query logging is enabled.
      *
      * @return bool

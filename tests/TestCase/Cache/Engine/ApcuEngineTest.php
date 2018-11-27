@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
+use DateInterval;
 
 /**
  * ApcuEngineTest class
@@ -142,6 +143,23 @@ class ApcuEngineTest extends TestCase
     }
 
     /**
+     * Test get with default value
+     *
+     * @return void
+     */
+    public function testGetDefaultValue()
+    {
+        $apcu = Cache::pool('apcu');
+        $this->assertFalse($apcu->get('nope', false));
+        $this->assertNull($apcu->get('nope', null));
+        $this->assertTrue($apcu->get('nope', true));
+        $this->assertSame(0, $apcu->get('nope', 0));
+
+        $apcu->set('yep', 0);
+        $this->assertSame(0, $apcu->get('yep', false));
+    }
+
+    /**
      * testExpiry method
      *
      * @return void
@@ -151,7 +169,7 @@ class ApcuEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'apcu');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'apcu');
@@ -159,7 +177,30 @@ class ApcuEngineTest extends TestCase
 
         sleep(2);
         $result = Cache::read('other_test', 'apcu');
-        $this->assertFalse($result);
+        $this->assertNull($result);
+        $this->assertSame(0, Cache::pool('apcu')->get('other_test', 0), 'expired values get default.');
+    }
+
+    /**
+     * test set ttl parameter
+     *
+     * @return void
+     */
+    public function testSetWithTtl()
+    {
+        $this->_configCache(['duration' => 99]);
+        $engine = Cache::pool('apcu');
+        $this->assertNull($engine->get('test'));
+
+        $data = 'this is a test of the emergency broadcasting system';
+        $this->assertTrue($engine->set('default_ttl', $data));
+        $this->assertTrue($engine->set('int_ttl', $data, 1));
+        $this->assertTrue($engine->set('interval_ttl', $data, new DateInterval('PT1S')));
+
+        sleep(2);
+        $this->assertNull($engine->get('int_ttl'));
+        $this->assertNull($engine->get('interval_ttl'));
+        $this->assertSame($data, $engine->get('default_ttl'));
     }
 
     /**
@@ -233,9 +274,9 @@ class ApcuEngineTest extends TestCase
         apcu_store('not_cake', 'survive');
         Cache::write('some_value', 'value', 'apcu');
 
-        $result = Cache::clear(false, 'apcu');
+        $result = Cache::clear('apcu');
         $this->assertTrue($result);
-        $this->assertFalse(Cache::read('some_value', 'apcu'));
+        $this->assertNull(Cache::read('some_value', 'apcu'));
         $this->assertEquals('survive', apcu_fetch('not_cake'));
         apcu_delete('not_cake');
     }
@@ -260,12 +301,12 @@ class ApcuEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'apcu_groups'));
 
         apcu_inc('test_group_a');
-        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'apcu_groups'));
         $this->assertEquals('value2', Cache::read('test_groups', 'apcu_groups'));
 
         apcu_inc('test_group_b');
-        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'apcu_groups'));
         $this->assertEquals('value3', Cache::read('test_groups', 'apcu_groups'));
     }
@@ -288,7 +329,7 @@ class ApcuEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'apcu_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'apcu_groups'));
 
-        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
     }
 
     /**
@@ -308,11 +349,11 @@ class ApcuEngineTest extends TestCase
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'apcu_groups'));
         $this->assertTrue(Cache::clearGroup('group_a', 'apcu_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
 
         $this->assertTrue(Cache::write('test_groups', 'value2', 'apcu_groups'));
         $this->assertTrue(Cache::clearGroup('group_b', 'apcu_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'apcu_groups'));
+        $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
     }
 
     /**

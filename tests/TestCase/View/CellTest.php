@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use Cake\View\Cell;
 use Cake\View\Exception\MissingCellViewException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
@@ -59,7 +60,7 @@ class CellTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         unset($this->View);
     }
 
@@ -161,7 +162,7 @@ class CellTest extends TestCase
 
         $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
         $this->assertEquals('custom_template_path', $appCell->viewBuilder()->getTemplate());
-        $this->assertEquals('Cell/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
+        $this->assertEquals(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -287,7 +288,7 @@ class CellTest extends TestCase
     public function testPluginCellAlternateTemplate()
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-        $cell->viewBuilder()->setTemplate('../../Element/translate');
+        $cell->viewBuilder()->setTemplate('../../element/translate');
         $this->assertContains('This is a translatable string', "{$cell}");
     }
 
@@ -299,7 +300,7 @@ class CellTest extends TestCase
     public function testPluginCellAlternateTemplateRenderParam()
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-        $result = $cell->render('../../Element/translate');
+        $result = $cell->render('../../element/translate');
         $this->assertContains('This is a translatable string', $result);
     }
 
@@ -402,10 +403,10 @@ class CellTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
-        $mock->method('read')
-            ->will($this->returnValue(false));
+        $mock->method('get')
+            ->will($this->returnValue(null));
         $mock->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('cell_test_app_view_cell_articles_cell_display_default', "dummy\n")
             ->will($this->returnValue(true));
         Cache::setConfig('default', $mock);
@@ -426,10 +427,10 @@ class CellTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
-        $mock->method('read')
+        $mock->method('get')
             ->will($this->returnValue("dummy\n"));
         $mock->expects($this->never())
-            ->method('write');
+            ->method('set');
         Cache::setConfig('default', $mock);
 
         $cell = $this->View->cell('Articles', [], ['cache' => true]);
@@ -448,10 +449,10 @@ class CellTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
-        $mock->method('read')
-            ->will($this->returnValue(false));
+        $mock->method('get')
+            ->will($this->returnValue(null));
         $mock->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('my_key', "dummy\n")
             ->will($this->returnValue(true));
         Cache::setConfig('cell', $mock);
@@ -474,10 +475,10 @@ class CellTest extends TestCase
         $mock = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $mock->method('init')
             ->will($this->returnValue(true));
-        $mock->method('read')
-            ->will($this->returnValue(false));
+        $mock->method('get')
+            ->will($this->returnValue(null));
         $mock->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('cell_test_app_view_cell_articles_cell_customTemplateViewBuilder_default', "<h1>This is the alternate template</h1>\n")
             ->will($this->returnValue(true));
         Cache::setConfig('default', $mock);

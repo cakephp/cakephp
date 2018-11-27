@@ -13,7 +13,7 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
@@ -32,7 +32,7 @@ class SchemaCacheTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.tags'];
+    public $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * Cache Engine Mock
@@ -114,11 +114,10 @@ class SchemaCacheTest extends TestCase
     public function testBuildNoArgs()
     {
         $ds = ConnectionManager::get('test');
-        $this->cache->method('write')
+        $this->cache->method('set')
             ->will($this->returnValue(true));
-
         $this->cache->expects($this->at(3))
-            ->method('write')
+            ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
 
@@ -136,7 +135,7 @@ class SchemaCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
 
         $this->cache->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
         $this->cache->expects($this->never())
@@ -156,11 +155,11 @@ class SchemaCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
 
         $this->cache->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with('test_articles')
             ->will($this->returnValue(true));
         $this->cache->expects($this->never())
-            ->method('read');
+            ->method('get');
         $this->cache->expects($this->never())
             ->method('delete');
 
@@ -176,6 +175,8 @@ class SchemaCacheTest extends TestCase
     public function testClearNoArgs()
     {
         $ds = ConnectionManager::get('test');
+        $this->cache->method('delete')
+            ->will($this->returnValue(true));
 
         $this->cache->expects($this->at(3))
             ->method('delete')
@@ -195,10 +196,11 @@ class SchemaCacheTest extends TestCase
         $ds = ConnectionManager::get('test');
 
         $this->cache->expects($this->never())
-            ->method('write');
+            ->method('set');
         $this->cache->expects($this->once())
             ->method('delete')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
 
         $ormCache = new SchemaCache($ds);
         $ormCache->clear('articles');

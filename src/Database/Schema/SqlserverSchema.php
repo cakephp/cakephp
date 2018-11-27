@@ -138,8 +138,8 @@ class SqlserverSchema extends BaseSchema
             return ['type' => TableSchema::TYPE_TEXT, 'length' => null];
         }
 
-        if ($col === 'image' || strpos($col, 'binary')) {
-            return ['type' => TableSchema::TYPE_BINARY, 'length' => null];
+        if ($col === 'image' || strpos($col, 'binary') !== false) {
+            return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
 
         if ($col === 'uniqueidentifier') {
@@ -371,12 +371,17 @@ class SqlserverSchema extends BaseSchema
         }
 
         if ($data['type'] === TableSchema::TYPE_BINARY) {
-            $out .= ' VARBINARY';
+            if (!isset($data['length'])
+                || in_array($data['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)) {
+                $data['length'] = 'MAX';
+            }
 
-            if ($data['length'] !== TableSchema::LENGTH_TINY) {
-                $out .= '(MAX)';
+            if ($data['length'] === 1) {
+                $out .= ' BINARY(1)';
             } else {
-                $out .= sprintf('(%s)', TableSchema::LENGTH_TINY);
+                $out .= ' VARBINARY';
+
+                $out .= sprintf('(%s)', $data['length']);
             }
         }
 

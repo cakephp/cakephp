@@ -23,14 +23,14 @@ trait FieldTrait
     /**
      * The field name or expression to be used in the left hand side of the operator
      *
-     * @var string|\Cake\Database\ExpressionInterface
+     * @var string|array|\Cake\Database\ExpressionInterface
      */
     protected $_field;
 
     /**
      * Sets the field name
      *
-     * @param string|\Cake\Database\ExpressionInterface $field The field to compare with.
+     * @param string|array|\Cake\Database\ExpressionInterface $field The field to compare with.
      * @return void
      */
     public function setField($field): void
@@ -41,7 +41,7 @@ trait FieldTrait
     /**
      * Returns the field name
      *
-     * @return string|\Cake\Database\ExpressionInterface
+     * @return string|array|\Cake\Database\ExpressionInterface
      */
     public function getField()
     {

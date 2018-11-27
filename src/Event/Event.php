@@ -64,7 +64,7 @@ class Event implements EventInterface
      *
      * ```
      *  $event = new Event('Order.afterBuy', $this, ['buyer' => $userData]);
-     *  $event = new Event('User.afterRegister', $UserModel);
+     *  $event = new Event('User.afterRegister', $userModel);
      * ```
      *
      * @param string $name Name of the event

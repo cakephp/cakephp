@@ -56,12 +56,15 @@ class WincacheEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param mixed $value Data to be cached
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
         $key = $this->_key($key);
-        $duration = $this->_config['duration'];
+        $duration = $this->duration($ttl);
 
         return wincache_ucache_set($key, $value, $duration);
     }
@@ -70,14 +73,19 @@ class WincacheEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
-     * @return mixed The cached data, or false if the data doesn't exist,
+     * @param mixed $default Default value to return if the key does not exist.
+     * @return mixed The cached data, or default value if the data doesn't exist,
      *   has expired, or if there was an error fetching it
      */
-    public function read(string $key)
+    public function get($key, $default = null)
     {
-        $key = $this->_key($key);
+        $success = null;
+        $value = wincache_ucache_get($this->_key($key), $success);
+        if ($success === false) {
+            return $default;
+        }
 
-        return wincache_ucache_get($key);
+        return $value;
     }
 
     /**
@@ -114,7 +122,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete(string $key): bool
+    public function delete($key)
     {
         $key = $this->_key($key);
 
@@ -125,15 +133,10 @@ class WincacheEngine extends CacheEngine
      * Delete all keys from the cache. This will clear every
      * item in the cache matching the cache config prefix.
      *
-     * @param bool $check If true, nothing will be cleared, as entries will
-     *   naturally expire in wincache..
      * @return bool True Returns true.
      */
-    public function clear(bool $check): bool
+    public function clear()
     {
-        if ($check) {
-            return true;
-        }
         $info = wincache_ucache_info();
         $cacheKeys = $info['ucache_entries'];
         unset($info);

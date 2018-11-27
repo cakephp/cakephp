@@ -46,11 +46,11 @@ class CompositeKeyTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.composite_increments',
-        'core.site_articles',
-        'core.site_articles_tags',
-        'core.site_authors',
-        'core.site_tags',
+        'core.CompositeIncrements',
+        'core.SiteArticles',
+        'core.SiteArticlesTags',
+        'core.SiteAuthors',
+        'core.SiteTags',
     ];
 
     /**

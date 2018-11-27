@@ -17,8 +17,9 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
@@ -111,13 +112,14 @@ class AssetsTask extends Shell
             }
 
             $link = Inflector::underscore($plugin);
-            $dir = WWW_ROOT;
+            $wwwRoot = Configure::read('App.wwwRoot');
+            $dir = $wwwRoot;
             $namespaced = false;
             if (strpos($link, '/') !== false) {
                 $namespaced = true;
                 $parts = explode('/', $link);
                 $link = array_pop($parts);
-                $dir = WWW_ROOT . implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
+                $dir = $wwwRoot . implode(DIRECTORY_SEPARATOR, $parts) . DIRECTORY_SEPARATOR;
             }
 
             $plugins[$plugin] = [
@@ -219,7 +221,7 @@ class AssetsTask extends Shell
         }
 
         if (is_link($dest)) {
-            // @codingStandardsIgnoreLine
+            // phpcs:ignore
             if (@unlink($dest)) {
                 $this->out('Unlinked ' . $dest);
 
@@ -231,8 +233,8 @@ class AssetsTask extends Shell
             }
         }
 
-        $folder = new Folder($dest);
-        if ($folder->delete()) {
+        $fs = new Filesystem();
+        if ($fs->deleteDir($dest)) {
             $this->out('Deleted ' . $dest);
 
             return true;
@@ -252,9 +254,9 @@ class AssetsTask extends Shell
     protected function _createDirectory(string $dir): bool
     {
         $old = umask(0);
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $result = @mkdir($dir, 0755, true);
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
         umask($old);
 
         if ($result) {
@@ -277,9 +279,9 @@ class AssetsTask extends Shell
      */
     protected function _createSymlink(string $target, string $link): bool
     {
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $result = @symlink($target, $link);
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
 
         if ($result) {
             $this->out('Created symlink ' . $link);
@@ -299,8 +301,8 @@ class AssetsTask extends Shell
      */
     protected function _copyDirectory(string $source, string $destination): bool
     {
-        $folder = new Folder($source);
-        if ($folder->copy($destination)) {
+        $fs = new Filesystem();
+        if ($fs->copyDir($source, $destination)) {
             $this->out('Copied assets to directory ' . $destination);
 
             return true;

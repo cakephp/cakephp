@@ -25,7 +25,7 @@ use Cake\Cache\CacheEngine;
 
 class TestAppCacheEngine extends CacheEngine
 {
-    public function write(string $key, $value): bool
+    public function set($key, $value, $ttl = null)
     {
         if ($key === 'fail') {
             return false;
@@ -34,7 +34,7 @@ class TestAppCacheEngine extends CacheEngine
         return true;
     }
 
-    public function read(string $key)
+    public function get($key, $default = null)
     {
     }
 
@@ -46,11 +46,11 @@ class TestAppCacheEngine extends CacheEngine
     {
     }
 
-    public function delete(string $key): bool
+    public function delete($key)
     {
     }
 
-    public function clear(bool $check): bool
+    public function clear()
     {
     }
 

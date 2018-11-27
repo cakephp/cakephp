@@ -283,7 +283,7 @@ class EavStrategy implements TranslateStrategyInterface
                 'foreign_key' => $key,
                 'model' => $model,
             ])
-            ->enableBufferedResults(false)
+            ->disableBufferedResults()
             ->all()
             ->indexBy('field');
 
@@ -486,8 +486,8 @@ class EavStrategy implements TranslateStrategyInterface
         $query = $association->find()
             ->select(['id', 'num' => 0])
             ->where(current($ruleSet))
-            ->enableHydration(false)
-            ->enableBufferedResults(false);
+            ->disableHydration()
+            ->disableBufferedResults();
 
         unset($ruleSet[0]);
         foreach ($ruleSet as $i => $conditions) {

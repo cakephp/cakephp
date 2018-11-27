@@ -595,6 +595,16 @@ SQL;
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
                 '`body` LONGBLOB NOT NULL',
             ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 5],
+                '`bytes` VARBINARY(5)',
+            ],
+            [
+                'bit',
+                ['type' => 'binary', 'length' => 1],
+                '`bit` BINARY(1)',
+            ],
             // Integers
             [
                 'post_id',

@@ -18,6 +18,7 @@ use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
+use Composer\CaBundle\CaBundle;
 
 /**
  * Implements sending Cake\Http\Client\Request via ext/curl.
@@ -100,7 +101,7 @@ class Curl implements AdapterInterface
         }
 
         if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($options['ssl_verify_host'])) {
             // Value of 1 or true is deprecated. Only 2 or 0 should be used now.
@@ -121,6 +122,10 @@ class Curl implements AdapterInterface
         }
         if (isset($options['proxy']['proxy'])) {
             $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
+        }
+        if (isset($options['proxy']['username'])) {
+            $password = !empty($options['proxy']['password']) ? $options['proxy']['password'] : '';
+            $out[CURLOPT_PROXYUSERPWD] = $options['proxy']['username'] . ':' . $password;
         }
         if (isset($options['curl']) && is_array($options['curl'])) {
             // Can't use array_merge() because keys will be re-ordered.

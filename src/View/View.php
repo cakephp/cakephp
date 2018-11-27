@@ -53,7 +53,7 @@ use RuntimeException;
  *
  * in your Controller to use plugin `SuperHot` as a theme. Eg. If current action
  * is PostsController::index() then View class will look for template file
- * `plugins/SuperHot/Template/Posts/index.ctp`. If a theme template
+ * `plugins/SuperHot/templates/Posts/index.php`. If a theme template
  * is not found for the current action the default app template file is used.
  *
  * @property \Cake\View\Helper\BreadcrumbsHelper $Breadcrumbs
@@ -122,7 +122,7 @@ class View implements EventDispatcherInterface
 
     /**
      * The name of the template file to render. The name specified
-     * is the filename in /src/Template/<SubFolder> without the .ctp extension.
+     * is the filename in /templates/<SubFolder> without the .php extension.
      *
      * @var string
      */
@@ -130,7 +130,7 @@ class View implements EventDispatcherInterface
 
     /**
      * The name of the layout file to render the template inside of. The name specified
-     * is the filename of the layout in /src/Template/Layout without the .ctp
+     * is the filename of the layout in /templates/Layout without the .php
      * extension.
      *
      * @var string|false
@@ -160,11 +160,11 @@ class View implements EventDispatcherInterface
     protected $viewVars = [];
 
     /**
-     * File extension. Defaults to CakePHP's template ".ctp".
+     * File extension. Defaults to ".php".
      *
      * @var string
      */
-    protected $_ext = '.ctp';
+    protected $_ext = '.php';
 
     /**
      * Sub-directory for this template file. This is often used for extension based routing.
@@ -272,7 +272,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public const TYPE_TEMPLATE = 'view';
+    public const TYPE_TEMPLATE = 'template';
 
     /**
      * Constant for view file type 'element'
@@ -282,13 +282,6 @@ class View implements EventDispatcherInterface
     public const TYPE_ELEMENT = 'element';
 
     /**
-     * Constant for name of view file 'Element'
-     *
-     * @var string
-     */
-    public const NAME_ELEMENT = 'Element';
-
-    /**
      * Constant for view file type 'layout'
      *
      * @var string
@@ -296,11 +289,18 @@ class View implements EventDispatcherInterface
     public const TYPE_LAYOUT = 'layout';
 
     /**
-     * Constant for template folder  'Template'
+     * Constant for type used for App::path().
      *
      * @var string
      */
     public const NAME_TEMPLATE = 'Template';
+
+    /**
+     * Constant for folder name containing files for overriding plugin templates.
+     *
+     * @var string
+     */
+    public const PLUGIN_TEMPLATE_FOLDER = 'plugin';
 
     /**
      * Constructor
@@ -484,6 +484,19 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Turns off CakePHP's conventional mode of applying layout files.
+     * Layouts will not be automatically applied to rendered views.
+     *
+     * @return $this
+     */
+    public function disableAutoLayout()
+    {
+        $this->autoLayout = false;
+
+        return $this;
+    }
+
+    /**
      * Get the current view theme.
      *
      * @return string|null
@@ -508,7 +521,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Get the name of the template file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     * filename in /templates/<SubFolder> without the .php extension.
      *
      * @return string
      */
@@ -519,7 +532,7 @@ class View implements EventDispatcherInterface
 
     /**
      * Set the name of the template file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     * filename in /templates/<SubFolder> without the .php extension.
      *
      * @param string|false $name Template file name to set.
      * @return $this
@@ -533,8 +546,8 @@ class View implements EventDispatcherInterface
 
     /**
      * Get the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
+     * The name specified is the filename of the layout in /templates/Layout
+     * without the .php extension.
      *
      * @return string|false
      */
@@ -545,8 +558,8 @@ class View implements EventDispatcherInterface
 
     /**
      * Set the name of the layout file to render the template inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
+     * The name specified is the filename of the layout in /templates/Layout
+     * without the .php extension.
      *
      * @param string|bool $name Layout file name to set.
      * @return $this
@@ -564,7 +577,7 @@ class View implements EventDispatcherInterface
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
      * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
      *
-     * @param string $name Name of template file in the /src/Template/Element/ folder,
+     * @param string $name Name of template file in the /templates/Element/ folder,
      *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
@@ -603,7 +616,7 @@ class View implements EventDispatcherInterface
         if (empty($options['ignoreMissing'])) {
             list ($plugin, $name) = pluginSplit($name, true);
             $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
-            $file = $plugin . static::NAME_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
+            $file = $plugin . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
             throw new MissingElementException([$file]);
         }
     }
@@ -644,7 +657,7 @@ class View implements EventDispatcherInterface
     /**
      * Checks if an element exists
      *
-     * @param string $name Name of template file in the /src/Template/Element/ folder,
+     * @param string $name Name of template file in the /templates/Element/ folder,
      *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
      *   is not found in the plugin, the normal view path cascade will be searched.
      * @return bool Success
@@ -961,7 +974,7 @@ class View implements EventDispatcherInterface
                     if (!$parent) {
                         list($plugin, $name) = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
-                        $defaultPath = $paths[0] . static::NAME_ELEMENT . DIRECTORY_SEPARATOR;
+                        $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
                             'You cannot extend an element which does not exist (%s).',
                             $defaultPath . $name . $this->_ext
@@ -1193,10 +1206,10 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Returns filename of given action's template file (.ctp) as a string.
+     * Returns filename of given action's template file as a string.
      * CamelCased action names will be under_scored by default.
      * This means that you can have LongActionNames that refer to
-     * long_action_names.ctp views. You can change the inflection rule by
+     * long_action_names.php templates. You can change the inflection rule by
      * overriding _inflectViewFileName.
      *
      * @param string|null $name Controller action to find template filename for
@@ -1311,7 +1324,7 @@ class View implements EventDispatcherInterface
      * Returns layout filename for this template as a string.
      *
      * @param string|null $name The name of the layout to find.
-     * @return string Filename for layout file (.ctp).
+     * @return string Filename for layout file.
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
      */
     protected function _getLayoutFileName(?string $name = null): string
@@ -1326,7 +1339,7 @@ class View implements EventDispatcherInterface
         }
         list($plugin, $name) = $this->pluginSplit($name);
 
-        $layoutPaths = $this->_getSubPaths('Layout' . DIRECTORY_SEPARATOR . $subDir);
+        $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
@@ -1353,7 +1366,7 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
-        $elementPaths = $this->_getSubPaths(static::NAME_ELEMENT);
+        $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
 
         foreach ($paths as $path) {
             foreach ($elementPaths as $elementPath) {
@@ -1417,7 +1430,7 @@ class View implements EventDispatcherInterface
         $pluginPaths = $themePaths = [];
         if (!empty($plugin)) {
             for ($i = 0, $count = count($templatePaths); $i < $count; $i++) {
-                $pluginPaths[] = $templatePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
+                $pluginPaths[] = $templatePaths[$i] . static::PLUGIN_TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR;
             }
             $pluginPaths = array_merge($pluginPaths, App::path(static::NAME_TEMPLATE, $plugin));
         }
@@ -1427,7 +1440,7 @@ class View implements EventDispatcherInterface
 
             if ($plugin) {
                 for ($i = 0, $count = count($themePaths); $i < $count; $i++) {
-                    array_unshift($themePaths, $themePaths[$i] . 'Plugin' . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
+                    array_unshift($themePaths, $themePaths[$i] . static::PLUGIN_TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $plugin . DIRECTORY_SEPARATOR);
                 }
             }
         }
@@ -1436,7 +1449,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            [dirname(__DIR__) . DIRECTORY_SEPARATOR . static::NAME_TEMPLATE . DIRECTORY_SEPARATOR]
+            [dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR]
         );
 
         if ($plugin !== null) {

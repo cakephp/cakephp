@@ -38,35 +38,35 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The subdirectory to the template.
      *
-     * @var string
+     * @var string|null
      */
     protected $_templatePath;
 
     /**
      * The template file to render.
      *
-     * @var string
+     * @var string|null
      */
     protected $_template;
 
     /**
      * The plugin name to use.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_plugin;
 
     /**
      * The theme name to use.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_theme;
 
     /**
      * The layout name to render.
      *
-     * @var string
+     * @var string|null|false
      */
     protected $_layout;
 
@@ -80,14 +80,14 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The layout path to build the view with.
      *
-     * @var string
+     * @var string|null
      */
     protected $_layoutPath;
 
     /**
      * The view variables to use
      *
-     * @var string
+     * @var string|null
      */
     protected $_name;
 
@@ -96,7 +96,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Can either use plugin notation, a short name
      * or a fully namespaced classname.
      *
-     * @var string
+     * @var string|null
      */
     protected $_className;
 
@@ -244,7 +244,22 @@ class ViewBuilder implements JsonSerializable, Serializable
      */
     public function enableAutoLayout(bool $enable = true): self
     {
-        $this->_autoLayout = (bool)$enable;
+        $this->_autoLayout = $enable;
+
+        return $this;
+    }
+
+    /**
+     * Turns off CakePHP's conventional mode of applying layout files.
+     *
+     * Setting to off means that layouts will not be automatically applied to
+     * rendered views.
+     *
+     * @return $this
+     */
+    public function disableAutoLayout()
+    {
+        $this->_autoLayout = false;
 
         return $this;
     }
@@ -337,7 +352,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Sets the name of the view file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     * filename in /templates/<SubFolder> without the .php extension.
      *
      * @param string|null $name View file name to set.
      * @return $this
@@ -351,7 +366,7 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Gets the name of the view file to render. The name specified is the
-     * filename in /src/Template/<SubFolder> without the .ctp extension.
+     * filename in /templates/<SubFolder> without the .php extension.
      *
      * @return string|null
      */
@@ -362,8 +377,8 @@ class ViewBuilder implements JsonSerializable, Serializable
 
     /**
      * Sets the name of the layout file to render the view inside of.
-     * The name specified is the filename of the layout in /src/Template/Layout
-     * without the .ctp extension.
+     * The name specified is the filename of the layout in /templates/Layout
+     * without the .php extension.
      *
      * @param string|null|false $name Layout file name to set.
      * @return $this

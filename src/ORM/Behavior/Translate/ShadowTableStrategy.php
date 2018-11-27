@@ -358,7 +358,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $translation = $this->translationTable->find()
             ->select(array_merge(['id', 'locale'], $fields))
             ->where($where)
-            ->enableBufferedResults(false)
+            ->disableBufferedResults()
             ->first();
 
         if ($translation) {

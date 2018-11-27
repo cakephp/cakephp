@@ -25,6 +25,7 @@ use RecursiveIteratorIterator;
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
  *
+ * @deprecated 4.0.0 Will be removed in 5.0.
  * @link https://book.cakephp.org/3.0/en/core-libraries/file-folder.html#folder-api
  */
 class Folder
@@ -446,9 +447,9 @@ class Folder
         }
 
         if ($recursive === false && is_dir($path)) {
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             if (@chmod($path, intval($mode, 8))) {
-                //@codingStandardsIgnoreEnd
+                // phpcs:enable
                 $this->_messages[] = sprintf('%s changed to %s', $path, $mode);
 
                 return true;
@@ -471,9 +472,9 @@ class Folder
                         continue;
                     }
 
-                    //@codingStandardsIgnoreStart
+                    // phpcs:disable
                     if (@chmod($fullpath, intval($mode, 8))) {
-                        //@codingStandardsIgnoreEnd
+                        // phpcs:enable
                         $this->_messages[] = sprintf('%s changed to %s', $fullpath, $mode);
                     } else {
                         $this->_errors[] = sprintf('%s NOT changed to %s', $fullpath, $mode);
@@ -706,17 +707,17 @@ class Folder
             foreach ($iterator as $item) {
                 $filePath = $item->getPathname();
                 if ($item->isFile() || $item->isLink()) {
-                    //@codingStandardsIgnoreStart
+                    // phpcs:disable
                     if (@unlink($filePath)) {
-                        //@codingStandardsIgnoreEnd
+                        // phpcs:enable
                         $this->_messages[] = sprintf('%s removed', $filePath);
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
                     }
                 } elseif ($item->isDir() && !$item->isDot()) {
-                    //@codingStandardsIgnoreStart
+                    // phpcs:disable
                     if (@rmdir($filePath)) {
-                        //@codingStandardsIgnoreEnd
+                        // phpcs:enable
                         $this->_messages[] = sprintf('%s removed', $filePath);
                     } else {
                         $this->_errors[] = sprintf('%s NOT removed', $filePath);
@@ -727,9 +728,9 @@ class Folder
             }
 
             $path = rtrim($path, DIRECTORY_SEPARATOR);
-            //@codingStandardsIgnoreStart
+            // phpcs:disable
             if (@rmdir($path)) {
-                //@codingStandardsIgnoreEnd
+                // phpcs:enable
                 $this->_messages[] = sprintf('%s removed', $path);
             } else {
                 $this->_errors[] = sprintf('%s NOT removed', $path);
@@ -790,9 +791,9 @@ class Folder
         }
 
         $exceptions = array_merge(['.', '..', '.svn'], $options['skip']);
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         if ($handle = @opendir($fromDir)) {
-            //@codingStandardsIgnoreEnd
+            // phpcs:enable
             while (($item = readdir($handle)) !== false) {
                 $to = Folder::addPathElement($toDir, $item);
                 if (($options['scheme'] !== Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {

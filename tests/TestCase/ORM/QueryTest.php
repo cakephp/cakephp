@@ -41,13 +41,13 @@ class QueryTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.articles_tags',
-        'core.authors',
-        'core.comments',
-        'core.datatypes',
-        'core.posts',
-        'core.tags',
+        'core.Articles',
+        'core.ArticlesTags',
+        'core.Authors',
+        'core.Comments',
+        'core.Datatypes',
+        'core.Posts',
+        'core.Tags',
     ];
 
     /**
@@ -574,7 +574,7 @@ class QueryTest extends TestCase
         ]);
         $query = new Query($this->connection, $table);
 
-        $results = $query->select()->contain('Tags')->enableHydration(false)->toArray();
+        $results = $query->select()->contain('Tags')->disableHydration()->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -635,7 +635,7 @@ class QueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
-            ->enableHydration(false)
+            ->disableHydration()
             ->toArray();
         $expected = [
             [
@@ -688,7 +688,7 @@ class QueryTest extends TestCase
 
         $results = $query->repository($table)
             ->select()
-            ->enableHydration(false)
+            ->disableHydration()
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })
@@ -1945,7 +1945,7 @@ class QueryTest extends TestCase
 
         $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
-            ->method('read')
+            ->method('get')
             ->with('my_key')
             ->will($this->returnValue($resultSet));
 
@@ -1970,7 +1970,7 @@ class QueryTest extends TestCase
 
         $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $cacher->expects($this->once())
-            ->method('write')
+            ->method('set')
             ->with(
                 'my_key',
                 $this->isInstanceOf('Cake\Datasource\ResultSetInterface')

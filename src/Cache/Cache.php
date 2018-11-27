@@ -17,7 +17,6 @@ namespace Cake\Cache;
 
 use Cake\Cache\Engine\NullEngine;
 use Cake\Core\StaticConfigTrait;
-use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -134,7 +133,7 @@ class Cache
      *
      * @param string $name Name of the config array that needs an engine instance built
      * @return void
-     * @throws \InvalidArgumentException When a cache engine cannot be created.
+     * @throws \Cake\Cache\InvalidArgumentException When a cache engine cannot be created.
      */
     protected static function _buildEngine(string $name): void
     {
@@ -196,6 +195,8 @@ class Cache
      *
      * @param string $config The configuration name you want an engine for.
      * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
+     * @deprecated 3.7.0 Use Cache::pool() instead. In 4.0 all cache engines will implement the
+     *   PSR16 interface and this method does not return objects implementing that interface.
      */
     public static function engine(string $config): CacheEngine
     {
@@ -212,6 +213,17 @@ class Cache
         static::_buildEngine($config);
 
         return $registry->{$config};
+    }
+
+    /**
+     * Get a SimpleCacheEngine object for the named cache pool.
+     *
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\CacheEngine
+     */
+    public static function pool(string $config)
+    {
+        return static::engine($config);
     }
 
     /**
@@ -238,19 +250,19 @@ class Cache
      */
     public static function write(string $key, $value, $config = 'default'): bool
     {
-        $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        $success = $engine->write($key, $value);
+        $backend = static::pool($config);
+        $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ),
                 E_USER_WARNING
             );
@@ -278,25 +290,12 @@ class Cache
      *
      * @param array $data An array of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
-     * @return array of bools for each key provided, indicating true for success or false for fail
+     * @return bool True on success, false on failure
      * @throws \RuntimeException
      */
-    public static function writeMany(array $data, string $config = 'default'): array
+    public static function writeMany(array $data, string $config = 'default'): bool
     {
-        $engine = static::engine($config);
-        $return = $engine->writeMany($data);
-        foreach ($return as $key => $success) {
-            if ($success === false && $data[$key] !== '') {
-                throw new RuntimeException(sprintf(
-                    '%s cache was unable to write \'%s\' to %s cache',
-                    $config,
-                    $key,
-                    get_class($engine)
-                ));
-            }
-        }
-
-        return $return;
+        return static::pool($config)->setMultiple($data);
     }
 
     /**
@@ -318,13 +317,11 @@ class Cache
      *
      * @param string $key Identifier for the data
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
+     * @return mixed The cached data, or null if the data doesn't exist, has expired, or if there was an error fetching it
      */
     public static function read(string $key, string $config = 'default')
     {
-        $engine = static::engine($config);
-
-        return $engine->read($key);
+        return static::pool($config)->get($key);
     }
 
     /**
@@ -351,9 +348,7 @@ class Cache
      */
     public static function readMany(array $keys, string $config = 'default'): array
     {
-        $engine = static::engine($config);
-
-        return $engine->readMany($keys);
+        return static::pool($config)->getMultiple($keys);
     }
 
     /**
@@ -364,15 +359,15 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return mixed new value, or false if the data doesn't exist, is not integer,
      *    or if there was an error fetching it.
+     * @throws \Cake\Cache\InvalidArgumentException when offset < 0
      */
     public static function increment(string $key, int $offset = 1, string $config = 'default')
     {
-        $engine = static::engine($config);
-        if (!is_int($offset) || $offset < 0) {
-            return false;
+        if ($offset < 0) {
+            throw new InvalidArgumentException('Offset cannot be less than 0.');
         }
 
-        return $engine->increment($key, $offset);
+        return static::pool($config)->increment($key, $offset);
     }
 
     /**
@@ -383,15 +378,15 @@ class Cache
      * @param string $config Optional string configuration name. Defaults to 'default'
      * @return mixed new value, or false if the data doesn't exist, is not integer,
      *   or if there was an error fetching it
+     * @throws \Cake\Cache\InvalidArgumentException when offset < 0
      */
     public static function decrement(string $key, int $offset = 1, string $config = 'default')
     {
-        $engine = static::engine($config);
-        if (!is_int($offset) || $offset < 0) {
-            return false;
+        if ($offset < 0) {
+            throw new InvalidArgumentException('Offset cannot be less than 0.');
         }
 
-        return $engine->decrement($key, $offset);
+        return static::pool($config)->decrement($key, $offset);
     }
 
     /**
@@ -417,9 +412,7 @@ class Cache
      */
     public static function delete(string $key, string $config = 'default'): bool
     {
-        $engine = static::engine($config);
-
-        return $engine->delete($key);
+        return static::pool($config)->delete($key);
     }
 
     /**
@@ -441,42 +434,35 @@ class Cache
      *
      * @param array $keys Array of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
-     * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
-     * couldn't be removed
+     * @return bool True on success, false on failure.
      */
-    public static function deleteMany(array $keys, string $config = 'default'): array
+    public static function deleteMany(array $keys, string $config = 'default'): bool
     {
-        $engine = static::engine($config);
-
-        return $engine->deleteMany($keys);
+        return static::pool($config)->deleteMultiple($keys);
     }
 
     /**
      * Delete all keys from the cache.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public static function clear(bool $check = false, string $config = 'default'): bool
+    public static function clear(string $config = 'default'): bool
     {
-        $engine = static::engine($config);
-
-        return $engine->clear($check);
+        return static::pool($config)->clear();
     }
 
     /**
      * Delete all keys from the cache from all configurations.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
      * @return array Status code. For each configuration, it reports the status of the operation
      */
-    public static function clearAll(bool $check = false): array
+    public static function clearAll(): array
     {
         $status = [];
 
         foreach (self::configured() as $config) {
-            $status[$config] = self::clear($check, $config);
+            $status[$config] = self::clear($config);
         }
 
         return $status;
@@ -491,9 +477,7 @@ class Cache
      */
     public static function clearGroup(string $group, string $config = 'default'): bool
     {
-        $engine = static::engine($config);
-
-        return $engine->clearGroup($group);
+        return static::pool($config)->clearGroup($group);
     }
 
     /**
@@ -510,7 +494,7 @@ class Cache
      *
      * @param string|null $group group name or null to retrieve all group mappings
      * @return array map of group and all configuration that has the same group
-     * @throws \InvalidArgumentException
+     * @throws \Cake\Cache\InvalidArgumentException
      */
     public static function groupConfigs(?string $group = null): array
     {
@@ -591,7 +575,7 @@ class Cache
     public static function remember(string $key, callable $callable, string $config = 'default')
     {
         $existing = self::read($key, $config);
-        if ($existing !== false) {
+        if ($existing !== null) {
             return $existing;
         }
         $results = call_user_func($callable);
@@ -625,11 +609,10 @@ class Cache
      */
     public static function add(string $key, $value, $config = 'default'): bool
     {
-        $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        return $engine->add($key, $value);
+        return static::pool($config)->add($key, $value);
     }
 }

@@ -20,6 +20,7 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use NoRewindIterator;
 
@@ -64,8 +65,28 @@ class TestIterator extends ArrayIterator
     }
 }
 
+class CountableIterator extends \IteratorIterator implements \Countable
+{
+    public function __construct($items)
+    {
+        $f = function () use ($items) {
+            foreach ($items as $e) {
+                yield $e;
+            }
+        };
+        parent::__construct($f());
+    }
+
+    public function count()
+    {
+        return 6;
+    }
+}
+
 /**
- * CollectionTest
+ * Collection Test
+ *
+ * @coversDefaultClass \Cake\Collection\Collection
  */
 class CollectionTest extends TestCase
 {
@@ -676,10 +697,29 @@ class CollectionTest extends TestCase
     public function testMaxCallable($items)
     {
         $collection = new Collection($items);
-        $callback = function ($e) {
+        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max(function ($e) {
             return $e['a']['b']['c'] * - 1;
-        };
-        $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
+        }));
+    }
+
+    /**
+     * Test max with a collection of Entities
+     *
+     * @return void
+     */
+    public function testMaxWithEntities()
+    {
+        $collection = new Collection([
+            new Entity(['id' => 1, 'count' => 18]),
+            new Entity(['id' => 2, 'count' => 9]),
+            new Entity(['id' => 3, 'count' => 42]),
+            new Entity(['id' => 4, 'count' => 4]),
+            new Entity(['id' => 5, 'count' => 22]),
+        ]);
+
+        $expected = new Entity(['id' => 3, 'count' => 42]);
+
+        $this->assertEquals($expected, $collection->max('count'));
     }
 
     /**
@@ -692,6 +732,26 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection($items);
         $this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->min('a.b.c'));
+    }
+
+    /**
+     * Test min with a collection of Entities
+     *
+     * @return void
+     */
+    public function testMinWithEntities()
+    {
+        $collection = new Collection([
+            new Entity(['id' => 1, 'count' => 18]),
+            new Entity(['id' => 2, 'count' => 9]),
+            new Entity(['id' => 3, 'count' => 42]),
+            new Entity(['id' => 4, 'count' => 4]),
+            new Entity(['id' => 5, 'count' => 22]),
+        ]);
+
+        $expected = new Entity(['id' => 4, 'count' => 4]);
+
+        $this->assertEquals($expected, $collection->min('count'));
     }
 
     /**
@@ -2139,6 +2199,89 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the takeLast() method
+     *
+     * @dataProvider simpleProvider
+     * @param array $data The data to test with.
+     * @return void
+     * @covers ::takeLast
+     */
+    public function testLastN($data)
+    {
+        $collection = new Collection($data);
+        $result = $collection->takeLast(3)->toArray();
+        $expected = ['b' => 2, 'c' => 3, 'd' => 4];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the takeLast() method with overflow
+     *
+     * @dataProvider simpleProvider
+     * @param array $data The data to test with.
+     * @return void
+     * @covers ::takeLast
+     */
+    public function testLastNtWithOverflow($data)
+    {
+        $collection = new Collection($data);
+        $result = $collection->takeLast(10)->toArray();
+        $expected = ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the takeLast() with an odd numbers collection
+     *
+     * @dataProvider simpleProvider
+     * @param array $data The data to test with.
+     * @return void
+     * @covers ::takeLast
+     */
+    public function testLastNtWithOddData($data)
+    {
+        $collection = new Collection($data);
+        $result = $collection->take(3)->takeLast(2)->toArray();
+        $expected = ['b' => 2, 'c' => 3];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests the takeLast() with countable collection
+     *
+     * @return void
+     * @covers ::takeLast
+     */
+    public function testLastNtWithCountable()
+    {
+        $rangeZeroToFive = range(0, 5);
+
+        $collection = new Collection(new CountableIterator($rangeZeroToFive));
+        $result = $collection->takeLast(2)->toList();
+        $this->assertEquals([4, 5], $result);
+
+        $collection = new Collection(new CountableIterator($rangeZeroToFive));
+        $result = $collection->takeLast(1)->toList();
+        $this->assertEquals([5], $result);
+    }
+
+    /**
+     * Tests the takeLast() with countable collection
+     *
+     * @dataProvider simpleProvider
+     * @param array $data The data to test with.
+     * @return void
+     * @covers ::takeLast
+     */
+    public function testLastNtWithNegative($data)
+    {
+        $collection = new Collection($data);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The takeLast method requires a number greater than 0.');
+        $collection->takeLast(-1)->toArray();
+    }
+
+    /**
      * Tests sumOf with no parameters
      *
      * @return void
@@ -2619,5 +2762,22 @@ class CollectionTest extends TestCase
         $this->assertTrue(method_exists($newIterator, 'checkValues'), 'Our method has gone missing!');
         $this->assertTrue($newIterator->checkValues());
         $this->assertCount(3, $newIterator->toArray());
+    }
+
+    /**
+     * Tests that elements in a lazy collection are not fetched immediately.
+     *
+     * @return void
+     */
+    public function testLazy()
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = (new Collection($items))->lazy();
+        $callable = $this->getMockBuilder(\StdClass::class)
+            ->setMethods(['__invoke'])
+            ->getMock();
+
+        $callable->expects($this->never())->method('__invoke');
+        $collection->filter($callable)->filter($callable);
     }
 }

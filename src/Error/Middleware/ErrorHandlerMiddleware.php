@@ -70,19 +70,22 @@ class ErrorHandlerMiddleware
      * Constructor
      *
      * @param string|callable|null $exceptionRenderer The renderer or class name
-     *   to use or a callable factory. If null, Configure::read('Error.exceptionRenderer')
-     *   will be used.
-     * @param array $config Configuration options to use. If empty, `Configure::read('Error')`
+     *   to use or a callable factory. If null, value of 'exceptionRenderer' key
+     *   from $config will be used with fallback to Cake\Error\ExceptionRenderer::class.
+     * @param array $config Configuration options to use.
      *   will be used.
      */
     public function __construct($exceptionRenderer = null, array $config = [])
     {
+        $this->setConfig($config);
+
         if ($exceptionRenderer) {
             $this->exceptionRenderer = $exceptionRenderer;
+
+            return;
         }
 
-        $config = $config ?: Configure::read('Error');
-        $this->setConfig($config);
+        $this->exceptionRenderer = $this->getConfig('exceptionRenderer', ExceptionRenderer::class);
     }
 
     /**
@@ -151,10 +154,6 @@ class ErrorHandlerMiddleware
      */
     protected function getRenderer(Throwable $exception, ServerRequestInterface $request): ExceptionRendererInterface
     {
-        if (!$this->exceptionRenderer) {
-            $this->exceptionRenderer = $this->getConfig('exceptionRenderer') ?: ExceptionRenderer::class;
-        }
-
         if (is_string($this->exceptionRenderer)) {
             $class = App::className($this->exceptionRenderer, 'Error');
             if (!$class) {
@@ -166,6 +165,7 @@ class ErrorHandlerMiddleware
 
             return new $class($exception, $request);
         }
+
         $factory = $this->exceptionRenderer;
 
         return $factory($exception, $request);
@@ -202,8 +202,32 @@ class ErrorHandlerMiddleware
      */
     protected function getMessage(ServerRequestInterface $request, Throwable $exception): string
     {
+        $message = $this->getMessageForException($exception);
+
+        $message .= "\nRequest URL: " . $request->getRequestTarget();
+        $referer = $request->getHeaderLine('Referer');
+        if ($referer) {
+            $message .= "\nReferer URL: " . $referer;
+        }
+        if ($this->getConfig('trace')) {
+            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
+
+        return $message;
+    }
+
+    /**
+     * Generate the message for the exception
+     *
+     * @param \Exception $exception The exception to log a message for.
+     * @param bool $isPrevious False for original exception, true for previous
+     * @return string Error message
+     */
+    protected function getMessageForException($exception, $isPrevious = false)
+    {
         $message = sprintf(
-            '[%s] %s',
+            '%s[%s] %s',
+            $isPrevious ? "\nPrevious: " : '',
             get_class($exception),
             $exception->getMessage()
         );
@@ -215,13 +239,10 @@ class ErrorHandlerMiddleware
                 $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
             }
         }
-        $message .= "\nRequest URL: " . $request->getRequestTarget();
-        $referer = $request->getHeaderLine('Referer');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
-        if ($this->getConfig('trace')) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+
+        $previous = $exception->getPrevious();
+        if ($previous) {
+            $message .= $this->getMessageForException($previous, true);
         }
 
         return $message;

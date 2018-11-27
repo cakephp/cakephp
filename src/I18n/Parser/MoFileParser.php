@@ -134,9 +134,9 @@ class MoFileParser
                 continue;
             }
 
-            $messages[$singularId] = $singular;
+            $messages[$singularId]['_context'][''] = $singular;
             if ($pluralId !== null) {
-                $messages[$pluralId] = $plurals;
+                $messages[$pluralId]['_context'][''] = $plurals;
             }
         }
 

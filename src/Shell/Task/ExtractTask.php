@@ -20,8 +20,7 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
-use Cake\Filesystem\File;
-use Cake\Filesystem\Folder;
+use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
@@ -192,7 +191,7 @@ class ExtractTask extends Shell
             if (!Plugin::isLoaded($plugin)) {
                 throw new MissingPluginException(['plugin' => $plugin]);
             }
-            $this->_paths = [Plugin::classPath($plugin)];
+            $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
             $this->params['plugin'] = $plugin;
         } else {
             $this->_getPaths();
@@ -599,9 +598,11 @@ class ExtractTask extends Shell
             }
 
             $filename = str_replace('/', '_', $domain) . '.pot';
-            $File = new File($this->_output . $filename);
             $response = '';
-            while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
+            while ($overwriteAll === false
+                && file_exists($this->_output . $filename)
+                && strtoupper($response) !== 'Y'
+            ) {
                 $this->out();
                 $response = $this->in(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
@@ -612,15 +613,14 @@ class ExtractTask extends Shell
                     $response = '';
                     while (!$response) {
                         $response = $this->in('What would you like to name this file?', null, 'new_' . $filename);
-                        $File = new File($this->_output . $response);
                         $filename = $response;
                     }
                 } elseif (strtoupper($response) === 'A') {
                     $overwriteAll = true;
                 }
             }
-            $File->write($output);
-            $File->close();
+            $fs = new Filesystem();
+            $fs->dumpFile($this->_output . $filename, $output);
         }
     }
 
@@ -765,8 +765,10 @@ class ExtractTask extends Shell
         }
         foreach ($this->_paths as $path) {
             $path = realpath($path) . DIRECTORY_SEPARATOR;
-            $Folder = new Folder($path);
-            $files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
+            $fs = new Filesystem();
+            $files = $fs->findRecursive($path, '/\.php$/');
+            $files = array_keys(iterator_to_array($files));
+            sort($files);
             if (!empty($pattern)) {
                 $files = preg_grep($pattern, $files, PREG_GREP_INVERT);
                 $files = array_values($files);

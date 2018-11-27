@@ -133,6 +133,30 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetTypeMap()
+    {
+        $response = new Response();
+        $response->setTypeMap('ical', 'text/calendar');
+
+        $response = $response->withType('ical')->getType();
+        $this->assertEquals('text/calendar', $response);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetTypeMapAsArray()
+    {
+        $response = new Response();
+        $response->setTypeMap('ical', ['text/calendar']);
+
+        $response = $response->withType('ical')->getType();
+        $this->assertEquals('text/calendar', $response);
+    }
+
+    /**
      * Tests the withType method
      *
      * @return void
@@ -1096,7 +1120,8 @@ class ResponseTest extends TestCase
 
         $expected = '/* this is the test asset css file */';
         $this->assertEquals($expected, trim($body->getContents()));
-        $this->assertEquals($expected, trim($new->getFile()->read()));
+        $file = $new->getFile()->openFile();
+        $this->assertEquals($expected, trim($file->fread(100)));
     }
 
     /**

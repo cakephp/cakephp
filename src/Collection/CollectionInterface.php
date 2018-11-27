@@ -559,6 +559,25 @@ interface CollectionInterface extends Iterator, JsonSerializable
     public function take(int $size = 1, int $from = 0): CollectionInterface;
 
     /**
+     * Returns the last N elements of a collection
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [1, 2, 3, 4, 5];
+     *
+     * $last = (new Collection($items))->takeLast(3);
+     *
+     * // Result will look like this when converted to array
+     * [3, 4, 5];
+     * ```
+     *
+     * @param int $howMany The number of elements at the end of the collection
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function takeLast(int $howMany): CollectionInterface;
+
+    /**
      * Returns a new collection that will skip the specified amount of elements
      * at the beginning of the iteration.
      *
@@ -809,6 +828,16 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @return \Cake\Collection\CollectionInterface
      */
     public function compile(bool $preserveKeys = true): CollectionInterface;
+
+    /**
+     * Returns a new collection where any operations chained after it are guaranteed
+     * to be run lazily. That is, elements will be yieleded one at a time.
+     *
+     * A lazy collection can only be iterated once. A second attempt results in an error.
+     *
+     * @return \Cake\Collection\CollectionInterface
+     */
+    public function lazy();
 
     /**
      * Returns a new collection where the operations performed by this collection.

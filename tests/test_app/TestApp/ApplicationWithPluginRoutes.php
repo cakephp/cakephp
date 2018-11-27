@@ -22,12 +22,20 @@ use Cake\Routing\RouteBuilder;
 
 class ApplicationWithPluginRoutes extends BaseApplication
 {
+    /**
+     * @return void
+     */
     public function bootstrap(): void
     {
         parent::bootstrap();
         $this->addPlugin('TestPlugin');
     }
 
+    /**
+     * @param \Cake\Http\MiddlewareQueue $middleware
+     *
+     * @return \Cake\Http\MiddlewareQueue
+     */
     public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         $middleware->add(new RoutingMiddleware($this));
@@ -43,7 +51,7 @@ class ApplicationWithPluginRoutes extends BaseApplication
      */
     public function routes(RouteBuilder $routes): void
     {
-        $routes->scope('/app', function ($routes) {
+        $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
         $routes->loadPlugin('TestPlugin');

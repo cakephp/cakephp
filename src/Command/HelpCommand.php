@@ -22,6 +22,7 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
+use Cake\Core\Configure;
 use SimpleXMLElement;
 
 /**
@@ -45,7 +46,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     }
 
     /**
-     * Main function Prints out the list of shells.
+     * Main function Prints out the list of commands.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
@@ -55,7 +56,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     {
         if (!$args->getOption('xml')) {
             $io->out('<info>Current Paths:</info>', 2);
-            $io->out('* app:  ' . APP_DIR);
+            $io->out('* app:  ' . Configure::read('App.dir'));
             $io->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
             $io->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
             $io->out('');
@@ -117,8 +118,8 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         }
         $io->out('');
 
-        $io->out('To run a command, type <info>`cake shell_name [args|options]`</info>');
-        $io->out('To get help on a specific command, type <info>`cake shell_name --help`</info>', 2);
+        $io->out('To run a command, type <info>`cake command_name [args|options]`</info>');
+        $io->out('To get help on a specific command, type <info>`cake command_name --help`</info>', 2);
     }
 
     /**
@@ -154,7 +155,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            'Get the list of available shells for this application.'
+            'Get the list of available commands for this application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,

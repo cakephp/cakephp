@@ -42,13 +42,13 @@ class TranslateBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.authors',
-        'core.groups',
-        'core.special_tags',
-        'core.tags',
-        'core.comments',
-        'core.translates',
+        'core.Articles',
+        'core.Authors',
+        'core.Groups',
+        'core.SpecialTags',
+        'core.Tags',
+        'core.Comments',
+        'core.Translates',
     ];
 
     public function tearDown()

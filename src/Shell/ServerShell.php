@@ -118,7 +118,7 @@ class ServerShell extends Shell
         $this->out();
         $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
         $this->hr();
-        $this->out(sprintf('App : %s', APP_DIR));
+        $this->out(sprintf('App : %s', Configure::read('App.dir')));
         $this->out(sprintf('Path: %s', APP));
         $this->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
         $this->out(sprintf('Ini Path: %s', $this->_iniPath));

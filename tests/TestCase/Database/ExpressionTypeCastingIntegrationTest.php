@@ -84,7 +84,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
  */
 class ExpressionTypeCastingIntegrationTest extends TestCase
 {
-    public $fixtures = ['core.ordered_uuid_items'];
+    public $fixtures = ['core.OrderedUuidItems'];
 
     public function setUp()
     {

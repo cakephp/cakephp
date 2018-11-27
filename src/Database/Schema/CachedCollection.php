@@ -55,7 +55,7 @@ class CachedCollection extends Collection
 
         if (!empty($cacheConfig) && !$options['forceRefresh']) {
             $cached = Cache::read($cacheKey, $cacheConfig);
-            if ($cached !== false) {
+            if ($cached) {
                 return $cached;
             }
         }

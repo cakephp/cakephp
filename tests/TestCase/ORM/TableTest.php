@@ -54,18 +54,18 @@ class UsersTable extends Table
 class TableTest extends TestCase
 {
     public $fixtures = [
-        'core.articles',
-        'core.tags',
-        'core.articles_tags',
-        'core.authors',
-        'core.categories',
-        'core.comments',
-        'core.groups',
-        'core.groups_members',
-        'core.members',
-        'core.polymorphic_tagged',
-        'core.site_articles',
-        'core.users',
+        'core.Articles',
+        'core.Tags',
+        'core.ArticlesTags',
+        'core.Authors',
+        'core.Categories',
+        'core.Comments',
+        'core.Groups',
+        'core.GroupsMembers',
+        'core.Members',
+        'core.PolymorphicTagged',
+        'core.SiteArticles',
+        'core.Users',
     ];
 
     /**
@@ -127,7 +127,7 @@ class TableTest extends TestCase
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

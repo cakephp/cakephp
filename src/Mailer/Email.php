@@ -18,7 +18,6 @@ namespace Cake\Mailer;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
-use Cake\Filesystem\File;
 use Cake\Http\Client\FormDataPart;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
@@ -83,6 +82,13 @@ class Email implements JsonSerializable, Serializable
      * @var string
      */
     public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
+
+    /**
+     * Constant for folder name containing email templates.
+     *
+     * @var string
+     */
+    public const TEMPLATE_FOLDER = 'email';
 
     /**
      * Recipient of the email
@@ -943,10 +949,10 @@ class Email implements JsonSerializable, Serializable
         }
         if ($this->_messageId !== false) {
             if ($this->_messageId === true) {
-                $headers['Message-ID'] = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
-            } else {
-                $headers['Message-ID'] = $this->_messageId;
+                $this->_messageId = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->_domain . '>';
             }
+
+            $headers['Message-ID'] = $this->_messageId;
         }
 
         if ($this->_priority) {
@@ -1001,68 +1007,6 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Sets template.
-     *
-     * @param string|null $template Template name or null to not use.
-     * @return $this
-     */
-    public function setTemplate(?string $template): self
-    {
-        deprecationWarning(
-            'Email::setTemplate() is deprecated. Use $email->viewBuilder()->setTemplate() instead.'
-        );
-
-        $this->viewBuilder()->setTemplate($template ?: '');
-
-        return $this;
-    }
-
-    /**
-     * Gets template.
-     *
-     * @return string
-     */
-    public function getTemplate(): string
-    {
-        deprecationWarning(
-            'Email::getTemplate() is deprecated. Use $email->viewBuilder()->getTemplate() instead.'
-        );
-
-        return $this->viewBuilder()->getTemplate();
-    }
-
-    /**
-     * Sets layout.
-     *
-     * @param string|null $layout Layout name or null to not use
-     * @return $this
-     */
-    public function setLayout(?string $layout): self
-    {
-        deprecationWarning(
-            'Email::setLayout() is deprecated. Use $email->viewBuilder()->setLayout() instead.'
-        );
-
-        $this->viewBuilder()->setLayout($layout ?: false);
-
-        return $this;
-    }
-
-    /**
-     * Gets layout.
-     *
-     * @return string|null|false
-     */
-    public function getLayout()
-    {
-        deprecationWarning(
-            'Email::getLayout() is deprecated. Use $email->viewBuilder()->getLayout() instead.'
-        );
-
-        return $this->viewBuilder()->getLayout();
-    }
-
-    /**
      * Sets view class for render.
      *
      * @param string $viewClass View class name.
@@ -1106,68 +1050,6 @@ class Email implements JsonSerializable, Serializable
     public function getViewVars(): array
     {
         return $this->viewBuilder()->getVars();
-    }
-
-    /**
-     * Sets theme to use when rendering.
-     *
-     * @param string|null $theme Theme name.
-     * @return $this
-     */
-    public function setTheme(?string $theme): self
-    {
-        deprecationWarning(
-            'Email::setTheme() is deprecated. Use $email->viewBuilder()->setTheme() instead.'
-        );
-
-        $this->viewBuilder()->setTheme($theme);
-
-        return $this;
-    }
-
-    /**
-     * Gets theme to use when rendering.
-     *
-     * @return string|null
-     */
-    public function getTheme(): ?string
-    {
-        deprecationWarning(
-            'Email::getTheme() is deprecated. Use $email->viewBuilder()->getTheme() instead.'
-        );
-
-        return $this->viewBuilder()->getTheme();
-    }
-
-    /**
-     * Sets helpers to be used when rendering.
-     *
-     * @param array $helpers Helpers list.
-     * @return $this
-     */
-    public function setHelpers(array $helpers): self
-    {
-        deprecationWarning(
-            'Email::setHelpers() is deprecated. Use $email->viewBuilder()->setHelpers() instead.'
-        );
-
-        $this->viewBuilder()->setHelpers($helpers, false);
-
-        return $this;
-    }
-
-    /**
-     * Gets helpers to be used when rendering.
-     *
-     * @return array
-     */
-    public function getHelpers(): array
-    {
-        deprecationWarning(
-            'Email::getHelpers() is deprecated. Use $email->viewBuilder()->getHelpers() instead.'
-        );
-
-        return $this->viewBuilder()->getHelpers();
     }
 
     /**
@@ -1910,9 +1792,7 @@ class Email implements JsonSerializable, Serializable
      */
     protected function _readFile($path)
     {
-        $File = new File($path);
-
-        return chunk_split(base64_encode($File->read()));
+        return chunk_split(base64_encode((string)file_get_contents($path)));
     }
 
     /**
@@ -2073,25 +1953,25 @@ class Email implements JsonSerializable, Serializable
             return $rendered;
         }
 
-        $View = $this->createView();
+        $view = $this->createView();
 
-        list($templatePlugin) = pluginSplit($View->getTemplate());
-        list($layoutPlugin) = pluginSplit((string)$View->getLayout());
+        list($templatePlugin) = pluginSplit($view->getTemplate());
+        list($layoutPlugin) = pluginSplit((string)$view->getLayout());
         if ($templatePlugin) {
-            $View->setPlugin($templatePlugin);
+            $view->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {
-            $View->setPlugin($layoutPlugin);
+            $view->setPlugin($layoutPlugin);
         }
 
-        if ($View->get('content') === null) {
-            $View->set('content', $content);
+        if ($view->get('content') === null) {
+            $view->set('content', $content);
         }
 
         foreach ($types as $type) {
-            $View->setTemplatePath('Email' . DIRECTORY_SEPARATOR . $type);
-            $View->setLayoutPath('Email' . DIRECTORY_SEPARATOR . $type);
+            $view->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
+            $view->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
 
-            $render = $View->render();
+            $render = $view->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);
             $rendered[$type] = $this->_encodeString($render, $this->charset);
         }

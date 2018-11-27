@@ -18,6 +18,7 @@ use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
+use Composer\CaBundle\CaBundle;
 
 /**
  * HTTP curl adapter test.
@@ -30,7 +31,7 @@ class CurlTest extends TestCase
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
 
         $this->curl = new Curl();
-        $this->caFile = CORE_PATH . 'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+        $this->caFile = CaBundle::getBundledCaBundlePath();
     }
 
     /**
@@ -108,6 +109,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_TIMEOUT => 5,
             CURLOPT_CAINFO => $this->caFile,
         ];
@@ -173,6 +175,7 @@ class CurlTest extends TestCase
             ],
             CURLOPT_POST => true,
             CURLOPT_CUSTOMREQUEST => 'PUT',
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
         ];
         $this->assertSame($expected, $result);
@@ -238,6 +241,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
             CURLOPT_CAINFO => $this->caFile,
@@ -255,6 +259,8 @@ class CurlTest extends TestCase
         $options = [
             'proxy' => [
                 'proxy' => '127.0.0.1:8080',
+                'username' => 'frodo',
+                'password' => 'one_ring',
             ],
         ];
         $request = new Request('http://localhost/things', 'GET');
@@ -269,8 +275,10 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_PROXY => '127.0.0.1:8080',
+            CURLOPT_PROXYUSERPWD => 'frodo:one_ring',
         ];
         $this->assertSame($expected, $result);
     }
@@ -299,6 +307,7 @@ class CurlTest extends TestCase
                 'User-Agent: CakePHP',
             ],
             CURLOPT_HTTPGET => true,
+            CURLOPT_POSTFIELDS => '',
             CURLOPT_CAINFO => $this->caFile,
             CURLOPT_USERAGENT => 'Super-secret',
         ];

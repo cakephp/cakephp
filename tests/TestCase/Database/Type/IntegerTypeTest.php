@@ -96,6 +96,36 @@ class IntegerTypeTest extends TestCase
     }
 
     /**
+     * Test to make sure the method throws an exception for invalid integer values.
+     *
+     * @return void
+     */
+    public function testInvalidManyToPHP()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $values = [
+            'a' => null,
+            'b' => '2.3',
+            'c' => '15',
+            'd' => '0.0',
+            'e' => 10,
+            'f' => '6a88accf-a34e-4dd9-ade0-8d255ccaecbe',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => 2,
+            'c' => 15,
+            'd' => 0,
+            'e' => 10,
+            'f' => '6a88accf-a34e-4dd9-ade0-8d255ccaecbe',
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
+    }
+
+    /**
      * Test converting to database format
      *
      * @return void
@@ -103,9 +133,6 @@ class IntegerTypeTest extends TestCase
     public function testToDatabase()
     {
         $this->assertNull($this->type->toDatabase(null, $this->driver));
-
-        $result = $this->type->toDatabase('some data', $this->driver);
-        $this->assertSame(0, $result);
 
         $result = $this->type->toDatabase(2, $this->driver);
         $this->assertSame(2, $result);
@@ -115,14 +142,30 @@ class IntegerTypeTest extends TestCase
     }
 
     /**
-     * Tests that passing an invalid value will throw an exception
+     * Invalid Integer Data Provider
      *
      * @return void
      */
-    public function testToDatabaseInvalid()
+    public function invalidIntegerProvider()
+    {
+        return [
+            'array' => [['3', '4']],
+            'non-numeric-string' => ['some-data'],
+            'uuid' => ['6a88accf-a34e-4dd9-ade0-8d255ccaecbe'],
+        ];
+    }
+
+    /**
+     * Tests that passing an invalid value will throw an exception
+     *
+     * @dataProvider invalidIntegerProvider
+     * @param  mixed $value Invalid value to test against the database type.
+     * @return void
+     */
+    public function testToDatabaseInvalid($value)
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->type->toDatabase(['3', '4'], $this->driver);
+        $this->type->toDatabase($value, $this->driver);
     }
 
     /**

@@ -54,6 +54,7 @@ class IntegrationTestTraitTest extends TestCase
         static::setAppNamespace();
 
         Router::reload();
+        Router::extensions(['json']);
         Router::scope('/', function ($routes) {
             $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
             $routes->applyMiddleware('cookie');
@@ -262,7 +263,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         // first clean routes to have Router::$initailized === false
         Router::reload();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithPluginRoutes', null);
 
@@ -501,9 +502,9 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+        $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -520,13 +521,25 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertContains('Template' . DS . 'Posts' . DS . 'index.ctp', $this->_viewName);
+        $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('Template' . DS . 'Layout' . DS . 'default.ctp', $this->_layoutName);
+        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
         $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Tests URLs containing extensions.
+     *
+     * @return void
+     */
+    public function testRequestWithExt()
+    {
+        $this->get(['controller' => 'Posts', 'action' => 'ajax', '_ext' => 'json']);
+
+        $this->assertResponseCode(200);
     }
 
     /**
@@ -537,7 +550,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertTemplateAfterCellRender()
     {
         $this->get('/posts/get');
-        $this->assertContains('Template' . DS . 'Posts' . DS . 'get.ctp', $this->_viewName);
+        $this->assertContains('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
         $this->assertTemplate('get');
         $this->assertResponseContains('cellcontent');
     }
@@ -549,7 +562,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testArrayUrls()
     {
-        $this->post(['controller' => 'Posts', 'action' => 'index']);
+        $this->post(['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
         $this->assertEquals('value', $this->viewVariable('test'));
     }
 
@@ -868,10 +881,10 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertRedirect()
     {
         $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/get/tasks/index');
 
         $this->assertRedirect();
-        $this->assertRedirect('/tasks/index');
+        $this->assertRedirect('/get/tasks/index');
         $this->assertRedirect(['controller' => 'Tasks', 'action' => 'index']);
 
         $this->assertResponseEmpty();
@@ -1284,7 +1297,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function assertionFailureMessagesProvider()
     {
-        $templateDir = TEST_APP . 'TestApp' . DS . 'Template' . DS;
+        $templateDir = TEST_APP . 'templates' . DS;
 
         return [
             'assertContentType' => ['assertContentType', 'Failed asserting that \'test\' was set as the Content-Type.', '/posts/index', 'test'],
@@ -1294,7 +1307,7 @@ class IntegrationTestTraitTest extends TestCase
             'assertFileResponse' => ['assertFileResponse', 'Failed asserting that \'test\' file was sent.', '/posts/file', 'test'],
             'assertHeader' => ['assertHeader', 'Failed asserting that \'test\' equals content in header \'X-Cake\'.', '/posts/header', 'X-Cake', 'test'],
             'assertHeaderContains' => ['assertHeaderContains', 'Failed asserting that \'test\' is in header \'X-Cake\'', '/posts/header', 'X-Cake', 'test'],
-            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file ' . $templateDir . 'Layout' . DS . 'default.ctp.', '/posts/index', 'custom_layout'],
+            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file ' . $templateDir . 'layout' . DS . 'default.php.', '/posts/index', 'custom_layout'],
             'assertRedirect' => ['assertRedirect', 'Failed asserting that \'http://localhost/\' equals content in header \'Location\'.', '/posts/flashNoRender', '/'],
             'assertRedirectContains' => ['assertRedirectContains', 'Failed asserting that \'/posts/somewhere-else\' is in header \'Location\'.', '/posts/flashNoRender', '/posts/somewhere-else'],
             'assertResponseCode' => ['assertResponseCode', 'Failed asserting that 302 matches response status code 200.', '/posts/index', 302],
@@ -1311,7 +1324,7 @@ class IntegrationTestTraitTest extends TestCase
             'assertResponseRegExp' => ['assertResponseRegExp', 'Failed asserting that /test/ PCRE pattern found in response body.', '/posts/index/error', '/test/'],
             'assertResponseSuccess' => ['assertResponseSuccess', 'Failed asserting that 404 is between 200 and 308.', '/posts/missing'],
             'assertSession' => ['assertSession', 'Failed asserting that \'test\' is in session path \'Missing.path\'.', '/posts/index', 'test', 'Missing.path'],
-            'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file ' . $templateDir . 'Posts' . DS . 'index.ctp.', '/posts/index', 'custom_template'],
+            'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file ' . $templateDir . 'Posts' . DS . 'index.php.', '/posts/index', 'custom_template'],
             'assertFlashMessage' => ['assertFlashMessage', 'Failed asserting that \'missing\' was in \'flash\' message.', '/posts/index', 'missing'],
             'assertFlashMessageWithKey' => ['assertFlashMessage', 'Failed asserting that \'missing\' was in \'auth\' message.', '/posts/index', 'missing', 'auth'],
             'assertFlashMessageAt' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' was in \'flash\' message #0.', '/posts/index', 0, 'missing'],

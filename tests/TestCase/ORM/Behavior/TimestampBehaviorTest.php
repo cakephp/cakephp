@@ -45,7 +45,7 @@ class TimestampBehaviorTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.users',
+        'core.Users',
     ];
 
     /**

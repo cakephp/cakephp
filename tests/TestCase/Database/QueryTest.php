@@ -32,11 +32,11 @@ use DateTimeImmutable;
 class QueryTest extends TestCase
 {
     public $fixtures = [
-        'core.articles',
-        'core.authors',
-        'core.comments',
-        'core.profiles',
-        'core.menu_link_trees',
+        'core.Articles',
+        'core.Authors',
+        'core.Comments',
+        'core.Profiles',
+        'core.MenuLinkTrees',
     ];
 
     public $autoFixtures = false;
@@ -724,7 +724,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(
                 [
-                    'id' => '3something-crazy',
+                    'id' => '3',
                     'created <' => new \DateTime('2013-01-01 12:00'),
                 ],
                 ['created' => 'datetime', 'id' => 'integer']
@@ -740,7 +740,7 @@ class QueryTest extends TestCase
             ->from('comments')
             ->where(
                 [
-                    'id' => '1something-crazy',
+                    'id' => '1',
                     'created <' => new \DateTime('2013-01-01 12:00'),
                 ],
                 ['created' => 'datetime', 'id' => 'integer']
@@ -1850,26 +1850,26 @@ class QueryTest extends TestCase
     }
 
     /**
-     * Test that order() works with an associative array which contains extra values.
+     * Test exception for order() with an associative array which contains extra values.
      *
      * @return void
      */
     public function testSelectOrderByAssociativeArrayContainingExtraExpressions()
     {
-        $this->deprecated(function () {
-            $this->loadFixtures('Articles');
-            $query = new Query($this->connection);
-            $query->select(['id'])
-                ->from('articles')
-                ->order([
-                    'id' => 'desc -- Comment',
-                ]);
-            $result = $query->execute();
-            $this->assertEquals(['id' => 3], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 2], $result->fetch('assoc'));
-            $this->assertEquals(['id' => 1], $result->fetch('assoc'));
-            $result->closeCursor();
-        });
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage(
+            'Passing extra expressions by associative array is not ' .
+            'allowed to avoid potential SQL injection. ' .
+            'Use QueryExpression or numeric array instead.'
+        );
+
+        $this->loadFixtures('Articles');
+        $query = new Query($this->connection);
+        $query->select(['id'])
+            ->from('articles')
+            ->order([
+                'id' => 'desc -- Comment',
+            ]);
     }
 
     /**

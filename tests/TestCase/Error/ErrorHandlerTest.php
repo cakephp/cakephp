@@ -109,7 +109,7 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
         if ($this->_restoreError) {
             restore_error_handler();
             restore_exception_handler();
@@ -192,9 +192,9 @@ class ErrorHandlerTest extends TestCase
         $this->_restoreError = true;
 
         ob_start();
-        //@codingStandardsIgnoreStart
+        // phpcs:disable
         @include 'invalid.file';
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
         $result = ob_get_clean();
         $this->assertEmpty($result);
     }

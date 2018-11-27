@@ -20,6 +20,8 @@ use SplFileInfo;
 
 /**
  * Convenience class for reading, writing and appending to files.
+ *
+ * @deprecated 4.0.0 Will be removed in 5.0.
  */
 class File
 {
@@ -574,7 +576,7 @@ class File
     /**
      * Copy the File to $dest
      *
-     * @param string $dest Destination for the copy
+     * @param string $dest Absolute path to copy the file to.
      * @param bool $overwrite Overwrite $dest if exists
      * @return bool Success
      */

@@ -411,23 +411,29 @@ trait DateFormatTrait
     }
 
     /**
-     * Get the difference formatter instance or overwrite the current one.
+     * Get the difference formatter instance.
      *
-     * @param \Cake\I18n\RelativeTimeFormatter|null $formatter The formatter instance when setting.
      * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
      */
-    public static function diffFormatter($formatter = null)
+    public static function getDiffFormatter(): RelativeTimeFormatter
     {
-        if ($formatter === null) {
-            // Use the static property defined in chronos.
-            if (static::$diffFormatter === null) {
-                static::$diffFormatter = new RelativeTimeFormatter();
-            }
-
-            return static::$diffFormatter;
+        // Use the static property defined in chronos.
+        if (static::$diffFormatter === null) {
+            static::$diffFormatter = new RelativeTimeFormatter();
         }
 
-        return static::$diffFormatter = $formatter;
+        return static::$diffFormatter;
+    }
+
+    /**
+     * Set the difference formatter instance.
+     *
+     * @param \Cake\I18n\RelativeTimeFormatter $formatter The formatter instance when setting.
+     * @return void
+     */
+    public static function setDiffFormatter(RelativeTimeFormatter $formatter): void
+    {
+        static::$diffFormatter = $formatter;
     }
 
     /**

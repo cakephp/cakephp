@@ -60,7 +60,7 @@ class CompletionShellTest extends TestCase
         parent::tearDown();
         unset($this->Shell);
         static::setAppNamespace('App');
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -102,7 +102,7 @@ class CompletionShellTest extends TestCase
         $output = $this->out->output();
 
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
-            'cache help i18n plugin routes schema_cache server version ' .
+            'cache help i18n plugin routes schema_cache server upgrade version ' .
             "abort demo i18m integration merge sample shell_test testing_dispatch";
         $this->assertTextEquals($expected, $output);
     }

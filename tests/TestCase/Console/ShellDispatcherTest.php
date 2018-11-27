@@ -50,7 +50,7 @@ class ShellDispatcherTest extends TestCase
     {
         parent::tearDown();
         ShellDispatcher::resetAliases();
-        Plugin::unload();
+        Plugin::getCollection()->clear();
     }
 
     /**

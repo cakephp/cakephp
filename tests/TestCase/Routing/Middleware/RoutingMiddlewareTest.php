@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Cache\Cache;
+use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -476,7 +477,7 @@ class RoutingMiddlewareTest extends TestCase
         $cacheConfigName = '_cake_router_';
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
@@ -490,7 +491,7 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware($request, $response, $next);
 
-        Cache::clear(false, $cacheConfigName);
+        Cache::clear($cacheConfigName);
         Cache::drop($cacheConfigName);
     }
 
@@ -506,13 +507,13 @@ class RoutingMiddlewareTest extends TestCase
         Cache::disable();
         Cache::setConfig($cacheConfigName, [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();
         $next = function ($req, $res) use ($cacheConfigName) {
             $routeCollection = Cache::read('routeCollection', $cacheConfigName);
-            $this->assertFalse($routeCollection);
+            $this->assertNull($routeCollection);
 
             return $res;
         };
@@ -520,7 +521,7 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware($request, $response, $next);
 
-        Cache::clear(false, $cacheConfigName);
+        Cache::clear($cacheConfigName);
         Cache::drop($cacheConfigName);
         Cache::enable();
     }
@@ -532,12 +533,12 @@ class RoutingMiddlewareTest extends TestCase
      */
     public function testCacheConfigNotFound()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(CacheInvalidArgumentException::class);
         $this->expectExceptionMessage('The "notfound" cache configuration does not exist.');
 
         Cache::setConfig('_cake_router_', [
             'engine' => 'File',
-            'path' => TMP,
+            'path' => CACHE,
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $response = new Response();

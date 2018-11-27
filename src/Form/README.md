@@ -55,7 +55,7 @@ You can always define additional public methods as you need as well.
 ```php
 $contact = new ContactForm();
 $success = $contact->execute($data);
-$errors = $contact->errors();
+$errors = $contact->getErrors();
 ```
 
 ## Documentation

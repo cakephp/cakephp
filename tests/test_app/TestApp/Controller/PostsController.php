@@ -79,6 +79,19 @@ class PostsController extends AppController
     }
 
     /**
+     * Stub AJAX method
+     *
+     * @return void
+     */
+    public function ajax()
+    {
+        $data = [];
+
+        $this->set(compact('data'));
+        $this->set('_serialize', ['data']);
+    }
+
+    /**
      * Post endpoint for integration testing with security component.
      *
      * @return void

@@ -1053,6 +1053,24 @@ class RouteTest extends TestCase
     }
 
     /**
+     * Test that match() matches explicit GET routes
+     *
+     * @return void
+     */
+    public function testMatchWithExplicitGet()
+    {
+        $route = new Route(
+            '/anything',
+            ['controller' => 'Articles', 'action' => 'foo', '_method' => 'GET']
+        );
+        $result = $route->match([
+            'controller' => 'Articles',
+            'action' => 'foo',
+        ]);
+        $this->assertEquals("/anything", $result);
+    }
+
+    /**
      * Test separartor.
      *
      * @return void

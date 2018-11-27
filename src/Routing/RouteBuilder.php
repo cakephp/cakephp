@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
+use Cake\Routing\Route\RedirectRoute;
 use Cake\Routing\Route\Route;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -280,7 +281,7 @@ class RouteBuilder
      * });
      * ```
      *
-     * Plugins will create lower_case underscored resource routes. e.g
+     * Plugins will create lowercase dasherized resource routes. e.g
      * `/comments/comments`
      *
      * Connect resource routes for the Articles controller in the
@@ -292,7 +293,7 @@ class RouteBuilder
      * });
      * ```
      *
-     * Prefixes will create lower_case underscored resource routes. e.g
+     * Prefixes will create lowercase dasherized resource routes. e.g
      * `/admin/posts`
      *
      * You can create nested resources by passing a callback in:
@@ -319,7 +320,7 @@ class RouteBuilder
      * You can use the `inflect` option to change how path segments are generated:
      *
      * ```
-     * $routes->resources('PaymentTypes', ['inflect' => 'dasherize']);
+     * $routes->resources('PaymentTypes', ['inflect' => 'underscore']);
      * ```
      *
      * Will generate routes like `/payment-types` instead of `/payment_types`
@@ -328,7 +329,7 @@ class RouteBuilder
      *
      * - 'id' - The regular expression fragment to use when matching IDs. By default, matches
      *    integer values and UUIDs.
-     * - 'inflect' - Choose the inflection method used on the resource name. Defaults to 'underscore'.
+     * - 'inflect' - Choose the inflection method used on the resource name. Defaults to 'dasherize'.
      * - 'only' - Only connect the specific list of actions.
      * - 'actions' - Override the method names used for connecting actions.
      * - 'map' - Additional resource routes that should be connected. If you define 'only' and 'map',
@@ -353,7 +354,7 @@ class RouteBuilder
         }
         $options += [
             'connectOptions' => [],
-            'inflect' => 'underscore',
+            'inflect' => 'dasherize',
             'id' => static::ID . '|' . static::UUID,
             'only' => [],
             'actions' => [],
@@ -659,14 +660,9 @@ class RouteBuilder
     public function connect($route, $defaults = [], array $options = []): Route
     {
         $defaults = $this->parseDefaults($defaults);
-        if (!isset($options['action']) && !isset($defaults['action'])) {
-            $defaults['action'] = 'index';
-        }
-
         if (empty($options['_ext'])) {
             $options['_ext'] = $this->_extensions;
         }
-
         if (empty($options['routeClass'])) {
             $options['routeClass'] = $this->_routeClass;
         }
@@ -758,6 +754,9 @@ class RouteBuilder
                 }
             }
             $defaults += $this->_params + ['plugin' => null];
+            if (!isset($defaults['action']) && !isset($options['action'])) {
+                $defaults['action'] = 'index';
+            }
 
             $route = new $routeClass($route, $defaults, $options);
         }
@@ -803,17 +802,18 @@ class RouteBuilder
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
-     * @return void
+     * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute
      */
-    public function redirect(string $route, $url, array $options = []): void
+    public function redirect(string $route, $url, array $options = []): Route
     {
         if (!isset($options['routeClass'])) {
-            $options['routeClass'] = 'Cake\Routing\Route\RedirectRoute';
+            $options['routeClass'] = RedirectRoute::class;
         }
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
-        $this->connect($route, $url, $options);
+
+        return $this->connect($route, $url, $options);
     }
 
     /**
@@ -857,8 +857,8 @@ class RouteBuilder
             $callback = $params;
             $params = [];
         }
+        $path = '/' . Inflector::dasherize($name);
         $name = Inflector::underscore($name);
-        $path = '/' . $name;
         if (isset($params['path'])) {
             $path = $params['path'];
             unset($params['path']);
@@ -897,7 +897,7 @@ class RouteBuilder
         }
         $params = ['plugin' => $name] + $this->_params;
         if (empty($options['path'])) {
-            $options['path'] = '/' . Inflector::underscore($name);
+            $options['path'] = '/' . Inflector::dasherize($name);
         }
         $this->scope($options['path'], $params, $callback);
     }

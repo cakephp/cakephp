@@ -17,6 +17,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
+use RuntimeException;
 
 /**
  * An expression object for ORDER BY clauses
@@ -66,6 +67,19 @@ class OrderByExpression extends QueryExpression
      */
     protected function _addConditions(array $orders, array $types): void
     {
+        foreach ($orders as $key => $val) {
+            if (is_string($key) &&
+                is_string($val) &&
+                !in_array(strtoupper($val), ['ASC', 'DESC'], true)
+            ) {
+                throw new RuntimeException(
+                    'Passing extra expressions by associative array is not ' .
+                    'allowed to avoid potential SQL injection. ' .
+                    'Use QueryExpression or numeric array instead.'
+                );
+            }
+        }
+
         $this->_conditions = array_merge($this->_conditions, $orders);
     }
 }

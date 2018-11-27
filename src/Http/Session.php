@@ -282,7 +282,7 @@ class Session
      */
     protected function setEngine(SessionHandlerInterface $handler): SessionHandlerInterface
     {
-        if (!headers_sent()) {
+        if (!headers_sent() && session_status() !== \PHP_SESSION_ACTIVE) {
             session_set_save_handler($handler, false);
         }
 
@@ -547,7 +547,7 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCLI && session_status() === PHP_SESSION_ACTIVE) {
+        if (!$this->_isCLI && session_status() === \PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 

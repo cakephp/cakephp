@@ -47,13 +47,13 @@ define('APP', TEST_APP . 'TestApp' . DS);
 define('WWW_ROOT', TEST_APP . 'webroot' . DS);
 define('CONFIG', TEST_APP . 'config' . DS);
 
-//@codingStandardsIgnoreStart
+// phpcs:disable
 @mkdir(LOGS);
 @mkdir(SESSIONS);
 @mkdir(CACHE);
 @mkdir(CACHE . 'views');
 @mkdir(CACHE . 'models');
-//@codingStandardsIgnoreEnd
+// phpcs:enable
 
 require_once CORE_PATH . 'config/bootstrap.php';
 
@@ -75,8 +75,8 @@ Configure::write('App', [
     'cssBaseUrl' => 'css/',
     'paths' => [
         'plugins' => [TEST_APP . 'Plugin' . DS],
-        'templates' => [APP . 'Template' . DS],
-        'locales' => [APP . 'Locale' . DS],
+        'templates' => [TEST_APP . 'templates' . DS],
+        'locales' => [TEST_APP . 'resources' . DS . 'locales' . DS],
     ],
 ]);
 

@@ -18,6 +18,7 @@ namespace Cake\Network;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Network\Exception\SocketException;
 use Cake\Validation\Validation;
+use Composer\CaBundle\CaBundle;
 use Exception;
 use InvalidArgumentException;
 
@@ -87,7 +88,7 @@ class Socket
      * @var array
      */
     protected $_encryptMethods = [
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
@@ -98,7 +99,7 @@ class Socket
         'tlsv10_server' => STREAM_CRYPTO_METHOD_TLSv1_0_SERVER,
         'tlsv11_server' => STREAM_CRYPTO_METHOD_TLSv1_1_SERVER,
         'tlsv12_server' => STREAM_CRYPTO_METHOD_TLSv1_2_SERVER
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
     ];
 
     /**
@@ -207,9 +208,7 @@ class Socket
             $this->_config['context']['ssl']['peer_name'] = $host;
         }
         if (empty($this->_config['context']['ssl']['cafile'])) {
-            $dir = dirname(dirname(__DIR__));
-            $this->_config['context']['ssl']['cafile'] = $dir . DIRECTORY_SEPARATOR .
-                'config' . DIRECTORY_SEPARATOR . 'cacert.pem';
+            $this->_config['context']['ssl']['cafile'] = CaBundle::getBundledCaBundlePath();
         }
         if (!empty($this->_config['context']['ssl']['verify_host'])) {
             $this->_config['context']['ssl']['CN_match'] = $host;
@@ -442,14 +441,14 @@ class Socket
         // See https://github.com/php/php-src/commit/10bc5fd4c4c8e1dd57bd911b086e9872a56300a0
         if (version_compare(PHP_VERSION, '5.6.7', '>=')) {
             if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
-                // @codingStandardsIgnoreStart
+                // phpcs:disable
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
-                // @codingStandardsIgnoreEnd
+                // phpcs:enable
             }
             if ($method === STREAM_CRYPTO_METHOD_TLS_SERVER) {
-                // @codingStandardsIgnoreStart
+                // phpcs:disable
                 $method |= STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
-                // @codingStandardsIgnoreEnd
+                // phpcs:enable
             }
         }
 

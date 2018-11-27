@@ -557,6 +557,18 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Disables the usage of savepoints.
+     *
+     * @return $this
+     */
+    public function disableSavePoints()
+    {
+        $this->_useSavePoints = false;
+
+        return $this;
+    }
+
+    /**
      * Returns whether this connection is using savepoints for nested transactions
      *
      * @return bool true if enabled, false otherwise
@@ -781,6 +793,18 @@ class Connection implements ConnectionInterface
     public function enableQueryLogging(bool $value): ConnectionInterface
     {
         $this->_logQueries = $value;
+
+        return $this;
+    }
+
+    /**
+     * Disable query logging
+     *
+     * @return $this
+     */
+    public function disableQueryLogging()
+    {
+        $this->_logQueries = false;
 
         return $this;
     }
