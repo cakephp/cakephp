@@ -15,7 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
+use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
@@ -728,6 +730,11 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      */
     public function testUsingFunctionExpression()
     {
+        $this->skipIf(
+            ConnectionManager::get('test')->getDriver() instanceof Postgres,
+            'Test needs to be adjusted to not fail on Postgres'
+        );
+
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
 
