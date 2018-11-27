@@ -304,7 +304,7 @@ class Response implements ResponseInterface
             'image/psd',
             'image/x-photoshop',
             'image/photoshop',
-            'zz-application/zz-winassoc-psd'
+            'zz-application/zz-winassoc-psd',
         ],
         'ice' => 'x-conference/x-cooltalk',
         'iges' => 'model/iges',
