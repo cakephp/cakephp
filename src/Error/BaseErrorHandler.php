@@ -125,8 +125,13 @@ abstract class BaseErrorHandler
      * @param array|null $context Context
      * @return bool True if error was handled
      */
-    public function handleError(int $code, string $description, ?string $file = null, ?int $line = null, ?array $context = null): bool
-    {
+    public function handleError(
+        int $code,
+        string $description,
+        ?string $file = null,
+        ?int $line = null,
+        ?array $context = null
+    ): bool {
         if (error_reporting() === 0) {
             return false;
         }

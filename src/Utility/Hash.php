@@ -738,7 +738,7 @@ class Hash
      * Hash::merge() will behave in a recursive fashion (unlike `array_merge`). But it will not act recursively for
      * keys that contain scalar values (unlike `array_merge_recursive`).
      *
-     * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
+     * This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
      *
      * @param array $data Array to be merged
      * @param mixed $merge Array to merge with. The argument and all trailing arguments will be array cast when merged
@@ -773,7 +773,11 @@ class Hash
             foreach ($stack as $curKey => &$curMerge) {
                 foreach ($curMerge[0] as $key => &$val) {
                     $isArray = is_array($curMerge[1]);
-                    if ($isArray && !empty($curMerge[1][$key]) && (array)$curMerge[1][$key] === $curMerge[1][$key] && (array)$val === $val) {
+                    if ($isArray
+                        && !empty($curMerge[1][$key])
+                        && (array)$curMerge[1][$key] === $curMerge[1][$key]
+                        && (array)$val === $val
+                    ) {
                         // Recurse into the current merge data as it is an array.
                         $stack[] = [&$val, &$curMerge[1][$key]];
                     } elseif ((int)$key === $key && $isArray && isset($curMerge[1][$key])) {

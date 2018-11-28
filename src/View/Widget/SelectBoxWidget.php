@@ -198,8 +198,14 @@ class SelectBoxWidget extends BasicWidget
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
      */
-    protected function _renderOptgroup(string $label, $optgroup, ?array $disabled, $selected, $templateVars, $escape): string
-    {
+    protected function _renderOptgroup(
+        string $label,
+        $optgroup,
+        ?array $disabled,
+        $selected,
+        $templateVars,
+        $escape
+    ): string {
         $opts = $optgroup;
         $attrs = [];
         if (isset($optgroup['options'], $optgroup['text'])) {

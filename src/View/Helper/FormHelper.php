@@ -1006,7 +1006,9 @@ class FormHelper extends Helper
 
         if ($legend === true) {
             $isCreate = $context->isCreate();
-            $modelName = Inflector::humanize(Inflector::singularize($this->_View->getRequest()->getParam('controller')));
+            $modelName = Inflector::humanize(
+                Inflector::singularize($this->_View->getRequest()->getParam('controller'))
+            );
             if (!$isCreate) {
                 $legend = __d('cake', 'Edit {0}', $modelName);
             } else {
@@ -1042,8 +1044,8 @@ class FormHelper extends Helper
      * - `type` - Force the type of widget you want. e.g. `type => 'select'`
      * - `label` - Either a string label, or an array of options for the label. See FormHelper::label().
      * - `options` - For widgets that take options e.g. radio, select.
-     * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting (field
-     *    error and error messages).
+     * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting
+     *   (field error and error messages).
      * - `empty` - String or boolean to enable empty select box options.
      * - `nestedInput` - Used with checkbox and radio inputs. Set to false to render inputs outside of label
      *   elements. Can be set to true on any input to force the input inside the label. If you
@@ -1110,7 +1112,11 @@ class FormHelper extends Helper
         $nestedInput = $options['nestedInput'] ?? $nestedInput;
         unset($options['nestedInput']);
 
-        if ($nestedInput === true && $options['type'] === 'checkbox' && !array_key_exists('hiddenField', $options) && $label !== false) {
+        if ($nestedInput === true
+            && $options['type'] === 'checkbox'
+            && !array_key_exists('hiddenField', $options)
+            && $label !== false
+        ) {
             $options['hiddenField'] = '_split';
         }
 
@@ -1519,7 +1525,9 @@ class FormHelper extends Helper
         if ($options['hiddenField']) {
             $hiddenOptions = [
                 'name' => $options['name'],
-                'value' => $options['hiddenField'] !== true && $options['hiddenField'] !== '_split' ? $options['hiddenField'] : '0',
+                'value' => $options['hiddenField'] !== true
+                    && $options['hiddenField'] !== '_split'
+                    ? $options['hiddenField'] : '0',
                 'form' => $options['form'] ?? null,
                 'secure' => false,
             ];
@@ -2442,7 +2450,10 @@ class FormHelper extends Helper
         }
         unset($options['interval'], $options['round']);
 
-        if ($options['val'] === true || $options['val'] === null && isset($options['empty']) && $options['empty'] === false) {
+        if ($options['val'] === true || $options['val'] === null
+            && isset($options['empty'])
+            && $options['empty'] === false
+        ) {
             $val = new DateTime();
             $currentYear = $val->format('Y');
             if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {

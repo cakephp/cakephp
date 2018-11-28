@@ -23,7 +23,8 @@ interface PaginatorInterface
     /**
      * Handles pagination of datasource records.
      *
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The repository or query to paginate.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The repository or query
+     *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results

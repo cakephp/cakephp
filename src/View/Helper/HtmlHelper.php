@@ -106,6 +106,7 @@ class HtmlHelper extends Helper
      * @var array
      */
     protected $_docTypes = [
+        // phpcs:disable Generic.Files.LineLength
         'html4-strict' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">',
         'html4-trans' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
         'html4-frame' => '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
@@ -114,6 +115,7 @@ class HtmlHelper extends Helper
         'xhtml-trans' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
         'xhtml-frame' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
         'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
+        // phpcs:enable Generic.Files.LineLength
     ];
 
     /**
@@ -764,8 +766,13 @@ class HtmlHelper extends Helper
      * @return string Formatted HTML
      * @link https://book.cakephp.org/3.0/en/views/helpers/html.html#creating-table-cells
      */
-    public function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, bool $useCount = false, bool $continueOddEven = true): string
-    {
+    public function tableCells(
+        $data,
+        $oddTrOptions = null,
+        $evenTrOptions = null,
+        bool $useCount = false,
+        bool $continueOddEven = true
+    ): string {
         if (empty($data[0]) || !is_array($data[0])) {
             $data = [$data];
         }
@@ -1065,7 +1072,10 @@ class HtmlHelper extends Helper
         }
 
         if (isset($options['poster'])) {
-            $options['poster'] = $this->Url->assetUrl($options['poster'], ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options);
+            $options['poster'] = $this->Url->assetUrl(
+                $options['poster'],
+                ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options
+            );
         }
         $text = $options['text'];
 

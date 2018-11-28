@@ -1187,8 +1187,12 @@ class BelongsToMany extends Association
      * @param array $options list of options accepted by `Table::delete()`
      * @return array
      */
-    protected function _diffLinks(Query $existing, array $jointEntities, array $targetEntities, array $options = []): array
-    {
+    protected function _diffLinks(
+        Query $existing,
+        array $jointEntities,
+        array $targetEntities,
+        array $options = []
+    ): array {
         $junction = $this->junction();
         $target = $this->getTarget();
         $belongsTo = $junction->getAssociation($target->getAlias());

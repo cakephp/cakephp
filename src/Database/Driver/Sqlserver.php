@@ -20,6 +20,7 @@ use Cake\Database\Driver;
 use Cake\Database\Query;
 use Cake\Database\Statement\SqlserverStatement;
 use Cake\Database\StatementInterface;
+use InvalidArgumentException;
 use PDO;
 
 /**
@@ -72,7 +73,10 @@ class Sqlserver extends Driver
         $config = $this->_config;
 
         if (isset($config['persistent']) && $config['persistent']) {
-            throw new \InvalidArgumentException('Config setting "persistent" cannot be set to true, as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT');
+            throw new InvalidArgumentException(
+                'Config setting "persistent" cannot be set to true, '
+                . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT'
+            );
         }
 
         $config['flags'] += [

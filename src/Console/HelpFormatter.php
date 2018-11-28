@@ -109,7 +109,10 @@ class HelpFormatter
                 ]);
             }
             $out[] = '';
-            $out[] = sprintf('To see help on a subcommand use <info>`' . $this->_alias . ' %s [subcommand] --help`</info>', $parser->getCommand());
+            $out[] = sprintf(
+                'To see help on a subcommand use <info>`' . $this->_alias . ' %s [subcommand] --help`</info>',
+                $parser->getCommand()
+            );
             $out[] = '';
         }
 

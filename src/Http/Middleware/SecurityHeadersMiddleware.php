@@ -248,8 +248,11 @@ class SecurityHeadersMiddleware
      * @param callable $next Callback to invoke the next middleware.
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
-    {
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface {
         $response = $next($request, $response);
         foreach ($this->headers as $header => $value) {
             $response = $response->withHeader($header, $value);

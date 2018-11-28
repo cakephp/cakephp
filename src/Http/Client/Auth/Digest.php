@@ -124,7 +124,9 @@ class Digest
         } else {
             $credentials['cnonce'] = uniqid();
             $nc = sprintf('%08x', $credentials['nc']++);
-            $response = md5($a1 . ':' . $credentials['nonce'] . ':' . $nc . ':' . $credentials['cnonce'] . ':auth:' . $a2);
+            $response = md5(
+                $a1 . ':' . $credentials['nonce'] . ':' . $nc . ':' . $credentials['cnonce'] . ':auth:' . $a2
+            );
         }
 
         $authHeader = 'Digest ';

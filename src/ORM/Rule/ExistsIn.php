@@ -54,8 +54,8 @@ class ExistsIn
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $repository The repository where the field will be looked for,
-     * or the association name for the repository.
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $repository The repository where the
+     * field will be looked for, or the association name for the repository.
      * @param array $options The options that modify the rules behavior.
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
      *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.

@@ -210,8 +210,12 @@ class CounterCacheBehavior extends Behavior
      * @return void
      * @throws \RuntimeException If invalid callable is passed.
      */
-    protected function _processAssociation(EventInterface $event, EntityInterface $entity, Association $assoc, array $settings): void
-    {
+    protected function _processAssociation(
+        EventInterface $event,
+        EntityInterface $entity,
+        Association $assoc,
+        array $settings
+    ): void {
         $foreignKeys = (array)$assoc->getForeignKey();
         $primaryKeys = (array)$assoc->getBindingKey();
         $countConditions = $entity->extract($foreignKeys);

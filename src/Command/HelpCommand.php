@@ -46,7 +46,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     }
 
     /**
-     * Main function Prints out the list of shells.
+     * Main function Prints out the list of commands.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
@@ -118,8 +118,8 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         }
         $io->out('');
 
-        $io->out('To run a command, type <info>`cake shell_name [args|options]`</info>');
-        $io->out('To get help on a specific command, type <info>`cake shell_name --help`</info>', 2);
+        $io->out('To run a command, type <info>`cake command_name [args|options]`</info>');
+        $io->out('To get help on a specific command, type <info>`cake command_name --help`</info>', 2);
     }
 
     /**
@@ -155,7 +155,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            'Get the list of available shells for this application.'
+            'Get the list of available commands for this application.'
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,

@@ -70,14 +70,19 @@ class MailTransport extends AbstractTransport
      * @throws \Cake\Network\Exception\SocketException if mail could not be sent
      * @return void
      */
-    protected function _mail(string $to, string $subject, string $message, string $headers, ?string $params = null): void
-    {
-        //@codingStandardsIgnoreStart
+    protected function _mail(
+        string $to,
+        string $subject,
+        string $message,
+        string $headers,
+        ?string $params = null
+    ): void {
+        // phpcs:disable
         if (!@mail($to, $subject, $message, $headers, $params)) {
             $error = error_get_last();
             $msg = 'Could not send email: ' . (isset($error['message']) ? $error['message'] : 'unknown');
             throw new SocketException($msg);
         }
-        //@codingStandardsIgnoreEnd
+        // phpcs:enable
     }
 }

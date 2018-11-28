@@ -504,7 +504,8 @@ class PaginatorHelper extends Helper
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
      * @param array $urlOptions Array of options
-     * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
+     * @return string By default, returns a full pagination URL string for use
+     *   in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
     public function generateUrl(array $options = [], ?string $model = null, array $urlOptions = []): string
@@ -615,7 +616,9 @@ class PaginatorHelper extends Helper
     public function hasPage(int $page = 1, ?string $model = null): bool
     {
         if (!is_numeric($page)) {
-            throw new InvalidArgumentException('First argument "page" has to be int. Note that argument order switched from 3.x to 4.x.');
+            throw new InvalidArgumentException(
+                'First argument "page" has to be int. Note that argument order switched from 3.x to 4.x.'
+            );
         }
 
         $paging = $this->params($model);
@@ -670,9 +673,9 @@ class PaginatorHelper extends Helper
      * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
      *
      * @param string $format The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
-     *    set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing
-     *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
-     *    custom content you would like.
+     *   set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing the
+     *   following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}`
+     *   and any custom content you would like.
      * @param array $options Options for the counter string. See #options for list of keys.
      *   If string it will be used as format.
      * @return string Counter string.
@@ -1144,19 +1147,31 @@ class PaginatorHelper extends Helper
         $links = [];
 
         if ($options['prev'] && $this->hasPrev()) {
-            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, ['fullBase' => true]));
+            $links[] = $this->Html->meta(
+                'prev',
+                $this->generateUrl(['page' => $params['page'] - 1], null, ['fullBase' => true])
+            );
         }
 
         if ($options['next'] && $this->hasNext()) {
-            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, ['fullBase' => true]));
+            $links[] = $this->Html->meta(
+                'next',
+                $this->generateUrl(['page' => $params['page'] + 1], null, ['fullBase' => true])
+            );
         }
 
         if ($options['first']) {
-            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, ['fullBase' => true]));
+            $links[] = $this->Html->meta(
+                'first',
+                $this->generateUrl(['page' => 1], null, ['fullBase' => true])
+            );
         }
 
         if ($options['last']) {
-            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, ['fullBase' => true]));
+            $links[] = $this->Html->meta(
+                'last',
+                $this->generateUrl(['page' => $params['pageCount']], null, ['fullBase' => true])
+            );
         }
 
         $out = implode($links);

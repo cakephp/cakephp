@@ -1050,8 +1050,8 @@ trait EntityTrait
      * Set fields as invalid and not patchable into the entity.
      *
      * This is useful for batch operations when one needs to get the original value for an error message after patching.
-     * This value could not be patched into the entity and is simply copied into the _invalid property for debugging purposes
-     * or to be able to log it away.
+     * This value could not be patched into the entity and is simply copied into the _invalid property for debugging
+     * purposes or to be able to log it away.
      *
      * @param array $fields The values to set.
      * @param bool $overwrite Whether or not to overwrite pre-existing values for $field.

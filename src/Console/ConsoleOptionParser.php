@@ -41,20 +41,20 @@ use LogicException;
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
  * cane either include an `=` or leave it out.
  *
- * `cake myshell command --connection default --name=something`
+ * `cake my_command --connection default --name=something`
  *
  * Short options can be defined singly or in groups.
  *
- * `cake myshell command -cn`
+ * `cake my_command -cn`
  *
  * Short options can be combined into groups as seen above. Each letter in a group
  * will be treated as a separate option. The previous example is equivalent to:
  *
- * `cake myshell command -c -n`
+ * `cake my_command -c -n`
  *
  * Short options can also accept values:
  *
- * `cake myshell command -c default`
+ * `cake my_command -c default`
  *
  * ### Positional arguments
  *
@@ -405,8 +405,8 @@ class ConsoleOptionParser
      * - `choices` A list of valid choices for this option. If left empty all values are valid..
      *   An exception will be raised when parse() encounters an invalid value.
      *
-     * @param \Cake\Console\ConsoleInputOption|string $name The long name you want to the value to be parsed out as when options are parsed.
-     *   Will also accept an instance of ConsoleInputOption
+     * @param \Cake\Console\ConsoleInputOption|string $name The long name you want to the value to be parsed out
+     *   as when options are parsed. Will also accept an instance of ConsoleInputOption.
      * @param array $options An array of parameters that define the behavior of the option
      * @return $this
      */
@@ -553,7 +553,8 @@ class ConsoleOptionParser
      *    specific option parsers. When help is generated for a subcommand, if a parser is present
      *    it will be used.
      *
-     * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand. Will also accept an instance of ConsoleInputSubcommand
+     * @param \Cake\Console\ConsoleInputSubcommand|string $name Name of the subcommand.
+     *   Will also accept an instance of ConsoleInputSubcommand.
      * @param array $options Array of params, see above.
      * @return $this
      */

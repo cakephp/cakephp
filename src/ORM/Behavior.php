@@ -241,7 +241,11 @@ class Behavior implements EventListenerInterface
 
             foreach ($this->_config[$key] as $method) {
                 if (!is_callable([$this, $method])) {
-                    throw new Exception(sprintf('The method %s is not callable on class %s', $method, get_class($this)));
+                    throw new Exception(sprintf(
+                        'The method %s is not callable on class %s',
+                        $method,
+                        get_class($this)
+                    ));
                 }
             }
         }

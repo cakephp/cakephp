@@ -83,8 +83,12 @@ class MiddlewareDispatcher
      *   when doing requests in your tests.
      * @throws \LogicException If it cannot load class for use in integration testing.
      */
-    public function __construct(TestCase $test, ?string $class = null, ?array $constructorArgs = null, bool $disableRouterReload = false)
-    {
+    public function __construct(
+        TestCase $test,
+        ?string $class = null,
+        ?array $constructorArgs = null,
+        bool $disableRouterReload = false
+    ) {
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];

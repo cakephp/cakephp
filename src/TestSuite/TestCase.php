@@ -249,8 +249,13 @@ abstract class TestCase extends BaseTestCase
      * @param string $message Assertion failure message
      * @return void
      */
-    public function assertEventFiredWith(string $name, string $dataKey, string $dataValue, ?EventManager $eventManager = null, string $message = ''): void
-    {
+    public function assertEventFiredWith(
+        string $name,
+        string $dataKey,
+        string $dataValue,
+        ?EventManager $eventManager = null,
+        string $message = ''
+    ): void {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
         }
@@ -363,8 +368,12 @@ abstract class TestCase extends BaseTestCase
      * @param bool $ignoreCase Whether or not the search should be case-sensitive.
      * @return void
      */
-    public function assertTextContains(string $needle, string $haystack, string $message = '', bool $ignoreCase = false): void
-    {
+    public function assertTextContains(
+        string $needle,
+        string $haystack,
+        string $message = '',
+        bool $ignoreCase = false
+    ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
         $this->assertContains($needle, $haystack, $message, $ignoreCase);
@@ -380,8 +389,12 @@ abstract class TestCase extends BaseTestCase
      * @param bool $ignoreCase Whether or not the search should be case-sensitive.
      * @return void
      */
-    public function assertTextNotContains(string $needle, string $haystack, string $message = '', bool $ignoreCase = false): void
-    {
+    public function assertTextNotContains(
+        string $needle,
+        string $haystack,
+        string $message = '',
+        bool $ignoreCase = false
+    ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
         $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
@@ -560,7 +573,11 @@ abstract class TestCase extends BaseTestCase
                     debug($string);
                     debug($regex);
                 }
-                $this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+                $this->assertRegExp(
+                    $expression,
+                    $string,
+                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description)
+                );
 
                 return false;
             }
@@ -620,7 +637,7 @@ abstract class TestCase extends BaseTestCase
         return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 
     /**
      * Compatibility function to test if a value is between an acceptable range.
@@ -685,7 +702,7 @@ abstract class TestCase extends BaseTestCase
         return $condition;
     }
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
     /**
      * Mock a model, maintain fixtures and table association

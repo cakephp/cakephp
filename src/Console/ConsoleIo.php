@@ -109,8 +109,12 @@ class ConsoleIo
      * @param \Cake\Console\ConsoleInput|null $in A ConsoleInput object for stdin.
      * @param \Cake\Console\HelperRegistry|null $helpers A HelperRegistry instance
      */
-    public function __construct(?ConsoleOutput $out = null, ?ConsoleOutput $err = null, ?ConsoleInput $in = null, ?HelperRegistry $helpers = null)
-    {
+    public function __construct(
+        ?ConsoleOutput $out = null,
+        ?ConsoleOutput $err = null,
+        ?ConsoleInput $in = null,
+        ?HelperRegistry $helpers = null
+    ) {
         $this->_out = $out ?: new ConsoleOutput('php://stdout');
         $this->_err = $err ?: new ConsoleOutput('php://stderr');
         $this->_in = $in ?: new ConsoleInput('php://stdin');

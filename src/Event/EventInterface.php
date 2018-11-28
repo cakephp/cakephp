@@ -69,8 +69,8 @@ interface EventInterface
      * Accesses the event data/payload.
      *
      * @param string|null $key The data payload element to return, or null to return all data.
-     * @return array|mixed|null The data payload if $key is null, or the data value for the given $key. If the $key does not
-     * exist a null value is returned.
+     * @return array|mixed|null The data payload if $key is null, or the data value for the given $key.
+     *   If the $key does not exist a null value is returned.
      */
     public function getData(?string $key = null);
 

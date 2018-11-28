@@ -617,7 +617,9 @@ class Debugger
             $outputMask = (array)static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                $value = array_key_exists($key, $outputMask) ? $outputMask[$key] : static::_export($value, $depth - 1, $indent);
+                $value = array_key_exists($key, $outputMask)
+                    ? $outputMask[$key]
+                    : static::_export($value, $depth - 1, $indent);
                 $props[] = "$key => " . $value;
             }
 
@@ -934,7 +936,11 @@ TEXT;
     public static function checkSecurityKeys()
     {
         if (Security::getSalt() === '__SALT__') {
-            trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'ROOT/config/app.php'), E_USER_NOTICE);
+            trigger_error(sprintf(
+                'Please change the value of %s in %s to a salt value specific to your application.',
+                '\'Security.salt\'',
+                'ROOT/config/app.php'
+            ), E_USER_NOTICE);
         }
     }
 }

@@ -91,8 +91,12 @@ class Text
      * @param string $rightBound The right boundary to ignore separators in.
      * @return array|string Array of tokens in $data or original input if empty.
      */
-    public static function tokenize(string $data, string $separator = ',', string $leftBound = '(', string $rightBound = ')')
-    {
+    public static function tokenize(
+        string $data,
+        string $separator = ',',
+        string $leftBound = '(',
+        string $rightBound = ')'
+    ) {
         if (empty($data)) {
             return [];
         }
@@ -611,6 +615,7 @@ class Text
                 }
 
                 if ($truncate === '') {
+                    // phpcs:ignore Generic.Files.LineLength
                     if (!preg_match('/img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param/i', $tag[2])) {
                         if (preg_match('/<[\w]+[^>]*>/', $tag[0])) {
                             array_unshift($openTags, $tag[2]);

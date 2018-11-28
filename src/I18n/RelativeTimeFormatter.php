@@ -31,8 +31,11 @@ class RelativeTimeFormatter
      * @return string The difference between the two days in a human readable format
      * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
-    public function diffForHumans(I18nDateTimeInterface $date, ?I18nDateTimeInterface $other = null, bool $absolute = false): string
-    {
+    public function diffForHumans(
+        I18nDateTimeInterface $date,
+        ?I18nDateTimeInterface $other = null,
+        bool $absolute = false
+    ): string {
         $isNow = $other === null;
         if ($isNow) {
             $other = $date->now($date->getTimezone());
@@ -193,10 +196,24 @@ class RelativeTimeFormatter
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
             $future = [];
-            list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
+            list(
+                $future['H'],
+                $future['i'],
+                $future['s'],
+                $future['d'],
+                $future['m'],
+                $future['Y']
+            ) = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
             $past = [];
-            list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
+            list(
+                $past['H'],
+                $past['i'],
+                $past['s'],
+                $past['d'],
+                $past['m'],
+                $past['Y']
+            ) = explode('/', date('H/i/s/d/m/Y', $pastTime));
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
             $years = $future['Y'] - $past['Y'];

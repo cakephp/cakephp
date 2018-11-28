@@ -249,7 +249,8 @@ class TimeHelper extends Helper
      *   - `class` - The class name to use, defaults to `time-ago-in-words`.
      *   - `title` - Defaults to the $dateTime input.
      *
-     * @param int|string|\DateTime|\Cake\I18n\Time|\Cake\I18n\FrozenTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object
+     * @param int|string|\DateTime|\Cake\I18n\Time|\Cake\I18n\FrozenTime $dateTime UNIX timestamp, strtotime() valid
+     *   string or DateTime object.
      * @param array $options Default format if timestamp is used in $dateString
      * @return string Relative time string.
      * @see \Cake\I18n\Time::timeAgoInWords()
@@ -346,8 +347,10 @@ class TimeHelper extends Helper
      *
      * This method is an alias for TimeHelper::i18nFormat().
      *
-     * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string or DateTime object (or a date format string)
-     * @param int|string|null $format date format string (or a UNIX timestamp, strtotime() valid string or DateTime object)
+     * @param int|string|\DateTime $date UNIX timestamp, strtotime() valid string
+     *   or DateTime object (or a date format string).
+     * @param int|string|null $format date format string (or a UNIX timestamp,
+     *   strtotime() valid string or DateTime object).
      * @param false|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
      * @return string|false Formatted and translated date string
