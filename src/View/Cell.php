@@ -193,7 +193,9 @@ abstract class Cell implements EventDispatcherInterface
             $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
             $name = substr($name, 0, -4);
             if (!$builder->getTemplatePath()) {
-                $builder->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
+                $builder->setTemplatePath(
+                    static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name)
+                );
             }
 
             $view = $this->createView();
@@ -255,11 +257,21 @@ abstract class Cell implements EventDispatcherInterface
         try {
             return $this->render();
         } catch (Exception $e) {
-            trigger_error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()), E_USER_WARNING);
+            trigger_error(sprintf(
+                'Could not render cell - %s [%s, line %d]',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            ), E_USER_WARNING);
 
             return '';
         } catch (Error $e) {
-            throw new Error(sprintf('Could not render cell - %s [%s, line %d]', $e->getMessage(), $e->getFile(), $e->getLine()));
+            throw new Error(sprintf(
+                'Could not render cell - %s [%s, line %d]',
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            ));
         }
     }
 

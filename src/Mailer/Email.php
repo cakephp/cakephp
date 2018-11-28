@@ -453,7 +453,12 @@ class Email implements JsonSerializable, Serializable
      */
     public function setReadReceipt($email, ?string $name = null): self
     {
-        return $this->_setEmailSingle('_readReceipt', $email, $name, 'Disposition-Notification-To requires only 1 email address.');
+        return $this->_setEmailSingle(
+            '_readReceipt',
+            $email,
+            $name,
+            'Disposition-Notification-To requires only 1 email address.'
+        );
     }
 
     /**
@@ -1098,9 +1103,10 @@ class Email implements JsonSerializable, Serializable
         } elseif (is_object($name)) {
             $transport = $name;
         } else {
-            throw new InvalidArgumentException(
-                sprintf('The value passed for the "$name" argument must be either a string, or an object, %s given.', gettype($name))
-            );
+            throw new InvalidArgumentException(sprintf(
+                'The value passed for the "$name" argument must be either a string, or an object, %s given.',
+                gettype($name)
+            ));
         }
         if (!method_exists($transport, 'send')) {
             throw new LogicException(sprintf('The "%s" do not have send method.', get_class($transport)));
@@ -1124,7 +1130,8 @@ class Email implements JsonSerializable, Serializable
     /**
      * Sets message ID.
      *
-     * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email), String to set as Message-ID.
+     * @param bool|string $message True to generate a new Message-ID, False to ignore (not send in email),
+     *   String to set as Message-ID.
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -1134,7 +1141,9 @@ class Email implements JsonSerializable, Serializable
             $this->_messageId = $message;
         } else {
             if (!preg_match('/^\<.+@.+\>$/', $message)) {
-                throw new InvalidArgumentException('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"');
+                throw new InvalidArgumentException(
+                    'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'
+                );
             }
             $this->_messageId = $message;
         }
@@ -1432,7 +1441,8 @@ class Email implements JsonSerializable, Serializable
     /**
      * Static method to fast create an instance of \Cake\Mailer\Email
      *
-     * @param string|array|null $to Address to send (see Cake\Mailer\Email::to()). If null, will try to use 'to' from transport config
+     * @param string|array|null $to Address to send (see Cake\Mailer\Email::to()).
+     *   If null, will try to use 'to' from transport config
      * @param string|null $subject String of subject or null to use 'subject' from transport config
      * @param string|array|null $message String with message or array with variables to be used in render
      * @param string|array $config String to use Email delivery profile from app.php or array with configs
@@ -1440,8 +1450,13 @@ class Email implements JsonSerializable, Serializable
      * @return static Instance of Cake\Mailer\Email
      * @throws \InvalidArgumentException
      */
-    public static function deliver($to = null, ?string $subject = null, $message = null, $config = 'default', bool $send = true): Email
-    {
+    public static function deliver(
+        $to = null,
+        ?string $subject = null,
+        $message = null,
+        $config = 'default',
+        bool $send = true
+    ): Email {
         $class = __CLASS__;
 
         if (is_array($config) && !isset($config['transport'])) {

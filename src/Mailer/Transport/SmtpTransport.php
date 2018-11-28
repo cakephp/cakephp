@@ -230,7 +230,11 @@ class SmtpTransport extends AbstractTransport
             }
         } catch (SocketException $e) {
             if ($config['tls']) {
-                throw new SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', null, $e);
+                throw new SocketException(
+                    'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.',
+                    null,
+                    $e
+                );
             }
             try {
                 $this->_smtpSend("HELO {$host}", '250');
@@ -264,7 +268,9 @@ class SmtpTransport extends AbstractTransport
             } elseif ($replyCode === '504') {
                 throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
             } else {
-                throw new SocketException('AUTH command not recognized or not implemented, SMTP server may not require authentication.');
+                throw new SocketException(
+                    'AUTH command not recognized or not implemented, SMTP server may not require authentication.'
+                );
             }
         }
     }

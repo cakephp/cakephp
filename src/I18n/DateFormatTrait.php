@@ -202,6 +202,7 @@ trait DateFormatTrait
             $pattern = $format;
         }
 
+        // phpcs:ignore Generic.Files.LineLength
         if (preg_match('/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/', $locale)) {
             $calendar = IntlDateFormatter::TRADITIONAL;
         } else {

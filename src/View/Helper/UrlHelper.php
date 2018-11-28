@@ -247,7 +247,10 @@ class UrlHelper extends Helper
             $plugin = Inflector::camelize($segments[0]);
             if (Plugin::isLoaded($plugin)) {
                 unset($segments[0]);
-                $pluginPath = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $segments);
+                $pluginPath = Plugin::path($plugin)
+                    . 'webroot'
+                    . DIRECTORY_SEPARATOR
+                    . implode(DIRECTORY_SEPARATOR, $segments);
                 if (file_exists($pluginPath)) {
                     return $path . '?' . filemtime($pluginPath);
                 }

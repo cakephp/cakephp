@@ -221,7 +221,12 @@ abstract class BaseSchema
      * @param array $indexes The indexes for the table.
      * @return array SQL statements to create a table.
      */
-    abstract public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array;
+    abstract public function createTableSql(
+        TableSchema $schema,
+        array $columns,
+        array $constraints,
+        array $indexes
+    ): array;
 
     /**
      * Generate the SQL fragment for a single column in a table.

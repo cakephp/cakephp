@@ -491,8 +491,12 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
      */
-    public function build(array $vars = [], ?ServerRequest $request = null, ?Response $response = null, ?EventManager $events = null): View
-    {
+    public function build(
+        array $vars = [],
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?EventManager $events = null
+    ): View {
         $className = $this->_className;
         if ($className === null) {
             $className = App::className('App', 'View', 'View') ?: 'Cake\View\View';

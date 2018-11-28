@@ -43,7 +43,8 @@ class Plugin
      *
      * @param string $name name of the plugin in CamelCase format
      * @return string path to the plugin folder
-     * @throws \Cake\Core\Exception\MissingPluginException if the folder for plugin was not found or plugin has not been loaded
+     * @throws \Cake\Core\Exception\MissingPluginException If the folder for plugin was not found
+     *   or plugin has not been loaded.
      */
     public static function path(string $name): string
     {

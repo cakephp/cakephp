@@ -100,7 +100,10 @@ class Session
             }
         }
 
-        if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS') && ini_get('session.cookie_secure') != 1) {
+        if (!isset($sessionConfig['ini']['session.cookie_secure'])
+            && env('HTTPS')
+            && ini_get('session.cookie_secure') != 1
+        ) {
             $sessionConfig['ini']['session.cookie_secure'] = 1;
         }
 

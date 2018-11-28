@@ -924,7 +924,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Convenience method that adds a NOT NULL condition to the query
      *
-     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them that should be not null
+     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them
+     *  that should be not null.
      * @return $this
      */
     public function whereNotNull($fields)
@@ -945,7 +946,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Convenience method that adds a IS NULL condition to the query
      *
-     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them that should be null
+     * @param array|string|\Cake\Database\ExpressionInterface $fields A single field or expressions or a list of them
+     *   that should be null.
      * @return $this
      */
     public function whereNull($fields)
@@ -2098,7 +2100,8 @@ class Query implements ExpressionInterface, IteratorAggregate
      * Helper function used to build conditions by composing QueryExpression objects.
      *
      * @param string $part Name of the query part to append the new part to
-     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function to append.
+     * @param string|null|array|\Cake\Database\ExpressionInterface|callable $append Expression or builder function
+     *   to append.
      * @param string $conjunction type of conjunction to be used to operate part
      * @param array $types associative array of type names used to bind values to query
      * @return void

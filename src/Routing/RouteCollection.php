@@ -485,8 +485,11 @@ class RouteCollection
     {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
-                $message = "Cannot apply '$name' middleware or middleware group to path '$path'. It has not been registered.";
-                throw new RuntimeException($message);
+                throw new RuntimeException(sprintf(
+                    "Cannot apply '%s' middleware or middleware group to path '%s'. It has not been registered.",
+                    $name,
+                    $path
+                ));
             }
         }
         // Matches route element pattern in Cake\Routing\Route
@@ -518,8 +521,10 @@ class RouteCollection
                 continue;
             }
             if (!$this->hasMiddleware($name)) {
-                $message = "The middleware named '$name' has not been registered. Use registerMiddleware() to define it.";
-                throw new RuntimeException($message);
+                throw new RuntimeException(sprintf(
+                    "The middleware named '%s' has not been registered. Use registerMiddleware() to define it.",
+                    $name
+                ));
             }
             $out[] = $this->_middleware[$name];
         }

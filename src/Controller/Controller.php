@@ -170,8 +170,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
      * @param \Cake\Controller\ComponentRegistry|null $components The component registry. Defaults to a new instance.
      */
-    public function __construct(?ServerRequest $request = null, ?Response $response = null, ?string $name = null, ?EventManagerInterface $eventManager = null, ?ComponentRegistry $components = null)
-    {
+    public function __construct(
+        ?ServerRequest $request = null,
+        ?Response $response = null,
+        ?string $name = null,
+        ?EventManagerInterface $eventManager = null,
+        ?ComponentRegistry $components = null
+    ) {
         if ($name !== null) {
             $this->name = $name;
         }
@@ -689,7 +694,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Returns the referring URL for this request.
      *
      * @param string|array|null $default Default URL to use if HTTP_REFERER cannot be read from headers
-     * @param bool $local If false, do not restrict referring URLs to local server. Careful with trusting external sources.
+     * @param bool $local If false, do not restrict referring URLs to local server.
+     *   Careful with trusting external sources.
      * @return string Referring URL
      */
     public function referer($default = '/', bool $local = true): string

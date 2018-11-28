@@ -196,8 +196,12 @@ class HasMany extends Association
      * @param array $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
      */
-    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, iterable $entities, array $options): bool
-    {
+    protected function _saveTarget(
+        array $foreignKeyReference,
+        EntityInterface $parentEntity,
+        iterable $entities,
+        array $options
+    ): bool {
         $foreignKey = array_keys($foreignKeyReference);
         $table = $this->getTarget();
         $original = $entities;
@@ -435,8 +439,8 @@ class HasMany extends Association
     }
 
     /**
-     * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
-     * Skips deleting records present in $remainingEntities
+     * Deletes/sets null the related objects according to the dependency between source and targets
+     * and foreign key nullability. Skips deleting records present in $remainingEntities
      *
      * @param array $foreignKeyReference The foreign key reference defining the link between the
      * target entity, and the parent entity.
@@ -446,8 +450,13 @@ class HasMany extends Association
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
      */
-    protected function _unlinkAssociated(array $foreignKeyReference, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = []): bool
-    {
+    protected function _unlinkAssociated(
+        array $foreignKeyReference,
+        EntityInterface $entity,
+        Table $target,
+        array $remainingEntities = [],
+        array $options = []
+    ): bool {
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
@@ -478,7 +487,9 @@ class HasMany extends Association
 
     /**
      * Deletes/sets null the related objects matching $conditions.
-     * The action which is taken depends on the dependency between source and targets and also on foreign key nullability
+     *
+     * The action which is taken depends on the dependency between source and
+     * targets and also on foreign key nullability.
      *
      * @param array $foreignKey array of foreign key properties
      * @param \Cake\ORM\Table $target The associated table
