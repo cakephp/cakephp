@@ -83,7 +83,7 @@ script:
         vendor/bin/phpstan analyse src && vendor/bin/psalm --show-info=false
       fi
 
-  - if [[ PHPSTAN_LEVEL_3 = 1 ]]; then composer require --dev phpstan/phpstan:^0.10 && vendor/bin/phpstan analyse -l 3 src; fi
+  - if [[ $PHPSTAN_LEVEL_3 = 1 ]]; then composer require --dev phpstan/phpstan:^0.10 && vendor/bin/phpstan analyse -l 3 src; fi
 
 after_success:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.2 ]]; then bash <(curl -s https://codecov.io/bash); fi
