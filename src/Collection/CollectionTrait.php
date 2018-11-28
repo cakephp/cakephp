@@ -388,6 +388,7 @@ trait CollectionTrait
             if ($count === 0) {
                 return null;
             }
+            /** @var \Countable $iterator */
             $iterator = new LimitIterator($iterator, $count - 1, 1);
         }
 

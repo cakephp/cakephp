@@ -144,6 +144,7 @@
 
         <InvalidArrayOffset>
             <errorLevel type="suppress">
+                <file name="src/Auth/BaseAuthenticate.php" />
                 <file name="src/Core/StaticConfigTrait.php" />
                 <file name="src/I18n/Parser/MoFileParser.php" />
                 <file name="src/I18n/Parser/PoFileParser.php" />
