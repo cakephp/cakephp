@@ -1228,7 +1228,8 @@ trait IntegrationTestTrait
     /**
      * Inspect controller to extract possible causes of the failed assertion
      *
-     * @param null $message
+     * @param string $message Original message to use as a base
+     * @return null|string
      */
     protected function extractVerboseMessage($message = null)
     {
@@ -1249,7 +1250,7 @@ trait IntegrationTestTrait
     /**
      * Extract verbose message for existing exception
      *
-     * @param Exception $exception
+     * @param \Exception $exception Exception to extract
      * @return string
      */
     protected function extractExceptionMessage(\Exception $exception)
