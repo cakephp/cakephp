@@ -80,7 +80,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * The schema for this fixture.
      *
-     * @var \Cake\Database\Schema\TableSchemaInterface
+     * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      */
     protected $_schema;
 
