@@ -606,8 +606,8 @@ trait IntegrationTestTrait
     protected function _buildRequest($url, $method, $data)
     {
         $sessionConfig = (array)Configure::read('Session') + [
-                'defaults' => 'php',
-            ];
+            'defaults' => 'php',
+        ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
         list($url, $query) = $this->_url($url);
