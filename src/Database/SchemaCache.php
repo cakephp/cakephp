@@ -30,7 +30,7 @@ class SchemaCache
     /**
      * Schema
      *
-     * @var \Cake\Database\Schema\CachedCollection|\Cake\Database\Schema\Collection
+     * @var \Cake\Database\Schema\CachedCollection
      */
     protected $_schema;
 
@@ -76,6 +76,7 @@ class SchemaCache
         if (empty($name)) {
             $tables = $this->_schema->listTables();
         }
+        /** @var string $configName */
         $configName = $this->_schema->getCacheMetadata();
 
         foreach ($tables as $table) {
@@ -90,7 +91,7 @@ class SchemaCache
      * Helper method to get the schema collection.
      *
      * @param \Cake\Database\Connection $connection Connection object
-     * @return \Cake\Database\Schema\Collection|\Cake\Database\Schema\CachedCollection
+     * @return \Cake\Database\Schema\CachedCollection
      * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
     public function getSchema(Connection $connection)
@@ -100,6 +101,9 @@ class SchemaCache
             $connection->cacheMetadata(true);
         }
 
-        return $connection->getSchemaCollection();
+        /** @var \Cake\Database\Schema\CachedCollection $schemaCollection */
+        $schemaCollection = $connection->getSchemaCollection();
+
+        return $schemaCollection;
     }
 }
