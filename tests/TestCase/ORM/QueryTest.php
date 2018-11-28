@@ -3688,4 +3688,39 @@ class QueryTest extends TestCase
                 ->find()
                 ->selectAllExcept([], ['body']);
     }
+
+    /**
+     * Test that the entity of a belongsTo association is not empty if we are using an inner join with match
+     * and specify a list of select fields
+     */
+    public function testInnerJoinMatchWithQueryFields()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        // 1. without providing a set of select fields the test succeeds
+        $query = $table->find('all', [
+            'contain' => ['Authors']
+        ]);
+        $query->innerJoinWith('Authors', function ($q) {
+            return $q->where(['Authors.name' => 'larry']);
+        });
+        $article = $query->first();
+        $this->assertNotEmpty($article->author);
+
+        // 2. when providing an array of fields to select the author-entity is empty
+        $query = $table->find('all', [
+            'contain' => ['Authors']
+        ]);
+        $query->innerJoinWith('Authors', function ($q) {
+            return $q->where(['Authors.name' => 'larry']);
+        });
+        $query->select([
+            'Articles.id',
+            'Authors.id',
+            'Authors.name',
+        ]);
+        $article = $query->first();
+        $this->assertNotEmpty($article->author);
+    }
 }
