@@ -110,6 +110,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param string $class Class name.
      * @return void
+     * @since 4.0.0
      */
     public static function setDefaultStrategyClass(string $class)
     {
@@ -120,6 +121,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Get default strategy class name.
      *
      * @return string
+     * @since 4.0.0
      */
     public static function getDefaultStrategyClass(): string
     {
@@ -130,6 +132,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Get strategy class instance.
      *
      * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
+     * @since 4.0.0
      */
     public function getStrategy(): TranslateStrategyInterface
     {
@@ -144,6 +147,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Create strategy instance.
      *
      * @return \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
+     * @since 4.0.0
      */
     protected function createStrategy()
     {
@@ -161,6 +165,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @param \Cake\ORM\Behavior\Translate\TranslateStrategyInterface $strategy Strategy class instance.
      * @return $this
+     * @since 4.0.0
      */
     public function setStrategy(TranslateStrategyInterface $strategy)
     {

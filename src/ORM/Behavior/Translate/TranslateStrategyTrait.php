@@ -150,7 +150,7 @@ trait TranslateStrategyTrait
 
         return [
             '_translations' => function ($value, $entity) use ($marshaller, $options) {
-                /* @var \Cake\Datasource\EntityInterface $entity */
+                /** @var \Cake\Datasource\EntityInterface $entity */
                 $translations = $entity->get('_translations');
                 foreach ($this->_config['fields'] as $field) {
                     $options['validate'] = $this->_config['validator'];
