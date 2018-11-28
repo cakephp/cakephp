@@ -163,6 +163,7 @@
                 <file name="src/Cache/Engine/MemcachedEngine.php" />
                 <file name="src/Cache/Engine/RedisEngine.php" />
                 <file name="src/ORM/Behavior/TranslateBehavior.php" />
+                <file name="src/ORM/Behavior/Translate/EavStrategy.php" />
             </errorLevel>
         </UndefinedClass>
 
