@@ -264,8 +264,12 @@ class FixtureManager
      * @param bool $drop whether drop the fixture if it is already created or not
      * @return void
      */
-    protected function _setupTable(FixtureInterface $fixture, ConnectionInterface $db, array $sources, bool $drop = true): void
-    {
+    protected function _setupTable(
+        FixtureInterface $fixture,
+        ConnectionInterface $db,
+        array $sources,
+        bool $drop = true
+    ): void {
         $configName = $db->configName();
         $isFixtureSetup = $this->isFixtureSetup($configName, $fixture);
         if ($isFixtureSetup) {
@@ -462,7 +466,8 @@ class FixtureManager
      * Creates a single fixture table and loads data into it.
      *
      * @param string $name of the fixture
-     * @param \Cake\Datasource\ConnectionInterface|null $db Connection instance or leave null to get a Connection from the fixture
+     * @param \Cake\Datasource\ConnectionInterface|null $db Connection instance or null
+     *  to get a Connection from the fixture.
      * @param bool $dropTables Whether or not tables should be dropped and re-created.
      * @return void
      * @throws \UnexpectedValueException if $name is not a previously loaded class

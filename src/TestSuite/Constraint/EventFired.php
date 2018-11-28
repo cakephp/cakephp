@@ -43,7 +43,9 @@ class EventFired extends Constraint
         $this->_eventManager = $eventManager;
 
         if ($this->_eventManager->getEventList() === null) {
-            throw new AssertionFailedError('The event manager you are asserting against is not configured to track events.');
+            throw new AssertionFailedError(
+                'The event manager you are asserting against is not configured to track events.'
+            );
         }
     }
 

@@ -72,8 +72,11 @@ class CommandRunner implements EventDispatcherInterface
      * @param string $root The root command name to be removed from argv.
      * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
-    public function __construct(ConsoleApplicationInterface $app, $root = 'cake', ?CommandFactoryInterface $factory = null)
-    {
+    public function __construct(
+        ConsoleApplicationInterface $app,
+        $root = 'cake',
+        ?CommandFactoryInterface $factory = null
+    ) {
         $this->app = $app;
         $this->root = $root;
         $this->factory = $factory ?: new CommandFactory();

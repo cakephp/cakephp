@@ -96,7 +96,8 @@ class Component implements EventListenerInterface
     /**
      * Constructor
      *
-     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
+     * @param \Cake\Controller\ComponentRegistry $registry A component registry
+     *  this component can use to lazy load its components.
      * @param array $config Array of configuration settings.
      */
     public function __construct(ComponentRegistry $registry, array $config = [])

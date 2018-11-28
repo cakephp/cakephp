@@ -310,11 +310,13 @@ class Route
                     $option = '?';
                 }
                 $slashParam = '/' . $search;
+                // phpcs:disable Generic.Files.LineLength
                 if (strpos($parsed, $slashParam) !== false) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
                     $routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 }
+                // phpcs:disable Generic.Files.LineLength
             } else {
                 $routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
             }

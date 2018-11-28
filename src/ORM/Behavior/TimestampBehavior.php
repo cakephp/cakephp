@@ -102,9 +102,10 @@ class TimestampBehavior extends Behavior
 
         foreach ($events[$eventName] as $field => $when) {
             if (!in_array($when, ['always', 'new', 'existing'])) {
-                throw new UnexpectedValueException(
-                    sprintf('When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
-                );
+                throw new UnexpectedValueException(sprintf(
+                    'When should be one of "always", "new" or "existing". The passed value "%s" is invalid',
+                    $when
+                ));
             }
             if ($when === 'always' ||
                 ($when === 'new' && $new) ||

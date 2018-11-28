@@ -54,8 +54,8 @@ class QueryExpression implements ExpressionInterface, Countable
      * expression objects. Optionally, you can set the conjunction keyword to be used
      * for joining each part of this level of the expression tree.
      *
-     * @param string|array|\Cake\Database\ExpressionInterface $conditions tree-like array structure containing all the conditions
-     * to be added or nested inside this expression object.
+     * @param string|array|\Cake\Database\ExpressionInterface $conditions Tree like array structure
+     * containing all the conditions to be added or nested inside this expression object.
      * @param array|\Cake\Database\TypeMap $types associative array of types to be associated with the values
      * passed in $conditions.
      * @param string $conjunction the glue that will join all the string conditions at this
@@ -331,8 +331,9 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param array|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
-     * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
+     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the
+     * conditions passed in $conditions. If there are more $values than $conditions,
+     * the last $value is used as the `ELSE` value.
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      * @return $this
@@ -389,7 +390,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form
      * "field BETWEEN from AND to".
      *
-     * @param string|\Cake\Database\ExpressionInterface $field The field name to compare for values in between the range.
+     * @param string|\Cake\Database\ExpressionInterface $field The field name to compare for values inbetween the range.
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
      * @param string|null $type the type name for $value as configured using the Type map.

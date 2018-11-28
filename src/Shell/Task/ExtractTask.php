@@ -223,7 +223,11 @@ class ExtractTask extends Shell
         } else {
             $message = "What is the path you would like to output?\n[Q]uit";
             while (true) {
-                $response = $this->in($message, null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale');
+                $response = $this->in(
+                    $message,
+                    null,
+                    rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale'
+                );
                 if (strtoupper($response) === 'Q') {
                     $this->err('Extract Aborted');
                     $this->_stop();
@@ -248,7 +252,11 @@ class ExtractTask extends Shell
             $this->_merge = !(strtolower((string)$this->params['merge']) === 'no');
         } else {
             $this->out();
-            $response = $this->in('Would you like to merge all domain strings into the default.pot file?', ['y', 'n'], 'n');
+            $response = $this->in(
+                'Would you like to merge all domain strings into the default.pot file?',
+                ['y', 'n'],
+                'n'
+            );
             $this->_merge = strtolower((string)$response) === 'y';
         }
 
@@ -361,7 +369,8 @@ class ExtractTask extends Shell
             'default' => true,
             'help' => 'Ignores all files in plugins if this command is run inside from the same app directory.',
         ])->addOption('plugin', [
-            'help' => 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.',
+            'help' => 'Extracts tokens only from the plugin specified and '
+                . 'puts the result in the plugin\'s Locale directory.',
         ])->addOption('ignore-model-validation', [
             'boolean' => true,
             'default' => false,
@@ -527,7 +536,9 @@ class ExtractTask extends Shell
                     $occurrences = implode("\n#: ", $occurrences);
                     $header = '';
                     if (!$this->param('no-location')) {
-                        $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
+                        $header = '#: '
+                            . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences))
+                            . "\n";
                     }
 
                     $sentence = '';
@@ -661,11 +672,18 @@ class ExtractTask extends Shell
     {
         $strings = [];
         $count = count($strings);
-        while ($count < $target && ($this->_tokens[$position] === ',' || $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position][0] === T_LNUMBER)) {
+        while ($count < $target
+            && ($this->_tokens[$position] === ','
+                || $this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
+                || $this->_tokens[$position][0] === T_LNUMBER
+            )
+        ) {
             $count = count($strings);
             if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING && $this->_tokens[$position + 1] === '.') {
                 $string = '';
-                while ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING || $this->_tokens[$position] === '.') {
+                while ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING
+                    || $this->_tokens[$position] === '.'
+                ) {
                     if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {
                         $string .= $this->_formatString($this->_tokens[$position][1]);
                     }

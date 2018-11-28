@@ -31,8 +31,8 @@ if (!function_exists('h')) {
      *    implement a `__toString` method. Otherwise the class name will be used.
      *    Other scalar types will be returned unchanged.
      * @param bool $double Encode existing html entities.
-     * @param string|null $charset Character set to use when escaping. Defaults to config value in `mb_internal_encoding()`
-     * or 'UTF-8'.
+     * @param string|null $charset Character set to use when escaping.
+     *   Defaults to config value in `mb_internal_encoding()` or 'UTF-8'.
      * @return mixed Wrapped text.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#h
      */

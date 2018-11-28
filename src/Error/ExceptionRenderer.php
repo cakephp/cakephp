@@ -94,7 +94,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
      * code error depending on the code used to construct the error.
      *
      * @param \Throwable $exception Exception.
-     * @param \Cake\Http\ServerRequest $request The request - if this is set it will be used instead of creating a new one
+     * @param \Cake\Http\ServerRequest $request The request if this is set it will be used
+     *   instead of creating a new one.
      */
     public function __construct(Throwable $exception, ?ServerRequest $request = null)
     {

@@ -89,7 +89,11 @@ class AssociationCollection implements IteratorAggregate
 
         $association = new $className($associated, $options);
         if (!$association instanceof Association) {
-            $message = sprintf('The association must extend `%s` class, `%s` given.', Association::class, get_class($association));
+            $message = sprintf(
+                'The association must extend `%s` class, `%s` given.',
+                Association::class,
+                get_class($association)
+            );
             throw new InvalidArgumentException($message);
         }
 
@@ -254,8 +258,13 @@ class AssociationCollection implements IteratorAggregate
      * @return bool Success
      * @throws \InvalidArgumentException When an unknown alias is used.
      */
-    protected function _saveAssociations(Table $table, EntityInterface $entity, array $associations, array $options, bool $owningSide): bool
-    {
+    protected function _saveAssociations(
+        Table $table,
+        EntityInterface $entity,
+        array $associations,
+        array $options,
+        bool $owningSide
+    ): bool {
         unset($options['associated']);
         foreach ($associations as $alias => $nested) {
             if (is_int($alias)) {
@@ -291,8 +300,12 @@ class AssociationCollection implements IteratorAggregate
      * @param array $options Original options
      * @return bool Success
      */
-    protected function _save(Association $association, EntityInterface $entity, array $nested, array $options): bool
-    {
+    protected function _save(
+        Association $association,
+        EntityInterface $entity,
+        array $nested,
+        array $options
+    ): bool {
         if (!$entity->isDirty($association->getProperty())) {
             return true;
         }

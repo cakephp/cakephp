@@ -41,8 +41,10 @@ interface FixtureInterface
      *
      * Should insert all the records into the test database.
      *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection into which the records will be inserted.
-     * @return \Cake\Database\StatementInterface|bool on success or if there are no records to insert, or false on failure.
+     * @param \Cake\Datasource\ConnectionInterface $db An instance of the connection
+     *   into which the records will be inserted.
+     * @return \Cake\Database\StatementInterface|bool on success or if there are no records to insert,
+     *  or false on failure.
      */
     public function insert(ConnectionInterface $db);
 
@@ -50,7 +52,8 @@ interface FixtureInterface
      * Build and execute SQL queries necessary to create the constraints for the
      * fixture
      *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database into which the constraints will be created
+     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database
+     *  into which the constraints will be created.
      * @return bool on success or if there are no constraints to create, or false on failure
      */
     public function createConstraints(ConnectionInterface $db): bool;
@@ -59,7 +62,8 @@ interface FixtureInterface
      * Build and execute SQL queries necessary to drop the constraints for the
      * fixture
      *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database into which the constraints will be dropped
+     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database
+     *  into which the constraints will be dropped.
      * @return bool on success or if there are no constraints to drop, or false on failure
      */
     public function dropConstraints(ConnectionInterface $db): bool;

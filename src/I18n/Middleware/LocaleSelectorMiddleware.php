@@ -50,8 +50,11 @@ class LocaleSelectorMiddleware
      * @param callable $next The next middleware to call.
      * @return \Psr\Http\Message\ResponseInterface A response.
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
-    {
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $next
+    ): ResponseInterface {
         $locale = Locale::acceptFromHttp($request->getHeaderLine('Accept-Language'));
         if (!$locale) {
             return $next($request, $response);

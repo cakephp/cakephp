@@ -54,8 +54,9 @@ class CaseExpression implements ExpressionInterface
      *
      * @param array|\Cake\Database\ExpressionInterface $conditions The conditions to test. Must be a ExpressionInterface
      * instance, or an array of ExpressionInterface instances.
-     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the conditions
-     * passed in $conditions. If there are more $values than $conditions, the last $value is used as the `ELSE` value
+     * @param array|\Cake\Database\ExpressionInterface $values associative array of values to be associated with the
+     * conditions passed in $conditions. If there are more $values than $conditions,
+     * the last $value is used as the `ELSE` value.
      * @param array $types associative array of types to be associated with the values
      * passed in $values
      */
@@ -77,7 +78,8 @@ class CaseExpression implements ExpressionInterface
      * Conditions must be a one dimensional array or a QueryExpression.
      * The trueValues must be a similar structure, but may contain a string value.
      *
-     * @param array|\Cake\Database\ExpressionInterface $conditions Must be a ExpressionInterface instance, or an array of ExpressionInterface instances.
+     * @param array|\Cake\Database\ExpressionInterface $conditions Must be a ExpressionInterface instance,
+     *   or an array of ExpressionInterface instances.
      * @param array|\Cake\Database\ExpressionInterface $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
      *
@@ -104,7 +106,8 @@ class CaseExpression implements ExpressionInterface
      * Iterates over the passed in conditions and ensures that there is a matching true value for each.
      * If no matching true value, then it is defaulted to '1'.
      *
-     * @param array|\Cake\Database\ExpressionInterface $conditions Must be a ExpressionInterface instance, or an array of ExpressionInterface instances.
+     * @param array|\Cake\Database\ExpressionInterface $conditions Must be a ExpressionInterface instance,
+     *   or an array of ExpressionInterface instances.
      * @param array|\Cake\Database\ExpressionInterface $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
      *

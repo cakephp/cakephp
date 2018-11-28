@@ -78,8 +78,12 @@ class SqlserverSchema extends BaseSchema
      * @return array Array of column information.
      * @link https://technet.microsoft.com/en-us/library/ms187752.aspx
      */
-    protected function _convertColumn(string $col, ?int $length = null, ?int $precision = null, ?int $scale = null): array
-    {
+    protected function _convertColumn(
+        string $col,
+        ?int $length = null,
+        ?int $precision = null,
+        ?int $scale = null
+    ): array {
         $col = strtolower($col);
         $length = (int)$length;
         $precision = (int)$precision;
@@ -269,6 +273,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
+        // phpcs:disable Generic.Files.LineLength
         $sql = 'SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
                 FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
                 RC.name AS [reference_column]
@@ -280,6 +285,7 @@ class SqlserverSchema extends BaseSchema
             INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
             INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
             WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?';
+        // phpcs:enable Generic.Files.LineLength
 
         $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
 
@@ -426,7 +432,9 @@ class SqlserverSchema extends BaseSchema
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
         } elseif (isset($data['default'])) {
-            $default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
+            $default = is_bool($data['default'])
+                ? (int)$data['default']
+                : $this->_driver->schemaValue($data['default']);
             $out .= ' DEFAULT ' . $default;
         } elseif (isset($data['null']) && $data['null'] !== false) {
             $out .= ' DEFAULT NULL';
