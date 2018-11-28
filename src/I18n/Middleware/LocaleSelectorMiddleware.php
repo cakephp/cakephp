@@ -55,7 +55,10 @@ class LocaleSelectorMiddleware
         if (!$locale) {
             return $next($request, $response);
         }
-        if (in_array($locale, $this->locales) || $this->locales === ['*']) {
+        if ($this->locales !== ['*']) {
+            $locale = Locale::lookup($this->locales, $locale, true);
+        }
+        if ($locale || $this->locales === ['*']) {
             I18n::setLocale($locale);
         }
 

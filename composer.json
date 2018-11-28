@@ -92,8 +92,8 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs --colors -p ./src ./tests",
-        "cs-fix": "phpcbf --colors ./src ./tests",
+        "cs-check": "phpcs --colors -p src/ tests/",
+        "cs-fix": "phpcbf --colors src/ tests/",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml"
     }
