@@ -860,7 +860,7 @@ abstract class Association
     /**
      * Gets the default finder to use for fetching rows from the target table.
      *
-     * @return string
+     * @return string|array
      */
     public function getFinder()
     {
