@@ -176,7 +176,7 @@ trait PostgresDialectTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function disableForeignKeySQL(): string
     {
@@ -184,7 +184,7 @@ trait PostgresDialectTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function enableForeignKeySQL(): string
     {

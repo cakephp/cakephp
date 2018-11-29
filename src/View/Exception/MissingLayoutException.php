@@ -21,7 +21,7 @@ use Cake\Core\Exception\Exception;
 class MissingLayoutException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'Layout file "%s" is missing.';
 }

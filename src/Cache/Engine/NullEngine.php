@@ -25,7 +25,7 @@ use Cake\Cache\CacheEngine;
 class NullEngine extends CacheEngine
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function init(array $config = []): bool
     {
@@ -33,7 +33,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function set($key, $value, $ttl = null)
     {
@@ -41,7 +41,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setMultiple($data, $ttl = null): bool
     {
@@ -49,7 +49,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function get($key, $default = null)
     {
@@ -57,7 +57,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getMultiple($keys, $default = null): array
     {
@@ -65,7 +65,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function increment(string $key, int $offset = 1)
     {
@@ -73,7 +73,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function decrement(string $key, int $offset = 1)
     {
@@ -81,7 +81,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function delete($key)
     {
@@ -89,7 +89,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function deleteMultiple($keys): bool
     {
@@ -97,7 +97,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function clear()
     {
@@ -105,7 +105,7 @@ class NullEngine extends CacheEngine
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function clearGroup(string $group): bool
     {

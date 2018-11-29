@@ -30,7 +30,7 @@ class TimeType extends DateTimeType
     protected $_format = 'H:i:s';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function _parseValue(string $value)
     {

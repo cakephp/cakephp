@@ -115,7 +115,7 @@ class Sqlite extends Driver
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function supportsDynamicConstraints(): bool
     {

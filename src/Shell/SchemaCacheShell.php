@@ -80,6 +80,7 @@ class SchemaCacheShell extends Shell
     protected function _getSchemaCache(): SchemaCache
     {
         try {
+            /** @var \Cake\Database\Connection $connection */
             $connection = ConnectionManager::get($this->params['connection']);
 
             return new SchemaCache($connection);

@@ -93,7 +93,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function on($eventKey = null, $options = [], $callable = null): EventManagerInterface
     {
@@ -176,7 +176,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function off($eventKey, $callable = null): EventManagerInterface
     {
@@ -249,7 +249,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dispatch($event): EventInterface
     {
@@ -302,7 +302,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function listeners(string $eventKey): array
     {

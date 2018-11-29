@@ -21,7 +21,7 @@ use Cake\Core\Exception\Exception;
 class MissingTemplateException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'Template file "%s" is missing.';
 }

@@ -50,7 +50,7 @@ class ControllerAuthorize extends BaseAuthorize
     protected $_Controller;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {

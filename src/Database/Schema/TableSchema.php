@@ -298,7 +298,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function name(): string
     {
@@ -306,7 +306,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addColumn(string $name, $attrs)
     {
@@ -325,7 +325,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function removeColumn(string $name)
     {
@@ -335,7 +335,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function columns(): array
     {
@@ -343,7 +343,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getColumn(string $name): ?array
     {
@@ -357,7 +357,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getColumnType(string $name): ?string
     {
@@ -369,7 +369,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setColumnType(string $name, string $type)
     {
@@ -384,7 +384,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function hasColumn(string $name): bool
     {
@@ -392,7 +392,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function baseColumnType(string $column): ?string
     {
@@ -414,7 +414,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function typeMap(): array
     {
@@ -422,7 +422,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isNullable(string $name): bool
     {
@@ -434,7 +434,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function defaultValues(): array
     {
@@ -499,7 +499,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function indexes(): array
     {
@@ -507,7 +507,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getIndex(string $name): ?array
     {
@@ -519,7 +519,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function primaryKey(): array
     {
@@ -590,7 +590,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dropConstraint(string $name)
     {
@@ -646,7 +646,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function constraints(): array
     {
@@ -654,7 +654,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getConstraint(string $name): ?array
     {
@@ -666,7 +666,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setOptions(array $options): TableSchemaInterface
     {
@@ -676,7 +676,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getOptions(): array
     {
@@ -684,7 +684,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setTemporary(bool $temporary): TableSchemaInterface
     {
@@ -694,7 +694,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isTemporary(): bool
     {
@@ -702,7 +702,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function createSql(Connection $connection): array
     {
@@ -722,7 +722,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dropSql(Connection $connection): array
     {
@@ -732,7 +732,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function truncateSql(Connection $connection): array
     {
@@ -742,7 +742,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addConstraintSql(Connection $connection): array
     {
@@ -752,7 +752,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function dropConstraintSql(Connection $connection): array
     {

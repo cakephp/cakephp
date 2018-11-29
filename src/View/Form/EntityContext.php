@@ -178,7 +178,7 @@ class EntityContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isPrimaryKey(string $field): bool
     {
@@ -428,7 +428,7 @@ class EntityContext implements ContextInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function getRequiredMessage(string $field): ?string
     {

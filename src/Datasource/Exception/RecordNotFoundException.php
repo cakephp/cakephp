@@ -23,7 +23,7 @@ use Cake\Core\Exception\Exception;
 class RecordNotFoundException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 404;
 

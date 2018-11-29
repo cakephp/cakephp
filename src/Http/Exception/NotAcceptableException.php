@@ -21,7 +21,7 @@ use Throwable;
 class NotAcceptableException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 406;
 

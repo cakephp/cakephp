@@ -234,7 +234,7 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function defaultRowValue(array $row, bool $joined): array
     {
@@ -447,7 +447,7 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function _appendNotMatching(QueryInterface $query, array $options): void
     {
@@ -916,7 +916,7 @@ class BelongsToMany extends Association
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function setConditions($conditions)
     {

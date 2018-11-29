@@ -112,7 +112,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function listTablesSql(array $config): array
     {
@@ -124,7 +124,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
@@ -137,7 +137,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
@@ -194,7 +194,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeIndexSql(string $tableName, array $config): array
     {
@@ -242,7 +242,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
@@ -252,7 +252,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
@@ -454,7 +454,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
@@ -473,7 +473,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
@@ -490,7 +490,7 @@ class SqliteSchema extends BaseSchema
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function truncateTableSql(TableSchema $schema): array
     {

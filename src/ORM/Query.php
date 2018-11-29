@@ -1057,7 +1057,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sql(?ValueBinder $binder = null): string
     {
@@ -1272,7 +1272,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __debugInfo()
     {

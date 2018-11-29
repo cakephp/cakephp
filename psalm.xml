@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <psalm
     totallyTyped="false"
+    allowCoercionFromStringToClassConst="true"
+    allowStringToStandInForClass="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
@@ -142,6 +144,7 @@
 
         <InvalidArrayOffset>
             <errorLevel type="suppress">
+                <file name="src/Auth/BaseAuthenticate.php" />
                 <file name="src/Core/StaticConfigTrait.php" />
                 <file name="src/I18n/Parser/MoFileParser.php" />
                 <file name="src/I18n/Parser/PoFileParser.php" />

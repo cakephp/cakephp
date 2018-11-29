@@ -21,7 +21,7 @@ use Throwable;
 class GoneException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 410;
 

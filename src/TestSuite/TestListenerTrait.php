@@ -23,70 +23,70 @@ use PHPUnit\Framework\Warning;
 trait TestListenerTrait
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function startTestSuite(TestSuite $suite): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function endTestSuite(TestSuite $suite): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function startTest(Test $test): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function endTest(Test $test, float $time): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addSkippedTest(Test $test, \Throwable $t, float $time): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addError(Test $test, \Throwable $t, float $time): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addWarning(Test $test, Warning $e, float $time): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addFailure(Test $test, AssertionFailedError $e, float $time): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addRiskyTest(Test $test, \Throwable $e, float $time): void
     {
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function addIncompleteTest(Test $test, \Throwable $e, float $time): void
     {

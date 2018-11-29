@@ -21,7 +21,7 @@ use Throwable;
 class ServiceUnavailableException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 503;
 

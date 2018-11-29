@@ -239,7 +239,7 @@ trait DateFormatTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __toString()
     {

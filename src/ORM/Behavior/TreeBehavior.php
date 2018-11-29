@@ -76,7 +76,7 @@ class TreeBehavior extends Behavior
     ];
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function initialize(array $config): void
     {

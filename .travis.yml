@@ -39,6 +39,13 @@ matrix:
     - php: 7.1
       env: STATIC_ANALYSIS=1 DEFAULT=0
 
+    - php: 7.2
+      env: STATIC_ANALYSIS=1 PHPSTAN_LEVEL_3=1 DEFAULT=0
+
+  allow_failures:
+    - php: 7.2
+      env: STATIC_ANALYSIS=1 PHPSTAN_LEVEL_3=1 DEFAULT=0
+
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
   - if [[ ${TRAVIS_PHP_VERSION} != "7.3" ]]; then phpenv config-rm xdebug.ini; fi
@@ -69,8 +76,14 @@ script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.2 ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
-  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev "phpstan/phpstan:^0.10" && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src; fi
-  - if [[ $STATIC_ANALYSIS = 1 ]]; then composer require --dev vimeo/psalm:^2.0 && vendor/bin/psalm --show-info=false; fi
+
+  - |
+      if [[ $STATIC_ANALYSIS = 1 && $PHPSTAN_LEVEL_3 != 1 ]]; then
+        composer require --dev phpstan/phpstan:^0.10 vimeo/psalm:^3.0
+        vendor/bin/phpstan analyse src && vendor/bin/psalm --show-info=false
+      fi
+
+  - if [[ $PHPSTAN_LEVEL_3 = 1 ]]; then composer require --dev phpstan/phpstan:^0.10 && vendor/bin/phpstan analyse -l 3 src; fi
 
 after_success:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.2 ]]; then bash <(curl -s https://codecov.io/bash); fi

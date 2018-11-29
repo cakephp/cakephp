@@ -98,7 +98,7 @@ trait IntegrationTestTrait
     /**
      * The response for the most recent request.
      *
-     * @var \Cake\Http\Response|null
+     * @var \Psr\Http\Message\ResponseInterface|null
      */
     protected $_response;
 

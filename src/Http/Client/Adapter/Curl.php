@@ -31,7 +31,7 @@ use Composer\CaBundle\CaBundle;
 class Curl implements AdapterInterface
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function send(Request $request, array $options): array
     {

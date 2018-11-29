@@ -91,7 +91,7 @@ class DateTimeType extends BaseType
     protected $dbTimezone;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct($name = null)
     {

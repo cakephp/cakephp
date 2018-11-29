@@ -21,12 +21,12 @@ use Cake\Core\Exception\Exception;
 class DuplicateNamedRouteException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_messageTemplate = 'A route named "%s" has already been connected to "%s".';
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct($message, $code = 404, $previous = null)
     {

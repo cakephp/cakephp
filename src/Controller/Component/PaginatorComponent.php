@@ -65,7 +65,7 @@ class PaginatorComponent extends Component
     protected $_paginator;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {

@@ -45,7 +45,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function sql(ValueBinder $generator): string
     {
@@ -58,7 +58,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function traverse(callable $visitor): void
     {

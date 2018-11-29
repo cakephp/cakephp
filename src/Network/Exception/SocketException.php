@@ -22,7 +22,7 @@ use Cake\Core\Exception\Exception;
 class SocketException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 0;
 }

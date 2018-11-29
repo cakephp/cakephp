@@ -82,7 +82,7 @@ class DateType extends DateTimeType
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected function _parseValue(string $value)
     {

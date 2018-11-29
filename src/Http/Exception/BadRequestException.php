@@ -21,7 +21,7 @@ use Throwable;
 class BadRequestException extends HttpException
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 400;
 

@@ -30,7 +30,7 @@ use Cake\Core\Exception\Exception;
 class RedirectException extends Exception
 {
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     protected $_defaultCode = 302;
 }

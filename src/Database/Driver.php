@@ -98,12 +98,12 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function connect(): bool;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function disconnect(): void
     {
@@ -134,12 +134,12 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function enabled(): bool;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function prepare($query): StatementInterface
     {
@@ -151,7 +151,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function beginTransaction(): bool
     {
@@ -164,7 +164,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function commitTransaction(): bool
     {
@@ -177,7 +177,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function rollbackTransaction(): bool
     {
@@ -190,37 +190,37 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function releaseSavePointSQL($name): string;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function savePointSQL($name): string;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function rollbackSavePointSQL($name): string;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function disableForeignKeySQL(): string;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function enableForeignKeySQL(): string;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function supportsDynamicConstraints(): bool;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function supportsSavePoints(): bool
     {
@@ -228,7 +228,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function quote($value, $type): string
     {
@@ -250,22 +250,22 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function queryTranslator(string $type): callable;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function schemaDialect(): BaseSchema;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     abstract public function quoteIdentifier(string $identifier): string;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function schemaValue($value): string
     {
@@ -292,7 +292,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function schema(): string
     {
@@ -300,7 +300,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function lastInsertId(?string $table = null, ?string $column = null)
     {
@@ -314,7 +314,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isConnected(): bool
     {
@@ -332,7 +332,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function enableAutoQuoting(bool $enable = true): DriverInterface
     {
@@ -354,7 +354,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function isAutoQuotingEnabled(): bool
     {
@@ -362,7 +362,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function compileQuery(Query $query, ValueBinder $generator): array
     {
@@ -374,7 +374,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function newCompiler(): QueryCompiler
     {

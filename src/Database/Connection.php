@@ -137,7 +137,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function config(): array
     {
@@ -145,7 +145,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function configName(): string
     {

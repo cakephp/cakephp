@@ -377,7 +377,7 @@ trait SqlserverDialectTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function disableForeignKeySQL(): string
     {
@@ -385,7 +385,7 @@ trait SqlserverDialectTrait
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function enableForeignKeySQL(): string
     {

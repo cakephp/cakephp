@@ -40,7 +40,7 @@ class StoppableIterator extends Collection
     /**
      * A reference to the internal iterator this object is wrapping.
      *
-     * @var \Iterator
+     * @var \Traversable
      */
     protected $_innerIterator;
 

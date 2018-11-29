@@ -35,7 +35,7 @@ class MemoryStorage implements StorageInterface
     protected $_redirectUrl;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function read()
     {
@@ -43,7 +43,7 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function write($user): void
     {
@@ -51,7 +51,7 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function delete(): void
     {
@@ -59,7 +59,7 @@ class MemoryStorage implements StorageInterface
     }
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function redirectUrl($url = null)
     {
