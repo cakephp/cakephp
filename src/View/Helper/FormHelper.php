@@ -1502,13 +1502,24 @@ class FormHelper extends Helper
             unset($options['step']);
         }
 
-        $autoLength = !array_key_exists('maxlength', $options)
-            && !empty($fieldDef['length'])
-            && $options['type'] !== 'select';
+        $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
+        if (in_array($options['type'], $typesWithMaxLength)) {
 
-        $allowedTypes = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if ($autoLength && in_array($options['type'], $allowedTypes)) {
-            $options['maxlength'] = min($fieldDef['length'], 100000);
+            if (method_exists($context, 'getMaxLength')) {
+                $maxLength = $context->getMaxLength($fieldName);
+            }
+
+            if (!empty($fieldDef['length']) && isset($maxLength)) {
+                $fieldDef['length'] = min($fieldDef['length'], $maxLength);
+            } elseif (isset($maxLength)) {
+                $fieldDef['length'] = $maxLength;
+            }
+            if (!empty($options['maxlength'])) {
+                $fieldDef['length'] = min($fieldDef['length'], $options['maxlength']);
+            }
+            if (!empty($fieldDef['length'])) {
+                $options['maxlength'] = min($fieldDef['length'], 100000);
+            }
         }
 
         if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
