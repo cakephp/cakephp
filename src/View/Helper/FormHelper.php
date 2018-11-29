@@ -1477,7 +1477,11 @@ class FormHelper extends Helper
         }
 
         $validationLength = $context->getMaxLength($fieldName);
-        $fieldDef['length'] = $fieldDef['length'] ?? $validationLength;
+        if($fieldDef['length'] && $validationLength){
+            $fieldDef['length'] = min($fieldDef['length'], $validationLength);
+        }else if($validationLength){
+            $fieldDef['length'] = $validationLength;
+        }
 
         $autoLength = !array_key_exists('maxlength', $options)
             && !empty($fieldDef['length'])
@@ -1485,7 +1489,7 @@ class FormHelper extends Helper
 
         $allowedTypes = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
         if ($autoLength && in_array($options['type'], $allowedTypes)) {
-            $options['maxlength'] = min($fieldDef['length'], 100000);
+            $options['maxlength'] = $fieldDef['length'];
         }
 
         if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {

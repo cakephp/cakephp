@@ -441,10 +441,12 @@ class EntityContext implements ContextInterface
             return null;
         }
         foreach ($validator->field($fieldName)->rules() as $rule) {
-            if ($rule->get('rule') == 'maxLength') {
+            if ($rule->get('rule') === 'maxLength') {
                 return $rule->get('pass')[0] ?? null;
             }
         }
+
+        return null;
     }
 
     /**

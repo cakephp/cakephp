@@ -226,10 +226,8 @@ class ArrayContext implements ContextInterface
         if(!$fieldSchema){
             return null;
         }
-
-        if (is_array($fieldSchema)) {
-            $maxLength = Hash::get($fieldSchema, 'length');
-        }
+        
+        $maxLength = Hash::get($fieldSchema, 'length');
 
         return $maxLength ?? null;
     }
