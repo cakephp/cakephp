@@ -430,7 +430,7 @@ class EntityContext implements ContextInterface
      * Get field length from validation
      *
      * @param string $field The dot separated path to the field you want to check.
-     * @return int|false
+     * @return int|null
      */
     public function getMaxLength($field)
     {
