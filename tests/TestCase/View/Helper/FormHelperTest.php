@@ -9446,7 +9446,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->create($form);
         $result = $this->Form->control('title');
-        debug($result);
+
         $expected = [
             'div' => ['class'],
             'label' => ['for'],

@@ -220,9 +220,11 @@ class ArrayContext implements ContextInterface
             return false;
         }
         $fieldShema = Hash::get($this->_context['schema'], $field);
-        $maxLength =  Hash::get($fieldShema, 'length');
+        if(is_array($fieldShema)) {
+            $maxLength = Hash::get($fieldShema, 'length');
+        }
 
-        return $maxLength??false;
+        return $maxLength ?? false;
     }
 
     /**
