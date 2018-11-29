@@ -207,6 +207,25 @@ class ArrayContext implements ContextInterface
     }
 
     /**
+     * Get field length from validation
+     *
+     * In this context class, this is simply defined by the 'maxlength' array.
+     *
+     * @param string $field A dot separated path to check required-ness for.
+     * @return int|false
+     */
+    public function getMaxLength($field)
+    {
+        if (!is_array($this->_context['schema'])) {
+            return false;
+        }
+        $fieldShema = Hash::get($this->_context['schema'], $field);
+        $maxLength =  Hash::get($fieldShema, 'length');
+
+        return $maxLength??false;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function fieldNames()

@@ -1476,6 +1476,10 @@ class FormHelper extends Helper
             unset($options['step']);
         }
 
+
+        $validationLength = $context->getMaxLength($fieldName);
+        $fieldDef['length'] = $fieldDef['length'] ?? $validationLength;
+
         $autoLength = !array_key_exists('maxlength', $options)
             && !empty($fieldDef['length'])
             && $options['type'] !== 'select';

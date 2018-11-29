@@ -71,6 +71,14 @@ interface ContextInterface
     public function isRequired($field);
 
     /**
+     * Get maximum length of a filed from model validation
+     *
+     * @param string $field A dot separated path to check required-ness for.
+     * @return bool|false
+     */
+    public function getMaxLength($field);
+
+    /**
      * Get the fieldnames of the top level object in this context.
      *
      * @return array A list of the field names in the context.

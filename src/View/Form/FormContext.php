@@ -137,6 +137,24 @@ class FormContext implements ContextInterface
     /**
      * {@inheritDoc}
      */
+    public function getMaxLength($field)
+    {
+        $validator = $this->_form->getValidator();
+        if (!$validator->hasField($field)) {
+            return false;
+        }
+        foreach($validator->field($field)->rules() as $rule){
+            if($rule->get('rule') == 'maxLength'){
+                return $rule->get('pass')[0] ?? false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function fieldNames()
     {
         return $this->_form->schema()->fields();
