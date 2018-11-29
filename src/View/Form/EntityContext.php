@@ -442,11 +442,7 @@ class EntityContext implements ContextInterface
         }
         foreach ($validator->field($fieldName)->rules() as $rule) {
             if ($rule->get('rule') === 'maxLength') {
-<<<<<<< 892251dd39a1c5c9a91c83d1a6b50a402ed59a37
-                return $rule->get('pass')[0] ?? null;
-=======
                 return isset($rule->get('pass')[0]) ? $rule->get('pass')[0] : null;
->>>>>>> Form Helper maxlength attribute uses validation
             }
         }
 

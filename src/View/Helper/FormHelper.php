@@ -1477,11 +1477,8 @@ class FormHelper extends Helper
         }
 
         $validationLength = $context->getMaxLength($fieldName);
-<<<<<<< 892251dd39a1c5c9a91c83d1a6b50a402ed59a37
-        if($fieldDef['length'] && $validationLength){
-=======
+
         if(!empty($fieldDef['length']) && $validationLength){
->>>>>>> Form Helper maxlength attribute uses validation
             $fieldDef['length'] = min($fieldDef['length'], $validationLength);
         }else if($validationLength){
             $fieldDef['length'] = $validationLength;
