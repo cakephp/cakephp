@@ -12,7 +12,6 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-
 namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
@@ -226,10 +225,12 @@ class ArrayContext implements ContextInterface
         if(!$fieldSchema){
             return null;
         }
-        
-        $maxLength = Hash::get($fieldSchema, 'length');
 
-        return $maxLength ?? null;
+        if (is_array($fieldSchema)) {
+            return Hash::get($fieldSchema, 'length');
+        }
+
+        return null;
     }
 
     /**
