@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
@@ -212,19 +213,20 @@ class ArrayContext implements ContextInterface
      * In this context class, this is simply defined by the 'maxlength' array.
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return int|false
+     * @return int|null
      */
     public function getMaxLength($field)
     {
         if (!is_array($this->_context['schema'])) {
-            return false;
+            return null;
         }
         $fieldShema = Hash::get($this->_context['schema'], $field);
-        if(is_array($fieldShema)) {
+
+        if (is_array($fieldShema)) {
             $maxLength = Hash::get($fieldShema, 'length');
         }
 
-        return $maxLength ?? false;
+        return $maxLength ?? null;
     }
 
     /**

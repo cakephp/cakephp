@@ -74,7 +74,7 @@ interface ContextInterface
      * Get maximum length of a filed from model validation
      *
      * @param string $field A dot separated path to check required-ness for.
-     * @return bool|false
+     * @return bool|null
      */
     public function getMaxLength($field);
 

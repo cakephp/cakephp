@@ -432,16 +432,17 @@ class EntityContext implements ContextInterface
      * @param string $field The dot separated path to the field you want to check.
      * @return int|false
      */
-    public function getMaxLength($field){
+    public function getMaxLength($field)
+    {
         $parts = explode('.', $field);
         $validator = $this->_getValidator($parts);
         $fieldName = array_pop($parts);
         if (!$validator->hasField($fieldName)) {
-            return false;
+            return null;
         }
-        foreach($validator->field($fieldName)->rules() as $rule){
-            if($rule->get('rule') == 'maxLength'){
-                return $rule->get('pass')[0] ?? false;
+        foreach ($validator->field($fieldName)->rules() as $rule) {
+            if ($rule->get('rule') == 'maxLength') {
+                return $rule->get('pass')[0] ?? null;
             }
         }
     }

@@ -12,6 +12,7 @@
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 namespace Cake\View\Form;
 
 use Cake\Http\ServerRequest;
@@ -105,7 +106,6 @@ class FormContext implements ContextInterface
      * Get default value from form schema for given field.
      *
      * @param string $field Field name.
-
      * @return mixed
      */
     protected function _schemaDefault($field)
@@ -141,15 +141,15 @@ class FormContext implements ContextInterface
     {
         $validator = $this->_form->getValidator();
         if (!$validator->hasField($field)) {
-            return false;
+            return null;
         }
-        foreach($validator->field($field)->rules() as $rule){
-            if($rule->get('rule') == 'maxLength'){
-                return $rule->get('pass')[0] ?? false;
+        foreach ($validator->field($field)->rules() as $rule) {
+            if ($rule->get('rule') == 'maxLength') {
+                return $rule->get('pass')[0] ?? null;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**

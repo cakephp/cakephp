@@ -88,7 +88,7 @@ class NullContext implements ContextInterface
      */
     public function getMaxLength($field)
     {
-        return false;
+        return null;
     }
 
     /**
