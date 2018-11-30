@@ -2451,7 +2451,7 @@ class QueryTest extends TestCase
             ->contain(['Authors'])
             ->order(['Authors.id' => 'asc'])
             ->select(['Authors.id']);
-        $results = $query->extract('Authors.id')->toList();
+        $results = $query->extract('author.id')->toList();
         $expected = [1, 1, 3];
         $this->assertEquals($expected, $results);
     }
