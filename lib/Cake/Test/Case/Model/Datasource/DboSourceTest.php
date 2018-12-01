@@ -1028,6 +1028,11 @@ class DboSourceTest extends CakeTestCase {
 			$this->markTestSkipped('This test can only run on MySQL');
 		}
 		$name = $this->db->fullTableName('enum_tests');
+
+		$query = "DROP TABLE IF EXISTS {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
 		$query = "CREATE TABLE {$name} (mood ENUM('','happy','sad','ok') NOT NULL);";
 		$result = $this->db->query($query);
 		$this->assertTrue($result);
@@ -1042,6 +1047,40 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEquals(array(
 			'EnumTest' => array(
 				'mood' => '',
+				'id' => '0'
+			)
+		), $enumResult);
+	}
+
+/**
+ * Test for MySQL enum datatype for a list of Integer stored as String
+ *
+ * @return void
+ */
+	public function testIntValueAsStringOnEnum() {
+		if (!$this->db instanceof Mysql) {
+			$this->markTestSkipped('This test can only run on MySQL');
+		}
+		$name = $this->db->fullTableName('enum_faya_tests');
+
+		$query = "DROP TABLE IF EXISTS {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
+		$query = "CREATE TABLE {$name} (faya enum('10','20','30','40') NOT NULL);";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
+		$EnumFayaTest = ClassRegistry::init('EnumFayaTest');
+		$enumResult = $EnumFayaTest->save(array('faya' => '10'));
+
+		$query = "DROP TABLE {$name};";
+		$result = $this->db->query($query);
+		$this->assertTrue($result);
+
+		$this->assertEquals(array(
+			'EnumFayaTest' => array(
+				'faya' => '10',
 				'id' => '0'
 			)
 		), $enumResult);
