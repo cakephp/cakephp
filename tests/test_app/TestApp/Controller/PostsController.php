@@ -130,4 +130,10 @@ class PostsController extends AppController
 
         return $this->getResponse()->withStringBody('');
     }
+
+    public function throw_exception()
+    {
+        $this->Flash->error('Error 1');
+        throw new \OutOfBoundsException('oh no!');
+    }
 }
