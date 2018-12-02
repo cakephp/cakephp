@@ -9681,10 +9681,9 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'type' => 'text',
                 'required' => 'required',
-                'maxlength' => 45,
+                'maxlength' => 55, // Length set in validator should take precedence over schema.
             ],
             '/div',
-
         ];
         $this->assertHtml($expected, $result);
 
@@ -9715,7 +9714,7 @@ class FormHelperTest extends TestCase
                 'name' => 'title',
                 'type' => 'text',
                 'required' => 'required',
-                'maxlength' => 10,
+                'maxlength' => 10, // Length set in options should take highest precedence.
             ],
             '/div',
 

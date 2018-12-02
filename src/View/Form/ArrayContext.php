@@ -243,17 +243,7 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        $fieldSchema = Hash::get($this->_context['schema'], $field);
-
-        if (!$fieldSchema) {
-            return null;
-        }
-
-        if (is_array($fieldSchema)) {
-            return Hash::get($fieldSchema, 'length');
-        }
-
-        return null;
+        return Hash::get($this->_context['schema'], "$field.length");
     }
 
     /**
