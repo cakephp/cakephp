@@ -1224,6 +1224,38 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Tests that generated default order URL doesn't include sort and direction parameters.
+     *
+     * @return void
+     */
+    public function testDefaultSortRemovedFromUrlWithAliases()
+    {
+        $request = new ServerRequest([
+            'params' => ['controller' => 'articles', 'action' => 'index', 'plugin' => null],
+            'url' => '/articles?sort=title&direction=asc'
+        ]);
+        Router::setRequestInfo($request);
+
+        $this->Paginator->options(['model' => 'Articles']);
+        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
+            'Articles' => [
+                'page' => 1, 'current' => 3, 'count' => 13,
+                'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
+                'sort' => 'Articles.title', 'direction' => 'asc',
+                'sortDefault' => 'Articles.title', 'directionDefault' => 'desc',
+            ],
+        ]);
+
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['class' => 'asc', 'href' => '/articles/index'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test the prev() method.
      *
      * @return void

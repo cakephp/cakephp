@@ -714,6 +714,52 @@ class PaginatorTest extends TestCase
     }
 
     /**
+     * Test that "sort" and "direction" in paging params is properly set based
+     * on initial value of "order" in paging settings.
+     *
+     * @return void
+     */
+    public function testValidateSortAndDirectionAliased()
+    {
+        $table = $this->_getMockPosts(['query']);
+        $query = $this->_getMockFindQuery();
+
+        $table->expects($this->once())
+            ->method('query')
+            ->will($this->returnValue($query));
+
+        $query->expects($this->once())->method('applyOptions')
+            ->with([
+                'limit' => 20,
+                'page' => 1,
+                'order' => ['PaginatorPosts.title' => 'asc'],
+                'whitelist' => ['limit', 'sort', 'page', 'direction'],
+                'sort' => 'title',
+                'scope' => null,
+            ]);
+
+        $options = [
+            'order' => [
+                'Articles.title' => 'desc',
+            ],
+        ];
+        $queryParams = [
+            'page' => 1,
+            'sort' => 'title',
+            'direction' => 'asc'
+        ];
+
+        $this->Paginator->paginate($table, $queryParams, $options);
+        $pagingParams = $this->Paginator->getPagingParams();
+
+        $this->assertEquals('title', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+
+        $this->assertEquals('Articles.title', $pagingParams['PaginatorPosts']['sortDefault']);
+        $this->assertEquals('desc', $pagingParams['PaginatorPosts']['directionDefault']);
+    }
+
+    /**
      * testValidateSortRetainsOriginalSortValue
      *
      * @return void
@@ -935,14 +981,15 @@ class PaginatorTest extends TestCase
     }
 
     /**
+     * @param string $modelAlias Model alias to use.
      * @return \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function mockAliasHasFieldModel()
+    protected function mockAliasHasFieldModel($modelAlias = 'model')
     {
         $model = $this->getMockRepository();
         $model->expects($this->any())
             ->method('getAlias')
-            ->will($this->returnValue('model'));
+            ->will($this->returnValue($modelAlias));
         $model->expects($this->any())
             ->method('hasField')
             ->will($this->returnValue(true));
@@ -1015,6 +1062,33 @@ class PaginatorTest extends TestCase
             'model.author_id' => 'asc',
         ];
         $this->assertEquals($expected, $result['order']);
+    }
+
+    /**
+     * Tests that sort query string and model prefixes default match on assoc merging.
+     *
+     * @return void
+     */
+    public function testValidateSortMultipleWithQueryAndAliasedDefault()
+    {
+        $model = $this->mockAliasHasFieldModel();
+
+        $options = [
+            'sort' => 'created',
+            'direction' => 'desc',
+            'order' => [
+                'model.created' => 'asc'
+            ]
+        ];
+        $result = $this->Paginator->validateSort($model, $options);
+
+        $expected = [
+            'sort' => 'created',
+            'order' => [
+                'model.created' => 'desc',
+            ],
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
