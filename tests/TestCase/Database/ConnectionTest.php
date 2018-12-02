@@ -72,7 +72,7 @@ class ConnectionTest extends TestCase
      * Auxiliary method to build a mock for a driver so it can be injected into
      * the connection object
      *
-     * @return \Cake\Database\Driver
+     * @return \Cake\Database\Driver|\PHPUnit_Framework_MockObject_MockObject
      */
     public function getMockFormDriver()
     {

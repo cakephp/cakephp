@@ -18,6 +18,11 @@ use TestApp\Mailer\TestMailer;
 
 class MailerTest extends TestCase
 {
+    /**
+     * @param array $methods
+     * @param array $args
+     * @return \Cake\Mailer\Email|\PHPUnit_Framework_MockObject_MockObject
+     */
     public function getMockForEmail($methods = [], $args = [])
     {
         return $this->getMockBuilder('Cake\Mailer\Email')
@@ -26,12 +31,18 @@ class MailerTest extends TestCase
             ->getMock();
     }
 
+    /**
+     * @return void
+     */
     public function testConstructor()
     {
         $mailer = new TestMailer();
         $this->assertInstanceOf('Cake\Mailer\Email', $mailer->getEmailForAssertion());
     }
 
+    /**
+     * @return void
+     */
     public function testReset()
     {
         $mailer = new TestMailer();
@@ -41,6 +52,9 @@ class MailerTest extends TestCase
         $this->assertNotEquals($email->getViewVars(), $mailer->reset()->getEmailForAssertion()->getViewVars());
     }
 
+    /**
+     * @return void
+     */
     public function testGetName()
     {
         $result = (new TestMailer())->getName();
@@ -48,6 +62,9 @@ class MailerTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return void
+     */
     public function testProxies()
     {
         $email = $this->getMockForEmail('setHeaders');
@@ -149,6 +166,8 @@ class MailerTest extends TestCase
 
     /**
      * Test that mailers call reset() when send fails
+     *
+     * @return void
      */
     public function testSendFailsEmailIsReset()
     {
@@ -177,7 +196,7 @@ class MailerTest extends TestCase
     /**
      * test that initial email instance config is restored after email is sent.
      *
-     * @return [type]
+     * @return void
      */
     public function testDefaultProfileRestoration()
     {
@@ -199,6 +218,7 @@ class MailerTest extends TestCase
     }
 
     /**
+     * @return void
      */
     public function testMissingActionThrowsException()
     {
