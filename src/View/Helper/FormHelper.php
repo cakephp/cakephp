@@ -1515,7 +1515,9 @@ class FormHelper extends Helper
                 $maxLength = $fieldDef['length'];
             }
 
-            $options['maxlength'] = min($maxLength, 100000);
+            if ($maxLength !== null) {
+                $options['maxlength'] = min($maxLength, 100000);
+            }
         }
 
         if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
