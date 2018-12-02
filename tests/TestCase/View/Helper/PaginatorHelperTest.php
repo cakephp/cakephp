@@ -1237,7 +1237,7 @@ class PaginatorHelperTest extends TestCase
         Router::setRequestInfo($request);
 
         $this->Paginator->options(['model' => 'Articles']);
-        $this->Paginator->request = $this->Paginator->request->withParam('paging', [
+        $request = $this->View->getRequest()->withParam('paging', [
             'Articles' => [
                 'page' => 1, 'current' => 3, 'count' => 13,
                 'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
@@ -1245,6 +1245,7 @@ class PaginatorHelperTest extends TestCase
                 'sortDefault' => 'Articles.title', 'directionDefault' => 'desc',
             ],
         ]);
+        $this->View->setRequest($request);
 
         $result = $this->Paginator->sort('title');
         $expected = [
