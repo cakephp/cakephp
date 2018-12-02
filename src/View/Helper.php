@@ -139,7 +139,7 @@ class Helper implements EventListenerInterface
         if (isset($removed[$name])) {
             $method = $removed[$name];
             deprecationWarning(sprintf(
-                'Helper::$%s is removed. Use $view->%s() instead.',
+                'Helper::$%s is deprecated. Use $view->%s() instead.',
                 $name,
                 $method
             ));
@@ -149,7 +149,7 @@ class Helper implements EventListenerInterface
 
         if ($name === 'request') {
             deprecationWarning(
-                'Helper::$%s is removed. Use $view->%s() instead. Use $helper->getView()->getRequest() instead.'
+                'Helper::$request is deprecated. Use $helper->getView()->getRequest() instead.'
             );
 
             return $this->_View->getRequest();
