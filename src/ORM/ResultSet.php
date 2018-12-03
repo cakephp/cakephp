@@ -528,6 +528,13 @@ class ResultSet implements ResultSetInterface
             $presentAliases[$table] = true;
         }
 
+        // If the default table is not in the results, set
+        // it to an empty array so that any contained
+        // associations hydrate correctly.
+        if (!isset($results[$defaultAlias])) {
+            $results[$defaultAlias] = [];
+        }
+
         unset($presentAliases[$defaultAlias]);
 
         foreach ($this->_containMap as $assoc) {
