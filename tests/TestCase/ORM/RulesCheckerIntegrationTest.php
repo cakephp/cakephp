@@ -714,6 +714,49 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Add a custom condition to the ExistsIn rule.
+     * This example only allows adding comments to published articles
+     *
+     * @group save
+     * @return void
+     */
+    public function testIsUniqueWithCustomConditions()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->Comments->belongsTo('Articles');
+
+        $rules = $table->Comments->rulesChecker();
+        $rules->add($rules->existsIn(['article_id'], $table), ['conditions' => ['published' => 'Y']]);
+
+        $article = $table->newEntity([
+            'title' => 'new article',
+            'published' => 'N',
+            'comments' => [
+                $table->Comments->newEntity([
+                    'user_id' => 1,
+                    'comment' => 'comment 1',
+                ]),
+            ]
+        ]);
+
+        $this->assertFalse($table->save($article));
+
+        $article = $table->newEntity([
+            'title' => 'new article',
+            'published' => 'Y',
+            'comments' => [
+                $table->Comments->newEntity([
+                    'user_id' => 1,
+                    'comment' => 'comment 1',
+                ]),
+            ]
+        ]);
+
+        $this->assertNotFalse($table->save($article));
+    }
+
+    /**
      * Tests the checkRules save option
      *
      * @group save

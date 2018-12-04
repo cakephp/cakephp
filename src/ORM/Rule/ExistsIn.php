@@ -71,6 +71,12 @@ class ExistsIn
     /**
      * Performs the existence check
      *
+     * ### Options
+     *
+     * - `conditions` A set of extra conditions to use when checking if the entity exists
+     *   in the database. For example, to only check for existence of any 'active' items, the
+     *   condition: ['active' => true] could be set.
+     *
      * @param \Cake\Datasource\EntityInterface $entity The entity from where to extract the fields
      * @param array $options Options passed to the check,
      * where the `repository` key is required.
@@ -134,6 +140,10 @@ class ExistsIn
             $primary,
             $entity->extract($fields)
         );
+
+        if (isset($options['conditions'])) {
+            $conditions += $options['conditions'];
+        }
 
         return $target->exists($conditions);
     }
