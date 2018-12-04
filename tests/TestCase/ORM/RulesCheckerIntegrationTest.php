@@ -722,38 +722,23 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testIsUniqueWithCustomConditions()
     {
-        $table = $this->getTableLocator()->get('Articles');
-        $table->hasMany('Comments');
-        $table->Comments->belongsTo('Articles');
+        $comment = new Entity(['article_id' => 1, 'user_id' => 1, 'comment' => 'Comment 1']);
+        $articlesTable = $this->getTableLocator()->get('Articles');
+        $articlesTable->hasMany('Comments');
+        $articlesTable->Comments->belongsTo('Articles');
 
-        $rules = $table->Comments->rulesChecker();
-        $rules->add($rules->existsIn(['article_id'], $table), ['conditions' => ['published' => 'Y']]);
+        $rules = $articlesTable->Comments->rulesChecker();
 
-        $article = $table->newEntity([
-            'title' => 'new article',
-            'published' => 'N',
-            'comments' => [
-                $table->Comments->newEntity([
-                    'user_id' => 1,
-                    'comment' => 'comment 1',
-                ]),
-            ]
-        ]);
+        $rules->add($rules->existsIn(['article_id'], $articlesTable), ['conditions' => ['published' => 'Y']]);
 
-        $this->assertFalse($table->save($article));
+        $article = $articlesTable->get(1);
+        $article->published = 'N';
+        $articlesTable->save($article);
 
-        $article = $table->newEntity([
-            'title' => 'new article',
-            'published' => 'Y',
-            'comments' => [
-                $table->Comments->newEntity([
-                    'user_id' => 1,
-                    'comment' => 'comment 1',
-                ]),
-            ]
-        ]);
+        $this->assertFalse($articlesTable->Comments->save($comment));
 
-        $this->assertNotFalse($table->save($article));
+        $comment->article_id = 2;
+        $this->assertNotFalse($articlesTable->Comments->save($comment));
     }
 
     /**
