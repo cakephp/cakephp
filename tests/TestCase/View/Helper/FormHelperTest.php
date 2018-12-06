@@ -23,6 +23,8 @@ use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
+use Cake\Validation\Validator;
+use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
@@ -9571,6 +9573,228 @@ class FormHelperTest extends TestCase
             '/label',
             '/div',
             '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testControlMaxLengthArrayContext method
+     *
+     * Test control() with maxlength attribute in Array Context.
+     *
+     * @return void
+     */
+    public function testControlMaxLengthArrayContext()
+    {
+        $this->article['schema'] = [
+            'title' => ['length' => 10]
+        ];
+
+        $this->Form->create($this->article);
+        $result = $this->Form->control('title');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => [
+                'id',
+                'name' => 'title',
+                'type' => 'text',
+                'required' => 'required',
+                'maxlength' => 10,
+            ],
+            '/div',
+
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testControlMaxLengthEntityContext method
+     *
+     * Test control() with maxlength attribute in Entity Context.
+     *
+     * @return void
+     */
+    public function testControlMaxLengthEntityContext()
+    {
+        $this->article['schema']['title']['length'] = 45;
+
+        $validator = new Validator();
+        $validator->maxLength('title', 10);
+        $article = new EntityContext(
+            new ServerRequest(),
+            [
+                'entity' => new Entity($this->article),
+                'table' => new Table([
+                    'schema' => $this->article['schema'],
+                    'validator' => $validator
+                ])
+
+            ]
+        );
+
+        $this->Form->create($article);
+        $result = $this->Form->control('title');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => [
+                'id',
+                'name' => 'title',
+                'type' => 'text',
+                'required' => 'required',
+                'maxlength' => 10,
+            ],
+            '/div',
+
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->article['schema']['title']['length'] = 45;
+        $validator = new Validator();
+        $validator->maxLength('title', 55);
+        $article = new EntityContext(
+            new ServerRequest(),
+            [
+                'entity' => new Entity($this->article),
+                'table' => new Table([
+                    'schema' => $this->article['schema'],
+                    'validator' => $validator
+                ])
+
+            ]
+        );
+
+        $this->Form->create($article);
+        $result = $this->Form->control('title');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => [
+                'id',
+                'name' => 'title',
+                'type' => 'text',
+                'required' => 'required',
+                'maxlength' => 55, // Length set in validator should take precedence over schema.
+            ],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->article['schema']['title']['length'] = 45;
+        $validator = new Validator();
+        $validator->maxLength('title', 55);
+        $article = new EntityContext(
+            new ServerRequest(),
+            [
+                'entity' => new Entity($this->article),
+                'table' => new Table([
+                    'schema' => $this->article['schema'],
+                    'validator' => $validator
+                ])
+
+            ]
+        );
+
+        $this->Form->create($article);
+        $result = $this->Form->control('title', ['maxlength' => 10]);
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => [
+                'id',
+                'name' => 'title',
+                'type' => 'text',
+                'required' => 'required',
+                'maxlength' => 10, // Length set in options should take highest precedence.
+            ],
+            '/div',
+
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testControlMinMaxLengthEntityContext method
+     *
+     * Test control() with maxlength attribute in Entity Context sets the minimum val.
+     *
+     * @return void
+     */
+    public function testControlMinMaxLengthEntityContext()
+    {
+        $validator = new Validator();
+        $validator->maxLength('title', 10);
+        $article = new EntityContext(
+            new ServerRequest(),
+            [
+                'entity' => new Entity($this->article),
+                'table' => new Table([
+                    'schema' => $this->article['schema'],
+                    'validator' => $validator
+                ])
+
+            ]
+        );
+
+        $this->Form->create($article);
+        $result = $this->Form->control('title');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => [
+                'id',
+                'name' => 'title',
+                'type' => 'text',
+                'required' => 'required',
+                'maxlength' => 10,
+            ],
+            '/div',
+
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testControlMaxLengthFormContext method
+     *
+     * Test control() with maxlength attribute in Form Context.
+     *
+     * @return void
+     */
+    public function testControlMaxLengthFormContext()
+    {
+        $validator = new Validator();
+        $validator->maxLength('title', 10);
+        $form = new Form();
+        $form->setValidator('default', $validator);
+
+        $this->Form->create($form);
+        $result = $this->Form->control('title');
+        $expected = [
+            'div' => ['class'],
+            'label' => ['for'],
+            'Title',
+            '/label',
+            'input' => [
+                'id',
+                'name' => 'title',
+                'type' => 'text',
+                'required' => 'required',
+                'maxlength' => 10,
+            ],
+            '/div',
+
         ];
         $this->assertHtml($expected, $result);
     }
