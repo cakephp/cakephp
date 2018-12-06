@@ -9605,7 +9605,6 @@ class FormHelperTest extends TestCase
                 'maxlength' => 10,
             ],
             '/div',
-
         ];
         $this->assertHtml($expected, $result);
     }
@@ -9631,7 +9630,6 @@ class FormHelperTest extends TestCase
                     'schema' => $this->article['schema'],
                     'validator' => $validator
                 ])
-
             ]
         );
 
@@ -9650,7 +9648,6 @@ class FormHelperTest extends TestCase
                 'maxlength' => 10,
             ],
             '/div',
-
         ];
         $this->assertHtml($expected, $result);
 
@@ -9717,7 +9714,6 @@ class FormHelperTest extends TestCase
                 'maxlength' => 10, // Length set in options should take highest precedence.
             ],
             '/div',
-
         ];
         $this->assertHtml($expected, $result);
     }
@@ -9741,7 +9737,6 @@ class FormHelperTest extends TestCase
                     'schema' => $this->article['schema'],
                     'validator' => $validator
                 ])
-
             ]
         );
 
@@ -9760,7 +9755,6 @@ class FormHelperTest extends TestCase
                 'maxlength' => 10,
             ],
             '/div',
-
         ];
         $this->assertHtml($expected, $result);
     }
@@ -9794,7 +9788,6 @@ class FormHelperTest extends TestCase
                 'maxlength' => 10,
             ],
             '/div',
-
         ];
         $this->assertHtml($expected, $result);
     }
