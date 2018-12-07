@@ -269,13 +269,13 @@ class TableLocator implements LocatorInterface
             $options['className'] = Inflector::camelize($alias);
         }
 
-        if (class_exists($options['className'])) {
+        if (strpos($options['className'], '\\') !== false && class_exists($options['className'])) {
             return $options['className'];
         }
 
         foreach ($this->_namespaces as $namespace) {
             $class = App::className($options['className'], $namespace, 'Table');
-            if ($class !== null) {
+            if ($class !== false) {
                 return $class;
             }
         }
