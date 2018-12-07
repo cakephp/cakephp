@@ -66,7 +66,7 @@ class TableLocator implements LocatorInterface
     /**
      * Constructor.
      *
-     * @param array|null $namespaces Namespaces where tables should be located located.
+     * @param array|null $namespaces Namespaces where tables should be located.
      *   If none provided, the default `Model\Table` under your app's namespace is used.
      */
     public function __construct(array $namespaces = null)
@@ -77,7 +77,9 @@ class TableLocator implements LocatorInterface
             ];
         }
 
-        $this->_namespaces = $namespaces;
+        foreach ($namespaces as $namespace) {
+            $this->addNamespace($namespace);
+        }
     }
 
     /**
@@ -341,5 +343,19 @@ class TableLocator implements LocatorInterface
             $this->_config[$alias],
             $this->_fallbacked[$alias]
         );
+    }
+
+    /**
+     * Adds a namespace where tables should be looked for.
+     *
+     * @param string $namespace Namespace to add.
+     * @return $this
+     */
+    public function addNamespace($namespace)
+    {
+        $namespace = str_replace('\\', '/', $namespace);
+        $this->_namespaces[] = trim($namespace, '/');
+
+        return $this;
     }
 }

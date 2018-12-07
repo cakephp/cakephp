@@ -689,4 +689,26 @@ class TableLocatorTest extends TestCase
         $table = $locator->get('Articles');
         $this->assertInstanceOf(Table::class, $table);
     }
+
+    /**
+     * testAddNamespace
+     *
+     * Tests that adding a namespace takes effect.
+     *
+     * @return void
+     */
+    public function testAddNamespace()
+    {
+        $locator = new TableLocator([]);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(Table::class, $table);
+
+        $locator->clear();
+        $locator->addNamespace('Infrastructure/Table');
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(AddressesTable::class, $table);
+
+    }
 }
