@@ -28,11 +28,11 @@ class TableLocator implements LocatorInterface
 {
 
     /**
-     * Contains a list of namespaces where table classes should be looked for.
+     * Contains a list of locations where table classes should be looked for.
      *
      * @var array
      */
-    protected $_namespaces = [];
+    protected $_locations = [];
 
     /**
      * Configuration for aliases.
@@ -66,19 +66,19 @@ class TableLocator implements LocatorInterface
     /**
      * Constructor.
      *
-     * @param array|null $namespaces Namespaces where tables should be located.
+     * @param array|null $locations Locations where tables should be looked for.
      *   If none provided, the default `Model\Table` under your app's namespace is used.
      */
-    public function __construct(array $namespaces = null)
+    public function __construct(array $locations = null)
     {
-        if ($namespaces === null) {
-            $namespaces = [
+        if ($locations === null) {
+            $locations = [
                 'Model/Table',
             ];
         }
 
-        foreach ($namespaces as $namespace) {
-            $this->addNamespace($namespace);
+        foreach ($locations as $location) {
+            $this->addLocation($location);
         }
     }
 
@@ -273,14 +273,14 @@ class TableLocator implements LocatorInterface
             return $options['className'];
         }
 
-        foreach ($this->_namespaces as $namespace) {
-            $class = App::className($options['className'], $namespace, 'Table');
+        foreach ($this->_locations as $location) {
+            $class = App::className($options['className'], $location, 'Table');
             if ($class !== false) {
                 return $class;
             }
         }
 
-        return null;
+        return false;
     }
 
     /**
@@ -346,15 +346,15 @@ class TableLocator implements LocatorInterface
     }
 
     /**
-     * Adds a namespace where tables should be looked for.
+     * Adds a location where tables should be looked for.
      *
-     * @param string $namespace Namespace to add.
+     * @param string $location Location to add.
      * @return $this
      */
-    public function addNamespace($namespace)
+    public function addLocation($location)
     {
-        $namespace = str_replace('\\', '/', $namespace);
-        $this->_namespaces[] = trim($namespace, '/');
+        $location = str_replace('\\', '/', $location);
+        $this->_locations[] = trim($location, '/');
 
         return $this;
     }

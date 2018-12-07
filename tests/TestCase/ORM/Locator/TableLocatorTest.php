@@ -613,13 +613,13 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * testCustomNamespace
+     * testCustomLocation
      *
      * Tests that the correct table is returned when non-standard namespace is defined.
      *
      * @return void
      */
-    public function testCustomNamespace()
+    public function testCustomLocation()
     {
         $locator = new TableLocator(['Infrastructure/Table']);
 
@@ -628,13 +628,13 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * testCustomNamespacePlugin
+     * testCustomLocationPlugin
      *
      * Tests that the correct plugin table is returned when non-standard namespace is defined.
      *
      * @return void
      */
-    public function testCustomNamespacePlugin()
+    public function testCustomLocationPlugin()
     {
         $locator = new TableLocator(['Infrastructure/Table']);
 
@@ -643,13 +643,13 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * testCustomNamespaceDefaultWhenNone
+     * testCustomLocationDefaultWhenNone
      *
      * Tests that the default table is returned when no namespace is defined.
      *
      * @return void
      */
-    public function testCustomNamespaceDefaultWhenNone()
+    public function testCustomLocationDefaultWhenNone()
     {
         $locator = new TableLocator([]);
 
@@ -658,13 +658,13 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * testCustomNamespaceDefaultWhenMissing
+     * testCustomLocationDefaultWhenMissing
      *
      * Tests that the default table is returned when the class cannot be found in a non-standard namespace.
      *
      * @return void
      */
-    public function testCustomNamespaceDefaultWhenMissing()
+    public function testCustomLocationDefaultWhenMissing()
     {
         $locator = new TableLocator(['Infrastructure/Table']);
 
@@ -673,13 +673,13 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * testCustomNamespaceMultiple
+     * testCustomLocationMultiple
      *
      * Tests that the correct table is returned when multiple namespaces are defined.
      *
      * @return void
      */
-    public function testCustomNamespaceMultiple()
+    public function testCustomLocationMultiple()
     {
         $locator = new TableLocator([
             'Infrastructure/Table',
@@ -691,13 +691,13 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * testAddNamespace
+     * testAddLocation
      *
      * Tests that adding a namespace takes effect.
      *
      * @return void
      */
-    public function testAddNamespace()
+    public function testAddLocation()
     {
         $locator = new TableLocator([]);
 
@@ -705,7 +705,7 @@ class TableLocatorTest extends TestCase
         $this->assertInstanceOf(Table::class, $table);
 
         $locator->clear();
-        $locator->addNamespace('Infrastructure/Table');
+        $locator->addLocation('Infrastructure/Table');
 
         $table = $locator->get('Addresses');
         $this->assertInstanceOf(AddressesTable::class, $table);
