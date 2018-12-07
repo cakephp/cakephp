@@ -348,7 +348,7 @@ class TableLocator implements LocatorInterface
     /**
      * Adds a namespace where tables should be looked for.
      *
-     * @param string $namespace Namespace to add.
+     * @param string $namespace Namespace to add.
      * @return $this
      */
     public function addNamespace($namespace)

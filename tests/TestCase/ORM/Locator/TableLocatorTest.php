@@ -709,6 +709,5 @@ class TableLocatorTest extends TestCase
 
         $table = $locator->get('Addresses');
         $this->assertInstanceOf(AddressesTable::class, $table);
-
     }
 }
