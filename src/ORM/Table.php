@@ -1180,12 +1180,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query The query builder
      */
-    public function find(string $type = 'all', $options = []): Query
+    public function find(string $type = 'all', ...$args): Query
     {
         $query = $this->query();
         $query->select();
 
-        return $this->callFinder($type, $query, $options);
+        return $this->callFinder($type, $query, ...$args);
     }
 
     /**
@@ -1198,7 +1198,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to use for the find
      * @return \Cake\ORM\Query The query builder
      */
-    public function findAll(Query $query, array $options): Query
+    public function findAll(Query $query, array $options = []): Query
     {
         return $query;
     }
@@ -1260,7 +1260,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options for the find
      * @return \Cake\ORM\Query The query builder
      */
-    public function findList(Query $query, array $options): Query
+    public function findList(Query $query, array $options = []): Query
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1323,7 +1323,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
-    public function findThreaded(Query $query, array $options): Query
+    public function findThreaded(Query $query, array $options = []): Query
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -2239,17 +2239,24 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
      */
-    public function callFinder(string $type, Query $query, array $options = []): Query
+    public function callFinder(string $type, Query $query, ...$args): Query
     {
-        $query->applyOptions($options);
-        $options = $query->getOptions();
+        if ($args) {
+            $options = $args[0];
+            if (is_array($options)) {
+                $query->applyOptions($options);
+                $args[0] = $query->getOptions();
+            }
+        }
         $finder = 'find' . $type;
         if (method_exists($this, $finder)) {
-            return $this->{$finder}($query, $options);
+            return $this->{$finder}($query, ...$args);
         }
 
         if ($this->_behaviors->hasFinder($type)) {
-            return $this->_behaviors->callFinder($type, [$query, $options]);
+            array_unshift($args, $query);
+            
+            return $this->_behaviors->callFinder($type, $args);
         }
 
         throw new BadMethodCallException(sprintf(
