@@ -67,7 +67,7 @@ interface RepositoryInterface
      * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
      * @return \Cake\Datasource\QueryInterface
      */
-    public function find(string $type = 'all', $options = []);
+    public function find(string $type = 'all', ...$args);
 
     /**
      * Returns a single record after finding it by its primary key, if no record is
