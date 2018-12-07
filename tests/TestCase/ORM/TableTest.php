@@ -5197,7 +5197,7 @@ class TableTest extends TestCase
 
         $query = (new Query($this->connection, $table))->select();
         $table->expects($this->once())->method('callFinder')
-            ->with('all', $query, []);
+            ->with('all', $query);
         $table->find();
     }
 
