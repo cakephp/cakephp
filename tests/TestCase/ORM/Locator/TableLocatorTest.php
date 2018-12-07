@@ -20,6 +20,9 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use TestApp\Infrastructure\Table\AddressesTable;
+use TestApp\Model\Table\ArticlesTable;
+use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
 
 /**
  * Used to test correct class is instantiated when using $this->_locator->get();
@@ -607,5 +610,83 @@ class TableLocatorTest extends TestCase
         $plugin3 = $this->_locator->get('TestPluginTwo.Comments');
 
         $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
+    }
+
+    /**
+     * testCustomNamespace
+     *
+     * Tests that the correct table is returned when non-standard namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomNamespace()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(AddressesTable::class, $table);
+    }
+
+    /**
+     * testCustomNamespacePlugin
+     *
+     * Tests that the correct plugin table is returned when non-standard namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomNamespacePlugin()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('TestPlugin.Addresses');
+        $this->assertInstanceOf(PluginAddressesTable::class, $table);
+    }
+
+    /**
+     * testCustomNamespaceDefaultWhenNone
+     *
+     * Tests that the default table is returned when no namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomNamespaceDefaultWhenNone()
+    {
+        $locator = new TableLocator([]);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testCustomNamespaceDefaultWhenMissing
+     *
+     * Tests that the default table is returned when the class cannot be found in a non-standard namespace.
+     *
+     * @return void
+     */
+    public function testCustomNamespaceDefaultWhenMissing()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('Articles');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testCustomNamespaceMultiple
+     *
+     * Tests that the correct table is returned when multiple namespaces are defined.
+     *
+     * @return void
+     */
+    public function testCustomNamespaceMultiple()
+    {
+        $locator = new TableLocator([
+            'Infrastructure/Table',
+            'Model/Table',
+        ]);
+
+        $table = $locator->get('Articles');
+        $this->assertInstanceOf(Table::class, $table);
     }
 }

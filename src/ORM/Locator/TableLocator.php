@@ -28,6 +28,13 @@ class TableLocator implements LocatorInterface
 {
 
     /**
+     * Contains a list of namespaces where table classes should be looked for.
+     *
+     * @var array
+     */
+    protected $_namespaces = [];
+
+    /**
      * Configuration for aliases.
      *
      * @var array
@@ -55,6 +62,23 @@ class TableLocator implements LocatorInterface
      * @var array
      */
     protected $_options = [];
+
+    /**
+     * Constructor.
+     *
+     * @param array|null $namespaces Namespaces where tables should be located located.
+     *   If none provided, the default `Model\Table` under your app's namespace is used.
+     */
+    public function __construct(array $namespaces = null)
+    {
+        if ($namespaces === null) {
+            $namespaces = [
+                'Model/Table',
+            ];
+        }
+
+        $this->_namespaces = $namespaces;
+    }
 
     /**
      * Stores a list of options to be used when instantiating an object
@@ -243,7 +267,18 @@ class TableLocator implements LocatorInterface
             $options['className'] = Inflector::camelize($alias);
         }
 
-        return App::className($options['className'], 'Model/Table', 'Table');
+        if (class_exists($options['className'])) {
+            return $options['className'];
+        }
+
+        foreach ($this->_namespaces as $namespace) {
+            $class = App::className($options['className'], $namespace, 'Table');
+            if ($class !== null) {
+                return $class;
+            }
+        }
+
+        return null;
     }
 
     /**
