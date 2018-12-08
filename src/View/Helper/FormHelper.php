@@ -1328,6 +1328,15 @@ class FormHelper extends Helper
                 unset($options['options']);
 
                 return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
+            case 'date':
+            case 'time':
+                if (!empty($options['native'])) {
+                    unset($options['native']);
+
+                    return $this->text($fieldName, $options);
+                }
+
+                return $this->{$options['type']}($fieldName, $options);
             case 'input':
                 throw new RuntimeException("Invalid type 'input' used for field '$fieldName'");
 
@@ -1599,7 +1608,9 @@ class FormHelper extends Helper
         }
 
         $labelAttributes['for'] = $options['id'];
-        if (in_array($options['type'], $this->_groupedInputTypes, true)) {
+        if (in_array($options['type'], $this->_groupedInputTypes, true)
+            && empty($options['native'])
+        ) {
             $labelAttributes['for'] = false;
         }
         if ($options['nestedInput']) {

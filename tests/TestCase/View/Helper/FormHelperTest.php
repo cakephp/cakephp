@@ -7164,6 +7164,20 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertContains('value="' . date('m') . '" selected="selected"', $result);
         $this->assertNotContains('value="2008" selected="selected"', $result);
+
+        $result = $this->Form->control('date', [
+            'type' => 'date',
+            'native' => true,
+        ]);
+        $expected = [
+            'div' => ['class' => 'input date'],
+            'label' => ['for' => 'date'],
+            'Date',
+            '/label',
+            'input' => ['type' => 'date', 'id' => 'date', 'name' => 'date'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
