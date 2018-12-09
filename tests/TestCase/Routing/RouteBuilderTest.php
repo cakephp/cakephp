@@ -49,7 +49,7 @@ class RouteBuilderTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload('TestPlugin');
+        $this->clearPlugins();
     }
 
     /**
@@ -428,6 +428,10 @@ class RouteBuilderTest extends TestCase
 
         $this->assertInstanceOf(RedirectRoute::class, $route);
         $this->assertEquals('/forums', $route->redirect[0]);
+
+        $route = $routes->redirect('/old', '/forums');
+        $this->assertInstanceOf(RedirectRoute::class, $route);
+        $this->assertSame($route, $this->collection->routes()[2]);
     }
 
     /**
@@ -1249,7 +1253,7 @@ class RouteBuilderTest extends TestCase
         $this->deprecated(function () {
             $this->expectException(\InvalidArgumentException::class);
             $this->expectExceptionMessage('Cannot load routes for the plugin named TestPlugin.');
-            Plugin::load('TestPlugin');
+            $this->loadPlugins(['TestPlugin']);
             $routes = new RouteBuilder($this->collection, '/');
             $routes->loadPlugin('TestPlugin', 'nope.php');
         });
@@ -1262,7 +1266,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $routes = new RouteBuilder($this->collection, '/');
         $routes->loadPlugin('TestPlugin');
         $this->assertCount(1, $this->collection->routes());

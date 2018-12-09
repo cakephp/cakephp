@@ -120,7 +120,7 @@ class Connection implements ConnectionInterface
         $this->setDriver($driver, $config);
 
         if (!empty($config['log'])) {
-            $this->logQueries($config['log']);
+            $this->enableQueryLogging($config['log']);
         }
     }
 
@@ -599,6 +599,18 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Disables the usage of savepoints.
+     *
+     * @return $this
+     */
+    public function disableSavePoints()
+    {
+        $this->_useSavePoints = false;
+
+        return $this;
+    }
+
+    /**
      * Returns whether this connection is using savepoints for nested transactions
      *
      * @return bool true if enabled, false otherwise
@@ -847,13 +859,54 @@ class Connection implements ConnectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated 3.7.0 Use enableQueryLogging() and isQueryLoggingEnabled() instead.
      */
     public function logQueries($enable = null)
     {
+        deprecationWarning(
+            'Connection::logQueries() is deprecated. ' .
+            'Use enableQueryLogging() and isQueryLoggingEnabled() instead.'
+        );
         if ($enable === null) {
             return $this->_logQueries;
         }
         $this->_logQueries = $enable;
+    }
+
+    /**
+     * Enable/disable query logging
+     *
+     * @param bool $value Enable/disable query logging
+     * @return $this
+     */
+    public function enableQueryLogging($value)
+    {
+        $this->_logQueries = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Disable query logging
+     *
+     * @return $this
+     */
+    public function disableQueryLogging()
+    {
+        $this->_logQueries = false;
+
+        return $this;
+    }
+
+    /**
+     * Check if query logging is enabled.
+     *
+     * @return bool
+     */
+    public function isQueryLoggingEnabled()
+    {
+        return $this->_logQueries;
     }
 
     /**

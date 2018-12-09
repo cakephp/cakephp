@@ -24,6 +24,50 @@ use Cake\View\ViewBuilder;
  */
 class ViewBuilderTest extends TestCase
 {
+    public function testSetVar()
+    {
+        $builder = new ViewBuilder();
+
+        $builder->setVar('testing', 'value');
+        $this->assertSame('value', $builder->getVar('testing'));
+    }
+
+    public function testSetVars()
+    {
+        $builder = new ViewBuilder();
+
+        $data = ['test' => 'val', 'foo' => 'bar'];
+        $builder->setVars($data);
+        $this->assertEquals($data, $builder->getVars());
+
+        $update = ['test' => 'updated'];
+        $builder->setVars($update);
+        $this->assertEquals(
+            ['test' => 'val', 'foo' => 'bar', 'test' => 'updated'],
+            $builder->getVars()
+        );
+
+        $update = ['overwrite' => 'yes'];
+        $builder->setVars($update, false);
+        $this->assertEquals(
+            ['overwrite' => 'yes'],
+            $builder->getVars()
+        );
+    }
+
+    public function testHasVar()
+    {
+        $builder = new ViewBuilder();
+
+        $this->assertFalse($builder->hasVar('foo'));
+
+        $builder->setVar('foo', 'value');
+        $this->assertTrue($builder->hasVar('foo'));
+
+        $builder->setVar('bar', null);
+        $this->assertTrue($builder->hasVar('bar'));
+    }
+
     /**
      * data provider for string properties.
      *
@@ -233,9 +277,10 @@ class ViewBuilderTest extends TestCase
             ->setHelpers(['Form', 'Html'])
             ->setLayoutPath('Admin/')
             ->setTheme('TestTheme')
-            ->setPlugin('TestPlugin');
+            ->setPlugin('TestPlugin')
+            ->setVars(['foo' => 'bar', 'x' => 'old']);
         $view = $builder->build(
-            ['one' => 'value'],
+            ['one' => 'value', 'x' => 'new'],
             $request,
             $response,
             $events
@@ -245,12 +290,15 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('default', $view->getLayout());
         $this->assertEquals('Articles/', $view->getTemplatePath());
         $this->assertEquals('Admin/', $view->getLayoutPath());
-        $this->assertEquals('TestPlugin', $view->plugin);
-        $this->assertEquals('TestTheme', $view->theme);
-        $this->assertSame($request, $view->request);
-        $this->assertInstanceOf(Response::class, $view->response);
+        $this->assertEquals('TestPlugin', $view->getPlugin());
+        $this->assertEquals('TestTheme', $view->getTheme());
+        $this->assertSame($request, $view->getRequest());
+        $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
-        $this->assertSame(['one' => 'value'], $view->viewVars);
+        $this->assertEquals(
+            ['one' => 'value', 'foo' => 'bar', 'x' => 'new'],
+            $view->viewVars
+        );
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $view->Html);
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $view->Form);
     }
@@ -348,5 +396,19 @@ class ViewBuilderTest extends TestCase
         $this->assertEquals('test', $builder->getLayout());
         $this->assertEquals(['Html'], $builder->getHelpers());
         $this->assertEquals('JsonView', $builder->getClassName());
+    }
+
+    /**
+     * testDisableAutoLayout
+     *
+     * @return void
+     */
+    public function testDisableAutoLayout()
+    {
+        $builder = new ViewBuilder();
+        $this->assertNull($builder->isAutoLayoutEnabled());
+
+        $builder->disableAutoLayout();
+        $this->assertFalse($builder->isAutoLayoutEnabled());
     }
 }

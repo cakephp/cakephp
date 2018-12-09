@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -139,7 +140,7 @@ class AssociationTest extends TestCase
      *
      * @return void
      */
-    public function testSetNameAfterTarger()
+    public function testSetNameAfterTarget()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Association name does not match target table alias.');
@@ -162,11 +163,80 @@ class AssociationTest extends TestCase
     /**
      * Tests that className() returns the correct association className
      *
+     * @group deprecated
      * @return void
      */
     public function testClassName()
     {
-        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+        $this->deprecated(function () {
+            $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->className());
+        });
+    }
+
+    /**
+     * Tests that setClassName() succeeds before the target table is resolved.
+     *
+     * @return void
+     */
+    public function testSetClassNameBeforeTarget()
+    {
+        $this->assertEquals('\Cake\Test\TestCase\ORM\TestTable', $this->association->getClassName());
+        $this->assertSame($this->association, $this->association->setClassName('\TestApp\Model\Table\AuthorsTable'));
+        $this->assertEquals('\TestApp\Model\Table\AuthorsTable', $this->association->getClassName());
+    }
+
+    /**
+     * Tests that setClassName() fails after the target table is resolved.
+     *
+     * @return void
+     */
+    public function testSetClassNameAfterTarget()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class name doesn\'t match the target table\'s class name.');
+        $this->association->getTarget();
+        $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
+    }
+
+    /**
+     * Tests that setClassName() fails after the target table is resolved.
+     *
+     * @return void
+     */
+    public function testSetClassNameWithShortSyntaxAfterTarget()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class name doesn\'t match the target table\'s class name.');
+        $this->association->getTarget();
+        $this->association->setClassName('Authors');
+    }
+
+    /**
+     * Tests that setClassName() succeeds if name equals target table's class name.
+     *
+     * @return void
+     */
+    public function testSetClassNameToTargetClassName()
+    {
+        $className = get_class($this->association->getTarget());
+        $this->association->setClassName($className);
+        $this->assertEquals($className, $this->association->getClassName());
+    }
+
+    /**
+     * Tests that setClassName() succeeds if the short name resolves to the target table's class name.
+     *
+     * @return void
+     */
+    public function testSetClassNameWithShortSyntaxToTargetClassName()
+    {
+        Configure::write('App.namespace', 'TestApp');
+
+        $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
+        $className = get_class($this->association->getTarget());
+        $this->assertEquals('TestApp\Model\Table\AuthorsTable', $className);
+        $this->association->setClassName('Authors');
+        $this->assertEquals('Authors', $this->association->getClassName());
     }
 
     /**
@@ -187,7 +257,7 @@ class AssociationTest extends TestCase
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
 
-        $this->assertEquals('Test', $this->association->className());
+        $this->assertEquals('Test', $this->association->getClassName());
     }
 
     /**
@@ -436,7 +506,7 @@ class AssociationTest extends TestCase
      */
     public function testTargetPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $config = [
             'className' => 'TestPlugin.Comments',
             'foreignKey' => 'a_key',
@@ -470,6 +540,7 @@ class AssociationTest extends TestCase
         $this->assertSame('TestPlugin.ThisAssociationName', $table->getRegistryAlias());
         $this->assertSame('comments', $table->getTable());
         $this->assertSame('ThisAssociationName', $table->getAlias());
+        $this->clearPlugins();
     }
 
     /**

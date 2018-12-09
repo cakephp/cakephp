@@ -60,6 +60,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 -----END RSA PRIVATE KEY-----';
 
     /**
+     * @return void
      */
     public function testExceptionUnknownSigningMethod()
     {

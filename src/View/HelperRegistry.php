@@ -66,8 +66,8 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         try {
             $this->load($helper);
         } catch (Exception\MissingHelperException $exception) {
-            if ($this->_View->plugin) {
-                $this->load($this->_View->plugin . '.' . $helper);
+            if ($this->_View->getPlugin()) {
+                $this->load($this->_View->getPlugin() . '.' . $helper);
 
                 return true;
             }
@@ -144,10 +144,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     protected function _create($class, $alias, $settings)
     {
         $instance = new $class($this->_View, $settings);
-        $vars = ['request', 'theme', 'plugin'];
-        foreach ($vars as $var) {
-            $instance->{$var} = $this->_View->{$var};
-        }
+
         $enable = isset($settings['enabled']) ? $settings['enabled'] : true;
         if ($enable) {
             $this->getEventManager()->on($instance);

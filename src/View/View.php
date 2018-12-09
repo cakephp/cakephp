@@ -27,6 +27,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingElementException;
+use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use InvalidArgumentException;
@@ -94,21 +95,21 @@ class View implements EventDispatcherInterface
      *
      * @var \Cake\View\ViewBlock
      */
-    public $Blocks;
+    protected $Blocks;
 
     /**
      * The name of the plugin.
      *
-     * @var string
+     * @var string|null
      */
-    public $plugin;
+    protected $plugin;
 
     /**
      * Name of the controller that created the View if any.
      *
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * Current passed params. Passed to View from the creating Controller for convenience.
@@ -123,14 +124,14 @@ class View implements EventDispatcherInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * The name of the subfolder containing templates for this View.
      *
      * @var string
      */
-    public $templatePath;
+    protected $templatePath;
 
     /**
      * The name of the template file to render. The name specified
@@ -138,7 +139,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $template;
+    protected $template;
 
     /**
      * The name of the layout file to render the template inside of. The name specified
@@ -147,14 +148,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    public $layout = 'default';
+    protected $layout = 'default';
 
     /**
      * The name of the layouts subfolder containing layouts for this View.
      *
      * @var string
      */
-    public $layoutPath;
+    protected $layoutPath;
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
@@ -162,7 +163,7 @@ class View implements EventDispatcherInterface
      *
      * @var bool
      */
-    public $autoLayout = true;
+    protected $autoLayout = true;
 
     /**
      * File extension. Defaults to CakePHP's template ".ctp".
@@ -175,21 +176,22 @@ class View implements EventDispatcherInterface
      * Sub-directory for this template file. This is often used for extension based routing.
      * Eg. With an `xml` extension, $subDir would be `xml/`
      *
-     * @var string|null
+     * @var string
      */
-    public $subDir;
+    protected $subDir = '';
 
     /**
      * The view theme to use.
      *
      * @var string|null
      */
-    public $theme;
+    protected $theme;
 
     /**
      * True when the view has been rendered.
      *
      * @var bool
+     * @deprecated 3.7.0 The property is deprecated and will be removed in 4.0.0.
      */
     public $hasRendered = false;
 
@@ -197,6 +199,7 @@ class View implements EventDispatcherInterface
      * List of generated DOM UUIDs.
      *
      * @var array
+     * @deprecated 3.7.0 The property is deprecated and will be removed in 4.0.0.
      */
     public $uuids = [];
 
@@ -207,14 +210,14 @@ class View implements EventDispatcherInterface
      *
      * @var \Cake\Http\ServerRequest
      */
-    public $request;
+    protected $request;
 
     /**
      * Reference to the Response object
      *
      * @var \Cake\Http\Response
      */
-    public $response;
+    protected $response;
 
     /**
      * The Cache configuration View will use to store cached elements. Changing this will change
@@ -224,7 +227,7 @@ class View implements EventDispatcherInterface
      * @var string
      * @see \Cake\View\View::element()
      */
-    public $elementCache = 'default';
+    protected $elementCache = 'default';
 
     /**
      * List of variables to collect from the associated controller.
@@ -387,6 +390,66 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Gets the request instance.
+     *
+     * @return \Cake\Http\ServerRequest
+     * @since 3.7.0
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Sets the request objects and configures a number of controller properties
+     * based on the contents of the request. The properties that get set are:
+     *
+     * - $this->request - To the $request parameter
+     * - $this->plugin - To the value returned by $request->getParam('plugin')
+     * - $this->passedArgs - Same as $request->params['pass]
+     *
+     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setRequest(ServerRequest $request)
+    {
+        $this->request = $request;
+        $this->plugin = $request->getParam('plugin');
+
+        if ($request->getParam('pass')) {
+            $this->passedArgs = $request->getParam('pass');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets the response instance.
+     *
+     * @return \Cake\Http\Response
+     * @since 3.7.0
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Sets the response instance.
+     *
+     * @param \Cake\Http\Response $response Response instance.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setResponse(Response $response)
+    {
+        $this->response = $response;
+
+        return $this;
+    }
+
+    /**
      * Get path for templates files.
      *
      * @return string
@@ -496,6 +559,20 @@ class View implements EventDispatcherInterface
     public function enableAutoLayout($enable = true)
     {
         $this->autoLayout = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Turns off CakePHP's conventional mode of applying layout files.
+
+     * Layouts will not be automatically applied to rendered views.
+     *
+     * @return $this
+     */
+    public function disableAutoLayout()
+    {
+        $this->autoLayout = false;
 
         return $this;
     }
@@ -1081,9 +1158,12 @@ class View implements EventDispatcherInterface
      * @param string $object Type of object, i.e. 'form' or 'link'
      * @param string $url The object's target URL
      * @return string
+     * @deprecated 3.7.0 This method is deprecated and will be removed in 4.0.0.
      */
     public function uuid($object, $url)
     {
+        deprecationWarning('View::uuid() is deprecated and will be removed in 4.0.0.');
+
         $c = 1;
         $url = Router::url($url);
         $hash = $object . substr(md5($object . $url), 0, 10);
@@ -1114,22 +1194,75 @@ class View implements EventDispatcherInterface
      */
     public function __get($name)
     {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::getTemplate() instead.');
+        try {
+            $registry = $this->helpers();
+            if (isset($registry->{$name})) {
+                $this->{$name} = $registry->{$name};
 
-            return $this->template;
+                return $registry->{$name};
+            }
+        } catch (MissingHelperException $exception) {
         }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::getTemplatePath() instead.');
 
-            return $this->templatePath;
+        $deprecated = [
+            'view' => 'getTemplate',
+            'viewPath' => 'getTemplatePath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is deprecated. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->{$method}();
         }
 
-        $registry = $this->helpers();
-        if (isset($registry->{$name})) {
-            $this->{$name} = $registry->{$name};
+        $protected = [
+            'templatePath' => 'getTemplatePath',
+            'template' => 'getTemplate',
+            'layout' => 'getLayout',
+            'layoutPath' => 'setLayoutPath',
+            'autoLayout' => 'isAutoLayoutEnabled',
+            'theme' => 'getTheme',
+            'request' => 'getRequest',
+            'response' => 'getResponse',
+            'subDir' => 'getSubdir',
+            'plugin' => 'getPlugin',
+            'name' => 'getName',
+        ];
+        if (isset($protected[$name])) {
+            $method = $protected[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is protected now. Use View::%s() instead.',
+                $name,
+                $method
+            ));
 
-            return $registry->{$name};
+            return $this->{$method}();
+        }
+
+        if ($name === 'Blocks') {
+            deprecationWarning(
+                'View::$Blocks is protected now. ' .
+                'Use one of the wrapper methods like View::fetch() etc. instead.'
+            );
+
+            return $this->Blocks;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'View::$helpers is protected now. ' .
+                'Use the helper registry through View::helpers() to manage helpers.'
+            );
+
+            return $this->helpers;
+        }
+
+        if (!empty($exception)) {
+            throw $exception;
         }
 
         return $this->{$name};
@@ -1144,17 +1277,57 @@ class View implements EventDispatcherInterface
      */
     public function __set($name, $value)
     {
-        if ($name === 'view') {
-            deprecationWarning('The `view` property is deprecated. Use View::setTemplate() instead.');
-            $this->template = $value;
+        $deprecated = [
+            'view' => 'setTemplate',
+            'viewPath' => 'setTemplatePath',
+        ];
+        if (isset($deprecated[$name])) {
+            $method = $deprecated[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is deprecated. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            $this->{$method}($value);
 
             return;
         }
-        if ($name === 'viewPath') {
-            deprecationWarning('The `viewPath` property is deprecated. Use View::setTemplatePath() instead.');
-            $this->templatePath = $value;
+
+        $protected = [
+            'templatePath' => 'setTemplatePath',
+            'template' => 'setTemplate',
+            'layout' => 'setLayout',
+            'layoutPath' => 'setLayoutPath',
+            'autoLayout' => 'enableAutoLayout',
+            'theme' => 'setTheme',
+            'request' => 'setRequest',
+            'response' => 'setResponse',
+            'subDir' => 'setSubDir',
+            'plugin' => 'setPlugin',
+            'name' => 'setName',
+            'elementCache' => 'setElementCache',
+        ];
+        if (isset($protected[$name])) {
+            $method = $protected[$name];
+            deprecationWarning(sprintf(
+                'View::$%s is protected now. Use View::%s() instead.',
+                $name,
+                $method
+            ));
+
+            $this->{$method}($value);
 
             return;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'View::$helpers is protected now. ' .
+                'Use the helper registry through View::helpers() to manage helpers.'
+            );
+
+            return $this->helpers = $value;
         }
 
         $this->{$name} = $value;
@@ -1273,6 +1446,73 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Set sub-directory for this template files.
+     *
+     * @param string $subDir Sub-directory name.
+     * @return $this
+     * @see \Cake\View\View::$subDir
+     * @since 3.7.0
+     */
+    public function setSubDir($subDir)
+    {
+        $this->subDir = $subDir;
+
+        return $this;
+    }
+
+    /**
+     * Get sub-directory for this template files.
+     *
+     * @return string
+     * @see \Cake\View\View::$subDir
+     * @since 3.7.0
+     */
+    public function getSubDir()
+    {
+        return $this->subDir;
+    }
+
+    /**
+     * Returns the plugin name.
+     *
+     * @return string|null
+     * @since 3.7.0
+     */
+    public function getPlugin()
+    {
+        return $this->plugin;
+    }
+
+    /**
+     * Sets the plugin name.
+     *
+     * @param string $name Plugin name.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setPlugin($name)
+    {
+        $this->plugin = $name;
+
+        return $this;
+    }
+
+    /**
+     * Set The cache configuration View will use to store cached elements
+     *
+     * @param string $elementCache Cache config name.
+     * @return $this
+     * @see \Cake\View\View::$elementCache
+     * @since 3.7.0
+     */
+    public function setElementCache($elementCache)
+    {
+        $this->elementCache = $elementCache;
+
+        return $this;
+    }
+
+    /**
      * Returns filename of given action's template file (.ctp) as a string.
      * CamelCased action names will be under_scored by default.
      * This means that you can have LongActionNames that refer to
@@ -1376,7 +1616,7 @@ class View implements EventDispatcherInterface
     {
         $plugin = null;
         list($first, $second) = pluginSplit($name);
-        if (Plugin::loaded($first) === true) {
+        if (Plugin::isLoaded($first) === true) {
             $name = $second;
             $plugin = $first;
         }

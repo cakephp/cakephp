@@ -20,6 +20,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Form\Schema;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -88,6 +89,14 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var \Cake\Validation\Validator
      */
     protected $_validator;
+
+    /**
+     * Form's data.
+     *
+     * @var array
+     * @since 3.7.0
+     */
+    protected $_data = [];
 
     /**
      * Constructor
@@ -242,8 +251,27 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * to `validate()` or `execute()`.
      *
      * @return array Last set validation errors.
+     * @deprecated 3.7.0 Use Form::getErrors() instead.
      */
     public function errors()
+    {
+        deprecationWarning(
+            'Form::errors() is deprecated. ' .
+            'Use Form::getErrors() instead.'
+        );
+
+        return $this->getErrors();
+    }
+
+    /**
+     * Get the errors in the form
+     *
+     * Will return the errors from the last call
+     * to `validate()` or `execute()`.
+     *
+     * @return array Last set validation errors.
+     */
+    public function getErrors()
     {
         return $this->_errors;
     }
@@ -305,6 +333,37 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     }
 
     /**
+     * Get field data.
+     *
+     * @param string|null $field The field name or null to get data array with
+     *   all fields.
+     * @return mixed
+     * @since 3.7.0
+     */
+    public function getData($field = null)
+    {
+        if ($field === null) {
+            return $this->_data;
+        }
+
+        return Hash::get($this->_data, $field);
+    }
+
+    /**
+     * Set form data.
+     *
+     * @param array $data Data array.
+     * @return $this
+     * @since 3.7.0
+     */
+    public function setData(array $data)
+    {
+        $this->_data = $data;
+
+        return $this;
+    }
+
+    /**
      * Get the printable version of a Form instance.
      *
      * @return array
@@ -313,7 +372,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     {
         $special = [
             '_schema' => $this->schema()->__debugInfo(),
-            '_errors' => $this->errors(),
+            '_errors' => $this->getErrors(),
             '_validator' => $this->getValidator()->__debugInfo()
         ];
 

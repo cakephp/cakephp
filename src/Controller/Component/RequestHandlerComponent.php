@@ -50,6 +50,8 @@ class RequestHandlerComponent extends Component
     /**
      * Contains the file extension parsed out by the Router
      *
+     * Deprecated as of 3.7.0. This property will be made protected in 4.0.0.
+     *
      * @var string|null
      * @see \Cake\Routing\Router::extensions()
      */
@@ -359,9 +361,14 @@ class RequestHandlerComponent extends Component
      * Returns true if the current call accepts an XML response, false otherwise
      *
      * @return bool True if client accepts an XML response
+     * @deprecated 3.7.0 Use RequestHandler::prefers('xml') instead.
      */
     public function isXml()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isXml() is deprecated. Use RequestHandlerComponent::prefers(\'xml\') instead.'
+        );
+
         return $this->prefers('xml');
     }
 
@@ -369,19 +376,29 @@ class RequestHandlerComponent extends Component
      * Returns true if the current call accepts an RSS response, false otherwise
      *
      * @return bool True if client accepts an RSS response
+     * @deprecated 3.7.0 Use RequestHandler::prefers('rss') instead.
      */
     public function isRss()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isRss() is deprecated. Use RequestHandlerComponent::prefers(\'rss\') instead.'
+        );
+
         return $this->prefers('rss');
     }
 
     /**
      * Returns true if the current call accepts an Atom response, false otherwise
      *
-     * @return bool True if client accepts an RSS response
+     * @return bool True if client accepts an Atom response
+     * @deprecated 3.7.0 Use RequestHandler::prefers('atom') instead.
      */
     public function isAtom()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isAtom() is deprecated. Use RequestHandlerComponent::prefers(\'atom\') instead.'
+        );
+
         return $this->prefers('atom');
     }
 
@@ -390,9 +407,14 @@ class RequestHandlerComponent extends Component
      * client accepts WAP content.
      *
      * @return bool True if user agent is a mobile web browser
+     * @deprecated 3.7.0 Use ServerRequest::is('mobile') instead.
      */
     public function isMobile()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isMobile() is deprecated. Use ServerRequest::is(\'mobile\') instead.'
+        );
+
         $request = $this->getController()->getRequest();
 
         return $request->is('mobile') || $this->accepts('wap');
@@ -402,9 +424,14 @@ class RequestHandlerComponent extends Component
      * Returns true if the client accepts WAP content
      *
      * @return bool
+     * @deprecated 3.7.0 Use RequestHandler::prefers('wap') instead.
      */
     public function isWap()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::isWap() is deprecated. Use RequestHandlerComponent::prefers(\'wap\') instead.'
+        );
+
         return $this->prefers('wap');
     }
 
@@ -684,9 +711,14 @@ class RequestHandlerComponent extends Component
      *
      * @return mixed A string content type alias, or raw content type if no alias map exists,
      *  otherwise null
+     * @deprecated 3.7.0 Use $response->mapType($response->getType()) instead.
      */
     public function responseType()
     {
+        deprecationWarning(
+            'RequestHandlerComponent::responseType() is deprecated. Use $response->mapType($response->getType()) instead.'
+        );
+
         $response = $this->getController()->response;
 
         return $response->mapType($response->getType());

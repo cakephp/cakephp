@@ -48,7 +48,7 @@ class CompletionShellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        Plugin::load(['TestPlugin', 'TestPluginTwo']);
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
 
         $this->out = new TestCompletionStringOutput();
         $io = new ConsoleIo($this->out);
@@ -74,7 +74,7 @@ class CompletionShellTest extends TestCase
         parent::tearDown();
         unset($this->Shell);
         static::setAppNamespace('App');
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

@@ -31,8 +31,9 @@ class RulesCheckerIntegrationTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.articles_tags', 'core.authors', 'core.tags',
-        'core.special_tags', 'core.categories', 'core.site_articles', 'core.site_authors'
+        'core.Articles', 'core.ArticlesTags', 'core.Authors', 'core.Tags',
+        'core.SpecialTags', 'core.Categories', 'core.SiteArticles', 'core.SiteAuthors',
+        'core.Comments',
     ];
 
     /**
@@ -650,6 +651,66 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn('author_id', 'NotValid'));
 
         $table->save($entity);
+    }
+
+    /**
+     * Tests existsIn does not prevent new entities from saving if parent entity is new
+     *
+     * @return void
+     */
+    public function testExistsInHasManyNewEntities()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->Comments->belongsTo('Articles');
+
+        $rules = $table->Comments->rulesChecker();
+        $rules->add($rules->existsIn(['article_id'], $table));
+
+        $article = $table->newEntity([
+            'title' => 'new article',
+            'comments' => [
+                $table->Comments->newEntity([
+                    'user_id' => 1,
+                    'comment' => 'comment 1',
+                ]),
+                $table->Comments->newEntity([
+                    'user_id' => 1,
+                    'comment' => 'comment 2',
+                ]),
+            ]
+        ]);
+
+        $this->assertNotFalse($table->save($article));
+    }
+
+    /**
+     * Tests existsIn does not prevent new entities from saving if parent entity is new,
+     * getting the parent entity from the association
+     *
+     * @return void
+     */
+    public function testExistsInHasManyNewEntitiesViaAssociation()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->Comments->belongsTo('Articles');
+
+        $rules = $table->Comments->rulesChecker();
+        $rules->add($rules->existsIn(['article_id'], 'Articles'));
+
+        $article = $table->newEntity([
+            'title' => 'test',
+        ]);
+
+        $article->comments = [
+            $table->Comments->newEntity([
+                'user_id' => 1,
+                'comment' => 'test',
+            ])
+        ];
+
+        $this->assertNotFalse($table->save($article));
     }
 
     /**

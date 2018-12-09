@@ -32,7 +32,7 @@ class RequestActionTraitTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = ['core.comments', 'core.posts', 'core.test_plugin_comments'];
+    public $fixtures = ['core.Comments', 'core.Posts', 'core.TestPluginComments'];
 
     /**
      * Setup
@@ -65,6 +65,7 @@ class RequestActionTraitTest extends TestCase
         parent::tearDown();
         DispatcherFactory::clear();
         Router::reload();
+        $this->clearPlugins();
 
         error_reporting($this->errorLevel);
     }
@@ -125,7 +126,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionPlugins()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::reload();
         Router::connect('/test_plugin/tests/:action/*', ['controller' => 'Tests', 'plugin' => 'TestPlugin']);
 
@@ -162,7 +163,7 @@ class RequestActionTraitTest extends TestCase
      */
     public function testRequestActionArray()
     {
-        Plugin::load(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->object->requestAction(
             ['controller' => 'RequestAction', 'action' => 'test_request_action']

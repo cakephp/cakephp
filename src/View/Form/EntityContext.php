@@ -249,7 +249,7 @@ class EntityContext implements ContextInterface
         }
 
         if ($entity instanceof EntityInterface) {
-            $part = array_pop($parts);
+            $part = end($parts);
             $val = $entity->get($part);
             if ($val !== null) {
                 return $val;
@@ -261,7 +261,7 @@ class EntityContext implements ContextInterface
                 return $options['default'];
             }
 
-            return $this->_schemaDefault($part, $entity);
+            return $this->_schemaDefault($parts);
         }
         if (is_array($entity) || $entity instanceof ArrayAccess) {
             $key = array_pop($parts);
@@ -275,16 +275,16 @@ class EntityContext implements ContextInterface
     /**
      * Get default value from table schema for given entity field.
      *
-     * @param string $field Field name.
-     * @param \Cake\Datasource\EntityInterface $entity The entity.
+     * @param array $parts Each one of the parts in a path for a field name
      * @return mixed
      */
-    protected function _schemaDefault($field, $entity)
+    protected function _schemaDefault($parts)
     {
-        $table = $this->_getTable($entity);
+        $table = $this->_getTable($parts);
         if ($table === false) {
             return null;
         }
+        $field = end($parts);
         $defaults = $table->getSchema()->defaultValues();
         if (!array_key_exists($field, $defaults)) {
             return null;
@@ -424,6 +424,57 @@ class EntityContext implements ContextInterface
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_getValidator($parts);
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get field length from validation
+     *
+     * @param string $field The dot separated path to the field you want to check.
+     * @return int|null
+     */
+    public function getMaxLength($field)
+    {
+        $parts = explode('.', $field);
+        $validator = $this->_getValidator($parts);
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+        foreach ($validator->field($fieldName)->rules() as $rule) {
+            if ($rule->get('rule') === 'maxLength') {
+                return $rule->get('pass')[0];
+            }
+        }
+
+        return null;
     }
 
     /**

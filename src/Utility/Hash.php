@@ -997,9 +997,9 @@ class Hash
         $type = strtolower($type);
 
         if ($dir === 'asc') {
-            $dir = SORT_ASC;
+            $dir = \SORT_ASC;
         } else {
-            $dir = SORT_DESC;
+            $dir = \SORT_DESC;
         }
         if ($type === 'numeric') {
             $type = \SORT_NUMERIC;

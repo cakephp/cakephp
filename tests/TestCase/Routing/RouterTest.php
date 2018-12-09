@@ -51,7 +51,7 @@ class RouterTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
         Router::reload();
         Router::defaultRouteClass('Cake\Routing\Route\Route');
     }
@@ -2660,7 +2660,7 @@ class RouterTest extends TestCase
      */
     public function testUsingCustomRouteClass()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::connect(
             '/:slug',
             ['plugin' => 'TestPlugin', 'action' => 'index'],
@@ -2685,14 +2685,14 @@ class RouterTest extends TestCase
      */
     public function testUsingCustomRouteClassPluginDotSyntax()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         Router::connect(
             '/:slug',
             ['controller' => 'posts', 'action' => 'view'],
             ['routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+']
         );
         $this->assertTrue(true); // Just to make sure the connect do not throw exception
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**

@@ -12,7 +12,7 @@
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\Database;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
@@ -32,7 +32,7 @@ class SchemaCacheTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.articles', 'core.tags'];
+    public $fixtures = ['core.Articles', 'core.Tags'];
 
     /**
      * Cache Engine Mock
@@ -114,6 +114,8 @@ class SchemaCacheTest extends TestCase
     public function testBuildNoArgs()
     {
         $ds = ConnectionManager::get('test');
+        $this->cache->method('write')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->at(3))
             ->method('write')
             ->with('test_articles');
@@ -133,7 +135,9 @@ class SchemaCacheTest extends TestCase
 
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
+
         $this->cache->expects($this->never())
             ->method('delete');
 
@@ -152,7 +156,8 @@ class SchemaCacheTest extends TestCase
 
         $this->cache->expects($this->once())
             ->method('write')
-            ->with('test_articles');
+            ->with('test_articles')
+            ->will($this->returnValue(true));
         $this->cache->expects($this->never())
             ->method('read');
         $this->cache->expects($this->never())

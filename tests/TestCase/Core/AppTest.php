@@ -32,7 +32,7 @@ class AppTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -218,12 +218,11 @@ class AppTest extends TestCase
     public function testPathWithPlugins()
     {
         $basepath = TEST_APP . 'Plugin' . DS;
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $result = App::path('Controller', 'TestPlugin');
         $this->assertPathEquals($basepath . 'TestPlugin' . DS . 'src' . DS . 'Controller' . DS, $result[0]);
 
-        Plugin::load('Company/TestPluginThree');
         $result = App::path('Controller', 'Company/TestPluginThree');
         $expected = $basepath . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS . 'Controller' . DS;
         $this->assertPathEquals($expected, $result[0]);

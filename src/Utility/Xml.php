@@ -170,6 +170,51 @@ class Xml
     }
 
     /**
+     * Parse the input html string and create either a SimpleXmlElement object or a DOMDocument.
+     *
+     * @param string $input The input html string to load.
+     * @param array $options The options to use. See Xml::build()
+     * @return \SimpleXMLElement|\DOMDocument
+     * @throws \Cake\Utility\Exception\XmlException
+     */
+    public static function loadHtml($input, $options = [])
+    {
+        $defaults = [
+            'return' => 'simplexml',
+            'loadEntities' => false,
+        ];
+        $options += $defaults;
+
+        $hasDisable = function_exists('libxml_disable_entity_loader');
+        $internalErrors = libxml_use_internal_errors(true);
+        if ($hasDisable && !$options['loadEntities']) {
+            libxml_disable_entity_loader(true);
+        }
+        $flags = 0;
+        if (!empty($options['parseHuge'])) {
+            $flags |= LIBXML_PARSEHUGE;
+        }
+        try {
+            $xml = new DOMDocument();
+            $xml->loadHTML($input, $flags);
+
+            if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+                $flags |= LIBXML_NOCDATA;
+                $xml = simplexml_import_dom($xml);
+            }
+
+            return $xml;
+        } catch (Exception $e) {
+            throw new XmlException('Xml cannot be read. ' . $e->getMessage(), null, $e);
+        } finally {
+            if ($hasDisable && !$options['loadEntities']) {
+                libxml_disable_entity_loader(false);
+            }
+            libxml_use_internal_errors($internalErrors);
+        }
+    }
+
+    /**
      * Transform an array into a SimpleXMLElement
      *
      * ### Options

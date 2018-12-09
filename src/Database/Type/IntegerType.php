@@ -64,7 +64,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             return null;
         }
 
-        if (!is_scalar($value)) {
+        if (!is_numeric($value)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot convert value of type `%s` to integer',
                 getTypeName($value)
@@ -101,6 +101,14 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             if (!isset($values[$field])) {
                 continue;
             }
+
+            if (!is_numeric($values[$field])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot convert value of type `%s` to integer',
+                    getTypeName($values[$field])
+                ));
+            }
+
             $values[$field] = (int)$values[$field];
         }
 
@@ -130,11 +138,8 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
         if ($value === null || $value === '') {
             return null;
         }
-        if (is_numeric($value) || ctype_digit($value)) {
+        if (is_numeric($value)) {
             return (int)$value;
-        }
-        if (is_array($value)) {
-            return 1;
         }
 
         return null;

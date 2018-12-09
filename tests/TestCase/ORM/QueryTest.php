@@ -38,13 +38,13 @@ class QueryTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.articles_tags',
-        'core.authors',
-        'core.comments',
-        'core.datatypes',
-        'core.posts',
-        'core.tags'
+        'core.Articles',
+        'core.ArticlesTags',
+        'core.Authors',
+        'core.Comments',
+        'core.Datatypes',
+        'core.Posts',
+        'core.Tags'
     ];
 
     /**
@@ -571,7 +571,7 @@ class QueryTest extends TestCase
         ]);
         $query = new Query($this->connection, $table);
 
-        $results = $query->select()->contain('Tags')->enableHydration(false)->toArray();
+        $results = $query->select()->contain('Tags')->disableHydration()->toArray();
         $expected = [
             [
                 'id' => 1,
@@ -632,7 +632,7 @@ class QueryTest extends TestCase
 
         $results = $query->select()
             ->contain(['Tags' => ['conditions' => ['Tags.id' => 3]]])
-            ->enableHydration(false)
+            ->disableHydration()
             ->toArray();
         $expected = [
             [
@@ -685,7 +685,7 @@ class QueryTest extends TestCase
 
         $results = $query->repository($table)
             ->select()
-            ->enableHydration(false)
+            ->disableHydration()
             ->matching('Comments', function ($q) {
                 return $q->where(['Comments.user_id' => 4]);
             })
@@ -1697,6 +1697,26 @@ class QueryTest extends TestCase
 
         $result = $query->count();
         $this->assertEquals(1, $result);
+    }
+
+    /**
+     * Test that RAND() returns correct results.
+     *
+     * @return void
+     */
+    public function testSelectRandom()
+    {
+        $table = $this->getTableLocator()->get('articles');
+        $query = $table
+            ->query();
+
+        $query->select(['s' => $query->func()->rand()]);
+        $result = $query
+            ->extract('s')
+            ->first();
+
+        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertLessThan(1, $result);
     }
 
     /**

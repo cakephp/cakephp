@@ -32,7 +32,7 @@ class DatabaseSessionTest extends TestCase
      *
      * @var string
      */
-    public $fixtures = ['core.sessions'];
+    public $fixtures = ['core.Sessions'];
 
     /**
      * setUp

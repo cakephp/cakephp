@@ -33,7 +33,7 @@ class AssetFilterTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load(['TestTheme']);
+        $this->loadPlugins(['TestTheme']);
     }
 
     /**
@@ -44,7 +44,7 @@ class AssetFilterTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -236,7 +236,7 @@ class AssetFilterTest extends TestCase
      */
     public function testAsset($url, $file)
     {
-        Plugin::load(['Company/TestPluginThree', 'TestPlugin', 'PluginJs']);
+        $this->loadPlugins(['Company/TestPluginThree', 'TestPlugin', 'PluginJs']);
 
         $filter = new AssetFilter();
         $response = $this->getMockBuilder('Cake\Http\Response')

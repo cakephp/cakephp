@@ -34,17 +34,17 @@ class QueryRegressionTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.tags',
-        'core.articles_tags',
-        'core.authors',
-        'core.authors_tags',
-        'core.comments',
-        'core.featured_tags',
-        'core.special_tags',
-        'core.tags_translations',
-        'core.translates',
-        'core.users'
+        'core.Articles',
+        'core.Tags',
+        'core.ArticlesTags',
+        'core.Authors',
+        'core.AuthorsTags',
+        'core.Comments',
+        'core.FeaturedTags',
+        'core.SpecialTags',
+        'core.TagsTranslations',
+        'core.Translates',
+        'core.Users'
     ];
 
     public $autoFixtures = false;
@@ -527,7 +527,7 @@ class QueryRegressionTest extends TestCase
     public function testPluginAssociationQueryGeneration()
     {
         $this->loadFixtures('Articles', 'Comments', 'Authors');
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('TestPlugin.Comments');
         $articles->belongsTo('TestPlugin.Authors');
@@ -545,6 +545,7 @@ class QueryRegressionTest extends TestCase
             $result->author->id,
             'No SQL error and author exists.'
         );
+        $this->clearPlugins();
     }
 
     /**

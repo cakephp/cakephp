@@ -18,6 +18,8 @@ use Cake\Database\Query;
 
 /**
  * Interface for database driver.
+ *
+ * @method $this disableAutoQuoting()
  */
 interface DriverInterface
 {

@@ -18,10 +18,12 @@ use Cake\Cache\Cache;
 use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
+use Cake\Cache\InvalidArgumentException as CacheInvalidArgumentException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Error\Error;
+use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;
 
 /**
  * CacheTest class
@@ -237,7 +239,7 @@ class CacheTest extends TestCase
 
         $this->assertTrue(Cache::write('no_save', 'Noooo!', 'tests'));
         $this->assertFalse(Cache::read('no_save', 'tests'));
-        $this->assertNull(Cache::delete('no_save', 'tests'));
+        $this->assertTrue(Cache::delete('no_save', 'tests'));
     }
 
     /**
@@ -298,7 +300,7 @@ class CacheTest extends TestCase
     public function testConfigWithLibAndPluginEngines()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $config = ['engine' => 'TestAppCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         Cache::setConfig('libEngine', $config);
@@ -313,7 +315,7 @@ class CacheTest extends TestCase
         Cache::drop('libEngine');
         Cache::drop('pluginLibEngine');
 
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -323,7 +325,7 @@ class CacheTest extends TestCase
      */
     public function testWriteNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::write('key', 'value', 'totally fake'));
     }
 
@@ -334,7 +336,7 @@ class CacheTest extends TestCase
      */
     public function testIncrementNonExistingConfig()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->assertFalse(Cache::increment('key', 1, 'totally fake'));
     }
 
@@ -641,8 +643,8 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('An empty value is not valid as a cache key');
+        $this->expectException(CacheInvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key must be a non-empty string');
         $this->_configCache();
         Cache::write(null, 'not null', 'tests');
     }
@@ -906,5 +908,30 @@ class CacheTest extends TestCase
         Cache::setRegistry($registry);
 
         $this->assertSame($registry, Cache::getRegistry());
+    }
+
+    /**
+     * Test getting instances with pool
+     *
+     * @return void
+     */
+    public function testPool()
+    {
+        $this->_configCache();
+
+        $pool = Cache::pool('tests');
+        $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
+    }
+
+    /**
+     * Test getting instances with pool
+     *
+     * @return void
+     */
+    public function testPoolCacheDisabled()
+    {
+        Cache::disable();
+        $pool = Cache::pool('tests');
+        $this->assertInstanceOf(SimpleCacheInterface::class, $pool);
     }
 }

@@ -130,7 +130,7 @@ class AssetMiddleware
      * Builds asset file path based off url
      *
      * @param string $url Asset URL
-     * @return string Absolute path for asset file
+     * @return string|null Absolute path for asset file, null on failure
      */
     protected function _getAssetFile($url)
     {
@@ -142,7 +142,7 @@ class AssetMiddleware
             }
             $pluginPart[] = Inflector::camelize($parts[$i]);
             $plugin = implode('/', $pluginPart);
-            if ($plugin && Plugin::loaded($plugin)) {
+            if ($plugin && Plugin::isLoaded($plugin)) {
                 $parts = array_slice($parts, $i + 1);
                 $fileFragment = implode(DIRECTORY_SEPARATOR, $parts);
                 $pluginWebroot = Plugin::path($plugin) . 'webroot' . DIRECTORY_SEPARATOR;
@@ -151,7 +151,7 @@ class AssetMiddleware
             }
         }
 
-        return '';
+        return null;
     }
 
     /**

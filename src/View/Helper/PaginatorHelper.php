@@ -100,11 +100,11 @@ class PaginatorHelper extends Helper
     {
         parent::__construct($View, $config);
 
-        $query = $this->request->getQueryParams();
+        $query = $this->_View->getRequest()->getQueryParams();
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
         $this->setConfig(
             'options.url',
-            array_merge($this->request->getParam('pass', []), ['?' => $query])
+            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query])
         );
     }
 
@@ -116,14 +116,16 @@ class PaginatorHelper extends Helper
      */
     public function params($model = null)
     {
+        $request = $this->_View->getRequest();
+
         if (empty($model)) {
             $model = $this->defaultModel();
         }
-        if (!$this->request->getParam('paging') || !$this->request->getParam('paging.' . $model)) {
+        if (!$request->getParam('paging') || !$request->getParam('paging.' . $model)) {
             return [];
         }
 
-        return $this->request->getParam('paging.' . $model);
+        return $request->getParam('paging.' . $model);
     }
 
     /**
@@ -152,22 +154,27 @@ class PaginatorHelper extends Helper
      */
     public function options(array $options = [])
     {
+        $request = $this->_View->getRequest();
+
         if (!empty($options['paging'])) {
-            $this->request = $this->request->withParam(
+            $request = $request->withParam(
                 'paging',
-                $options['paging'] + $this->request->getParam('paging', [])
+                $options['paging'] + $request->getParam('paging', [])
             );
             unset($options['paging']);
         }
-        $model = $this->defaultModel();
 
+        $model = $this->defaultModel();
         if (!empty($options[$model])) {
-            $this->request = $this->request->withParam(
+            $request = $request->withParam(
                 'paging.' . $model,
-                $options[$model] + (array)$this->request->getParam('paging.' . $model, [])
+                $options[$model] + (array)$request->getParam('paging.' . $model, [])
             );
             unset($options[$model]);
         }
+
+        $this->_View->setRequest($request);
+
         $this->_config['options'] = array_filter($options + $this->_config['options']);
         if (empty($this->_config['options']['url'])) {
             $this->_config['options']['url'] = [];
@@ -495,14 +502,20 @@ class PaginatorHelper extends Helper
      *
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
-     * @param array|bool $urlOptions Array of options or bool `fullBase` for BC reasons.
+     * @param array $urlOptions Array of options
+     * The bool version of this argument is *deprecated* and will be removed in 4.0.0
      * @return string By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], $model = null, $urlOptions = false)
+    public function generateUrl(array $options = [], $model = null, $urlOptions = [])
     {
-        if (!is_array($urlOptions)) {
+        if (is_bool($urlOptions)) {
             $urlOptions = ['fullBase' => $urlOptions];
+            deprecationWarning(
+                'Passing a boolean value as third argument into PaginatorHelper::generateUrl() is deprecated ' .
+                'and will be removed in 4.0.0 . ' .
+                'Pass an array instead.'
+            );
         }
         $urlOptions += [
             'escape' => true,
@@ -524,6 +537,13 @@ class PaginatorHelper extends Helper
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 
+        if (!empty($paging['sort']) && !empty($options['sort']) && strpos($options['sort'], '.') === false) {
+            $paging['sort'] = $this->_removeAlias($paging['sort'], null);
+        }
+        if (!empty($paging['sortDefault']) && !empty($options['sort']) && strpos($options['sort'], '.') === false) {
+            $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
+        }
+
         $url = [
             'page' => $paging['page'],
             'limit' => $paging['limit'],
@@ -544,9 +564,10 @@ class PaginatorHelper extends Helper
         if (!empty($url['page']) && $url['page'] == 1) {
             $url['page'] = false;
         }
+
         if (isset($paging['sortDefault'], $paging['directionDefault'], $url['sort'], $url['direction']) &&
             $url['sort'] === $paging['sortDefault'] &&
-            $url['direction'] === $paging['directionDefault']
+            strtolower($url['direction']) === strtolower($paging['directionDefault'])
         ) {
             $url['sort'] = $url['direction'] = null;
         }
@@ -572,6 +593,30 @@ class PaginatorHelper extends Helper
         }
 
         return $url;
+    }
+
+    /**
+     * Remove alias if needed.
+     *
+     * @param string $field Current field
+     * @param string|null $model Current model alias
+     * @return string Unaliased field if applicable
+     */
+    protected function _removeAlias($field, $model = null)
+    {
+        $currentModel = $model ?: $this->defaultModel();
+
+        if (strpos($field, '.') === false) {
+            return $field;
+        }
+
+        list ($alias, $currentField) = explode('.', $field);
+
+        if ($alias === $currentModel) {
+            return $currentField;
+        }
+
+        return $field;
     }
 
     /**
@@ -648,10 +693,10 @@ class PaginatorHelper extends Helper
         if ($this->_defaultModel) {
             return $this->_defaultModel;
         }
-        if (!$this->request->getParam('paging')) {
+        if (!$this->_View->getRequest()->getParam('paging')) {
             return null;
         }
-        list($this->_defaultModel) = array_keys($this->request->getParam('paging'));
+        list($this->_defaultModel) = array_keys($this->_View->getRequest()->getParam('paging'));
 
         return $this->_defaultModel;
     }
@@ -1143,19 +1188,19 @@ class PaginatorHelper extends Helper
         $links = [];
 
         if ($options['prev'] && $this->hasPrev()) {
-            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, true));
+            $links[] = $this->Html->meta('prev', $this->generateUrl(['page' => $params['page'] - 1], null, ['fullBase' => true]));
         }
 
         if ($options['next'] && $this->hasNext()) {
-            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, true));
+            $links[] = $this->Html->meta('next', $this->generateUrl(['page' => $params['page'] + 1], null, ['fullBase' => true]));
         }
 
         if ($options['first']) {
-            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, true));
+            $links[] = $this->Html->meta('first', $this->generateUrl(['page' => 1], null, ['fullBase' => true]));
         }
 
         if ($options['last']) {
-            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, true));
+            $links[] = $this->Html->meta('last', $this->generateUrl(['page' => $params['pageCount']], null, ['fullBase' => true]));
         }
 
         $out = implode($links);
