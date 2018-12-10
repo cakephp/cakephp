@@ -1185,6 +1185,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $query = $this->query();
         $query->select();
 
+        if (!$args) {
+            $args[0] = [];
+        }
+
         return $this->callFinder($type, $query, ...$args);
     }
 
@@ -1198,7 +1202,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to use for the find
      * @return \Cake\ORM\Query The query builder
      */
-    public function findAll(Query $query, array $options = []): Query
+    public function findAll(Query $query, array $options): Query
     {
         return $query;
     }
@@ -1260,7 +1264,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options for the find
      * @return \Cake\ORM\Query The query builder
      */
-    public function findList(Query $query, array $options = []): Query
+    public function findList(Query $query, array $options): Query
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -1323,7 +1327,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array $options The options to find with
      * @return \Cake\ORM\Query The query builder
      */
-    public function findThreaded(Query $query, array $options = []): Query
+    public function findThreaded(Query $query, array $options): Query
     {
         $options += [
             'keyField' => $this->getPrimaryKey(),
@@ -2255,7 +2259,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($this->_behaviors->hasFinder($type)) {
             array_unshift($args, $query);
-            
+
             return $this->_behaviors->callFinder($type, $args);
         }
 

@@ -373,7 +373,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException If the 'for' key is missing in options
      */
-    public function findPath(Query $query, array $options = []): Query
+    public function findPath(Query $query, array $options): Query
     {
         if (empty($options['for'])) {
             throw new InvalidArgumentException("The 'for' key is required for find('path')");
@@ -437,7 +437,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\ORM\Query
      * @throws \InvalidArgumentException When the 'for' key is not passed in $options
      */
-    public function findChildren(Query $query, array $options = []): Query
+    public function findChildren(Query $query, array $options): Query
     {
         $config = $this->getConfig();
         $options += ['for' => null, 'direct' => false];
@@ -488,7 +488,7 @@ class TreeBehavior extends Behavior
      * @param array $options Array of options as described above.
      * @return \Cake\ORM\Query
      */
-    public function findTreeList(Query $query, array $options = []): Query
+    public function findTreeList(Query $query, array $options): Query
     {
         $left = $this->_table->aliasField($this->getConfig('left'));
 
@@ -518,7 +518,7 @@ class TreeBehavior extends Behavior
      * @param array $options Array of options as described above.
      * @return \Cake\ORM\Query Augmented query.
      */
-    public function formatTreeList(Query $query, array $options = []): Query
+    public function formatTreeList(Query $query, array $options): Query
     {
         return $query->formatResults(function ($results) use ($options) {
             /** @var \Cake\Collection\CollectionTrait $results */

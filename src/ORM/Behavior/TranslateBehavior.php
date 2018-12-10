@@ -279,7 +279,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array $options Options
      * @return \Cake\ORM\Query
      */
-    public function findTranslations(Query $query, array $options = []): Query
+    public function findTranslations(Query $query, array $options): Query
     {
         $locales = $options['locales'] ?? [];
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();
