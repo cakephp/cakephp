@@ -32,7 +32,7 @@ class TableLocator implements LocatorInterface
      *
      * @var array
      */
-    protected $_locations = [];
+    protected $locations = [];
 
     /**
      * Configuration for aliases.
@@ -273,7 +273,7 @@ class TableLocator implements LocatorInterface
             return $options['className'];
         }
 
-        foreach ($this->_locations as $location) {
+        foreach ($this->locations as $location) {
             $class = App::className($options['className'], $location, 'Table');
             if ($class !== false) {
                 return $class;
@@ -354,7 +354,7 @@ class TableLocator implements LocatorInterface
     public function addLocation($location)
     {
         $location = str_replace('\\', '/', $location);
-        $this->_locations[] = trim($location, '/');
+        $this->locations[] = trim($location, '/');
 
         return $this;
     }
