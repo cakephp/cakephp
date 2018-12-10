@@ -34,17 +34,17 @@ class QueryRegressionTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.tags',
-        'core.articles_tags',
-        'core.authors',
-        'core.authors_tags',
-        'core.comments',
-        'core.featured_tags',
-        'core.special_tags',
-        'core.tags_translations',
-        'core.translates',
-        'core.users'
+        'core.Articles',
+        'core.Tags',
+        'core.ArticlesTags',
+        'core.Authors',
+        'core.AuthorsTags',
+        'core.Comments',
+        'core.FeaturedTags',
+        'core.SpecialTags',
+        'core.TagsTranslations',
+        'core.Translates',
+        'core.Users'
     ];
 
     public $autoFixtures = false;
@@ -527,7 +527,7 @@ class QueryRegressionTest extends TestCase
     public function testPluginAssociationQueryGeneration()
     {
         $this->loadFixtures('Articles', 'Comments', 'Authors');
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $articles = $this->getTableLocator()->get('Articles');
         $articles->hasMany('TestPlugin.Comments');
         $articles->belongsTo('TestPlugin.Authors');
@@ -545,6 +545,7 @@ class QueryRegressionTest extends TestCase
             $result->author->id,
             'No SQL error and author exists.'
         );
+        $this->clearPlugins();
     }
 
     /**
@@ -875,6 +876,32 @@ class QueryRegressionTest extends TestCase
             ->select(['Users__id' => 'id']);
         $results = $query->toArray();
         $this->assertCount(3, $results);
+    }
+
+    /**
+     * Test selecting with aliased aggregates and identifier quoting
+     * does not emit notice errors.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/12766
+     * @return void
+     */
+    public function testAliasedAggregateFieldTypeConversionSafe()
+    {
+        $this->loadFixtures('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $driver = $articles->getConnection()->getDriver();
+        $restore = $driver->isAutoQuotingEnabled();
+
+        $driver->enableAutoQuoting(true);
+        $query = $articles->find();
+        $query->select([
+            'sumUsers' => $articles->find()->func()->sum('author_id')
+        ]);
+        $driver->enableAutoQuoting($restore);
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertArrayHasKey('sumUsers', $result[0]);
     }
 
     /**

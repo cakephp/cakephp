@@ -769,7 +769,7 @@ class Route
             $url['_method'] = $url['[method]'];
         }
         if (empty($url['_method'])) {
-            return false;
+            $url['_method'] = 'GET';
         }
         $methods = array_map('strtoupper', (array)$url['_method']);
         foreach ($methods as $value) {

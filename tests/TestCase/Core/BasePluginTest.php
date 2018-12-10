@@ -39,7 +39,7 @@ class BasePluginTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

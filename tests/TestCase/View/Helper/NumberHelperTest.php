@@ -74,6 +74,7 @@ class NumberHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
+        $this->clearPlugins();
         static::setAppNamespace($this->_appNamespace);
         unset($this->View);
     }
@@ -127,9 +128,9 @@ class NumberHelperTest extends TestCase
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
         $this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
         $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());
-        Plugin::unload('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 }

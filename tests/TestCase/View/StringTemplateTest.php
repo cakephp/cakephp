@@ -192,9 +192,10 @@ class StringTemplateTest extends TestCase
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->assertNull($this->template->load('TestPlugin.test_templates'));
         $this->assertEquals('<em>{{text}}</em>', $this->template->get('italic'));
+        $this->clearPlugins();
     }
 
     /**

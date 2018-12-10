@@ -61,6 +61,16 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing a call to SQL RAND function.
+     *
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function rand()
+    {
+        return $this->_build('RAND', [], [], 'float');
+    }
+
+    /**
      * Returns a FunctionExpression representing a call to SQL SUM function.
      *
      * @param mixed $expression the function argument

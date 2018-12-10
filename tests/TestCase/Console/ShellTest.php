@@ -53,13 +53,13 @@ class ShellTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles',
-        'core.articles_tags',
-        'core.attachments',
-        'core.comments',
-        'core.posts',
-        'core.tags',
-        'core.users'
+        'core.Articles',
+        'core.ArticlesTags',
+        'core.Attachments',
+        'core.Comments',
+        'core.Posts',
+        'core.Tags',
+        'core.Users'
     ];
 
     /** @var \Cake\Console\Shell */
@@ -129,7 +129,7 @@ class ShellTest extends TestCase
     {
         static::setAppNamespace();
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->Shell->tasks = ['Extract' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
@@ -141,6 +141,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
+        $this->clearPlugins();
     }
 
     /**
@@ -159,7 +160,7 @@ class ShellTest extends TestCase
         );
         $this->assertEquals('Articles', $Shell->modelClass);
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
             'TestPlugin\Model\Table\TestPluginCommentsTable',
@@ -169,6 +170,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
+        $this->clearPlugins();
     }
 
     /**

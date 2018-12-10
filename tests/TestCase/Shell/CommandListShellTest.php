@@ -33,7 +33,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load(['TestPlugin', 'TestPluginTwo']);
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
     }
 
     /**
@@ -44,7 +44,7 @@ class CommandListShellTest extends ConsoleIntegrationTestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

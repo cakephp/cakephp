@@ -44,7 +44,7 @@ class LogTest extends TestCase
     public function testImportingLoggers()
     {
         static::setAppNamespace();
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         Log::setConfig('libtest', [
             'engine' => 'TestApp'
@@ -64,7 +64,7 @@ class LogTest extends TestCase
 
         Log::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
 
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

@@ -38,11 +38,11 @@ class TableTest extends TestCase
 {
 
     public $fixtures = [
-        'core.articles',
-        'core.tags',
-        'core.articles_tags',
-        'core.orders',
-        'core.products'
+        'core.Articles',
+        'core.Tags',
+        'core.ArticlesTags',
+        'core.Orders',
+        'core.Products'
     ];
 
     protected $_map;

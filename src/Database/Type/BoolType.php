@@ -161,6 +161,9 @@ class BoolType extends Type implements TypeInterface, BatchCastingInterface
         if ($value === 'false') {
             return false;
         }
+        if (!is_scalar($value)) {
+            return null;
+        }
 
         return !empty($value);
     }

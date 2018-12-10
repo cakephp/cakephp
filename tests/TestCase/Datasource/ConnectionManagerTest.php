@@ -11,7 +11,6 @@
  */
 namespace Cake\Test\TestCase\Datasource;
 
-use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -68,7 +67,7 @@ class ConnectionManagerTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::unload();
+        $this->clearPlugins();
         ConnectionManager::drop('test_variant');
         ConnectionManager::dropAlias('other_name');
     }
@@ -202,7 +201,7 @@ class ConnectionManagerTest extends TestCase
      */
     public function testGetPluginDataSource()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $name = 'test_variant';
         $config = ['className' => 'TestPlugin.TestSource', 'foo' => 'bar'];
         ConnectionManager::setConfig($name, $config);

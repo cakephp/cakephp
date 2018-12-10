@@ -210,7 +210,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadPluginValue()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $engine = new IniConfig($this->path);
         $result = $engine->read('TestPlugin.nested');
 
@@ -221,7 +221,7 @@ class IniConfigTest extends TestCase
 
         $result = $engine->read('TestPlugin.nested');
         $this->assertEquals('foo', $result['database']['db']['password']);
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

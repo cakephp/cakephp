@@ -484,6 +484,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function from($tables = [], $overwrite = false)
     {
         if (empty($tables)) {
+            deprecationWarning('Using Query::from() to read state is deprecated. Use clause("from") instead.');
+
             return $this->_parts['from'];
         }
 
@@ -589,6 +591,8 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function join($tables = null, $types = [], $overwrite = false)
     {
         if ($tables === null) {
+            deprecationWarning('Using Query::join() to read state is deprecated. Use clause("join") instead.');
+
             return $this->_parts['join'];
         }
 
@@ -2061,6 +2065,22 @@ class Query implements ExpressionInterface, IteratorAggregate
     {
         $this->_dirty();
         $this->_useBufferedResults = (bool)$enable;
+
+        return $this;
+    }
+
+    /**
+     * Disables buffered results.
+     *
+     * Disabling buffering will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function disableBufferedResults()
+    {
+        $this->_dirty();
+        $this->_useBufferedResults = false;
 
         return $this;
     }

@@ -159,6 +159,18 @@ class PluginCollection implements Iterator, Countable
     }
 
     /**
+     * Remove all plugins from the collection
+     *
+     * @return $this
+     */
+    public function clear()
+    {
+        $this->plugins = [];
+
+        return $this;
+    }
+
+    /**
      * Check whether the named plugin exists in the collection.
      *
      * @param string $name The named plugin.

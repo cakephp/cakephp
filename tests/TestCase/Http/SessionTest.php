@@ -14,10 +14,12 @@
  */
 namespace Cake\Test\TestCase\Network;
 
+use Cake\Core\Plugin;
 use Cake\Http\Session;
 use Cake\Http\Session\CacheSession;
 use Cake\Http\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * TestCacheSession
@@ -75,7 +77,7 @@ class SessionTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.cake_sessions', 'core.sessions'];
+    public $fixtures = ['core.CakeSessions', 'core.Sessions'];
 
     /**
      * tearDown method
@@ -86,6 +88,7 @@ class SessionTest extends TestCase
     {
         unset($_SESSION);
         parent::tearDown();
+        $this->clearPlugins();
     }
 
     /**
@@ -303,6 +306,25 @@ class SessionTest extends TestCase
     }
 
     /**
+     * test close method
+     *
+     * @return void
+     */
+    public function testCloseFailure()
+    {
+        $session = new Session();
+        $session->started();
+        $this->assertTrue($session->start());
+        try {
+            $session->close();
+        } catch (RuntimeException $e) {
+            // closing the session in CLI should raise an error
+            // and won't close the session.
+            $this->assertTrue($session->started());
+        }
+    }
+
+    /**
      * testClear method
      *
      * @return void
@@ -494,7 +516,7 @@ class SessionTest extends TestCase
     public function testUsingPluginHandler()
     {
         static::setAppNamespace();
-        \Cake\Core\Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $config = [
             'defaults' => 'cake',

@@ -20,7 +20,7 @@ if (empty($plugin)) {
 
 echo '<br><br>';
 
-if (!Plugin::loaded($plugin)):
+if (!Plugin::isLoaded($plugin)):
     echo sprintf('Make sure your plugin <em>%s</em> is in the %s directory and was loaded.', h($plugin), $pluginPath);
 else:
     echo sprintf('Make sure your plugin was loaded from %s and Composer is able to autoload its classes, see %s and %s',

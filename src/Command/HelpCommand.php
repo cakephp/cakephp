@@ -54,9 +54,9 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     {
         if (!$args->getOption('xml')) {
             $io->out('<info>Current Paths:</info>', 2);
-            $io->out('* app:  ' . APP_DIR);
-            $io->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
-            $io->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
+            $io->out('* app:  ' . APP_DIR . DIRECTORY_SEPARATOR);
+            $io->out('* root: ' . ROOT . DIRECTORY_SEPARATOR);
+            $io->out('* core: ' . CORE_PATH);
             $io->out('');
 
             $io->out('<info>Available Commands:</info>', 2);

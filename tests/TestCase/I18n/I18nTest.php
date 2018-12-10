@@ -56,7 +56,7 @@ class I18nTest extends TestCase
         I18n::clear();
         I18n::setDefaultFormatter('default');
         I18n::setLocale($this->locale);
-        Plugin::unload();
+        $this->clearPlugins();
         Cache::clear(false, '_cake_core_');
     }
 
@@ -180,7 +180,7 @@ class I18nTest extends TestCase
      */
     public function testPluginMesagesLoad()
     {
-        Plugin::load([
+        $this->loadPlugins([
             'TestPlugin',
             'Company/TestPluginThree'
         ]);
@@ -206,7 +206,7 @@ class I18nTest extends TestCase
      */
     public function testPluginOverride()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
         $translator = I18n::getTranslator('test_theme');
         $this->assertEquals(
             'translated',

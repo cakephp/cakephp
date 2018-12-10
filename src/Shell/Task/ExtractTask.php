@@ -16,6 +16,7 @@ namespace Cake\Shell\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\Filesystem\Folder;
@@ -47,6 +48,13 @@ class ExtractTask extends Shell
      * @var bool
      */
     protected $_merge = false;
+
+    /**
+     * Use relative paths in the pot files rather than full path
+     *
+     * @var bool
+     */
+    protected $_relativePaths = false;
 
     /**
      * Current file being processed
@@ -103,6 +111,18 @@ class ExtractTask extends Shell
      * @var bool
      */
     protected $_extractCore = false;
+
+    /**
+     * Displays marker error(s) if true
+     * @var bool
+     */
+    protected $_markerError;
+
+    /**
+     * Count number of marker errors found
+     * @var bool
+     */
+    protected $_countMarkerError = 0;
 
     /**
      * No welcome message.
@@ -168,8 +188,8 @@ class ExtractTask extends Shell
             $this->_paths = explode(',', $this->params['paths']);
         } elseif (isset($this->params['plugin'])) {
             $plugin = Inflector::camelize($this->params['plugin']);
-            if (!Plugin::loaded($plugin)) {
-                Plugin::load($plugin);
+            if (!Plugin::isLoaded($plugin)) {
+                throw new MissingPluginException(['plugin' => $plugin]);
             }
             $this->_paths = [Plugin::classPath($plugin)];
             $this->params['plugin'] = $plugin;
@@ -231,6 +251,9 @@ class ExtractTask extends Shell
             $response = $this->in('Would you like to merge all domain strings into the default.pot file?', ['y', 'n'], 'n');
             $this->_merge = strtolower($response) === 'y';
         }
+
+        $this->_markerError = $this->param('marker-error');
+        $this->_relativePaths = $this->param('relative-paths');
 
         if (empty($this->_files)) {
             $this->_searchFiles();
@@ -300,6 +323,11 @@ class ExtractTask extends Shell
         $this->_paths = $this->_files = $this->_storage = [];
         $this->_translations = $this->_tokens = [];
         $this->out();
+        if ($this->_countMarkerError) {
+            $this->err("{$this->_countMarkerError} marker error(s) detected.");
+            $this->err(" => Use the --marker-error option to display errors.");
+        }
+
         $this->out('Done.');
     }
 
@@ -320,6 +348,10 @@ class ExtractTask extends Shell
         ])->addOption('merge', [
             'help' => 'Merge all domain strings into the default.po file.',
             'choices' => ['yes', 'no']
+        ])->addOption('relative-paths', [
+            'help' => 'Use relative paths in the .pot file',
+            'boolean' => true,
+            'default' => false,
         ])->addOption('output', [
             'help' => 'Full path to output directory.'
         ])->addOption('files', [
@@ -352,6 +384,10 @@ class ExtractTask extends Shell
             'boolean' => true,
             'default' => false,
             'help' => 'Do not write file locations for each extracted message.',
+        ])->addOption('marker-error', [
+            'boolean' => true,
+            'default' => false,
+            'help' => 'Do not display marker error.',
         ]);
 
         return $parser;
@@ -446,6 +482,9 @@ class ExtractTask extends Shell
                         'file' => $this->_file,
                         'line' => $line,
                     ];
+                    if ($this->_relativePaths) {
+                        $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
+                    }
                     if (isset($plural)) {
                         $details['msgid_plural'] = $plural;
                     }
@@ -453,7 +492,7 @@ class ExtractTask extends Shell
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
-                } elseif (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+                } else {
                     $this->_markerError($this->_file, $line, $functionName, $count);
                 }
             }
@@ -674,6 +713,14 @@ class ExtractTask extends Shell
      */
     protected function _markerError($file, $line, $marker, $count)
     {
+        if (strpos($this->_file, CAKE_CORE_INCLUDE_PATH) === false) {
+            $this->_countMarkerError++;
+        }
+
+        if (!$this->_markerError) {
+            return;
+        }
+
         $this->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
         $tokenCount = count($this->_tokens);

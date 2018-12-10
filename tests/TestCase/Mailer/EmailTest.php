@@ -106,7 +106,7 @@ class TestEmail extends Email
 class EmailTest extends TestCase
 {
 
-    public $fixtures = ['core.users'];
+    public $fixtures = ['core.Users'];
 
     /**
      * @var \Cake\Mailer\Email
@@ -136,7 +136,10 @@ class EmailTest extends TestCase
                 'className' => 'TestFalse'
             ]
         ];
-        Email::setConfigTransport($this->transports);
+
+        $this->deprecated(function () {
+            Email::setConfigTransport($this->transports);
+        });
     }
 
     /**
@@ -149,9 +152,11 @@ class EmailTest extends TestCase
         parent::tearDown();
         Log::drop('email');
         Email::drop('test');
-        Email::dropTransport('debug');
-        Email::dropTransport('badClassName');
-        Email::dropTransport('test_smtp');
+        $this->deprecated(function () {
+            Email::dropTransport('debug');
+            Email::dropTransport('badClassName');
+            Email::dropTransport('test_smtp');
+        });
     }
 
     /**
@@ -409,8 +414,8 @@ class EmailTest extends TestCase
      */
     public function testClassNameException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport class "TestFalse" not found.');
+        $this->expectException(\BadMethodCallException::class);
+        $this->expectExceptionMessage('Mailer transport TestFalse is not available.');
         $email = new Email();
         $email->setTransport('badClassName');
     }
@@ -813,8 +818,8 @@ class EmailTest extends TestCase
      */
     public function testTemplate()
     {
-        $this->Email->setTemplate('template');
-        $this->assertSame('template', $this->Email->getTemplate());
+        $this->Email->viewBuilder()->setTemplate('template');
+        $this->assertSame('template', $this->Email->viewBuilder()->getTemplate());
     }
 
     /**
@@ -824,8 +829,8 @@ class EmailTest extends TestCase
      */
     public function testLayout()
     {
-        $this->Email->setLayout('layout');
-        $this->assertSame('layout', $this->Email->getLayout());
+        $this->Email->viewBuilder()->setLayout('layout');
+        $this->assertSame('layout', $this->Email->viewBuilder()->getLayout());
     }
 
     /**
@@ -835,11 +840,11 @@ class EmailTest extends TestCase
      */
     public function testTheme()
     {
-        $this->assertNull($this->Email->getTheme());
+        $this->assertNull($this->Email->viewBuilder()->getTheme());
 
-        $this->Email->setTheme('default');
+        $this->Email->viewBuilder()->setTheme('default');
         $expected = 'default';
-        $this->assertSame($expected, $this->Email->getTheme());
+        $this->assertSame($expected, $this->Email->viewBuilder()->getTheme());
     }
 
     /**
@@ -945,7 +950,7 @@ class EmailTest extends TestCase
     public function testTransportInvalid()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Transport config "Invalid" is missing.');
+        $this->expectExceptionMessage('The "Invalid" transport configuration does not exist');
         $this->Email->setTransport('Invalid');
     }
 
@@ -978,8 +983,10 @@ class EmailTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Transport config "debug" is invalid, the required `className` option is missing');
-        Email::dropTransport('debug');
-        Email::setConfigTransport('debug', []);
+        $this->deprecated(function () {
+            Email::dropTransport('debug');
+            Email::setConfigTransport('debug', []);
+        });
 
         $this->Email->setTransport('debug');
     }
@@ -991,16 +998,18 @@ class EmailTest extends TestCase
      */
     public function testConfigTransport()
     {
-        Email::dropTransport('debug');
         $settings = [
             'className' => 'Debug',
             'log' => true
         ];
-        $result = Email::setConfigTransport('debug', $settings);
-        $this->assertNull($result, 'No return.');
+        $this->deprecated(function () use ($settings) {
+            Email::dropTransport('debug');
+            $result = Email::setConfigTransport('debug', $settings);
+            $this->assertNull($result, 'No return.');
 
-        $result = Email::getConfigTransport('debug');
-        $this->assertEquals($settings, $result);
+            $result = Email::getConfigTransport('debug');
+            $this->assertEquals($settings, $result);
+        });
     }
 
     /**
@@ -1008,7 +1017,6 @@ class EmailTest extends TestCase
      */
     public function testConfigTransportMultiple()
     {
-        Email::dropTransport('debug');
         $settings = [
             'debug' => [
                 'className' => 'Debug',
@@ -1021,9 +1029,12 @@ class EmailTest extends TestCase
                 'host' => 'example.com'
             ]
         ];
-        Email::setConfigTransport($settings);
-        $this->assertEquals($settings['debug'], Email::getConfigTransport('debug'));
-        $this->assertEquals($settings['test_smtp'], Email::getConfigTransport('test_smtp'));
+        $this->deprecated(function () use ($settings) {
+            Email::dropTransport('debug');
+            Email::setConfigTransport($settings);
+            $this->assertEquals($settings['debug'], Email::getConfigTransport('debug'));
+            $this->assertEquals($settings['test_smtp'], Email::getConfigTransport('test_smtp'));
+        });
     }
 
     /**
@@ -1033,13 +1044,15 @@ class EmailTest extends TestCase
     public function testConfigTransportErrorOnDuplicate()
     {
         $this->expectException(\BadMethodCallException::class);
-        Email::dropTransport('debug');
         $settings = [
             'className' => 'Debug',
             'log' => true
         ];
-        Email::setConfigTransport('debug', $settings);
-        Email::setConfigTransport('debug', $settings);
+        $this->deprecated(function () use ($settings) {
+            Email::setConfigTransport('debug', $settings);
+            Email::setConfigTransport('debug', $settings);
+            Email::dropTransport('debug');
+        });
     }
 
     /**
@@ -1049,10 +1062,12 @@ class EmailTest extends TestCase
      */
     public function testConfigTransportInstance()
     {
-        Email::dropTransport('debug');
-        $instance = new DebugTransport();
-        Email::setConfigTransport('debug', $instance);
-        $this->assertEquals(['className' => $instance], Email::getConfigTransport('debug'));
+        $this->deprecated(function () {
+            Email::dropTransport('debug');
+            $instance = new DebugTransport();
+            Email::setConfigTransport('debug', $instance);
+            $this->assertEquals(['className' => $instance], Email::getConfigTransport('debug'));
+        });
     }
 
     /**
@@ -1062,13 +1077,15 @@ class EmailTest extends TestCase
      */
     public function testConfiguredTransport()
     {
-        $result = Email::configuredTransport();
-        $this->assertInternalType('array', $result, 'Should have config keys');
-        $this->assertEquals(
-            array_keys($this->transports),
-            $result,
-            'Loaded transports should be present in enumeration.'
-        );
+        $this->deprecated(function () {
+            $result = Email::configuredTransport();
+            $this->assertInternalType('array', $result, 'Should have config keys');
+            $this->assertEquals(
+                array_keys($this->transports),
+                $result,
+                'Loaded transports should be present in enumeration.'
+            );
+        });
     }
 
     /**
@@ -1078,10 +1095,12 @@ class EmailTest extends TestCase
      */
     public function testDropTransport()
     {
-        $result = Email::getConfigTransport('debug');
-        $this->assertInternalType('array', $result, 'Should have config data');
-        Email::dropTransport('debug');
-        $this->assertNull(Email::getConfigTransport('debug'), 'Should not exist.');
+        $this->deprecated(function () {
+            $result = Email::getConfigTransport('debug');
+            $this->assertInternalType('array', $result, 'Should have config data');
+            Email::dropTransport('debug');
+            $this->assertNull(Email::getConfigTransport('debug'), 'Should not exist.');
+        });
     }
 
     /**
@@ -1190,13 +1209,13 @@ class EmailTest extends TestCase
         $result = $this->Email->getSubject();
         $this->assertEquals($config['subject'], $result);
 
-        $result = $this->Email->getTheme();
+        $result = $this->Email->viewBuilder()->getTheme();
         $this->assertEquals($config['theme'], $result);
 
         $result = $this->Email->getTransport();
         $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
 
-        $result = $this->Email->getHelpers();
+        $result = $this->Email->viewBuilder()->getHelpers();
         $this->assertEquals($config['helpers'], $result);
     }
 
@@ -1213,7 +1232,7 @@ class EmailTest extends TestCase
         $this->Email->setTo('you@cakephp.org');
         $this->Email->setSubject('My title');
         $this->Email->setEmailFormat('text');
-        $this->Email->setTemplate('default');
+        $this->Email->viewBuilder()->setTemplate('default');
         $this->Email->setViewVars([
             'content' => 'A message to you',
         ]);
@@ -1646,7 +1665,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default', 'default');
+        $this->Email->viewBuilder()->setTemplate('default', 'default');
         $result = $this->Email->send();
 
         $this->assertContains('This email was sent using the CakePHP Framework', $result['message']);
@@ -1668,8 +1687,9 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setConfig(['empty']);
-        $this->Email->setTemplate('default');
-        $this->Email->setLayout(null);
+        $this->Email->viewBuilder()
+            ->setTemplate('default')
+            ->setLayout(false);
         $result = $this->Email->send('message body.');
 
         $this->assertContains('message body.', $result['message']);
@@ -1690,7 +1710,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default', 'default');
+        $this->Email->viewBuilder()->setTemplate('default', 'default');
         $this->Email->setEmailFormat('both');
         $result = $this->Email->send();
 
@@ -1737,8 +1757,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default');
-        $this->Email->setLayout('japanese');
+        $this->Email->viewBuilder()->setTemplate('default');
+        $this->Email->viewBuilder()->setLayout('japanese');
         $this->Email->charset = 'ISO-2022-JP';
         $result = $this->Email->send();
 
@@ -1755,7 +1775,7 @@ class EmailTest extends TestCase
      */
     public function testSendRenderThemed()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
         $this->Email->reset();
         $this->Email->setTransport('debug');
 
@@ -1763,8 +1783,8 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTheme('TestTheme');
-        $this->Email->setTemplate('themed', 'default');
+        $this->Email->viewBuilder()->setTheme('TestTheme');
+        $this->Email->viewBuilder()->setTemplate('themed', 'default');
         $result = $this->Email->send();
 
         $this->assertContains('In TestTheme', $result['message']);
@@ -1772,6 +1792,7 @@ class EmailTest extends TestCase
         $this->assertContains('Message-ID: ', $result['headers']);
         $this->assertContains('To: ', $result['headers']);
         $this->assertContains('/test_theme/img/test.jpg', $result['message']);
+        $this->clearPlugins();
     }
 
     /**
@@ -1789,7 +1810,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $this->Email->setEmailFormat('html');
-        $this->Email->setTemplate('html', 'default');
+        $this->Email->viewBuilder()->setTemplate('html', 'default');
         $result = $this->Email->send();
 
         $this->assertTextContains('<h1>HTML Ipsum Presents</h1>', $result['message']);
@@ -1810,7 +1831,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('custom', 'default');
+        $this->Email->viewBuilder()->setTemplate('custom', 'default');
         $this->Email->setViewVars(['value' => 12345]);
         $result = $this->Email->send();
 
@@ -1831,7 +1852,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('japanese', 'default');
+        $this->Email->viewBuilder()->setTemplate('japanese', 'default');
         $this->Email->setViewVars(['value' => '日本語の差し込み123']);
         $this->Email->charset = 'ISO-2022-JP';
         $result = $this->Email->send();
@@ -1855,18 +1876,18 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('custom_helper', 'default');
+        $this->Email->viewBuilder()
+            ->setTemplate('custom_helper')
+            ->setLayout('default')
+            ->setHelpers(['Time'], false);
         $this->Email->setViewVars(['time' => $timestamp]);
-
-        $result = $this->Email->setHelpers(['Time']);
-        $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->Email->send();
         $dateTime = new \DateTime;
         $dateTime->setTimestamp($timestamp);
         $this->assertContains('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
 
-        $result = $this->Email->getHelpers();
+        $result = $this->Email->viewBuilder()->getHelpers();
         $this->assertEquals(['Time'], $result);
     }
 
@@ -1884,7 +1905,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('image');
+        $this->Email->viewBuilder()->setTemplate('image');
         $this->Email->setEmailFormat('html');
         $server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
 
@@ -1904,7 +1925,7 @@ class EmailTest extends TestCase
      */
     public function testSendRenderPlugin()
     {
-        Plugin::load(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
+        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -1913,32 +1934,48 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
 
-        $result = $this->Email->setTemplate('TestPlugin.test_plugin_tpl')->setLayout('default')->send();
+        $this->Email->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('default');
+        $result = $this->Email->send();
         $this->assertContains('Into TestPlugin.', $result['message']);
         $this->assertContains('This email was sent using the CakePHP Framework', $result['message']);
 
-        $result = $this->Email->setTemplate('TestPlugin.test_plugin_tpl')->setLayout('TestPlugin.plug_default')->send();
+        $this->Email->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('TestPlugin.plug_default');
+        $result = $this->Email->send();
         $this->assertContains('Into TestPlugin.', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
-        $result = $this->Email->setTemplate('TestPlugin.test_plugin_tpl')->setLayout('plug_default')->send();
+        $this->Email->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('plug_default');
+        $result = $this->Email->send();
         $this->assertContains('Into TestPlugin.', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
 
-        $result = $this->Email->setTemplate('TestPlugin.test_plugin_tpl')->setLayout('TestPluginTwo.default')->send();
+        $this->Email->viewBuilder()
+            ->setTemplate('TestPlugin.test_plugin_tpl')
+            ->setLayout('TestPluginTwo.default');
+        $result = $this->Email->send();
         $this->assertContains('Into TestPlugin.', $result['message']);
         $this->assertContains('This email was sent using TestPluginTwo.', $result['message']);
 
         // test plugin template overridden by theme
-        $this->Email->setTheme('TestTheme');
+        $this->Email->viewBuilder()->setTheme('TestTheme');
         $result = $this->Email->send();
 
         $this->assertContains('Into TestPlugin. (themed)', $result['message']);
 
         $this->Email->setViewVars(['value' => 12345]);
-        $result = $this->Email->setTemplate('custom')->setLayout('TestPlugin.plug_default')->send();
+        $this->Email->viewBuilder()
+            ->setTemplate('custom')
+            ->setLayout('TestPlugin.plug_default');
+        $result = $this->Email->send();
         $this->assertContains('Here is your value: 12345', $result['message']);
         $this->assertContains('This email was sent using the TestPlugin.', $result['message']);
+        $this->clearPlugins();
     }
 
     /**
@@ -1954,7 +1991,8 @@ class EmailTest extends TestCase
         $this->Email->setFrom('cake@cakephp.org');
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
-        $this->Email->setTemplate('fooo')->send();
+        $this->Email->viewBuilder()->setTemplate('fooo');
+        $this->Email->send();
     }
 
     /**
@@ -1970,7 +2008,7 @@ class EmailTest extends TestCase
         $this->Email->setFrom('cake@cakephp.org');
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
-        $this->Email->setTemplate('custom', 'default');
+        $this->Email->viewBuilder()->setTemplate('custom', 'default');
         $this->Email->setProfile([]);
         $this->Email->setViewVars(['value' => 12345]);
         $this->Email->setEmailFormat('both');
@@ -2044,8 +2082,10 @@ class EmailTest extends TestCase
      */
     public function testDeliver()
     {
-        Email::dropTransport('default');
-        Email::setConfigTransport('default', ['className' => 'Debug']);
+        $this->deprecated(function () {
+            Email::dropTransport('default');
+            Email::setConfigTransport('default', ['className' => 'Debug']);
+        });
 
         $instance = Email::deliver('all@cakephp.org', 'About', 'Everything ok', ['from' => 'root@cakephp.org'], false);
         $this->assertInstanceOf('Cake\Mailer\Email', $instance);
@@ -2067,8 +2107,8 @@ class EmailTest extends TestCase
         $this->assertSame($instance->getFrom(), ['cake@cakephp.org' => 'cake@cakephp.org']);
         $this->assertSame($instance->getTo(), ['debug@cakephp.org' => 'debug@cakephp.org']);
         $this->assertSame($instance->getSubject(), 'Update ok');
-        $this->assertSame($instance->getTemplate(), 'custom');
-        $this->assertSame($instance->getLayout(), 'custom_layout');
+        $this->assertSame($instance->viewBuilder()->getTemplate(), 'custom');
+        $this->assertSame($instance->viewBuilder()->getLayout(), 'custom_layout');
         $this->assertEquals($instance->getViewVars(), ['value' => 123, 'name' => 'CakePHP']);
         $this->assertSame($instance->getCc(), ['cake@cakephp.org' => 'Myself']);
 
@@ -2091,7 +2131,7 @@ class EmailTest extends TestCase
         $this->Email->setTo(['you@cakephp.org' => 'You']);
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
-        $this->Email->setTemplate('default', 'default');
+        $this->Email->viewBuilder()->setTemplate('default', 'default');
         $this->Email->setEmailFormat('both');
         $this->Email->send();
 
@@ -2126,13 +2166,13 @@ class EmailTest extends TestCase
     public function testReset()
     {
         $this->Email->setTo('cake@cakephp.org');
-        $this->Email->setTheme('TestTheme');
+        $this->Email->viewBuilder()->setTheme('TestTheme');
         $this->Email->setEmailPattern('/.+@.+\..+/i');
         $this->assertSame(['cake@cakephp.org' => 'cake@cakephp.org'], $this->Email->getTo());
 
         $this->Email->reset();
         $this->assertSame([], $this->Email->getTo());
-        $this->assertFalse($this->Email->getTheme());
+        $this->assertFalse($this->Email->viewBuilder()->getTheme());
         $this->assertSame(Email::EMAIL_PATTERN, $this->Email->getEmailPattern());
     }
 
@@ -2225,7 +2265,7 @@ class EmailTest extends TestCase
     public function testRenderWithLayoutAndAttachment()
     {
         $this->Email->setEmailFormat('html');
-        $this->Email->setTemplate('html', 'default');
+        $this->Email->viewBuilder()->setTemplate('html', 'default');
         $this->Email->setAttachments([CAKE . 'basics.php']);
         $result = $this->Email->render([]);
         $this->assertNotEmpty($result);
@@ -2283,8 +2323,8 @@ class EmailTest extends TestCase
         ];
         $this->Email = new Email($configs);
 
-        $template = $this->Email->getTemplate();
-        $layout = $this->Email->getLayout();
+        $template = $this->Email->viewBuilder()->getTemplate();
+        $layout = $this->Email->viewBuilder()->getLayout();
         $this->assertEquals('', $template);
         $this->assertEquals($configs['layout'], $layout);
     }
@@ -2836,13 +2876,17 @@ HTML;
      */
     public function testMockTransport()
     {
-        Email::dropTransport('default');
+        $this->deprecated(function () {
+            Email::dropTransport('default');
+        });
 
         $mock = $this->getMockBuilder('\Cake\Mailer\AbstractTransport')->getMock();
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Email::setConfig('default', $config);
-        Email::setConfigTransport('default', $mock);
+        $this->deprecated(function () use ($mock) {
+            Email::setConfigTransport('default', $mock);
+        });
 
         $em = new Email('default');
 
@@ -2981,5 +3025,29 @@ XML;
                 'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST'
             );
         }
+    }
+
+    /**
+     * Test deprecated methods
+     *
+     * @return void
+     */
+    public function testDeprecatedMethods()
+    {
+        $this->deprecated(function () {
+            $this->Email
+                ->setTemplate('foo')
+                ->setLayout('bar')
+                ->setTheme('baz')
+                ->setHelpers(['A', 'B']);
+
+            $this->assertSame('foo', $this->Email->getTemplate());
+            $this->assertSame('bar', $this->Email->getLayout());
+            $this->assertSame('baz', $this->Email->getTheme());
+            $this->assertSame(['A', 'B'], $this->Email->getHelpers());
+
+            $this->Email->setLayout('');
+            $this->assertFalse($this->Email->getLayout());
+        });
     }
 }

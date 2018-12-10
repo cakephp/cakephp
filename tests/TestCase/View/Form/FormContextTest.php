@@ -44,6 +44,27 @@ class FormContextTest extends TestCase
     }
 
     /**
+     * tests getRequiredMessage
+     *
+     * @return void
+     */
+    public function testGetRequiredMessage()
+    {
+        $validator = new Validator();
+        $validator->requirePresence('title', true, 'Don\'t forget a title!');
+
+        $form = new Form();
+        $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
+
+        $context = new FormContext($this->request, [
+            'entity' => $form,
+        ]);
+
+        $this->assertNull($context->getRequiredMessage('body'));
+        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+    }
+
+    /**
      * Test getting the primary key.
      *
      * @return void
@@ -91,6 +112,27 @@ class FormContextTest extends TestCase
         $this->assertEquals('New title', $context->val('Articles.title'));
         $this->assertEquals('My copy', $context->val('Articles.body'));
         $this->assertNull($context->val('Articles.nope'));
+    }
+
+    /**
+     * Test reading values from form data.
+     */
+    public function testValPresentInForm()
+    {
+        $form = new Form();
+        $form->setData(['title' => 'set title']);
+
+        $context = new FormContext($this->request, ['entity' => $form]);
+
+        $this->assertEquals('set title', $context->val('title'));
+        $this->assertNull($context->val('Articles.body'));
+
+        $this->request = $this->request->withParsedBody([
+            'title' => 'New title',
+        ]);
+        $context = new FormContext($this->request, ['entity' => $form]);
+
+        $this->assertEquals('New title', $context->val('title'));
     }
 
     /**
