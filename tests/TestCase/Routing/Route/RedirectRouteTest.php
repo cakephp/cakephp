@@ -216,7 +216,7 @@ class RedirectRouteTest extends TestCase
     public function testParsePersistPatterns()
     {
         $this->expectException(\Cake\Routing\Exception\RedirectException::class);
-        $this->expectExceptionMessage('http://localhost/tags/add?lang=nl');
+        $this->expectExceptionMessage('http://localhost/tags/add');
         $this->expectExceptionCode(301);
         $route = new RedirectRoute('/:lang/my_controllers', ['controller' => 'tags', 'action' => 'add'], ['lang' => '(nl|en)', 'persist' => ['lang']]);
         $route->parse('/nl/my_controllers/');

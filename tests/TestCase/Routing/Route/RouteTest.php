@@ -258,7 +258,7 @@ class RouteTest extends TestCase
             'action' => 'move',
             'id' => '123',
             'x' => '8',
-            'y' => '9',
+            '?' => ['y' => '9'],
         ]);
         $this->assertEquals('/fighters/123/move/8/:y?y=9', $result);
     }
@@ -603,7 +603,7 @@ class RouteTest extends TestCase
         $result = $route->match(['controller' => 'posts', 'action' => 'view']);
         $this->assertEquals('/blog/view', $result);
 
-        $result = $route->match(['controller' => 'posts', 'action' => 'view', 'id' => 2]);
+        $result = $route->match(['controller' => 'posts', 'action' => 'view', '?' => ['id' => 2]]);
         $this->assertEquals('/blog/view?id=2', $result);
 
         $result = $route->match(['controller' => 'nodes', 'action' => 'view']);
@@ -914,7 +914,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             1,
             'second',
-            'query' => 'string',
+            '?' => ['query' => 'string'],
         ]);
         $this->assertEquals('/blog/1-second?query=string', $result);
 
@@ -946,7 +946,7 @@ class RouteTest extends TestCase
             'slug' => 'second',
             'third',
             'fourth',
-            'query' => 'string',
+            '?' => ['query' => 'string'],
         ]);
         $this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
 
@@ -957,7 +957,7 @@ class RouteTest extends TestCase
             'second',
             'third',
             'fourth',
-            'query' => 'string',
+            '?' => ['query' => 'string'],
         ]);
         $this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
     }
@@ -998,8 +998,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             1,
             '_ext' => 'json',
-            'id' => 'b',
-            'c' => 'd',
+            '?' => ['id' => 'b', 'c' => 'd',],
         ]);
         $this->assertEquals('/posts/view/1.json?id=b&c=d', $result);
 
@@ -1086,9 +1085,11 @@ class RouteTest extends TestCase
             'controller' => 'posts',
             'action' => 'index',
             0,
-            'test' => 'var',
-            'var2' => 'test2',
-            'more' => 'test data',
+            '?' => [
+                'test' => 'var',
+                'var2' => 'test2',
+                'more' => 'test data',
+            ],
         ]);
         $expected = '/posts/index/0?test=var&amp;var2=test2&amp;more=test+data';
         $this->assertEquals($expected, $result);

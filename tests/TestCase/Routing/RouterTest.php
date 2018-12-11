@@ -928,7 +928,7 @@ class RouterTest extends TestCase
             'plugin' => null,
             'controller' => 'articles',
             'action' => 'index',
-            'id' => 'testing',
+            '?' => ['id' => 'testing'],
             '_ext' => 'json',
         ]);
         $expected = '/articles.json?id=testing';
@@ -995,7 +995,7 @@ class RouterTest extends TestCase
 
         $url = Router::url([
             '_name' => 'test', 'name' => 'mark',
-            'page' => 1, 'sort' => 'title', 'dir' => 'desc',
+            '?' => ['page' => 1, 'sort' => 'title', 'dir' => 'desc',],
         ]);
         $this->assertEquals('/users/mark?page=1&sort=title&dir=desc', $url);
 
@@ -2484,12 +2484,12 @@ class RouterTest extends TestCase
             'controller' => 'posts',
             'action' => 'view',
             'pass' => [1],
-            'url' => ['url' => 'eng/posts/view/1', 'foo' => 'bar', 'baz' => 'quu'],
+            'url' => ['url' => 'eng/posts/view/1'],
             'paging' => [],
             'models' => [],
         ];
         $result = Router::reverse($params);
-        $this->assertEquals('/eng/posts/view/1?foo=bar&baz=quu', $result);
+        $this->assertEquals('/eng/posts/view/1', $result);
     }
 
     public function testReverseCakeRequestQuery()
@@ -2943,25 +2943,6 @@ class RouterTest extends TestCase
 
         $result = Router::url(['controller' => 'FooBar', 'action' => 'index']);
         $this->assertEquals('/foo-bar', $result);
-    }
-
-    /**
-     * Test generation of routes with collisions between the query string
-     * and other url params
-     *
-     * @return void
-     */
-    public function testUrlWithCollidingQueryString()
-    {
-        Router::connect('/:controller/:action/:id');
-
-        $query = ['controller' => 'Foo', 'action' => 'bar', 'id' => 100];
-        $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
-        $this->assertEquals('/posts/view/1?controller=Foo&action=bar&id=100', $result);
-
-        $query = ['_host' => 'foo.bar', '_ssl' => 0, '_scheme' => 'ftp://', '_base' => 'baz', '_port' => '15'];
-        $result = Router::url(['controller' => 'posts', 'action' => 'view', 'id' => 1, '?' => $query]);
-        $this->assertEquals('/posts/view/1?_host=foo.bar&_ssl=0&_scheme=ftp%3A%2F%2F&_base=baz&_port=15', $result);
     }
 
     /**

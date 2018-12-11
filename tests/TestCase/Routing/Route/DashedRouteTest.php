@@ -62,7 +62,7 @@ class DashedRouteTest extends TestCase
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView']);
         $this->assertEquals('/blog/my-view', $result);
 
-        $result = $route->match(['controller' => 'Posts', 'action' => 'myView', 'id' => 2]);
+        $result = $route->match(['controller' => 'Posts', 'action' => 'myView', '?' => ['id' => 2]]);
         $this->assertEquals('/blog/my-view?id=2', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView', 1]);
