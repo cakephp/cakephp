@@ -998,7 +998,7 @@ class RouteTest extends TestCase
             'action' => 'view',
             1,
             '_ext' => 'json',
-            '?' => ['id' => 'b', 'c' => 'd',],
+            '?' => ['id' => 'b', 'c' => 'd', ],
         ]);
         $this->assertEquals('/posts/view/1.json?id=b&c=d', $result);
 
