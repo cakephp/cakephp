@@ -29,9 +29,9 @@ class CookieSet extends ResponseBase
      */
     public function matches($other)
     {
-        $value = $this->response->getCookie($other);
+        $cookie = $this->response->getCookie($other);
 
-        return $value !== null;
+        return $cookie !== null && $cookie['value'] !== '';
     }
 
     /**

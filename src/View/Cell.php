@@ -198,6 +198,7 @@ abstract class Cell
             if (!$builder->getTemplatePath()) {
                 $builder->setTemplatePath('Cell' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name));
             }
+            $template = $builder->getTemplate();
 
             $this->View = $this->createView();
             try {

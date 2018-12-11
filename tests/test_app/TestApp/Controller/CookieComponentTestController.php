@@ -57,4 +57,9 @@ class CookieComponentTestController extends Controller
         }
         $this->Cookie->write('NameOfCookie', 'abc');
     }
+
+    public function remove_cookie($key)
+    {
+        $this->Cookie->delete($key);
+    }
 }
