@@ -261,7 +261,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
 
-        $action = strtolower($controller->getRequest()->getParam('action'));
+        $action = $controller->getRequest()->getParam('action');
         if (!$controller->isAction($action)) {
             return null;
         }

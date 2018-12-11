@@ -850,6 +850,25 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * test invoking action method with mismatched casing.
+     *
+     * @return void
+     */
+    public function testInvokeActionMethodCasing(): void
+    {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::RETURNER() could not be found, or is not accessible.');
+        $url = new ServerRequest([
+            'url' => 'test/RETURNER/',
+            'params' => ['controller' => 'Test', 'action' => 'RETURNER'],
+        ]);
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+
+        $Controller = new TestController($url, $response);
+        $Controller->invokeAction();
+    }
+
+    /**
      * test invoking controller methods.
      *
      * @return void
