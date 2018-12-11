@@ -1465,7 +1465,7 @@ class CakeResponse {
 		$file->open('rb');
 
 		$end = $start = false;
-		if (is_array($range) && !empty($range)) {
+		if ($range && is_array($range)) {
 			list($start, $end) = $range;
 		}
 		if ($start !== false) {
