@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
+use Cake\Mailer\Renderer;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -37,18 +38,6 @@ class TestEmail extends Email
     public function formatAddress($address)
     {
         return parent::_formatAddress($address);
-    }
-
-    /**
-     * Wrap to protected method
-     *
-     * @param string $text
-     * @param int $length
-     * @return array
-     */
-    public function wrap($text, $length = Email::LINE_LENGTH_MUST)
-    {
-        return parent::_wrap($text, $length);
     }
 
     /**
@@ -79,26 +68,6 @@ class TestEmail extends Email
     public function decode($text)
     {
         return $this->_decode($text);
-    }
-
-    /**
-     * Render to protected method
-     *
-     * @return array
-     */
-    public function render($content)
-    {
-        return $this->_render($content);
-    }
-
-    /**
-     * GetContentTransferEncoding to protected method
-     *
-     * @return string
-     */
-    public function getContentTransferEncoding()
-    {
-        return $this->_getContentTransferEncoding();
     }
 }
 
@@ -1146,7 +1115,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $result = $this->Email->send(['Sending content', 'As array']);
-        $expected = "Sending content\r\nAs array\r\n\r\n\r\n";
+        $expected = "Sending content\r\nAs array\r\n\r\n";
         $this->assertSame($expected, $result['message']);
     }
 
@@ -1599,6 +1568,7 @@ class EmailTest extends TestCase
             'This email was sent using the CakePHP Framework, https://cakephp.org.' .
             "\r\n" .
             "\r\n" .
+            "\r\n" .
             "--$boundary\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
@@ -1607,6 +1577,7 @@ class EmailTest extends TestCase
         $this->assertStringStartsWith($expected, $result['message']);
 
         $expected = "</html>\r\n" .
+            "\r\n" .
             "\r\n" .
             "\r\n" .
             "--$boundary--\r\n";
@@ -2059,73 +2030,6 @@ class EmailTest extends TestCase
     }
 
     /**
-     * testWrap method
-     *
-     * @return void
-     */
-    public function testWrap()
-    {
-        $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci,',
-            'non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan amet.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis',
-            'orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan',
-            'amet.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula pellentesque accumsan amet.<hr></p>';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac',
-            'turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula',
-            'pellentesque accumsan amet.<hr></p>',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac',
-            '<a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
-            'nisi, vehicula pellentesque accumsan amet.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum <a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">ok</a>';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum',
-            '<a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">',
-            'ok</a>',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite ok.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum',
-            'withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite',
-            'ok.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-    }
-
-    /**
      * testRender method
      *
      * @return void
@@ -2135,7 +2039,8 @@ class EmailTest extends TestCase
         $this->Email->setEmailFormat('html');
         $this->Email->viewBuilder()->setTemplate('html', 'default');
         $this->Email->setAttachments([CAKE . 'basics.php']);
-        $result = $this->Email->render([]);
+        $this->Email->render();
+        $result = $this->Email->message();
         $this->assertNotEmpty($result);
 
         $result = $this->Email->getBoundary();
@@ -2574,7 +2479,7 @@ class EmailTest extends TestCase
     {
         $email = new Email(['transport' => 'debug']);
 
-        if (! empty($charset)) {
+        if (!empty($charset)) {
             $email->charset = $charset;
         }
         if (! empty($headerCharset)) {
@@ -2622,7 +2527,7 @@ class EmailTest extends TestCase
      */
     public function testWrapLongLine()
     {
-        $message = '<a href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST) . '</a>';
+        $message = '<a href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST) . '</a>';
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2631,7 +2536,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('Wordwrap Test');
         $this->Email->setProfile(['empty']);
         $result = $this->Email->send($message);
-        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST - 26) . "\r\n" .
+        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST - 26) . "\r\n" .
             str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
@@ -2639,24 +2544,24 @@ class EmailTest extends TestCase
         $str1 = 'a ';
         $str2 = ' b';
         $length = strlen($str1) + strlen($str2);
-        $message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length - 1) . $str2;
+        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length - 1) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length) . $str2;
+        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . $str2;
+        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . $str2;
 
         $result = $this->Email->send($message);
-        $expected = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
+        $expected = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -2674,7 +2579,7 @@ class EmailTest extends TestCase
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-        $message = $str . str_repeat('x', Email::LINE_LENGTH_MUST + 1);
+        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2699,7 +2604,7 @@ HTML;
     {
         $str = 'foo<bar';
         $length = strlen($str);
-        $message = $str . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1);
+        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2885,8 +2790,8 @@ XML;
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
             $this->assertTrue(
-                strlen($line) <= Email::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST'
+                strlen($line) <= Renderer::LINE_LENGTH_MUST,
+                'Line length exceeds the max. limit of Renderer::LINE_LENGTH_MUST'
             );
         }
     }

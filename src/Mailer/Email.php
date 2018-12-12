@@ -18,10 +18,7 @@ namespace Cake\Mailer;
 use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
-use Cake\Http\Client\FormDataPart;
 use Cake\Log\Log;
-use Cake\Utility\Hash;
-use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\ViewVarsTrait;
 use InvalidArgumentException;
@@ -49,20 +46,6 @@ class Email implements JsonSerializable, Serializable
     use ViewVarsTrait;
 
     /**
-     * Line length - no should more - RFC 2822 - 2.1.1
-     *
-     * @var int
-     */
-    public const LINE_LENGTH_SHOULD = 78;
-
-    /**
-     * Line length - no must more - RFC 2822 - 2.1.1
-     *
-     * @var int
-     */
-    public const LINE_LENGTH_MUST = 998;
-
-    /**
      * Type of message - HTML
      *
      * @var string
@@ -77,18 +60,18 @@ class Email implements JsonSerializable, Serializable
     public const MESSAGE_TEXT = 'text';
 
     /**
+     * Type of message - BOTH
+     *
+     * @var string
+     */
+    public const MESSAGE_BOTH = 'both';
+
+    /**
      * Holds the regex pattern for email validation
      *
      * @var string
      */
     public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
-
-    /**
-     * Constant for folder name containing email templates.
-     *
-     * @var string
-     */
-    public const TEMPLATE_FOLDER = 'email';
 
     /**
      * Recipient of the email
@@ -249,6 +232,13 @@ class Email implements JsonSerializable, Serializable
      * @var string|null
      */
     protected $transferEncoding;
+
+    /**
+     * Email Renderer
+     *
+     * @var \Cake\Mailer\Renderer
+     */
+    protected $renderer;
 
     /**
      * Available encoding to be set for transfer.
@@ -915,7 +905,8 @@ class Email implements JsonSerializable, Serializable
         $defaults = array_fill_keys(
             [
                 'from', 'sender', 'replyTo', 'readReceipt', 'returnPath',
-                'to', 'cc', 'bcc', 'subject'],
+                'to', 'cc', 'bcc', 'subject',
+            ],
             false
         );
         $include += $defaults;
@@ -971,14 +962,14 @@ class Email implements JsonSerializable, Serializable
         $headers['MIME-Version'] = '1.0';
         if ($this->_attachments) {
             $headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
-        } elseif ($this->_emailFormat === 'both') {
+        } elseif ($this->_emailFormat === static::MESSAGE_BOTH) {
             $headers['Content-Type'] = 'multipart/alternative; boundary="' . $this->_boundary . '"';
         } elseif ($this->_emailFormat === 'text') {
-            $headers['Content-Type'] = 'text/plain; charset=' . $this->_getContentTypeCharset();
+            $headers['Content-Type'] = 'text/plain; charset=' . $this->getContentTypeCharset();
         } elseif ($this->_emailFormat === 'html') {
-            $headers['Content-Type'] = 'text/html; charset=' . $this->_getContentTypeCharset();
+            $headers['Content-Type'] = 'text/html; charset=' . $this->getContentTypeCharset();
         }
-        $headers['Content-Transfer-Encoding'] = $this->_getContentTransferEncoding();
+        $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
 
         return $headers;
     }
@@ -1385,7 +1376,7 @@ class Email implements JsonSerializable, Serializable
             $content = implode("\n", $content) . "\n";
         }
 
-        $this->_message = $this->_render($this->_wrap($content));
+        $this->render($content);
 
         $transport = $this->getTransport();
         if (!$transport) {
@@ -1397,6 +1388,21 @@ class Email implements JsonSerializable, Serializable
         $this->_logDelivery($contents);
 
         return $contents;
+    }
+
+    /**
+     * Render email.
+     *
+     * @param string|null $content Content array or string
+     * @return void
+     */
+    public function render(?string $content = null)
+    {
+        if ($this->renderer === null) {
+            $this->renderer = new Renderer();
+        }
+
+        list($this->_message, $this->_boundary, $this->_textMessage, $this->_htmlMessage) = $this->renderer->render($this, $content);
     }
 
     /**
@@ -1623,183 +1629,6 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Translates a string for one charset to another if the App.encoding value
-     * differs and the mb_convert_encoding function exists
-     *
-     * @param string $text The text to be converted
-     * @param string $charset the target encoding
-     * @return string
-     */
-    protected function _encodeString($text, $charset)
-    {
-        if ($this->_appCharset === $charset) {
-            return $text;
-        }
-
-        return mb_convert_encoding($text, $charset, $this->_appCharset);
-    }
-
-    /**
-     * Wrap the message to follow the RFC 2822 - 2.1.1
-     *
-     * @param string $message Message to wrap
-     * @param int $wrapLength The line length
-     * @return array Wrapped message
-     */
-    protected function _wrap($message, $wrapLength = Email::LINE_LENGTH_MUST)
-    {
-        if ($message === null || strlen($message) === 0) {
-            return [''];
-        }
-        $message = str_replace(["\r\n", "\r"], "\n", $message);
-        $lines = explode("\n", $message);
-        $formatted = [];
-        $cut = ($wrapLength === Email::LINE_LENGTH_MUST);
-
-        foreach ($lines as $line) {
-            if (empty($line) && $line !== '0') {
-                $formatted[] = '';
-                continue;
-            }
-            if (strlen($line) < $wrapLength) {
-                $formatted[] = $line;
-                continue;
-            }
-            if (!preg_match('/<[a-z]+.*>/i', $line)) {
-                $formatted = array_merge(
-                    $formatted,
-                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut))
-                );
-                continue;
-            }
-
-            $tagOpen = false;
-            $tmpLine = $tag = '';
-            $tmpLineLength = 0;
-            for ($i = 0, $count = strlen($line); $i < $count; $i++) {
-                $char = $line[$i];
-                if ($tagOpen) {
-                    $tag .= $char;
-                    if ($char === '>') {
-                        $tagLength = strlen($tag);
-                        if ($tagLength + $tmpLineLength < $wrapLength) {
-                            $tmpLine .= $tag;
-                            $tmpLineLength += $tagLength;
-                        } else {
-                            if ($tmpLineLength > 0) {
-                                $formatted = array_merge(
-                                    $formatted,
-                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut))
-                                );
-                                $tmpLine = '';
-                                $tmpLineLength = 0;
-                            }
-                            if ($tagLength > $wrapLength) {
-                                $formatted[] = $tag;
-                            } else {
-                                $tmpLine = $tag;
-                                $tmpLineLength = $tagLength;
-                            }
-                        }
-                        $tag = '';
-                        $tagOpen = false;
-                    }
-                    continue;
-                }
-                if ($char === '<') {
-                    $tagOpen = true;
-                    $tag = '<';
-                    continue;
-                }
-                if ($char === ' ' && $tmpLineLength >= $wrapLength) {
-                    $formatted[] = $tmpLine;
-                    $tmpLineLength = 0;
-                    continue;
-                }
-                $tmpLine .= $char;
-                $tmpLineLength++;
-                if ($tmpLineLength === $wrapLength) {
-                    $nextChar = $line[$i + 1];
-                    if ($nextChar === ' ' || $nextChar === '<') {
-                        $formatted[] = trim($tmpLine);
-                        $tmpLine = '';
-                        $tmpLineLength = 0;
-                        if ($nextChar === ' ') {
-                            $i++;
-                        }
-                    } else {
-                        $lastSpace = strrpos($tmpLine, ' ');
-                        if ($lastSpace === false) {
-                            continue;
-                        }
-                        $formatted[] = trim(substr($tmpLine, 0, $lastSpace));
-                        $tmpLine = substr($tmpLine, $lastSpace + 1);
-
-                        $tmpLineLength = strlen($tmpLine);
-                    }
-                }
-            }
-            if (!empty($tmpLine)) {
-                $formatted[] = $tmpLine;
-            }
-        }
-        $formatted[] = '';
-
-        return $formatted;
-    }
-
-    /**
-     * Create unique boundary identifier
-     *
-     * @return void
-     */
-    protected function _createBoundary()
-    {
-        if ($this->_attachments || $this->_emailFormat === 'both') {
-            $this->_boundary = md5(Security::randomBytes(16));
-        }
-    }
-
-    /**
-     * Attach non-embedded files by adding file contents inside boundaries.
-     *
-     * @param string|null $boundary Boundary to use. If null, will default to $this->_boundary
-     * @return array An array of lines to add to the message
-     */
-    protected function _attachFiles($boundary = null)
-    {
-        if ($boundary === null) {
-            $boundary = $this->_boundary;
-        }
-
-        $msg = [];
-        foreach ($this->_attachments as $filename => $fileInfo) {
-            if (!empty($fileInfo['contentId'])) {
-                continue;
-            }
-            $data = $fileInfo['data'] ?? $this->_readFile($fileInfo['file']);
-            $hasDisposition = (
-                !isset($fileInfo['contentDisposition']) ||
-                $fileInfo['contentDisposition']
-            );
-            $part = new FormDataPart('', $data, '');
-
-            if ($hasDisposition) {
-                $part->disposition('attachment');
-                $part->filename($filename);
-            }
-            $part->transferEncoding('base64');
-            $part->type($fileInfo['mimetype']);
-
-            $msg[] = '--' . $boundary;
-            $msg[] = (string)$part;
-            $msg[] = '';
-        }
-
-        return $msg;
-    }
-
-    /**
      * Read the file contents and return a base64 version of the file contents.
      *
      * @param string $path The absolute path to the file to read.
@@ -1811,202 +1640,12 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Attach inline/embedded files to the message.
-     *
-     * @param string|null $boundary Boundary to use. If null, will default to $this->_boundary
-     * @return array An array of lines to add to the message
-     */
-    protected function _attachInlineFiles($boundary = null)
-    {
-        if ($boundary === null) {
-            $boundary = $this->_boundary;
-        }
-
-        $msg = [];
-        foreach ($this->_attachments as $filename => $fileInfo) {
-            if (empty($fileInfo['contentId'])) {
-                continue;
-            }
-            $data = $fileInfo['data'] ?? $this->_readFile($fileInfo['file']);
-
-            $msg[] = '--' . $boundary;
-            $part = new FormDataPart('', $data, 'inline');
-            $part->type($fileInfo['mimetype']);
-            $part->transferEncoding('base64');
-            $part->contentId($fileInfo['contentId']);
-            $part->filename($filename);
-            $msg[] = (string)$part;
-            $msg[] = '';
-        }
-
-        return $msg;
-    }
-
-    /**
-     * Render the body of the email.
-     *
-     * @param array $content Content to render
-     * @return array Email body ready to be sent
-     */
-    protected function _render($content)
-    {
-        $this->_textMessage = $this->_htmlMessage = '';
-
-        $content = implode("\n", $content);
-        $rendered = $this->_renderTemplates($content);
-
-        $this->_createBoundary();
-        $msg = [];
-
-        $contentIds = array_filter((array)Hash::extract($this->_attachments, '{s}.contentId'));
-        $hasInlineAttachments = count($contentIds) > 0;
-        $hasAttachments = !empty($this->_attachments);
-        $hasMultipleTypes = count($rendered) > 1;
-        $multiPart = ($hasAttachments || $hasMultipleTypes);
-
-        $boundary = $relBoundary = $textBoundary = $this->_boundary;
-
-        if ($hasInlineAttachments) {
-            $msg[] = '--' . $boundary;
-            $msg[] = 'Content-Type: multipart/related; boundary="rel-' . $boundary . '"';
-            $msg[] = '';
-            $relBoundary = $textBoundary = 'rel-' . $boundary;
-        }
-
-        if ($hasMultipleTypes && $hasAttachments) {
-            $msg[] = '--' . $relBoundary;
-            $msg[] = 'Content-Type: multipart/alternative; boundary="alt-' . $boundary . '"';
-            $msg[] = '';
-            $textBoundary = 'alt-' . $boundary;
-        }
-
-        if (isset($rendered['text'])) {
-            if ($multiPart) {
-                $msg[] = '--' . $textBoundary;
-                $msg[] = 'Content-Type: text/plain; charset=' . $this->_getContentTypeCharset();
-                $msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
-                $msg[] = '';
-            }
-            $this->_textMessage = $rendered['text'];
-            $content = explode("\n", $this->_textMessage);
-            $msg = array_merge($msg, $content);
-            $msg[] = '';
-        }
-
-        if (isset($rendered['html'])) {
-            if ($multiPart) {
-                $msg[] = '--' . $textBoundary;
-                $msg[] = 'Content-Type: text/html; charset=' . $this->_getContentTypeCharset();
-                $msg[] = 'Content-Transfer-Encoding: ' . $this->_getContentTransferEncoding();
-                $msg[] = '';
-            }
-            $this->_htmlMessage = $rendered['html'];
-            $content = explode("\n", $this->_htmlMessage);
-            $msg = array_merge($msg, $content);
-            $msg[] = '';
-        }
-
-        if ($textBoundary !== $relBoundary) {
-            $msg[] = '--' . $textBoundary . '--';
-            $msg[] = '';
-        }
-
-        if ($hasInlineAttachments) {
-            $attachments = $this->_attachInlineFiles($relBoundary);
-            $msg = array_merge($msg, $attachments);
-            $msg[] = '';
-            $msg[] = '--' . $relBoundary . '--';
-            $msg[] = '';
-        }
-
-        if ($hasAttachments) {
-            $attachments = $this->_attachFiles($boundary);
-            $msg = array_merge($msg, $attachments);
-        }
-        if ($hasAttachments || $hasMultipleTypes) {
-            $msg[] = '';
-            $msg[] = '--' . $boundary . '--';
-            $msg[] = '';
-        }
-
-        return $msg;
-    }
-
-    /**
-     * Gets the text body types that are in this email message
-     *
-     * @return array Array of types. Valid types are 'text' and 'html'
-     */
-    protected function _getTypes()
-    {
-        $types = [$this->_emailFormat];
-        if ($this->_emailFormat === 'both') {
-            $types = ['html', 'text'];
-        }
-
-        return $types;
-    }
-
-    /**
-     * Build and set all the view properties needed to render the templated emails.
-     * If there is no template set, the $content will be returned in a hash
-     * of the text content types for the email.
-     *
-     * @param string $content The content passed in from send() in most cases.
-     * @return array The rendered content with html and text keys.
-     */
-    protected function _renderTemplates($content)
-    {
-        $types = $this->_getTypes();
-        $rendered = [];
-        $template = $this->viewBuilder()->getTemplate();
-        if (empty($template)) {
-            foreach ($types as $type) {
-                $rendered[$type] = $this->_encodeString($content, $this->charset);
-            }
-
-            return $rendered;
-        }
-
-        $view = $this->createView();
-
-        list($templatePlugin) = pluginSplit($view->getTemplate());
-        list($layoutPlugin) = pluginSplit((string)$view->getLayout());
-        if ($templatePlugin) {
-            $view->setPlugin($templatePlugin);
-        } elseif ($layoutPlugin) {
-            $view->setPlugin($layoutPlugin);
-        }
-
-        if ($view->get('content') === null) {
-            $view->set('content', $content);
-        }
-
-        foreach ($types as $type) {
-            $view->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
-            $view->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
-
-            $render = $view->render();
-            $render = str_replace(["\r\n", "\r"], "\n", $render);
-            $rendered[$type] = $this->_encodeString($render, $this->charset);
-        }
-
-        foreach ($rendered as $type => $content) {
-            $rendered[$type] = $this->_wrap($content);
-            $rendered[$type] = implode("\n", $rendered[$type]);
-            $rendered[$type] = rtrim($rendered[$type], "\n");
-        }
-
-        return $rendered;
-    }
-
-    /**
      * Return the Content-Transfer Encoding value based
      * on the set transferEncoding or set charset.
      *
      * @return string
      */
-    protected function _getContentTransferEncoding()
+    public function getContentTransferEncoding()
     {
         if ($this->transferEncoding) {
             return $this->transferEncoding;
@@ -2028,7 +1667,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @return string
      */
-    protected function _getContentTypeCharset()
+    public function getContentTypeCharset()
     {
         $charset = strtoupper($this->charset);
         if (array_key_exists($charset, $this->_contentTypeCharset)) {
