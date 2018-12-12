@@ -2177,12 +2177,19 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $this->db->length('decimal(20,3)');
 		$this->assertEquals('20,3', $result);
+	}
 
+/**
+ * Test length parsing of enum column.
+ *
+ * @return void
+ */
+	public function testLengthEnum() {
 		$result = $this->db->length('enum("one", "longer")');
-		$this->assertEquals(6, $result);
+		$this->assertNull($result);
 
 		$result = $this->db->length("enum('One Value','ANOTHER ... VALUE ...')");
-		$this->assertEquals(21, $result);
+		$this->assertNull($result);
 	}
 
 /**

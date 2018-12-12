@@ -3080,14 +3080,6 @@ SQL;
 		$expected = '5,2';
 		$this->assertSame($expected, $result);
 
-		$result = $this->Dbo->length("enum('test','me','now')");
-		$expected = 4;
-		$this->assertSame($expected, $result);
-
-		$result = $this->Dbo->length("set('a','b','cd')");
-		$expected = 2;
-		$this->assertSame($expected, $result);
-
 		$result = $this->Dbo->length(false);
 		$this->assertNull($result);
 
@@ -3098,6 +3090,26 @@ SQL;
 		$result = $this->Dbo->length('text');
 		$expected = null;
 		$this->assertSame($expected, $result);
+	}
+
+/**
+ * Tests the length of enum column.
+ *
+ * @return void
+ */
+	public function testLengthEnum() {
+		$result = $this->Dbo->length("enum('test','me','now')");
+		$this->assertNull($result);
+	}
+
+/**
+ * Tests the length of set column.
+ *
+ * @return void
+ */
+	public function testLengthSet() {
+		$result = $this->Dbo->length("set('a','b','cd')");
+		$this->assertNull($result);
 	}
 
 /**
