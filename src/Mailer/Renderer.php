@@ -54,9 +54,16 @@ class Renderer
     /**
      * If set, boundary to use for multipart mime messages
      *
-     * @var string|null
+     * @var string
      */
     protected $boundary;
+
+    /**
+     * Email instance.
+     *
+     * @var \Cake\Mailer\Email
+     */
+    protected $email;
 
     /**
      * Constructor
@@ -73,7 +80,7 @@ class Renderer
      * @param string|null $content Content to render.
      * @return array Email Body ready to be sent
      */
-    public function render(Email $email, ?string $content = null)
+    public function render(Email $email, ?string $content = null): array
     {
         $this->email = $email;
         $textMessage = $htmlMessage = '';
@@ -167,7 +174,7 @@ class Renderer
      * @param string $charset the target encoding
      * @return string
      */
-    protected function encodeString($text, $charset)
+    protected function encodeString(string $text, string $charset): string
     {
         if ($this->appCharset === $charset) {
             return $text;
@@ -179,11 +186,11 @@ class Renderer
     /**
      * Wrap the message to follow the RFC 2822 - 2.1.1
      *
-     * @param string $message Message to wrap
+     * @param string|null $message Message to wrap
      * @param int $wrapLength The line length
      * @return array Wrapped message
      */
-    protected function wrap($message, $wrapLength = self::LINE_LENGTH_MUST)
+    protected function wrap(?string $message = null, int $wrapLength = self::LINE_LENGTH_MUST): array
     {
         if ($message === null || strlen($message) === 0) {
             return [''];
@@ -290,7 +297,7 @@ class Renderer
      *
      * @return void
      */
-    protected function createBoundary()
+    protected function createBoundary(): void
     {
         if ($this->email->getAttachments() || $this->email->getEmailFormat() === Email::MESSAGE_BOTH) {
             $this->boundary = md5(Security::randomBytes(16));
@@ -303,7 +310,7 @@ class Renderer
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
      * @return array An array of lines to add to the message
      */
-    protected function attachFiles($boundary = null)
+    protected function attachFiles(?string $boundary = null): array
     {
         if ($boundary === null) {
             $boundary = $this->boundary;
@@ -342,7 +349,7 @@ class Renderer
      * @param string $path The absolute path to the file to read.
      * @return string File contents in base64 encoding
      */
-    protected function readFile($path)
+    protected function readFile(string $path): string
     {
         return chunk_split(base64_encode((string)file_get_contents($path)));
     }
@@ -353,7 +360,7 @@ class Renderer
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
      * @return array An array of lines to add to the message
      */
-    protected function attachInlineFiles($boundary = null)
+    protected function attachInlineFiles(?string $boundary = null): array
     {
         if ($boundary === null) {
             $boundary = $this->boundary;
@@ -384,7 +391,7 @@ class Renderer
      *
      * @return array Array of types. Valid types are Email::MESSAGE_TEXT and Email::MESSAGE_HTML
      */
-    protected function getTypes()
+    protected function getTypes(): array
     {
         $format = $this->email->getEmailFormat();
 
@@ -401,10 +408,10 @@ class Renderer
      * If there is no template set, the $content will be returned in a hash
      * of the text content types for the email.
      *
-     * @param string $content The content passed in from send() in most cases.
+     * @param string|null $content The content passed in from send() in most cases.
      * @return array The rendered content with html and text keys.
      */
-    protected function renderTemplates($content)
+    protected function renderTemplates(?string $content = null): array
     {
         $types = $this->getTypes();
         $rendered = [];
