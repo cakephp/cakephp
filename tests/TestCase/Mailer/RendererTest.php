@@ -27,9 +27,9 @@ class TestRenderer extends Renderer
      * @param int $length
      * @return array
      */
-    public function wrap($text, $length = Renderer::LINE_LENGTH_MUST)
+    public function doWrap($text, $length = Renderer::LINE_LENGTH_MUST)
     {
-        return parent::wrap($text, $length);
+        return $this->wrap($text, $length);
     }
 }
 
@@ -48,7 +48,7 @@ class RendererTest extends TestCase
         $renderer = new TestRenderer();
 
         $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $renderer->wrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci,',
             'non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.',
@@ -57,7 +57,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan amet.';
-        $result = $renderer->wrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis',
             'orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan',
@@ -67,7 +67,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula pellentesque accumsan amet.<hr></p>';
-        $result = $renderer->wrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
         $expected = [
             '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac',
             'turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula',
@@ -77,7 +77,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $renderer->wrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac',
             '<a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
@@ -87,7 +87,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum <a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">ok</a>';
-        $result = $renderer->wrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum',
             '<a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">',
@@ -97,7 +97,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite ok.';
-        $result = $renderer->wrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum',
             'withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite',
