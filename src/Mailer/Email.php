@@ -215,7 +215,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string
      */
-    public $charset = 'utf-8';
+    protected $charset = 'utf-8';
 
     /**
      * Charset the email header is sent in
@@ -223,7 +223,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @var string|null
      */
-    public $headerCharset;
+    protected $headerCharset;
 
     /**
      * The email transfer encoding used.
