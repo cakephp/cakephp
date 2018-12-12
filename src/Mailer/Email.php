@@ -1402,7 +1402,11 @@ class Email implements JsonSerializable, Serializable
             $this->renderer = new Renderer();
         }
 
-        list($this->_message, $this->_boundary, $this->_textMessage, $this->_htmlMessage) = $this->renderer->render($this, $content);
+        list($this->_message,
+            $this->_boundary,
+            $this->_textMessage,
+            $this->_htmlMessage
+        ) = $this->renderer->render($this, $content);
     }
 
     /**
