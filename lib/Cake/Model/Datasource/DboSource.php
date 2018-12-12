@@ -3282,18 +3282,7 @@ class DboSource extends DataSource {
 			return (int)$length;
 		}
 		if (in_array($type, array('enum', 'set'))) {
-			$values = array_map(function ($value) {
-				return trim(trim($value), '\'"');
-			}, explode(',', $length));
-
-			$maxLength = 0;
-			foreach ($values as $key => $enumValue) {
-				$tmpLength = strlen($enumValue);
-				if ($tmpLength > $maxLength) {
-					$maxLength = $tmpLength;
-				}
-			}
-			return $maxLength;
+			return null;
 		}
 		return (int)$length;
 	}
@@ -3511,25 +3500,28 @@ class DboSource extends DataSource {
 			return null;
 		}
 
-		if (!isset($this->columns[$type])) {
+		if (!isset($this->columns[$type]) && substr($type, 0, 4) !== 'enum') {
 			trigger_error(__d('cake_dev', 'Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 
-		$real = $this->columns[$type];
-		$out = $this->name($name) . ' ' . $real['name'];
-
-		if (isset($column['length'])) {
-			$length = $column['length'];
-		} elseif (isset($column['limit'])) {
-			$length = $column['limit'];
-		} elseif (isset($real['length'])) {
-			$length = $real['length'];
-		} elseif (isset($real['limit'])) {
-			$length = $real['limit'];
-		}
-		if (isset($length)) {
-			$out .= '(' . $length . ')';
+		if (substr($type, 0, 4) === 'enum') {
+			$out = $this->name($name) . ' ' . $type;
+		} else {
+			$real = $this->columns[$type];
+			$out = $this->name($name) . ' ' . $real['name'];
+			if (isset($column['length'])) {
+				$length = $column['length'];
+			} elseif (isset($column['limit'])) {
+				$length = $column['limit'];
+			} elseif (isset($real['length'])) {
+				$length = $real['length'];
+			} elseif (isset($real['limit'])) {
+				$length = $real['limit'];
+			}
+			if (isset($length)) {
+				$out .= '(' . $length . ')';
+			}
 		}
 
 		if (($column['type'] === 'integer' || $column['type'] === 'float') && isset($column['default']) && $column['default'] === '') {
