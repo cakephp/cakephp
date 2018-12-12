@@ -1239,10 +1239,12 @@ class PaginatorHelper extends Helper
      */
     public function limitControl(array $limits = [], $default = null, array $options = [])
     {
+        $fopt = array();
         $fopt['type'] = 'get';        
         if (isset($options['form'])) {
             $fopt = array_merge($fopt,$options['form']);
         }
+        unset($options['form']);
         
         $out = $this->Form->create(null, $fopt);
 
