@@ -194,14 +194,14 @@ class Email implements JsonSerializable, Serializable
      *
      * @var array
      */
-    protected $_emailFormatAvailable = ['text', 'html', 'both'];
+    protected $_emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
 
     /**
      * What format should the email be sent in
      *
      * @var string
      */
-    protected $_emailFormat = 'text';
+    protected $_emailFormat = self::MESSAGE_TEXT;
 
     /**
      * The transport instance to use for sending mail.
@@ -964,9 +964,9 @@ class Email implements JsonSerializable, Serializable
             $headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
         } elseif ($this->_emailFormat === static::MESSAGE_BOTH) {
             $headers['Content-Type'] = 'multipart/alternative; boundary="' . $this->_boundary . '"';
-        } elseif ($this->_emailFormat === 'text') {
+        } elseif ($this->_emailFormat === static::MESSAGE_TEXT) {
             $headers['Content-Type'] = 'text/plain; charset=' . $this->getContentTypeCharset();
-        } elseif ($this->_emailFormat === 'html') {
+        } elseif ($this->_emailFormat === static::MESSAGE_HTML) {
             $headers['Content-Type'] = 'text/html; charset=' . $this->getContentTypeCharset();
         }
         $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
@@ -1572,7 +1572,7 @@ class Email implements JsonSerializable, Serializable
         $this->_textMessage = '';
         $this->_htmlMessage = '';
         $this->_message = [];
-        $this->_emailFormat = 'text';
+        $this->_emailFormat = static::MESSAGE_TEXT;
         $this->_transport = null;
         $this->_priority = null;
         $this->charset = 'utf-8';

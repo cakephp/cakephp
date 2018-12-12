@@ -105,28 +105,28 @@ class Renderer
             $textBoundary = 'alt-' . $boundary;
         }
 
-        if (isset($rendered['text'])) {
+        if (isset($rendered[Email::MESSAGE_TEXT])) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
                 $msg[] = 'Content-Type: text/plain; charset=' . $this->email->getContentTypeCharset();
                 $msg[] = 'Content-Transfer-Encoding: ' . $this->email->getContentTransferEncoding();
                 $msg[] = '';
             }
-            $textMessage = $rendered['text'];
+            $textMessage = $rendered[Email::MESSAGE_TEXT];
             $content = explode("\n", $textMessage);
             $msg = array_merge($msg, $content);
             $msg[] = '';
             $msg[] = '';
         }
 
-        if (isset($rendered['html'])) {
+        if (isset($rendered[Email::MESSAGE_HTML])) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
                 $msg[] = 'Content-Type: text/html; charset=' . $this->email->getContentTypeCharset();
                 $msg[] = 'Content-Transfer-Encoding: ' . $this->email->getContentTransferEncoding();
                 $msg[] = '';
             }
-            $htmlMessage = $rendered['html'];
+            $htmlMessage = $rendered[Email::MESSAGE_HTML];
             $content = explode("\n", $htmlMessage);
             $msg = array_merge($msg, $content);
             $msg[] = '';
@@ -292,7 +292,7 @@ class Renderer
      */
     protected function createBoundary()
     {
-        if ($this->email->getAttachments() || $this->email->getEmailFormat() === 'both') {
+        if ($this->email->getAttachments() || $this->email->getEmailFormat() === Email::MESSAGE_BOTH) {
             $this->boundary = md5(Security::randomBytes(16));
         }
     }
@@ -382,15 +382,15 @@ class Renderer
     /**
      * Gets the text body types that are in this email message
      *
-     * @return array Array of types. Valid types are 'text' and 'html'
+     * @return array Array of types. Valid types are Email::MESSAGE_TEXT and Email::MESSAGE_HTML
      */
     protected function getTypes()
     {
         $format = $this->email->getEmailFormat();
 
         $types = [$format];
-        if ($format === 'both') {
-            $types = ['html', 'text'];
+        if ($format === Email::MESSAGE_BOTH) {
+            $types = [Email::MESSAGE_HTML, Email::MESSAGE_TEXT];
         }
 
         return $types;
