@@ -20,9 +20,12 @@ use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
+use Cake\View\ViewVarsTrait;
 
 class Renderer
 {
+    use ViewVarsTrait;
+
     /**
      * Line length - no should more - RFC 2822 - 2.1.1
      *
@@ -415,7 +418,7 @@ class Renderer
     {
         $types = $this->getTypes();
         $rendered = [];
-        $template = $this->email->viewBuilder()->getTemplate();
+        $template = $this->viewBuilder()->getTemplate();
         if (empty($template)) {
             foreach ($types as $type) {
                 $content = str_replace(["\r\n", "\r"], "\n", $content);
@@ -428,7 +431,7 @@ class Renderer
             return $rendered;
         }
 
-        $view = $this->email->createView();
+        $view = $this->createView();
 
         list($templatePlugin) = pluginSplit($view->getTemplate());
         list($layoutPlugin) = pluginSplit((string)$view->getLayout());

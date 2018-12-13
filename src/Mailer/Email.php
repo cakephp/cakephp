@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
 use Cake\Log\Log;
 use Cake\Utility\Text;
-use Cake\View\ViewVarsTrait;
 use InvalidArgumentException;
 use JsonSerializable;
 use LogicException;
@@ -43,7 +42,6 @@ use SimpleXMLElement;
 class Email implements JsonSerializable, Serializable
 {
     use StaticConfigTrait;
-    use ViewVarsTrait;
 
     /**
      * Type of message - HTML
@@ -333,7 +331,7 @@ class Email implements JsonSerializable, Serializable
             $this->_domain = php_uname('n');
         }
 
-        $this->viewBuilder()
+        $this->getRenderer()->viewBuilder()
             ->setClassName('Cake\View\View')
             ->setTemplate('')
             ->setLayout('default')
@@ -357,7 +355,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function __clone()
     {
-        $this->_viewBuilder = clone $this->viewBuilder();
+        $this->_viewBuilder = clone $this->getRenderer()->viewBuilder();
     }
 
     /**
@@ -1010,7 +1008,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function setViewRenderer(string $viewClass): self
     {
-        $this->viewBuilder()->setClassName($viewClass);
+        $this->getRenderer()->viewBuilder()->setClassName($viewClass);
 
         return $this;
     }
@@ -1022,7 +1020,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getViewRenderer(): string
     {
-        return $this->viewBuilder()->getClassName();
+        return $this->getRenderer()->viewBuilder()->getClassName();
     }
 
     /**
@@ -1033,7 +1031,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function setViewVars(array $viewVars): self
     {
-        $this->set($viewVars);
+        $this->getRenderer()->viewBuilder()->setVars($viewVars);
 
         return $this;
     }
@@ -1045,7 +1043,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getViewVars(): array
     {
-        return $this->viewBuilder()->getVars();
+        return $this->getRenderer()->viewBuilder()->getVars();
     }
 
     /**
@@ -1398,15 +1396,32 @@ class Email implements JsonSerializable, Serializable
      */
     public function render(?string $content = null)
     {
-        if ($this->renderer === null) {
-            $this->renderer = new Renderer();
-        }
-
         list($this->_message,
             $this->_boundary,
             $this->_textMessage,
             $this->_htmlMessage
-        ) = $this->renderer->render($this, $content);
+        ) = $this->getRenderer()->render($this, $content);
+    }
+
+    public function viewBuilder()
+    {
+        return $this->getRenderer()->viewBuilder();
+    }
+
+    protected function getRenderer()
+    {
+        if ($this->renderer === null) {
+            $this->renderer = new Renderer();
+        }
+
+        return $this->renderer;
+    }
+
+    protected function setRenderer(Renderer $renderer)
+    {
+        $this->renderer = $renderer;
+
+        return $this;
     }
 
     /**
@@ -1540,18 +1555,18 @@ class Email implements JsonSerializable, Serializable
         ];
         foreach ($viewBuilderMethods as $method) {
             if (array_key_exists($method, $config)) {
-                $this->viewBuilder()->{'set' . ucfirst($method)}($config[$method]);
+                $this->getRenderer()->viewBuilder()->{'set' . ucfirst($method)}($config[$method]);
             }
         }
 
         if (array_key_exists('helpers', $config)) {
-            $this->viewBuilder()->setHelpers($config['helpers'], false);
+            $this->getRenderer()->viewBuilder()->setHelpers($config['helpers'], false);
         }
         if (array_key_exists('viewRender', $config)) {
-            $this->viewBuilder()->setClassName($config['viewRender']);
+            $this->getRenderer()->viewBuilder()->setClassName($config['viewRender']);
         }
         if (array_key_exists('viewVars', $config)) {
-            $this->set($config['viewVars']);
+            $this->getRenderer()->viewBuilder()->setVars($config['viewVars']);
         }
     }
 
@@ -1586,7 +1601,7 @@ class Email implements JsonSerializable, Serializable
         $this->_profile = [];
         $this->_emailPattern = self::EMAIL_PATTERN;
 
-        $this->viewBuilder()
+        $this->getRenderer()->viewBuilder()
             ->setLayout('default')
             ->setTemplate('')
             ->setClassName('Cake\View\View')
@@ -1696,7 +1711,7 @@ class Email implements JsonSerializable, Serializable
             '_attachments', '_messageId', '_headers', '_appCharset', 'charset', 'headerCharset',
         ];
 
-        $array = ['viewConfig' => $this->viewBuilder()->jsonSerialize()];
+        $array = ['viewConfig' => $this->getRenderer()->viewBuilder()->jsonSerialize()];
 
         foreach ($properties as $property) {
             $array[$property] = $this->{$property};
@@ -1723,7 +1738,7 @@ class Email implements JsonSerializable, Serializable
     public function createFromArray(array $config): self
     {
         if (isset($config['viewConfig'])) {
-            $this->viewBuilder()->createFromArray($config['viewConfig']);
+            $this->getRenderer()->viewBuilder()->createFromArray($config['viewConfig']);
             unset($config['viewConfig']);
         }
 
