@@ -1399,11 +1399,12 @@ class Email implements JsonSerializable, Serializable
      */
     public function render(?string $content = null): void
     {
-        list($this->_message,
-            $this->_boundary,
-            $this->_textMessage,
-            $this->_htmlMessage
-        ) = $this->getRenderer()->render($this, $content);
+        $content = $this->getRenderer()->render($this, $content);
+
+        $this->_message = $content['message'];
+        $this->_boundary = $content['boundary'];
+        $this->_textMessage = $content['textMessage'];
+        $this->_htmlMessage = $content['htmlMessage'];
     }
 
     /**

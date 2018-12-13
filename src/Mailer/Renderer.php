@@ -169,7 +169,12 @@ class Renderer
             $msg[] = '';
         }
 
-        return [$msg, $boundary, $textMessage, $htmlMessage];
+        return [
+            'message' => $msg,
+            'boundary' => $boundary,
+            'textMessage' => $textMessage,
+            'htmlMessage' => $htmlMessage,
+        ];
     }
 
     /**
