@@ -1425,7 +1425,7 @@ class Email implements JsonSerializable, Serializable
     protected function getRenderer(): Renderer
     {
         if ($this->renderer === null) {
-            $this->renderer = new Renderer();
+            $this->renderer = new Renderer($this->_appCharset);
         }
 
         return $this->renderer;

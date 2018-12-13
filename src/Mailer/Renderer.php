@@ -72,11 +72,13 @@ class Renderer
     protected $email;
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @param string|null $appCharset Application's character set.
      */
-    public function __construct()
+    public function __construct(?string $appCharset = null)
     {
-        $this->appCharset = Configure::read('App.encoding');
+        $this->appCharset = $appCharset ?? Configure::read('App.encoding');
     }
 
     /**
