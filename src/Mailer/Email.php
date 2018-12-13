@@ -1406,11 +1406,21 @@ class Email implements JsonSerializable, Serializable
         ) = $this->getRenderer()->render($this, $content);
     }
 
+    /**
+     * Get view builder.
+     *
+     * @return \Cake\View\ViewBuilder
+     */
     public function viewBuilder(): ViewBuilder
     {
         return $this->getRenderer()->viewBuilder();
     }
 
+    /**
+     * Get email renderer.
+     *
+     * @return \Cake\Mailer\Renderer
+     */
     protected function getRenderer(): Renderer
     {
         if ($this->renderer === null) {
@@ -1420,6 +1430,12 @@ class Email implements JsonSerializable, Serializable
         return $this->renderer;
     }
 
+    /**
+     * Set email renderer.
+     *
+     * @param \Cake\Mailer\Renderer $renderer Render instance.
+     * @return $this
+     */
     protected function setRenderer(Renderer $renderer): self
     {
         $this->renderer = $renderer;

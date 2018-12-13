@@ -22,6 +22,9 @@ use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\ViewVarsTrait;
 
+/**
+ * Class for rendering email message.
+ */
 class Renderer
 {
     use ViewVarsTrait;
