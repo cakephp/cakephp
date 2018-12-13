@@ -1507,7 +1507,6 @@ class Email implements JsonSerializable, Serializable
         if (is_array($config) && !isset($config['transport'])) {
             $config['transport'] = 'default';
         }
-        /* @var \Cake\Mailer\Email $instance */
         $instance = new $class($config);
         if ($to !== null) {
             $instance->setTo($to);
