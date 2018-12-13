@@ -139,6 +139,9 @@
         <EmptyArrayAccess>
             <errorLevel type="suppress">
                 <file name="src/Database/Dialect/SqlserverDialectTrait.php" />
+                <file name="src/ORM/Marshaller.php" />
+                <file name="src/Shell/Task/ExtractTask.php" />
+                <file name="src/View/Helper/HtmlHelper.php" />
             </errorLevel>
         </EmptyArrayAccess>
 
@@ -146,6 +149,7 @@
             <errorLevel type="suppress">
                 <file name="src/Auth/BaseAuthenticate.php" />
                 <file name="src/Core/StaticConfigTrait.php" />
+                <file name="src/Database/Schema/PostgresSchema.php" />
                 <file name="src/I18n/Parser/MoFileParser.php" />
                 <file name="src/I18n/Parser/PoFileParser.php" />
                 <file name="src/Routing/Middleware/AssetMiddleware.php"/>
@@ -206,6 +210,12 @@
                 <file name="src/Core/functions.php" />
             </errorLevel>
         </InvalidCast>
+
+        <InvalidClone>
+            <errorLevel type="suppress">
+                <file name="src/I18n/Number.php" />
+            </errorLevel>
+        </InvalidClone>
 
     </issueHandlers>
 </psalm>

@@ -32,6 +32,7 @@ use Cake\Collection\Iterator\ZipIterator;
 use Countable;
 use LimitIterator;
 use LogicException;
+use OuterIterator;
 use RecursiveIteratorIterator;
 use Traversable;
 
@@ -860,7 +861,8 @@ trait CollectionTrait
     public function unwrap(): Traversable
     {
         $iterator = $this;
-        while (get_class($iterator) === 'Cake\Collection\Collection') {
+        while (get_class($iterator) === 'Cake\Collection\Collection'
+            && $iterator instanceof OuterIterator) {
             $iterator = $iterator->getInnerIterator();
         }
 

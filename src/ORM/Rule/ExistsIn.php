@@ -36,7 +36,7 @@ class ExistsIn
     /**
      * The repository where the field will be looked for
      *
-     * @var \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string
+     * @var \Cake\ORM\Table|\Cake\ORM\Association|string
      */
     protected $_repository;
 
@@ -54,7 +54,7 @@ class ExistsIn
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
      * @param string|array $fields The field or fields to check existence as primary key.
-     * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Association|string $repository The repository where the
+     * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
      * @param array $options The options that modify the rules behavior.
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
@@ -95,9 +95,13 @@ class ExistsIn
 
         $fields = $this->_fields;
         $source = $target = $this->_repository;
-        $isAssociation = $target instanceof Association;
-        $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
-        $realTarget = $isAssociation ? $target->getTarget() : $target;
+        if ($target instanceof Association) {
+            $bindingKey = (array)$target->getBindingKey();
+            $realTarget = $target->getTarget();
+        } else {
+            $bindingKey = (array)$target->getPrimaryKey();
+            $realTarget = $target;
+        }
 
         if (!empty($options['_sourceTable']) && $realTarget === $options['_sourceTable']) {
             return true;
