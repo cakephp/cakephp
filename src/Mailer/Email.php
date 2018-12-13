@@ -235,7 +235,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Email Renderer
      *
-     * @var \Cake\Mailer\Renderer
+     * @var \Cake\Mailer\Renderer|null
      */
     protected $renderer;
 
