@@ -350,13 +350,15 @@ class Email implements JsonSerializable, Serializable
     }
 
     /**
-     * Clone ViewBuilder instance when email object is cloned.
+     * Clone Renderer instance when email object is cloned.
      *
      * @return void
      */
     public function __clone()
     {
-        $this->_viewBuilder = clone $this->getRenderer()->viewBuilder();
+        if ($this->renderer) {
+            $this->renderer = clone $this->renderer;
+        }
     }
 
     /**
