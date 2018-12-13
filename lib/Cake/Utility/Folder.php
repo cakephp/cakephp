@@ -122,7 +122,7 @@ class Folder {
  *
  * @param string $path Path to folder
  * @param bool $create Create folder if not found
- * @param string|bool $mode Mode (CHMOD) to apply to created folder, false to ignore
+ * @param int|bool $mode Mode (CHMOD) to apply to created folder, false to ignore
  * @link https://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder
  */
 	public function __construct($path = false, $create = false, $mode = false) {
