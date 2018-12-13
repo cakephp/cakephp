@@ -273,11 +273,10 @@ class EmailTest extends TestCase
     public static function invalidEmails()
     {
         return [
-            [1.0],
             [''],
             ['string'],
             ['<tag>'],
-            [['ok@cakephp.org', 1.0, '', 'string']],
+            [['ok@cakephp.org', '1.0', '', 'string']],
         ];
     }
 
