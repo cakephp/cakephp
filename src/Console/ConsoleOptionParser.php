@@ -949,7 +949,7 @@ class ConsoleOptionParser
      * algorithm.
      *
      * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
-     * @param array $haystack List of items available for the type $needle belongs to.
+     * @param string[] $haystack List of items available for the type $needle belongs to.
      * @return string|null The closest name to the item submitted by the user.
      */
     protected function findClosestItem($needle, $haystack)

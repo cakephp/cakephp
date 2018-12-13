@@ -299,7 +299,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * ```
      *
      * @param callable $visitor A function or callable to be executed for each part
-     * @param array $parts The query clauses to traverse
+     * @param string[] $parts The query clauses to traverse
      * @return $this
      */
     public function traverse(callable $visitor, array $parts = [])
