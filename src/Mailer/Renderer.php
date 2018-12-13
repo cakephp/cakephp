@@ -78,7 +78,7 @@ class Renderer
      */
     public function __construct(?string $appCharset = null)
     {
-        $this->appCharset = $appCharset ?? Configure::read('App.encoding');
+        $this->appCharset = $appCharset ?: Configure::read('App.encoding');
     }
 
     /**
