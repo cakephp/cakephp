@@ -665,7 +665,7 @@ class RouteBuilderTest extends TestCase
         $routes->resources(
             'NetworkObjects',
             ['inflect' => 'dasherize'],
-            function ($routes) {
+            function (RouteBuilder $routes) {
                 $routes->resources('Attributes');
             }
         );
@@ -721,7 +721,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testResourcesInScope()
     {
-        Router::scope('/api', ['prefix' => 'api'], function ($routes) {
+        Router::scope('/api', ['prefix' => 'api'], function (RouteBuilder $routes) {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
@@ -873,7 +873,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesNested()
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-        $routes->resources('Articles', function ($routes) {
+        $routes->resources('Articles', function (RouteBuilder $routes) {
             $this->assertEquals('/api/articles/', $routes->path());
             $this->assertEquals(['prefix' => 'api'], $routes->params());
 
@@ -938,7 +938,7 @@ class RouteBuilderTest extends TestCase
     public function testScope()
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-        $routes->scope('/v1', ['version' => 1], function ($routes) {
+        $routes->scope('/v1', ['version' => 1], function (RouteBuilder $routes) {
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api', 'version' => 1], $routes->params());
         });
@@ -952,7 +952,7 @@ class RouteBuilderTest extends TestCase
     public function testScopeWithAction()
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'api']);
-        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function ($routes) {
+        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function (RouteBuilder $routes) {
             $routes->connect('/shared', ['shared' => true]);
             $routes->get('/exclusive', ['exclusive' => true]);
         });
@@ -978,7 +978,7 @@ class RouteBuilderTest extends TestCase
             ['prefix' => 'api'],
             ['middleware' => ['auth']]
         );
-        $routes->scope('/v1', function ($routes) {
+        $routes->scope('/v1', function (RouteBuilder $routes) {
             $this->assertAttributeEquals(['auth'], 'middleware', $routes, 'Should inherit middleware');
             $this->assertEquals('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api'], $routes->params());
@@ -993,7 +993,7 @@ class RouteBuilderTest extends TestCase
     public function testNamePrefixes()
     {
         $routes = new RouteBuilder($this->collection, '/api', [], ['namePrefix' => 'api:']);
-        $routes->scope('/v1', ['version' => 1, '_namePrefix' => 'v1:'], function ($routes) {
+        $routes->scope('/v1', ['version' => 1, '_namePrefix' => 'v1:'], function (RouteBuilder $routes) {
             $this->assertEquals('api:v1:', $routes->namePrefix());
             $routes->connect('/ping', ['controller' => 'Pings'], ['_name' => 'ping']);
 
@@ -1215,7 +1215,7 @@ class RouteBuilderTest extends TestCase
     public function testHttpMethodIntegration()
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->scope('/', function ($routes) {
+        $routes->scope('/', function (RouteBuilder $routes) {
             $routes->get('/faq/:page', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
                 ->setPatterns(['page' => '[a-z0-9_]+'])
                 ->setHost('docs.example.com');

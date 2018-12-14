@@ -283,10 +283,12 @@ trait CollectionTrait
         $callback = $this->_propertyExtractor($callback);
 
         $mapper = function ($value, $key, $mr) use ($callback) {
+            /** @var \Cake\Collection\Iterator\MapReduce $mr */
             $mr->emitIntermediate($value, $callback($value));
         };
 
         $reducer = function ($values, $key, $mr) {
+            /** @var \Cake\Collection\Iterator\MapReduce $mr */
             $mr->emit(count($values), $key);
         };
 
@@ -558,6 +560,7 @@ trait CollectionTrait
         ];
 
         $mapper = function ($value, $key, $mapReduce) use ($options) {
+            /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
             $rowKey = $options['keyPath'];
             $rowVal = $options['valuePath'];
 
@@ -579,6 +582,7 @@ trait CollectionTrait
             foreach ($values as $value) {
                 $result += $value;
             }
+            /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
             $mapReduce->emit($result, $key);
         };
 
@@ -600,6 +604,7 @@ trait CollectionTrait
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
             $parents[$id] =& $row;
+            /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
@@ -612,6 +617,7 @@ trait CollectionTrait
             if (empty($key) || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
+                    /** @var \Cake\Collection\Iterator\MapReduce $mapReduce */
                     $mapReduce->emit($parents[$id]);
                 }
 
@@ -627,6 +633,7 @@ trait CollectionTrait
 
         return (new Collection(new MapReduce($this->unwrap(), $mapper, $reducer)))
             ->map(function ($value) use (&$isObject) {
+                /** @var \ArrayIterator $value */
                 return $isObject ? $value : $value->getArrayCopy();
             });
     }
@@ -885,9 +892,10 @@ trait CollectionTrait
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @param callable|null $operation
+     * @param callable|null $filter
      * @return \Cake\Collection\CollectionInterface
+     * @throws \LogicException
      */
     public function cartesianProduct(callable $operation = null, callable $filter = null)
     {
@@ -941,6 +949,7 @@ trait CollectionTrait
      * {@inheritDoc}
      *
      * @return \Cake\Collection\CollectionInterface
+     * @throws \LogicException
      */
     public function transpose()
     {
