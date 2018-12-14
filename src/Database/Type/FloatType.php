@@ -146,7 +146,7 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
         if (is_numeric($value)) {
             return (float)$value;
         }
-        if (preg_match('/[^0-9,. ]/', $value)) {
+        if (is_string($value) && preg_match('/[^0-9,. ]/', $value)) {
             return null;
         }
 
