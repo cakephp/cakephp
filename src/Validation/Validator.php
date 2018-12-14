@@ -306,7 +306,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of default providers.
      *
-     * @return array
+     * @return string[]
      */
     public static function getDefaultProviders()
     {
@@ -343,7 +343,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of providers in this validator.
      *
-     * @return array
+     * @return string[]
      */
     public function providers()
     {
