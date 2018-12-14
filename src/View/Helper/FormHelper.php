@@ -1330,6 +1330,7 @@ class FormHelper extends Helper
                 return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
             case 'date':
             case 'time':
+            case 'month':
                 if (!empty($options['native'])) {
                     unset($options['native']);
 

@@ -3215,6 +3215,80 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test generation of brower's native datetime inputs.
+     *
+     * @return void
+     */
+    public function testNativeDateTime()
+    {
+        $result = $this->Form->control('when', ['type' => 'datetime-local']);
+        $expected = [
+            'div' => ['class' => 'input datetime-local'],
+            'label' => ['for' => 'when'],
+            'When',
+            '/label',
+            'input' => ['name' => 'when', 'type' => 'datetime-local', 'id' => 'when'],
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('time', [
+            'type' => 'time',
+            'native' => true,
+        ]);
+        $expected = [
+            'div' => ['class' => 'input time'],
+            'label' => ['for' => 'time'],
+            'Time',
+            '/label',
+            'input' => ['type' => 'time', 'id' => 'time', 'name' => 'time'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('week', [
+            'type' => 'week',
+        ]);
+        $expected = [
+            'div' => ['class' => 'input week'],
+            'label' => ['for' => 'week'],
+            'Week',
+            '/label',
+            'input' => ['type' => 'week', 'id' => 'week', 'name' => 'week'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('month', [
+            'type' => 'month',
+            'native' => true,
+        ]);
+        $expected = [
+            'div' => ['class' => 'input month'],
+            'label' => ['for' => 'month'],
+            'Month',
+            '/label',
+            'input' => ['type' => 'month', 'id' => 'month', 'name' => 'month'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('date', [
+            'type' => 'date',
+            'native' => true,
+        ]);
+        $expected = [
+            'div' => ['class' => 'input date'],
+            'label' => ['for' => 'date'],
+            'Date',
+            '/label',
+            'input' => ['type' => 'date', 'id' => 'date', 'name' => 'date'],
+            '/div'
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testCreateIdPrefix method
      *
      * Test id prefix.
@@ -7164,20 +7238,6 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertContains('value="' . date('m') . '" selected="selected"', $result);
         $this->assertNotContains('value="2008" selected="selected"', $result);
-
-        $result = $this->Form->control('date', [
-            'type' => 'date',
-            'native' => true,
-        ]);
-        $expected = [
-            'div' => ['class' => 'input date'],
-            'label' => ['for' => 'date'],
-            'Date',
-            '/label',
-            'input' => ['type' => 'date', 'id' => 'date', 'name' => 'date'],
-            '/div'
-        ];
-        $this->assertHtml($expected, $result);
     }
 
     /**
