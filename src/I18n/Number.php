@@ -306,6 +306,7 @@ class Number
             static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
         }
 
+        /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];
 
         $options = array_intersect_key($options, [
