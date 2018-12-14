@@ -892,8 +892,8 @@ trait CollectionTrait
     }
 
     /**
-     * @param callable|null $operation
-     * @param callable|null $filter
+     * @param callable|null $operation Operation
+     * @param callable|null $filter Filter
      * @return \Cake\Collection\CollectionInterface
      * @throws \LogicException
      */
