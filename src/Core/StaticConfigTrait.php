@@ -205,7 +205,7 @@ trait StaticConfigTrait
     /**
      * Returns an array containing the named configurations
      *
-     * @return array Array of configurations.
+     * @return string[] Array of configurations.
      */
     public static function configured()
     {

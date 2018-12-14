@@ -1288,6 +1288,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string|null $layout Layout name or null to not use
      * @return $this
+     * @deprecated 3.7.0 Use $email->viewBuilder()->setLayout() instead.
      */
     public function setLayout($layout)
     {
@@ -1303,6 +1304,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Gets layout.
      *
+     * @deprecated 3.7.0 Use $email->viewBuilder()->getLayout() instead.
      * @return string
      */
     public function getLayout()
@@ -1432,6 +1434,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param string $theme Theme name.
      * @return $this
+     * @deprecated 3.7.0 Use $email->viewBuilder()->setTheme() instead.
      */
     public function setTheme($theme)
     {
@@ -1448,6 +1451,7 @@ class Email implements JsonSerializable, Serializable
      * Gets theme to use when rendering.
      *
      * @return string
+     * @deprecated 3.7.0 Use $email->viewBuilder()->getTheme() instead.
      */
     public function getTheme()
     {
@@ -1483,6 +1487,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @param array $helpers Helpers list.
      * @return $this
+     * @deprecated 3.7.0 Use $email->viewBuilder()->setHelpers() instead.
      */
     public function setHelpers(array $helpers)
     {
@@ -1499,6 +1504,7 @@ class Email implements JsonSerializable, Serializable
      * Gets helpers to be used when rendering.
      *
      * @return array
+     * @deprecated 3.7.0 Use $email->viewBuilder()->getHelpers() instead.
      */
     public function getHelpers()
     {
