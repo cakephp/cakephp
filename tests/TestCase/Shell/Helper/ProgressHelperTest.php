@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 class ProgressHelperTest extends TestCase
 {
     /**
-     * @var \Cake\Shell\Helper\ProgressHelper 
+     * @var \Cake\Shell\Helper\ProgressHelper
      */
     protected $helper;
 
