@@ -152,12 +152,15 @@ class BoolTypeTest extends TestCase
         $this->assertTrue($this->type->marshal(1));
         $this->assertTrue($this->type->marshal('1'));
         $this->assertTrue($this->type->marshal('true'));
+        $this->assertTrue($this->type->marshal('on'));
 
+        $this->assertFalse($this->type->marshal(false));
         $this->assertFalse($this->type->marshal('false'));
         $this->assertFalse($this->type->marshal('0'));
         $this->assertFalse($this->type->marshal(0));
+        $this->assertFalse($this->type->marshal('off'));
         $this->assertFalse($this->type->marshal(''));
-        $this->assertTrue($this->type->marshal('not empty'));
+        $this->assertNull($this->type->marshal('not empty'));
         $this->assertNull($this->type->marshal(['2', '3']));
     }
 
