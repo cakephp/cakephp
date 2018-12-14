@@ -156,6 +156,9 @@ class FloatTypeTest extends TestCase
         $result = $this->type->marshal('2.51');
         $this->assertSame(2.51, $result);
 
+        $result = $this->type->marshal('1 230,73');
+        $this->assertSame('1 230,73', $result);
+
         $result = $this->type->marshal('3.5 bears');
         $this->assertNull($result);
 

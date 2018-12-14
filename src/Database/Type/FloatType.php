@@ -147,7 +147,12 @@ class FloatType extends Type implements TypeInterface, BatchCastingInterface
             return (float)$value;
         }
 
-        return null;
+        // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
+        if (preg_match('/[^0-9,. ]/', $value)) {
+            return null;
+        }
+
+        return $value;
     }
 
     /**
