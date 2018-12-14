@@ -211,11 +211,5 @@
             </errorLevel>
         </InvalidCast>
 
-        <InvalidClone>
-            <errorLevel type="suppress">
-                <file name="src/I18n/Number.php" />
-            </errorLevel>
-        </InvalidClone>
-
     </issueHandlers>
 </psalm>
