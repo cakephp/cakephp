@@ -157,8 +157,6 @@ class DecimalType extends Type implements TypeInterface, BatchCastingInterface
         if (is_numeric($value)) {
             return (float)$value;
         }
-
-        // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
         if (preg_match('/[^0-9,. ]/', $value)) {
             return null;
         }
