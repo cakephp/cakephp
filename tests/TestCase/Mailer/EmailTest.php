@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
+use Cake\Mailer\Renderer;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -37,18 +38,6 @@ class TestEmail extends Email
     public function formatAddress($address)
     {
         return parent::_formatAddress($address);
-    }
-
-    /**
-     * Wrap to protected method
-     *
-     * @param string $text
-     * @param int $length
-     * @return array
-     */
-    public function wrap($text, $length = Email::LINE_LENGTH_MUST)
-    {
-        return parent::_wrap($text, $length);
     }
 
     /**
@@ -79,26 +68,6 @@ class TestEmail extends Email
     public function decode($text)
     {
         return $this->_decode($text);
-    }
-
-    /**
-     * Render to protected method
-     *
-     * @return array
-     */
-    public function render($content)
-    {
-        return $this->_render($content);
-    }
-
-    /**
-     * GetContentTransferEncoding to protected method
-     *
-     * @return string
-     */
-    public function getContentTransferEncoding()
-    {
-        return $this->_getContentTransferEncoding();
     }
 }
 
@@ -304,11 +273,10 @@ class EmailTest extends TestCase
     public static function invalidEmails()
     {
         return [
-            [1.0],
             [''],
             ['string'],
             ['<tag>'],
-            [['ok@cakephp.org', 1.0, '', 'string']],
+            [['ok@cakephp.org', '1.0', '', 'string']],
         ];
     }
 
@@ -498,7 +466,7 @@ class EmailTest extends TestCase
      */
     public function testFormatAddressJapanese()
     {
-        $this->Email->headerCharset = 'ISO-2022-JP';
+        $this->Email->setHeaderCharset('ISO-2022-JP');
         $result = $this->Email->formatAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
@@ -719,7 +687,7 @@ class EmailTest extends TestCase
     {
         mb_internal_encoding('UTF-8');
 
-        $this->Email->headerCharset = 'ISO-2022-JP';
+        $this->Email->setHeaderCharset('ISO-2022-JP');
         $this->Email->setSubject('日本語のSubjectにも対応するよ');
         $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsJE4bKEJTdWJqZWN0GyRCJEskYkJQMX4kOSRrJGgbKEI=?=';
         $this->assertSame($expected, $this->Email->getSubject());
@@ -791,7 +759,7 @@ class EmailTest extends TestCase
         ];
         $this->assertSame($expected, $this->Email->getHeaders(['from' => true, 'to' => true]));
 
-        $this->Email->charset = 'ISO-2022-JP';
+        $this->Email->setCharset('ISO-2022-JP');
         $expected = [
             'From' => 'CakePHP <cake@cakephp.org>',
             'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
@@ -1146,7 +1114,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('My title');
         $this->Email->setProfile(['empty']);
         $result = $this->Email->send(['Sending content', 'As array']);
-        $expected = "Sending content\r\nAs array\r\n\r\n\r\n";
+        $expected = "Sending content\r\nAs array\r\n\r\n";
         $this->assertSame($expected, $result['message']);
     }
 
@@ -1599,6 +1567,7 @@ class EmailTest extends TestCase
             'This email was sent using the CakePHP Framework, https://cakephp.org.' .
             "\r\n" .
             "\r\n" .
+            "\r\n" .
             "--$boundary\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
@@ -1607,6 +1576,7 @@ class EmailTest extends TestCase
         $this->assertStringStartsWith($expected, $result['message']);
 
         $expected = "</html>\r\n" .
+            "\r\n" .
             "\r\n" .
             "\r\n" .
             "--$boundary--\r\n";
@@ -1629,7 +1599,7 @@ class EmailTest extends TestCase
         $this->Email->setProfile(['empty']);
         $this->Email->viewBuilder()->setTemplate('default');
         $this->Email->viewBuilder()->setLayout('japanese');
-        $this->Email->charset = 'ISO-2022-JP';
+        $this->Email->setCharset('ISO-2022-JP');
         $result = $this->Email->send();
 
         $expected = mb_convert_encoding('CakePHP Framework を使って送信したメールです。 https://cakephp.org.', 'ISO-2022-JP');
@@ -1724,7 +1694,7 @@ class EmailTest extends TestCase
         $this->Email->setProfile(['empty']);
         $this->Email->viewBuilder()->setTemplate('japanese', 'default');
         $this->Email->setViewVars(['value' => '日本語の差し込み123']);
-        $this->Email->charset = 'ISO-2022-JP';
+        $this->Email->setCharset('ISO-2022-JP');
         $result = $this->Email->send();
 
         $expected = mb_convert_encoding('ここにあなたの設定した値が入ります: 日本語の差し込み123', 'ISO-2022-JP');
@@ -2016,7 +1986,7 @@ class EmailTest extends TestCase
         // UTF-8 is 8bit
         $this->assertTrue($this->_checkContentTransferEncoding($message, '8bit'));
 
-        $this->Email->charset = 'ISO-2022-JP';
+        $this->Email->setCharset('ISO-2022-JP');
         $this->Email->send();
         $message = $this->Email->message();
         $this->assertContains('Content-Type: text/plain; charset=ISO-2022-JP', $message);
@@ -2051,78 +2021,11 @@ class EmailTest extends TestCase
      */
     public function testResetWithCharset()
     {
-        $this->Email->charset = 'ISO-2022-JP';
+        $this->Email->setCharset('ISO-2022-JP');
         $this->Email->reset();
 
-        $this->assertSame('utf-8', $this->Email->charset, $this->Email->charset);
-        $this->assertNull($this->Email->headerCharset);
-    }
-
-    /**
-     * testWrap method
-     *
-     * @return void
-     */
-    public function testWrap()
-    {
-        $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci,',
-            'non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan amet.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis',
-            'orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan',
-            'amet.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula pellentesque accumsan amet.<hr></p>';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac',
-            'turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula',
-            'pellentesque accumsan amet.<hr></p>',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac',
-            '<a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
-            'nisi, vehicula pellentesque accumsan amet.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum <a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">ok</a>';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum',
-            '<a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">',
-            'ok</a>',
-            '',
-        ];
-        $this->assertSame($expected, $result);
-
-        $text = 'Lorem ipsum withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite ok.';
-        $result = $this->Email->wrap($text, Email::LINE_LENGTH_SHOULD);
-        $expected = [
-            'Lorem ipsum',
-            'withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite',
-            'ok.',
-            '',
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertSame('utf-8', $this->Email->getCharset());
+        $this->assertNull($this->Email->getHeaderCharset());
     }
 
     /**
@@ -2135,7 +2038,8 @@ class EmailTest extends TestCase
         $this->Email->setEmailFormat('html');
         $this->Email->viewBuilder()->setTemplate('html', 'default');
         $this->Email->setAttachments([CAKE . 'basics.php']);
-        $result = $this->Email->render([]);
+        $this->Email->render();
+        $result = $this->Email->message();
         $this->assertNotEmpty($result);
 
         $result = $this->Email->getBoundary();
@@ -2277,20 +2181,20 @@ class EmailTest extends TestCase
     public function testConfigCharset()
     {
         $email = new Email();
-        $this->assertEquals(Configure::read('App.encoding'), $email->charset);
-        $this->assertEquals(Configure::read('App.encoding'), $email->headerCharset);
+        $this->assertEquals(Configure::read('App.encoding'), $email->getCharset());
+        $this->assertEquals(Configure::read('App.encoding'), $email->getHeaderCharset());
 
         $email = new Email(['charset' => 'iso-2022-jp', 'headerCharset' => 'iso-2022-jp-ms']);
-        $this->assertEquals('iso-2022-jp', $email->charset);
-        $this->assertEquals('iso-2022-jp-ms', $email->headerCharset);
+        $this->assertEquals('iso-2022-jp', $email->getCharset());
+        $this->assertEquals('iso-2022-jp-ms', $email->getHeaderCharset());
 
         $email = new Email(['charset' => 'iso-2022-jp']);
-        $this->assertEquals('iso-2022-jp', $email->charset);
-        $this->assertEquals('iso-2022-jp', $email->headerCharset);
+        $this->assertEquals('iso-2022-jp', $email->getCharset());
+        $this->assertEquals('iso-2022-jp', $email->getHeaderCharset());
 
         $email = new Email(['headerCharset' => 'iso-2022-jp-ms']);
-        $this->assertEquals(Configure::read('App.encoding'), $email->charset);
-        $this->assertEquals('iso-2022-jp-ms', $email->headerCharset);
+        $this->assertEquals(Configure::read('App.encoding'), $email->getCharset());
+        $this->assertEquals('iso-2022-jp-ms', $email->getHeaderCharset());
     }
 
     /**
@@ -2418,12 +2322,12 @@ class EmailTest extends TestCase
      */
     public function testEncode()
     {
-        $this->Email->headerCharset = 'ISO-2022-JP';
+        $this->Email->setHeaderCharset('ISO-2022-JP');
         $result = $this->Email->encode('日本語');
         $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=';
         $this->assertSame($expected, $result);
 
-        $this->Email->headerCharset = 'ISO-2022-JP';
+        $this->Email->setHeaderCharset('ISO-2022-JP');
         $result = $this->Email->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
         $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
@@ -2438,12 +2342,12 @@ class EmailTest extends TestCase
      */
     public function testDecode()
     {
-        $this->Email->headerCharset = 'ISO-2022-JP';
+        $this->Email->setHeaderCharset('ISO-2022-JP');
         $result = $this->Email->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
         $expected = '日本語';
         $this->assertSame($expected, $result);
 
-        $this->Email->headerCharset = 'ISO-2022-JP';
+        $this->Email->setHeaderCharset('ISO-2022-JP');
         $result = $this->Email->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=');
@@ -2574,11 +2478,11 @@ class EmailTest extends TestCase
     {
         $email = new Email(['transport' => 'debug']);
 
-        if (! empty($charset)) {
-            $email->charset = $charset;
+        if (!empty($charset)) {
+            $email->setCharset($charset);
         }
-        if (! empty($headerCharset)) {
-            $email->headerCharset = $headerCharset;
+        if (!empty($headerCharset)) {
+            $email->setHeaderCharset($headerCharset);
         }
 
         $email->setFrom('someone@example.com', 'どこかの誰か');
@@ -2622,7 +2526,7 @@ class EmailTest extends TestCase
      */
     public function testWrapLongLine()
     {
-        $message = '<a href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST) . '</a>';
+        $message = '<a href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST) . '</a>';
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2631,7 +2535,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('Wordwrap Test');
         $this->Email->setProfile(['empty']);
         $result = $this->Email->send($message);
-        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Email::LINE_LENGTH_MUST - 26) . "\r\n" .
+        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST - 26) . "\r\n" .
             str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
@@ -2639,24 +2543,24 @@ class EmailTest extends TestCase
         $str1 = 'a ';
         $str2 = ' b';
         $length = strlen($str1) + strlen($str2);
-        $message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length - 1) . $str2;
+        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length - 1) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length) . $str2;
+        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . $str2;
+        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . $str2;
 
         $result = $this->Email->send($message);
-        $expected = $str1 . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
+        $expected = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -2674,7 +2578,7 @@ class EmailTest extends TestCase
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-        $message = $str . str_repeat('x', Email::LINE_LENGTH_MUST + 1);
+        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2699,7 +2603,7 @@ HTML;
     {
         $str = 'foo<bar';
         $length = strlen($str);
-        $message = $str . str_repeat('x', Email::LINE_LENGTH_MUST - $length + 1);
+        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2885,8 +2789,8 @@ XML;
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
             $this->assertTrue(
-                strlen($line) <= Email::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Email::LINE_LENGTH_MUST'
+                strlen($line) <= Renderer::LINE_LENGTH_MUST,
+                'Line length exceeds the max. limit of Renderer::LINE_LENGTH_MUST'
             );
         }
     }
