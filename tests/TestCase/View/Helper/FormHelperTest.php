@@ -18,6 +18,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Form\Form;
 use Cake\Http\ServerRequest;
+use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Routing\Router;
@@ -3221,13 +3222,21 @@ class FormHelperTest extends TestCase
      */
     public function testNativeDateTime()
     {
-        $result = $this->Form->control('when', ['type' => 'datetime-local']);
+        $result = $this->Form->control('when', [
+            'type' => 'datetime-local',
+            'value' => Time::now(),
+        ]);
         $expected = [
             'div' => ['class' => 'input datetime-local'],
             'label' => ['for' => 'when'],
             'When',
             '/label',
-            'input' => ['name' => 'when', 'type' => 'datetime-local', 'id' => 'when'],
+            'input' => [
+                'name' => 'when',
+                'type' => 'datetime-local',
+                'id' => 'when',
+                'value' => Time::now()->format('Y-m-d\TH:i'),
+            ],
             '/div',
         ];
         $this->assertHtml($expected, $result);

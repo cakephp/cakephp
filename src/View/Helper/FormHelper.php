@@ -186,6 +186,7 @@ class FormHelper extends Helper
         'select' => ['SelectBox'],
         'textarea' => ['Textarea'],
         'datetime' => ['DateTime', 'select'],
+        'datetimenative' => ['DateTimeNative'],
         '_default' => ['Basic'],
     ];
 
@@ -1328,6 +1329,8 @@ class FormHelper extends Helper
                 unset($options['options']);
 
                 return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
+            case 'datetime-local':
+                return $this->dateTimeNative($fieldName, $options);
             case 'date':
             case 'time':
             case 'month':
@@ -2518,6 +2521,15 @@ class FormHelper extends Helper
         $options = $this->_datetimeOptions($options);
 
         return $this->widget('datetime', $options);
+    }
+
+    public function dateTimeNative($fieldName, array $options = [])
+    {
+        $options += ['type' => 'datetime-local'];
+
+        $options = $this->_initInputField($fieldName, $options);
+
+        return $this->widget('datetimenative', $options);
     }
 
     /**
