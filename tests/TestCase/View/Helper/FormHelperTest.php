@@ -3222,9 +3222,11 @@ class FormHelperTest extends TestCase
      */
     public function testNativeDateTime()
     {
+        $datetime = new \DateTime('2017-12-15 13:05:10');
+
         $result = $this->Form->control('when', [
             'type' => 'datetime-local',
-            'value' => Time::now(),
+            'value' => $datetime,
         ]);
         $expected = [
             'div' => ['class' => 'input datetime-local'],
@@ -3235,7 +3237,7 @@ class FormHelperTest extends TestCase
                 'name' => 'when',
                 'type' => 'datetime-local',
                 'id' => 'when',
-                'value' => Time::now()->format('Y-m-d\TH:i'),
+                'value' => '2017-12-15T13:05',
             ],
             '/div',
         ];
@@ -3244,26 +3246,39 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('time', [
             'type' => 'time',
             'native' => true,
+            'value' => $datetime,
         ]);
         $expected = [
             'div' => ['class' => 'input time'],
             'label' => ['for' => 'time'],
             'Time',
             '/label',
-            'input' => ['type' => 'time', 'id' => 'time', 'name' => 'time'],
+            'input' => [
+                'type' =>
+                'time',
+                'id' => 'time',
+                'name' => 'time',
+                'value' => '13:05',
+            ],
             '/div'
         ];
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->control('week', [
             'type' => 'week',
+            'value' => $datetime,
         ]);
         $expected = [
             'div' => ['class' => 'input week'],
             'label' => ['for' => 'week'],
             'Week',
             '/label',
-            'input' => ['type' => 'week', 'id' => 'week', 'name' => 'week'],
+            'input' => [
+                'type' => 'week',
+                'id' => 'week',
+                'name' => 'week',
+                'value' => '2017-W50'
+            ],
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -3271,13 +3286,19 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('month', [
             'type' => 'month',
             'native' => true,
+            'value' => $datetime,
         ]);
         $expected = [
             'div' => ['class' => 'input month'],
             'label' => ['for' => 'month'],
             'Month',
             '/label',
-            'input' => ['type' => 'month', 'id' => 'month', 'name' => 'month'],
+            'input' => [
+                'type' => 'month',
+                'id' => 'month',
+                'name' => 'month',
+                'value' => '2017-12'
+            ],
             '/div'
         ];
         $this->assertHtml($expected, $result);
@@ -3285,13 +3306,19 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('date', [
             'type' => 'date',
             'native' => true,
+            'value' => $datetime,
         ]);
         $expected = [
             'div' => ['class' => 'input date'],
             'label' => ['for' => 'date'],
             'Date',
             '/label',
-            'input' => ['type' => 'date', 'id' => 'date', 'name' => 'date'],
+            'input' => [
+                'type' => 'date',
+                'id' => 'date',
+                'name' => 'date',
+                'value' => '2017-12-15'
+            ],
             '/div'
         ];
         $this->assertHtml($expected, $result);

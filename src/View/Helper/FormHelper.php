@@ -1330,6 +1330,7 @@ class FormHelper extends Helper
 
                 return $this->multiCheckbox($fieldName, $opts, $options + ['label' => $label]);
             case 'datetime-local':
+            case 'week':
                 return $this->dateTimeNative($fieldName, $options);
             case 'date':
             case 'time':
@@ -1337,7 +1338,7 @@ class FormHelper extends Helper
                 if (!empty($options['native'])) {
                     unset($options['native']);
 
-                    return $this->text($fieldName, $options);
+                    return $this->dateTimeNative($fieldName, $options);
                 }
 
                 return $this->{$options['type']}($fieldName, $options);

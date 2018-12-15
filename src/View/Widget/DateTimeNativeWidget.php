@@ -93,7 +93,27 @@ class DateTimeNativeWidget implements WidgetInterface
             $date = new DateTime();
         }
 
-        return $date->format('Y-m-d\TH:i');
+        switch ($options['type']) {
+            case 'datetime-local':
+                return $date->format('Y-m-d\TH:i');
+
+            case 'date':
+                return $date->format('Y-m-d');
+
+            case 'time':
+                return $date->format('H:i');
+
+            case 'month':
+                return $date->format('Y-m');
+
+            case 'week':
+                return $date->format('Y-\WW');
+        }
+
+        throw new RuntimeException(sprintf(
+            'Invalid type "%s" for input tag.',
+            $options['type']
+        ));
     }
 
     /**
