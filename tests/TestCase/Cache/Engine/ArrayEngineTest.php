@@ -98,7 +98,7 @@ class ArrayEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'array');
-        $this->assertFalse($result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'array');
@@ -106,7 +106,7 @@ class ArrayEngineTest extends TestCase
 
         sleep(2);
         $result = Cache::read('other_test', 'array');
-        $this->assertFalse($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -179,9 +179,9 @@ class ArrayEngineTest extends TestCase
     {
         Cache::write('some_value', 'value', 'array');
 
-        $result = Cache::clear(false, 'array');
+        $result = Cache::clear('array');
         $this->assertTrue($result);
-        $this->assertFalse(Cache::read('some_value', 'array'));
+        $this->assertNull(Cache::read('some_value', 'array'));
     }
 
     /**
@@ -204,12 +204,12 @@ class ArrayEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'array_groups'));
 
         Cache::clearGroup('group_a', 'array_groups');
-        $this->assertFalse(Cache::read('test_groups', 'array_groups'));
+        $this->assertNull(Cache::read('test_groups', 'array_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'array_groups'));
         $this->assertEquals('value2', Cache::read('test_groups', 'array_groups'));
 
         Cache::clearGroup('group_b', 'array_groups');
-        $this->assertFalse(Cache::read('test_groups', 'array_groups'));
+        $this->assertNull(Cache::read('test_groups', 'array_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'array_groups'));
         $this->assertEquals('value3', Cache::read('test_groups', 'array_groups'));
     }
@@ -232,7 +232,7 @@ class ArrayEngineTest extends TestCase
         $this->assertEquals('value', Cache::read('test_groups', 'array_groups'));
 
         $this->assertTrue(Cache::delete('test_groups', 'array_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'array_groups'));
+        $this->assertNull(Cache::read('test_groups', 'array_groups'));
     }
 
     /**
@@ -252,11 +252,11 @@ class ArrayEngineTest extends TestCase
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'array_groups'));
         $this->assertTrue(Cache::clearGroup('group_a', 'array_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'array_groups'));
+        $this->assertNull(Cache::read('test_groups', 'array_groups'));
 
         $this->assertTrue(Cache::write('test_groups', 'value2', 'array_groups'));
         $this->assertTrue(Cache::clearGroup('group_b', 'array_groups'));
-        $this->assertFalse(Cache::read('test_groups', 'array_groups'));
+        $this->assertNull(Cache::read('test_groups', 'array_groups'));
     }
 
     /**

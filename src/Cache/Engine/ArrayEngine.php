@@ -41,14 +41,17 @@ class ArrayEngine extends CacheEngine
      * Write data for key into cache
      *
      * @param string $key Identifier for the data
-     * @param mixed $value Data to be cached
-     * @return bool True if the data was successfully cached, false on failure
+     * @param mixed $data Data to be cached
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
+     *   the driver supports TTL then the library may set a default value
+     *   for it or let the driver take care of that.
+     * @return bool True on success and false on failure.
      */
-    public function write($key, $value)
+    public function set($key, $data, $ttl = null)
     {
         $key = $this->_key($key);
-        $expires = time() + $this->_config['duration'];
-        $this->data[$key] = ['exp' => $expires, 'val' => $value];
+        $expires = time() + $this->duration($ttl);
+        $this->data[$key] = ['exp' => $expires, 'val' => $data];
 
         return true;
     }
@@ -57,14 +60,15 @@ class ArrayEngine extends CacheEngine
      * Read a key from the cache
      *
      * @param string $key Identifier for the data
-     * @return mixed The cached data, or false if the data doesn't exist,
-     *   has expired, or if there was an error fetching it
+     * @param mixed $default Default value to return if the key does not exist.
+     * @return mixed The cached data, or default value if the data doesn't exist, has
+     * expired, or if there was an error fetching it.
      */
-    public function read($key)
+    public function get($key, $default = null)
     {
         $key = $this->_key($key);
         if (!isset($this->data[$key])) {
-            return false;
+            return $default;
         }
         $data = $this->data[$key];
 
@@ -73,7 +77,7 @@ class ArrayEngine extends CacheEngine
         if ($data['exp'] <= $now) {
             unset($this->data[$key]);
 
-            return false;
+            return $default;
         }
 
         return $data['val'];
@@ -86,10 +90,10 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return bool|int New incremented value, false otherwise
      */
-    public function increment($key, $offset = 1)
+    public function increment(string $key, int $offset = 1)
     {
-        if (!$this->read($key)) {
-            $this->write($key, 0);
+        if ($this->get($key) === null) {
+            $this->set($key, 0);
         }
         $key = $this->_key($key);
         $this->data[$key]['val'] += $offset;
@@ -104,10 +108,10 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return bool|int New decremented value, false otherwise
      */
-    public function decrement($key, $offset = 1)
+    public function decrement(string $key, int $offset = 1)
     {
-        if (!$this->read($key)) {
-            $this->write($key, 0);
+        if ($this->get($key) === null) {
+            $this->set($key, 0);
         }
         $key = $this->_key($key);
         $this->data[$key]['val'] -= $offset;
@@ -132,10 +136,9 @@ class ArrayEngine extends CacheEngine
     /**
      * Delete all keys from the cache. This will clear every cache config using APC.
      *
-     * @param bool $check Unused argument required by interface.
      * @return bool True Returns true.
      */
-    public function clear($check)
+    public function clear()
     {
         $this->data = [];
 
@@ -149,7 +152,7 @@ class ArrayEngine extends CacheEngine
      *
      * @return array
      */
-    public function groups()
+    public function groups(): array
     {
         $result = [];
         foreach ($this->_config['groups'] as $group) {
@@ -171,7 +174,7 @@ class ArrayEngine extends CacheEngine
      * @param string $group The group to clear.
      * @return bool success
      */
-    public function clearGroup($group)
+    public function clearGroup(string $group): bool
     {
         $key = $this->_config['prefix'] . $group;
         if (isset($this->data[$key])) {
