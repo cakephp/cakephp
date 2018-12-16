@@ -1227,9 +1227,9 @@ trait IntegrationTestTrait
      * Inspect controller to extract possible causes of the failed assertion
      *
      * @param string $message Original message to use as a base
-     * @return null|string
+     * @return string
      */
-    protected function extractVerboseMessage($message = null)
+    protected function extractVerboseMessage(string $message): string
     {
         if ($this->_exception instanceof \Exception) {
             $message .= $this->extractExceptionMessage($this->_exception);

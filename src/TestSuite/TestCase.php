@@ -230,7 +230,7 @@ abstract class TestCase extends BaseTestCase
      * @param array $plugins A list of plugins you want to remove.
      * @return void
      */
-    public function removePlugins(array $plugins = [])
+    public function removePlugins(array $plugins = []): void
     {
         $collection = Plugin::getCollection();
         foreach ($plugins as $plugin) {
@@ -245,7 +245,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function clearPlugins()
+    public function clearPlugins(): void
     {
         Plugin::getCollection()->clear();
     }

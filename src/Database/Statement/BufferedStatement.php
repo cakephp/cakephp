@@ -225,7 +225,7 @@ class BufferedStatement implements Iterator, StatementInterface
     /**
      * @inheritDoc
      */
-    public function fetchAssoc()
+    public function fetchAssoc(): array
     {
         $result = $this->fetch(static::FETCH_TYPE_ASSOC);
 

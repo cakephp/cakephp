@@ -470,7 +470,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return string
      */
-    public function getStringBody()
+    public function getStringBody(): string
     {
         return $this->_getBody();
     }

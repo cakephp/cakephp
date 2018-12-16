@@ -236,7 +236,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check required-ness for.
      * @return int|null
      */
-    public function getMaxLength($field)
+    public function getMaxLength(string $field): ?int
     {
         if (!is_array($this->_context['schema'])) {
             return null;

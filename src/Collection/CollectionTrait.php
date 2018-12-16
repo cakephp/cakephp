@@ -697,7 +697,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function lazy()
+    public function lazy(): CollectionInterface
     {
         $generator = function () {
             foreach ($this->unwrap() as $k => $v) {
