@@ -77,7 +77,7 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $CODECOVERAGE = 1]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $CODECOVERAGE = 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
