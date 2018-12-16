@@ -1092,7 +1092,8 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'message', $at), $verboseMessage
+            new FlashParamEquals($this->_requestSession, $key, 'message', $at),
+            $verboseMessage
         );
     }
 
@@ -1109,7 +1110,8 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'element'), $verboseMessage
+            new FlashParamEquals($this->_requestSession, $key, 'element'),
+            $verboseMessage
         );
     }
 
@@ -1127,7 +1129,8 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'element', $at), $verboseMessage
+            new FlashParamEquals($this->_requestSession, $key, 'element', $at),
+            $verboseMessage
         );
     }
 

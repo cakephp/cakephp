@@ -102,7 +102,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_ALL = self::EMPTY_STRING | self::EMPTY_ARRAY | self::EMPTY_FILE | self::EMPTY_DATE | self::EMPTY_TIME;
+    public const EMPTY_ALL = self::EMPTY_STRING
+        | self::EMPTY_ARRAY
+        | self::EMPTY_FILE
+        | self::EMPTY_DATE
+        | self::EMPTY_TIME;
 
     /**
      * Holds the ValidationSet objects array
