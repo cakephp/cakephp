@@ -742,7 +742,7 @@ abstract class TestCase extends BaseTestCase
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockForModel(string $alias, array $methods = [], array $options = [])
+    public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
     {
         /** @var \Cake\ORM\Table $className */
         $className = $this->_getTableClassName($alias, $options);
