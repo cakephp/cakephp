@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Plugin;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;

@@ -9600,7 +9600,7 @@ class FormHelperTest extends TestCase
     public function testControlMaxLengthArrayContext()
     {
         $this->article['schema'] = [
-            'title' => ['length' => 10]
+            'title' => ['length' => 10],
         ];
 
         $this->Form->create($this->article);
@@ -9644,8 +9644,8 @@ class FormHelperTest extends TestCase
                 'table' => new Table([
                     'alias' => 'Articles',
                     'schema' => $this->article['schema'],
-                    'validator' => $validator
-                ])
+                    'validator' => $validator,
+                ]),
             ]
         );
 
@@ -9680,7 +9680,7 @@ class FormHelperTest extends TestCase
                     'schema' => $this->article['schema'],
                     'validator' => $validator,
                     'alias' => 'Articles',
-                ])
+                ]),
 
             ]
         );
@@ -9716,7 +9716,7 @@ class FormHelperTest extends TestCase
                     'schema' => $this->article['schema'],
                     'validator' => $validator,
                     'alias' => 'Articles',
-                ])
+                ]),
 
             ]
         );
@@ -9761,7 +9761,7 @@ class FormHelperTest extends TestCase
                     'alias' => 'Articles',
                     'schema' => $this->article['schema'],
                     'validator' => $validator,
-                ])
+                ]),
             ]
         );
 

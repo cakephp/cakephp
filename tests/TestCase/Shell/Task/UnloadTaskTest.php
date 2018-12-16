@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Console\Shell;
-use Cake\Core\Plugin;
 use Cake\Filesystem\File;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 

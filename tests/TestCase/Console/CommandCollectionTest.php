@@ -17,7 +17,6 @@ namespace Cake\Test\Console;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;

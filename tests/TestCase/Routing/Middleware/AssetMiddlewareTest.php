@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Routing\Middleware;
 
-use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;

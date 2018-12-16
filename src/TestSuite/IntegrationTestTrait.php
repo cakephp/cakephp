@@ -1090,7 +1090,10 @@ trait IntegrationTestTrait
     public function assertFlashMessageAt(int $at, string $expected, string $key = 'flash', string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'message', $at), $verboseMessage);
+        $this->assertThat(
+            $expected,
+            new FlashParamEquals($this->_requestSession, $key, 'message', $at), $verboseMessage
+        );
     }
 
     /**
@@ -1104,7 +1107,10 @@ trait IntegrationTestTrait
     public function assertFlashElement(string $expected, string $key = 'flash', string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'element'), $verboseMessage);
+        $this->assertThat(
+            $expected,
+            new FlashParamEquals($this->_requestSession, $key, 'element'), $verboseMessage
+        );
     }
 
     /**
@@ -1119,7 +1125,10 @@ trait IntegrationTestTrait
     public function assertFlashElementAt(int $at, string $expected, string $key = 'flash', string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'element', $at), $verboseMessage);
+        $this->assertThat(
+            $expected,
+            new FlashParamEquals($this->_requestSession, $key, 'element', $at), $verboseMessage
+        );
     }
 
     /**

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\App;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use TestApp\Core\TestApp;
 

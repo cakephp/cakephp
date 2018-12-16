@@ -55,7 +55,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    const EMPTY_STRING = 1;
+    public const EMPTY_STRING = 1;
 
     /**
      * A flag for allowEmptyFor()
@@ -64,7 +64,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    const EMPTY_ARRAY = 2;
+    public const EMPTY_ARRAY = 2;
 
     /**
      * A flag for allowEmptyFor()
@@ -75,7 +75,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    const EMPTY_FILE = 4;
+    public const EMPTY_FILE = 4;
 
     /**
      * A flag for allowEmptyFor()
@@ -85,7 +85,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    const EMPTY_DATE = 8;
+    public const EMPTY_DATE = 8;
 
     /**
      * A flag for allowEmptyFor()
@@ -95,14 +95,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    const EMPTY_TIME = 16;
+    public const EMPTY_TIME = 16;
 
     /**
      * A combination of the all EMPTY_* flags
      *
      * @var int
      */
-    const EMPTY_ALL = self::EMPTY_STRING | self::EMPTY_ARRAY | self::EMPTY_FILE | self::EMPTY_DATE | self::EMPTY_TIME;
+    public const EMPTY_ALL = self::EMPTY_STRING | self::EMPTY_ARRAY | self::EMPTY_FILE | self::EMPTY_DATE | self::EMPTY_TIME;
 
     /**
      * Holds the ValidationSet objects array

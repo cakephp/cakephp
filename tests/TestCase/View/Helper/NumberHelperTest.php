@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;

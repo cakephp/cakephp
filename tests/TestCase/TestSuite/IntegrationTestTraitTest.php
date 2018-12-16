@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Event\EventManager;
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Middleware\EncryptedCookieMiddleware;

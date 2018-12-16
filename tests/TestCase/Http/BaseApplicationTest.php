@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;

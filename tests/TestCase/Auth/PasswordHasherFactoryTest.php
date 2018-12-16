@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\PasswordHasherFactory;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**

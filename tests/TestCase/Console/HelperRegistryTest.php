@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\HelperRegistry;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use TestApp\Command\Helper\CommandHelper;
 use TestApp\Shell\Helper\SimpleHelper;

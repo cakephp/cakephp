@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Cache\Cache;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
 use Cake\View\Exception\MissingCellViewException;

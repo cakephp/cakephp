@@ -873,7 +873,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result);
@@ -890,12 +890,12 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_FORM_SIZE,
-            ]
+            ],
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -905,8 +905,8 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -917,8 +917,8 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $expected = [
             'photo' => [
-                'uploadedFile' => 'The provided value is invalid'
-            ]
+                'uploadedFile' => 'The provided value is invalid',
+            ],
         ];
         $this->assertSame($expected, $result);
         $this->assertNotEmpty($result);
@@ -955,7 +955,7 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
+                'day' => '',
             ],
         ];
         $result = $validator->errors($data);
@@ -978,8 +978,8 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'date' => [
-                'date' => 'The provided value is invalid'
-            ]
+                'date' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -1039,8 +1039,8 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'time' => [
-                'time' => 'The provided value is invalid'
-            ]
+                'time' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
@@ -1103,8 +1103,8 @@ class ValidatorTest extends TestCase
         ];
         $expected = [
             'published' => [
-                'dateTime' => 'The provided value is invalid'
-            ]
+                'dateTime' => 'The provided value is invalid',
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);

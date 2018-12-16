@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\FormAuthenticate;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;

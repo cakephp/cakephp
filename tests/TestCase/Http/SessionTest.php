@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Network;
 
-use Cake\Core\Plugin;
 use Cake\Http\Session;
 use Cake\Http\Session\CacheSession;
 use Cake\Http\Session\DatabaseSession;

@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\TaskRegistry;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**

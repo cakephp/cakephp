@@ -20,7 +20,6 @@ use Cake\Cache\CacheRegistry;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Cache\InvalidArgumentException;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Error\Error;
 use Psr\SimpleCache\CacheInterface as SimpleCacheInterface;

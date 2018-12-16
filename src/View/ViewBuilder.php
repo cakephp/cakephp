@@ -462,7 +462,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string|null $name The class name for the view.
      * @return $this
      */
-    public function setClassName(string $name): self
+    public function setClassName(?string $name): self
     {
         $this->_className = $name;
 

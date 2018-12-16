@@ -646,7 +646,7 @@ abstract class Association
      *
      * @return string|array
      */
-    public function getFinder(): string
+    public function getFinder()
     {
         return $this->_finder;
     }
@@ -657,7 +657,7 @@ abstract class Association
      * @param string|array $finder the finder name to use or array of finder name and option.
      * @return $this
      */
-    public function setFinder(string $finder)
+    public function setFinder($finder)
     {
         $this->_finder = $finder;
 

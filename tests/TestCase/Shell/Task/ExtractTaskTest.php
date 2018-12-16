@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 

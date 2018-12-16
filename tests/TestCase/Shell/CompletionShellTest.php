@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Core\Plugin;
 use Cake\TestSuite\Stub\ConsoleOutput as StubOutput;
 use Cake\TestSuite\TestCase;
 

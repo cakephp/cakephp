@@ -1224,7 +1224,7 @@ class PaginatorHelperTest extends TestCase
     {
         $request = new ServerRequest([
             'params' => ['controller' => 'articles', 'action' => 'index', 'plugin' => null],
-            'url' => '/articles?sort=title&direction=asc'
+            'url' => '/articles?sort=title&direction=asc',
         ]);
         Router::setRequestInfo($request);
 

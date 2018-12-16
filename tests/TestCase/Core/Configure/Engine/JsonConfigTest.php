@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core\Configure\Engine;
 
 use Cake\Core\Configure\Engine\JsonConfig;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**

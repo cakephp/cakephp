@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Plugin;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
@@ -897,7 +896,7 @@ class QueryRegressionTest extends TestCase
         $driver->enableAutoQuoting(true);
         $query = $articles->find();
         $query->select([
-            'sumUsers' => $articles->find()->func()->sum('author_id')
+            'sumUsers' => $articles->find()->func()->sum('author_id'),
         ]);
         $driver->enableAutoQuoting($restore);
 

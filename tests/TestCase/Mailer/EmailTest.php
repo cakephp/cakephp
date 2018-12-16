@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
 use Cake\Mailer\Renderer;

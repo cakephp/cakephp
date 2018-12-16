@@ -747,7 +747,7 @@ class PaginatorTest extends TestCase
         $queryParams = [
             'page' => 1,
             'sort' => 'title',
-            'direction' => 'asc'
+            'direction' => 'asc',
         ];
 
         $this->Paginator->paginate($table, $queryParams, $options);
@@ -1078,8 +1078,8 @@ class PaginatorTest extends TestCase
             'sort' => 'created',
             'direction' => 'desc',
             'order' => [
-                'model.created' => 'asc'
-            ]
+                'model.created' => 'asc',
+            ],
         ];
         $result = $this->Paginator->validateSort($model, $options);
 

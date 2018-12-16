@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestSuite;
 
 use Cake\Core\Exception\Exception as CakeException;
-use Cake\Core\Plugin;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
