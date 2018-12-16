@@ -26,6 +26,21 @@ use Cake\TestSuite\TestCase;
 class ProgressHelperTest extends TestCase
 {
     /**
+     * @var \Cake\Shell\Helper\ProgressHelper
+     */
+    protected $helper;
+
+    /**
+     * @var \Cake\TestSuite\Stub\ConsoleOutput
+     */
+    protected $stub;
+
+    /**
+     * @var \Cake\Console\ConsoleIo
+     */
+    protected $io;
+
+    /**
      * setUp method
      *
      * @return void
@@ -50,7 +65,7 @@ class ProgressHelperTest extends TestCase
             'total' => 200,
             'width' => 50,
         ]);
-        $this->assertSame($helper, $this->helper, 'init should be chainable');
+        $this->assertSame($helper, $this->helper, 'Should be chainable');
     }
 
     /**
@@ -70,7 +85,7 @@ class ProgressHelperTest extends TestCase
      */
     public function testOutputSuccess()
     {
-        $this->helper->output([function ($progress) {
+        $this->helper->output([function (ProgressHelper $progress) {
             $progress->increment(20);
         }]);
         $expected = [
@@ -100,7 +115,7 @@ class ProgressHelperTest extends TestCase
         $this->helper->output([
             'total' => 10,
             'width' => 20,
-            'callback' => function ($progress) {
+            'callback' => function (ProgressHelper $progress) {
                 $progress->increment(2);
             },
         ]);

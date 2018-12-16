@@ -456,9 +456,10 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Sets the view classname.
      *
      * Accepts either a short name (Ajax) a plugin name (MyPlugin.Ajax)
-     * or a fully namespaced name (App\View\AppView).
+     * or a fully namespaced name (App\View\AppView) or null to use the
+     * View class provided by CakePHP.
      *
-     * @param string $name The class name for the view.
+     * @param string|null $name The class name for the view.
      * @return $this
      */
     public function setClassName(string $name): self

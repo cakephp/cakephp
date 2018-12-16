@@ -246,7 +246,7 @@ interface TableSchemaInterface extends SchemaInterface
     /**
      * Get the names of all the constraints in the table.
      *
-     * @return array
+     * @return string[]
      */
     public function constraints(): array;
 }

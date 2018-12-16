@@ -58,13 +58,6 @@ class MiddlewareDispatcher
     protected $_constructorArgs;
 
     /**
-     * Allow router reloading to be disabled.
-     *
-     * @var bool
-     */
-    protected $_disableRouterReload = false;
-
-    /**
      * The application that is being dispatched.
      *
      * @var \Cake\Core\HttpApplicationInterface
@@ -92,7 +85,6 @@ class MiddlewareDispatcher
         $this->_test = $test;
         $this->_class = $class ?: Configure::read('App.namespace') . '\Application';
         $this->_constructorArgs = $constructorArgs ?: [CONFIG];
-        $this->_disableRouterReload = $disableRouterReload;
 
         try {
             $reflect = new ReflectionClass($this->_class);
@@ -144,9 +136,7 @@ class MiddlewareDispatcher
         }
 
         $out = Router::url($url);
-        if (!$this->_disableRouterReload) {
-            Router::reload();
-        }
+        Router::resetRoutes();
 
         return $out;
     }

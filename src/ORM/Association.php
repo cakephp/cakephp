@@ -180,8 +180,9 @@ abstract class Association
 
     /**
      * The default finder name to use for fetching rows from the target table
+     * With array value, finder name and default options are allowed.
      *
-     * @var string
+     * @var string|array
      */
     protected $_finder = 'all';
 
@@ -643,7 +644,7 @@ abstract class Association
     /**
      * Gets the default finder to use for fetching rows from the target table.
      *
-     * @return string
+     * @return string|array
      */
     public function getFinder(): string
     {
@@ -653,7 +654,7 @@ abstract class Association
     /**
      * Sets the default finder to use for fetching rows from the target table.
      *
-     * @param string $finder the finder name to use
+     * @param string|array $finder the finder name to use or array of finder name and option.
      * @return $this
      */
     public function setFinder(string $finder)

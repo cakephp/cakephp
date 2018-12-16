@@ -314,7 +314,7 @@ class CacheTest extends TestCase
         Cache::drop('libEngine');
         Cache::drop('pluginLibEngine');
 
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

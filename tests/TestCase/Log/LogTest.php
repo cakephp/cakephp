@@ -64,7 +64,7 @@ class LogTest extends TestCase
 
         Log::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
 
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

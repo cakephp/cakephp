@@ -77,7 +77,7 @@ class HelperTest extends TestCase
         parent::tearDown();
         Configure::delete('Asset');
 
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         unset($this->View);
     }
 

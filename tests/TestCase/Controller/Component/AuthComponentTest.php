@@ -26,6 +26,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Route\InflectedRoute;
+use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
@@ -63,7 +64,7 @@ class AuthComponentTest extends TestCase
         Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
         static::setAppNamespace();
 
-        Router::scope('/', function ($routes): void {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
 
@@ -1113,10 +1114,10 @@ class AuthComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
-        Router::prefix('admin', function ($routes): void {
+        Router::prefix('admin', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
-        Router::scope('/', function ($routes): void {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
         $this->Controller->setRequest(new ServerRequest([
@@ -1184,10 +1185,10 @@ class AuthComponentTest extends TestCase
     {
         $event = new Event('Controller.startup', $this->Controller);
         Router::reload();
-        Router::prefix('admin', function ($routes): void {
+        Router::prefix('admin', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
-        Router::scope('/', function ($routes): void {
+        Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks(InflectedRoute::class);
         });
 

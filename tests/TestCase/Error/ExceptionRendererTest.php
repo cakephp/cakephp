@@ -183,7 +183,7 @@ class ExceptionRendererTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         if ($this->_restoreError) {
             restore_error_handler();
         }

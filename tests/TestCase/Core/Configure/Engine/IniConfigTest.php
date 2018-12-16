@@ -221,7 +221,7 @@ class IniConfigTest extends TestCase
 
         $result = $engine->read('TestPlugin.nested');
         $this->assertEquals('foo', $result['database']['db']['password']);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

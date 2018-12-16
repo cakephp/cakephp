@@ -750,7 +750,7 @@ trait EntityTrait
     /**
      * Gets the dirty properties.
      *
-     * @return array
+     * @return string[]
      */
     public function getDirty(): array
     {

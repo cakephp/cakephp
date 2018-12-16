@@ -1475,7 +1475,7 @@ class ServerRequest implements ServerRequestInterface
      * Get the parsed request body data.
      *
      * If the request Content-Type is either application/x-www-form-urlencoded
-     * or multipart/form-data, nd the request method is POST, this will be the
+     * or multipart/form-data, and the request method is POST, this will be the
      * post data. For other content types, it may be the deserialized request
      * body.
      *

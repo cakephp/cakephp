@@ -41,7 +41,7 @@ class RoutingMiddleware
     /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Core\HttpApplicationInterface
+     * @var \Cake\Core\HttpApplicationInterface|null
      */
     protected $app;
 
@@ -61,6 +61,12 @@ class RoutingMiddleware
      */
     public function __construct(?HttpApplicationInterface $app = null, ?string $cacheConfig = null)
     {
+        if ($app === null) {
+            deprecationWarning(
+                'RoutingMiddleware should be passed an application instance. ' .
+                'Failing to do so can cause plugin routes to not behave correctly.'
+            );
+        }
         $this->app = $app;
         $this->cacheConfig = $cacheConfig;
     }

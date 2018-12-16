@@ -102,6 +102,20 @@ class LocaleSelectorMiddlewareTest extends TestCase
     }
 
     /**
+     * The default locale should change when the request locale has an accepted fallback option
+     *
+     * @return void
+     */
+    public function testInvokeLocaleAcceptedFallback()
+    {
+        $request = ServerRequestFactory::fromGlobals(['HTTP_ACCEPT_LANGUAGE' => 'es-ES;q=0.8,da;q=0.4']);
+        $response = new Response();
+        $middleware = new LocaleSelectorMiddleware(['en_CA', 'es']);
+        $middleware($request, $response, $this->next);
+        $this->assertSame('es', I18n::getLocale(), 'es is accepted');
+    }
+
+    /**
      * The default locale should change when the '*' is accepted
      *
      * @return void

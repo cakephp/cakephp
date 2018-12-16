@@ -51,7 +51,7 @@ class RouterTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         Router::reload();
         Router::defaultRouteClass('Cake\Routing\Route\Route');
     }
@@ -112,7 +112,7 @@ class RouterTest extends TestCase
     {
         Configure::write('App.base', '/cakephp');
         Router::fullBaseUrl('http://example.com');
-        Router::scope('/', function ($routes) {
+        Router::scope('/', function (RouteBuilder $routes) {
             $routes->get('/:controller', ['action' => 'index']);
         });
 
@@ -2412,7 +2412,7 @@ class RouterTest extends TestCase
             ['routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+']
         );
         $this->assertTrue(true); // Just to make sure the connect do not throw exception
-        Plugin::getCollection()->remove('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 
     /**
@@ -2877,8 +2877,8 @@ class RouterTest extends TestCase
             $this->assertEquals(['prefix' => 'admin', 'param' => 'value'], $routes->params());
         });
 
-        Router::prefix('CustomPath', ['path' => '/custom_path'], function (RouteBuilder $routes) {
-            $this->assertEquals('/custom_path', $routes->path());
+        Router::prefix('CustomPath', ['path' => '/custom-path'], function (RouteBuilder $routes) {
+            $this->assertEquals('/custom-path', $routes->path());
             $this->assertEquals(['prefix' => 'custom_path'], $routes->params());
         });
     }

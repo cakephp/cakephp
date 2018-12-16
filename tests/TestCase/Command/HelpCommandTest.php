@@ -54,7 +54,7 @@ class HelpCommandTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -67,7 +67,7 @@ class HelpCommandTest extends TestCase
         $this->exec('help');
         $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertCommandList();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

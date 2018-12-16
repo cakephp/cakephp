@@ -65,7 +65,7 @@ class ExtractTaskTest extends TestCase
 
         $Folder = new Folder($this->path);
         $Folder->delete();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

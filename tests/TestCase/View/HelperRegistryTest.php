@@ -66,7 +66,7 @@ class HelperRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         unset($this->Helpers, $this->View);
         parent::tearDown();
     }

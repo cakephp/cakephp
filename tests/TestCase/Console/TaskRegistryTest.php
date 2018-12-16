@@ -94,7 +94,7 @@ class TaskRegistryTest extends TestCase
         $result = $this->Tasks->load('TestPlugin.OtherTask');
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result, 'Task class is wrong.');
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -119,6 +119,6 @@ class TaskRegistryTest extends TestCase
 
         $result = $this->Tasks->loaded();
         $this->assertEquals(['CommandAliased', 'SomeTask'], $result, 'loaded() results are wrong.');
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 }

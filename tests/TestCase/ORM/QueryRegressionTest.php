@@ -546,7 +546,7 @@ class QueryRegressionTest extends TestCase
             $result->author->id,
             'No SQL error and author exists.'
         );
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -877,6 +877,32 @@ class QueryRegressionTest extends TestCase
             ->select(['Users__id' => 'id']);
         $results = $query->toArray();
         $this->assertCount(3, $results);
+    }
+
+    /**
+     * Test selecting with aliased aggregates and identifier quoting
+     * does not emit notice errors.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/12766
+     * @return void
+     */
+    public function testAliasedAggregateFieldTypeConversionSafe()
+    {
+        $this->loadFixtures('Articles');
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $driver = $articles->getConnection()->getDriver();
+        $restore = $driver->isAutoQuotingEnabled();
+
+        $driver->enableAutoQuoting(true);
+        $query = $articles->find();
+        $query->select([
+            'sumUsers' => $articles->find()->func()->sum('author_id')
+        ]);
+        $driver->enableAutoQuoting($restore);
+
+        $result = $query->execute()->fetchAll('assoc');
+        $this->assertArrayHasKey('sumUsers', $result[0]);
     }
 
     /**
