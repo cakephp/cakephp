@@ -420,6 +420,7 @@ class CakeSchema extends CakeObject {
 						$type = $value;
 						$value = array('type' => $type);
 					}
+					$value['type'] = addslashes($value['type']);
 					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 					unset($value['type']);
 					$col .= implode(', ', $this->_values($value));
@@ -624,17 +625,19 @@ class CakeSchema extends CakeObject {
 			if ($Obj->primaryKey === $name && !$hasPrimaryAlready && !isset($value['key'])) {
 				$value['key'] = 'primary';
 			}
-			if (!isset($db->columns[$value['type']])) {
-				trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s for %s.%s does not exist in DBO', $value['type'], $Obj->name, $name), E_USER_NOTICE);
-				continue;
-			} else {
-				$defaultCol = $db->columns[$value['type']];
-				if (isset($defaultCol['limit']) && $defaultCol['limit'] == $value['length']) {
-					unset($value['length']);
-				} elseif (isset($defaultCol['length']) && $defaultCol['length'] == $value['length']) {
-					unset($value['length']);
+			if (substr($value['type'], 0, 4) !== 'enum') {
+				if (!isset($db->columns[$value['type']])) {
+					trigger_error(__d('cake_dev', 'Schema generation error: invalid column type %s for %s.%s does not exist in DBO', $value['type'], $Obj->name, $name), E_USER_NOTICE);
+					continue;
+				} else {
+					$defaultCol = $db->columns[$value['type']];
+					if (isset($defaultCol['limit']) && $defaultCol['limit'] == $value['length']) {
+						unset($value['length']);
+					} elseif (isset($defaultCol['length']) && $defaultCol['length'] == $value['length']) {
+						unset($value['length']);
+					}
+					unset($value['limit']);
 				}
-				unset($value['limit']);
 			}
 
 			if (isset($value['default']) && ($value['default'] === '' || ($value['default'] === false && $value['type'] !== 'boolean'))) {

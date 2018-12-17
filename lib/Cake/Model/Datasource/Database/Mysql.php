@@ -120,6 +120,7 @@ class Mysql extends DboSource {
 		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
+		'enum' => array('name' => 'enum'),
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
 		'smallinteger' => array('name' => 'smallint', 'limit' => '6', 'formatter' => 'intval'),

@@ -64,6 +64,13 @@ class MyAppSchema extends CakeSchema {
 		'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => 1),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'status' => array(
+			'type' => 'enum(\'active\',\'deleted\')',
+			'null' => false,
+			'default' => 'active',
+			'collate' => 'utf8_unicode_ci',
+			'charset' => 'utf8',
+		),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 	);
 
@@ -809,6 +816,14 @@ class CakeSchemaTest extends CakeTestCase {
 			'posts' => array(
 				'add' => array(
 					'summary' => array('type' => 'text', 'null' => true, 'after' => 'body'),
+					'status' => array(
+						'type' => 'enum(\'active\',\'deleted\')',
+						'null' => false,
+						'default' => 'active',
+						'collate' => 'utf8_unicode_ci',
+						'charset' => 'utf8',
+						'after' => 'updated',
+					),
 				),
 				'drop' => array(
 					'tableParameters' => array(),
