@@ -23,8 +23,6 @@ use Traversable;
  * Describes the methods a Collection should implement. A collection is an immutable
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
- *
- * @method \Cake\Collection\CollectionInterface cartesianProduct(callable $operation = null, callable $filter = null)
  */
 interface CollectionInterface extends Iterator, JsonSerializable
 {
@@ -839,7 +837,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @return \Cake\Collection\CollectionInterface
      */
-    public function lazy();
+    public function lazy(): CollectionInterface;
 
     /**
      * Returns a new collection where the operations performed by this collection.

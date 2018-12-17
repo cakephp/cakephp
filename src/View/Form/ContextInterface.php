@@ -85,7 +85,7 @@ interface ContextInterface
      * @param string $field Field name.
      * @return int|null
      */
-    public function getMaxLength($field);
+    public function getMaxLength(string $field): ?int;
 
     /**
      * Get the fieldnames of the top level object in this context.

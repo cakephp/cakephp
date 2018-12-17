@@ -489,7 +489,7 @@ class View implements EventDispatcherInterface
      *
      * @return $this
      */
-    public function disableAutoLayout()
+    public function disableAutoLayout(): self
     {
         $this->autoLayout = false;
 
