@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 
@@ -195,7 +194,7 @@ class StringTemplateTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $this->assertNull($this->template->load('TestPlugin.test_templates'));
         $this->assertEquals('<em>{{text}}</em>', $this->template->get('italic'));
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

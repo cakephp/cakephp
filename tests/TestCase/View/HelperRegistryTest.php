@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
 use Cake\View\HelperRegistry;
@@ -66,7 +65,7 @@ class HelperRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         unset($this->Helpers, $this->View);
         parent::tearDown();
     }

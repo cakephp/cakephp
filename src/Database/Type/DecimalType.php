@@ -132,6 +132,9 @@ class DecimalType extends BaseType implements BatchCastingInterface
         if (is_numeric($value)) {
             return (float)$value;
         }
+        if (is_string($value) && preg_match('/^[0-9,. ]+$/', $value)) {
+            return $value;
+        }
 
         return null;
     }

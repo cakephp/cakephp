@@ -19,7 +19,6 @@ use Cake\Controller\Component\AuthComponent;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -54,7 +53,7 @@ class ComponentRegistryTest extends TestCase
     {
         parent::tearDown();
         unset($this->Components);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

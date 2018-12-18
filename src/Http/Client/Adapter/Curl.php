@@ -146,9 +146,9 @@ class Curl implements AdapterInterface
      */
     protected function createResponse($handle, $responseData): array
     {
-        $meta = curl_getinfo($handle);
-        $headers = trim(substr($responseData, 0, $meta['header_size']));
-        $body = substr($responseData, $meta['header_size']);
+        $headerSize = curl_getinfo($handle, CURLINFO_HEADER_SIZE);
+        $headers = trim(substr($responseData, 0, $headerSize));
+        $body = substr($responseData, $headerSize);
         $response = new Response(explode("\r\n", $headers), $body);
 
         return [$response];

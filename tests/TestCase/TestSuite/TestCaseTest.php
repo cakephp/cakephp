@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
-use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\Event;
 use Cake\Event\EventList;
@@ -425,7 +424,7 @@ class TestCaseTest extends TestCase
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
         $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -455,6 +454,26 @@ class TestCaseTest extends TestCase
         $entity = new Entity([]);
         $this->assertTrue($Mock->save($entity));
         $this->assertFalse($Mock->save($entity));
+
+        $allMethodsStubs = $this->getMockForModel(
+            'Table',
+            [],
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEmpty([], $allMethodsStubs->getAlias());
+
+        $allMethodsMocks = $this->getMockForModel(
+            'Table',
+            null,
+            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+        );
+        $result = $this->getTableLocator()->get('Comments');
+        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertEquals('Comments', $allMethodsMocks->getAlias());
+
+        $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);
     }
 
     /**

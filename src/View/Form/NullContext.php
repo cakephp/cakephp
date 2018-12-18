@@ -94,6 +94,14 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    public function getMaxLength(string $field): ?int
+    {
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function fieldNames(): array
     {
         return [];

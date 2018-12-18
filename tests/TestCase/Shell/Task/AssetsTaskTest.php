@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\TestCase;
 
@@ -72,7 +71,7 @@ class AssetsTaskTest extends TestCase
     {
         parent::tearDown();
         unset($this->Task);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

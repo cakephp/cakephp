@@ -1391,13 +1391,22 @@ class FormHelper extends Helper
             unset($options['step']);
         }
 
-        $autoLength = !array_key_exists('maxlength', $options)
-            && !empty($fieldDef['length'])
-            && $options['type'] !== 'select';
+        $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
+        if (!array_key_exists('maxlength', $options)
+            && in_array($options['type'], $typesWithMaxLength)
+        ) {
+            $maxLength = null;
+            if (method_exists($context, 'getMaxLength')) {
+                $maxLength = $context->getMaxLength($fieldName);
+            }
 
-        $allowedTypes = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
-        if ($autoLength && in_array($options['type'], $allowedTypes)) {
-            $options['maxlength'] = min($fieldDef['length'], 100000);
+            if ($maxLength === null && !empty($fieldDef['length'])) {
+                $maxLength = $fieldDef['length'];
+            }
+
+            if ($maxLength !== null) {
+                $options['maxlength'] = min($maxLength, 100000);
+            }
         }
 
         if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {

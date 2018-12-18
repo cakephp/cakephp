@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Collection\Collection;
+use Cake\Datasource\EntityInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
@@ -66,14 +67,14 @@ class TranslateBehaviorTest extends TestCase
      */
     protected function _extractTranslations($data)
     {
-        return (new Collection($data))->map(function ($row) {
+        return (new Collection($data))->map(function (EntityInterface $row) {
             $translations = $row->get('_translations');
             if (!$translations) {
                 return [];
             }
 
-            return array_map(function ($t) {
-                return $t->toArray();
+            return array_map(function (EntityInterface $entity) {
+                return $entity->toArray();
             }, $translations);
         });
     }

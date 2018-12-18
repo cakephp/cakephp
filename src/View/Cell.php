@@ -197,6 +197,7 @@ abstract class Cell implements EventDispatcherInterface
                     static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name)
                 );
             }
+            $template = $builder->getTemplate();
 
             $view = $this->createView();
             try {

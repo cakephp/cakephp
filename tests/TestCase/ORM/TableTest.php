@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Core\Plugin;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
@@ -127,7 +126,7 @@ class TableTest extends TestCase
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

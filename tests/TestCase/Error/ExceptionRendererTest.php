@@ -22,7 +22,6 @@ use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\Exception\MissingPluginException;
-use Cake\Core\Plugin;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\ExceptionRenderer;
@@ -183,7 +182,7 @@ class ExceptionRendererTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         if ($this->_restoreError) {
             restore_error_handler();
         }

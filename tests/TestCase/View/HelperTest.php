@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper;
@@ -77,7 +76,7 @@ class HelperTest extends TestCase
         parent::tearDown();
         Configure::delete('Asset');
 
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         unset($this->View);
     }
 

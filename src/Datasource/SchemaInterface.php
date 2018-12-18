@@ -86,7 +86,7 @@ interface SchemaInterface
     /**
      * Get the column names in the table.
      *
-     * @return array
+     * @return string[]
      */
     public function columns(): array;
 

@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\PasswordHasherFactory;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -44,7 +43,7 @@ class PasswordHasherFactoryTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $hasher = PasswordHasherFactory::build('TestPlugin.Legacy');
         $this->assertInstanceof('TestPlugin\Auth\LegacyPasswordHasher', $hasher);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

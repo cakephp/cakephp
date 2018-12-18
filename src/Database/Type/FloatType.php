@@ -108,9 +108,9 @@ class FloatType extends BaseType implements BatchCastingInterface
      * Marshalls request data into PHP floats.
      *
      * @param mixed $value The value to convert.
-     * @return float|null Converted value.
+     * @return string|float|null Converted value.
      */
-    public function marshal($value): ?float
+    public function marshal($value)
     {
         if ($value === null || $value === '') {
             return null;
@@ -120,6 +120,9 @@ class FloatType extends BaseType implements BatchCastingInterface
         }
         if (is_numeric($value)) {
             return (float)$value;
+        }
+        if (is_string($value) && preg_match('/^[0-9,. ]+$/', $value)) {
+            return $value;
         }
 
         return null;

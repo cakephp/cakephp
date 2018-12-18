@@ -72,6 +72,7 @@ class Application extends BaseApplication
     {
         $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
+            $routes->fallbacks();
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
     }

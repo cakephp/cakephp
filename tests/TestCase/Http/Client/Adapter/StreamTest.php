@@ -151,7 +151,7 @@ class StreamTest extends TestCase
         $responses = $stream->send($request, []);
         $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
 
-        $this->assertEquals(20000, strlen($responses[0]->body()));
+        $this->assertEquals(20000, strlen($responses[0]->getStringBody()));
     }
 
     /**

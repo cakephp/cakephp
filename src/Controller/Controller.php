@@ -787,7 +787,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return false;
         }
 
-        return $method->isPublic();
+        return $method->isPublic() && $method->getName() === $action;
     }
 
     /**

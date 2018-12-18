@@ -79,6 +79,7 @@ class LogEngineRegistry extends ObjectRegistry
         }
 
         if (!isset($instance)) {
+            /** @var string $class */
             $instance = new $class($settings);
         }
 

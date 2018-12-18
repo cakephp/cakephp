@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -433,7 +432,7 @@ class AssociationTest extends TestCase
         $this->assertSame('TestPlugin.ThisAssociationName', $table->getRegistryAlias());
         $this->assertSame('comments', $table->getTable());
         $this->assertSame('ThisAssociationName', $table->getAlias());
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

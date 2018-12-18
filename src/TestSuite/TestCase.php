@@ -16,6 +16,7 @@ namespace Cake\TestSuite;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
@@ -219,6 +220,34 @@ abstract class TestCase extends BaseTestCase
         $app->pluginRoutes($builder);
 
         return $app;
+    }
+
+    /**
+     * Remove plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @param array $plugins A list of plugins you want to remove.
+     * @return void
+     */
+    public function removePlugins(array $plugins = []): void
+    {
+        $collection = Plugin::getCollection();
+        foreach ($plugins as $plugin) {
+            $collection->remove($plugin);
+        }
+    }
+
+    /**
+     * Clear all plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @return void
+     */
+    public function clearPlugins(): void
+    {
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -708,12 +737,12 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array $methods The list of methods to mock
+     * @param array|null $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockForModel(string $alias, array $methods = [], array $options = [])
+    public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
     {
         /** @var \Cake\ORM\Table $className */
         $className = $this->_getTableClassName($alias, $options);

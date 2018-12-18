@@ -489,7 +489,7 @@ class View implements EventDispatcherInterface
      *
      * @return $this
      */
-    public function disableAutoLayout()
+    public function disableAutoLayout(): self
     {
         $this->autoLayout = false;
 
@@ -758,7 +758,7 @@ class View implements EventDispatcherInterface
     /**
      * Returns a list of variables available in the current View context
      *
-     * @return array Array of the set view variable names.
+     * @return string[] Array of the set view variable names.
      */
     public function getVars(): array
     {

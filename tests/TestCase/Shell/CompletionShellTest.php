@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Console\ConsoleIo;
-use Cake\Core\Plugin;
 use Cake\TestSuite\Stub\ConsoleOutput as StubOutput;
 use Cake\TestSuite\TestCase;
 
@@ -60,7 +59,7 @@ class CompletionShellTest extends TestCase
         parent::tearDown();
         unset($this->Shell);
         static::setAppNamespace('App');
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

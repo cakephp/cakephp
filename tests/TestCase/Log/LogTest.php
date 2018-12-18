@@ -14,7 +14,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log;
 
-use Cake\Core\Plugin;
 use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -64,7 +63,7 @@ class LogTest extends TestCase
 
         Log::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
 
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

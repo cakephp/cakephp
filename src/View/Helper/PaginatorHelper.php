@@ -448,6 +448,7 @@ class PaginatorHelper extends Helper
 
             $title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
         }
+
         $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
         unset($options['direction']);
 
@@ -535,6 +536,13 @@ class PaginatorHelper extends Helper
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 
+        if (!empty($paging['sort']) && !empty($options['?']['sort']) && strpos($options['?']['sort'], '.') === false) {
+            $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
+        }
+        if (!empty($paging['sortDefault']) && !empty($options['?']['sort']) && strpos($options['?']['sort'], '.') === false) {
+            $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
+        }
+
         $url = [];
 
         if (!empty($this->_config['options']['url'])) {
@@ -567,7 +575,7 @@ class PaginatorHelper extends Helper
         }
         if (isset($paging['sortDefault'], $paging['directionDefault'], $url['?']['sort'], $url['?']['direction']) &&
             $url['?']['sort'] === $paging['sortDefault'] &&
-            $url['?']['direction'] === $paging['directionDefault']
+            strtolower($url['?']['direction']) === strtolower($paging['directionDefault'])
         ) {
             $url['?']['sort'] = $url['?']['direction'] = null;
         }
@@ -593,6 +601,30 @@ class PaginatorHelper extends Helper
         }
 
         return $url;
+    }
+
+    /**
+     * Remove alias if needed.
+     *
+     * @param string $field Current field
+     * @param string|null $model Current model alias
+     * @return string Unaliased field if applicable
+     */
+    protected function _removeAlias($field, $model = null)
+    {
+        $currentModel = $model ?: $this->defaultModel();
+
+        if (strpos($field, '.') === false) {
+            return $field;
+        }
+
+        list ($alias, $currentField) = explode('.', $field);
+
+        if ($alias === $currentModel) {
+            return $currentField;
+        }
+
+        return $field;
     }
 
     /**

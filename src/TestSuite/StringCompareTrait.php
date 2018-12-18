@@ -59,7 +59,7 @@ trait StringCompareTrait
         }
 
         if ($this->_updateComparisons) {
-            file_put_contents($result);
+            file_put_contents($path, $result);
         }
 
         $expected = file_get_contents($path);

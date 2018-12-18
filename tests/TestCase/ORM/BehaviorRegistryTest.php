@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Plugin;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
@@ -51,7 +50,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
         parent::tearDown();
     }

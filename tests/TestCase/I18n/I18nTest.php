@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\I18n;
 
 use Aura\Intl\Package;
 use Cake\Cache\Cache;
-use Cake\Core\Plugin;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use Locale;
@@ -56,7 +55,7 @@ class I18nTest extends TestCase
         I18n::clear();
         I18n::setDefaultFormatter('default');
         I18n::setLocale($this->locale);
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         Cache::clear('_cake_core_');
     }
 

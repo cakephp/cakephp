@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
@@ -154,7 +153,7 @@ class TextHelperTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $Text = new TextHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
         $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Text->engine());
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

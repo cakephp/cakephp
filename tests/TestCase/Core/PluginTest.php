@@ -32,7 +32,7 @@ class PluginTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -43,7 +43,7 @@ class PluginTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

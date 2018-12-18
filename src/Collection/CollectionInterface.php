@@ -837,7 +837,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @return \Cake\Collection\CollectionInterface
      */
-    public function lazy();
+    public function lazy(): CollectionInterface;
 
     /**
      * Returns a new collection where the operations performed by this collection.

@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
-use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 use TestApp\Shell\MergeShell;
@@ -122,7 +121,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -151,7 +150,7 @@ class ShellTest extends TestCase
             'TestPlugin\Model\Table\TestPluginCommentsTable',
             $this->Shell->TestPluginComments
         );
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

@@ -80,9 +80,17 @@ interface ContextInterface
     public function getRequiredMessage(string $field): ?string;
 
     /**
+     * Get maximum length of a field from model validation.
+     *
+     * @param string $field Field name.
+     * @return int|null
+     */
+    public function getMaxLength(string $field): ?int;
+
+    /**
      * Get the fieldnames of the top level object in this context.
      *
-     * @return array A list of the field names in the context.
+     * @return string[] A list of the field names in the context.
      */
     public function fieldNames(): array;
 

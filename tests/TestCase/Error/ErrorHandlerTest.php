@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Error\ErrorHandler;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
@@ -109,7 +108,7 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         if ($this->_restoreError) {
             restore_error_handler();
             restore_exception_handler();

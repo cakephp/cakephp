@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Controller;
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -227,7 +226,7 @@ class ControllerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
@@ -842,6 +841,25 @@ class ControllerTest extends TestCase
         $url = new ServerRequest([
             'url' => 'test/redirect/',
             'params' => ['controller' => 'Test', 'action' => 'redirect'],
+        ]);
+        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+
+        $Controller = new TestController($url, $response);
+        $Controller->invokeAction();
+    }
+
+    /**
+     * test invoking action method with mismatched casing.
+     *
+     * @return void
+     */
+    public function testInvokeActionMethodCasing(): void
+    {
+        $this->expectException(\Cake\Controller\Exception\MissingActionException::class);
+        $this->expectExceptionMessage('Action TestController::RETURNER() could not be found, or is not accessible.');
+        $url = new ServerRequest([
+            'url' => 'test/RETURNER/',
+            'params' => ['controller' => 'Test', 'action' => 'RETURNER'],
         ]);
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
 

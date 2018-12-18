@@ -14,6 +14,8 @@ env:
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
     - DEFAULT=1
+    - CODECOVERAGE=0
+    - PHPCS=0
 
 services:
   - memcached
@@ -33,6 +35,9 @@ matrix:
   fast_finish: true
 
   include:
+    - php: 7.2
+      env: CODECOVERAGE=1 DEFAULT=0
+
     - php: 7.2
       env: PHPCS=1 DEFAULT=0
 
@@ -59,12 +64,12 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
   - |
-      if [[ ${TRAVIS_PHP_VERSION} != "7.3" && ($DEFAULT = 1 || $STATIC_ANALYSIS = 1) ]]; then
+      if [[ ${TRAVIS_PHP_VERSION} != "7.3" && $PHPCS = 0 ]]; then
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
       fi
-  - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
-  - if [[ $DEFAULT = 1 || $STATIC_ANALYSIS = 1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $PHPCS = 0 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $PHPCS = 0 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $PHPCS = 0 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
 
   - sudo locale-gen da_DK
 
@@ -72,8 +77,8 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.2 ]]; then export CODECOVERAGE=1; phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.2 ]]; then vendor/bin/phpunit; fi
+  - if [[ $CODECOVERAGE = 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
 
   - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
 
@@ -86,7 +91,7 @@ script:
   - if [[ $PHPSTAN_LEVEL_3 = 1 ]]; then composer require --dev phpstan/phpstan:^0.10 && vendor/bin/phpstan analyse -l 3 src; fi
 
 after_success:
-  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.2 ]]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [[ $CODECOVERAGE = 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false

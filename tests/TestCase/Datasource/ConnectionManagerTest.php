@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
-use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -68,7 +67,7 @@ class ConnectionManagerTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         ConnectionManager::drop('test_variant');
         ConnectionManager::dropAlias('other_name');
     }

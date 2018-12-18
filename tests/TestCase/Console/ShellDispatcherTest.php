@@ -17,7 +17,6 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\Shell;
 use Cake\Console\ShellDispatcher;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Error\Warning;
 
@@ -50,7 +49,7 @@ class ShellDispatcherTest extends TestCase
     {
         parent::tearDown();
         ShellDispatcher::resetAliases();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**

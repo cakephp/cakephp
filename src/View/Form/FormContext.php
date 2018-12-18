@@ -110,7 +110,6 @@ class FormContext implements ContextInterface
      * Get default value from form schema for given field.
      *
      * @param string $field Field name.
-
      * @return mixed
      */
     protected function _schemaDefault(string $field)
@@ -162,6 +161,24 @@ class FormContext implements ContextInterface
         }
         if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
             return $emptyMessage;
+        }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMaxLength(string $field): ?int
+    {
+        $validator = $this->_form->getValidator();
+        if (!$validator->hasField($field)) {
+            return null;
+        }
+        foreach ($validator->field($field)->rules() as $rule) {
+            if ($rule->get('rule') === 'maxLength') {
+                return $rule->get('pass')[0];
+            }
         }
 
         return null;

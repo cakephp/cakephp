@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
@@ -73,7 +72,7 @@ class NumberHelperTest extends TestCase
     public function tearDown()
     {
         parent::tearDown();
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
         static::setAppNamespace($this->_appNamespace);
         unset($this->View);
     }
@@ -131,6 +130,6 @@ class NumberHelperTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
         $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());
-        Plugin::getCollection()->remove('TestPlugin');
+        $this->removePlugins(['TestPlugin']);
     }
 }

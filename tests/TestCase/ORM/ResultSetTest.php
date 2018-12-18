@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Core\Plugin;
 use Cake\Database\Exception;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
@@ -397,7 +396,7 @@ class ResultSetTest extends TestCase
         })->first();
         $this->assertEquals('TestPlugin.Comments', $result->getSource());
         $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
-        Plugin::getCollection()->clear();
+        $this->clearPlugins();
     }
 
     /**
