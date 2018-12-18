@@ -97,6 +97,20 @@ class ArgumentsTest extends TestCase
     }
 
     /**
+     * get arguments missing value
+     *
+     * @return void
+     */
+    public function testGetArgumentMissing()
+    {
+        $values = [];
+        $names = ['size', 'color'];
+        $args = new Arguments($values, [], $names);
+        $this->assertNull($args->getArgument('size'));
+        $this->assertNull($args->getArgument('color'));
+    }
+
+    /**
      * test getOptions()
      *
      * @return void
