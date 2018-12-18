@@ -137,6 +137,39 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
+     * Provider for invalid names.
+     *
+     * @return array
+     */
+    public function invalidNameProvider()
+    {
+        return [
+            // Empty
+            [''],
+            // Leading spaces
+            [' spaced'],
+            // Trailing spaces
+            ['spaced '],
+            // Too many words
+            ['one two three four'],
+        ];
+    }
+
+    /**
+     * test adding a command instance.
+     *
+     * @dataProvider invalidNameProvider
+     * @return void
+     */
+    public function testAddCommandInvalidName($name)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid command name');
+        $collection = new CommandCollection();
+        $collection->add($name, DemoCommand::class);
+    }
+
+    /**
      * Class names that are not shells should fail
      *
      */
