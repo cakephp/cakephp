@@ -184,7 +184,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return array List of object names.
+     * @return string[] List of object names.
      */
     public function loaded()
     {

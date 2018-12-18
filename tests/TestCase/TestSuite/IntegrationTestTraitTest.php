@@ -704,6 +704,18 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Tests assertCookieNotSet assertion
+     *
+     * @return void
+     */
+    public function testAssertCookieNotSet()
+    {
+        $this->cookie('test', 'value');
+        $this->get('/cookie_component_test/remove_cookie/test');
+        $this->assertCookieNotSet('test');
+    }
+
+    /**
      * Tests the failure message for assertCookieNotSet
      *
      * @return void

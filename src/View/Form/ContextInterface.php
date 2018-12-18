@@ -76,7 +76,7 @@ interface ContextInterface
     /**
      * Get the fieldnames of the top level object in this context.
      *
-     * @return array A list of the field names in the context.
+     * @return string[] A list of the field names in the context.
      */
     public function fieldNames();
 

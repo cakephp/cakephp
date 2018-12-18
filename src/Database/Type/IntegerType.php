@@ -52,6 +52,23 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
     }
 
     /**
+     * Checks if the value is not a numeric value
+     *
+     * @throws \InvalidArgumentException
+     * @param mixed $value Value to check
+     * @return void
+     */
+    protected function checkNumeric($value)
+    {
+        if (!is_numeric($value)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot convert value of type `%s` to integer',
+                getTypeName($value)
+            ));
+        }
+    }
+
+    /**
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
@@ -64,12 +81,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
             return null;
         }
 
-        if (!is_numeric($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to integer',
-                getTypeName($value)
-            ));
-        }
+        $this->checkNumeric($value);
 
         return (int)$value;
     }
@@ -102,12 +114,7 @@ class IntegerType extends Type implements TypeInterface, BatchCastingInterface
                 continue;
             }
 
-            if (!is_numeric($values[$field])) {
-                throw new InvalidArgumentException(sprintf(
-                    'Cannot convert value of type `%s` to integer',
-                    getTypeName($values[$field])
-                ));
-            }
+            $this->checkNumeric($values[$field]);
 
             $values[$field] = (int)$values[$field];
         }
