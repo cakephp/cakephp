@@ -81,7 +81,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build('/controller/action/1?one=1&two=2');
         $this->assertEquals('/controller/action/1?one=1&amp;two=2', $result);
 
-        $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', 'page' => '1" onclick="alert(\'XSS\');"']);
+        $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', '?' => ['page' => '1" onclick="alert(\'XSS\');"']]);
         $this->assertEquals('/posts?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
@@ -94,13 +94,14 @@ class UrlHelperTest extends TestCase
         $this->assertEquals('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index', 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
+            'controller' => 'posts', 'action' => 'index',
+            '?' => ['param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'],
         ]);
         $this->assertEquals('/posts?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
-            'controller' => 'posts', 'action' => 'index', 'page' => '1',
-            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple'],
+            'controller' => 'posts', 'action' => 'index',
+            '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple', 'page' => '1'],
         ]);
         $this->assertEquals('/posts?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
     }
@@ -143,10 +144,10 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->build([
             'controller' => 'posts',
             'action' => 'view',
-            'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             '?' => [
                 'k' => 'v',
                 '1' => '2',
+                'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             ],
         ], ['escape' => false]);
         $this->assertEquals('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
