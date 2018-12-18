@@ -64,10 +64,9 @@ class CommandCollection implements IteratorAggregate, Countable
                 "Cannot use '$class' for command '$name' it is not a subclass of Cake\Console\Shell or Cake\Console\Command."
             );
         }
-        if (!preg_match('/^[\p{L}\p{N}\-_:.]+(?:(?: [\p{L}\p{N}\-_:.]+){1,2})?$/ui', $name)) {
+        if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {
             throw new InvalidArgumentException(
-                "The command name `{$name}` is invalid. " .
-                'Names must use only letters/numbers + punctuation characters and be 3 words or fewer.'
+                "The command name `{$name}` is invalid. Names can only be a maximum of three words."
             );
         }
 

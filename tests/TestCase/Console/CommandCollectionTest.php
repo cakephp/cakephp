@@ -20,6 +20,7 @@ use Cake\Core\Plugin;
 use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use stdClass;
 use TestApp\Command\DemoCommand;
 
@@ -164,7 +165,7 @@ class CommandCollectionTest extends TestCase
     public function testAddCommandInvalidName($name)
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid command name');
+        $this->expectExceptionMessage("The command name `$name` is invalid.");
         $collection = new CommandCollection();
         $collection->add($name, DemoCommand::class);
     }
