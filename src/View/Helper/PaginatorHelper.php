@@ -536,10 +536,16 @@ class PaginatorHelper extends Helper
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 
-        if (!empty($paging['sort']) && !empty($options['?']['sort']) && strpos($options['?']['sort'], '.') === false) {
+        if (!empty($paging['sort'])
+            && !empty($options['?']['sort'])
+            && strpos($options['?']['sort'], '.') === false
+        ) {
             $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
         }
-        if (!empty($paging['sortDefault']) && !empty($options['?']['sort']) && strpos($options['?']['sort'], '.') === false) {
+        if (!empty($paging['sortDefault'])
+            && !empty($options['?']['sort'])
+            && strpos($options['?']['sort'], '.') === false
+        ) {
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
         }
 

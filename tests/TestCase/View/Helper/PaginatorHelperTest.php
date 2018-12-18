@@ -926,7 +926,7 @@ class PaginatorHelperTest extends TestCase
         $options = [
             'prefix' => 'members',
             'controller' => 'posts',
-            '?' => ['sort' => 'name', 'direction' => 'desc']
+            '?' => ['sort' => 'name', 'direction' => 'desc'],
         ];
         $result = $this->Paginator->generateUrl($options);
         $expected = '/members/posts/index?page=2&amp;sort=name&amp;direction=desc';
