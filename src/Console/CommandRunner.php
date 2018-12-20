@@ -156,7 +156,9 @@ class CommandRunner implements EventDispatcherInterface
         array_shift($argv);
 
         $io = $io ?: new ConsoleIo();
-        $name = $this->resolveName($commands, $io, array_shift($argv));
+
+        list($name, $argv) = $this->longestCommandName($commands, $argv);
+        $name = $this->resolveName($commands, $io, $name);
 
         $result = Shell::CODE_ERROR;
         $shell = $this->getShell($io, $commands, $name);
@@ -296,14 +298,41 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
+     * Build the longest command name that exists in the collection
+     *
+     * Build the longest command name that matches a
+     * defined command. This will traverse a maximum of 3 tokens.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection to check.
+     * @param array $argv The CLI arguments.
+     * @return array An array of the resolved name and modified argv.
+     */
+    protected function longestCommandName($commands, $argv)
+    {
+        for ($i = 3; $i > 1; $i--) {
+            $parts = array_slice($argv, 0, $i);
+            $name = implode(' ', $parts);
+            if ($commands->has($name)) {
+                return [$name, array_slice($argv, $i)];
+            }
+        }
+        $name = array_shift($argv);
+
+        return [$name, $argv];
+    }
+
+    /**
      * Resolve the command name into a name that exists in the collection.
      *
      * Apply backwards compatible inflections and aliases.
+     * Will step forward up to 3 tokens in $argv to generate
+     * a command name in the CommandCollection. More specific
+     * command names take precedence over less specific ones.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to check.
      * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
-     * @param string $name The name from the CLI args.
-     * @return string The resolved name.
+     * @param string $name The name
+     * @return string The resolved class name
      */
     protected function resolveName($commands, $io, $name)
     {
