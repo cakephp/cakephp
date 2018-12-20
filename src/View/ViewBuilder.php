@@ -187,7 +187,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets path for template files.
      *
-     * @param string $path Path for view files.
+     * @param string|null $path Path for view files.
      * @return $this
      */
     public function setTemplatePath($path)
@@ -200,7 +200,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets path for template files.
      *
-     * @return string
+     * @return string|null
      */
     public function getTemplatePath()
     {
@@ -227,7 +227,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets path for layout files.
      *
-     * @param string $path Path for layout files.
+     * @param string|null $path Path for layout files.
      * @return $this
      */
     public function setLayoutPath($path)
@@ -240,7 +240,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets path for layout files.
      *
-     * @return string
+     * @return string|null
      */
     public function getLayoutPath()
     {
@@ -461,7 +461,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Sets the name of the view file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
-     * @param string $name View file name to set.
+     * @param string|null $name View file name to set.
      * @return $this
      */
     public function setTemplate($name)
@@ -475,7 +475,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Gets the name of the view file to render. The name specified is the
      * filename in /src/Template/<SubFolder> without the .ctp extension.
      *
-     * @return string
+     * @return string|null
      */
     public function getTemplate()
     {
@@ -505,7 +505,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * The name specified is the filename of the layout in /src/Template/Layout
      * without the .ctp extension.
      *
-     * @param string $name Layout file name to set.
+     * @param string|null|false $name Layout file name to set.
      * @return $this
      */
     public function setLayout($name)
@@ -518,7 +518,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the name of the layout file to render the view inside of.
      *
-     * @return string
+     * @return string|null|false
      */
     public function getLayout()
     {
@@ -596,7 +596,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets the view name.
      *
-     * @param string $name The name of the view.
+     * @param string|null $name The name of the view.
      * @return $this
      */
     public function setName($name)
@@ -609,7 +609,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the view name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
