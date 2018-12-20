@@ -109,16 +109,14 @@
         <!-- CakePHP Specific -->
         <PossiblyUndefinedArrayOffset>
             <errorLevel type="suppress">
+                <file name="src/Database/Driver/Mysql.php" />
                 <file name="src/I18n/Parser/PoFileParser.php" />
+                <file name="src/Database/Schema/SqlserverSchema.php" />
+                <file name="src/Http/ResponseEmitter.php" />
+                <file name="src/View/Helper/PaginatorHelper.php" />
+                <file name="src/View/Widget/RadioWidget.php" />
             </errorLevel>
         </PossiblyUndefinedArrayOffset>
-
-        <ImplicitToStringCast>
-            <errorLevel type="suppress">
-                <file name="src/Http/Client/FormData.php" />
-                <file name="src/View/Cell.php" />
-            </errorLevel>
-        </ImplicitToStringCast>
 
         <UndefinedConstant errorLevel="suppress" />
 
@@ -139,23 +137,8 @@
         <EmptyArrayAccess>
             <errorLevel type="suppress">
                 <file name="src/Database/Dialect/SqlserverDialectTrait.php" />
-                <file name="src/ORM/Marshaller.php" />
-                <file name="src/Shell/Task/ExtractTask.php" />
-                <file name="src/View/Helper/HtmlHelper.php" />
             </errorLevel>
         </EmptyArrayAccess>
-
-        <InvalidArrayOffset>
-            <errorLevel type="suppress">
-                <file name="src/Auth/BaseAuthenticate.php" />
-                <file name="src/Core/StaticConfigTrait.php" />
-                <file name="src/Database/Schema/PostgresSchema.php" />
-                <file name="src/I18n/Parser/MoFileParser.php" />
-                <file name="src/I18n/Parser/PoFileParser.php" />
-                <file name="src/Routing/Middleware/AssetMiddleware.php"/>
-                <file name="src/View/Widget/RadioWidget.php" />
-            </errorLevel>
-        </InvalidArrayOffset>
 
         <LoopInvalidation>
             <errorLevel type="suppress">
