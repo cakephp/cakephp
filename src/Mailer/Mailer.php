@@ -166,7 +166,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @var string
      */
-    static public $name;
+    public static $name;
 
     /**
      * Email instance.
