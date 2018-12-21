@@ -106,16 +106,17 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             }
 
             list ($prefix, $name) = explode('.', $prefixedName, 2);
-            $prefix = Inflector::camelize($prefix);debug($names);
+            $prefix = Inflector::camelize($prefix);
+            debug($names);
 
             $shortestName = $this->getShortestName($names);
             if (strpos($shortestName, '.') !== false) {
                 list (, $shortestName) = explode('.', $shortestName, 2);
             }
-            
+
             $prefixed[$prefix][] = $shortestName;
         }
-        
+
         ksort($prefixed);
 
         foreach ($prefixed as $prefix => $names) {
@@ -143,7 +144,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
                 return $name;
             }
         }
-        
+
         return null;
     }
 
@@ -151,16 +152,16 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param string[] $names
      * @return string
      */
-    protected function getShortestName(array $names) 
+    protected function getShortestName(array $names)
     {
         if (count($names) <= 1) {
             return array_shift($names);
         }
-        
+
         usort($names, function ($a, $b) {
             return strlen($a) - strlen($b);
         });
-        
+
         return array_shift($names);
     }
 
