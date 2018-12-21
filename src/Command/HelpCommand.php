@@ -22,6 +22,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use SimpleXMLElement;
+use Cake\Utility\Inflector;
 
 /**
  * Print out command list
@@ -70,6 +71,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
 
             return static::CODE_SUCCESS;
         }
+
         $this->asText($io, $commands);
 
         return static::CODE_SUCCESS;
@@ -95,29 +97,71 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             $invert[$class][] = $name;
         }
 
-        foreach ($commands as $name => $class) {
-            if (is_object($class)) {
-                $class = get_class($class);
-            }
-            if (count($invert[$class]) == 1) {
-                $io->out('- ' . $name);
+        $prefixed = [];
+        foreach ($invert as $class => $names) {
+            $prefixedName = $this->findPrefixedName($names);
+            if (!$prefixedName) {
+                $prefixed['[app]'][] = $this->getShortestName($names);
+                continue;
             }
 
-            if (count($invert[$class]) > 1) {
-                // Sort by length so we can get the shortest name.
-                usort($invert[$class], function ($a, $b) {
-                    return strlen($a) - strlen($b);
-                });
-                $io->out('- ' . array_shift($invert[$class]));
+            list ($prefix, $name) = explode('.', $prefixedName, 2);
+            $prefix = Inflector::camelize($prefix);debug($names);
 
-                // Empty the list to prevent duplicates
-                $invert[$class] = [];
+            $shortestName = $this->getShortestName($names);
+            if (strpos($shortestName, '.') !== false) {
+                list (, $shortestName) = explode('.', $shortestName, 2);
+            }
+            
+            $prefixed[$prefix][] = $shortestName;
+        }
+        
+        ksort($prefixed);
+
+        foreach ($prefixed as $prefix => $names) {
+            $io->out($prefix . ':');
+            sort($names);
+            foreach ($names as $name) {
+                $io->out(' - ' . $name);
             }
         }
         $io->out('');
 
         $io->out('To run a command, type <info>`cake command_name [args|options]`</info>');
         $io->out('To get help on a specific command, type <info>`cake command_name --help`</info>', 2);
+    }
+
+    /**
+     * @param string[] $names
+     *
+     * @return string|null
+     */
+    protected function findPrefixedName(array $names)
+    {
+        foreach ($names as $name) {
+            if (strpos($name, '.') !== false) {
+                return $name;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * @param string[] $names
+     * @return string
+     */
+    protected function getShortestName(array $names) 
+    {
+        if (count($names) <= 1) {
+            return array_shift($names);
+        }
+        
+        usort($names, function ($a, $b) {
+            return strlen($a) - strlen($b);
+        });
+        
+        return array_shift($names);
     }
 
     /**
