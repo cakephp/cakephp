@@ -514,6 +514,59 @@ class IntegrationTestTraitTest extends IntegrationTestCase
     }
 
     /**
+     * Test that the uploaded files are passed correctly to the request
+     *
+     * @return void
+     */
+    public function testUploadedFiles()
+    {
+        $this->configRequest([
+            'files' => [
+                'file' => [
+                    'tmp_name' => __FILE__,
+                    'size' => 42,
+                    'error' => 0,
+                    'type' => 'text/plain',
+                    'name' => 'Uploaded file'
+                ],
+                'pictures' => [
+                    'name' => [
+                        ['file' => 'a-file.png'],
+                        ['file' => 'a-moose.png']
+                    ],
+                    'type' => [
+                        ['file' => 'image/png'],
+                        ['file' => 'image/jpg']
+                    ],
+                    'tmp_name' => [
+                        ['file' => __FILE__],
+                        ['file' => __FILE__]
+                    ],
+                    'error' => [
+                        ['file' => 0],
+                        ['file' => 0]
+                    ],
+                    'size' => [
+                        ['file' => 17188],
+                        ['file' => 2010]
+                    ],
+                ],
+                'upload' => new UploadedFile(__FILE__, 42, 0)
+            ]
+        ]);
+        $this->post('/request_action/uploaded_files');
+        $this->assertHeader('X-Middleware', 'true');
+        $data = json_decode($this->_response->getBody(), true);
+
+        $this->assertEquals([
+            'file' => 'Uploaded file',
+            'pictures.0.file' => 'a-file.png',
+            'pictures.1.file' => 'a-moose.png',
+            'upload' => null
+        ], $data);
+    }
+
+    /**
      * Test that the PSR7 requests receive encoded data.
      *
      * @return void
