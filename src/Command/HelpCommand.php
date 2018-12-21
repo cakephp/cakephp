@@ -134,7 +134,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     }
 
     /**
-     * @param string[] $names
+     * @param string[] $names Names
      *
      * @return string|null
      */
@@ -150,7 +150,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
     }
 
     /**
-     * @param string[] $names
+     * @param string[] $names Names
      * @return string
      */
     protected function getShortestName(array $names)
