@@ -101,7 +101,8 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         foreach ($invert as $class => $names) {
             $prefixedName = $this->findPrefixedName($names);
             if (!$prefixedName) {
-                $prefixed['[app]'][] = $this->getShortestName($names);
+                $prefix = preg_match('#^Cake\\\\(Command|Shell)\\\\#', $class) ? '[core]' : '[app]';
+                $prefixed[$prefix][] = $this->getShortestName($names);
                 continue;
             }
 
