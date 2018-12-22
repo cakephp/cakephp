@@ -483,16 +483,11 @@ class PaginatorHelper extends Helper
             $title = $title[$dir];
         }
 
-        if (!isset($url['?'])) {
-            $url['?'] = [];
-        }
-
-        $url['?'] += ['sort' => $key, 'direction' => $dir, 'page' => 1];
-        $url['order'] = null;
+        $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
 
         $vars = [
             'text' => $options['escape'] ? h($title) : $title,
-            'url' => $this->generateUrl($url, $options['model']),
+            'url' => $this->generateUrl($paging, $options['model'], $url),
         ];
 
         return $this->templater()->format($template, $vars);
@@ -507,21 +502,22 @@ class PaginatorHelper extends Helper
      *    escaped afterwards before being displayed.
      * - `fullBase`: If true, the full base URL will be prepended to the result
      *
-     * @param array $options Pagination/URL options array
+     * @param array $options Pagination options.
      * @param string|null $model Which model to paginate on
+     * @param string|array $url URL.
      * @param array $urlOptions Array of options
      * @return string By default, returns a full pagination URL string for use
      *   in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], ?string $model = null, array $urlOptions = []): string
+    public function generateUrl(array $options = [], ?string $model = null, $url = [], array $urlOptions = []): string
     {
         $urlOptions += [
             'escape' => true,
             'fullBase' => false,
         ];
 
-        return $this->Url->build($this->generateUrlParams($options, $model), $urlOptions);
+        return $this->Url->build($this->generateUrlParams($options, $model, $url), $urlOptions);
     }
 
     /**
@@ -531,80 +527,90 @@ class PaginatorHelper extends Helper
      * @param string|null $model Which model to paginate on
      * @return array An array of URL parameters
      */
-    public function generateUrlParams(array $options = [], ?string $model = null): array
+    public function generateUrlParams(array $options = [], ?string $model = null, $url): array
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 
         if (!empty($paging['sort'])
-            && !empty($options['?']['sort'])
-            && strpos($options['?']['sort'], '.') === false
+            && !empty($options['sort'])
+            && strpos($options['sort'], '.') === false
         ) {
             $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
         }
         if (!empty($paging['sortDefault'])
-            && !empty($options['?']['sort'])
-            && strpos($options['?']['sort'], '.') === false
+            && !empty($options['sort'])
+            && strpos($options['sort'], '.') === false
         ) {
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
         }
-
-        $url = [];
 
         if (!empty($this->_config['options']['url'])) {
             $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
             $url = Hash::merge($url, Hash::get($this->_config, $key, []));
         }
 
-        $url = array_filter($url, function ($value) {
-            return $value || is_numeric($value) || $value === false;
-        });
+        // $url = array_filter($url, function ($value) {
+        //     return $value || is_numeric($value) || $value === false;
+        // });
+
+        // if (!isset($url['?'])) {
+        //     $url['?'] = [];
+        // }
+        // $url['?'] += [
+        //     'page' => $paging['page'],
+        //     'limit' => $paging['limit'],
+        //     'sort' => $paging['sort'],
+        //     'direction' => $paging['direction'],
+        // ];
+
+        // $url['?'] = array_filter($url['?'], function ($value) {
+        //     return $value || is_numeric($value) || $value === false;
+        // });
+
+        // $url = Hash::merge($url, $options);
+
+        $options += array_intersect_key(
+            $paging,
+            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null]
+        );
+
+        if (!empty($options['page']) && $options['page'] === 1) {
+            $options['page'] = null;
+        }
+
+        // if (isset($paging['sortDefault'], $paging['directionDefault'], $url['?']['sort'], $url['?']['direction']) &&
+        //     $url['?']['sort'] === $paging['sortDefault'] &&
+        //     strtolower($url['?']['direction']) === strtolower($paging['directionDefault'])
+        // ) {
+        //     $queryString['sort'] = $queryString['direction'] = null;
+        // }
+
+        // if (!empty($paging['scope'])) {
+        //     $scope = $paging['scope'];
+        //     $currentParams = $this->_config['options']['url'];
+
+        //     if (isset($url['#'])) {
+        //         $currentParams['#'] = $url['#'];
+        //         unset($url['#']);
+        //     }
+
+        //     // Merge existing query parameters in the scope.
+        //     if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
+        //         $url['?'] += $currentParams['?'][$scope];
+        //         unset($currentParams['?'][$scope]);
+        //     }
+        //     $url = ['?' => [$scope => $url['?']]] + $currentParams;
+        //     if (empty($url[$scope]['?']['page'])) {
+        //         unset($url[$scope]['?']['page']);
+        //     }
+        // }
 
         if (!isset($url['?'])) {
             $url['?'] = [];
         }
-        $url['?'] += [
-            'page' => $paging['page'],
-            'limit' => $paging['limit'],
-            'sort' => $paging['sort'],
-            'direction' => $paging['direction'],
-        ];
 
-        $url['?'] = array_filter($url['?'], function ($value) {
-            return $value || is_numeric($value) || $value === false;
-        });
-
-        $url = Hash::merge($url, $options);
-
-        if (!empty($url['?']['page']) && $url['?']['page'] === 1) {
-            $url['?']['page'] = null;
-        }
-        if (isset($paging['sortDefault'], $paging['directionDefault'], $url['?']['sort'], $url['?']['direction']) &&
-            $url['?']['sort'] === $paging['sortDefault'] &&
-            strtolower($url['?']['direction']) === strtolower($paging['directionDefault'])
-        ) {
-            $url['?']['sort'] = $url['?']['direction'] = null;
-        }
-
-        if (!empty($paging['scope'])) {
-            $scope = $paging['scope'];
-            $currentParams = $this->_config['options']['url'];
-
-            if (isset($url['#'])) {
-                $currentParams['#'] = $url['#'];
-                unset($url['#']);
-            }
-
-            // Merge existing query parameters in the scope.
-            if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
-                $url['?'] += $currentParams['?'][$scope];
-                unset($currentParams['?'][$scope]);
-            }
-            $url = ['?' => [$scope => $url['?']]] + $currentParams;
-            if (empty($url[$scope]['?']['page'])) {
-                unset($url[$scope]['?']['page']);
-            }
-        }
+        $url['?'] += $options;
 
         return $url;
     }
