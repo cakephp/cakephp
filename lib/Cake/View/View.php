@@ -807,7 +807,7 @@ class View extends CakeObject {
  * a layout or other element. Analogous to Controller::set().
  *
  * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
+ * @param mixed $two Value in case $one is a string (which then works as the key).
  *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  */
