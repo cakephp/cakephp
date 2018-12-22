@@ -30,7 +30,7 @@ class ApcuEngineTest extends TestCase
      *
      * @var bool
      */
-    static protected $useRequestTime = null;
+    protected static $useRequestTime = null;
 
     /**
      * Ensure use_request_time is turned off
