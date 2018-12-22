@@ -573,6 +573,8 @@ class ConsoleIoTest extends TestCase
      */
     public function testCreateFileSuccess()
     {
+        $this->err->expects($this->never())
+            ->method('write');
         $path = TMP . 'shell_test';
         mkdir($path);
 
@@ -583,6 +585,23 @@ class ConsoleIoTest extends TestCase
         $this->assertTrue($result);
         $this->assertFileExists($file);
         $this->assertStringEqualsFile($file, $contents);
+    }
+
+    public function testCreateFileDirectoryCreation()
+    {
+        $this->err->expects($this->never())
+            ->method('write');
+
+        $directory = TMP . 'shell_test';
+        $this->assertFileNotExists($directory, 'Directory should not exist before createFile');
+
+        $path = $directory . DS . 'create.txt';
+        $contents = 'some content';
+        $result = $this->io->createFile($path, $contents);
+
+        $this->assertTrue($result, 'File should create');
+        $this->assertFileExists($path);
+        $this->assertStringEqualsFile($path, $contents);
     }
 
     /**

@@ -28,6 +28,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Shell\SampleShell;
 
@@ -323,6 +324,48 @@ class CommandRunnerTest extends TestCase
 
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', 'ex'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Demo Command!', $messages);
+    }
+
+    /**
+     * Test running a valid command with spaces in the name
+     *
+     * @return void
+     */
+    public function testRunValidCommandSubcommandName()
+    {
+        $app = $this->makeAppWithCommands([
+            'tool build' => DemoCommand::class,
+            'tool' => AbortCommand::class
+        ]);
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'tool', 'build'], $this->getMockIo($output));
+        $this->assertSame(Shell::CODE_SUCCESS, $result);
+
+        $messages = implode("\n", $output->messages());
+        $this->assertContains('Demo Command!', $messages);
+    }
+
+    /**
+     * Test running a valid command with spaces in the name
+     *
+     * @return void
+     */
+    public function testRunValidCommandNestedName()
+    {
+        $app = $this->makeAppWithCommands([
+            'tool build assets' => DemoCommand::class,
+            'tool' => AbortCommand::class
+        ]);
+        $output = new ConsoleOutput();
+
+        $runner = new CommandRunner($app, 'cake');
+        $result = $runner->run(['cake', 'tool', 'build', 'assets'], $this->getMockIo($output));
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());

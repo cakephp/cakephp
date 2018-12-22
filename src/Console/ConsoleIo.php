@@ -556,6 +556,12 @@ class ConsoleIo
         }
 
         try {
+            // Create the directory using the current user permissions.
+            $directory = dirname($path);
+            if (!file_exists($directory)) {
+                mkdir($directory, 0777 ^ umask(), true);
+            }
+
             $file = new SplFileObject($path, 'w');
         } catch (RuntimeException $e) {
             $this->error("Could not write to `{$path}`. Permission denied.", 2);

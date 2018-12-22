@@ -118,7 +118,7 @@ class Arguments
     public function getArgument(string $name)
     {
         $offset = array_search($name, $this->argNames, true);
-        if ($offset === false) {
+        if ($offset === false || !isset($this->args[$offset])) {
             return null;
         }
 

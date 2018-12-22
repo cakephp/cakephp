@@ -198,22 +198,22 @@ trait IntegrationTestTrait
     /**
      * Auto-detect if the HTTP middleware stack should be used.
      *
+     * @before
      * @return void
      */
-    public function setUp()
+    public function setupServer()
     {
-        parent::setUp();
         $namespace = Configure::read('App.namespace');
     }
 
     /**
      * Clears the state used for requests.
      *
+     * @after
      * @return void
      */
-    public function tearDown()
+    public function cleanup()
     {
-        parent::tearDown();
         $this->_request = [];
         $this->_session = [];
         $this->_cookie = [];
