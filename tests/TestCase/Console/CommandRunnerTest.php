@@ -339,7 +339,7 @@ class CommandRunnerTest extends TestCase
     {
         $app = $this->makeAppWithCommands([
             'tool build' => DemoCommand::class,
-            'tool' => AbortCommand::class
+            'tool' => AbortCommand::class,
         ]);
         $output = new ConsoleOutput();
 
@@ -360,7 +360,7 @@ class CommandRunnerTest extends TestCase
     {
         $app = $this->makeAppWithCommands([
             'tool build assets' => DemoCommand::class,
-            'tool' => AbortCommand::class
+            'tool' => AbortCommand::class,
         ]);
         $output = new ConsoleOutput();
 
