@@ -479,8 +479,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testSortLinksMultiplePagination()
     {
-        $this->markTestSkipped('Scoped paging is not working currently.');
-
         $request = new ServerRequest([
             'url' => '/accounts/',
             'params' => [
@@ -991,8 +989,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testGenerateUrlMultiplePagination()
     {
-        $this->markTestSkipped('Scoped paging is not working currently.');
-
         $request = new ServerRequest([
             'url' => '/posts/index/',
             'params' => [
@@ -1041,11 +1037,11 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Paginator->generateUrl(['?' => ['sort' => 'name']]);
-        $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name';
+        $result = $this->Paginator->generateUrl(['sort' => 'name']);
+        $expected = '/posts/index?article%5Bsort%5D=name&amp;article%5Bpage%5D=3';
         $this->assertEquals($expected, $result);
 
-        $result = $this->Paginator->generateUrl(['#' => 'foo']);
+        $result = $this->Paginator->generateUrl([], null, ['#' => 'foo']);
         $expected = '/posts/index?article%5Bpage%5D=3#foo';
         $this->assertEquals($expected, $result);
     }
@@ -1057,8 +1053,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testGenerateUrlMultiplePaginationQueryStringData()
     {
-        $this->markTestSkipped('Scoped paging is not working currently.');
-
         $request = new ServerRequest([
             'url' => '/posts/index/',
             'params' => [
@@ -1080,8 +1074,8 @@ class PaginatorHelperTest extends TestCase
         $paginator = new PaginatorHelper($this->View);
         $paginator->options(['model' => 'Article']);
 
-        $result = $paginator->generateUrl(['?' => ['sort' => 'name']]);
-        $expected = '/posts/index?article%5Bpage%5D=3&amp;article%5Bsort%5D=name&amp;article%5Bpuppy%5D=no';
+        $result = $paginator->generateUrl(['sort' => 'name']);
+        $expected = '/posts/index?article%5Bsort%5D=name&amp;article%5Bpage%5D=3&amp;article%5Bpuppy%5D=no';
         $this->assertEquals($expected, $result);
 
         $result = $paginator->generateUrl([]);

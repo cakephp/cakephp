@@ -542,31 +542,6 @@ class PaginatorHelper extends Helper
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
         }
 
-        if (!empty($this->_config['options']['url'])) {
-            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
-            $url = Hash::merge($url, Hash::get($this->_config, $key, []));
-        }
-
-        // $url = array_filter($url, function ($value) {
-        //     return $value || is_numeric($value) || $value === false;
-        // });
-
-        // if (!isset($url['?'])) {
-        //     $url['?'] = [];
-        // }
-        // $url['?'] += [
-        //     'page' => $paging['page'],
-        //     'limit' => $paging['limit'],
-        //     'sort' => $paging['sort'],
-        //     'direction' => $paging['direction'],
-        // ];
-
-        // $url['?'] = array_filter($url['?'], function ($value) {
-        //     return $value || is_numeric($value) || $value === false;
-        // });
-
-        // $url = Hash::merge($url, $options);
-
         $options += array_intersect_key(
             $paging,
             ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null]
@@ -583,25 +558,20 @@ class PaginatorHelper extends Helper
             $options['sort'] = $options['direction'] = null;
         }
 
-        // if (!empty($paging['scope'])) {
-        //     $scope = $paging['scope'];
-        //     $currentParams = $this->_config['options']['url'];
+        if (!empty($paging['scope'])) {
+            $scope = $paging['scope'];
+            $currentParams = $this->_config['options']['url'];
 
-        //     if (isset($url['#'])) {
-        //         $currentParams['#'] = $url['#'];
-        //         unset($url['#']);
-        //     }
+            if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
+                $options += $currentParams['?'][$scope];
+            }
+            $options = [$scope => $options];
+        }
 
-        //     // Merge existing query parameters in the scope.
-        //     if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
-        //         $url['?'] += $currentParams['?'][$scope];
-        //         unset($currentParams['?'][$scope]);
-        //     }
-        //     $url = ['?' => [$scope => $url['?']]] + $currentParams;
-        //     if (empty($url[$scope]['?']['page'])) {
-        //         unset($url[$scope]['?']['page']);
-        //     }
-        // }
+        if (!empty($this->_config['options']['url'])) {
+            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
+            $url = Hash::merge($url, Hash::get($this->_config, $key, []));
+        }
 
         if (!isset($url['?'])) {
             $url['?'] = [];
