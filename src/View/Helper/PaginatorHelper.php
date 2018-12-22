@@ -510,8 +510,12 @@ class PaginatorHelper extends Helper
      *   in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], ?string $model = null, array $url = [], array $urlOptions = []): string
-    {
+    public function generateUrl(
+        array $options = [],
+        ?string $model = null,
+        array $url = [],
+        array $urlOptions = []
+    ): string {
         $urlOptions += [
             'escape' => true,
             'fullBase' => false,
