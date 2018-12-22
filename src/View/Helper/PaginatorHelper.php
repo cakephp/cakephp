@@ -576,12 +576,12 @@ class PaginatorHelper extends Helper
             $options['page'] = null;
         }
 
-        // if (isset($paging['sortDefault'], $paging['directionDefault'], $url['?']['sort'], $url['?']['direction']) &&
-        //     $url['?']['sort'] === $paging['sortDefault'] &&
-        //     strtolower($url['?']['direction']) === strtolower($paging['directionDefault'])
-        // ) {
-        //     $queryString['sort'] = $queryString['direction'] = null;
-        // }
+        if (isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction']) &&
+            $options['sort'] === $paging['sortDefault'] &&
+            strtolower($options['direction']) === strtolower($paging['directionDefault'])
+        ) {
+            $options['sort'] = $options['direction'] = null;
+        }
 
         // if (!empty($paging['scope'])) {
         //     $scope = $paging['scope'];

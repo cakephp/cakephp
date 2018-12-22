@@ -1199,8 +1199,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testDefaultSortRemovedFromUrl()
     {
-        $this->markTestSkipped('Removing default sort from URL is not working.');
-
         $request = new ServerRequest([
             'url' => '/articles/',
             'params' => [
@@ -1235,8 +1233,6 @@ class PaginatorHelperTest extends TestCase
      */
     public function testDefaultSortRemovedFromUrlWithAliases()
     {
-        $this->markTestSkipped('Removing default sort from URL is not working.');
-
         $request = new ServerRequest([
             'params' => ['controller' => 'articles', 'action' => 'index', 'plugin' => null],
             'url' => '/articles?sort=title&direction=asc',
