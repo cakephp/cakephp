@@ -108,7 +108,6 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
 
             list ($prefix, $name) = explode('.', $prefixedName, 2);
             $prefix = Inflector::camelize($prefix);
-            debug($names);
 
             $shortestName = $this->getShortestName($names);
             if (strpos($shortestName, '.') !== false) {
