@@ -501,13 +501,13 @@ class PaginatorHelper extends Helper
      *
      * @param array $options Pagination options.
      * @param string|null $model Which model to paginate on
-     * @param string|array $url URL.
+     * @param array $url URL.
      * @param array $urlOptions Array of options
      * @return string By default, returns a full pagination URL string for use
      *   in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], ?string $model = null, $url = [], array $urlOptions = []): string
+    public function generateUrl(array $options = [], ?string $model = null, array $url = [], array $urlOptions = []): string
     {
         $urlOptions += [
             'escape' => true,
@@ -522,10 +522,10 @@ class PaginatorHelper extends Helper
      *
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
-     * @param string|array $url URL.
+     * @param array $url URL.
      * @return array An array of URL parameters
      */
-    public function generateUrlParams(array $options = [], ?string $model = null, $url = []): array
+    public function generateUrlParams(array $options = [], ?string $model = null, array $url = []): array
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
