@@ -522,9 +522,10 @@ class PaginatorHelper extends Helper
      *
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
+     * @param string|array $url URL.
      * @return array An array of URL parameters
      */
-    public function generateUrlParams(array $options = [], ?string $model = null, $url): array
+    public function generateUrlParams(array $options = [], ?string $model = null, $url = []): array
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
