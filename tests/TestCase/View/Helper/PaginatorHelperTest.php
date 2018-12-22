@@ -1773,6 +1773,55 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Test for URLs with paging params as route placeholders instead of query string params.
+     *
+     * @return void
+     */
+    public function testRoutePlaceholder()
+    {
+        Router::reload();
+        Router::connect('/:controller/:action/:page');
+
+        $this->View->setRequest($this->View->getRequest()->withParam('paging', [
+            'Client' => [
+                'page' => 8,
+                'current' => 3,
+                'count' => 30,
+                'prevPage' => false,
+                'nextPage' => 2,
+                'pageCount' => 15,
+            ],
+        ]));
+
+        $this->Paginator->options(['routePlaceholders' => ['page']]);
+
+        $result = $this->Paginator->numbers();
+        $expected = [
+            ['li' => []], ['a' => ['href' => '/index/4']], '4', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/5']], '5', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/6']], '6', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/7']], '7', '/a', '/li',
+            ['li' => ['class' => 'active']], '<a href=""', '8', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/9']], '9', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/10']], '10', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/11']], '11', '/a', '/li',
+            ['li' => []], ['a' => ['href' => '/index/12']], '12', '/a', '/li',
+        ];
+        $this->assertHtml($expected, $result);
+
+        Router::reload();
+        Router::connect('/:controller/:action/:sort/:direction');
+
+        $this->Paginator->options(['routePlaceholders' => ['sort', 'direction']]);
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/index/title/asc'],
+            'Title',
+            '/a',
+        ];
+    }
+
+    /**
      * testNumbersPages method
      *
      * @return void

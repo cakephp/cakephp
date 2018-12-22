@@ -58,6 +58,9 @@ class PaginatorHelper extends Helper
      * - `url['?']['page']` Page number to use in links.
      * - `model` The name of the model.
      * - `escape` Defines if the title field for the link should be escaped (default: true).
+     * - `routePlaceholders` An array specifying which paging params should be
+     *   use as route placeholder instead of query string param. The array
+     *   can have values `'sort'`, `'direction'`, `'page'`.
      *
      * Templates: the templates used by this class
      *
@@ -578,7 +581,13 @@ class PaginatorHelper extends Helper
             $url['?'] = [];
         }
 
-        $url['?'] += $options;
+        if (!empty($this->_config['options']['routePlaceholders'])) {
+            $placeholders = array_flip($this->_config['options']['routePlaceholders']);
+            $url += array_intersect_key($options, $placeholders);
+            $url['?'] += array_diff_key($options, $placeholders);
+        } else {
+            $url['?'] += $options;
+        }
 
         return $url;
     }
