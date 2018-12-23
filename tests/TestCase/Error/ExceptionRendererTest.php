@@ -196,7 +196,9 @@ class ExceptionRendererTest extends TestCase
 
         $exception = new NotFoundException('Page not found');
         $request = new ServerRequest();
-        $request = $request->withParam('prefix', 'admin');
+        $request = $request
+            ->withParam('controller', 'Articles')
+            ->withParam('prefix', 'admin');
 
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception, $request);
 
@@ -903,6 +905,38 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertContains('Internal Error', (string)$result->getBody());
         $this->assertEquals(500, $result->getStatusCode());
+    }
+
+    /**
+     * Test that router request parameters are applied when the passed
+     * request has no params.
+     *
+     * @return void
+     */
+    public function testRenderInheritRoutingParams()
+    {
+        $routerRequest = new ServerRequest([
+            'params' => [
+                'controller' => 'Articles',
+                'action' => 'index',
+                'plugin' => null,
+                'pass' => [],
+                '_ext' => 'json',
+            ]
+        ]);
+        // Simulate a request having routing applied and stored in router
+        Router::pushRequest($routerRequest);
+
+        $exceptionRenderer = new ExceptionRenderer(new Exception('Terrible'), new ServerRequest());
+        $exceptionRenderer->render();
+        $properties = $exceptionRenderer->__debugInfo();
+
+        foreach (['controller', 'action', '_ext'] as $key) {
+            $this->assertSame(
+                $routerRequest->getParam($key),
+                $properties['controller']->request->getParam($key)
+            );
+        }
     }
 
     /**
