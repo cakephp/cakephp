@@ -59,7 +59,7 @@ class PaginatorHelper extends Helper
      * - `model` The name of the model.
      * - `escape` Defines if the title field for the link should be escaped (default: true).
      * - `routePlaceholders` An array specifying which paging params should be
-     *   use as route placeholder instead of query string param. The array
+     *   passed as route placeholders instead of query string parameters. The array
      *   can have values `'sort'`, `'direction'`, `'page'`.
      *
      * Templates: the templates used by this class
