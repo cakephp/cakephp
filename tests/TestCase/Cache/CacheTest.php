@@ -67,11 +67,11 @@ class CacheTest extends TestCase
     }
 
     /**
-     * tests Cache::engine() fallback
+     * tests Cache::pool() fallback
      *
      * @return void
      */
-    public function testCacheEngineFallback()
+    public function testCachePoolFallback()
     {
         $filename = tempnam(CACHE, 'tmp_');
 
@@ -87,7 +87,7 @@ class CacheTest extends TestCase
             'prefix' => 'test_',
         ]);
 
-        $engine = Cache::engine('tests');
+        $engine = Cache::pool('tests');
         $path = $engine->getConfig('path');
         $this->assertSame(CACHE, $path);
 
@@ -97,11 +97,11 @@ class CacheTest extends TestCase
     }
 
     /**
-     * tests you can disable Cache::engine() fallback
+     * tests you can disable Cache::pool() fallback
      *
      * @return void
      */
-    public function testCacheEngineFallbackDisabled()
+    public function testCachePoolFallbackDisabled()
     {
         $this->expectException(Error::class);
 
@@ -114,7 +114,7 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $engine = Cache::engine('tests');
+        $engine = Cache::pool('tests');
     }
 
     /**
@@ -135,7 +135,7 @@ class CacheTest extends TestCase
 
         $e = null;
         try {
-            Cache::engine('tests');
+            Cache::pool('tests');
         } catch (InvalidArgumentException $e) {
         }
 
@@ -148,7 +148,7 @@ class CacheTest extends TestCase
     }
 
     /**
-     * tests Cache::engine() fallback when using groups
+     * tests Cache::pool() fallback when using groups
      *
      * @return void
      */
@@ -250,7 +250,7 @@ class CacheTest extends TestCase
         $this->_configCache();
         Cache::disable();
 
-        $result = Cache::engine('tests');
+        $result = Cache::pool('tests');
         $this->assertInstanceOf(NullEngine::class, $result);
     }
 
@@ -267,7 +267,7 @@ class CacheTest extends TestCase
         Cache::setConfig('tests', [
             'className' => '\StdClass',
         ]);
-        $result = Cache::engine('tests');
+        $result = Cache::pool('tests');
         $this->assertInstanceOf(NullEngine::class, $result);
     }
 
@@ -286,7 +286,7 @@ class CacheTest extends TestCase
         Cache::setConfig('tests', [
             'engine' => $mock,
         ]);
-        $result = Cache::engine('tests');
+        $result = Cache::pool('tests');
         $this->assertInstanceOf(NullEngine::class, $result);
     }
 
@@ -302,12 +302,12 @@ class CacheTest extends TestCase
 
         $config = ['engine' => 'TestAppCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         Cache::setConfig('libEngine', $config);
-        $engine = Cache::engine('libEngine');
+        $engine = Cache::pool('libEngine');
         $this->assertInstanceOf('TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
         $config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => CACHE, 'prefix' => 'cake_test_'];
         $result = Cache::setConfig('pluginLibEngine', $config);
-        $engine = Cache::engine('pluginLibEngine');
+        $engine = Cache::pool('pluginLibEngine');
         $this->assertInstanceOf('TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
 
         Cache::drop('libEngine');
@@ -404,7 +404,7 @@ class CacheTest extends TestCase
         $this->assertNotContains('test', Cache::configured(), 'test config should not exist.');
         Cache::setConfig('tests', $config);
 
-        $engine = Cache::engine('tests');
+        $engine = Cache::pool('tests');
         $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
         $this->assertContains('tests', Cache::configured());
     }
@@ -419,7 +419,7 @@ class CacheTest extends TestCase
         $this->expectException(\BadMethodCallException::class);
         $config = ['engine' => 'Imaginary'];
         Cache::setConfig('test', $config);
-        Cache::engine('test');
+        Cache::pool('test');
     }
 
     /**
@@ -436,7 +436,7 @@ class CacheTest extends TestCase
         Cache::setConfig('test', [
             'engine' => '\RubbishEngine',
         ]);
-        Cache::engine('tests');
+        Cache::pool('tests');
     }
 
     /**
@@ -483,7 +483,7 @@ class CacheTest extends TestCase
             'prefix' => 'cache_value_',
         ]);
 
-        $engine = Cache::engine('cache.dotted');
+        $engine = Cache::pool('cache.dotted');
         $this->assertContains('cache.dotted', Cache::configured());
         $this->assertNotContains('dotted', Cache::configured());
         $this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
@@ -605,7 +605,7 @@ class CacheTest extends TestCase
         ]);
         $this->assertInstanceOf(
             'TestApp\Cache\Engine\TestAppCacheEngine',
-            Cache::engine('unconfigTest')
+            Cache::pool('unconfigTest')
         );
         $this->assertTrue(Cache::drop('unconfigTest'));
     }

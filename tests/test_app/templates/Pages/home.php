@@ -50,7 +50,7 @@ endif;
 
 <p>
 <?php
-$engine = Cache::engine('_cake_model_');
+$engine = Cache::pool('_cake_model_');
 $settings = $engine ? $engine->config() : false;
 if (!empty($settings)): ?>
     <span class="notice success">The <em><?= $settings['engine'] ?>Engine</em> is being used for core caching. To change the config edit APP/Config/cache.php</span>

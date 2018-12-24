@@ -12,6 +12,7 @@
         <ignoreFiles>
             <directory name="vendor" />
             <directory name="src/TestSuite" />
+            <directory name="src/Filesystem"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -19,13 +20,6 @@
         <LessSpecificReturnType errorLevel="info" />
 
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
-
-        <DeprecatedMethod errorLevel="info" />
-        <DeprecatedProperty errorLevel="info" />
-        <DeprecatedClass errorLevel="info" />
-        <DeprecatedConstant errorLevel="info" />
-        <DeprecatedInterface errorLevel="info" />
-        <DeprecatedTrait errorLevel="info" />
 
         <MissingClosureReturnType errorLevel="info" />
         <MissingReturnType errorLevel="info" />
@@ -107,6 +101,14 @@
         <InvalidPropertyAssignmentValue errorLevel="info" />
 
         <!-- CakePHP Specific -->
+        <DeprecatedClass>
+            <errorLevel type="suppress">
+                <file name="src/Console/Shell.php" />
+                <file name="src/Console/ShellDispatcher.php" />
+                <directory name="src/Shell" />
+            </errorLevel>
+        </DeprecatedClass>
+
         <PossiblyUndefinedArrayOffset>
             <errorLevel type="suppress">
                 <file name="src/Database/Driver/Mysql.php" />
@@ -143,7 +145,6 @@
         <LoopInvalidation>
             <errorLevel type="suppress">
                 <file name="src/View/Form/EntityContext.php" />
-                <file name="src/Filesystem/Folder.php" />
                 <file name="src/Core/Configure/Engine/IniConfig.php" />
             </errorLevel>
         </LoopInvalidation>
