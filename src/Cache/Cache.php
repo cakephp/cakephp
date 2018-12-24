@@ -191,6 +191,18 @@ class Cache
     }
 
     /**
+     * Get a cache engine object for the named cache config.
+     *
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\CacheEngine
+     * @deprecated 3.7.0 Use Cache::pool() instead. This method will be removed in 5.0.
+     */
+    public static function engine(string $config)
+    {
+        return static::pool($config);
+    }
+
+    /**
      * Get a SimpleCacheEngine object for the named cache pool.
      *
      * @param string $config The name of the configured cache backend.
