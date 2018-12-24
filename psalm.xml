@@ -98,7 +98,13 @@
 
         <!-- level 7 issues - even worse -->
         <InvalidArgument errorLevel="info" />
-        <InvalidPropertyAssignmentValue errorLevel="info" />
+
+        <InvalidPropertyAssignmentValue>
+            <errorLevel type="suppress">
+                <file name="src/Console/ConsoleInputSubcommand.php" />
+                <file name="src/I18n/DateFormatTrait.php" />
+            </errorLevel>
+        </InvalidPropertyAssignmentValue>
 
         <!-- CakePHP Specific -->
         <DeprecatedClass>
