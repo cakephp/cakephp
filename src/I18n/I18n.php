@@ -77,7 +77,7 @@ class I18n
         );
 
         if (class_exists('Cake\Cache\Cache')) {
-            static::$_collection->setCacher(Cache::engine('_cake_core_'));
+            static::$_collection->setCacher(Cache::pool('_cake_core_'));
         }
 
         return static::$_collection;
