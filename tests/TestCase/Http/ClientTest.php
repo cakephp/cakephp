@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Client;
+use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
@@ -802,4 +803,48 @@ class ClientTest extends TestCase
         $this->assertTrue($cookies->has('redirect1'));
         $this->assertTrue($cookies->has('redirect2'));
     }
+
+    /**
+     * testSendRequest
+     *
+     * @return void
+     */
+    public function testSendRequest()
+    {
+        $response = new Response();
+
+        $headers = [
+            'User-Agent' => 'Cake',
+            'Connection' => 'close',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+            ->setMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertInstanceOf('Zend\Diactoros\Request', $request);
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
+                $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
+
+                return true;
+            }))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client(['adapter' => $mock]);
+        $request = new \Zend\Diactoros\Request(
+            'http://cakephp.org/test.html',
+            Request::METHOD_GET,
+            'php://temp',
+            $headers
+        );
+        $result = $http->sendRequest($request);
+
+        $this->assertSame($result, $response);
+    }
+
 }

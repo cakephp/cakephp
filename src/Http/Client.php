@@ -26,6 +26,9 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Uri;
 
 /**
@@ -98,7 +101,7 @@ use Zend\Diactoros\Uri;
  *
  * @mixin \Cake\Core\InstanceConfigTrait
  */
-class Client
+class Client implements ClientInterface
 {
     use InstanceConfigTrait;
 
@@ -397,16 +400,28 @@ class Client
     }
 
     /**
+     * Sends a PSR-7 request and returns a PSR-7 response.
+     *
+     * @param \Psr\Http\Message\RequestInterface $request Request instance.
+     * @return \Psr\Http\Message\ResponseInterface Response instance.
+     * @throws \Psr\Http\Client\ClientExceptionInterface If an error happens while processing the request.
+     */
+    public function sendRequest(RequestInterface $request): ResponseInterface
+    {
+        return $response = $this->send($request, $this->_config);
+    }
+
+    /**
      * Send a request.
      *
      * Used internally by other methods, but can also be used to send
      * handcrafted Request objects.
      *
-     * @param \Cake\Http\Client\Request $request The request to send.
+     * @param \Psr\Http\Message\RequestInterface $request The request to send.
      * @param array $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
-    public function send(Request $request, array $options = []): Response
+    public function send(RequestInterface $request, array $options = [])
     {
         $redirects = 0;
         if (isset($options['redirect'])) {
@@ -440,14 +455,13 @@ class Client
     /**
      * Send a request without redirection.
      *
-     * @param \Cake\Http\Client\Request $request The request to send.
+     * @param \Psr\Http\Message\RequestInterface $request The request to send.
      * @param array $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
-    protected function _sendRequest(Request $request, array $options): Response
+    protected function _sendRequest(RequestInterface $request, array $options)
     {
         $responses = $this->_adapter->send($request, $options);
-        $url = $request->getUri();
         foreach ($responses as $response) {
             $this->_cookies = $this->_cookies->addFromResponse($response, $request);
         }

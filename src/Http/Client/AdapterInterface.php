@@ -14,14 +14,16 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client;
 
+use Psr\Http\Message\RequestInterface;
+
 interface AdapterInterface
 {
     /**
      * Send a request and get a response back.
      *
-     * @param \Cake\Http\Client\Request $request The request object to send.
+     * @param \Psr\Http\Message\RequestInterface $request The request object to send.
      * @param array $options Array of options for the stream.
      * @return \Cake\Http\Client\Response[] Array of populated Response objects
      */
-    public function send(Request $request, array $options): array;
+    public function send(RequestInterface $request, array $options): array;
 }

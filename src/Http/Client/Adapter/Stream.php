@@ -16,10 +16,10 @@ namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
 use Cake\Http\Client\AdapterInterface;
-use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Implements sending Cake\Http\Client\Request
@@ -67,7 +67,7 @@ class Stream implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function send(Request $request, array $options): array
+    public function send(RequestInterface $request, array $options): array
     {
         $this->_stream = null;
         $this->_context = null;
@@ -112,11 +112,11 @@ class Stream implements AdapterInterface
     /**
      * Build the stream context out of the request object.
      *
-     * @param \Cake\Http\Client\Request $request The request to build context from.
+     * @param \Psr\Http\Message\RequestInterface $request The request to build context from.
      * @param array $options Additional request options.
      * @return void
      */
-    protected function _buildContext(Request $request, array $options): void
+    protected function _buildContext(RequestInterface $request, array $options): void
     {
         $this->_buildContent($request, $options);
         $this->_buildHeaders($request, $options);
@@ -138,11 +138,11 @@ class Stream implements AdapterInterface
      *
      * Creates cookies & headers.
      *
-     * @param \Cake\Http\Client\Request $request The request being sent.
+     * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildHeaders(Request $request, array $options): void
+    protected function _buildHeaders(RequestInterface $request, array $options): void
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $values) {
@@ -157,11 +157,11 @@ class Stream implements AdapterInterface
      * If the $request->body() is a string, it will be used as is.
      * Array data will be processed with Cake\Http\Client\FormData
      *
-     * @param \Cake\Http\Client\Request $request The request being sent.
+     * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildContent(Request $request, array $options): void
+    protected function _buildContent(RequestInterface $request, array $options): void
     {
         $body = $request->getBody();
         if (empty($body)) {
@@ -176,11 +176,11 @@ class Stream implements AdapterInterface
     /**
      * Build miscellaneous options for the request.
      *
-     * @param \Cake\Http\Client\Request $request The request being sent.
+     * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildOptions(Request $request, array $options): void
+    protected function _buildOptions(RequestInterface $request, array $options): void
     {
         $this->_contextOptions['method'] = $request->getMethod();
         $this->_contextOptions['protocol_version'] = $request->getProtocolVersion();
@@ -201,11 +201,11 @@ class Stream implements AdapterInterface
     /**
      * Build SSL options for the request.
      *
-     * @param \Cake\Http\Client\Request $request The request being sent.
+     * @param \Psr\Http\Message\RequestInterface $request The request being sent.
      * @param array $options Array of options to use.
      * @return void
      */
-    protected function _buildSslContext(Request $request, array $options): void
+    protected function _buildSslContext(RequestInterface $request, array $options): void
     {
         $sslOptions = [
             'ssl_verify_peer',
@@ -235,11 +235,11 @@ class Stream implements AdapterInterface
     /**
      * Open the stream and send the request.
      *
-     * @param \Cake\Http\Client\Request $request The request object.
+     * @param \Psr\Http\Message\RequestInterface $request The request object.
      * @return array Array of populated Response objects
      * @throws \Cake\Http\Exception\HttpException
      */
-    protected function _send(Request $request): array
+    protected function _send(RequestInterface $request): array
     {
         $deadline = false;
         if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {

@@ -19,6 +19,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Implements sending Cake\Http\Client\Request via ext/curl.
@@ -33,7 +34,7 @@ class Curl implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function send(Request $request, array $options): array
+    public function send(RequestInterface $request, array $options): array
     {
         $ch = curl_init();
         $options = $this->buildOptions($request, $options);
@@ -61,11 +62,11 @@ class Curl implements AdapterInterface
     /**
      * Convert client options into curl options.
      *
-     * @param \Cake\Http\Client\Request $request The request.
+     * @param \Psr\Http\Message\RequestInterface $request The request.
      * @param array $options The client options
      * @return array
      */
-    public function buildOptions(Request $request, array $options): array
+    public function buildOptions(RequestInterface $request, array $options): array
     {
         $headers = [];
         foreach ($request->getHeaders() as $key => $values) {
