@@ -168,7 +168,7 @@ class Cache
                 ), 0, $e);
             }
 
-            $fallbackEngine = clone static::engine($config['fallback']);
+            $fallbackEngine = clone static::pool($config['fallback']);
             $newConfig = $config + ['groups' => [], 'prefix' => null];
             $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
             if ($newConfig['prefix']) {
@@ -191,17 +191,24 @@ class Cache
     }
 
     /**
-     * Fetch the engine attached to a specific configuration name.
+     * Get a cache engine object for the named cache config.
      *
-     * If the cache engine & configuration are missing an error will be
-     * triggered.
-     *
-     * @param string $config The configuration name you want an engine for.
-     * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
-     * @deprecated 3.7.0 Use Cache::pool() instead. In 4.0 all cache engines will implement the
-     *   PSR16 interface and this method does not return objects implementing that interface.
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\CacheEngine
+     * @deprecated 3.7.0 Use Cache::pool() instead. This method will be removed in 5.0.
      */
-    public static function engine(string $config): CacheEngine
+    public static function engine(string $config)
+    {
+        return static::pool($config);
+    }
+
+    /**
+     * Get a SimpleCacheEngine object for the named cache pool.
+     *
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\CacheEngine
+     */
+    public static function pool(string $config)
     {
         if (!static::$_enabled) {
             return new NullEngine();
@@ -216,17 +223,6 @@ class Cache
         static::_buildEngine($config);
 
         return $registry->{$config};
-    }
-
-    /**
-     * Get a SimpleCacheEngine object for the named cache pool.
-     *
-     * @param string $config The name of the configured cache backend.
-     * @return \Cake\Cache\CacheEngine
-     */
-    public static function pool(string $config)
-    {
-        return static::engine($config);
     }
 
     /**
@@ -503,7 +499,7 @@ class Cache
     public static function groupConfigs(?string $group = null): array
     {
         foreach (array_keys(static::$_config) as $config) {
-            static::engine($config);
+            static::pool($config);
         }
         if ($group === null) {
             return static::$_groups;

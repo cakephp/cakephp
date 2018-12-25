@@ -75,7 +75,7 @@ class CacheShell extends Shell
     public function clear(?string $prefix = null): void
     {
         try {
-            $engine = Cache::engine($prefix);
+            $engine = Cache::pool($prefix);
             Cache::clear($prefix);
             if ($engine instanceof ApcuEngine) {
                 $this->warn("ApcuEngine detected: Cleared $prefix CLI cache successfully " .

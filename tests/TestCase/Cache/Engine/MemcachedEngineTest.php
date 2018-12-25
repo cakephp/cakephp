@@ -86,7 +86,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::engine('memcached')->getConfig();
+        $config = Cache::pool('memcached')->getConfig();
         unset($config['path']);
         $expecting = [
             'prefix' => 'cake_',

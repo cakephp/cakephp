@@ -1031,7 +1031,6 @@ class Email implements JsonSerializable, Serializable
      *
      * @param array $viewVars Variables to set for view.
      * @return $this
-     * @deprecated 3.7.0 Use $email->viewBuilder()->setLayout() instead.
      */
     public function setViewVars(array $viewVars): self
     {

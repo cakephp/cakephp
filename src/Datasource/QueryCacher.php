@@ -127,7 +127,7 @@ class QueryCacher
     protected function _resolveCacher()
     {
         if (is_string($this->_config)) {
-            return Cache::engine($this->_config);
+            return Cache::pool($this->_config);
         }
 
         return $this->_config;
