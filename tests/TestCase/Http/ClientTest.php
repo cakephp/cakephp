@@ -846,5 +846,4 @@ class ClientTest extends TestCase
 
         $this->assertSame($result, $response);
     }
-
 }
