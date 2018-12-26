@@ -41,7 +41,6 @@
                 <file name="src/Http/Client/Request.php" />
                 <file name="src/I18n/DateFormatTrait.php" />
                 <file name="src/ORM/Association.php" />
-                <file name="src/ORM/BehaviorRegistry.php" />
                 <file name="src/Utility/Hash.php" />
             </errorLevel>
         </RedundantCondition>
