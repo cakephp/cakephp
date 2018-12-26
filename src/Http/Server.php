@@ -83,22 +83,10 @@ class Server implements EventDispatcherInterface
             $middleware = $this->app->pluginMiddleware($middleware);
         }
 
-        if (!($middleware instanceof MiddlewareQueue)) {
-            throw new RuntimeException('The application `middleware` method did not return a middleware queue.');
-        }
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);
         $middleware->add($this->app);
 
-        $response = $this->runner->run($middleware, $request, $response);
-
-        if (!($response instanceof ResponseInterface)) {
-            throw new RuntimeException(sprintf(
-                'Application did not create a response. Got "%s" instead.',
-                is_object($response) ? get_class($response) : $response
-            ));
-        }
-
-        return $response;
+        return $this->runner->run($middleware, $request, $response);
     }
 
     /**

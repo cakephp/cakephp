@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Traversable;
@@ -623,7 +624,7 @@ trait EntityTrait
             return static::$_accessors[$class][$type][$property] = '';
         }
 
-        if ($class === 'Cake\ORM\Entity') {
+        if ($class === Entity::class) {
             return '';
         }
 

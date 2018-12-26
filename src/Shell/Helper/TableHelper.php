@@ -107,7 +107,7 @@ class TableHelper extends Helper
      */
     public function output(array $rows): void
     {
-        if (!is_array($rows) || count($rows) === 0) {
+        if (empty($rows)) {
             return;
         }
 

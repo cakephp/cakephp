@@ -113,16 +113,7 @@ class Command
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
 
-        $parser = $this->buildOptionParser($parser);
-        if (!($parser instanceof ConsoleOptionParser)) {
-            throw new RuntimeException(sprintf(
-                "Invalid option parser returned from buildOptionParser(). Expected %s, got %s",
-                ConsoleOptionParser::class,
-                getTypeName($parser)
-            ));
-        }
-
-        return $parser;
+        return $this->buildOptionParser($parser);
     }
 
     /**

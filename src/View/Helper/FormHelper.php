@@ -709,7 +709,7 @@ class FormHelper extends Helper
 
                     return;
                 }
-                if (isset($this->fields[$field]) && $value === null) {
+                if (isset($this->fields[$field])) {
                     unset($this->fields[$field]);
                 }
                 $this->fields[] = $field;
@@ -1915,7 +1915,7 @@ class FormHelper extends Helper
      */
     public function submit(?string $caption = null, array $options = []): string
     {
-        if (!is_string($caption) && empty($caption)) {
+        if ($caption === null) {
             $caption = __d('cake', 'Submit');
         }
         $options += [

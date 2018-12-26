@@ -86,7 +86,7 @@ class SqlserverCompiler extends QueryCompiler
      */
     protected function _buildLimitPart(int $limit, Query $query): string
     {
-        if ($limit === null || $query->clause('offset') === null) {
+        if ($query->clause('offset') === null) {
             return '';
         }
 

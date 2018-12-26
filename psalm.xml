@@ -32,7 +32,19 @@
         <MissingClosureParamType errorLevel="info" />
         <MissingParamType errorLevel="info" />
 
-        <RedundantCondition errorLevel="info" />
+        <RedundantCondition>
+            <errorLevel type="suppress">
+                <file name="src/Console/ConsoleErrorHandler.php" />
+                <file name="src/Database/Expression/Comparison.php" />
+                <file name="src/Datasource/EntityTrait.php" />
+                <file name="src/Http/Client/Adapter/Curl.php" />
+                <file name="src/Http/Client/Request.php" />
+                <file name="src/I18n/DateFormatTrait.php" />
+                <file name="src/ORM/Association.php" />
+                <file name="src/ORM/BehaviorRegistry.php" />
+                <file name="src/Utility/Hash.php" />
+            </errorLevel>
+        </RedundantCondition>
 
         <DocblockTypeContradiction errorLevel="info" />
         <RedundantConditionGivenDocblockType errorLevel="info" />
@@ -200,6 +212,12 @@
                 <file name="src/Core/functions.php" />
             </errorLevel>
         </InvalidCast>
+
+        <InvalidArrayOffset>
+            <errorLevel type="suppress">
+                <file name="src/Datasource/EntityTrait.php" />
+            </errorLevel>
+        </InvalidArrayOffset>
 
     </issueHandlers>
 </psalm>

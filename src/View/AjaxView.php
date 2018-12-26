@@ -45,7 +45,7 @@ class AjaxView extends View
         ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
-        if ($response && $response instanceof Response) {
+        if ($response) {
             $response = $response->withType('ajax');
         }
 

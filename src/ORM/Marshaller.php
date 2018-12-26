@@ -654,7 +654,7 @@ class Marshaller
             }
 
             $key = implode(';', $entity->extract($primary));
-            if ($key === null || !isset($indexed[$key])) {
+            if (!isset($indexed[$key])) {
                 continue;
             }
 
@@ -822,7 +822,7 @@ class Marshaller
             // Marshal data into the old object, or make a new joinData object.
             if (isset($extra[$hash])) {
                 $record->set('_joinData', $marshaller->merge($extra[$hash], $value, $nested));
-            } elseif (is_array($value)) {
+            } else {
                 $joinData = $marshaller->one($value, $nested);
                 $record->set('_joinData', $joinData);
             }
