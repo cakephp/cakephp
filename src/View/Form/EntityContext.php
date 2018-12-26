@@ -20,6 +20,7 @@ use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -142,7 +143,7 @@ class EntityContext implements ContextInterface
             if ($isEntity) {
                 $table = $entity->getSource();
             }
-            if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
+            if (!$table && $isEntity && get_class($entity) !== Entity::class) {
                 list(, $entityClass) = namespaceSplit(get_class($entity));
                 $table = Inflector::pluralize($entityClass);
             }

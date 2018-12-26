@@ -190,10 +190,6 @@ trait StaticConfigTrait
             return [];
         }
 
-        if (!is_string($dsn)) {
-            throw new InvalidArgumentException('Only strings can be passed to parseDsn');
-        }
-
         $pattern = <<<'REGEXP'
 {
     ^

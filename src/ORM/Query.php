@@ -1283,8 +1283,8 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             'buffered' => $this->_useBufferedResults,
             'formatters' => count($this->_formatters),
             'mapReducers' => count($this->_mapReduce),
-            'contain' => $eagerLoader ? $eagerLoader->getContain() : [],
-            'matching' => $eagerLoader ? $eagerLoader->getMatching() : [],
+            'contain' => $eagerLoader->getContain(),
+            'matching' => $eagerLoader->getMatching(),
             'extraOptions' => $this->_options,
             'repository' => $this->_repository,
         ];

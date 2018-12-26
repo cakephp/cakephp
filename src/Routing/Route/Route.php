@@ -538,7 +538,7 @@ class Route
         $args = explode('/', $args);
 
         foreach ($args as $param) {
-            if (empty($param) && $param !== '0' && $param !== 0) {
+            if (empty($param) && !($param === '0' || $param === 0)) {
                 continue;
             }
             $pass[] = rawurldecode($param);
