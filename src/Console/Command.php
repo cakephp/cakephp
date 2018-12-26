@@ -21,7 +21,6 @@ use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Base class for console commands.

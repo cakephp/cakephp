@@ -24,7 +24,6 @@ use Cake\Event\EventManagerInterface;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 use Zend\HttpHandlerRunner\Emitter\EmitterInterface;
 
 /**
