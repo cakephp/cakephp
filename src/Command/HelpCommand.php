@@ -21,8 +21,8 @@ use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
-use SimpleXMLElement;
 use Cake\Utility\Inflector;
+use SimpleXMLElement;
 
 /**
  * Print out command list
