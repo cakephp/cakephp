@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Response;
@@ -302,6 +303,10 @@ class Stream implements AdapterInterface
      */
     protected function _open(string $url, RequestInterface $request): void
     {
+        if (!(bool)ini_get('allow_url_fopen')) {
+            throw new ClientException('The PHP directive `allow_url_fopen` must be enabled.');
+        }
+
         set_error_handler(function ($code, $message) {
             $this->_connectionErrors[] = $message;
         });

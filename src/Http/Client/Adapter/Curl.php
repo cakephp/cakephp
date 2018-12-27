@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Exception\ClientException;
 use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
@@ -37,6 +38,10 @@ class Curl implements AdapterInterface
      */
     public function send(RequestInterface $request, array $options): array
     {
+        if (!extension_loaded('curl')) {
+            throw new ClientException('curl extension is not loaded.');
+        }
+
         $ch = curl_init();
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
