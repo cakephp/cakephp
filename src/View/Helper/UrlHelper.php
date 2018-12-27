@@ -146,7 +146,7 @@ class UrlHelper extends Helper
      *
      * @param string|array $path Path string or URL array
      * @param array $options Options array. Possible keys:
-     *   `fullBase` Return full URL with domain name
+     *   `fullBase` Return full URL with domain name. Bool or string.
      *   `pathPrefix` Path prefix for relative URLs
      *   `ext` Asset extension to append
      *   `plugin` False value will prevent parsing path as a plugin
@@ -196,7 +196,8 @@ class UrlHelper extends Helper
         $path = $this->_encodeUrl($webPath);
 
         if (!empty($options['fullBase'])) {
-            $path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
+            $fullBaseUrl = is_string($options['fullBase']) ? $options['fullBase'] : Router::fullBaseUrl(); 
+            $path = rtrim($fullBaseUrl, '/') . '/' . ltrim($path, '/');
         }
 
         return $path;
