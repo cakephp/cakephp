@@ -946,7 +946,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
 
         $this->Flash->set($message, $this->_config['flash']);
     }
-    
+
     /**
      * Checks if there is an BaseAuthenticate instance.
      *
@@ -956,7 +956,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     {
         return $this->_authenticationProvider !== null;
     }
-    
+
     /**
      * If login was called during this request and the user was successfully
      * authenticated, this function will return the instance of the authentication
@@ -968,7 +968,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     {
         return $this->_authenticationProvider;
     }
-    
+
     /**
      * Checks if there is an BaseAuthorize instance.
      *
@@ -978,7 +978,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     {
         return $this->_authorizationProvider !== null;
     }
-    
+
     /**
      * If there was any authorization processing for the current request, this function
      * will return the instance of the Authorization object that granted access to the
