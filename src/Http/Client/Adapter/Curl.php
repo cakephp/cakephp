@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
-use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Exception\NetworkException;
+use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Composer\CaBundle\CaBundle;

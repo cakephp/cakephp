@@ -12,7 +12,7 @@ declare(strict_types=1);
  * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace  Cake\Http\Client\Exception;
+namespace Cake\Http\Client\Exception;
 
 use Exception;
 use Psr\Http\Client\RequestExceptionInterface;
@@ -34,12 +34,13 @@ class RequestException extends RuntimeException implements RequestExceptionInter
     protected $request;
 
     /**
-     * @param string $message
-     * @param \Psr\Http\Message\RequestInterface $request
+     * Constructor.
      *
-     * @param \Exception|null $previous
+     * @param string $message Exeception message.
+     * @param \Psr\Http\Message\RequestInterface $request Request instance.
+     * @param \Exception|null $previous Previous Exception
      */
-    public function __construct($message, RequestInterface $request, Exception $previous = null)
+    public function __construct($message, RequestInterface $request, ?Exception $previous = null)
     {
         $this->request = $request;
         parent::__construct($message, 0, $previous);
