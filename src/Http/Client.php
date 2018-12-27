@@ -408,7 +408,7 @@ class Client implements ClientInterface
      */
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
-        return $response = $this->send($request, $this->_config);
+        return $this->send($request, $this->_config);
     }
 
     /**
