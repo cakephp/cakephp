@@ -1819,6 +1819,7 @@ class PaginatorHelperTest extends TestCase
             'Title',
             '/a',
         ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
