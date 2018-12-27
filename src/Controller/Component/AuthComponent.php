@@ -231,7 +231,7 @@ class AuthComponent extends Component
      * successfully logging in the current user after calling `login()`
      * in the same request
      *
-     * @var \Cake\Auth\BaseAuthenticate
+     * @var \Cake\Auth\BaseAuthenticate|null
      */
     protected $_authenticationProvider;
 
@@ -239,7 +239,7 @@ class AuthComponent extends Component
      * The instance of the Authorize provider that was used to grant
      * access to the current user to the URL they are requesting.
      *
-     * @var \Cake\Auth\BaseAuthorize
+     * @var \Cake\Auth\BaseAuthorize|null
      */
     protected $_authorizationProvider;
 
