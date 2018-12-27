@@ -48,7 +48,7 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (\Cake\Core\Exception\Exception $e) {
+        } catch (NetworkException $e) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
         $this->assertCount(1, $responses);
