@@ -143,9 +143,9 @@ class UrlHelper extends Helper
      *
      * Depending on options passed provides full URL with domain name. Also calls
      * `Helper::assetTimestamp()` to add timestamp to local files.
-     * 
+     *
      * ### Options:
-     * 
+     *
      * - `fullBase` Boolean true or a string (e.g. https://example) to
      *    return full URL with protocol and domain name.
      * - `pathPrefix` Path prefix for relative URLs

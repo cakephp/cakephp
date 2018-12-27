@@ -355,7 +355,7 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->assetTimestamp('/test_theme/js/non_existant.js');
         $this->assertRegExp('#/test_theme/js/non_existant.js$#', $result, 'No error on missing file');
     }
-    
+
     /**
      * test script()
      *
