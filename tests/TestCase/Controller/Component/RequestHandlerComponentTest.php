@@ -27,6 +27,7 @@ use Cake\View\AjaxView;
 use Cake\View\JsonView;
 use Cake\View\XmlView;
 use TestApp\Controller\RequestHandlerTestController;
+use TestApp\View\AppView;
 use Zend\Diactoros\Stream;
 
 class RequestHandlerComponentExt extends RequestHandlerComponent
@@ -393,6 +394,66 @@ class RequestHandlerComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'js'));
         $this->RequestHandler->startup($event);
         $this->assertNotEquals(AjaxView::class, $this->Controller->viewBuilder()->getClassName());
+    }
+
+    /**
+     * @return array
+     */
+    public function defaultExtensionsProvider()
+    {
+        return [['html'], ['htm']];
+    }
+
+    /**
+     * Tests that the default extensions are using the default view.
+     *
+     * @param string $extension Extension to test.
+     * @dataProvider defaultExtensionsProvider
+     * @return void
+     */
+    public function testDefaultExtensions($extension)
+    {
+        Router::extensions([$extension], false);
+
+        $this->Controller->setRequest($this->request->withParam('_ext', $extension));
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+        $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
+
+        $this->assertEquals($extension, $this->RequestHandler->ext);
+        $this->assertEquals('text/html', $this->Controller->getResponse()->getType());
+
+        $view = $this->Controller->createView();
+        $this->assertInstanceOf(AppView::class, $view);
+        $this->assertEmpty($view->getLayoutPath());
+        $this->assertEmpty($view->getSubDir());
+    }
+
+    /**
+     * Tests that the default extensions can be overwritten by the accept header.
+     *
+     * @param string $extension Extension to test.
+     * @dataProvider defaultExtensionsProvider
+     * @return void
+     */
+    public function testDefaultExtensionsOverwrittenByAcceptHeader($extension)
+    {
+        Router::extensions([$extension], false);
+
+        $request = $this->request->withHeader(
+            'Accept',
+            'application/xml'
+        );
+        $this->Controller->setRequest($request->withParam('_ext', $extension));
+        $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
+        $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
+
+        $this->assertEquals('xml', $this->RequestHandler->ext);
+        $this->assertEquals('application/xml', $this->Controller->getResponse()->getType());
+
+        $view = $this->Controller->createView();
+        $this->assertInstanceOf(XmlView::class, $view);
+        $this->assertEquals('xml', $view->getLayoutPath());
+        $this->assertEquals('xml', $view->getSubDir());
     }
 
     /**

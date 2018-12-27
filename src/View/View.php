@@ -142,7 +142,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected $layoutPath;
+    protected $layoutPath = '';
 
     /**
      * Turns on or off CakePHP's conventional mode of applying layout files. On by default.

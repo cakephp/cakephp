@@ -343,7 +343,7 @@ object(Cake\View\View) {
 	[protected] templatePath => null
 	[protected] template => null
 	[protected] layout => 'default'
-	[protected] layoutPath => null
+	[protected] layoutPath => ''
 	[protected] autoLayout => true
 	[protected] viewVars => []
 	[protected] _ext => '.php'

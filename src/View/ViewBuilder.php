@@ -191,7 +191,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets path for template files.
      *
-     * @param string $path Path for view files.
+     * @param string|null $path Path for view files.
      * @return $this
      */
     public function setTemplatePath(string $path): self
@@ -227,7 +227,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets path for layout files.
      *
-     * @return string|false|null
+     * @return string|null|false
      */
     public function getLayoutPath()
     {
@@ -432,7 +432,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets the view name.
      *
-     * @param string $name The name of the view.
+     * @param string|null $name The name of the view.
      * @return $this
      */
     public function setName(string $name): self
