@@ -196,7 +196,7 @@ class UrlHelper extends Helper
         $path = $this->_encodeUrl($webPath);
 
         if (!empty($options['fullBase'])) {
-            $fullBaseUrl = is_string($options['fullBase']) ? $options['fullBase'] : Router::fullBaseUrl(); 
+            $fullBaseUrl = is_string($options['fullBase']) ? $options['fullBase'] : Router::fullBaseUrl();
             $path = rtrim($fullBaseUrl, '/') . '/' . ltrim($path, '/');
         }
 
