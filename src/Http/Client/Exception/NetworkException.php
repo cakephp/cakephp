@@ -14,7 +14,10 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client\Exception;
 
+use Exception;
 use Psr\Http\Client\NetworkExceptionInterface;
+use Psr\Http\Message\RequestInterface;
+use RuntimeException;
 
 /**
  * Thrown when the request cannot be completed because of network issues.
@@ -23,6 +26,35 @@ use Psr\Http\Client\NetworkExceptionInterface;
  *
  * Example: the target host name can not be resolved or the connection failed.
  */
-class NetworkException extends RequestException implements NetworkExceptionInterface
+class NetworkException extends RuntimeException implements NetworkExceptionInterface
 {
+    /**
+     * @var \Psr\Http\Message\RequestInterface
+     */
+    protected $request;
+
+    /**
+     * Constructor.
+     *
+     * @param string $message Exeception message.
+     * @param \Psr\Http\Message\RequestInterface $request Request instance.
+     * @param \Exception|null $previous Previous Exception
+     */
+    public function __construct($message, RequestInterface $request, ?Exception $previous = null)
+    {
+        $this->request = $request;
+        parent::__construct($message, 0, $previous);
+    }
+
+    /**
+     * Returns the request.
+     *
+     * The request object MAY be a different object from the one passed to ClientInterface::sendRequest()
+     *
+     * @return \Psr\Http\Message\RequestInterface
+     */
+    public function getRequest(): RequestInterface
+    {
+        return $this->request;
+    }
 }
