@@ -15,9 +15,10 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Core\Exception\Exception;
+use Cake\Http\Client\Exception\RequestException;
+use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\AdapterInterface;
 use Cake\Http\Client\Response;
-use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
 
@@ -237,7 +238,7 @@ class Stream implements AdapterInterface
      *
      * @param \Psr\Http\Message\RequestInterface $request The request object.
      * @return array Array of populated Response objects
-     * @throws \Cake\Http\Exception\HttpException
+     * @throws \Psr\Http\Client\NetworkExceptionInterface
      */
     protected function _send(RequestInterface $request): array
     {
@@ -247,7 +248,7 @@ class Stream implements AdapterInterface
         }
 
         $url = $request->getUri();
-        $this->_open((string)$url);
+        $this->_open((string)$url, $request);
         $content = '';
         $timedOut = false;
 
@@ -268,7 +269,7 @@ class Stream implements AdapterInterface
         fclose($this->_stream);
 
         if ($timedOut) {
-            throw new HttpException('Connection timed out ' . $url, 504);
+            throw new NetworkException('Connection timed out ' . $url, $request);
         }
 
         $headers = $meta['wrapper_data'];
@@ -296,10 +297,11 @@ class Stream implements AdapterInterface
      * Open the socket and handle any connection errors.
      *
      * @param string $url The url to connect to.
+     * @param \Psr\Http\Message\RequestInterface $request The request object.
      * @return void
-     * @throws \Cake\Core\Exception\Exception
+     * @throws \Psr\Http\Client\RequestExceptionInterface
      */
-    protected function _open(string $url): void
+    protected function _open(string $url, RequestInterface $request): void
     {
         set_error_handler(function ($code, $message) {
             $this->_connectionErrors[] = $message;
@@ -311,7 +313,7 @@ class Stream implements AdapterInterface
         }
 
         if (!$this->_stream || !empty($this->_connectionErrors)) {
-            throw new Exception(implode("\n", $this->_connectionErrors));
+            throw new RequestException(implode("\n", $this->_connectionErrors), $request);
         }
     }
 

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Http\Client\Adapter\Curl;
+use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
@@ -312,5 +313,22 @@ class CurlTest extends TestCase
             CURLOPT_USERAGENT => 'Super-secret',
         ];
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test that an exception is raised when timed out.
+     *
+     * @return void
+     */
+    public function testNetworkException()
+    {
+        $this->expectException(NetworkException::class);
+        $this->expectExceptionMessage('cURL Error (6) Could not resolve host: dummy');
+        $request = new Request('http://dummy/?sleep');
+        $options = [
+            'timeout' => 2,
+        ];
+
+        $this->curl->send($request, $options);
     }
 }

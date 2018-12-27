@@ -15,9 +15,10 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Exception\RequestException;
+use Cake\Http\Client\Exception\NetworkException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
-use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
 use Psr\Http\Message\RequestInterface;
 
@@ -46,11 +47,16 @@ class Curl implements AdapterInterface
             $error = curl_error($ch);
             curl_close($ch);
 
-            $status = 500;
-            if ($errorCode === CURLE_OPERATION_TIMEOUTED) {
-                $status = 504;
+            $message = "cURL Error ({$errorCode}) {$error}";
+            $errorNumbers = [
+                CURLE_FAILED_INIT,
+                CURLE_URL_MALFORMAT,
+                CURLE_URL_MALFORMAT_USER,
+            ];
+            if (in_array($errorCode, $errorNumbers, true)) {
+                throw new RequestException($message, $request);
             }
-            throw new HttpException("cURL Error ({$errorCode}) {$error}", $status);
+            throw new NetworkException($message, $request);
         }
 
         $responses = $this->createResponse($ch, $body);
