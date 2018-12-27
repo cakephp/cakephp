@@ -332,15 +332,11 @@ class RequestHandlerComponent extends Component
         $response = $controller->getResponse();
         $request = $controller->getRequest();
 
-        $isRecognized = (
-            !in_array($this->ext, ['html', 'htm']) &&
-            $response->getMimeType($this->ext)
-        );
-        if ($this->ext && !$isRecognized) {
-            throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
-        }
+        if ($this->ext && !in_array($this->ext, ['html', 'htm'])) {
+            if (!$response->getMimeType($this->ext)) {
+                throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
+            }
 
-        if ($this->ext) {
             $this->renderAs($controller, $this->ext);
             $response = $controller->response;
         } else {
