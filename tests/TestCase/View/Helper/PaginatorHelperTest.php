@@ -777,13 +777,13 @@ class PaginatorHelperTest extends TestCase
      */
     public function testUrlGeneration()
     {
-        // $result = $this->Paginator->sort('controller');
-        // $expected = [
-        //     'a' => ['href' => '/index?sort=controller&amp;direction=asc'],
-        //     'Controller',
-        //     '/a',
-        // ];
-        // $this->assertHtml($expected, $result);
+        $result = $this->Paginator->sort('controller');
+        $expected = [
+            'a' => ['href' => '/index?sort=controller&amp;direction=asc'],
+            'Controller',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
 
         $result = $this->Paginator->generateUrl();
         $this->assertEquals('/index', $result);
