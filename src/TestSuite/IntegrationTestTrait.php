@@ -621,7 +621,8 @@ trait IntegrationTestTrait
         $props = [
             'url' => $url,
             'session' => $session,
-            'query' => $queryData
+            'query' => $queryData,
+            'files' => [],
         ];
         if (is_string($data)) {
             $props['input'] = $data;

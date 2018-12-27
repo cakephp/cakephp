@@ -14,6 +14,8 @@
 namespace TestApp\Controller;
 
 use Cake\Http\Exception\NotFoundException;
+use Cake\Utility\Hash;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * RequestActionController class
@@ -176,5 +178,20 @@ class RequestActionController extends AppController
     public function error_method()
     {
         throw new NotFoundException('Not there or here.');
+    }
+
+    /**
+     * Tests uploaded files
+     *
+     * @return \Cake\Http\Response
+     */
+    public function uploaded_files()
+    {
+        $files = Hash::flatten($this->request->getUploadedFiles());
+        $names = collection($files)->map(function (UploadedFileInterface $file) {
+            return $file->getClientFilename();
+        });
+
+        return $this->response->withStringBody(json_encode($names));
     }
 }
