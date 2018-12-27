@@ -946,27 +946,47 @@ class AuthComponent extends Component implements EventDispatcherInterface
 
         $this->Flash->set($message, $this->_config['flash']);
     }
-
+    
+    /**
+     * Checks if there is an BaseAuthenticate instance.
+     *
+     * @return bool
+     */
+    public function hasAuthenticationProvider(): bool
+    {
+        return $this->_authenticationProvider !== null;
+    }
+    
     /**
      * If login was called during this request and the user was successfully
      * authenticated, this function will return the instance of the authentication
      * object that was used for logging the user in.
      *
-     * @return \Cake\Auth\BaseAuthenticate|null
+     * @return \Cake\Auth\BaseAuthenticate
      */
-    public function authenticationProvider(): ?BaseAuthenticate
+    public function authenticationProvider(): BaseAuthenticate
     {
         return $this->_authenticationProvider;
     }
-
+    
+    /**
+     * Checks if there is an BaseAuthorize instance.
+     *
+     * @return bool
+     */
+    public function hasAuthorizationProvider(): bool
+    {
+        return $this->_authorizationProvider !== null;
+    }
+    
     /**
      * If there was any authorization processing for the current request, this function
      * will return the instance of the Authorization object that granted access to the
      * user to the current address.
      *
-     * @return \Cake\Auth\BaseAuthorize|null
+     * @return \Cake\Auth\BaseAuthorize
      */
-    public function authorizationProvider(): ?BaseAuthorize
+    public function authorizationProvider(): BaseAuthorize
     {
         return $this->_authorizationProvider;
     }
