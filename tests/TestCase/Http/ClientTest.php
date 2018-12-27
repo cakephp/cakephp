@@ -205,7 +205,7 @@ class ClientTest extends TestCase
             'split' => 'value',
         ];
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -239,7 +239,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -273,7 +273,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -309,7 +309,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -346,7 +346,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -378,7 +378,7 @@ class ClientTest extends TestCase
     public function testInvalidAuthenticationType()
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->never())
@@ -402,7 +402,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $headers = [
@@ -459,7 +459,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -511,7 +511,7 @@ class ClientTest extends TestCase
             'Accept' => $mime,
         ];
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -542,7 +542,7 @@ class ClientTest extends TestCase
         $response = new Response();
         $data = 'some=value&more=data';
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->any())
@@ -572,7 +572,7 @@ class ClientTest extends TestCase
     public function testExceptionOnUnknownType()
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->never())
@@ -592,7 +592,7 @@ class ClientTest extends TestCase
      */
     public function testCookieStorage()
     {
-        $adapter = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $adapter = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
 
@@ -694,7 +694,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -819,7 +819,7 @@ class ClientTest extends TestCase
             'Content-Type' => 'application/x-www-form-urlencoded',
         ];
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
