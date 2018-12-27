@@ -21,7 +21,6 @@ use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
-use InvalidArgumentException;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -648,12 +647,6 @@ class PaginatorHelper extends Helper
      */
     public function hasPage(int $page = 1, ?string $model = null): bool
     {
-        if (!is_numeric($page)) {
-            throw new InvalidArgumentException(
-                'First argument "page" has to be int. Note that argument order switched from 3.x to 4.x.'
-            );
-        }
-
         $paging = $this->params($model);
         if ($paging === []) {
             return false;

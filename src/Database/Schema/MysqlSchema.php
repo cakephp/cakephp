@@ -351,10 +351,8 @@ class MysqlSchema extends BaseSchema
                         break;
                     }
 
-                    if ($isKnownLength) {
-                        $length = array_search($data['length'], TableSchema::$columnLengths);
-                        $out .= ' ' . strtoupper($length) . 'TEXT';
-                    }
+                    $length = array_search($data['length'], TableSchema::$columnLengths);
+                    $out .= ' ' . strtoupper($length) . 'TEXT';
 
                     break;
                 case TableSchema::TYPE_BINARY:

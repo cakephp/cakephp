@@ -160,7 +160,8 @@ class MiddlewareDispatcher
             $environment,
             $spec['query'],
             $spec['post'],
-            $spec['cookies']
+            $spec['cookies'],
+            $spec['files']
         );
         $request = $request->withAttribute('session', $spec['session']);
 

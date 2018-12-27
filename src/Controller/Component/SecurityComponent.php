@@ -181,7 +181,7 @@ class SecurityComponent extends Component
     protected function _throwException(?SecurityException $exception = null): void
     {
         if ($exception !== null) {
-            if (!Configure::read('debug') && $exception instanceof SecurityException) {
+            if (!Configure::read('debug')) {
                 $exception->setReason($exception->getMessage());
                 $exception->setMessage(self::DEFAULT_EXCEPTION_MESSAGE);
             }
@@ -359,7 +359,7 @@ class SecurityComponent extends Component
         );
 
         foreach ($fieldList as $i => $key) {
-            $isLocked = (is_array($locked) && in_array($key, $locked));
+            $isLocked = in_array($key, $locked);
 
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {

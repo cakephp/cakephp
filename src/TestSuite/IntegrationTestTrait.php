@@ -603,6 +603,7 @@ trait IntegrationTestTrait
             'url' => $url,
             'session' => $session,
             'query' => $queryData,
+            'files' => [],
         ];
         if (is_string($data)) {
             $props['input'] = $data;

@@ -1455,7 +1455,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _transactionCommitted(bool $atomic, bool $primary): bool
     {
-        return !$this->getConnection()->inTransaction() && ($atomic || (!$atomic && $primary));
+        return !$this->getConnection()->inTransaction() && ($atomic || ($primary && !$atomic));
     }
 
     /**

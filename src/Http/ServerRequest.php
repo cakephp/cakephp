@@ -386,9 +386,6 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function _processFiles($post, array $files)
     {
-        if (!is_array($files)) {
-            return $post;
-        }
         $fileData = [];
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {

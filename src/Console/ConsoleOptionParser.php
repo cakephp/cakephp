@@ -429,7 +429,7 @@ class ConsoleOptionParser
         }
         $this->_options[$name] = $option;
         asort($this->_options);
-        if ($option->short() !== null) {
+        if ($option->short()) {
             $this->_shortOptions[$option->short()] = $name;
             asort($this->_shortOptions);
         }

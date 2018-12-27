@@ -491,7 +491,7 @@ class Validation
             $dateFormat = 'ymd';
         }
         $parts = explode(' ', $check);
-        if (!empty($parts) && count($parts) > 1) {
+        if (count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
@@ -1040,7 +1040,7 @@ class Validation
      */
     protected static function _check($check, string $regex): bool
     {
-        return is_string($regex) && is_scalar($check) && preg_match($regex, (string)$check);
+        return is_scalar($check) && preg_match($regex, (string)$check);
     }
 
     /**

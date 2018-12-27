@@ -47,7 +47,7 @@ class Curl implements AdapterInterface
             curl_close($ch);
 
             $status = 500;
-            if ($error === 28) {
+            if ($errorCode === CURLE_OPERATION_TIMEOUTED) {
                 $status = 504;
             }
             throw new HttpException("cURL Error ({$errorCode}) {$error}", $status);

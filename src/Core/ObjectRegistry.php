@@ -74,7 +74,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function load(string $objectName, array $config = [])
     {
-        if (is_array($config) && isset($config['className'])) {
+        if (isset($config['className'])) {
             $name = $objectName;
             $objectName = $config['className'];
         } else {
