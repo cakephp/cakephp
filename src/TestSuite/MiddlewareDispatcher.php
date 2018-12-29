@@ -164,7 +164,7 @@ class MiddlewareDispatcher
             $spec['post'] = [];
         }
         $environment = array_merge(
-            array_merge($_SERVER, ['REQUEST_URI' => $spec['url'], 'PHP_SELF' => '/']),
+            array_merge(['REQUEST_URI' => $spec['url'], 'PHP_SELF' => '/'], $_SERVER),
             $spec['environment']
         );
         $request = ServerRequestFactory::fromGlobals(
