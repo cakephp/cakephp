@@ -194,7 +194,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param string|null $path Path for view files.
      * @return $this
      */
-    public function setTemplatePath(string $path): self
+    public function setTemplatePath(?string $path): self
     {
         $this->_templatePath = $path;
 
@@ -330,7 +330,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Sets the view theme to use.
      *
      * @param string|null $theme Theme name.
-     *   Use null or false to remove the current theme.
+     *   Use null to remove the current theme.
      * @return $this
      */
     public function setTheme(?string $theme): self
@@ -354,7 +354,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Sets the name of the view file to render. The name specified is the
      * filename in /templates/<SubFolder> without the .php extension.
      *
-     * @param string|null $name View file name to set.
+     * @param string|null $name View file name to set, or null to remove the template name.
      * @return $this
      */
     public function setTemplate(?string $name): self
@@ -432,10 +432,10 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets the view name.
      *
-     * @param string|null $name The name of the view.
+     * @param string|null $name The name of the view, or null to remove the current name.
      * @return $this
      */
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->_name = $name;
 
