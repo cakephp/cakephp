@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Http\Client;
+use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\Cookie;
@@ -204,7 +205,7 @@ class ClientTest extends TestCase
             'split' => 'value',
         ];
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -238,7 +239,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -272,7 +273,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -308,7 +309,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -345,7 +346,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -377,7 +378,7 @@ class ClientTest extends TestCase
     public function testInvalidAuthenticationType()
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->never())
@@ -401,7 +402,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $headers = [
@@ -458,7 +459,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -510,7 +511,7 @@ class ClientTest extends TestCase
             'Accept' => $mime,
         ];
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -541,7 +542,7 @@ class ClientTest extends TestCase
         $response = new Response();
         $data = 'some=value&more=data';
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->any())
@@ -571,7 +572,7 @@ class ClientTest extends TestCase
     public function testExceptionOnUnknownType()
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->never())
@@ -591,7 +592,7 @@ class ClientTest extends TestCase
      */
     public function testCookieStorage()
     {
-        $adapter = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $adapter = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
 
@@ -693,7 +694,7 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $mock = $this->getMockBuilder(Stream::class)
             ->setMethods(['send'])
             ->getMock();
         $mock->expects($this->once())
@@ -801,5 +802,48 @@ class ClientTest extends TestCase
 
         $this->assertTrue($cookies->has('redirect1'));
         $this->assertTrue($cookies->has('redirect2'));
+    }
+
+    /**
+     * testSendRequest
+     *
+     * @return void
+     */
+    public function testSendRequest()
+    {
+        $response = new Response();
+
+        $headers = [
+            'User-Agent' => 'Cake',
+            'Connection' => 'close',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->setMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertInstanceOf('Zend\Diactoros\Request', $request);
+                $this->assertEquals(Request::METHOD_GET, $request->getMethod());
+                $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
+                $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
+
+                return true;
+            }))
+            ->will($this->returnValue([$response]));
+
+        $http = new Client(['adapter' => $mock]);
+        $request = new \Zend\Diactoros\Request(
+            'http://cakephp.org/test.html',
+            Request::METHOD_GET,
+            'php://temp',
+            $headers
+        );
+        $result = $http->sendRequest($request);
+
+        $this->assertSame($result, $response);
     }
 }

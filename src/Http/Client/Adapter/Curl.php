@@ -15,10 +15,13 @@ declare(strict_types=1);
 namespace Cake\Http\Client\Adapter;
 
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\Exception\ClientException;
+use Cake\Http\Client\Exception\NetworkException;
+use Cake\Http\Client\Exception\RequestException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
-use Cake\Http\Exception\HttpException;
 use Composer\CaBundle\CaBundle;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Implements sending Cake\Http\Client\Request via ext/curl.
@@ -33,8 +36,12 @@ class Curl implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function send(Request $request, array $options): array
+    public function send(RequestInterface $request, array $options): array
     {
+        if (!extension_loaded('curl')) {
+            throw new ClientException('curl extension is not loaded.');
+        }
+
         $ch = curl_init();
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
@@ -45,11 +52,16 @@ class Curl implements AdapterInterface
             $error = curl_error($ch);
             curl_close($ch);
 
-            $status = 500;
-            if ($errorCode === CURLE_OPERATION_TIMEOUTED) {
-                $status = 504;
+            $message = "cURL Error ({$errorCode}) {$error}";
+            $errorNumbers = [
+                CURLE_FAILED_INIT,
+                CURLE_URL_MALFORMAT,
+                CURLE_URL_MALFORMAT_USER,
+            ];
+            if (in_array($errorCode, $errorNumbers, true)) {
+                throw new RequestException($message, $request);
             }
-            throw new HttpException("cURL Error ({$errorCode}) {$error}", $status);
+            throw new NetworkException($message, $request);
         }
 
         $responses = $this->createResponse($ch, $body);
@@ -61,11 +73,11 @@ class Curl implements AdapterInterface
     /**
      * Convert client options into curl options.
      *
-     * @param \Cake\Http\Client\Request $request The request.
+     * @param \Psr\Http\Message\RequestInterface $request The request.
      * @param array $options The client options
      * @return array
      */
-    public function buildOptions(Request $request, array $options): array
+    public function buildOptions(RequestInterface $request, array $options): array
     {
         $headers = [];
         foreach ($request->getHeaders() as $key => $values) {
