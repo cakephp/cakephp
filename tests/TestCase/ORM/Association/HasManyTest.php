@@ -1124,7 +1124,7 @@ class HasManyTest extends TestCase
     /**
      * Test that the associated entities are unlinked and deleted when they are dependent
      *
-     * TODO in the future this should change and apply the finder.
+     * In the future this should change and apply the finder.
      *
      * @return void
      */
