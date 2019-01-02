@@ -35,7 +35,11 @@ class HasManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Comments', 'core.Articles', 'core.Authors'];
+    public $fixtures = [
+        'core.Comments',
+        'core.Articles',
+        'core.Authors',
+    ];
 
     /**
      * Set up
@@ -1080,8 +1084,8 @@ class HasManyTest extends TestCase
     public function testSaveDefaultSaveStrategy()
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
-        $this->assertEquals('append', $authors->getAssociation('articles')->getSaveStrategy());
+        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_APPEND]);
+        $this->assertEquals(HasMany::SAVE_APPEND, $authors->getAssociation('articles')->getSaveStrategy());
     }
 
     /**
@@ -1092,7 +1096,7 @@ class HasManyTest extends TestCase
     public function testSaveReplaceSaveStrategyDependent()
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => 'replace', 'dependent' => true]);
+        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
 
         $entity = $authors->newEntity([
             'name' => 'mylux',
@@ -1115,6 +1119,53 @@ class HasManyTest extends TestCase
 
         $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they are dependent
+     *
+     * TODO in the future this should change and apply the finder.
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyDependentWithConditions()
+    {
+        $this->getTableLocator()->clear();
+        $this->setAppNamespace('TestApp');
+
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', [
+            'finder' => 'published',
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'dependent' => true,
+        ]);
+        $articles = $authors->Articles->getTarget();
+        $articles->updateAll(['published' => 'N'], ['author_id' => 1, 'title' => 'Third Article']);
+
+        $entity = $authors->get(1, ['contain' => ['Articles']]);
+        $data = [
+            'name' => 'updated',
+            'articles' => [
+                ['title' => 'First Article', 'body' => 'New First', 'published' => 'N']
+            ]
+        ];
+        $entity = $authors->patchEntity($entity, $data, ['associated' => ['Articles']]);
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        // Should only have one article left as we 'replaced' the others.
+        $this->assertCount(1, $entity->articles);
+        $this->assertCount(1, $authors->Articles->find()->toArray());
+
+        $others = $articles->find('all')
+            ->where(['Articles.author_id' => 1])
+            ->orderAsc('title')
+            ->toArray();
+        $this->assertCount(
+            1,
+            $others,
+            'Record not matching condition should stay. But does not'
+        );
+        $this->assertSame('First Article', $others[0]->title);
     }
 
     /**
