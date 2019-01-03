@@ -106,12 +106,11 @@ trait ConsoleIntegrationTestTrait
     /**
      * Cleans state to get ready for the next test
      *
+     * @after
      * @return void
      */
-    public function tearDown()
+    public function cleanupConsoleTrait()
     {
-        parent::tearDown();
-
         $this->_exitCode = null;
         $this->_out = null;
         $this->_err = null;
