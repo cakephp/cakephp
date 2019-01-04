@@ -33,7 +33,7 @@ class CachedCollection implements CollectionInterface
     /**
      * The decorated schema collection
      *
-     * @var \Cake\Datasource\CollectionInterface
+     * @var \Cake\Database\Schema\CollectionInterface
      */
     protected $collection;
 
@@ -47,7 +47,7 @@ class CachedCollection implements CollectionInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Datasource\CollectionInterface $collection The collection to wrap.
+     * @param \Cake\Database\Schema\CollectionInterface $collection The collection to wrap.
      * @param string $prefix The cache key prefix to use. Typically the connection name.
      * @param string|bool $cacheKey The cache key or boolean false to disable caching.
      */
