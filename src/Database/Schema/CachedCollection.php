@@ -16,12 +16,11 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Cache\Cache;
-use Cake\Datasource\ConnectionInterface;
 
 /**
- * Extends the schema collection class to provide caching
+ * Decorates a schema collection and adds caching
  */
-class CachedCollection extends Collection
+class CachedCollection implements CollectionInterface
 {
     /**
      * The name of the cache config key to use for caching table metadata,
@@ -32,20 +31,43 @@ class CachedCollection extends Collection
     protected $_cache = false;
 
     /**
+     * The decorated schema collection
+     *
+     * @var \Cake\Datasource\CollectionInterface
+     */
+    protected $collection;
+
+    /**
+     * The cache key prefix
+     *
+     * @var string
+     */
+    protected $prefix;
+
+    /**
      * Constructor.
      *
-     * @param \Cake\Datasource\ConnectionInterface $connection The connection instance.
+     * @param \Cake\Datasource\CollectionInterface $collection The collection to wrap.
+     * @param string $prefix The cache key prefix to use. Typically the connection name.
      * @param string|bool $cacheKey The cache key or boolean false to disable caching.
      */
-    public function __construct(ConnectionInterface $connection, $cacheKey = true)
+    public function __construct(CollectionInterface $collection, string $prefix = '', $cacheKey = true)
     {
-        parent::__construct($connection);
+        $this->collection = $collection;
+        $this->prefix = $prefix;
         $this->setCacheMetadata($cacheKey);
     }
 
     /**
      * {@inheritDoc}
-     *
+     */
+    public function listTables(): array
+    {
+        return $this->collection->listTables();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
@@ -60,7 +82,7 @@ class CachedCollection extends Collection
             }
         }
 
-        $table = parent::describe($name, $options);
+        $table = $this->collection->describe($name, $options);
 
         if (!empty($cacheConfig)) {
             Cache::write($cacheKey, $table, $cacheConfig);
@@ -77,7 +99,7 @@ class CachedCollection extends Collection
      */
     public function cacheKey(string $name): string
     {
-        return $this->_connection->configName() . '_' . $name;
+        return $this->prefix . '_' . $name;
     }
 
     /**
