@@ -80,6 +80,7 @@ trait QueryTrait
      * @var bool
      */
     protected $_eagerLoaded = false;
+
     /**
      * Returns the default table object that will be used by this query,
      * that is, the table that will appear in the from clause.
