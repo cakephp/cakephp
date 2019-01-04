@@ -20,6 +20,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -971,9 +972,9 @@ class PaginatorTest extends TestCase
      */
     protected function getMockRepository()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
+        $model = $this->getMockBuilder(RepositoryInterface::class)
             ->setMethods([
-                'getAlias', 'setAlias', 'hasField', 'find', 'get', 'query', 'updateAll', 'deleteAll',
+                'getAlias', 'setAlias', 'setRegistryAlias', 'getRegistryAlias', 'hasField', 'find', 'get', 'query', 'updateAll', 'deleteAll',
                 'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities',
             ])
             ->getMock();
