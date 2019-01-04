@@ -36,7 +36,11 @@ class HasManyTest extends TestCase
      *
      * @var array
      */
-    public $fixtures = ['core.Comments', 'core.Articles', 'core.Authors'];
+    public $fixtures = [
+        'core.Comments',
+        'core.Articles',
+        'core.Authors',
+    ];
 
     /**
      * Set up
@@ -923,5 +927,406 @@ class HasManyTest extends TestCase
         $association = $articles->hasMany('Comments');
         $this->assertSame($association, $association->setSaveStrategy(HasMany::SAVE_REPLACE));
         $this->assertSame(HasMany::SAVE_REPLACE, $association->getSaveStrategy());
+    }
+
+    /**
+     * Test that save works with replace saveStrategy and are not deleted once they are not null
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategy()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE]);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->setDirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that save works with replace saveStrategy, replacing the already persisted entities even if no new entities are passed
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyNotAdding()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertCount($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
+
+        $entity->set('articles', []);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertCount(0, $authors->Articles->find('all')->where(['author_id' => $entity['id']]));
+    }
+
+    /**
+     * Test that save works with append saveStrategy not deleting or setting null anything
+     *
+     * @return void
+     */
+    public function testSaveAppendSaveStrategy()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->setDirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertTrue($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that save has append as the default save strategy
+     *
+     * @return void
+     */
+    public function testSaveDefaultSaveStrategy()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_APPEND]);
+        $this->assertEquals(HasMany::SAVE_APPEND, $authors->getAssociation('articles')->getSaveStrategy());
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they are dependent
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyDependent()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever'],
+            ],
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        unset($entity->articles[0]);
+        $entity->setDirty('articles', true);
+
+        $authors->save($entity, ['associated' => ['Articles']]);
+
+        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they are dependent
+     *
+     * In the future this should change and apply the finder.
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyDependentWithConditions()
+    {
+        $this->getTableLocator()->clear();
+        $this->setAppNamespace('TestApp');
+
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', [
+            'finder' => 'published',
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'dependent' => true,
+        ]);
+        $articles = $authors->Articles->getTarget();
+        $articles->updateAll(['published' => 'N'], ['author_id' => 1, 'title' => 'Third Article']);
+
+        $entity = $authors->get(1, ['contain' => ['Articles']]);
+        $data = [
+            'name' => 'updated',
+            'articles' => [
+                ['title' => 'First Article', 'body' => 'New First', 'published' => 'N'],
+            ],
+        ];
+        $entity = $authors->patchEntity($entity, $data, ['associated' => ['Articles']]);
+        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+
+        // Should only have one article left as we 'replaced' the others.
+        $this->assertCount(1, $entity->articles);
+        $this->assertCount(1, $authors->Articles->find()->toArray());
+
+        $others = $articles->find('all')
+            ->where(['Articles.author_id' => 1])
+            ->orderAsc('title')
+            ->toArray();
+        $this->assertCount(
+            1,
+            $others,
+            'Record not matching condition should stay. But does not'
+        );
+        $this->assertSame('First Article', $others[0]->title);
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyNotNullable()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments', ['saveStrategy' => HasMany::SAVE_REPLACE]);
+
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!',
+                ],
+                [
+                    'user_id' => 2,
+                    'comment' => 'Of course',
+                ],
+            ],
+        ], ['associated' => ['Comments']]);
+
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+        $commentId = $article->comments[0]->id;
+        $sizeComments = count($article->comments);
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
+
+        unset($article->comments[0]);
+        $article->setDirty('comments', true);
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+
+        $this->assertEquals($sizeComments - 1, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they have a not nullable foreign key
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyAdding()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments', ['saveStrategy' => HasMany::SAVE_REPLACE]);
+
+        $article = $articles->newEntity([
+            'title' => 'Bakeries are sky rocketing',
+            'body' => 'All because of cake',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'That is true!',
+                ],
+                [
+                    'user_id' => 2,
+                    'comment' => 'Of course',
+                ],
+            ],
+        ], ['associated' => ['Comments']]);
+
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+        $commentId = $article->comments[0]->id;
+        $sizeComments = count($article->comments);
+        $articleId = $article->id;
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertTrue($articles->Comments->exists(['id' => $commentId]));
+
+        unset($article->comments[0]);
+        $article->comments[] = $articles->Comments->newEntity([
+            'user_id' => 1,
+            'comment' => 'new comment',
+        ]);
+
+        $article->setDirty('comments', true);
+        $article = $articles->save($article, ['associated' => ['Comments']]);
+
+        $this->assertEquals($sizeComments, $articles->Comments->find('all')->where(['article_id' => $article->id])->count());
+        $this->assertFalse($articles->Comments->exists(['id' => $commentId]));
+        $this->assertTrue($articles->Comments->exists(['comment' => 'new comment', 'article_id' => $articleId]));
+    }
+
+    /**
+     * Tests that dependent, non-cascading deletes are using the association
+     * conditions for deleting associated records.
+     *
+     * @return void
+     */
+    public function testHasManyNonCascadingUnlinkDeleteUsesAssociationConditions()
+    {
+        $Articles = $this->getTableLocator()->get('Articles');
+        $Comments = $Articles->hasMany('Comments', [
+            'dependent' => true,
+            'cascadeCallbacks' => false,
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'conditions' => [
+                'Comments.published' => 'Y',
+            ],
+        ]);
+
+        $article = $Articles->newEntity([
+            'title' => 'Title',
+            'body' => 'Body',
+            'comments' => [
+                [
+                    'user_id' => 1,
+                    'comment' => 'First comment',
+                    'published' => 'Y',
+                ],
+                [
+                    'user_id' => 1,
+                    'comment' => 'Second comment',
+                    'published' => 'Y',
+                ],
+            ],
+        ]);
+        $article = $Articles->save($article);
+        $this->assertNotEmpty($article);
+
+        $comment3 = $Comments->getTarget()->newEntity([
+            'article_id' => $article->get('id'),
+            'user_id' => 1,
+            'comment' => 'Third comment',
+            'published' => 'N',
+        ]);
+        $comment3 = $Comments->getTarget()->save($comment3);
+        $this->assertNotEmpty($comment3);
+
+        $this->assertEquals(3, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+
+        unset($article->comments[1]);
+        $article->setDirty('comments', true);
+
+        $article = $Articles->save($article);
+        $this->assertNotEmpty($article);
+
+        // Given the association condition of `'Comments.published' => 'Y'`,
+        // it is expected that only one of the three linked comments are
+        // actually being deleted, as only one of them matches the
+        // association condition.
+        $this->assertEquals(2, $Comments->getTarget()->find()->where(['Comments.article_id' => $article->get('id')])->count());
+    }
+
+    /**
+     * Tests that non-dependent, non-cascading deletes are using the association
+     * conditions for updating associated records.
+     *
+     * @return void
+     */
+    public function testHasManyNonDependentNonCascadingUnlinkUpdateUsesAssociationConditions()
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->associations()->removeAll();
+        $Articles = $Authors->hasMany('Articles', [
+            'dependent' => false,
+            'cascadeCallbacks' => false,
+            'saveStrategy' => HasMany::SAVE_REPLACE,
+            'conditions' => [
+                'Articles.published' => 'Y',
+            ],
+        ]);
+
+        $author = $Authors->newEntity([
+            'name' => 'Name',
+            'articles' => [
+                [
+                    'title' => 'First article',
+                    'body' => 'First article',
+                    'published' => 'Y',
+                ],
+                [
+                    'title' => 'Second article',
+                    'body' => 'Second article',
+                    'published' => 'Y',
+                ],
+            ],
+        ]);
+        $author = $Authors->save($author);
+        $this->assertNotEmpty($author);
+
+        $article3 = $Articles->getTarget()->newEntity([
+            'author_id' => $author->get('id'),
+            'title' => 'Third article',
+            'body' => 'Third article',
+            'published' => 'N',
+        ]);
+        $article3 = $Articles->getTarget()->save($article3);
+        $this->assertNotEmpty($article3);
+
+        $this->assertEquals(3, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+
+        $article2 = $author->articles[1];
+        unset($author->articles[1]);
+        $author->setDirty('articles', true);
+
+        $author = $Authors->save($author);
+        $this->assertNotEmpty($author);
+
+        // Given the association condition of `'Articles.published' => 'Y'`,
+        // it is expected that only one of the three linked articles are
+        // actually being unlinked (nulled), as only one of them matches the
+        // association condition.
+        $this->assertEquals(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
+        $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
+        $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
     }
 }

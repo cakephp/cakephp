@@ -52,8 +52,6 @@ class EmailTraitTest extends TestCase
         TransportFactory::setConfig('test_tools', [
             'className' => TestEmailTransport::class,
         ]);
-
-        TestEmailTransport::replaceAllTransports();
     }
 
     /**
@@ -68,8 +66,6 @@ class EmailTraitTest extends TestCase
         Email::drop('default');
         Email::drop('alternate');
         TransportFactory::drop('test_tools');
-
-        TestEmailTransport::clearEmails();
     }
 
     /**

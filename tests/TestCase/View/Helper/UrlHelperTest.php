@@ -292,6 +292,20 @@ class UrlHelperTest extends TestCase
     }
 
     /**
+     * Tests assetUrl() with full base URL.
+     *
+     * @return void
+     */
+    public function testAssetUrlFullBase()
+    {
+        $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => true]);
+        $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
+
+        $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => 'https://xyz/']);
+        $this->assertEquals('https://xyz/img/foo.jpg', $result);
+    }
+
+    /**
      * test assetUrl and Asset.timestamp = force
      *
      * @return void

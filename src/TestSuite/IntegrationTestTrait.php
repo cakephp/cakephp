@@ -390,7 +390,7 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     * @param array $data The data for the request.
+     * @param string|array|null $data The data for the request.
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
@@ -407,7 +407,7 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     * @param array $data The data for the request.
+     * @param string|array|null $data The data for the request.
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
@@ -424,7 +424,7 @@ trait IntegrationTestTrait
      * response.
      *
      * @param string|array $url The URL to request.
-     * @param array $data The data for the request.
+     * @param string|array|null $data The data for the request.
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
@@ -488,7 +488,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL
      * @param string $method The HTTP method
-     * @param array|null $data The request data.
+     * @param string|array|null $data The request data.
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
@@ -581,7 +581,7 @@ trait IntegrationTestTrait
      *
      * @param string|array $url The URL
      * @param string $method The HTTP method
-     * @param array|null $data The request data.
+     * @param string|array|null $data The request data.
      * @return array The request context
      */
     protected function _buildRequest($url, $method, $data): array

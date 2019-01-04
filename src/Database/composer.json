@@ -27,10 +27,8 @@
         "php": ">=5.6.0",
         "cakephp/cache": "^3.6.0",
         "cakephp/core": "^3.6.0",
-        "cakephp/datasource": "^3.6.0"
-    },
-    "suggest": {
-        "cakephp/log": "Require this if you want to use the built-in query logger"
+        "cakephp/datasource": "^3.6.0",
+        "cakephp/log": "^3.6.0"
     },
     "autoload": {
         "psr-4": {

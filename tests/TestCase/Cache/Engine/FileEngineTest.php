@@ -684,4 +684,31 @@ class FileEngineTest extends TestCase
         $result = Cache::add('test_add_key', 'test data 2', 'file_test');
         $this->assertFalse($result);
     }
+
+    /**
+     * Tests that only files inside of the configured path are being deleted.
+     *
+     * @return void
+     */
+    public function testClearIsRestrictedToConfiguredPath()
+    {
+        $this->_configCache([
+            'prefix' => '',
+            'path' => TMP . 'tests',
+        ]);
+
+        $unrelatedFile = tempnam(TMP, 'file_test');
+        file_put_contents($unrelatedFile, 'data');
+        $this->assertFileExists($unrelatedFile);
+
+        Cache::write('key', 'data', 'file_test');
+        $this->assertFileExists(TMP . 'tests/key');
+
+        $result = Cache::clear(false, 'file_test');
+        $this->assertTrue($result);
+        $this->assertFileNotExists(TMP . 'tests/key');
+
+        $this->assertFileExists($unrelatedFile);
+        $this->assertTrue(unlink($unrelatedFile));
+    }
 }

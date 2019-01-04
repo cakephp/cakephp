@@ -95,7 +95,6 @@ class HelpCommandTest extends TestCase
             'only short alias for plugin command.'
         );
         $this->assertOutputContains('- sample', 'app shell');
-        $this->assertOutputContains('- test_plugin.sample', 'Long plugin name');
         $this->assertOutputContains('- routes', 'core shell');
         $this->assertOutputContains('- example', 'short plugin name');
         $this->assertOutputContains('- abort', 'command object');
