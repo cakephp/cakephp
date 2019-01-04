@@ -334,7 +334,7 @@ abstract class Driver implements DriverInterface
     /**
      * @inheritDoc
      */
-    public function enableAutoQuoting(bool $enable = true): DriverInterface
+    public function enableAutoQuoting(bool $enable = true)
     {
         $this->_autoQuoting = (bool)$enable;
 
