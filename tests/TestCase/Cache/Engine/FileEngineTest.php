@@ -704,7 +704,7 @@ class FileEngineTest extends TestCase
         Cache::write('key', 'data', 'file_test');
         $this->assertFileExists(TMP . 'tests/key');
 
-        $result = Cache::clear(false, 'file_test');
+        $result = Cache::clear('file_test');
         $this->assertTrue($result);
         $this->assertFileNotExists(TMP . 'tests/key');
 
