@@ -144,16 +144,20 @@ class UrlHelper extends Helper
      * Depending on options passed provides full URL with domain name. Also calls
      * `Helper::assetTimestamp()` to add timestamp to local files.
      *
+     * ### Options:
+     *
+     * - `fullBase` Boolean true or a string (e.g. https://example) to
+     *    return full URL with protocol and domain name.
+     * - `pathPrefix` Path prefix for relative URLs
+     * - `ext` Asset extension to append
+     * - `plugin` False value will prevent parsing path as a plugin
+     * - `timestamp` Overrides the value of `Asset.timestamp` in Configure.
+     *    Set to false to skip timestamp generation.
+     *    Set to true to apply timestamps when debug is true. Set to 'force' to always
+     *    enable timestamping regardless of debug value.
+     *
      * @param string|array $path Path string or URL array
-     * @param array $options Options array. Possible keys:
-     *   `fullBase` Return full URL with domain name
-     *   `pathPrefix` Path prefix for relative URLs
-     *   `ext` Asset extension to append
-     *   `plugin` False value will prevent parsing path as a plugin
-     *   `timestamp` Overrides the value of `Asset.timestamp` in Configure.
-     *        Set to false to skip timestamp generation.
-     *        Set to true to apply timestamps when debug is true. Set to 'force' to always
-     *        enable timestamping regardless of debug value.
+     * @param array $options Options array.
      * @return string Generated URL
      */
     public function assetUrl($path, array $options = [])
@@ -196,7 +200,8 @@ class UrlHelper extends Helper
         $path = $this->_encodeUrl($webPath);
 
         if (!empty($options['fullBase'])) {
-            $path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
+            $fullBaseUrl = is_string($options['fullBase']) ? $options['fullBase'] : Router::fullBaseUrl();
+            $path = rtrim($fullBaseUrl, '/') . '/' . ltrim($path, '/');
         }
 
         return $path;

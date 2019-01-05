@@ -194,7 +194,7 @@ class FileEngine extends CacheEngine
         $time = time();
         $cachetime = (int)$this->_File->current();
 
-        if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
+        if ($cachetime < $time) {
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
@@ -269,7 +269,10 @@ class FileEngine extends CacheEngine
 
         $this->_clearDirectory($this->_config['path'], $now, $threshold);
 
-        $directory = new RecursiveDirectoryIterator($this->_config['path']);
+        $directory = new RecursiveDirectoryIterator(
+            $this->_config['path'],
+            \FilesystemIterator::SKIP_DOTS
+        );
         $contents = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST
