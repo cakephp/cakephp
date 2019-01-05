@@ -675,7 +675,7 @@ class BelongsToMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $parentEntity the source entity containing the target
      * entities to be saved.
-     * @param iterable $entities list of entities to persist in target table and to
+     * @param array $entities list of entities to persist in target table and to
      * link to the parent entity
      * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
@@ -683,7 +683,7 @@ class BelongsToMany extends Association
      * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
      * created if no errors happened, false otherwise
      */
-    protected function _saveTarget(EntityInterface $parentEntity, iterable $entities, $options)
+    protected function _saveTarget(EntityInterface $parentEntity, array $entities, $options)
     {
         $joinAssociations = false;
         if (!empty($options['associated'][$this->_junctionProperty]['associated'])) {
