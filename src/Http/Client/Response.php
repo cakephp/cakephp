@@ -120,34 +120,6 @@ class Response extends Message implements ResponseInterface
     protected $_json;
 
     /**
-     * Map of public => property names for __get()
-     *
-     * @var array
-     */
-    protected $_exposedProperties = [
-        'cookies' => '_getCookies',
-        'body' => '_getBody',
-        'code' => 'code',
-        'json' => '_getJson',
-        'xml' => '_getXml',
-        'headers' => '_getHeaders',
-    ];
-
-    /**
-     * Map of deprecated magic properties.
-     *
-     * @var array
-     * @internal
-     */
-    protected $_deprecatedMagicProperties = [
-        'cookies' => 'getCookies()',
-        'body' => 'getStringBody()',
-        'json' => 'getJson()',
-        'xml' => 'getXml()',
-        'headers' => 'getHeaders()',
-    ];
-
-    /**
      * Constructor
      *
      * @param array $headers Unparsed headers.
@@ -434,38 +406,6 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Get the response body.
-     *
-     * By passing in a $parser callable, you can get the decoded
-     * response content back.
-     *
-     * For example to get the json data as an object:
-     *
-     * ```
-     * $body = $response->body('json_decode');
-     * ```
-     *
-     * @param callable|null $parser The callback to use to decode
-     *   the response body.
-     * @return mixed The response body.
-     * @deprecated 3.7.0 Use getStringBody()/getJson()/getXml() instead.
-     */
-    public function body($parser = null)
-    {
-        deprecationWarning(
-            'Response::body() is deprecated. Use getStringBody()/getJson()/getXml() instead.'
-        );
-
-        $stream = $this->stream;
-        $stream->rewind();
-        if ($parser) {
-            return $parser($stream->getContents());
-        }
-
-        return $stream->getContents();
-    }
-
-    /**
      * Get the response body as string.
      *
      * @return string
@@ -555,71 +495,5 @@ class Response extends Message implements ResponseInterface
         $this->stream->rewind();
 
         return $this->stream->getContents();
-    }
-
-    /**
-     * Read values as properties.
-     *
-     * @param string $name Property name.
-     * @return mixed
-     */
-    public function __get($name)
-    {
-        if (!isset($this->_exposedProperties[$name])) {
-            return false;
-        }
-        $key = $this->_exposedProperties[$name];
-        if (substr($key, 0, 4) === '_get') {
-            deprecationWarning(sprintf(
-                'Response::%s is deprecated. Use Response::%s instead.',
-                $name,
-                $this->_deprecatedMagicProperties[$name]
-            ));
-
-            return $this->{$key}();
-        }
-
-        if ($key === 'code') {
-            deprecationWarning(
-                'Response::code() is deprecated. ' .
-                'Use Response::getStatusCode() instead.'
-            );
-        }
-
-        return $this->{$key};
-    }
-
-    /**
-     * isset/empty test with -> syntax.
-     *
-     * @param string $name Property name.
-     * @return bool
-     */
-    public function __isset($name)
-    {
-        if (!isset($this->_exposedProperties[$name])) {
-            return false;
-        }
-        $key = $this->_exposedProperties[$name];
-        if (substr($key, 0, 4) === '_get') {
-            deprecationWarning(sprintf(
-                'Response::%s is deprecated. Use Response::%s instead.',
-                $name,
-                $this->_deprecatedMagicProperties[$name]
-            ));
-
-            $val = $this->{$key}();
-
-            return $val !== null;
-        }
-
-        if ($key === 'code') {
-            deprecationWarning(
-                'Response::code() is deprecated. ' .
-                'Use Response::getStatusCode() instead.'
-            );
-        }
-
-        return isset($this->{$key});
     }
 }

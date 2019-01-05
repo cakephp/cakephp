@@ -404,11 +404,6 @@ XML;
         ];
         $response = new Response($headers, '');
         $this->assertSame(404, $response->getStatusCode());
-
-        $this->deprecated(function () use ($response) {
-            $this->assertSame(404, $response->code);
-            $this->assertTrue(isset($response->code));
-        });
     }
 
     /**
