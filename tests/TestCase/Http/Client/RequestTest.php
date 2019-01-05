@@ -39,7 +39,7 @@ class RequestTest extends TestCase
         $this->assertEquals('http://example.com', (string)$request->getUri());
         $this->assertContains($request->getMethod(), 'POST');
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->body());
+        $this->assertEquals(json_encode($data), $request->getBody()->__toString());
     }
     /**
      * @param array $headers The HTTP headers to set.
@@ -55,7 +55,7 @@ class RequestTest extends TestCase
         $this->assertEquals($request->getMethod(), $method);
         $this->assertEquals('http://example.com', (string)$request->getUri());
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->body());
+        $this->assertEquals(json_encode($data), $request->getBody()->__toString());
     }
     /**
      * @dataProvider additionProvider
@@ -93,7 +93,7 @@ class RequestTest extends TestCase
         $this->assertEquals('http://example.com', (string)$request->getUri());
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals('a=b&c=d', $request->body());
+        $this->assertEquals('a=b&c=d', $request->getBody()->__toString());
     }
 
     /**
@@ -113,7 +113,7 @@ class RequestTest extends TestCase
         $this->assertEquals('http://example.com', (string)$request->getUri());
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals('a=b&c%5B0%5D=foo&c%5B1%5D=bar', $request->body());
+        $this->assertEquals('a=b&c%5B0%5D=foo&c%5B1%5D=bar', $request->getBody()->__toString());
     }
 
     /**
@@ -124,10 +124,9 @@ class RequestTest extends TestCase
     public function testBody()
     {
         $data = '{"json":"data"}';
-        $request = new Request();
-        $this->assertSame($request, $request->body($data));
+        $request = new Request('', Request::METHOD_GET, [], $data);
 
-        $this->assertEquals($data, $request->body());
+        $this->assertEquals($data, $request->getBody()->__toString());
     }
 
     /**
@@ -137,17 +136,16 @@ class RequestTest extends TestCase
      */
     public function testBodyArray()
     {
-        $request = new Request();
         $data = [
             'a' => 'b',
             'c' => 'd',
             'e' => ['f', 'g'],
         ];
-        $request->body($data);
+        $request = new Request('', Request::METHOD_GET, [], $data);
         $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
         $this->assertEquals(
             'a=b&c=d&e%5B0%5D=f&e%5B1%5D=g',
-            $request->body(),
+            $request->getBody()->__toString(),
             'Body should be serialized'
         );
     }
@@ -160,13 +158,11 @@ class RequestTest extends TestCase
     public function testBodyInteroperability()
     {
         $request = new Request();
-        $this->assertSame('', $request->body());
+        $this->assertSame('', $request->getBody()->__toString());
 
         $data = '{"json":"data"}';
-        $request = new Request();
-        $request->body($data);
-        $this->assertSame($data, $request->body());
-        $this->assertSame($data, '' . $request->getBody());
+        $request = new Request('', Request::METHOD_GET, [], $data);
+        $this->assertSame($data, $request->getBody()->__toString());
     }
 
     /**
