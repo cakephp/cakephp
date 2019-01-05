@@ -26,8 +26,8 @@ use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
-use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Exception;
@@ -93,7 +93,7 @@ class Connection implements ConnectionInterface
     /**
      * The schema collection object
      *
-     * @var \Cake\Database\Schema\Collection|null
+     * @var \Cake\Database\Schema\CollectionInterface|null
      */
     protected $_schemaCollection;
 
