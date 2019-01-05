@@ -83,10 +83,12 @@ before_install:
   - sudo locale-gen da_DK
 
 before_script:
-  - composer install --prefer-dist --no-interaction
+  - if [[ $PREFER_LOWEST != 1 ]]; then composer install --prefer-source --no-interaction; fi
+  - if [[ $PREFER_LOWEST == 1 ]]; then composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction; fi
 
 script:
   - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
+
   - if [[ $CODECOVERAGE = 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
 
   - if [[ $CHECKS = 1 ]]; then composer require --dev "phpstan/phpstan:^0.10" && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src/; fi
