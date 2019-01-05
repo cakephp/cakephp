@@ -423,7 +423,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *   if associations is an array, a bool on whether to override previous list
      *   with the one passed
      * defaults to merging previous list with the new one.
-     * @return array|$this
+     * @return $this
      */
     public function contain($associations, $override = false)
     {

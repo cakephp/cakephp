@@ -92,7 +92,7 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
-    public function addPlugin($name, array $config = []): PluginApplicationInterface
+    public function addPlugin($name, array $config = [])
     {
         if (is_string($name)) {
             $plugin = $this->makePlugin($name, $config);

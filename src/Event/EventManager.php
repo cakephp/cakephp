@@ -95,7 +95,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
-    public function on($eventKey = null, $options = [], $callable = null): EventManagerInterface
+    public function on($eventKey = null, $options = [], $callable = null)
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
@@ -178,7 +178,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
-    public function off($eventKey, $callable = null): EventManagerInterface
+    public function off($eventKey, $callable = null)
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);

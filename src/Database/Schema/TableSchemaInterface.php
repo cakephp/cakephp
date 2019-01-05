@@ -154,9 +154,9 @@ interface TableSchemaInterface extends SchemaInterface
      * Sets whether the table is temporary in the database.
      *
      * @param bool $temporary Whether or not the table is to be temporary.
-     * @return \Cake\Database\Schema\TableSchemaInterface
+     * @return $this
      */
-    public function setTemporary(bool $temporary): self;
+    public function setTemporary(bool $temporary);
 
     /**
      * Gets whether the table is temporary in the database.

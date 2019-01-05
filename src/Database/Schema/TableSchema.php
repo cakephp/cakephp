@@ -686,7 +686,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function setTemporary(bool $temporary): TableSchemaInterface
+    public function setTemporary(bool $temporary)
     {
         $this->_temporary = (bool)$temporary;
 

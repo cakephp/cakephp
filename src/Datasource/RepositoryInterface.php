@@ -18,9 +18,6 @@ namespace Cake\Datasource;
 /**
  * Describes the methods that any class representing a data storage should
  * comply with.
- *
- * @method $this setRegistryAlias(string $alias)
- * @method string getRegistryAlias()
  */
 interface RepositoryInterface
 {
@@ -38,6 +35,21 @@ interface RepositoryInterface
      * @return string
      */
     public function getAlias(): string;
+
+    /**
+     * Sets the table registry key used to create this table instance.
+     *
+     * @param string $registryAlias The key used to access this object.
+     * @return $this
+     */
+    public function setRegistryAlias(string $registryAlias);
+
+    /**
+     * Returns the table registry key used to create this table instance.
+     *
+     * @return string
+     */
+    public function getRegistryAlias(): string;
 
     /**
      * Test to see if a Repository has a specific field/column.

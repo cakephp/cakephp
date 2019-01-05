@@ -227,9 +227,9 @@ interface DriverInterface
      * in queries.
      *
      * @param bool $enable Whether to enable auto quoting
-     * @return \Cake\Database\DriverInterface
+     * @return $this
      */
-    public function enableAutoQuoting(bool $enable = true): self;
+    public function enableAutoQuoting(bool $enable = true);
 
     /**
      * Returns whether or not this driver should automatically quote identifiers
