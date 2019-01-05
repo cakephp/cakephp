@@ -624,7 +624,7 @@ trait EntityTrait
             return static::$_accessors[$class][$type][$property] = '';
         }
 
-        if ($class === Entity::class) {
+        if (static::class === Entity::class) {
             return '';
         }
 
