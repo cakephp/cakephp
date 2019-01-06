@@ -27,6 +27,7 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Retry\ReconnectStrategy;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Exception;
@@ -92,7 +93,7 @@ class Connection implements ConnectionInterface
     /**
      * The schema collection object
      *
-     * @var \Cake\Database\Schema\Collection|null
+     * @var \Cake\Database\Schema\CollectionInterface|null
      */
     protected $_schemaCollection;
 
@@ -343,10 +344,10 @@ class Connection implements ConnectionInterface
     /**
      * Sets a Schema\Collection object for this connection.
      *
-     * @param \Cake\Database\Schema\Collection $collection The schema collection object
+     * @param \Cake\Database\Schema\CollectionInterface $collection The schema collection object
      * @return $this
      */
-    public function setSchemaCollection(SchemaCollection $collection)
+    public function setSchemaCollection(SchemaCollectionInterface $collection)
     {
         $this->_schemaCollection = $collection;
 
@@ -356,16 +357,20 @@ class Connection implements ConnectionInterface
     /**
      * Gets a Schema\Collection object for this connection.
      *
-     * @return \Cake\Database\Schema\Collection
+     * @return \Cake\Database\Schema\CollectionInterface
      */
-    public function getSchemaCollection(): SchemaCollection
+    public function getSchemaCollection(): SchemaCollectionInterface
     {
         if ($this->_schemaCollection !== null) {
             return $this->_schemaCollection;
         }
 
         if (!empty($this->_config['cacheMetadata'])) {
-            return $this->_schemaCollection = new CachedCollection($this, $this->_config['cacheMetadata']);
+            return $this->_schemaCollection = new CachedCollection(
+                new SchemaCollection($this),
+                $this->configName(),
+                $this->_config['cacheMetadata']
+            );
         }
 
         return $this->_schemaCollection = new SchemaCollection($this);
