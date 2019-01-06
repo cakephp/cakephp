@@ -401,7 +401,7 @@ abstract class Association
                         $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
                         $this->getName(),
                         $this->type(),
-                        $this->_targetTable ? get_class($this->_targetTable) : 'null',
+                        get_class($this->_targetTable),
                         $className
                     ));
                 }
