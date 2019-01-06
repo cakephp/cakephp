@@ -62,7 +62,7 @@ class InflectedRouteTest extends TestCase
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view']);
         $this->assertEquals('/blog/my_view', $result);
 
-        $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', 'id' => 2]);
+        $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', '?' => ['id' => 2]]);
         $this->assertEquals('/blog/my_view?id=2', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', 1]);

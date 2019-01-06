@@ -52,11 +52,14 @@ class PaginatorHelper extends Helper
      * The values that may be specified are:
      *
      * - `url` Url of the action. See Router::url()
-     * - `url['sort']` the key that the recordset is sorted.
-     * - `url['direction']` Direction of the sorting (default: 'asc').
-     * - `url['page']` Page number to use in links.
+     * - `url['?']['sort']` the key that the recordset is sorted.
+     * - `url['?']['direction']` Direction of the sorting (default: 'asc').
+     * - `url['?']['page']` Page number to use in links.
      * - `model` The name of the model.
      * - `escape` Defines if the title field for the link should be escaped (default: true).
+     * - `routePlaceholders` An array specifying which paging params should be
+     *   passed as route placeholders instead of query string parameters. The array
+     *   can have values `'sort'`, `'direction'`, `'page'`.
      *
      * Templates: the templates used by this class
      *
@@ -312,11 +315,11 @@ class PaginatorHelper extends Helper
         }
         $paging = $this->params($options['model']);
 
-        $url = array_merge(
-            $options['url'],
-            ['page' => $paging['page'] + $options['step']]
+        $url = $this->generateUrl(
+            ['page' => $paging['page'] + $options['step']],
+            $options['model'],
+            $options['url']
         );
-        $url = $this->generateUrl($url, $options['model']);
 
         $out = $templater->format($template, [
             'url' => $url,
@@ -479,14 +482,11 @@ class PaginatorHelper extends Helper
             $title = $title[$dir];
         }
 
-        $url = array_merge(
-            ['sort' => $key, 'direction' => $dir, 'page' => 1],
-            $url,
-            ['order' => null]
-        );
+        $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+
         $vars = [
             'text' => $options['escape'] ? h($title) : $title,
-            'url' => $this->generateUrl($url, $options['model']),
+            'url' => $this->generateUrl($paging, $options['model'], $url),
         ];
 
         return $this->templater()->format($template, $vars);
@@ -501,21 +501,26 @@ class PaginatorHelper extends Helper
      *    escaped afterwards before being displayed.
      * - `fullBase`: If true, the full base URL will be prepended to the result
      *
-     * @param array $options Pagination/URL options array
+     * @param array $options Pagination options.
      * @param string|null $model Which model to paginate on
+     * @param array $url URL.
      * @param array $urlOptions Array of options
      * @return string By default, returns a full pagination URL string for use
      *   in non-standard contexts (i.e. JavaScript)
      * @link https://book.cakephp.org/3.0/en/views/helpers/paginator.html#generating-pagination-urls
      */
-    public function generateUrl(array $options = [], ?string $model = null, array $urlOptions = []): string
-    {
+    public function generateUrl(
+        array $options = [],
+        ?string $model = null,
+        array $url = [],
+        array $urlOptions = []
+    ): string {
         $urlOptions += [
             'escape' => true,
             'fullBase' => false,
         ];
 
-        return $this->Url->build($this->generateUrlParams($options, $model), $urlOptions);
+        return $this->Url->build($this->generateUrlParams($options, $model, $url), $urlOptions);
     }
 
     /**
@@ -523,66 +528,68 @@ class PaginatorHelper extends Helper
      *
      * @param array $options Pagination/URL options array
      * @param string|null $model Which model to paginate on
+     * @param array $url URL.
      * @return array An array of URL parameters
      */
-    public function generateUrlParams(array $options = [], ?string $model = null): array
+    public function generateUrlParams(array $options = [], ?string $model = null, array $url = []): array
     {
         $paging = $this->params($model);
         $paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 
-        if (!empty($paging['sort']) && !empty($options['sort']) && strpos($options['sort'], '.') === false) {
-            $paging['sort'] = $this->_removeAlias($paging['sort'], null);
+        if (!empty($paging['sort'])
+            && !empty($options['sort'])
+            && strpos($options['sort'], '.') === false
+        ) {
+            $paging['sort'] = $this->_removeAlias($paging['sort'], $model = null);
         }
-        if (!empty($paging['sortDefault']) && !empty($options['sort']) && strpos($options['sort'], '.') === false) {
+        if (!empty($paging['sortDefault'])
+            && !empty($options['sort'])
+            && strpos($options['sort'], '.') === false
+        ) {
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $model);
         }
 
-        $url = [
-            'page' => $paging['page'],
-            'limit' => $paging['limit'],
-            'sort' => $paging['sort'],
-            'direction' => $paging['direction'],
-        ];
+        $options += array_intersect_key(
+            $paging,
+            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null]
+        );
 
-        if (!empty($this->_config['options']['url'])) {
-            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
-            $url = array_merge($url, Hash::get($this->_config, $key, []));
+        if (!empty($options['page']) && $options['page'] === 1) {
+            $options['page'] = null;
         }
 
-        $url = array_filter($url, function ($value) {
-            return $value || is_numeric($value) || $value === false;
-        });
-        $url = array_merge($url, $options);
-
-        if (!empty($url['page']) && $url['page'] === 1) {
-            $url['page'] = false;
-        }
-
-        if (isset($paging['sortDefault'], $paging['directionDefault'], $url['sort'], $url['direction']) &&
-            $url['sort'] === $paging['sortDefault'] &&
-            strtolower($url['direction']) === strtolower($paging['directionDefault'])
+        if (isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction']) &&
+            $options['sort'] === $paging['sortDefault'] &&
+            strtolower($options['direction']) === strtolower($paging['directionDefault'])
         ) {
-            $url['sort'] = $url['direction'] = null;
+            $options['sort'] = $options['direction'] = null;
         }
 
         if (!empty($paging['scope'])) {
             $scope = $paging['scope'];
             $currentParams = $this->_config['options']['url'];
 
-            if (isset($url['#'])) {
-                $currentParams['#'] = $url['#'];
-                unset($url['#']);
-            }
-
-            // Merge existing query parameters in the scope.
             if (isset($currentParams['?'][$scope]) && is_array($currentParams['?'][$scope])) {
-                $url += $currentParams['?'][$scope];
-                unset($currentParams['?'][$scope]);
+                $options += $currentParams['?'][$scope];
             }
-            $url = [$scope => $url] + $currentParams;
-            if (empty($url[$scope]['page'])) {
-                unset($url[$scope]['page']);
-            }
+            $options = [$scope => $options];
+        }
+
+        if (!empty($this->_config['options']['url'])) {
+            $key = implode('.', array_filter(['options.url', Hash::get($paging, 'scope', null)]));
+            $url = Hash::merge($url, Hash::get($this->_config, $key, []));
+        }
+
+        if (!isset($url['?'])) {
+            $url['?'] = [];
+        }
+
+        if (!empty($this->_config['options']['routePlaceholders'])) {
+            $placeholders = array_flip($this->_config['options']['routePlaceholders']);
+            $url += array_intersect_key($options, $placeholders);
+            $url['?'] += array_diff_key($options, $placeholders);
+        } else {
+            $url['?'] += $options;
         }
 
         return $url;
@@ -856,10 +863,9 @@ class PaginatorHelper extends Helper
      */
     protected function _formatNumber(StringTemplate $templater, array $options): string
     {
-        $url = array_merge($options['url'], ['page' => $options['page']]);
         $vars = [
             'text' => $options['text'],
-            'url' => $this->generateUrl($url, $options['model']),
+            'url' => $this->generateUrl(['page' => $options['page']], $options['model'], $options['url']),
         ];
 
         return $templater->format('number', $vars);
@@ -892,7 +898,8 @@ class PaginatorHelper extends Helper
             ]);
         }
 
-        $url = array_merge($options['url'], ['page' => $params['page']]);
+        $url = $options['url'];
+        $url['?']['page'] = $params['page'];
         $out .= $templater->format('current', [
             'text' => $this->Number->format($params['page']),
             'url' => $this->generateUrl($url, $options['model']),
@@ -985,17 +992,17 @@ class PaginatorHelper extends Helper
     {
         $out = '';
         $out .= $options['before'];
+
         for ($i = 1; $i <= $params['pageCount']; $i++) {
-            $url = array_merge($options['url'], ['page' => $i]);
             if ($i === $params['page']) {
                 $out .= $templater->format('current', [
                     'text' => $this->Number->format($params['page']),
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl(['page' => $i], $options['model'], $options['url']),
                 ]);
             } else {
                 $vars = [
                     'text' => $this->Number->format($i),
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl(['page' => $i], $options['model'], $options['url']),
                 ];
                 $out .= $templater->format('number', $vars);
             }
@@ -1051,9 +1058,8 @@ class PaginatorHelper extends Helper
 
         if (is_int($first) && $params['page'] >= $first) {
             for ($i = 1; $i <= $first; $i++) {
-                $url = array_merge($options['url'], ['page' => $i]);
                 $out .= $this->templater()->format('number', [
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl(['page' => $i], $options['model'], $options['url']),
                     'text' => $this->Number->format($i),
                 ]);
             }
@@ -1112,9 +1118,8 @@ class PaginatorHelper extends Helper
 
         if (is_int($last) && $params['page'] <= $lower) {
             for ($i = $lower; $i <= $params['pageCount']; $i++) {
-                $url = array_merge($options['url'], ['page' => $i]);
                 $out .= $this->templater()->format('number', [
-                    'url' => $this->generateUrl($url, $options['model']),
+                    'url' => $this->generateUrl(['page' => $i], $options['model'], $options['url']),
                     'text' => $this->Number->format($i),
                 ]);
             }
@@ -1175,28 +1180,28 @@ class PaginatorHelper extends Helper
         if ($options['prev'] && $this->hasPrev()) {
             $links[] = $this->Html->meta(
                 'prev',
-                $this->generateUrl(['page' => $params['page'] - 1], null, ['fullBase' => true])
+                $this->generateUrl(['page' => $params['page'] - 1], null, [], ['fullBase' => true])
             );
         }
 
         if ($options['next'] && $this->hasNext()) {
             $links[] = $this->Html->meta(
                 'next',
-                $this->generateUrl(['page' => $params['page'] + 1], null, ['fullBase' => true])
+                $this->generateUrl(['page' => $params['page'] + 1], null, [], ['fullBase' => true])
             );
         }
 
         if ($options['first']) {
             $links[] = $this->Html->meta(
                 'first',
-                $this->generateUrl(['page' => 1], null, ['fullBase' => true])
+                $this->generateUrl(['page' => 1], null, [], ['fullBase' => true])
             );
         }
 
         if ($options['last']) {
             $links[] = $this->Html->meta(
                 'last',
-                $this->generateUrl(['page' => $params['pageCount']], null, ['fullBase' => true])
+                $this->generateUrl(['page' => $params['pageCount']], null, [], ['fullBase' => true])
             );
         }
 
