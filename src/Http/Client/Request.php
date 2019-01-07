@@ -51,7 +51,7 @@ class Request extends Message implements RequestInterface
         if ($data === null) {
             $this->stream = new Stream('php://memory', 'rw');
         } else {
-            $this->body($data);
+            $this->setContent($data);
         }
     }
 
@@ -71,29 +71,25 @@ class Request extends Message implements RequestInterface
     }
 
     /**
-     * Get/set the body/payload for the message.
+     * Set the body/payload for the message.
      *
      * Array data will be serialized with Cake\Http\FormData,
      * and the content-type will be set.
      *
-     * @param string|array|null $body The body for the request. Leave null for get
-     * @return mixed Either $this or the body value.
+     * @param string|array $content The body for the request.
+     * @return $this
      */
-    public function body($body = null)
+    protected function setContent($content)
     {
-        if ($body === null) {
-            $body = $this->getBody();
-
-            return $body ? $body->__toString() : '';
-        }
-        if (is_array($body)) {
+        if (is_array($content)) {
             $formData = new FormData();
-            $formData->addMany($body);
+            $formData->addMany($content);
             $this->addHeaders(['Content-Type' => $formData->contentType()]);
-            $body = (string)$formData;
+            $content = (string)$formData;
         }
+
         $stream = new Stream('php://memory', 'rw');
-        $stream->write($body);
+        $stream->write($content);
         $this->stream = $stream;
 
         return $this;

@@ -151,13 +151,6 @@ class Message
     protected $_cookies = [];
 
     /**
-     * Body for the message.
-     *
-     * @var string|null
-     */
-    protected $_body;
-
-    /**
      * Get all cookies
      *
      * @return array
@@ -165,21 +158,5 @@ class Message
     public function cookies(): array
     {
         return $this->_cookies;
-    }
-
-    /**
-     * Get/set the body for the message.
-     *
-     * @param string|null $body The body for the request. Leave null for get
-     * @return mixed Either $this or the body value.
-     */
-    public function body($body = null)
-    {
-        if ($body === null) {
-            return $this->_body;
-        }
-        $this->_body = $body;
-
-        return $this;
     }
 }
