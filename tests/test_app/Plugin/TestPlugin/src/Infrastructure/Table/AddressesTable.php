@@ -7,7 +7,7 @@
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         3.7.1
+ * @since         3.8.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestPlugin\Infrastructure\Table;
