@@ -446,7 +446,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function add($field, $name, $rule = [])
     {
-        $field = $this->field($field);
+        $validationSet = $this->field($field);
 
         if (!is_array($name)) {
             $rules = [$name => $rule];
@@ -458,7 +458,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (is_array($rule)) {
                 $rule += ['rule' => $name];
             }
-            $field->add($name, $rule);
+            $validationSet->add($name, $rule);
         }
 
         return $this;
@@ -488,8 +488,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
-        $field = $this->field($field);
-        $field->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
+        $validationSet = $this->field($field);
+        $validationSet->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
             if (!is_array($value)) {
                 return false;
             }
@@ -530,8 +530,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
-        $field = $this->field($field);
-        $field->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
+        $validationSet = $this->field($field);
+        $validationSet->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
             if (!is_array($value)) {
                 return false;
             }
