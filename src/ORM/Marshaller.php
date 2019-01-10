@@ -743,13 +743,13 @@ class Marshaller
      * Creates a new sub-marshaller and merges the associated data for a BelongstoMany
      * association.
      *
-     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param \Cake\Datasource\EntityInterface[] $original The original entities list.
      * @param \Cake\ORM\Association $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    protected function _mergeBelongsToMany($original, Association $assoc, $value, array $options): array
+    protected function _mergeBelongsToMany(array $original, Association $assoc, $value, array $options): array
     {
         $associated = $options['associated'] ?? [];
 
@@ -773,13 +773,13 @@ class Marshaller
     /**
      * Merge the special _joinData property into the entity set.
      *
-     * @param \Cake\Datasource\EntityInterface $original The original entity
+     * @param \Cake\Datasource\EntityInterface[] $original The original entities list.
      * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[] An array of entities
      */
-    protected function _mergeJoinData($original, BelongsToMany $assoc, array $value, array $options): array
+    protected function _mergeJoinData(array $original, BelongsToMany $assoc, array $value, array $options): array
     {
         $associated = $options['associated'] ?? [];
         $extra = [];
