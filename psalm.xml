@@ -34,7 +34,6 @@
 
         <RedundantCondition>
             <errorLevel type="suppress">
-                <file name="src/I18n/DateFormatTrait.php" />
                 <file name="src/Utility/Hash.php" />
             </errorLevel>
         </RedundantCondition>
@@ -164,7 +163,6 @@
             <errorLevel type="suppress">
                 <file name="src/Cache/Engine/MemcachedEngine.php" />
                 <file name="src/Cache/Engine/RedisEngine.php" />
-                <file name="src/ORM/Behavior/TranslateBehavior.php" />
                 <file name="src/ORM/Behavior/Translate/EavStrategy.php" />
             </errorLevel>
         </UndefinedClass>
@@ -174,7 +172,6 @@
                 <file name="src/Console/Shell.php" />
                 <file name="src/Controller/Component/AuthComponent.php" />
                 <file name="src/Datasource/Paginator.php" />
-                <file name="src/Datasource/ResultSetDecorator.php" />
                 <file name="src/ORM/Association.php" />
                 <file name="src/ORM/Association/BelongsToMany.php" />
             </errorLevel>
@@ -205,12 +202,6 @@
                 <file name="src/Core/functions.php" />
             </errorLevel>
         </InvalidCast>
-
-        <InvalidArrayOffset>
-            <errorLevel type="suppress">
-                <file name="src/Datasource/EntityTrait.php" />
-            </errorLevel>
-        </InvalidArrayOffset>
 
     </issueHandlers>
 </psalm>
