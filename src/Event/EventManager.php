@@ -103,14 +103,14 @@ class EventManager implements EventManagerInterface
             return $this;
         }
         $argCount = func_num_args();
-        if ($argCount === 2) {
+        if ($eventKey && $argCount === 2) {
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options,
             ];
 
             return $this;
         }
-        if ($argCount === 3) {
+        if ($eventKey && $argCount === 3) {
             $priority = $options['priority'] ?? static::$defaultPriority;
             $this->_listeners[$eventKey][$priority][] = [
                 'callable' => $callable,
@@ -368,9 +368,9 @@ class EventManager implements EventManagerInterface
     /**
      * Returns the event list.
      *
-     * @return \Cake\Event\EventList
+     * @return \Cake\Event\EventList|null
      */
-    public function getEventList()
+    public function getEventList(): ?EventList
     {
         return $this->_eventList;
     }
