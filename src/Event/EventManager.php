@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 use Cake\Core\Exception\Exception;
-use InvalidArgumentException;
 
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
