@@ -265,9 +265,11 @@ class Comparison implements ExpressionInterface, FieldInterface
     protected function _flattenValue(iterable $value, $generator, $type = 'string'): string
     {
         $parts = [];
-        foreach ($this->_valueExpressions as $k => $v) {
-            $parts[$k] = $v->sql($generator);
-            unset($value[$k]);
+        if (is_array($value)) {
+            foreach ($this->_valueExpressions as $k => $v) {
+                $parts[$k] = $v->sql($generator);
+                unset($value[$k]);
+            }
         }
 
         if (!empty($value)) {

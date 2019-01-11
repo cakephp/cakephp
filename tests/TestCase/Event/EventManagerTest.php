@@ -188,16 +188,16 @@ class EventManagerTest extends TestCase
     {
         $count = 1;
         $manager = new EventManager();
-        $manager->on('my.event', 'myfunc');
+        $manager->on('my.event', 'substr');
         $expected = [
-            ['callable' => 'myfunc'],
+            ['callable' => 'substr'],
         ];
         $this->assertSame($expected, $manager->listeners('my.event'));
 
-        $manager->on('my.event', ['priority' => 1], 'func2');
+        $manager->on('my.event', ['priority' => 1], 'strpos');
         $expected = [
-            ['callable' => 'func2'],
-            ['callable' => 'myfunc'],
+            ['callable' => 'strpos'],
+            ['callable' => 'substr'],
         ];
         $this->assertSame($expected, $manager->listeners('my.event'));
 
@@ -210,19 +210,6 @@ class EventManagerTest extends TestCase
     }
 
     /**
-     * Test the on() with invalid arguments
-     *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Invalid arguments for EventManager::on(). Expected 1, 2 or 3 arguments.
-     * @return void
-     */
-    public function testOnInvalidArgument()
-    {
-        $manager = new EventManager();
-        $manager->on();
-    }
-
-    /**
      * Tests off'ing an event from a event key queue
      *
      * @return void
@@ -232,18 +219,18 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $manager->on('fake.event', ['AClass', 'aMethod']);
         $manager->on('another.event', ['AClass', 'anotherMethod']);
-        $manager->on('another.event', ['priority' => 1], 'fakeFunction');
+        $manager->on('another.event', ['priority' => 1], 'substr');
 
         $manager->off('fake.event', ['AClass', 'aMethod']);
         $this->assertEquals([], $manager->listeners('fake.event'));
 
         $manager->off('another.event', ['AClass', 'anotherMethod']);
         $expected = [
-            ['callable' => 'fakeFunction'],
+            ['callable' => 'substr'],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
 
-        $manager->off('another.event', 'fakeFunction');
+        $manager->off('another.event', 'substr');
         $this->assertEquals([], $manager->listeners('another.event'));
     }
 
@@ -255,13 +242,15 @@ class EventManagerTest extends TestCase
     public function testOffFromAll()
     {
         $manager = new EventManager();
-        $manager->on('fake.event', ['AClass', 'aMethod']);
-        $manager->on('another.event', ['AClass', 'aMethod']);
-        $manager->on('another.event', ['priority' => 1], 'fakeFunction');
+        $callable = function () {
+        };
+        $manager->on('fake.event', $callable);
+        $manager->on('another.event', $callable);
+        $manager->on('another.event', ['priority' => 1], 'substr');
 
-        $manager->off(['AClass', 'aMethod']);
+        $manager->off($callable);
         $expected = [
-            ['callable' => 'fakeFunction'],
+            ['callable' => 'substr'],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
         $this->assertEquals([], $manager->listeners('fake.event'));
@@ -274,12 +263,13 @@ class EventManagerTest extends TestCase
     {
         $manager = new EventManager();
         $manager->on('fake.event', ['AClass', 'aMethod']);
-        $manager->on('another.event', ['priority' => 1], 'fakeFunction');
+
+        $manager->on('another.event', ['priority' => 1], 'substr');
 
         $manager->off('fake.event');
 
         $expected = [
-            ['callable' => 'fakeFunction'],
+            ['callable' => 'substr'],
         ];
         $this->assertEquals($expected, $manager->listeners('another.event'));
         $this->assertEquals([], $manager->listeners('fake.event'));

@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use InvalidArgumentException;
+use Cake\Core\Exception\Exception;
 
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
@@ -95,13 +95,14 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
-    public function on($eventKey = null, $options = [], $callable = null)
+    public function on($eventKey, $options = [], ?callable $callable = null)
     {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
 
             return $this;
         }
+
         $argCount = func_num_args();
         if ($argCount === 2) {
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
@@ -110,18 +111,13 @@ class EventManager implements EventManagerInterface
 
             return $this;
         }
-        if ($argCount === 3) {
-            $priority = $options['priority'] ?? static::$defaultPriority;
-            $this->_listeners[$eventKey][$priority][] = [
-                'callable' => $callable,
-            ];
 
-            return $this;
-        }
-        throw new InvalidArgumentException(
-            'Invalid arguments for EventManager::on(). ' .
-            "Expected 1, 2 or 3 arguments. Got {$argCount} arguments."
-        );
+        $priority = $options['priority'] ?? static::$defaultPriority;
+        $this->_listeners[$eventKey][$priority][] = [
+            'callable' => $callable,
+        ];
+
+        return $this;
     }
 
     /**
@@ -185,26 +181,38 @@ class EventManager implements EventManagerInterface
 
             return $this;
         }
-        if ($callable instanceof EventListenerInterface) {
-            $this->_detachSubscriber($callable, $eventKey);
 
-            return $this;
-        }
-        if ($callable === null && is_string($eventKey)) {
-            unset($this->_listeners[$eventKey]);
+        if (!is_string($eventKey)) {
+            if (!is_callable($eventKey)) {
+                throw new Exception(
+                    'First argument of EventManager::off() must be ' .
+                    ' string or EventListenerInterface instance or callable.'
+                );
+            }
 
-            return $this;
-        }
-        if ($callable === null) {
             foreach (array_keys($this->_listeners) as $name) {
                 $this->off($name, $eventKey);
             }
 
             return $this;
         }
+
+        if ($callable instanceof EventListenerInterface) {
+            $this->_detachSubscriber($callable, $eventKey);
+
+            return $this;
+        }
+
+        if ($callable === null) {
+            unset($this->_listeners[$eventKey]);
+
+            return $this;
+        }
+
         if (empty($this->_listeners[$eventKey])) {
             return $this;
         }
+
         foreach ($this->_listeners[$eventKey] as $priority => $callables) {
             foreach ($callables as $k => $callback) {
                 if ($callback['callable'] === $callable) {
@@ -368,9 +376,9 @@ class EventManager implements EventManagerInterface
     /**
      * Returns the event list.
      *
-     * @return \Cake\Event\EventList
+     * @return \Cake\Event\EventList|null
      */
-    public function getEventList()
+    public function getEventList(): ?EventList
     {
         return $this->_eventList;
     }

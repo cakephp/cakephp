@@ -553,7 +553,7 @@ class SecurityComponent extends Component
         ?string $stringKeyMessage
     ): array {
         $messages = [];
-        foreach ((array)$dataFields as $key => $value) {
+        foreach ($dataFields as $key => $value) {
             if (is_int($key)) {
                 $foundKey = array_search($value, (array)$expectedFields);
                 if ($foundKey === false) {
@@ -561,7 +561,7 @@ class SecurityComponent extends Component
                 } else {
                     unset($expectedFields[$foundKey]);
                 }
-            } elseif (is_string($key)) {
+            } else {
                 if (isset($expectedFields[$key]) && $value !== $expectedFields[$key]) {
                     $messages[] = sprintf($stringKeyMessage, $key, $expectedFields[$key], $value);
                 }
