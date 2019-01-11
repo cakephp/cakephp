@@ -42,7 +42,7 @@ interface EventManagerInterface
      * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
      * ```
      *
-     * @param string|\Cake\Event\EventListenerInterface|null $eventKey The event unique identifier name
+     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
      * with which the callback will be associated. If $eventKey is an instance of
      * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents` methods.
      *
@@ -57,7 +57,7 @@ interface EventManagerInterface
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
      */
-    public function on($eventKey = null, $options = [], $callable = null);
+    public function on($eventKey, $options = [], ?callable $callable = null);
 
     /**
      * Remove a listener from the active listeners.
@@ -86,9 +86,9 @@ interface EventManagerInterface
      * $manager->off($callback);
      * ```
      *
-     * @param string|\Cake\Event\EventListenerInterface $eventKey The event unique identifier name
+     * @param string|\Cake\Event\EventListenerInterface|callable $eventKey The event unique identifier name
      *   with which the callback has been associated, or the $listener you want to remove.
-     * @param callable|null $callable The callback you want to detach.
+     * @param \Cake\Event\EventListenerInterface|callable|null $callable The callback you want to detach.
      * @return $this
      */
     public function off($eventKey, $callable = null);
