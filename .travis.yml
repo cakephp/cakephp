@@ -59,7 +59,7 @@ before_install:
 
   - pecl channel-update pecl.php.net
   - |
-      if [[ ${TRAVIS_PHP_VERSION} != "7.3" && ${TRAVIS_PHP_VERSION} != "5.6" ]]; then
+      if [[ ${TRAVIS_PHP_VERSION} != "5.6" ]]; then
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
       fi
   - echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
