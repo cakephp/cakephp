@@ -452,15 +452,13 @@ class HttpSocket extends CakeSocket {
  * @return false|HttpSocketResponse Result of request, either false on failure or the response to the request.
  */
 	public function get($uri = null, $query = array(), $request = array()) {
-		if (!empty($query)) {
-			$uri = $this->_parseUri($uri, $this->config['request']['uri']);
-			if (isset($uri['query'])) {
-				$uri['query'] = array_merge($uri['query'], $query);
-			} else {
-				$uri['query'] = $query;
-			}
-			$uri = $this->_buildUri($uri);
+		$uri = $this->_parseUri($uri, $this->config['request']['uri']);
+		if (isset($uri['query'])) {
+			$uri['query'] = array_merge($uri['query'], $query);
+		} else {
+			$uri['query'] = $query;
 		}
+		$uri = $this->_buildUri($uri);
 
 		$request = Hash::merge(array('method' => 'GET', 'uri' => $uri), $request);
 		return $this->request($request);
@@ -478,15 +476,13 @@ class HttpSocket extends CakeSocket {
  * @return false|HttpSocketResponse Result of request, either false on failure or the response to the request.
  */
 	public function head($uri = null, $query = array(), $request = array()) {
-		if (!empty($query)) {
-			$uri = $this->_parseUri($uri, $this->config['request']['uri']);
-			if (isset($uri['query'])) {
-				$uri['query'] = array_merge($uri['query'], $query);
-			} else {
-				$uri['query'] = $query;
-			}
-			$uri = $this->_buildUri($uri);
+		$uri = $this->_parseUri($uri, $this->config['request']['uri']);
+		if (isset($uri['query'])) {
+			$uri['query'] = array_merge($uri['query'], $query);
+		} else {
+			$uri['query'] = $query;
 		}
+		$uri = $this->_buildUri($uri);
 
 		$request = Hash::merge(array('method' => 'HEAD', 'uri' => $uri), $request);
 		return $this->request($request);
