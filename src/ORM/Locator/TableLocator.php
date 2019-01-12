@@ -69,7 +69,7 @@ class TableLocator implements LocatorInterface
      * @param array|null $locations Locations where tables should be looked for.
      *   If none provided, the default `Model\Table` under your app's namespace is used.
      */
-    public function __construct(array $locations = null)
+    public function __construct(?array $locations = null)
     {
         if ($locations === null) {
             $locations = [
@@ -241,12 +241,12 @@ class TableLocator implements LocatorInterface
 
         foreach ($this->locations as $location) {
             $class = App::className($options['className'], $location, 'Table');
-            if ($class !== false) {
+            if ($class !== null) {
                 return $class;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -319,7 +319,7 @@ class TableLocator implements LocatorInterface
      *
      * @since 3.8.0
      */
-    public function addLocation($location)
+    public function addLocation(string $location)
     {
         $location = str_replace('\\', '/', $location);
         $this->locations[] = trim($location, '/');
