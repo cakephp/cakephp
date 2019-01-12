@@ -21,7 +21,6 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Infrastructure\Table\AddressesTable;
-use TestApp\Model\Table\ArticlesTable;
 use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
 
 /**
