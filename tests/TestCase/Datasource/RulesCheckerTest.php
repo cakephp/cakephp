@@ -204,7 +204,6 @@ class RulesCheckerTest extends TestCase
      * Test that errors are present on multiple fields if errorField is
      * passed as an array.
      *
-     * @group mygroup
      * @return void
      */
     public function testAddToMultipleFieldsUsingArray()

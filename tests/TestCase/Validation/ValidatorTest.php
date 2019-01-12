@@ -107,7 +107,6 @@ class ValidatorTest extends TestCase
      * Testing that field can be passed as an array to apply
      * the rule to multiple fields.
      *
-     * @group mygroup
      * @return void
      */
     public function testAddingRulesToMultipleFields()
