@@ -426,6 +426,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * then rules list for the field will be replaced with second argument and
      * third argument will be ignored.
      *
+     * The first argument can be an array of fields if you wish for the rule to
+     * apply to multiple fields.
+     *
      * ### Example:
      *
      * ```
@@ -437,28 +440,35 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          'size' => ['rule' => ['lengthBetween', 8, 20]],
      *          'hasSpecialCharacter' => ['rule' => 'validateSpecialchar', 'message' => 'not valid']
      *      ]);
+     *
+     *      $validator
+     *          ->add(['title', 'description'], 'required', ['rule' => 'notBlank']);
+     *
      * ```
      *
-     * @param string $field The name of the field from which the rule will be added
+     * @param array|string $field The name of the field from which the rule will be added
      * @param array|string $name The alias for a single rule or multiple rules array
      * @param array|\Cake\Validation\ValidationRule $rule the rule to add
      * @return $this
      */
     public function add($field, $name, $rule = [])
     {
-        $validationSet = $this->field($field);
+        $fields = (array)$field;
+        foreach ($fields as $field) {
+            $validationSet = $this->field($field);
 
-        if (!is_array($name)) {
-            $rules = [$name => $rule];
-        } else {
-            $rules = $name;
-        }
-
-        foreach ($rules as $name => $rule) {
-            if (is_array($rule)) {
-                $rule += ['rule' => $name];
+            if (!is_array($name)) {
+                $rules = [$name => $rule];
+            } else {
+                $rules = $name;
             }
-            $validationSet->add($name, $rule);
+
+            foreach ($rules as $name => $rule) {
+                if (is_array($rule)) {
+                    $rule += ['rule' => $name];
+                }
+                $validationSet->add($name, $rule);
+            }
         }
 
         return $this;

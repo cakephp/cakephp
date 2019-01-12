@@ -199,4 +199,37 @@ class RulesCheckerTest extends TestCase
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
         $this->assertEmpty($entity->getErrors());
     }
+
+    /**
+     * Test that errors are present on multiple fields if errorField is
+     * passed as an array.
+     *
+     * @group mygroup
+     * @return void
+     */
+    public function testAddToMultipleFieldsUsingArray()
+    {
+        $entity = new Entity([
+            'one' => 'One',
+            'two' => 'Two',
+        ]);
+
+        $rules = new RulesChecker();
+        $rule = function () {
+            return false;
+        };
+        $msg = 'Something is wrong with both one and two.';
+        $options = [
+            'errorField' => ['one', 'two'],
+            'message' => $msg,
+        ];
+        $rules->add($rule, $options);
+        $expected = [
+            'one' => [$msg],
+            'two' => [$msg],
+        ];
+
+        $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
+        $this->assertEquals($expected, $entity->getErrors());
+    }
 }

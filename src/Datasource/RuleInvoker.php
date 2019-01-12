@@ -129,12 +129,13 @@ class RuleInvoker
         } else {
             $message = [$message];
         }
-        $errorField = $this->options['errorField'];
-        $entity->setError($errorField, $message);
-
-        if ($entity instanceof InvalidPropertyInterface && isset($entity->{$errorField})) {
-            $invalidValue = $entity->{$errorField};
-            $entity->setInvalidField($errorField, $invalidValue);
+        $errorFields = (array)$this->options['errorField'];
+        foreach ($errorFields as $errorField) {
+            $entity->setError($errorField, $message);
+            if ($entity instanceof InvalidPropertyInterface && isset($entity->{$errorField})) {
+                $invalidValue = $entity->{$errorField};
+                $entity->setInvalidField($errorField, $invalidValue);
+            }
         }
 
         return $pass === true;

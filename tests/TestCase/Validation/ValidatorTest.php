@@ -104,6 +104,38 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Testing that field can be passed as an array to apply
+     * the rule to multiple fields.
+     *
+     * @group mygroup
+     * @return void
+     */
+    public function testAddingRulesToMultipleFields()
+    {
+        $validator = new Validator();
+        $rule = function () {
+            return false;
+        };
+        $message = 'This should apply to both one and two.';
+        $options = [
+            'rule' => $rule,
+            'message' => $message,
+        ];
+        $validator->add(['one', 'two'], 'one-and-two-are-wrong', $options);
+
+        $data = [
+            'one' => '1',
+            'two' => '2',
+        ];
+        $expected = [
+            'one' => ['one-and-two-are-wrong' => $message],
+            'two' => ['one-and-two-are-wrong' => $message],
+        ];
+
+        $this->assertEquals($expected, $validator->errors($data));
+    }
+
+    /**
      * Testing addNested field rules
      *
      * @return void
