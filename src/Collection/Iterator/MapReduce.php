@@ -171,7 +171,7 @@ class MapReduce implements IteratorAggregate
      * @throws \LogicException if emitIntermediate was called but no reducer function
      * was provided
      */
-    protected function _execute()
+    protected function _execute(): void
     {
         $mapper = $this->_mapper;
         foreach ($this->_data as $key => $val) {

@@ -65,7 +65,7 @@ class InsertIterator extends Collection
      * @param iterable $values The source collection from which the values will
      * be inserted at the specified path.
      */
-    public function __construct(iterable $into, $path, iterable $values)
+    public function __construct(iterable $into, string $path, iterable $values)
     {
         parent::__construct($into);
 
@@ -85,7 +85,7 @@ class InsertIterator extends Collection
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         parent::next();
         if ($this->_validValues) {
@@ -126,7 +126,7 @@ class InsertIterator extends Collection
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         parent::rewind();
         $this->_values->rewind();

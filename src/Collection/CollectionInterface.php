@@ -43,7 +43,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * in this collection
      * @return \Cake\Collection\CollectionInterface
      */
-    public function each(callable $c): CollectionInterface;
+    public function each(callable $c);
 
     /**
      * Looks through each value in the collection, and returns another collection with
@@ -232,7 +232,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * inside the hierarchy of each value so that the column can be extracted.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function extract($matcher): CollectionInterface;
+    public function extract(string $matcher): CollectionInterface;
 
     /**
      * Returns the top element in this collection after being sorted by a property.
@@ -727,7 +727,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param string $nestingKey The key name under which children are nested
      * @return \Cake\Collection\CollectionInterface
      */
-    public function nest($idPath, $parentPath, $nestingKey = 'children'): CollectionInterface;
+    public function nest($idPath, $parentPath, string $nestingKey = 'children'): CollectionInterface;
 
     /**
      * Returns a new collection containing each of the elements found in `$values` as
@@ -917,7 +917,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * $comments = (new Collection($comments))->stopWhen(['is_approved' => false]);
      * ```
      *
-     * @param callable $condition the method that will receive each of the elements and
+     * @param callable|array $condition the method that will receive each of the elements and
      * returns true when the iteration should be stopped.
      * If an array, it will be interpreted as a key-value list of conditions where
      * the key is a property path as accepted by `Collection::extract`,

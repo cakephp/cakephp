@@ -46,7 +46,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function each(callable $c): CollectionInterface
+    public function each(callable $c)
     {
         foreach ($this->optimizeUnwrap() as $k => $v) {
             $c($v, $k);
@@ -161,7 +161,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function extract($matcher): CollectionInterface
+    public function extract(string $matcher): CollectionInterface
     {
         $extractor = new ExtractIterator($this->unwrap(), $matcher);
         if (is_string($matcher) && strpos($matcher, '{*}') !== false) {
@@ -594,7 +594,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function nest($idPath, $parentPath, $nestingKey = 'children'): CollectionInterface
+    public function nest($idPath, $parentPath, string $nestingKey = 'children'): CollectionInterface
     {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
