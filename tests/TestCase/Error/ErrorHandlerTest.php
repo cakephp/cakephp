@@ -358,8 +358,8 @@ class ErrorHandlerTest extends TestCase
             'trace' => true,
         ]);
 
-        $previous = new \Cake\Datasource\Exception\RecordNotFoundException('Previous logged');
-        $error = new \Cake\Http\Exception\NotFoundException('Kaboom!', null, $previous);
+        $previous = new RecordNotFoundException('Previous logged');
+        $error = new NotFoundException('Kaboom!', null, $previous);
 
         $this->_logger->expects($this->at(0))
             ->method('log')
