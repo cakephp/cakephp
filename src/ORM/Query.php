@@ -1229,6 +1229,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         $repository = $this->getRepository();
         $this->from([$repository->getAlias() => $repository->getTable()]);
 
+        // We do not pass $table to parent class here
         return parent::delete();
     }
 

@@ -100,26 +100,11 @@ class Plugin
      *
      * @param string $plugin Plugin name.
      * @return bool
+     * @since 3.7.0
      */
     public static function isLoaded(string $plugin): bool
     {
         return static::getCollection()->has($plugin);
-    }
-
-    /**
-     * Returns a list of all loaded plugins.
-     *
-     * @return array
-     */
-    public static function loaded(): array
-    {
-        $names = [];
-        foreach (static::getCollection() as $plugin) {
-            $names[] = $plugin->getName();
-        }
-        sort($names);
-
-        return $names;
     }
 
     /**

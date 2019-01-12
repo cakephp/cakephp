@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Core\Configure;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
@@ -338,6 +339,32 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         Configure::write('debug', false);
+        $errorHandler->handleException($error);
+    }
+
+    /**
+     * test logging attributes with previous exception
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogPrevious()
+    {
+        $errorHandler = new TestErrorHandler([
+            'log' => true,
+            'trace' => true,
+        ]);
+
+        $previous = new RecordNotFoundException('Previous logged');
+        $error = new NotFoundException('Kaboom!', null, $previous);
+
+        $this->_logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
+                $this->stringContains('ErrorHandlerTest->testHandleExceptionLogPrevious')
+            ));
+
         $errorHandler->handleException($error);
     }
 

@@ -20,6 +20,9 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use TestApp\Infrastructure\Table\AddressesTable;
+use TestApp\Model\Table\ArticlesTable;
+use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
 
 /**
  * Used to test correct class is instantiated when using $this->_locator->get();
@@ -581,5 +584,104 @@ class TableLocatorTest extends TestCase
         $plugin3 = $this->_locator->get('TestPluginTwo.Comments');
 
         $this->assertSame($plugin, $plugin3, 'Should be the same TestPluginTwo.Comments object');
+    }
+
+    /**
+     * testCustomLocation
+     *
+     * Tests that the correct table is returned when non-standard namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomLocation()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(AddressesTable::class, $table);
+    }
+
+    /**
+     * testCustomLocationPlugin
+     *
+     * Tests that the correct plugin table is returned when non-standard namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomLocationPlugin()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('TestPlugin.Addresses');
+        $this->assertInstanceOf(PluginAddressesTable::class, $table);
+    }
+
+    /**
+     * testCustomLocationDefaultWhenNone
+     *
+     * Tests that the default table is returned when no namespace is defined.
+     *
+     * @return void
+     */
+    public function testCustomLocationDefaultWhenNone()
+    {
+        $locator = new TableLocator([]);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testCustomLocationDefaultWhenMissing
+     *
+     * Tests that the default table is returned when the class cannot be found in a non-standard namespace.
+     *
+     * @return void
+     */
+    public function testCustomLocationDefaultWhenMissing()
+    {
+        $locator = new TableLocator(['Infrastructure/Table']);
+
+        $table = $locator->get('Articles');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testCustomLocationMultiple
+     *
+     * Tests that the correct table is returned when multiple namespaces are defined.
+     *
+     * @return void
+     */
+    public function testCustomLocationMultiple()
+    {
+        $locator = new TableLocator([
+            'Infrastructure/Table',
+            'Model/Table',
+        ]);
+
+        $table = $locator->get('Articles');
+        $this->assertInstanceOf(Table::class, $table);
+    }
+
+    /**
+     * testAddLocation
+     *
+     * Tests that adding a namespace takes effect.
+     *
+     * @return void
+     */
+    public function testAddLocation()
+    {
+        $locator = new TableLocator([]);
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(Table::class, $table);
+
+        $locator->clear();
+        $locator->addLocation('Infrastructure/Table');
+
+        $table = $locator->get('Addresses');
+        $this->assertInstanceOf(AddressesTable::class, $table);
     }
 }

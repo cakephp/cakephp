@@ -3,6 +3,8 @@ parameters:
     autoload_files:
         - tests/bootstrap.php
     ignoreErrors:
+        - '#Constant MCRYPT_[A-Z0-9_]+ not found#'
+        - '#Function mcrypt_[a-zA-Z0-9_]+ not found#'
         - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
         - '#Constructor of class Cake\\[a-zA-Z0-9_\\]+ has an unused parameter#'
         - '#Access to undefined constant Memcached::OPT_CLIENT_MODE#'

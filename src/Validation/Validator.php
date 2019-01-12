@@ -432,7 +432,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function add(string $field, $name, $rule = [])
     {
-        $field = $this->field($field);
+        $validationSet = $this->field($field);
 
         if (!is_array($name)) {
             $rules = [$name => $rule];
@@ -444,7 +444,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (is_array($rule)) {
                 $rule += ['rule' => $name];
             }
-            $field->add($name, $rule);
+            $validationSet->add($name, $rule);
         }
 
         return $this;
@@ -474,8 +474,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
-        $field = $this->field($field);
-        $field->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
+        $validationSet = $this->field($field);
+        $validationSet->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
             if (!is_array($value)) {
                 return false;
             }
@@ -516,8 +516,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
-        $field = $this->field($field);
-        $field->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
+        $validationSet = $this->field($field);
+        $validationSet->add(static::NESTED, $extra + ['rule' => function ($value, $context) use ($validator, $message) {
             if (!is_array($value)) {
                 return false;
             }
@@ -670,7 +670,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `notEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @deprecated Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
+     * @deprecated 3.7.0 Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
      *   allowEmptyDate(), allowEmptyTime() or allowEmptyDateTime() instead.
      * @param string|array $field the name of the field or a list of fields
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
@@ -974,7 +974,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `allowEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @deprecated Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
+     * @deprecated 3.7.0 Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
      *   allowEmptyDate(), allowEmptyTime() or allowEmptyDateTime() with reversed
      *   conditions instead.
      * @param string|array $field the name of the field or list of fields
@@ -2298,7 +2298,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param mixed $data Value to check against.
      * @return bool
-     * @deprecated Use isEmpty() instead
+     * @deprecated 3.7.0 Use isEmpty() instead
      */
     protected function _fieldIsEmpty($data): bool
     {

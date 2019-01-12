@@ -352,9 +352,30 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(Throwable $exception): string
     {
+        $message = $this->getMessageForException($exception);
+
+        $request = Router::getRequest();
+        if ($request) {
+            $message .= $this->_requestContext($request);
+        }
+
+        return $message;
+    }
+
+    /**
+     * Generate the message for the exception
+     *
+     * @param \Exception $exception The exception to log a message for.
+     * @param bool $isPrevious False for original exception, true for previous
+     * @return string Error message
+     */
+    protected function getMessageForException(Throwable $exception, bool $isPrevious = false): string
+    {
         $config = $this->_options;
+
         $message = sprintf(
-            '[%s] %s in %s on line %s',
+            '%s[%s] %s in %s on line %s',
+            $isPrevious ? "\nCaused by: " : '',
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),
@@ -369,13 +390,13 @@ abstract class BaseErrorHandler
             }
         }
 
-        $request = Router::getRequest();
-        if ($request) {
-            $message .= $this->_requestContext($request);
-        }
-
         if (!empty($config['trace'])) {
             $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
+
+        $previous = $exception->getPrevious();
+        if ($previous) {
+            $message .= $this->getMessageForException($previous, true);
         }
 
         return $message;
