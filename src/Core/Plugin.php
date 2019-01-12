@@ -108,6 +108,22 @@ class Plugin
     }
 
     /**
+     * Return a list of loaded plugins.
+     *
+     * @return array A list of plugins that have been loaded
+     */
+    public static function loaded()
+    {
+        $names = [];
+        foreach (static::getCollection() as $plugin) {
+            $names[] = $plugin->getName();
+        }
+        sort($names);
+
+        return $names;
+    }
+
+    /**
      * Get the shared plugin collection.
      *
      * This method should generally not be used during application
