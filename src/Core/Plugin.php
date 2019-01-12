@@ -358,7 +358,6 @@ class Plugin
      * @param string|null $plugin Plugin name.
      * @return bool|array Boolean true if $plugin is already loaded.
      *   If $plugin is null, returns a list of plugins that have been loaded
-     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use Plugin::isLoaded() instead.
      */
     public static function loaded($plugin = null)
     {
