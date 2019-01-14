@@ -41,7 +41,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @param callable $c callable function that will receive each of the elements
      * in this collection
-     * @return \Cake\Collection\CollectionInterface
+     * @return $this
      */
     public function each(callable $c);
 
