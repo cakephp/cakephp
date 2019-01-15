@@ -161,7 +161,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function extract(string $matcher): CollectionInterface
+    public function extract($matcher): CollectionInterface
     {
         $extractor = new ExtractIterator($this->unwrap(), $matcher);
         if (is_string($matcher) && strpos($matcher, '{*}') !== false) {

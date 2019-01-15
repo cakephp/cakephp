@@ -228,11 +228,12 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * [1, 2, 3, 4]
      * ```
      *
-     * @param string $matcher a dot separated string symbolizing the path to follow
-     * inside the hierarchy of each value so that the column can be extracted.
+     * @param string|callable $matcher A dot separated path of column to follow
+     * so that the final one can be returned or a callable that will take care
+     * of doing that.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function extract(string $matcher): CollectionInterface;
+    public function extract($matcher): CollectionInterface;
 
     /**
      * Returns the top element in this collection after being sorted by a property.

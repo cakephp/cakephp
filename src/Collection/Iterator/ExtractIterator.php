@@ -51,8 +51,9 @@ class ExtractIterator extends Collection
      * ```
      *
      * @param iterable $items The list of values to iterate
-     * @param string $path a dot separated string symbolizing the path to follow
-     * inside the hierarchy of each value so that the column can be extracted.
+     * @param string|callable $path A dot separated path of column to follow
+     * so that the final one can be returned or a callable that will take care
+     * of doing that.
      */
     public function __construct(iterable $items, $path)
     {
