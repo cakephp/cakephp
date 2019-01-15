@@ -16,8 +16,10 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Http\Middleware\DoublePassMiddleware;
 use Countable;
 use LogicException;
+use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 
 /**
@@ -34,11 +36,11 @@ class MiddlewareQueue implements Countable
     protected $queue = [];
 
     /**
-     * The queue of middleware callables.
+     * The queue of middlewares.
      *
-     * @var callable[]
+     * @var \Psr\Http\Server\MiddlewareInterface[]
      */
-    protected $callables = [];
+    protected $middlewares = [];
 
     /**
      * Constructor
@@ -54,13 +56,13 @@ class MiddlewareQueue implements Countable
      * Get the middleware at the provided index.
      *
      * @param int $index The index to fetch.
-     * @return callable|null Either the callable middleware or null
+     * @return \Psr\Http\Server\MiddlewareInterface|null Either the callable middleware or null
      *   if the index is undefined.
      */
-    public function get(int $index): ?callable
+    public function get(int $index): ?MiddlewareInterface
     {
-        if (isset($this->callables[$index])) {
-            return $this->callables[$index];
+        if (isset($this->middlewares[$index])) {
+            return $this->middlewares[$index];
         }
 
         return $this->resolve($index);
@@ -70,11 +72,11 @@ class MiddlewareQueue implements Countable
      * Resolve middleware name to callable.
      *
      * @param int $index The index to fetch.
-     * @return callable|null Either the callable middleware or null
+     * @return \Psr\Http\Server\MiddlewareInterface|null Either the callable middleware or null
      *   if the index is undefined.
      * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve(int $index): ?callable
+    protected function resolve(int $index): ?MiddlewareInterface
     {
         if (!isset($this->queue[$index])) {
             return null;
@@ -94,7 +96,11 @@ class MiddlewareQueue implements Countable
             $callable = $this->queue[$index];
         }
 
-        return $this->callables[$index] = $callable;
+        if (!$callable instanceof MiddlewareInterface) {
+            $callable = new DoublePassMiddleware($callable);
+        }
+
+        return $this->middlewares[$index] = $callable;
     }
 
     /**
