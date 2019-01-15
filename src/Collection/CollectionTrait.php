@@ -46,7 +46,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function each(callable $c)
+    public function each(callable $c): CollectionInterface
     {
         foreach ($this->optimizeUnwrap() as $k => $v) {
             $c($v, $k);

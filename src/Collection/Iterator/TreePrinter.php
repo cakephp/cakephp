@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection\Iterator;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
 use RecursiveIterator;
 use RecursiveIteratorIterator;
@@ -23,7 +24,7 @@ use RecursiveIteratorIterator;
  * Iterator for flattening elements in a tree structure while adding some
  * visual markers for their relative position in the tree
  */
-class TreePrinter extends RecursiveIteratorIterator
+class TreePrinter extends RecursiveIteratorIterator implements CollectionInterface
 {
     use CollectionTrait;
 

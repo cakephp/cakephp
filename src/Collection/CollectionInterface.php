@@ -43,7 +43,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * in this collection
      * @return $this
      */
-    public function each(callable $c);
+    public function each(callable $c): CollectionInterface;
 
     /**
      * Looks through each value in the collection, and returns another collection with
