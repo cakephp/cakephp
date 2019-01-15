@@ -663,7 +663,7 @@ trait CollectionTrait
         }
         // RecursiveIteratorIterator can return duplicate key values causing
         // data loss when converted into an array
-        if ($preserveKeys && get_class($iterator) === 'RecursiveIteratorIterator') {
+        if ($preserveKeys && get_class($iterator) === RecursiveIteratorIterator::class) {
             $preserveKeys = false;
         }
 
@@ -868,7 +868,7 @@ trait CollectionTrait
     public function unwrap(): Traversable
     {
         $iterator = $this;
-        while (get_class($iterator) === 'Cake\Collection\Collection'
+        while (get_class($iterator) === Collection::class
             && $iterator instanceof OuterIterator) {
             $iterator = $iterator->getInnerIterator();
         }
