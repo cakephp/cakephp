@@ -58,7 +58,7 @@ class SortIterator extends Collection
      * @param int $type the type of comparison to perform, either SORT_STRING
      * SORT_NUMERIC or SORT_NATURAL
      */
-    public function __construct(iterable $items, $callback, $dir = \SORT_DESC, $type = \SORT_NUMERIC)
+    public function __construct(iterable $items, $callback, int $dir = \SORT_DESC, int $type = \SORT_NUMERIC)
     {
         if (!is_array($items)) {
             $items = iterator_to_array((new Collection($items))->unwrap(), false);

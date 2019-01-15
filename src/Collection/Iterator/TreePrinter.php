@@ -15,14 +15,16 @@ declare(strict_types=1);
  */
 namespace Cake\Collection\Iterator;
 
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\CollectionTrait;
+use RecursiveIterator;
 use RecursiveIteratorIterator;
 
 /**
  * Iterator for flattening elements in a tree structure while adding some
  * visual markers for their relative position in the tree
  */
-class TreePrinter extends RecursiveIteratorIterator
+class TreePrinter extends RecursiveIteratorIterator implements CollectionInterface
 {
     use CollectionTrait;
 
@@ -66,8 +68,13 @@ class TreePrinter extends RecursiveIteratorIterator
      * their depth in the tree.
      * @param int $mode Iterator mode.
      */
-    public function __construct($items, $valuePath, $keyPath, $spacer, $mode = RecursiveIteratorIterator::SELF_FIRST)
-    {
+    public function __construct(
+        RecursiveIterator $items,
+        $valuePath,
+        $keyPath,
+        string $spacer,
+        int $mode = RecursiveIteratorIterator::SELF_FIRST
+    ) {
         parent::__construct($items, $mode);
         $this->_value = $this->_propertyExtractor($valuePath);
         $this->_key = $this->_propertyExtractor($keyPath);

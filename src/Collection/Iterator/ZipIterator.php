@@ -50,7 +50,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
     /**
      * The function to use for zipping items together
      *
-     * @var callable
+     * @var callable|null
      */
     protected $_callback;
 
@@ -68,7 +68,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      * @param array $sets The list of array or iterators to be zipped.
      * @param callable|null $callable The function to use for zipping the elements of each iterator.
      */
-    public function __construct(array $sets, $callable = null)
+    public function __construct(array $sets, ?callable $callable = null)
     {
         $sets = array_map(function ($items) {
             return (new Collection($items))->unwrap();
@@ -87,7 +87,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      * Returns the value resulting out of zipping all the elements for all the
      * iterators with the same positional index.
      *
-     * @return mixed
+     * @return array|false
      */
     public function current()
     {
