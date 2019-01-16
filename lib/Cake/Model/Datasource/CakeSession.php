@@ -575,7 +575,7 @@ class CakeSession {
 			$sessionConfig['cacheLimiter'] = 'must-revalidate';
 		}
 
-		if (empty($_SESSION)) {
+		if (!headers_sent() && session_status() !== \PHP_SESSION_ACTIVE  && empty($_SESSION)) {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
@@ -587,7 +587,7 @@ class CakeSession {
 		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
 			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
 		}
-		if (!empty($sessionConfig['handler']['engine'])) {
+		if (!headers_sent() && session_status() !== \PHP_SESSION_ACTIVE && !empty($sessionConfig['handler']['engine'])) {
 			$handler = static::_getHandler($sessionConfig['handler']['engine']);
 			session_set_save_handler(
 				array($handler, 'open'),
