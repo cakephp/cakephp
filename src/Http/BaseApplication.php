@@ -31,6 +31,7 @@ use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Base class for application classes.
@@ -233,16 +234,14 @@ abstract class BaseApplication implements
      * - Invoke the controller.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\ResponseInterface $response The response
-     * @param callable $next The next middleware
+     * @param \Psr\Http\Message\RequestHandlerInterface $handler The response
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(
+    public function process(
         ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
+        RequestHandlerInterface $handler
     ): ResponseInterface {
-        return $this->getDispatcher()->dispatch($request, $response);
+        return $this->getDispatcher()->dispatch($request);
     }
 
     /**

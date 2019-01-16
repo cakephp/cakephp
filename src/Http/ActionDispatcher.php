@@ -69,8 +69,11 @@ class ActionDispatcher implements EventDispatcherInterface
      * @return \Cake\Http\Response A modified/replaced response.
      * @throws \ReflectionException
      */
-    public function dispatch(ServerRequest $request, Response $response): Response
+    public function dispatch(ServerRequest $request, ?Response $response = null): Response
     {
+        if ($response === null) {
+            $response = new Response();
+        }
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
         }
