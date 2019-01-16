@@ -174,7 +174,7 @@ class Time extends MutableDateTime implements JsonSerializable
     {
         $quarter = ceil($this->format('m') / 3);
         if ($range === false) {
-            return $quarter;
+            return (int)$quarter;
         }
 
         $year = $this->format('Y');
