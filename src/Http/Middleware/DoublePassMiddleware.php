@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
+use Cake\Core\Exception\Exception;
+use Cake\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -33,7 +35,7 @@ class DoublePassMiddleware implements MiddlewareInterface
     {
         return $response = ($this->callable)(
             $request,
-            $this->responsePrototype,
+            new Response(),
             $this->decorateHandler($handler)
         );
     }
@@ -46,7 +48,11 @@ class DoublePassMiddleware implements MiddlewareInterface
     protected function decorateHandler(RequestHandlerInterface $handler): callable
     {
         return function ($request, $response) use ($handler) {
-            return $handler->handle($request);
+            try {
+                return $handler->handle($request);
+            } catch (Exception $e) {
+                return $response;
+            }
         };
     }
 }
