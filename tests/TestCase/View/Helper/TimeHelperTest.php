@@ -153,7 +153,7 @@ class TimeHelperTest extends TestCase
      */
     public function testToQuarter()
     {
-        $this->assertEquals(4, $this->Time->toQuarter('2007-12-25'));
+        $this->assertSame(4, $this->Time->toQuarter('2007-12-25'));
         $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
     }
 
