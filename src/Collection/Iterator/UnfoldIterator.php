@@ -17,7 +17,6 @@ namespace Cake\Collection\Iterator;
 
 use IteratorIterator;
 use RecursiveIterator;
-use Traversable;
 
 /**
  * An iterator that can be used to generate nested iterators out of a collection
@@ -47,12 +46,12 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      * Creates the iterator that will generate child iterators from each of the
      * elements it was constructed with.
      *
-     * @param \Traversable $items The list of values to iterate
+     * @param iterable $items The list of values to iterate
      * @param callable $unfolder A callable function that will receive the
      * current item and key. It must return an array or Traversable object
      * out of which the nested iterators will be yielded.
      */
-    public function __construct(Traversable $items, callable $unfolder)
+    public function __construct(iterable $items, callable $unfolder)
     {
         $this->_unfolder = $unfolder;
         parent::__construct($items);

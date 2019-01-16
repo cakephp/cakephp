@@ -594,7 +594,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function nest($idPath, $parentPath, string $nestingKey = 'children'): CollectionInterface
+    public function nest($idPath, $parentPath, $nestingKey = 'children'): CollectionInterface
     {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
@@ -663,7 +663,7 @@ trait CollectionTrait
         }
         // RecursiveIteratorIterator can return duplicate key values causing
         // data loss when converted into an array
-        if ($preserveKeys && get_class($iterator) === RecursiveIteratorIterator::class) {
+        if ($preserveKeys && get_class($iterator) === 'RecursiveIteratorIterator') {
             $preserveKeys = false;
         }
 
@@ -868,7 +868,7 @@ trait CollectionTrait
     public function unwrap(): Traversable
     {
         $iterator = $this;
-        while (get_class($iterator) === Collection::class
+        while (get_class($iterator) === 'Cake\Collection\Collection'
             && $iterator instanceof OuterIterator) {
             $iterator = $iterator->getInnerIterator();
         }
