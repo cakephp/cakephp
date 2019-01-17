@@ -33,10 +33,12 @@ class DoublePassMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
+        $response = new Response();
+
         return ($this->callable)(
             $request,
-            new Response(),
-            $this->decorateHandler($handler)
+            $response,
+            $this->decorateHandler($handler, $response)
         );
     }
 
@@ -45,9 +47,13 @@ class DoublePassMiddleware implements MiddlewareInterface
         return $this->callable;
     }
 
-    protected function decorateHandler(RequestHandlerInterface $handler): callable
+    protected function decorateHandler(RequestHandlerInterface $handler, $response): callable
     {
-        return function ($request, $response) use ($handler) {
+        return function ($request, $res) use ($handler, $response) {
+            if ($res !== $response) {
+                throw new Exception('Callable should not modify response instance before calling $next.');
+            }
+
             return $handler->handle($request);
         };
     }

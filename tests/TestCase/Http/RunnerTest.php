@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Core\Exception\Exception;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;
 use Cake\Http\Runner;
@@ -65,7 +66,8 @@ class RunnerTest extends TestCase
     }
 
     /**
-     * Test replacing a response in a middleware.
+     * Test exception is thrown if double pass callable modifies response before
+     * calling $next.
      *
      * @return void
      */
@@ -80,11 +82,9 @@ class RunnerTest extends TestCase
         $runner = new Runner();
 
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
-        $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
-        $result = $runner->run($this->queue, $req, $res);
-
-        $this->assertNotSame($res, $result, 'Response was not replaced');
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Callable should not modify response instance before calling $next.');
+        $result = $runner->run($this->queue, $req);
     }
 
     /**
