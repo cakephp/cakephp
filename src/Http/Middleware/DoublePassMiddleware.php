@@ -33,7 +33,7 @@ class DoublePassMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
     {
-        return $response = ($this->callable)(
+        return ($this->callable)(
             $request,
             new Response(),
             $this->decorateHandler($handler)
