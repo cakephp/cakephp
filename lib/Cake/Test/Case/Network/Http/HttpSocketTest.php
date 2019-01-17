@@ -701,7 +701,7 @@ class HttpSocketTest extends CakeTestCase {
 		);
 		$http = $this->getMock('TestHttpSocket', array('read', 'write', 'connect', 'request'), array($request));
 
-		$expected = array('method' => 'GET', 'uri' => '/_test');
+		$expected = array('method' => 'GET', 'uri' => 'http://localhost:5984/_test');
 		$http->expects($this->at(0))->method('request')->with($expected);
 		$http->get('/_test');
 
