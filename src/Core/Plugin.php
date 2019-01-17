@@ -108,7 +108,7 @@ class Plugin
      * @param array $config configuration options for the plugin
      * @throws \Cake\Core\Exception\MissingPluginException if the folder for the plugin to be loaded is not found
      * @return void
-     * @deprecated 3.7 This method will be removed in 4.0.0. Use Application::addPlugin() instead.
+     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use Application::addPlugin() instead.
      */
     public static function load($plugin, array $config = [])
     {
@@ -195,7 +195,7 @@ class Plugin
      * @param array $options Options.
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException
-     * @deprecated 3.7 This method will be removed in 4.0.0.
+     * @deprecated 3.7.0 This method will be removed in 4.0.0.
      */
     public static function loadAll(array $options = [])
     {
@@ -277,7 +277,7 @@ class Plugin
      * @param string $name name of the plugin
      * @return mixed
      * @see \Cake\Core\Plugin::load() for examples of bootstrap configuration
-     * @deprecated 3.7 This method will be removed in 4.0.0.
+     * @deprecated 3.7.0 This method will be removed in 4.0.0.
      */
     public static function bootstrap($name)
     {
@@ -341,6 +341,7 @@ class Plugin
      *
      * @param string $plugin The name of the plugin to check.
      * @return bool
+     * @since 3.7.0
      */
     public static function isLoaded($plugin)
     {
@@ -381,7 +382,7 @@ class Plugin
      * Forgets a loaded plugin or all of them if first parameter is null
      *
      * @param string|null $plugin name of the plugin to forget
-     * @deprecated 3.7 This method will be removed in 4.0.0. Use PluginCollection::remove() or clear() instead.
+     * @deprecated 3.7.0 This method will be removed in 4.0.0. Use PluginCollection::remove() or clear() instead.
      * @return void
      */
     public static function unload($plugin = null)
