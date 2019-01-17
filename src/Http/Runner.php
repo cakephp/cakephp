@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
-use Cake\Core\Exception\Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -40,17 +39,22 @@ class Runner implements RequestHandlerInterface
      */
     protected $queue;
 
+    protected $responsePrototype;
+
     /**
      * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
+     * @param \Psr\Http\Message\ResponseInterface $responsePrototype A response object
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
     public function run(
         MiddlewareQueue $queue,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
+        ?ResponseInterface $responsePrototype = null
     ): ResponseInterface {
         $this->queue = $queue;
         $this->index = 0;
+        $this->responsePrototype = $responsePrototype ?: (new Response())->withStatus(500);
 
         return $this->handle($request);
     }
@@ -64,7 +68,7 @@ class Runner implements RequestHandlerInterface
         $middleware = $this->queue->get($this->index++);
 
         if ($middleware === null) {
-            throw new Exception('Middleware queue exhausted but no response instance received.');
+            return $this->responsePrototype;
         }
 
         return $middleware->process($request, $this);

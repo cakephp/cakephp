@@ -48,11 +48,7 @@ class DoublePassMiddleware implements MiddlewareInterface
     protected function decorateHandler(RequestHandlerInterface $handler): callable
     {
         return function ($request, $response) use ($handler) {
-            try {
-                return $handler->handle($request);
-            } catch (Exception $e) {
-                return $response;
-            }
+            return $handler->handle($request);
         };
     }
 }
