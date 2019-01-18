@@ -50,9 +50,11 @@ class DoublePassMiddleware implements MiddlewareInterface
     protected function decorateHandler(RequestHandlerInterface $handler, $response): callable
     {
         return function ($request, $res) use ($handler, $response) {
-            if ($res !== $response) {
-                throw new Exception('Callable should not modify response instance before calling $next.');
-            }
+            // This check doesn't work as intended and returns false positive
+            // when response bubbles up.
+            // if ($res !== $response) {
+            //     throw new Exception('Callable should not modify response instance before calling $next.');
+            // }
 
             return $handler->handle($request);
         };

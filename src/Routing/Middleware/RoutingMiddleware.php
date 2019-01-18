@@ -160,6 +160,6 @@ class RoutingMiddleware
         $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 
-        return $runner->run($middleware, $request, $response);
+        return $runner->run($middleware, $request);
     }
 }

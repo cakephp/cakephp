@@ -73,6 +73,10 @@ class RunnerTest extends TestCase
      */
     public function testRunResponseReplace()
     {
+        $this->markTestSkipped(
+            'Skip until we figure out a way to test for premature response modification in DoublePassMiddleware.'
+        );
+
         $one = function ($req, $res, $next) {
             $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
 
