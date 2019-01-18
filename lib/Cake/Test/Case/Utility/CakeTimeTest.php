@@ -1226,4 +1226,13 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected->format('Y-m-d H:i'), $converted);
 	}
 
+	public function testTimezoneConversionToUTC() {
+		date_default_timezone_set('Europe/Copenhagen'); // server timezone
+		$clientTimeZone = new DateTimeZone('Asia/Bangkok');
+		$clientDateTime = new DateTime('2019-01-31 10:00:00', $clientTimeZone);
+		// Convert to UTC.
+		$actual = CakeTime::format($clientDateTime, '%Y-%m-%d %H:%M:%S', false, 'UTC');
+		$this->assertEquals('2019-01-31 03:00:00', $actual);
+	}
+
 }
