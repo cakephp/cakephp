@@ -305,14 +305,13 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_URI' => '/api/ping',
         ]);
         $response = new Response();
-        $next = function ($req, $res) {
+        $next = function ($req, $res, $next) {
             $this->log[] = 'last';
 
-            return $res;
+            return $next($req, $res);
         };
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
-        $this->assertSame($response, $result, 'Should return result');
         $this->assertSame(['second', 'first', 'last'], $this->log);
     }
 
@@ -358,7 +357,6 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
 
-        $this->assertSame($response, $result, 'Should return result');
         $this->assertSame(['first', 'second'], $this->log);
     }
 
@@ -401,7 +399,6 @@ class RoutingMiddlewareTest extends TestCase
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
 
-        $this->assertSame($response, $result, 'Should return result');
         $this->assertSame(['first'], $this->log);
     }
 
@@ -451,7 +448,6 @@ class RoutingMiddlewareTest extends TestCase
         };
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware($request, $response, $next);
-        $this->assertSame($response, $result, 'Should return result');
         $this->assertSame($expected, $this->log);
     }
 
