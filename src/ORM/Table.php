@@ -1730,7 +1730,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         $entity = $this->newEntity();
         if ($options['defaults'] && is_array($search)) {
-            $entity->set($search, ['guard' => false]);
+            $entity = $this->patchEntity($entity, $search, ['guard' => false]);
         }
         if ($callback !== null) {
             $entity = $callback($entity) ?: $entity;

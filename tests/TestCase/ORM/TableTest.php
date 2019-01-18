@@ -5840,6 +5840,24 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that findOrCreate creates a new valid entity with the search data
+     *
+     * @return void
+     */
+    public function testFindOrCreateValidatesNewEntity()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $validator = new Validator();
+        $validator->notBlank('title');
+        $articles->setValidator('default', $validator);
+
+        $article = $articles->findOrCreate(['title' => '']);
+        $this->assertTrue($article->isNew());
+        $this->assertNotEmpty($article->getError('title'));
+        $this->assertNull($article->id);
+    }
+
+    /**
      * Test that creating a table fires the initialize event.
      *
      * @return void
