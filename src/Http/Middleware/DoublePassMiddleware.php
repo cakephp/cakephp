@@ -15,23 +15,42 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
-use Cake\Core\Exception\Exception;
 use Cake\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * This class decorates a double pass closure/invokable to be PSR 15 compliant.
+ */
 class DoublePassMiddleware implements MiddlewareInterface
 {
+    /**
+     * A closure or invokable object.
+     *
+     * @var callable
+     */
     protected $callable;
 
+    /**
+     * Constructor
+     *
+     * @param callable $callable A closure.
+     */
     public function __construct(callable $callable)
     {
         $this->callable = $callable;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    /**
+     * Run the internal double pass callable to process an incoming server request.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler Request handler instance.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = new Response();
 
@@ -42,11 +61,22 @@ class DoublePassMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * @internal
+     * @return callable
+     */
     public function getCallable(): callable
     {
         return $this->callable;
     }
 
+    /**
+     * Wrap the handler in a closure to be used for $next.
+     *
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler Request handler instance.
+     * @param \Psr\Http\Message\ResponseInterface $response Response instance.
+     * @return callable
+     */
     protected function decorateHandler(RequestHandlerInterface $handler, $response): callable
     {
         return function ($request, $res) use ($handler, $response) {

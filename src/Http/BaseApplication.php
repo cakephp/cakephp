@@ -234,7 +234,7 @@ abstract class BaseApplication implements
      * - Invoke the controller.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\RequestHandlerInterface $handler The response
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The response
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function process(

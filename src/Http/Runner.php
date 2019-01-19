@@ -39,6 +39,11 @@ class Runner implements RequestHandlerInterface
      */
     protected $queue;
 
+    /**
+     * Response prototype to return if queue is exhausted without receiving response.
+     *
+     * @var \Psr\Http\Message\ResponseInterface
+     */
     protected $responsePrototype;
 
     /**
@@ -60,6 +65,8 @@ class Runner implements RequestHandlerInterface
     }
 
     /**
+     * Handle incoming server request and return a response.
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request The server request
      * @return \Psr\Http\Message\ResponseInterface An updated response
      */

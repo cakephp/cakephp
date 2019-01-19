@@ -20,16 +20,36 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * This class decorates a closure to be PSR 15 compliant.
+ */
 class CallableMiddleware implements MiddlewareInterface
 {
+    /**
+     * A callable.
+     *
+     * @var callable
+     */
     protected $callable;
 
+    /**
+     * Constructor
+     *
+     * @param callable $callable A closure.
+     */
     public function __construct(callable $callable)
     {
         $this->callable = $callable;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler) : ResponseInterface
+    /**
+     * Run the callable to process an incoming server request.
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler Request handler instance.
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         return ($this->callable)(
             $request,

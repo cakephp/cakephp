@@ -56,7 +56,7 @@ class MiddlewareQueue implements Countable
      * Get the middleware at the provided index.
      *
      * @param int $index The index to fetch.
-     * @return \Psr\Http\Server\MiddlewareInterface|null Either the callable middleware or null
+     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
      *   if the index is undefined.
      */
     public function get(int $index): ?MiddlewareInterface
@@ -69,10 +69,10 @@ class MiddlewareQueue implements Countable
     }
 
     /**
-     * Resolve middleware name to callable.
+     * Resolve middleware name to a PSR 15 compliant middleware instance.
      *
      * @param int $index The index to fetch.
-     * @return \Psr\Http\Server\MiddlewareInterface|null Either the callable middleware or null
+     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
      *   if the index is undefined.
      * @throws \RuntimeException If Middleware not found.
      */
@@ -104,7 +104,7 @@ class MiddlewareQueue implements Countable
     }
 
     /**
-     * Append a middleware callable to the end of the queue.
+     * Append a middleware to the end of the queue.
      *
      * @param callable|string|array $middleware The middleware(s) to append.
      * @return $this
