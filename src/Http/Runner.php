@@ -30,7 +30,7 @@ class Runner implements RequestHandlerInterface
      *
      * @var int
      */
-    protected $index;
+    protected $index = 0;
 
     /**
      * The middleware queue being run.
