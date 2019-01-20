@@ -1285,6 +1285,8 @@ class Validation
         $file = static::getFilename($file);
 
         list($width, $height) = getimagesize($file);
+        $validHeight = null;
+        $validWidth = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
