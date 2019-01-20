@@ -17,7 +17,7 @@ namespace Cake\Http;
 
 use Cake\Core\App;
 use Cake\Http\Middleware\CallableMiddleware;
-use Cake\Http\Middleware\DoublePassMiddleware;
+use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
 use Closure;
 use Countable;
 use LogicException;
@@ -102,12 +102,12 @@ class MiddlewareQueue implements Countable
         }
 
         if (!$middleware instanceof Closure) {
-            return $this->middlewares[$index] = new DoublePassMiddleware($middleware);
+            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
         }
 
         $info = new ReflectionFunction($middleware);
         if ($info->getNumberOfParameters() > 2) {
-            return $this->middlewares[$index] = new DoublePassMiddleware($middleware);
+            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
         }
 
         return $this->middlewares[$index] = new CallableMiddleware($middleware);

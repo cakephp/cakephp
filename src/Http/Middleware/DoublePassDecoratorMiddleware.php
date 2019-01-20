@@ -24,7 +24,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * This class decorates a double pass closure/invokable to be PSR 15 compliant.
  */
-class DoublePassMiddleware implements MiddlewareInterface
+class DoublePassDecoratorMiddleware implements MiddlewareInterface
 {
     /**
      * A closure or invokable object.
