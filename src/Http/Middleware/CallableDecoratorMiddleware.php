@@ -21,7 +21,20 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * This class decorates a closure to be PSR 15 compliant.
+ * Decorate callable middleware as PSR-15 middleware.
+ *
+ * Decorates middleware with the following signature:
+ *
+ * ```
+ * function (
+ *     ServerRequestInterface $request,
+ *     RequestHandlerInterface $handler
+ * ): ResponseInterface
+ * ```
+ *
+ * such that it will operate as PSR-15 middleware.
+ *
+ * Neither the arguments nor the return value need be typehinted.
  */
 class CallableDecoratorMiddleware implements MiddlewareInterface
 {

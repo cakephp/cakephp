@@ -22,7 +22,21 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * This class decorates a double pass closure/invokable to be PSR 15 compliant.
+ * Decorate double-pass middleware as PSR-15 middleware.
+ *
+ * The callable can be a closure with the following signature:
+ *
+ * ```
+ * function (
+ *     ServerRequestInterface $request,
+ *     ResponseInterface $response,
+ *     callable $next
+ * ): ResponseInterface
+ * ```
+ *
+ * or a class with `__invoke()` method with same signature as above.
+ *
+ * Neither the arguments nor the return value need be typehinted.
  */
 class DoublePassDecoratorMiddleware implements MiddlewareInterface
 {
