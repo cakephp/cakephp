@@ -441,7 +441,7 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_URI' => $url,
         ]);
         $response = new Response();
-        $next = function ($req, $res) {
+        $next = function ($req, $res, $next) {
             $this->log[] = 'last';
 
             return $res;
