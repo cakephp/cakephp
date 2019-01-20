@@ -23,7 +23,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * This class decorates a closure to be PSR 15 compliant.
  */
-class CallableMiddleware implements MiddlewareInterface
+class CallableDecoratorMiddleware implements MiddlewareInterface
 {
     /**
      * A callable.
