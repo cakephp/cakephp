@@ -155,6 +155,9 @@ use Cake\Mailer\Exception\MissingActionException;
  * @method \Cake\Mailer\Email setProfile($config)
  * @method string|array getProfile()
  * @method \Cake\Mailer\Email profile($config = null)
+ * @method \Cake\Mailer\Email setEmailPattern($regex)
+ * @method string getEmailPattern()
+ * @method \Cake\Mailer\Email emailPattern($regex = null)
  */
 abstract class Mailer implements EventListenerInterface
 {
