@@ -56,4 +56,13 @@ class CallableMiddleware implements MiddlewareInterface
             $handler
         );
     }
+
+    /**
+     * @internal
+     * @return callable
+     */
+    public function getCallable(): callable
+    {
+        return $this->callable;
+    }
 }

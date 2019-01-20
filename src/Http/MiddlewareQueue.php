@@ -16,10 +16,13 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Http\Middleware\CallableMiddleware;
 use Cake\Http\Middleware\DoublePassMiddleware;
+use Closure;
 use Countable;
 use LogicException;
 use Psr\Http\Server\MiddlewareInterface;
+use ReflectionFunction;
 use RuntimeException;
 
 /**
@@ -82,25 +85,32 @@ class MiddlewareQueue implements Countable
             return null;
         }
 
-        if (is_string($this->queue[$index])) {
-            $class = $this->queue[$index];
-            $className = App::className($class, 'Middleware', 'Middleware');
+        $middleware = $this->queue[$index];
+        if (is_string($middleware)) {
+            $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null || !class_exists($className)) {
                 throw new RuntimeException(sprintf(
                     'Middleware "%s" was not found.',
-                    $class
+                    $middleware
                 ));
             }
-            $callable = new $className();
-        } else {
-            $callable = $this->queue[$index];
+            $middleware = new $className();
         }
 
-        if (!$callable instanceof MiddlewareInterface) {
-            $callable = new DoublePassMiddleware($callable);
+        if ($middleware instanceof MiddlewareInterface) {
+            return $this->middlewares[$index] = $middleware;
         }
 
-        return $this->middlewares[$index] = $callable;
+        if (!$middleware instanceof Closure) {
+            return $this->middlewares[$index] = new DoublePassMiddleware($middleware);
+        }
+
+        $info = new ReflectionFunction($middleware);
+        if ($info->getNumberOfParameters() > 2) {
+            return $this->middlewares[$index] = new DoublePassMiddleware($middleware);
+        }
+
+        return $this->middlewares[$index] = new CallableMiddleware($middleware);
     }
 
     /**

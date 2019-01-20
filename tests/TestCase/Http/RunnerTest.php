@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase;
 
 use Cake\Core\Exception\Exception;
-use Cake\Http\Middleware\CallableMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;
 use Cake\Http\Runner;
@@ -100,11 +99,11 @@ class RunnerTest extends TestCase
     public function testRunSequencing()
     {
         $log = [];
-        $one = new CallableMiddleware(function ($req, $handler) use (&$log) {
+        $one = function ($req, $handler) use (&$log) {
             $log[] = 'one';
 
             return $handler->handle($req);
-        });
+        };
         $two = function ($req, $res, $next) use (&$log) {
             $log[] = 'two';
 
