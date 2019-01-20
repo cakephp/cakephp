@@ -1235,4 +1235,14 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals('2019-01-31 03:00:00', $actual);
 	}
 
+	public function testTimezoneConversionToUTCPlainPHP() {
+		date_default_timezone_set('Europe/Copenhagen'); // server timezone
+		$clientTimeZone = new DateTimeZone('Asia/Bangkok');
+		$clientDateTime = new DateTime('2019-01-31 10:00:00', $clientTimeZone);
+		// Convert to UTC.
+		$clientDateTime->setTimezone(new DateTimeZone('UTC'));
+		$actual = $clientDateTime->format('Y-m-d H:i:s');
+		$this->assertEquals('2019-01-31 03:00:00', $actual);
+	}
+
 }
