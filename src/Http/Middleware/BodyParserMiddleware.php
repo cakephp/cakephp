@@ -16,11 +16,12 @@ declare(strict_types=1);
 namespace Cake\Http\Middleware;
 
 use Cake\Http\Exception\BadRequestException;
-use Cake\Http\Response;
 use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Parse encoded request body data.
@@ -30,7 +31,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * You can also add your own request body parsers using the `addParser()` method.
  */
-class BodyParserMiddleware
+class BodyParserMiddleware implements MiddlewareInterface
 {
     /**
      * Registered Parsers
@@ -127,19 +128,18 @@ class BodyParserMiddleware
      * Will modify the request adding a parsed body if the content-type is known.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @param callable $next Callback to invoke the next middleware.
-     * @return \Cake\Http\Response A response
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Cake\Http\ResponseInterface A response.
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!in_array($request->getMethod(), $this->methods)) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
         list($type) = explode(';', $request->getHeaderLine('Content-Type'));
         $type = strtolower($type);
         if (!isset($this->parsers[$type])) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         $parser = $this->parsers[$type];
@@ -149,7 +149,7 @@ class BodyParserMiddleware
         }
         $request = $request->withParsedBody($result);
 
-        return $next($request, $response);
+        return $handler->handle($request);
     }
 
     /**
