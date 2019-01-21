@@ -18,13 +18,15 @@ namespace Cake\Http\Middleware;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Handles common security headers in a convenient way
  *
  * @link https://book.cakephp.org/3.0/en/controllers/middleware.html#security-header-middleware
  */
-class SecurityHeadersMiddleware
+class SecurityHeadersMiddleware implements MiddlewareInterface
 {
     /** @var string X-Content-Type-Option nosniff */
     public const NOSNIFF = 'nosniff';
@@ -246,16 +248,12 @@ class SecurityHeadersMiddleware
      * Serve assets if the path matches one.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @param callable $next Callback to invoke the next middleware.
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Cake\Http\ResponseInterface A response.
      */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
-        $response = $next($request, $response);
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $response = $handler->handle($request);
         foreach ($this->headers as $header => $value) {
             $response = $response->withHeader($header, $value);
         }

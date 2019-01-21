@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http\Middleware;
 use Cake\Http\Middleware\SecurityHeadersMiddleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\TestSuite\TestCase;
+use TestApp\Http\TestRequestHandler;
 use Zend\Diactoros\Response;
 
 /**
@@ -35,10 +36,9 @@ class SecurityHeadersMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
 
         $middleware = new SecurityHeadersMiddleware();
         $middleware
@@ -58,7 +58,7 @@ class SecurityHeadersMiddlewareTest extends TestCase
             'x-content-type-options' => ['nosniff'],
         ];
 
-        $result = $middleware($request, $response, $next);
+        $result = $middleware->process($request, $handler);
         $this->assertEquals($expected, $result->getHeaders());
     }
 
