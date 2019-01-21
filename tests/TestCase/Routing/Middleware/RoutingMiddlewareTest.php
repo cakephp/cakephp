@@ -23,6 +23,7 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use TestApp\Application;
+use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
@@ -61,11 +62,9 @@ class RoutingMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
         $request = $request->withAttribute('base', '/subdir');
 
-        $response = new Response();
-        $next = function ($req, $res) {
-        };
+        $handler = new TestRequestHandler();
         $middleware = new RoutingMiddleware($this->app());
-        $response = $middleware($request, $response, $next);
+        $response = $middleware->process($request, $handler);
 
         $this->assertEquals(301, $response->getStatusCode());
         $this->assertEquals('http://localhost/subdir/pages', $response->getHeaderLine('Location'));
@@ -82,15 +81,14 @@ class RoutingMiddlewareTest extends TestCase
             $routes->redirect('/testpath', '/pages');
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $response = new Response('php://memory', 200, ['X-testing' => 'Yes']);
-        $next = function ($req, $res) {
-        };
+        $handler = new TestRequestHandler(function ($request) {
+            return new Response('php://memory', 200, ['X-testing' => 'Yes']);
+        });
         $middleware = new RoutingMiddleware($this->app());
-        $response = $middleware($request, $response, $next);
+        $response = $middleware->process($request, $handler);
 
         $this->assertEquals(301, $response->getStatusCode());
         $this->assertEquals('http://localhost/pages', $response->getHeaderLine('Location'));
-        $this->assertEquals('Yes', $response->getHeaderLine('X-testing'));
     }
 
     /**
@@ -115,7 +113,7 @@ class RoutingMiddlewareTest extends TestCase
             return $res;
         };
         $middleware = new RoutingMiddleware($this->app());
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -142,7 +140,7 @@ class RoutingMiddlewareTest extends TestCase
             return $res;
         };
         $middleware = new RoutingMiddleware($this->app());
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -172,7 +170,7 @@ class RoutingMiddlewareTest extends TestCase
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -197,7 +195,7 @@ class RoutingMiddlewareTest extends TestCase
             ->method('pluginRoutes')
             ->with($this->isInstanceOf(RouteBuilder::class));
         $middleware = new RoutingMiddleware($app);
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -216,7 +214,7 @@ class RoutingMiddlewareTest extends TestCase
             return $res;
         };
         $middleware = new RoutingMiddleware($this->app());
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -232,7 +230,7 @@ class RoutingMiddlewareTest extends TestCase
             return $res;
         };
         $middleware = new RoutingMiddleware($this->app());
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -271,7 +269,7 @@ class RoutingMiddlewareTest extends TestCase
             return $res;
         };
         $middleware = new RoutingMiddleware($this->app());
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -311,7 +309,7 @@ class RoutingMiddlewareTest extends TestCase
             return $next($req, $res);
         };
         $middleware = new RoutingMiddleware($this->app());
-        $result = $middleware($request, $response, $next);
+        $result = $middleware->process($request, $handler);
         $this->assertSame(['second', 'first', 'last'], $this->log);
     }
 
@@ -355,7 +353,7 @@ class RoutingMiddlewareTest extends TestCase
             $this->fail('Should not be invoked as first should be ignored.');
         };
         $middleware = new RoutingMiddleware($this->app());
-        $result = $middleware($request, $response, $next);
+        $result = $middleware->process($request, $handler);
 
         $this->assertSame(['first', 'second'], $this->log);
     }
@@ -397,7 +395,7 @@ class RoutingMiddlewareTest extends TestCase
             $this->fail('Should not be invoked as second should be ignored.');
         };
         $middleware = new RoutingMiddleware($this->app());
-        $result = $middleware($request, $response, $next);
+        $result = $middleware->process($request, $handler);
 
         $this->assertSame(['first'], $this->log);
     }
@@ -447,7 +445,7 @@ class RoutingMiddlewareTest extends TestCase
             return $res;
         };
         $middleware = new RoutingMiddleware($this->app());
-        $result = $middleware($request, $response, $next);
+        $result = $middleware->process($request, $handler);
         $this->assertSame($expected, $this->log);
     }
 
@@ -486,7 +484,7 @@ class RoutingMiddlewareTest extends TestCase
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
 
         Cache::clear($cacheConfigName);
         Cache::drop($cacheConfigName);
@@ -516,7 +514,7 @@ class RoutingMiddlewareTest extends TestCase
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
 
         Cache::clear($cacheConfigName);
         Cache::drop($cacheConfigName);
@@ -544,7 +542,7 @@ class RoutingMiddlewareTest extends TestCase
         };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app, 'notfound');
-        $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
 
         Cache::drop('_cake_router_');
     }
