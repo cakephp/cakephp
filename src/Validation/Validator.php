@@ -2284,10 +2284,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
         $newRecord = $context['newRecord'];
         if (in_array($allowed, [static::WHEN_CREATE, static::WHEN_UPDATE], true)) {
-            $allowed = (
-                ($allowed === static::WHEN_CREATE && $newRecord) ||
-                ($allowed === static::WHEN_UPDATE && !$newRecord)
-            );
+            $allowed = ($allowed === static::WHEN_CREATE && $newRecord) ||
+                ($allowed === static::WHEN_UPDATE && !$newRecord);
         }
 
         return $allowed;

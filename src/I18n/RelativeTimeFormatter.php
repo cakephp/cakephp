@@ -43,15 +43,15 @@ class RelativeTimeFormatter
         $diffInterval = $date->diff($other);
 
         switch (true) {
-            case ($diffInterval->y > 0):
+            case $diffInterval->y > 0:
                 $count = $diffInterval->y;
                 $message = __dn('cake', '{0} year', '{0} years', $count, $count);
                 break;
-            case ($diffInterval->m > 0):
+            case $diffInterval->m > 0:
                 $count = $diffInterval->m;
                 $message = __dn('cake', '{0} month', '{0} months', $count, $count);
                 break;
-            case ($diffInterval->d > 0):
+            case $diffInterval->d > 0:
                 $count = $diffInterval->d;
                 if ($count >= I18nDateTimeInterface::DAYS_PER_WEEK) {
                     $count = (int)($count / I18nDateTimeInterface::DAYS_PER_WEEK);
@@ -60,11 +60,11 @@ class RelativeTimeFormatter
                     $message = __dn('cake', '{0} day', '{0} days', $count, $count);
                 }
                 break;
-            case ($diffInterval->h > 0):
+            case $diffInterval->h > 0:
                 $count = $diffInterval->h;
                 $message = __dn('cake', '{0} hour', '{0} hours', $count, $count);
                 break;
-            case ($diffInterval->i > 0):
+            case $diffInterval->i > 0:
                 $count = $diffInterval->i;
                 $message = __dn('cake', '{0} minute', '{0} minutes', $count, $count);
                 break;

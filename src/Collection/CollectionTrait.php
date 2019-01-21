@@ -920,7 +920,7 @@ trait CollectionTrait
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
             if ($filter === null || $filter($currentCombination)) {
-                $result[] = ($operation === null) ? $currentCombination : $operation($currentCombination);
+                $result[] = $operation === null ? $currentCombination : $operation($currentCombination);
             }
 
             $currentIndexes[$lastIndex]++;

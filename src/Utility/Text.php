@@ -955,7 +955,7 @@ class Text
                 $map[] = $value;
             } else {
                 if (empty($values)) {
-                    $find = ($value < 224) ? 2 : 3;
+                    $find = $value < 224 ? 2 : 3;
                 }
                 $values[] = $value;
 

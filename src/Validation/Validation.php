@@ -1065,7 +1065,7 @@ class Validation
 
         for ($position = ($length % 2); $position < $length; $position += 2) {
             $number = (int)$check[$position] * 2;
-            $sum += ($number < 10) ? $number : $number - 9;
+            $sum += $number < 10 ? $number : $number - 9;
         }
 
         return $sum % 10 === 0;

@@ -366,7 +366,7 @@ class Paginator implements PaginatorInterface
                 $direction = 'asc';
             }
 
-            $order = (isset($options['order']) && is_array($options['order'])) ? $options['order'] : [];
+            $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
             if ($order && $options['sort'] && strpos($options['sort'], '.') === false) {
                 $order = $this->_removeAliases($order, $object->getAlias());
             }
