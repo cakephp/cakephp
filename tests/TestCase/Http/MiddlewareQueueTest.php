@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
-use Cake\Http\Middleware\CallableMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\TestSuite\TestCase;
 use TestApp\Middleware\DumbMiddleware;
