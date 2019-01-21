@@ -2,7 +2,5 @@
 <ruleset name="CakePHP Core">
     <config name="installed_paths" value="../../cakephp/cakephp-codesniffer" />
 
-    <rule ref="CakePHP" >
-        <exclude name="Generic.Commenting.Todo.TaskFound" />
-    </rule>
+    <rule ref="CakePHP" />
 </ruleset>
