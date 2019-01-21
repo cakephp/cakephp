@@ -20,6 +20,8 @@ use Cake\Http\Response;
 use Cake\Utility\CookieCryptTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Middlware for encrypting & decrypting cookies.
@@ -35,7 +37,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * The encryption types and padding are compatible with those used by CookieComponent
  * for backwards compatibility.
  */
-class EncryptedCookieMiddleware
+class EncryptedCookieMiddleware implements MiddlewareInterface
 {
     use CookieCryptTrait;
 
@@ -77,19 +79,16 @@ class EncryptedCookieMiddleware
      * Apply cookie encryption/decryption.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @param callable $next The next middleware to call.
-     * @return \Psr\Http\Message\ResponseInterface A response.
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Cake\Http\ResponseInterface A response.
      */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         if ($request->getCookieParams()) {
             $request = $this->decodeCookies($request);
         }
-        $response = $next($request, $response);
+
+        $response = $handler->handle($request);
         if ($response->hasHeader('Set-Cookie')) {
             $response = $this->encodeSetCookieHeader($response);
         }

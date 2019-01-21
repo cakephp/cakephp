@@ -22,6 +22,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\CookieCryptTrait;
+use TestApp\Http\TestRequestHandler;
 
 /**
  * Test for EncryptedCookieMiddleware
@@ -63,15 +64,13 @@ class EncryptedCookieMiddlewareTest extends TestCase
         ]);
         $this->assertNotEquals('decoded', $request->getCookie('decoded'));
 
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertSame('decoded', $req->getCookie('secret'));
             $this->assertSame('always plain', $req->getCookie('plain'));
 
-            return $res->withHeader('called', 'yes');
-        };
-        $middleware = $this->middleware;
-        $response = $middleware($request, $response, $next);
+            return (new Response())->withHeader('called', 'yes');
+        });
+        $response = $this->middleware->process($request, $handler);
         $this->assertSame('yes', $response->getHeaderLine('called'), 'Inner middleware not invoked');
     }
 
@@ -87,18 +86,17 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams(['secret' => $cookie]);
 
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertSame('', $req->getCookie('secret'));
 
-            return $res;
-        };
+            return new Response();
+        });
         $middleware = new EncryptedCookieMiddleware(
             ['secret'],
             $this->_getCookieEncryptionKey(),
             'aes'
         );
-        $response = $middleware($request, $response, $next);
+        $middleware->process($request, $handler);
     }
 
     /**
@@ -126,14 +124,12 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseSetCookieHeader()
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
+        $handler = new TestRequestHandler(function ($req) {
+            return (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
                 ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
                 ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
-        };
-        $middleware = $this->middleware;
-        $response = $middleware($request, $response, $next);
+        });
+        $response = $this->middleware->process($request, $handler);
         $this->assertNotContains('ninja=shuriken', $response->getHeaderLine('Set-Cookie'));
         $this->assertContains('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
 
@@ -153,14 +149,12 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseCookieData()
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res->withCookie(new Cookie('secret', 'be quiet'))
+        $handler = new TestRequestHandler(function ($req) {
+            return (new Response())->withCookie(new Cookie('secret', 'be quiet'))
                 ->withCookie(new Cookie('plain', 'in clear'))
                 ->withCookie(new Cookie('ninja', 'shuriken'));
-        };
-        $middleware = $this->middleware;
-        $response = $middleware($request, $response, $next);
+        });
+        $response = $this->middleware->process($request, $handler);
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
         $this->assertEquals(
             'shuriken',
