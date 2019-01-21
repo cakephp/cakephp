@@ -191,7 +191,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of an optgroup element.
      *
      * @param string $label The optgroup label text
-     * @param array|\ArrayAccess $optgroup The opt group data.
+     * @param array $optgroup The opt group data.
      * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
@@ -228,14 +228,14 @@ class SelectBoxWidget extends BasicWidget
      *
      * Will recursively call itself when option groups are in use.
      *
-     * @param array|\ArrayAccess  $options The options to render.
-     * @param array|\ArrayAccess|null $disabled The options to disable.
+     * @param array $options The options to render.
+     * @param array|null $disabled The options to disable.
      * @param array|string|null $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
      * @return array Option elements.
      */
-    protected function _renderOptions($options, $disabled, $selected, $templateVars, $escape): array
+    protected function _renderOptions($options, ?array $disabled, $selected, $templateVars, $escape): array
     {
         $out = [];
         foreach ($options as $key => $val) {

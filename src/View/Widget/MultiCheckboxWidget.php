@@ -242,7 +242,7 @@ class MultiCheckboxWidget implements WidgetInterface
      * Helper method for deciding what options are disabled.
      *
      * @param string $key The key to test.
-     * @param array|bool|null $disabled The disabled values.
+     * @param mixed $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(string $key, $disabled): bool

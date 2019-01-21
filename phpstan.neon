@@ -3,7 +3,6 @@ parameters:
     autoload_files:
         - tests/bootstrap.php
     ignoreErrors:
-        - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
         - '#Constructor of class Cake\\[a-zA-Z0-9_\\]+ has an unused parameter#'
         - '#Access to undefined constant Memcached::OPT_CLIENT_MODE#'
         - '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
@@ -22,8 +21,12 @@ parameters:
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
-        - '#Part \$field \(array|string\) of encapsed string cannot be cast to string#'
         - '#Binary operation "\+" between array|false and array results in an error#'
+        - '#Variable \$validWidth in isset\(\) always exists and is not nullable#'
+        - '#Variable \$validHeight in isset\(\) always exists and is not nullable#'
+        -
+            message: '#Binary operation "-" between (.)* results in an error#'
+            path: 'src/I18n/RelativeTimeFormatter.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

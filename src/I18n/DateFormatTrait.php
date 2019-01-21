@@ -243,7 +243,7 @@ trait DateFormatTrait
      */
     public function __toString()
     {
-        return $this->i18nFormat();
+        return (string)$this->i18nFormat();
     }
 
     /**
