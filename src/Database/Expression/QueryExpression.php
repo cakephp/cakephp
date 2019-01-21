@@ -507,7 +507,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return '';
         }
         $conjunction = $this->_conjunction;
-        $template = ($len === 1) ? '%s' : '(%s)';
+        $template = $len === 1 ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {

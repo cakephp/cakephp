@@ -175,7 +175,7 @@ trait CookieCryptTrait
         if ($first === '{' || $first === '[') {
             $ret = json_decode($string, true);
 
-            return ($ret !== null) ? $ret : $string;
+            return $ret ?? $string;
         }
         $array = [];
         foreach (explode(',', $string) as $pair) {

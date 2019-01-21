@@ -143,7 +143,7 @@ if (!function_exists('pr')) {
             return $var;
         }
 
-        $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
+        $template = PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg' ? '<pre class="pr">%s</pre>' : "\n%s\n\n";
         printf($template, trim(print_r($var, true)));
 
         return $var;
@@ -171,7 +171,7 @@ if (!function_exists('pj')) {
             return $var;
         }
 
-        $template = (PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg') ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
+        $template = PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg' ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
         printf($template, trim(json_encode($var, JSON_PRETTY_PRINT)));
 
         return $var;

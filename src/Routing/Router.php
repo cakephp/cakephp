@@ -467,7 +467,7 @@ class Router
         }
         if (is_array($url)) {
             if (isset($url['_ssl'])) {
-                $url['_scheme'] = ($url['_ssl'] === true) ? 'https' : 'http';
+                $url['_scheme'] = $url['_ssl'] === true ? 'https' : 'http';
             }
 
             if (isset($url['_full']) && $url['_full'] === true) {
