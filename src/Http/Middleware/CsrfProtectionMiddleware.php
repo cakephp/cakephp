@@ -22,6 +22,10 @@ use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Provides CSRF protection & validation.
@@ -37,7 +41,7 @@ use Cake\Utility\Security;
  * used together your forms will have CSRF tokens automatically added
  * when `$this->Form->create(...)` is used in a view.
  */
-class CsrfProtectionMiddleware
+class CsrfProtectionMiddleware implements MiddlewareInterface
 {
     /**
      * Default config for the CSRF handling.
@@ -80,12 +84,11 @@ class CsrfProtectionMiddleware
     /**
      * Checks and sets the CSRF token depending on the HTTP verb.
      *
-     * @param \Cake\Http\ServerRequest $request The request.
-     * @param \Cake\Http\Response $response The response.
-     * @param callable $next Callback to invoke the next middleware.
-     * @return \Cake\Http\Response A response
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Cake\Http\ResponseInterface A response.
      */
-    public function __invoke(ServerRequest $request, Response $response, callable $next): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
@@ -100,13 +103,13 @@ class CsrfProtectionMiddleware
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->_createToken();
             $request = $this->_addTokenToRequest($token, $request);
-            $response = $this->_addTokenCookie($token, $request, $response);
+            $response = $handler->handle($request);
 
-            return $next($request, $response);
+            return $this->_addTokenCookie($token, $request, $response);
         }
         $request = $this->_validateAndUnsetTokenField($request);
 
-        return $next($request, $response);
+        return $handler->handle($request);
     }
 
     /**
