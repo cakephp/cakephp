@@ -1737,7 +1737,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         unset($options['defaults']);
 
-        return $this->save($entity, $options) ?: $entity;
+        $result = $this->save($entity, $options);
+
+        if ($result === false) {
+            throw new PersistenceFailedException($entity, ['findOrCreate']);
+        }
+
+        return $entity;
     }
 
     /**

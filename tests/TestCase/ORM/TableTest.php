@@ -32,6 +32,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
@@ -5840,21 +5841,22 @@ class TableTest extends TestCase
     }
 
     /**
-     * Test that findOrCreate creates a new valid entity with the search data
+     * Test that findOrCreate throws a PersistenceFailedException when it cannot save
+     * an entity created from $search
      *
      * @return void
      */
-    public function testFindOrCreateValidatesNewEntity()
+    public function testFindOrCreateWithInvalidEntity()
     {
+        $this->expectException(PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity findOrCreate failure (title: "_empty").');
+
         $articles = $this->getTableLocator()->get('Articles');
         $validator = new Validator();
         $validator->notBlank('title');
         $articles->setValidator('default', $validator);
 
-        $article = $articles->findOrCreate(['title' => '']);
-        $this->assertTrue($article->isNew());
-        $this->assertNotEmpty($article->getError('title'));
-        $this->assertNull($article->id);
+        $articles->findOrCreate(['title' => '']);
     }
 
     /**
