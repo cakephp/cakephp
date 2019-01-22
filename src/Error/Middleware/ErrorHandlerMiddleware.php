@@ -21,9 +21,13 @@ use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionRendererInterface;
+use Cake\Http\Response;
 use Cake\Log\Log;
 use Exception;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
 /**
@@ -34,7 +38,7 @@ use Throwable;
  *
  * @mixin \Cake\Core\InstanceConfigTrait
  */
-class ErrorHandlerMiddleware
+class ErrorHandlerMiddleware implements MiddlewareInterface
 {
     use InstanceConfigTrait;
 
@@ -92,16 +96,15 @@ class ErrorHandlerMiddleware
      * Wrap the remaining middleware with error handling.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @param callable $next Callback to invoke the next middleware.
-     * @return \Psr\Http\Message\ResponseInterface A response
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Cake\Http\ResponseInterface A response.
      */
-    public function __invoke($request, $response, $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
-            return $next($request, $response);
+            return $handler->handle($request);
         } catch (Throwable $exception) {
-            return $this->handleException($exception, $request, $response);
+            return $this->handleException($exception, $request);
         }
     }
 
@@ -110,10 +113,9 @@ class ErrorHandlerMiddleware
      *
      * @param \Throwable $exception The exception to handle.
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    public function handleException($exception, $request, $response)
+    public function handleException($exception, $request)
     {
         $renderer = $this->getRenderer($exception, $request);
         try {
@@ -122,26 +124,23 @@ class ErrorHandlerMiddleware
 
             return $res;
         } catch (Throwable $exception) {
-            $this->logException($request, $exception);
-            $response = $this->handleInternalError($response);
         }
 
-        return $response;
+        $this->logException($request, $exception);
+
+        return $this->handleInternalError();
     }
 
     /**
      * Handle internal errors.
      *
-     * @param \Psr\Http\Message\ResponseInterface $response The response
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    protected function handleInternalError($response)
+    protected function handleInternalError()
     {
-        $body = $response->getBody();
-        $body->write('An Internal Server Error Occurred');
+        $response = new Response(['body' => 'An Internal Server Error Occurred']);
 
-        return $response->withStatus(500)
-            ->withBody($body);
+        return $response->withStatus(500);
     }
 
     /**
