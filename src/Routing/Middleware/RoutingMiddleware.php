@@ -18,6 +18,7 @@ namespace Cake\Routing\Middleware;
 use Cake\Cache\Cache;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Http\Middleware\CallableDecoratorMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
@@ -151,8 +152,12 @@ class RoutingMiddleware implements MiddlewareInterface
         }
         $matching = Router::getRouteCollection()->getMiddleware($middleware);
         if (!$matching) {
-            return $handler->process($request);
+            return $handler->handle($request);
         }
+
+        $matching[] = new CallableDecoratorMiddleware(function ($req, $handl) use ($handler) {
+            return $handler->handle($req);
+        });
         $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 

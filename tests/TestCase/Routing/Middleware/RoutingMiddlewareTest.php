@@ -26,7 +26,6 @@ use TestApp\Application;
 use TestApp\Http\TestRequestHandler;
 use TestApp\Middleware\DumbMiddleware;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**
@@ -99,8 +98,7 @@ class RoutingMiddlewareTest extends TestCase
     public function testRouterSetParams()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $response = new Response();
-        $next = function (ServerRequest $req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -110,8 +108,8 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
 
-            return $res;
-        };
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $middleware->process($request, $handler);
     }
@@ -125,8 +123,7 @@ class RoutingMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $request = $request->withAttribute('params', ['_csrfToken' => 'i-am-groot']);
-        $response = new Response();
-        $next = function (ServerRequest $req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -137,8 +134,8 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
 
-            return $res;
-        };
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $middleware->process($request, $handler);
     }
@@ -153,8 +150,7 @@ class RoutingMiddlewareTest extends TestCase
         Router::reload();
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
-        $response = new Response();
-        $next = function (ServerRequest $req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -166,8 +162,8 @@ class RoutingMiddlewareTest extends TestCase
             $this->assertNotEmpty(Router::routes());
             $this->assertEquals('/app/articles', Router::routes()[0]->template);
 
-            return $res;
-        };
+            return new Response();
+        });
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app);
         $middleware->process($request, $handler);
@@ -183,10 +179,6 @@ class RoutingMiddlewareTest extends TestCase
         Router::reload();
 
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/app/articles']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
         $app = $this->getMockBuilder(Application::class)
             ->setMethods(['pluginRoutes'])
             ->setConstructorArgs([CONFIG])
@@ -195,7 +187,7 @@ class RoutingMiddlewareTest extends TestCase
             ->method('pluginRoutes')
             ->with($this->isInstanceOf(RouteBuilder::class));
         $middleware = new RoutingMiddleware($app);
-        $middleware->process($request, $handler);
+        $middleware->process($request, new TestRequestHandler());
     }
 
     /**
@@ -207,12 +199,11 @@ class RoutingMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
         $request = $request->withAttribute('params', ['controller' => 'Articles']);
-        $response = new Response();
-        $next = function (ServerRequest $req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals(['controller' => 'Articles'], $req->getAttribute('params'));
 
-            return $res;
-        };
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $middleware->process($request, $handler);
     }
@@ -225,12 +216,8 @@ class RoutingMiddlewareTest extends TestCase
     {
         $this->expectException(\Cake\Routing\Exception\MissingRouteException::class);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
         $middleware = new RoutingMiddleware($this->app());
-        $middleware->process($request, $handler);
+        $middleware->process($request, new TestRequestHandler());
     }
 
     /**
@@ -253,8 +240,7 @@ class RoutingMiddlewareTest extends TestCase
             null,
             ['_method' => 'PATCH']
         );
-        $response = new Response();
-        $next = function (ServerRequest $req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $expected = [
                 'controller' => 'Articles',
                 'action' => 'index',
@@ -266,8 +252,8 @@ class RoutingMiddlewareTest extends TestCase
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertEquals('PATCH', $req->getMethod());
 
-            return $res;
-        };
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $middleware->process($request, $handler);
     }
@@ -302,12 +288,11 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/api/ping',
         ]);
-        $response = new Response();
-        $next = function ($req, $res, $next) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->log[] = 'last';
 
-            return $next($req, $res);
-        };
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware->process($request, $handler);
         $this->assertSame(['second', 'first', 'last'], $this->log);
@@ -348,10 +333,9 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/api/articles',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->fail('Should not be invoked as first should be ignored.');
-        };
+        });
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware->process($request, $handler);
 
@@ -390,10 +374,9 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
-            $this->fail('Should not be invoked as second should be ignored.');
-        };
+        $handler = new TestRequestHandler(function ($req) {
+            $this->fail('Should not be invoked as first should be ignored.');
+        });
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware->process($request, $handler);
 
@@ -438,12 +421,11 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => $url,
         ]);
-        $response = new Response();
-        $next = function ($req, $res, $next) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->log[] = 'last';
 
-            return $res;
-        };
+            return new Response();
+        });
         $middleware = new RoutingMiddleware($this->app());
         $result = $middleware->process($request, $handler);
         $this->assertSame($expected, $this->log);
