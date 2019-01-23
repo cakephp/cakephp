@@ -457,13 +457,12 @@ class RoutingMiddlewareTest extends TestCase
             'path' => CACHE,
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $response = new Response();
-        $next = function ($req, $res) use ($cacheConfigName) {
+        $handler = new TestRequestHandler(function ($req) use ($cacheConfigName) {
             $routeCollection = Cache::read('routeCollection', $cacheConfigName);
             $this->assertInstanceOf(RouteCollection::class, $routeCollection);
 
-            return $res;
-        };
+            return new Response();
+        });
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware->process($request, $handler);
@@ -487,13 +486,12 @@ class RoutingMiddlewareTest extends TestCase
             'path' => CACHE,
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $response = new Response();
-        $next = function ($req, $res) use ($cacheConfigName) {
+        $handler = new TestRequestHandler(function ($req) use ($cacheConfigName) {
             $routeCollection = Cache::read('routeCollection', $cacheConfigName);
             $this->assertNull($routeCollection);
 
-            return $res;
-        };
+            return new Response();
+        });
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app, $cacheConfigName);
         $middleware->process($request, $handler);
@@ -518,13 +516,9 @@ class RoutingMiddlewareTest extends TestCase
             'path' => CACHE,
         ]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/articles']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
         $app = new Application(CONFIG);
         $middleware = new RoutingMiddleware($app, 'notfound');
-        $middleware->process($request, $handler);
+        $middleware->process($request, new TestRequestHandler());
 
         Cache::drop('_cake_router_');
     }
