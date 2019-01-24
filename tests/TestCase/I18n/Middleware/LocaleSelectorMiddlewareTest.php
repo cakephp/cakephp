@@ -20,7 +20,6 @@ use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\TestSuite\TestCase;
 use Locale;
 use TestApp\Http\TestRequestHandler;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 /**

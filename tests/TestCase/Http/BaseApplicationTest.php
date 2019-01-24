@@ -19,7 +19,6 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
-use Cake\Http\Runner;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;

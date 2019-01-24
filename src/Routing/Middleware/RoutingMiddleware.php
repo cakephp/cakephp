@@ -18,7 +18,6 @@ namespace Cake\Routing\Middleware;
 use Cake\Cache\Cache;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
-use Cake\Http\Middleware\CallableDecoratorMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
@@ -123,7 +122,7 @@ class RoutingMiddleware implements MiddlewareInterface
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
-     * @return \Cake\Http\ResponseInterface A response.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

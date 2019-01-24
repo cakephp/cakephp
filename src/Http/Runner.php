@@ -40,16 +40,16 @@ class Runner implements RequestHandlerInterface
     protected $queue;
 
     /**
-     * Response prototype to return if queue is exhausted without receiving response.
+     * Fallback handler to use if middleware queue does not generate response.
      *
-     * @var \Psr\Http\Message\ResponseInterface
+     * @var \Psr\Http\Server\RequestHandlerInterface|null
      */
-    protected $responsePrototype;
+    protected $fallbackHandler;
 
     /**
      * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
-     * @param \Psr\Http\Message\RequestHandlerInterface $fallbackHandler Fallback request handler.
+     * @param \Psr\Http\Server\RequestHandlerInterface $fallbackHandler Fallback request handler.
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
     public function run(
