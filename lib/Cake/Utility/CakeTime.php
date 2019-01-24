@@ -327,7 +327,7 @@ class CakeTime {
 		) {
 			$clone = clone $dateString;
 			$clone->setTimezone(new DateTimeZone(date_default_timezone_get()));
-			$date = (int)$clone->format('U') + $clone->getOffset();
+			$date = (int)$clone->format('U')/* + $clone->getOffset()*/;
 		} elseif ($dateString instanceof DateTime) {
 			$date = (int)$dateString->format('U');
 		} else {
