@@ -7,7 +7,6 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 class MiddlewareApplication extends BaseApplication
 {
@@ -43,10 +42,9 @@ class MiddlewareApplication extends BaseApplication
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\RequestHandlerInterface $handler The request handler
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function process(ServerRequestInterface $req, RequestHandlerInterface $handler): ResponseInterface
+    public function handle(ServerRequestInterface $req): ResponseInterface
     {
         $res = new Response(['status' => 200]);
 

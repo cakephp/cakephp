@@ -22,11 +22,11 @@ use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 require_once __DIR__ . '/server_mocks.php';
 
@@ -88,7 +88,7 @@ class ServerTest extends TestCase
      */
     public function testRunWithRequest()
     {
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
         $app = new MiddlewareApplication($this->config);
@@ -114,7 +114,7 @@ class ServerTest extends TestCase
     public function testRunCallingPluginHooks()
     {
         $response = new Response('php://memory', 200, ['X-testing' => 'source header']);
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
         $app = $this->getMockBuilder(MiddlewareApplication::class)
@@ -244,7 +244,6 @@ class ServerTest extends TestCase
         $server->run();
         $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
         $this->assertInstanceOf('Closure', $this->middleware->get(3)->getCallable(), '2nd last middleware is a closure');
-        $this->assertSame($app, $this->middleware->get(4), 'Last middleware is an app instance');
     }
 
     /**

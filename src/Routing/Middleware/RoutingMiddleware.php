@@ -155,12 +155,9 @@ class RoutingMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $matching[] = new CallableDecoratorMiddleware(function ($req, $handl) use ($handler) {
-            return $handler->handle($req);
-        });
         $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 
-        return $runner->run($middleware, $request);
+        return $runner->run($middleware, $request, $this->app);
     }
 }

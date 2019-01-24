@@ -288,12 +288,12 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/api/ping',
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler();
+        $middleware = new RoutingMiddleware($this->app(function ($req) {
             $this->log[] = 'last';
 
             return new Response();
-        });
-        $middleware = new RoutingMiddleware($this->app());
+        }));
         $result = $middleware->process($request, $handler);
         $this->assertSame(['second', 'first', 'last'], $this->log);
     }
@@ -421,12 +421,12 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => $url,
         ]);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler();
+        $middleware = new RoutingMiddleware($this->app(function ($req) {
             $this->log[] = 'last';
 
             return new Response();
-        });
-        $middleware = new RoutingMiddleware($this->app());
+        }));
         $result = $middleware->process($request, $handler);
         $this->assertSame($expected, $this->log);
     }
@@ -526,15 +526,21 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Create a stub application for testing.
      *
+     * @param callable $handleCallack Callback for "handle" method.
      * @return \Cake\Core\HttpApplicationInterface
      */
-    protected function app()
+    protected function app($handleCallback = null)
     {
         $mock = $this->createMock(Application::class);
         $mock->method('routes')
             ->will($this->returnCallback(function ($routes) {
                 return $routes;
             }));
+
+        if ($handleCallback) {
+            $mock->method('handle')
+                ->will($this->returnCallback($handleCallback));
+        }
 
         return $mock;
     }

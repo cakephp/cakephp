@@ -56,7 +56,7 @@ class BaseApplicationTest extends TestCase
      *
      * @return void
      */
-    public function testProcess()
+    public function testHandle()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
         $request = $request->withAttribute('params', [
@@ -67,7 +67,7 @@ class BaseApplicationTest extends TestCase
         ]);
 
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $result = $app->process($request, new Runner());
+        $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertEquals('Hello Jane', '' . $result->getBody());
     }

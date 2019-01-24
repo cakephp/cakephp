@@ -81,9 +81,8 @@ class Server implements EventDispatcherInterface
         }
 
         $this->dispatchEvent('Server.buildMiddleware', ['middleware' => $middleware]);
-        $middleware->add($this->app);
 
-        return $this->runner->run($middleware, $request);
+        return $this->runner->run($middleware, $request, $this->app);
     }
 
     /**

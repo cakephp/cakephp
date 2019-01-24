@@ -16,13 +16,13 @@ namespace Cake\Core;
 
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
-use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * An interface defining the methods that the
  * http server depend on.
  */
-interface HttpApplicationInterface extends MiddlewareInterface
+interface HttpApplicationInterface extends RequestHandlerInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.

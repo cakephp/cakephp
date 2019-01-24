@@ -49,17 +49,17 @@ class Runner implements RequestHandlerInterface
     /**
      * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
-     * @param \Psr\Http\Message\ResponseInterface $responsePrototype A response object
+     * @param \Psr\Http\Message\RequestHandlerInterface $fallbackHandler Fallback request handler.
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
     public function run(
         MiddlewareQueue $queue,
         ServerRequestInterface $request,
-        ?ResponseInterface $responsePrototype = null
+        ?RequestHandlerInterface $fallbackHandler = null
     ): ResponseInterface {
         $this->queue = $queue;
         $this->index = 0;
-        $this->responsePrototype = $responsePrototype ?: (new Response())->withStatus(500);
+        $this->fallbackHandler = $fallbackHandler;
 
         return $this->handle($request);
     }
@@ -74,10 +74,14 @@ class Runner implements RequestHandlerInterface
     {
         $middleware = $this->queue->get($this->index++);
 
-        if ($middleware === null) {
-            return $this->responsePrototype;
+        if ($middleware) {
+            return $middleware->process($request, $this);
         }
 
-        return $middleware->process($request, $this);
+        if ($this->fallbackHandler) {
+            return $this->fallbackHandler->handle($request);
+        }
+
+        return (new Response())->withStatus(500);
     }
 }
