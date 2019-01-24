@@ -34,13 +34,6 @@ class ActionDispatcher implements EventDispatcherInterface
     use EventDispatcherTrait;
 
     /**
-     * Attached routing filters
-     *
-     * @var \Cake\Event\EventListenerInterface[]
-     */
-    protected $filters = [];
-
-    /**
      * Controller factory instance.
      *
      * @var \Cake\Http\ControllerFactory
@@ -133,15 +126,5 @@ class ActionDispatcher implements EventDispatcherInterface
         }
 
         return $response;
-    }
-
-    /**
-     * Get the connected filters.
-     *
-     * @return array
-     */
-    public function getFilters(): array
-    {
-        return $this->filters;
     }
 }
