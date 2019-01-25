@@ -23,22 +23,11 @@ use Cake\Routing\Router;
 use LogicException;
 
 /**
- * This class provides compatibility with dispatcher filters
- * and interacting with the controller layers.
- *
- * Long term this should just be the controller dispatcher, but
- * for now it will do a bit more than that.
+ * Dispatch the request to a controller for generating a response.
  */
 class ActionDispatcher implements EventDispatcherInterface
 {
     use EventDispatcherTrait;
-
-    /**
-     * Attached routing filters
-     *
-     * @var \Cake\Event\EventListenerInterface[]
-     */
-    protected $filters = [];
 
     /**
      * Controller factory instance.
@@ -133,15 +122,5 @@ class ActionDispatcher implements EventDispatcherInterface
         }
 
         return $response;
-    }
-
-    /**
-     * Get the connected filters.
-     *
-     * @return array
-     */
-    public function getFilters(): array
-    {
-        return $this->filters;
     }
 }
