@@ -354,22 +354,22 @@ class CakeTime {
  * See http://php.net/manual/en/function.strftime.php for information on formatting
  * using locale strings.
  *
- * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param int|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @param string $format The format to use. If null, `CakeTime::$niceFormat` is used
  * @return string Formatted date string
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::nice
  */
-	public static function nice($dateString = null, $timezone = null, $format = null) {
-		if (!$dateString) {
-			$dateString = time();
+	public static function nice($date = null, $timezone = null, $format = null) {
+		if (!$date) {
+			$date = time();
 		}
-		$date = static::fromString($dateString, $timezone);
-
+		$timestamp = static::fromString($date, $timezone);
 		if (!$format) {
 			$format = static::$niceFormat;
 		}
-		return static::_strftime(static::convertSpecifiers($format, $date), $date);
+		$convertedFormat = static::convertSpecifiers($format, $timestamp);
+		return static::__strftime($convertedFormat, $timestamp, $date, $timezone);
 	}
 
 /**
@@ -382,28 +382,31 @@ class CakeTime {
  * If $dateString's year is the current year, the returned string does not
  * include mention of the year.
  *
- * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param int|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Described, relative date string
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::niceShort
  */
-	public static function niceShort($dateString = null, $timezone = null) {
-		if (!$dateString) {
-			$dateString = time();
+	public static function niceShort($date = null, $timezone = null) {
+		if (!$date) {
+			$date = time();
 		}
-		$date = static::fromString($dateString, $timezone);
+		$timestamp = static::fromString($date, $timezone);
 
-		if (static::isToday($dateString, $timezone)) {
-			return __d('cake', 'Today, %s', static::_strftime("%H:%M", $date));
+		if (static::isToday($date, $timezone)) {
+			$formattedDate = static::__strftime("%H:%M", $timestamp, $date, $timezone);
+			return __d('cake', 'Today, %s', $formattedDate);
 		}
-		if (static::wasYesterday($dateString, $timezone)) {
-			return __d('cake', 'Yesterday, %s', static::_strftime("%H:%M", $date));
+		if (static::wasYesterday($date, $timezone)) {
+			$formattedDate = static::__strftime("%H:%M", $timestamp, $date, $timezone);
+			return __d('cake', 'Yesterday, %s', $formattedDate);
 		}
-		if (static::isTomorrow($dateString, $timezone)) {
-			return __d('cake', 'Tomorrow, %s', static::_strftime("%H:%M", $date));
+		if (static::isTomorrow($date, $timezone)) {
+			$formattedDate = static::__strftime("%H:%M", $timestamp, $date, $timezone);
+			return __d('cake', 'Tomorrow, %s', $formattedDate);
 		}
 
-		$d = static::_strftime("%w", $date);
+		$d = static::__strftime("%w", $timestamp, $date, $timezone);
 		$day = array(
 			__d('cake', 'Sunday'),
 			__d('cake', 'Monday'),
@@ -413,18 +416,21 @@ class CakeTime {
 			__d('cake', 'Friday'),
 			__d('cake', 'Saturday')
 		);
-		if (static::wasWithinLast('7 days', $dateString, $timezone)) {
-			return sprintf('%s %s', $day[$d], static::_strftime(static::$niceShortFormat, $date));
+		if (static::wasWithinLast('7 days', $date, $timezone)) {
+			$formattedDate = static::__strftime(static::$niceShortFormat, $timestamp, $date, $timezone);
+			return sprintf('%s %s', $day[$d], $formattedDate);
 		}
-		if (static::isWithinNext('7 days', $dateString, $timezone)) {
-			return __d('cake', 'On %s %s', $day[$d], static::_strftime(static::$niceShortFormat, $date));
+		if (static::isWithinNext('7 days', $date, $timezone)) {
+			$formattedDate = static::__strftime(static::$niceShortFormat, $timestamp, $date, $timezone);
+			return __d('cake', 'On %s %s', $day[$d], $formattedDate);
 		}
 
 		$y = '';
-		if (!static::isThisYear($date)) {
+		if (!static::isThisYear($timestamp)) {
 			$y = ' %Y';
 		}
-		return static::_strftime(static::convertSpecifiers("%b %eS{$y}, %H:%M", $date), $date);
+		$format = static::convertSpecifiers("%b %eS{$y}, %H:%M", $timestamp);
+		return static::__strftime($format, $timestamp, $date, $timezone);
 	}
 
 /**
@@ -1065,17 +1071,8 @@ class CakeTime {
 		if (empty($format)) {
 			$format = '%x';
 		}
-		$serverTimeZone = date_default_timezone_get();
-		if (
-			!empty($timezone) &&
-			$date instanceof DateTime &&
-			$date->getTimezone()->getName() != $serverTimeZone
-		) {
-			date_default_timezone_set($timezone);
-		}
-		$result = static::_strftime(static::convertSpecifiers($format, $timestamp), $timestamp);
-		date_default_timezone_set($serverTimeZone);
-		return $result;
+		$convertedFormat = static::convertSpecifiers($format, $timestamp);
+		return static::__strftime($convertedFormat, $timestamp, $date, $timezone);
 	}
 
 /**
@@ -1166,13 +1163,12 @@ class CakeTime {
  * Handles utf8_encoding the result of strftime when necessary.
  *
  * @param string $format Format string.
- * @param int $date Timestamp to format.
+ * @param int $timestamp Timestamp to format.
  * @return string formatted string with correct encoding.
  */
-	protected static function _strftime($format, $date) {
-		$format = strftime($format, $date);
+	protected static function _strftime($format, $timestamp) {
+		$format = strftime($format, $timestamp);
 		$encoding = Configure::read('App.encoding');
-
 		if (!empty($encoding) && $encoding === 'UTF-8') {
 			if (function_exists('mb_check_encoding')) {
 				$valid = mb_check_encoding($format, $encoding);
@@ -1184,6 +1180,31 @@ class CakeTime {
 			}
 		}
 		return $format;
+	}
+
+/**
+ * Multibyte wrapper for strftime.
+ *
+ * Adjusts the timezone when necessary before formatting the time.
+ *
+ * @param string $format Format string.
+ * @param int $timestamp Timestamp to format.
+ * @param int|string|DateTime $date Timestamp, strtotime() valid string or DateTime object.
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object.
+ * @return string Formatted date string with correct encoding.
+ */
+	private static function __strftime($format, $timestamp, $date, $timezone) {
+		$serverTimeZone = date_default_timezone_get();
+		if (
+			!empty($timezone) &&
+			$date instanceof DateTime &&
+			$date->getTimezone()->getName() != $serverTimeZone
+		) {
+			date_default_timezone_set($timezone);
+		}
+		$result = static::_strftime($format, $timestamp);
+		date_default_timezone_set($serverTimeZone);
+		return $result;
 	}
 
 }
