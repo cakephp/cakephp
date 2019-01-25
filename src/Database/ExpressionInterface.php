@@ -35,7 +35,7 @@ interface ExpressionInterface
      * being iterated.
      *
      * @param callable $visitor The callable to apply to all nodes.
-     * @return $this
+     * @return $this|void
      */
     public function traverse(callable $visitor);
 }

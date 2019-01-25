@@ -44,9 +44,9 @@ class ConsoleOutput extends ConsoleOutputBase
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return void
+     * @return true
      */
-    public function write($message, int $newlines = 1): void
+    public function write($message, int $newlines = 1)
     {
         foreach ((array)$message as $line) {
             $this->_out[] = $line;
@@ -57,6 +57,8 @@ class ConsoleOutput extends ConsoleOutputBase
             $this->_out[] = '';
             $newlines--;
         }
+
+        return true;
     }
 
     /**
