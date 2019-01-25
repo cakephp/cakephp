@@ -421,6 +421,18 @@ class CakeTimeTest extends CakeTestCase {
 		$this->_restoreSystemTimezone();
 	}
 
+	public function testNiceTimezoneConversion() {
+		date_default_timezone_set('Europe/Copenhagen'); // server timezone
+		$clientTimeZone = new DateTimeZone('Asia/Bangkok');
+		$clientDateTime = new DateTime('2019-01-31 10:00:00', $clientTimeZone);
+		// Convert to UTC.
+		$actual = CakeTime::nice($clientDateTime, 'UTC', '%Y-%m-%d %H:%M:%S');
+		$clientDateTime->setTimezone(new DateTimeZone('UTC'));
+		$expected = $clientDateTime->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $actual);
+		$this->_restoreSystemTimezone();
+	}
+
 /**
  * testNiceShort method
  *
