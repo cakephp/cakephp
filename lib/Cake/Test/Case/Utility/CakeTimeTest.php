@@ -990,7 +990,19 @@ class CakeTimeTest extends CakeTestCase {
 		$clientDateTime = new DateTime('2019-01-31 10:00:00', $clientTimeZone);
 		// Convert to UTC.
 		$actual = CakeTime::fromString($clientDateTime, 'UTC');
-		$expected = 1548900000; // '2019-01-31 03:00:00' timestamp
+		$clientDateTime->setTimezone(new DateTimeZone('UTC'));
+		$expected = $clientDateTime->getTimestamp() + $clientDateTime->getOffset(); // 1548903600
+		$this->assertEquals($expected, $actual);
+		$this->_restoreSystemTimezone();
+	}
+
+	public function testFromStringUTCtoCopenhagen() {
+		date_default_timezone_set('UTC'); // server timezone
+		$clientTimeZone = new DateTimeZone('UTC');
+		$clientDateTime = new DateTime('2012-01-01 10:00:00', $clientTimeZone);
+		$actual = CakeTime::fromString($clientDateTime, 'Europe/Copenhagen');
+		$clientDateTime->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$expected = $clientDateTime->getTimestamp() + $clientDateTime->getOffset(); // 1325415600
 		$this->assertEquals($expected, $actual);
 		$this->_restoreSystemTimezone();
 	}
@@ -1006,6 +1018,25 @@ class CakeTimeTest extends CakeTestCase {
 		$result = $this->Time->fromString($date);
 		$this->assertEquals($result, $date->format('U'));
 	}
+
+	public function testConvertToBangkok() {
+		$serverTimeZoneName = 'Europe/Copenhagen';
+		date_default_timezone_set($serverTimeZoneName);
+
+		$serverTimeZone = new DateTimeZone($serverTimeZoneName);
+		$DateTime = new DateTime('2019-01-31 04:00:00', $serverTimeZone);
+		$serverTimestamp = $DateTime->getTimestamp() + $DateTime->getOffset(); // 1548907200
+
+		$clientTimeZoneName = 'Asia/Bangkok';
+		$clientTimeZone = new DateTimeZone($clientTimeZoneName);
+		$DateTime->setTimezone($clientTimeZone);
+		$expected = $DateTime->getTimestamp() + $DateTime->getOffset(); // 1548928800
+
+		$actual = CakeTime::convert($serverTimestamp, $clientTimeZoneName);
+		$this->assertEquals($expected, $actual);
+		$this->_restoreSystemTimezone();
+	}
+
 
 /**
  * test converting time specifiers using a time definition localfe file
@@ -1096,15 +1127,6 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-	public function testConvertTimezoneConversionToUTC() {
-		date_default_timezone_set('Europe/Copenhagen'); // server timezone
-		$serverTime = 1548903600; // '2019-01-31 04:00:00' timestamp
-		$actual = CakeTime::convert($serverTime, 'UTC');
-		$expected = 1548900000; // '2019-01-31 03:00:00' timestamp
-		$this->assertEquals($expected, $actual);
-		$this->_restoreSystemTimezone();
-	}
-
 /**
  * test convert %e on Windows.
  *
@@ -1173,8 +1195,20 @@ class CakeTimeTest extends CakeTestCase {
 		$clientDateTime = new DateTime('2019-01-31 10:00:00', $clientTimeZone);
 		// Convert to UTC.
 		$actual = CakeTime::i18nFormat($clientDateTime, '%Y-%m-%d %H:%M:%S', false, 'UTC');
-		$this->assertEquals('2019-01-31 03:00:00', $actual);
+		$clientDateTime->setTimezone(new DateTimeZone('UTC'));
+		$expected = $clientDateTime->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $actual);
 		$this->_restoreSystemTimezone();
+	}
+
+	public function testI18nFormatUTCtoCopenhagen() {
+		date_default_timezone_set('UTC');
+		$clientTimeZone = new DateTimeZone('UTC');
+		$clientDateTime = new DateTime('2012-01-01 10:00:00', $clientTimeZone);
+		$actual = CakeTime::i18nFormat($clientDateTime, '%Y-%m-%d %H:%M', false, 'Europe/Copenhagen');
+		$clientDateTime->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$expected = $clientDateTime->format('Y-m-d H:i');
+		$this->assertEquals($expected, $actual);
 	}
 
 /**
@@ -1245,7 +1279,7 @@ class CakeTimeTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testCorrectTimezoneConversion() {
+	public function testCorrectTimezoneConversionAsString() {
 		date_default_timezone_set('UTC');
 		$date = '2012-01-01 10:00:00';
 		$converted = CakeTime::format($date, '%Y-%m-%d %H:%M', '', 'Europe/Copenhagen');
@@ -1254,13 +1288,26 @@ class CakeTimeTest extends CakeTestCase {
 		$this->assertEquals($expected->format('Y-m-d H:i'), $converted);
 	}
 
+	public function testCorrectTimezoneConversionAsObject() {
+		date_default_timezone_set('UTC');
+		$clientTimeZone = new DateTimeZone('UTC');
+		$date = '2012-01-01 10:00:00';
+		$clientDateTime = new DateTime($date, $clientTimeZone);
+		$converted = CakeTime::format($clientDateTime, '%Y-%m-%d %H:%M', '', 'Europe/Copenhagen');
+		$clientDateTime->setTimezone(new DateTimeZone('Europe/Copenhagen'));
+		$expected = $clientDateTime->format('Y-m-d H:i');
+		$this->assertEquals($expected, $converted);
+	}
+
 	public function testFormatTimezoneConversionToUTC() {
 		date_default_timezone_set('Europe/Copenhagen'); // server timezone
 		$clientTimeZone = new DateTimeZone('Asia/Bangkok');
 		$clientDateTime = new DateTime('2019-01-31 10:00:00', $clientTimeZone);
 		// Convert to UTC.
 		$actual = CakeTime::format($clientDateTime, '%Y-%m-%d %H:%M:%S', false, 'UTC');
-		$this->assertEquals('2019-01-31 03:00:00', $actual);
+		$clientDateTime->setTimezone(new DateTimeZone('UTC'));
+		$expected = $clientDateTime->format('Y-m-d H:i:s');
+		$this->assertEquals($expected, $actual);
 		$this->_restoreSystemTimezone();
 	}
 

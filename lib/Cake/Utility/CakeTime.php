@@ -239,9 +239,9 @@ class CakeTime {
 /**
  * Converts given time (in server's time zone) to user's local time, given his/her timezone.
  *
- * @param string $serverTime UNIX timestamp
- * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
- * @return int UNIX timestamp
+ * @param integer $serverTime Server's timestamp.
+ * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object.
+ * @return int User's timezone timestamp.
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::convert
  */
 	public static function convert($serverTime, $timezone) {
@@ -303,11 +303,11 @@ class CakeTime {
 	}
 
 /**
- * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ * Returns a timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
  * @param int|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return string Parsed timestamp
+ * @return int|false Parsed given timezone timestamp.
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::fromString
  */
 	public static function fromString($dateString, $timezone = null) {
@@ -327,7 +327,7 @@ class CakeTime {
 		) {
 			$clone = clone $dateString;
 			$clone->setTimezone(new DateTimeZone(date_default_timezone_get()));
-			$date = (int)$clone->format('U')/* + $clone->getOffset()*/;
+			$date = (int)$clone->format('U') + $clone->getOffset();
 		} elseif ($dateString instanceof DateTime) {
 			$date = (int)$dateString->format('U');
 		} else {
@@ -1055,17 +1055,29 @@ class CakeTime {
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::i18nFormat
  */
 	public static function i18nFormat($date, $format = null, $default = false, $timezone = null) {
-		$date = static::fromString($date, $timezone);
-		if ($date === false && $default !== false) {
+		$timestamp = static::fromString($date, $timezone);
+		if ($timestamp === false && $default !== false) {
 			return $default;
 		}
-		if ($date === false) {
+		if ($timestamp === false) {
 			return '';
 		}
 		if (empty($format)) {
 			$format = '%x';
 		}
-		return static::_strftime(static::convertSpecifiers($format, $date), $date);
+		$serverTimeZone = date_default_timezone_get();
+		if (
+			!empty($timezone) &&
+			$date instanceof DateTime &&
+			$date->getTimezone()->getName() != $serverTimeZone
+		) {
+			date_default_timezone_set($timezone);
+		}
+		$result = static::_strftime(static::convertSpecifiers($format, $timestamp), $timestamp);
+		if (!empty($serverTimeZone)) {
+			date_default_timezone_set($serverTimeZone);
+		}
+		return $result;
 	}
 
 /**
