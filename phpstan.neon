@@ -28,6 +28,7 @@ parameters:
             message: '#Binary operation "-" between (.)* results in an error#'
             path: 'src/I18n/RelativeTimeFormatter.php'
         - '#Static property Cake\\Chronos\\(Date|Chronos|MutableDate|MutableDateTime)::\$diffFormatter \(Cake\\Chronos\\DifferenceFormatter\) does not accept Cake\\I18n\\RelativeTimeFormatter#'
+        - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
