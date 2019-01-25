@@ -1037,7 +1037,6 @@ class CakeTimeTest extends CakeTestCase {
 		$this->_restoreSystemTimezone();
 	}
 
-
 /**
  * test converting time specifiers using a time definition localfe file
  *

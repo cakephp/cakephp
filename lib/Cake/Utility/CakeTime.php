@@ -239,7 +239,7 @@ class CakeTime {
 /**
  * Converts given time (in server's time zone) to user's local time, given his/her timezone.
  *
- * @param integer $serverTime Server's timestamp.
+ * @param int $serverTime Server's timestamp.
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object.
  * @return int User's timezone timestamp.
  * @link https://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::convert
