@@ -1074,9 +1074,7 @@ class CakeTime {
 			date_default_timezone_set($timezone);
 		}
 		$result = static::_strftime(static::convertSpecifiers($format, $timestamp), $timestamp);
-		if (!empty($serverTimeZone)) {
-			date_default_timezone_set($serverTimeZone);
-		}
+		date_default_timezone_set($serverTimeZone);
 		return $result;
 	}
 
