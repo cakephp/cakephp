@@ -44,7 +44,7 @@ class ConsoleOutput extends ConsoleOutputBase
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return true
+     * @return false
      */
     public function write($message, int $newlines = 1)
     {
@@ -58,7 +58,7 @@ class ConsoleOutput extends ConsoleOutputBase
             $newlines--;
         }
 
-        return true;
+        return false;
     }
 
     /**
