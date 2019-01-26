@@ -259,12 +259,12 @@ class ValuesExpression implements ExpressionInterface
      * values.
      *
      * @param callable $visitor The visitor to traverse the expression with.
-     * @return void
+     * @return $this
      */
-    public function traverse(callable $visitor): void
+    public function traverse(callable $visitor)
     {
         if ($this->_query) {
-            return;
+            return $this;
         }
 
         if (!$this->_castedExpressions) {
@@ -285,6 +285,8 @@ class ValuesExpression implements ExpressionInterface
                 }
             }
         }
+
+        return $this;
     }
 
     /**
