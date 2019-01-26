@@ -99,16 +99,17 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritDoc
      */
-    public function traverse(callable $callable): void
+    public function traverse(callable $callable)
     {
         foreach ([$this->_field, $this->_from, $this->_to] as $part) {
             if ($part instanceof ExpressionInterface) {
                 $callable($part);
             }
         }
+
+        return $this;
     }
 
     /**
