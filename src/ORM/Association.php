@@ -854,11 +854,9 @@ abstract class Association
      */
     public function exists($conditions): bool
     {
-        if ($this->_conditions) {
-            $conditions = $this
-                ->find('all', ['conditions' => $conditions])
-                ->clause('where');
-        }
+        $conditions = $this->find()
+            ->where($conditions)
+            ->clause('where');
 
         return $this->getTarget()->exists($conditions);
     }
@@ -874,13 +872,11 @@ abstract class Association
      */
     public function updateAll(array $fields, $conditions): int
     {
-        $target = $this->getTarget();
-        $expression = $target->query()
-            ->where($this->getConditions())
+        $expression = $this->find()
             ->where($conditions)
             ->clause('where');
 
-        return $target->updateAll($fields, $expression);
+        return $this->getTarget()->updateAll($fields, $expression);
     }
 
     /**
@@ -893,13 +889,11 @@ abstract class Association
      */
     public function deleteAll($conditions): int
     {
-        $target = $this->getTarget();
-        $expression = $target->query()
-            ->where($this->getConditions())
+        $expression = $this->find()
             ->where($conditions)
             ->clause('where');
 
-        return $target->deleteAll($expression);
+        return $this->getTarget()->deleteAll($expression);
     }
 
     /**
