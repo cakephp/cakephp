@@ -119,16 +119,14 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     {
         $renderer = $this->getRenderer($exception, $request);
         try {
-            $res = $renderer->render();
+            $response = $renderer->render();
             $this->logException($request, $exception);
-
-            return $res;
-        } catch (Throwable $exception) {
+        } catch (Throwable $internalException) {
+            $this->logException($request, $internalException);
+            $response = $this->handleInternalError();
         }
 
-        $this->logException($request, $exception);
-
-        return $this->handleInternalError();
+        return $response;
     }
 
     /**
