@@ -52,8 +52,7 @@ class DependentDeleteHelper
 
             return true;
         }
-        $conditions = array_merge($conditions, $association->getConditions());
 
-        return (bool)$table->deleteAll($conditions);
+        return (bool)$association->deleteAll($conditions);
     }
 }
