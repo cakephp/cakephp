@@ -171,7 +171,7 @@ abstract class Cell implements EventDispatcherInterface
             } catch (ReflectionException $e) {
                 throw new BadMethodCallException(sprintf(
                     'Class %s does not have a "%s" method.',
-                    get_class($this),
+                    static::class,
                     $this->action
                 ));
             }
@@ -188,7 +188,7 @@ abstract class Cell implements EventDispatcherInterface
                 $builder->setTemplate($template);
             }
 
-            $className = get_class($this);
+            $className = static::class;
             $namePrefix = '\View\Cell\\';
             $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
             $name = substr($name, 0, -4);
@@ -229,7 +229,7 @@ abstract class Cell implements EventDispatcherInterface
             return [];
         }
         $template = $template ?: 'default';
-        $key = 'cell_' . Inflector::underscore(get_class($this)) . '_' . $action . '_' . $template;
+        $key = 'cell_' . Inflector::underscore(static::class) . '_' . $action . '_' . $template;
         $key = str_replace('\\', '_', $key);
         $default = [
             'config' => 'default',

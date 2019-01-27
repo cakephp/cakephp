@@ -184,7 +184,7 @@ class Shell
     public function __construct(?ConsoleIo $io = null, ?LocatorInterface $locator = null)
     {
         if (!$this->name) {
-            list(, $class) = namespaceSplit(get_class($this));
+            list(, $class) = namespaceSplit(static::class);
             $this->name = str_replace(['Shell', 'Task'], '', $class);
         }
         $this->_io = $io ?: new ConsoleIo();

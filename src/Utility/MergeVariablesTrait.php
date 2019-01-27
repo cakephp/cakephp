@@ -34,7 +34,7 @@ trait MergeVariablesTrait
      */
     protected function _mergeVars($properties, $options = [])
     {
-        $class = get_class($this);
+        $class = static::class;
         $parents = [];
         while (true) {
             $parent = get_parent_class($class);

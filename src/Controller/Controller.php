@@ -186,7 +186,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->name === null) {
-            list(, $name) = namespaceSplit(get_class($this));
+            list(, $name) = namespaceSplit(static::class);
             $this->name = substr($name, 0, -10);
         }
 
@@ -297,7 +297,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         $trace = debug_backtrace();
-        $parts = explode('\\', get_class($this));
+        $parts = explode('\\', static::class);
         trigger_error(
             sprintf(
                 'Undefined property: %s::$%s in %s on line %s',

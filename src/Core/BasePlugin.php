@@ -129,7 +129,7 @@ class BasePlugin implements PluginInterface
         if ($this->name) {
             return $this->name;
         }
-        $parts = explode('\\', get_class($this));
+        $parts = explode('\\', static::class);
         array_pop($parts);
         $this->name = implode('/', $parts);
 

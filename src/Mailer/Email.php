@@ -1502,7 +1502,7 @@ class Email implements JsonSerializable, Serializable
         $config = 'default',
         bool $send = true
     ): Email {
-        $class = __CLASS__;
+        $class = self::class;
 
         if (is_array($config) && !isset($config['transport'])) {
             $config['transport'] = 'default';

@@ -311,7 +311,7 @@ class Router
     {
         if (empty(static::$_initialState)) {
             static::$_collection = new RouteCollection();
-            static::$_initialState = get_class_vars(get_called_class());
+            static::$_initialState = get_class_vars(static::class);
 
             return;
         }
