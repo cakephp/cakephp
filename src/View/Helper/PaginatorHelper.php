@@ -946,7 +946,7 @@ class PaginatorHelper extends Helper
         $out = '';
         $first = is_int($options['first']) ? $options['first'] : 0;
         if ($options['first'] && $start > 1) {
-            $offset = ($start <= $first) ? $start - 1 : $options['first'];
+            $offset = $start <= $first ? $start - 1 : $options['first'];
             $out .= $this->first($offset, $options);
             if ($first < $start - 1) {
                 $out .= $ellipsis;
@@ -970,7 +970,7 @@ class PaginatorHelper extends Helper
         $out = '';
         $last = is_int($options['last']) ? $options['last'] : 0;
         if ($options['last'] && $end < $params['pageCount']) {
-            $offset = ($params['pageCount'] < $end + $last) ? $params['pageCount'] - $end : $options['last'];
+            $offset = $params['pageCount'] < $end + $last ? $params['pageCount'] - $end : $options['last'];
             if ($offset <= $options['last'] && $params['pageCount'] - $end > $last) {
                 $out .= $ellipsis;
             }

@@ -1,9 +1,8 @@
 parameters:
-    level: 2
+    level: 3
     autoload_files:
         - tests/bootstrap.php
     ignoreErrors:
-        - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
         - '#Constructor of class Cake\\[a-zA-Z0-9_\\]+ has an unused parameter#'
         - '#Access to undefined constant Memcached::OPT_CLIENT_MODE#'
         - '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
@@ -22,8 +21,23 @@ parameters:
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
-        - '#Part \$field \(array|string\) of encapsed string cannot be cast to string#'
         - '#Binary operation "\+" between array|false and array results in an error#'
+        - '#Variable \$validWidth in isset\(\) always exists and is not nullable#'
+        - '#Variable \$validHeight in isset\(\) always exists and is not nullable#'
+        -
+            message: '#Binary operation "-" between (.)* results in an error#'
+            path: 'src/I18n/RelativeTimeFormatter.php'
+        - '#Static property Cake\\Chronos\\(Date|Chronos|MutableDate|MutableDateTime)::\$diffFormatter \(Cake\\Chronos\\DifferenceFormatter\) does not accept Cake\\I18n\\RelativeTimeFormatter#'
+        - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
+        - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
+        - '#Method Cake\\ORM\\Query::find\(\) should return \$this\(Cake\\Datasource\\QueryInterface\) but returns Cake\\ORM\\Query#'
+        -
+            message: '#Offset mixed does not exist on array\(\)|array\(2 => mixed\)|array\(string, string\)#'
+            path: 'src/Database/Dialect/SqlserverDialectTrait.php'
+        -
+            message: '#Offset 0 does not exist on array\(\)#'
+            path: 'src/Database/Dialect/SqlserverDialectTrait.php'
+        - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

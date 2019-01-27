@@ -60,12 +60,14 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
-    public function traverse(callable $visitor): void
+    public function traverse(callable $visitor)
     {
         if ($this->_field instanceof ExpressionInterface) {
             $visitor($this->_field);
             $this->_field->traverse($visitor);
         }
+
+        return $this;
     }
 
     /**

@@ -81,7 +81,7 @@ class UpgradeCommand extends Command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return void
+     * @return null
      */
     public function execute(Arguments $args, ConsoleIo $io)
     {
@@ -105,6 +105,8 @@ class UpgradeCommand extends Command
                 $this->processLocales();
                 break;
         }
+
+        return null;
     }
 
     /**

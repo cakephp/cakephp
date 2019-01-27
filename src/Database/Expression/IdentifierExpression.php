@@ -82,9 +82,10 @@ class IdentifierExpression implements ExpressionInterface
      * hence there is nothing to traverse
      *
      * @param callable $callable The callable to traverse with.
-     * @return void
+     * @return $this
      */
-    public function traverse(callable $callable): void
+    public function traverse(callable $callable)
     {
+        return $this;
     }
 }

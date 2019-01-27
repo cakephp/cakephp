@@ -534,7 +534,7 @@ class Cookie implements CookieInterface
         if ($first === '{' || $first === '[') {
             $ret = json_decode($string, true);
 
-            return ($ret !== null) ? $ret : $string;
+            return $ret ?? $string;
         }
 
         $array = [];

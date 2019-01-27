@@ -231,10 +231,9 @@ class CaseExpression implements ExpressionInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritDoc
      */
-    public function traverse(callable $visitor): void
+    public function traverse(callable $visitor)
     {
         foreach (['_conditions', '_values'] as $part) {
             foreach ($this->{$part} as $c) {
@@ -248,5 +247,7 @@ class CaseExpression implements ExpressionInterface
             $visitor($this->_elseValue);
             $this->_elseValue->traverse($visitor);
         }
+
+        return $this;
     }
 }

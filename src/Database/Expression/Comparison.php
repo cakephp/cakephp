@@ -164,10 +164,9 @@ class Comparison implements ExpressionInterface, FieldInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritDoc
      */
-    public function traverse(callable $callable): void
+    public function traverse(callable $callable)
     {
         if ($this->_field instanceof ExpressionInterface) {
             $callable($this->_field);
@@ -183,6 +182,8 @@ class Comparison implements ExpressionInterface, FieldInterface
             $callable($v);
             $v->traverse($callable);
         }
+
+        return $this;
     }
 
     /**

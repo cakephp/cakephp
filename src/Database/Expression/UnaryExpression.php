@@ -91,15 +91,16 @@ class UnaryExpression implements ExpressionInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
+     * @inheritDoc
      */
-    public function traverse(callable $callable): void
+    public function traverse(callable $callable)
     {
         if ($this->_value instanceof ExpressionInterface) {
             $callable($this->_value);
             $this->_value->traverse($callable);
         }
+
+        return $this;
     }
 
     /**

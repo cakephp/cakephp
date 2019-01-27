@@ -483,7 +483,7 @@ class Client implements ClientInterface
             return $url;
         }
         if ($query) {
-            $q = (strpos($url, '?') === false) ? '?' : '&';
+            $q = strpos($url, '?') === false ? '?' : '&';
             $url .= $q;
             $url .= is_string($query) ? $query : http_build_query($query);
         }

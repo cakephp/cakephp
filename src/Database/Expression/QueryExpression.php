@@ -507,7 +507,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return '';
         }
         $conjunction = $this->_conjunction;
-        $template = ($len === 1) ? '%s' : '(%s)';
+        $template = $len === 1 ? '%s' : '(%s)';
         $parts = [];
         foreach ($this->_conditions as $part) {
             if ($part instanceof Query) {
@@ -532,9 +532,9 @@ class QueryExpression implements ExpressionInterface, Countable
      * Callback function receives as only argument an instance of ExpressionInterface
      *
      * @param callable $callable The callable to apply to all sub-expressions.
-     * @return void
+     * @return $this
      */
-    public function traverse(callable $callable): void
+    public function traverse(callable $callable)
     {
         foreach ($this->_conditions as $c) {
             if ($c instanceof ExpressionInterface) {
@@ -542,6 +542,8 @@ class QueryExpression implements ExpressionInterface, Countable
                 $c->traverse($callable);
             }
         }
+
+        return $this;
     }
 
     /**
