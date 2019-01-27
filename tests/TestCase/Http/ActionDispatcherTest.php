@@ -15,11 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
-use Cake\Event\EventInterface;
 use Cake\Http\ActionDispatcher;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
