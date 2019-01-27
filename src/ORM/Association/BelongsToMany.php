@@ -463,18 +463,13 @@ class BelongsToMany extends Association
 
         $subquery = $this->find()
             ->select(array_values($conds))
-            ->where($options['conditions'])
-            ->andWhere($this->junctionConditions());
+            ->where($options['conditions']);
 
         if (!empty($options['queryBuilder'])) {
             $subquery = $options['queryBuilder']($subquery);
         }
 
-        $assoc = $junction->getAssociation($this->getTarget()->getAlias());
-        $conditions = $assoc->_joinCondition([
-            'foreignKey' => $this->getTargetForeignKey(),
-        ]);
-        $subquery = $this->_appendJunctionJoin($subquery, $conditions);
+        $subquery = $this->_appendJunctionJoin($subquery);
 
         $query
             ->andWhere(function ($exp) use ($subquery, $conds) {
@@ -1018,7 +1013,7 @@ class BelongsToMany extends Association
      * and modifies the query accordingly based of this association
      * configuration.
      *
-     * If your association includes conditions, the junction table will be
+     * If your association includes conditions or a finder, the junction table will be
      * included in the query's contained associations.
      *
      * @param string|array|null $type the type of query to perform, if an array is passed,
@@ -1036,28 +1031,30 @@ class BelongsToMany extends Association
             ->where($this->targetConditions())
             ->addDefaultTypes($this->getTarget());
 
-        if (!$this->junctionConditions()) {
+        if (!($this->junctionConditions() || $this->getFinder())) {
             return $query;
         }
 
-        $belongsTo = $this->junction()->getAssociation($this->getTarget()->getAlias());
-        $conditions = $belongsTo->_joinCondition([
-            'foreignKey' => $this->getTargetForeignKey(),
-        ]);
-        $conditions += $this->junctionConditions();
-
-        return $this->_appendJunctionJoin($query, $conditions);
+        return $this->_appendJunctionJoin($query);
     }
 
     /**
      * Append a join to the junction table.
      *
      * @param \Cake\ORM\Query $query The query to append.
-     * @param string|array $conditions The query conditions to use.
+     * @param array|null $conditions The query conditions to use.
      * @return \Cake\ORM\Query The modified query.
      */
-    protected function _appendJunctionJoin(Query $query, $conditions): Query
+    protected function _appendJunctionJoin(Query $query, ?array $conditions = null): Query
     {
+        if ($conditions === null) {
+            $belongsTo = $this->junction()->getAssociation($this->getTarget()->getAlias());
+            $conditions = $belongsTo->_joinCondition([
+                'foreignKey' => $this->getTargetForeignKey(),
+            ]);
+            $conditions += $this->junctionConditions();
+        }
+
         $name = $this->_junctionAssociationName();
         /** @var array $joins */
         $joins = $query->clause('join');
@@ -1138,16 +1135,25 @@ class BelongsToMany extends Association
 
         return $this->junction()->getConnection()->transactional(
             function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {
-                $foreignKey = array_map([$this->_junctionTable, 'aliasField'], (array)$this->getForeignKey());
-                $hasMany = $this->getSource()->getAssociation($this->_junctionTable->getAlias());
-                $existing = $hasMany->find('all')
-                    ->where(array_combine($foreignKey, $primaryValue));
+                $junction = $this->junction();
+                $target = $this->getTarget();
 
-                $associationConditions = $this->getConditions();
-                if ($associationConditions) {
-                    $existing->contain($this->getTarget()->getAlias());
-                    $existing->andWhere($associationConditions);
+                $foreignKey = (array)$this->getForeignKey();
+                $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
+
+                $junctionPrimaryKey = (array)$junction->getPrimaryKey();
+                $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
+
+                $keys = array_combine($foreignKey, $prefixedForeignKey);
+                foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
+                    $keys[$key] = $junction->aliasField($key);
                 }
+
+                // Find existing rows so that we can diff with new entities.
+                // Only hydrate primary/foreign key columns to save time.
+                $existing = $this->find()
+                    ->select($keys)
+                    ->where(array_combine($prefixedForeignKey, $primaryValue));
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
                 $inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities, $options);
@@ -1323,9 +1329,9 @@ class BelongsToMany extends Association
 
         $unions = [];
         foreach ($missing as $key) {
-            $unions[] = $hasMany->find('all')
+            $unions[] = $hasMany->find()
                 ->where(array_combine($foreignKey, $sourceKey))
-                ->andWhere(array_combine($assocForeignKey, $key));
+                ->where(array_combine($assocForeignKey, $key));
         }
 
         $query = array_shift($unions);
