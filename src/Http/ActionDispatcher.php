@@ -16,8 +16,10 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Controller\Controller;
+use Cake\Http\Response;
 use Cake\Routing\Router;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Dispatch the request to a controller for generating a response.
@@ -45,10 +47,10 @@ class ActionDispatcher
      * Dispatches a Request & Response
      *
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
-     * @param \Cake\Http\Response $response The response to dispatch.
-     * @return \Cake\Http\Response A modified/replaced response.
+     * @param \Psr\Http\Message\ResponseInterface $response The response to dispatch.
+     * @return \Psr\Http\Message\ResponseInterface A modified/replaced response.
      */
-    public function dispatch(ServerRequest $request, ?Response $response = null): Response
+    public function dispatch(ServerRequest $request, ?ResponseInterface $response = null): ResponseInterface
     {
         if ($response === null) {
             $response = new Response();
@@ -66,18 +68,18 @@ class ActionDispatcher
      * Invoke a controller's action and wrapping methods.
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
-     * @return \Cake\Http\Response The response
+     * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \LogicException If the controller action returns a non-response value.
      */
-    protected function _invoke(Controller $controller): Response
+    protected function _invoke(Controller $controller): ResponseInterface
     {
         $result = $controller->startupProcess();
-        if ($result instanceof Response) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 
         $response = $controller->invokeAction();
-        if ($response !== null && !($response instanceof Response)) {
+        if ($response !== null && !($response instanceof ResponseInterface)) {
             throw new LogicException('Controller actions can only return Cake\Http\Response or null.');
         }
 
@@ -86,7 +88,7 @@ class ActionDispatcher
         }
 
         $result = $controller->shutdownProcess();
-        if ($result instanceof Response) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
         if (!$response) {
