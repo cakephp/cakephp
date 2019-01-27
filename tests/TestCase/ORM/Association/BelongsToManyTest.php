@@ -287,6 +287,30 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Ensure that the `finder` option is applied to the target
+     * table.
+     *
+     * @return void
+     */
+    public function testFinderOption()
+    {
+        $this->setAppNamespace('TestApp');
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'finder' => 'published',
+        ]);
+        $articles->updateAll(['published' => 'N'], ['id' => 1]);
+        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $entity->articles, 'only one article should load');
+        $this->assertSame('Y', $entity->articles[0]->published);
+    }
+
+    /**
      * Test cascading deletes.
      *
      * @return void
