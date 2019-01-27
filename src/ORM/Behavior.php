@@ -244,7 +244,7 @@ class Behavior implements EventListenerInterface
                     throw new Exception(sprintf(
                         'The method %s is not callable on class %s',
                         $method,
-                        get_class($this)
+                        static::class
                     ));
                 }
             }
@@ -375,7 +375,7 @@ class Behavior implements EventListenerInterface
      */
     protected function _reflectionCache(): array
     {
-        $class = get_class($this);
+        $class = static::class;
         if (isset(self::$_reflectionCache[$class])) {
             return self::$_reflectionCache[$class];
         }

@@ -160,7 +160,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      */
     protected function _tableFromClass(): string
     {
-        list(, $class) = namespaceSplit(get_class($this));
+        list(, $class) = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
         $table = $class;
 
@@ -254,7 +254,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
                 sprintf(
                     'Cannot describe schema for table `%s` for fixture `%s` : the table does not exist.',
                     $this->table,
-                    get_class($this)
+                    static::class
                 )
             );
         }

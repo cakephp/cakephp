@@ -47,7 +47,7 @@ trait TranslateTrait
         }
 
         if ($created || empty($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
-            $className = get_class($this);
+            $className = static::class;
 
             $i18n[$language] = new $className();
             $created = true;

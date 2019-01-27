@@ -358,7 +358,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getTable(): string
     {
         if ($this->_table === null) {
-            $table = namespaceSplit(get_class($this));
+            $table = namespaceSplit(static::class);
             $table = substr(end($table), 0, -5);
             if (!$table) {
                 $table = $this->getAlias();
@@ -390,7 +390,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getAlias(): string
     {
         if ($this->_alias === null) {
-            $alias = namespaceSplit(get_class($this));
+            $alias = namespaceSplit(static::class);
             $alias = substr(end($alias), 0, -5) ?: $this->_table;
             $this->_alias = $alias;
         }
@@ -629,10 +629,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         if (!$this->_entityClass) {
             $default = Entity::class;
-            $self = get_called_class();
+            $self = static::class;
             $parts = explode('\\', $self);
 
-            if ($self === __CLASS__ || count($parts) < 3) {
+            if ($self === self::class || count($parts) < 3) {
                 return $this->_entityClass = $default;
             }
 
@@ -780,7 +780,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException(sprintf(
                 'The %s behavior is not defined on %s.',
                 $name,
-                get_class($this)
+                static::class
             ));
         }
 
@@ -1856,7 +1856,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
 
         if ($options['atomic'] && !$this->getConnection()->inTransaction()) {
-            throw new RolledbackTransactionException(['table' => get_class($this)]);
+            throw new RolledbackTransactionException(['table' => static::class]);
         }
 
         if (!$options['atomic'] && !$options['_primary']) {
@@ -2333,7 +2333,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$association) {
             throw new RuntimeException(sprintf(
                 'Table "%s" is not associated with "%s"',
-                get_class($this),
+                static::class,
                 $property
             ));
         }

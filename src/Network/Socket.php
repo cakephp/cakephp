@@ -405,7 +405,7 @@ class Socket
         if (empty($state)) {
             static $initalState = [];
             if (empty($initalState)) {
-                $initalState = get_class_vars(__CLASS__);
+                $initalState = get_class_vars(self::class);
             }
             $state = $initalState;
         }

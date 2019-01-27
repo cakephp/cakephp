@@ -110,7 +110,7 @@ trait CellTrait
                 $builder->setTheme($this->theme);
             }
 
-            $class = get_class($this);
+            $class = static::class;
             $builder->setClassName($class);
             $instance->viewClass = $class;
 

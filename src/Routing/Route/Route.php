@@ -872,7 +872,7 @@ class Route
      */
     public static function __set_state($fields)
     {
-        $class = get_called_class();
+        $class = static::class;
         $obj = new $class('');
         foreach ($fields as $field => $value) {
             $obj->$field = $value;

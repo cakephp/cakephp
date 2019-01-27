@@ -98,7 +98,7 @@ class Helper implements EventListenerInterface
      */
     public function __call($method, $params)
     {
-        trigger_error(sprintf('Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
+        trigger_error(sprintf('Method %1$s::%2$s does not exist', static::class, $method), E_USER_WARNING);
     }
 
     /**
