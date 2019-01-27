@@ -30,7 +30,6 @@ parameters:
         - '#Static property Cake\\Chronos\\(Date|Chronos|MutableDate|MutableDateTime)::\$diffFormatter \(Cake\\Chronos\\DifferenceFormatter\) does not accept Cake\\I18n\\RelativeTimeFormatter#'
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
         - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
-        - '#Method Cake\\ORM\\Query::find\(\) should return \$this\(Cake\\Datasource\\QueryInterface\) but returns Cake\\ORM\\Query#'
         -
             message: '#Offset mixed does not exist on array\(\)|array\(2 => mixed\)|array\(string, string\)#'
             path: 'src/Database/Dialect/SqlserverDialectTrait.php'
