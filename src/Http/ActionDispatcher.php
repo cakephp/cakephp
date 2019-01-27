@@ -16,30 +16,14 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Controller\Controller;
-use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use LogicException;
 
 /**
- * This class provides compatibility with dispatcher filters
- * and interacting with the controller layers.
- *
- * Long term this should just be the controller dispatcher, but
- * for now it will do a bit more than that.
+ * Dispatch the request to a controller for generating a response.
  */
-class ActionDispatcher implements EventDispatcherInterface
+class ActionDispatcher
 {
-    use EventDispatcherTrait;
-
-    /**
-     * Attached routing filters
-     *
-     * @var \Cake\Event\EventListenerInterface[]
-     */
-    protected $filters = [];
-
     /**
      * Controller factory instance.
      *
@@ -51,13 +35,9 @@ class ActionDispatcher implements EventDispatcherInterface
      * Constructor
      *
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
-     * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
      */
-    public function __construct(?ControllerFactory $factory = null, ?EventManager $eventManager = null)
+    public function __construct(?ControllerFactory $factory = null)
     {
-        if ($eventManager) {
-            $this->setEventManager($eventManager);
-        }
         $this->factory = $factory ?: new ControllerFactory();
     }
 
@@ -67,7 +47,6 @@ class ActionDispatcher implements EventDispatcherInterface
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Cake\Http\Response A modified/replaced response.
-     * @throws \ReflectionException
      */
     public function dispatch(ServerRequest $request, ?Response $response = null): Response
     {
@@ -77,29 +56,10 @@ class ActionDispatcher implements EventDispatcherInterface
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
         }
-        $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
-        $request = $beforeEvent->getData('request');
-        if ($beforeEvent->getResult() instanceof Response) {
-            return $beforeEvent->getResult();
-        }
+        $controller = $this->factory->create($request, $response);
 
-        // Use the controller built by an beforeDispatch
-        // event handler if there is one.
-        if ($beforeEvent->getData('controller') instanceof Controller) {
-            $controller = $beforeEvent->getData('controller');
-        } else {
-            $controller = $this->factory->create($request, $response);
-        }
-
-        $response = $this->_invoke($controller);
-        if ($request->getParam('return')) {
-            return $response;
-        }
-
-        $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
-
-        return $afterEvent->getData('response');
+        return $this->_invoke($controller);
     }
 
     /**
@@ -111,8 +71,6 @@ class ActionDispatcher implements EventDispatcherInterface
      */
     protected function _invoke(Controller $controller): Response
     {
-        $this->dispatchEvent('Dispatcher.invokeController', ['controller' => $controller]);
-
         $result = $controller->startupProcess();
         if ($result instanceof Response) {
             return $result;
@@ -136,15 +94,5 @@ class ActionDispatcher implements EventDispatcherInterface
         }
 
         return $response;
-    }
-
-    /**
-     * Get the connected filters.
-     *
-     * @return array
-     */
-    public function getFilters(): array
-    {
-        return $this->filters;
     }
 }

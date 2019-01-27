@@ -248,6 +248,6 @@ abstract class BaseApplication implements
      */
     protected function getDispatcher(): ActionDispatcher
     {
-        return new ActionDispatcher(null, $this->getEventManager());
+        return new ActionDispatcher();
     }
 }

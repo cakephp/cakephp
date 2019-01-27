@@ -49,82 +49,9 @@ class ActionDispatcherTest extends TestCase
     public function testConstructorArgs()
     {
         $factory = $this->getMockBuilder('Cake\Http\ControllerFactory')->getMock();
-        $events = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
-        $dispatcher = new ActionDispatcher($factory, $events);
+        $dispatcher = new ActionDispatcher($factory);
 
-        $this->assertAttributeSame($events, '_eventManager', $dispatcher);
         $this->assertAttributeSame($factory, 'factory', $dispatcher);
-    }
-
-    /**
-     * Ensure that aborting in the beforeDispatch doesn't invoke the controller
-     *
-     * @return void
-     */
-    public function testBeforeDispatchEventAbort()
-    {
-        $response = new Response();
-        $dispatcher = new ActionDispatcher();
-
-        $req = new ServerRequest();
-        $res = new Response();
-        $dispatcher->getEventManager()->on('Dispatcher.beforeDispatch', function () use ($response) {
-            return $response;
-        });
-        $result = $dispatcher->dispatch($req, $res);
-        $this->assertSame($response, $result, 'Should be response from filter.');
-    }
-
-    /**
-     * Ensure afterDispatch can replace the response
-     *
-     * @return void
-     */
-    public function testDispatchAfterDispatchEventModifyResponse()
-    {
-        $req = new ServerRequest([
-            'url' => '/cakes',
-            'params' => [
-                'plugin' => null,
-                'controller' => 'Cakes',
-                'action' => 'index',
-                'pass' => [],
-            ],
-            'session' => new Session(),
-        ]);
-        $res = new Response();
-        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function (EventInterface $event) {
-            $response = $event->getData('response');
-            $event->setData('response', $response->withStringBody('Filter body'));
-        });
-        $result = $this->dispatcher->dispatch($req, $res);
-        $this->assertSame('Filter body', (string)$result->getBody(), 'Should be response from filter.');
-    }
-
-    /**
-     * Test that a controller action returning a response
-     * results in no afterDispatch event.
-     *
-     * @return void
-     */
-    public function testDispatchActionReturnResponseNoAfterDispatch()
-    {
-        $req = new ServerRequest([
-            'url' => '/cakes',
-            'params' => [
-                'plugin' => null,
-                'controller' => 'Cakes',
-                'action' => 'index',
-                'pass' => [],
-                'return' => true,
-            ],
-        ]);
-        $res = new Response();
-        $this->dispatcher->getEventManager()->on('Dispatcher.afterDispatch', function () {
-            $this->fail('no afterDispatch event should be fired');
-        });
-        $result = $this->dispatcher->dispatch($req, $res);
-        $this->assertSame('Hello Jane', (string)$result->getBody(), 'Response from controller.');
     }
 
     /**
