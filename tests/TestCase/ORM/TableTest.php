@@ -3570,8 +3570,8 @@ class TableTest extends TestCase
                 'name' => 'Another Something',
             ]),
         ];
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
         $this->assertSame($entity, $table->save($entity));
         $this->assertFalse($entity->isNew());
         $this->assertFalse($entity->tags[0]->isNew());
@@ -3715,12 +3715,12 @@ class TableTest extends TestCase
      */
     public function testSaveBelongsToManyDeleteAllLinks()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags', [
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags', [
             'saveStrategy' => 'replace',
         ]);
 
-        $entity = $table->get(1, ['contain' => 'tags']);
+        $entity = $table->get(1, ['contain' => 'Tags']);
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
 
         $entity->tags = [];
@@ -3728,7 +3728,7 @@ class TableTest extends TestCase
         $this->assertSame($result, $entity);
         $this->assertSame([], $entity->tags, 'No tags on the entity.');
 
-        $entity = $table->get(1, ['contain' => 'tags']);
+        $entity = $table->get(1, ['contain' => 'Tags']);
         $this->assertSame([], $entity->tags, 'No tags in the db either.');
     }
 
@@ -3740,12 +3740,12 @@ class TableTest extends TestCase
      */
     public function testSaveBelongsToManyDeleteSomeLinks()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags', [
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags', [
             'saveStrategy' => 'replace',
         ]);
 
-        $entity = $table->get(1, ['contain' => 'tags']);
+        $entity = $table->get(1, ['contain' => 'Tags']);
         $this->assertCount(2, $entity->tags, 'Fixture data did not change.');
 
         $tag = new Entity([
@@ -3757,7 +3757,7 @@ class TableTest extends TestCase
         $this->assertCount(1, $entity->tags, 'Only one tag left.');
         $this->assertEquals($tag, $entity->tags[0]);
 
-        $entity = $table->get(1, ['contain' => 'tags']);
+        $entity = $table->get(1, ['contain' => 'Tags']);
         $this->assertCount(1, $entity->tags, 'Only one tag in the db.');
         $this->assertEquals($tag->id, $entity->tags[0]->id);
     }
@@ -3769,8 +3769,8 @@ class TableTest extends TestCase
      */
     public function testSaveBelongsToManyIgnoreNonEntityData()
     {
-        $articles = $this->getTableLocator()->get('articles');
-        $article = $articles->get(1, ['contain' => ['tags']]);
+        $articles = $this->getTableLocator()->get('Articles');
+        $article = $articles->get(1, ['contain' => ['Tags']]);
         $article->tags = [
             '_ids' => [2, 1],
         ];
@@ -3858,9 +3858,9 @@ class TableTest extends TestCase
      */
     public function testBelongsToManyIntegration()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $tags = $article->tags;
         $this->assertNotEmpty($tags);
         $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'Something New']);
@@ -4682,9 +4682,9 @@ class TableTest extends TestCase
      */
     public function testReplacelinksBelongsToMany()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4692,12 +4692,12 @@ class TableTest extends TestCase
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
 
-        $table->getAssociation('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('Tags')->replaceLinks($article, $tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
         $this->assertEquals(4, $article->tags[2]->id);
 
-        $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertCount(3, $article->tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
@@ -4712,17 +4712,17 @@ class TableTest extends TestCase
      */
     public function testReplacelinksBelongsToManyWithEmpty()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
         $tags = [];
 
-        $table->getAssociation('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('Tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
-        $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEmpty($article->tags);
     }
 
@@ -4734,9 +4734,9 @@ class TableTest extends TestCase
      */
     public function testReplacelinksBelongsToManyWithJoint()
     {
-        $table = $this->getTableLocator()->get('articles');
-        $table->belongsToMany('tags');
-        $tagsTable = $this->getTableLocator()->get('tags');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsToMany('Tags');
+        $tagsTable = $this->getTableLocator()->get('Tags');
         $options = ['markNew' => false];
 
         $article = new Entity(['id' => 1], $options);
@@ -4749,9 +4749,9 @@ class TableTest extends TestCase
         ], $options);
         $tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
 
-        $table->getAssociation('tags')->replaceLinks($article, $tags);
+        $table->getAssociation('Tags')->replaceLinks($article, $tags);
         $this->assertSame($tags, $article->tags);
-        $article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+        $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertCount(2, $article->tags);
         $this->assertEquals(2, $article->tags[0]->id);
         $this->assertEquals(3, $article->tags[1]->id);
