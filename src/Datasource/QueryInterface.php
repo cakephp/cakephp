@@ -121,7 +121,7 @@ interface QueryInterface
      *
      * @param string $finder The finder method to use.
      * @param array $options The options for the finder.
-     * @return $this Returns a modified query.
+     * @return \Cake\Datasource\QueryInterface Returns a modified query.
      */
     public function find($finder, array $options = []);
 
