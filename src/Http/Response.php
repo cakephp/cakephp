@@ -2099,11 +2099,23 @@ class Response implements ResponseInterface
      *
      * @return string
      */
-    public function __toString()
+    public function getStringBody()
     {
         $this->stream->rewind();
 
         return (string)$this->stream->getContents();
+    }
+
+    /**
+     * String conversion. Fetches the response body as a string.
+     * Does *not* send headers.
+     * If body is a callable, a blank string is returned.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getStringBody();
     }
 
     /**
