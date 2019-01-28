@@ -90,6 +90,7 @@ class FormHelper extends Helper
             'timestamp' => 'datetime',
             'date' => 'date',
             'time' => 'time',
+            'year' => 'year',
             'boolean' => 'checkbox',
             'float' => 'number',
             'integer' => 'number',
@@ -184,6 +185,7 @@ class FormHelper extends Helper
         'select' => ['SelectBox'],
         'textarea' => ['Textarea'],
         'datetime' => ['DateTime', 'select'],
+        'year' => ['Year', 'select'],
         '_default' => ['Basic'],
     ];
 
@@ -1286,6 +1288,8 @@ class FormHelper extends Helper
                 return 'email';
             case isset($options['rows']) || isset($options['cols']):
                 return 'textarea';
+            case $fieldName === 'year':
+                return 'year';
         }
 
         return $type;
@@ -2191,11 +2195,11 @@ class FormHelper extends Helper
      *
      * - `empty` - If true, the empty select option is shown. If a string,
      *   that string is displayed as the empty element.
-     * - `orderYear` - Ordering of year values in select options.
+     * - `order` - Ordering of year values in select options.
      *   Possible values 'asc', 'desc'. Default 'desc'
      * - `value` The selected value of the input.
-     * - `maxYear` The max year to appear in the select element.
-     * - `minYear` The min year to appear in the select element.
+     * - `max` The max year to appear in the select element.
+     * - `min` The min year to appear in the select element.
      *
      * @param string $fieldName Prefix name for the SELECT element
      * @param array $options Options & attributes for the select elements.
@@ -2204,18 +2208,13 @@ class FormHelper extends Helper
      */
     public function year(string $fieldName, array $options = []): string
     {
-        $options = $this->_singleDatetime($options, 'year');
+        $options += [
+            'empty' => true,
+        ];
+        $options = $this->_initInputField($fieldName, $options);
+        unset($options['type']);
 
-        $len = isset($options['val']) ? strlen($options['val']) : 0;
-        if (isset($options['val']) && $len > 0 && $len < 5) {
-            $options['val'] = [
-                'year' => (int)$options['val'],
-                'month' => date('m'),
-                'day' => date('d'),
-            ];
-        }
-
-        return $this->dateTime($fieldName, $options);
+        return $this->widget('year', $options);
     }
 
     /**
@@ -2387,7 +2386,6 @@ class FormHelper extends Helper
 
         return $this->widget('datetime', $options);
     }
-
     /**
      * Helper method for converting from FormHelper options data to widget format.
      *

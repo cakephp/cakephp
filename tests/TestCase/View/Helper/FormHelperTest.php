@@ -6593,14 +6593,13 @@ class FormHelperTest extends TestCase
      */
     public function testYear()
     {
-        $this->markTestSkipped('Still have to handle select generation for "year"');
-
         $this->View->setRequest(
-            $this->View->getRequest()->withData('Contact.published', '2006-10-10')
+            $this->View->getRequest()->withData('published', '2006')
         );
-        $result = $this->Form->year('Model.field', ['value' => '', 'minYear' => 2006, 'maxYear' => 2007]);
+
+        $result = $this->Form->year('field', ['value' => '', 'min' => 2006, 'max' => 2007]);
         $expected = [
-            ['select' => ['name' => 'Model[field][year]']],
+            ['select' => ['name' => 'field']],
             ['option' => ['selected' => 'selected', 'value' => '']],
             '/option',
             ['option' => ['value' => '2007']],
@@ -6613,14 +6612,14 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->year('Model.field', [
+        $result = $this->Form->year('field', [
             'value' => '',
-            'minYear' => 2006,
-            'maxYear' => 2007,
-            'orderYear' => 'asc',
+            'min' => 2006,
+            'max' => 2007,
+            'order' => 'asc',
         ]);
         $expected = [
-            ['select' => ['name' => 'Model[field][year]']],
+            ['select' => ['name' => 'field']],
             ['option' => ['selected' => 'selected', 'value' => '']],
             '/option',
             ['option' => ['value' => '2006']],
@@ -6633,13 +6632,13 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->year('Contact.published', [
+        $result = $this->Form->year('published', [
             'empty' => false,
-            'minYear' => 2006,
-            'maxYear' => 2007,
+            'min' => 2006,
+            'max' => 2007,
         ]);
         $expected = [
-            ['select' => ['name' => 'Contact[published][year]']],
+            ['select' => ['name' => 'published']],
             ['option' => ['value' => '2007']],
             '2007',
             '/option',
@@ -6650,35 +6649,31 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->year('Contact.published', [
+        $result = $this->Form->year('published', [
             'empty' => 'Published on',
         ]);
         $this->assertContains('Published on', $result);
     }
 
     /**
-     * testControlDatetimePreEpoch method
+     * testControlYearPreEpoch method
      *
      * Test minYear being prior to the unix epoch.
      *
      * @return void
      */
-    public function testControlDatetimePreEpoch()
+    public function testControlYearPreEpoch()
     {
-        $this->markTestSkipped('Still have to handle select generation for "year"');
-
         $start = date('Y') - 80;
         $end = date('Y') - 18;
         $result = $this->Form->control('birth_year', [
-            'type' => 'date',
+            'type' => 'year',
             'label' => 'Birth Year',
-            'minYear' => $start,
-            'maxYear' => $end,
-            'month' => false,
-            'day' => false,
+            'min' => $start,
+            'max' => $end,
         ]);
         $this->assertContains('value="' . $start . '">' . $start, $result);
-        $this->assertContains('value="' . $end . '" selected="selected">' . $end, $result);
+        $this->assertContains('value="' . $end . '">' . $end, $result);
         $this->assertNotContains('value="00">00', $result);
     }
 
@@ -6706,30 +6701,28 @@ class FormHelperTest extends TestCase
      */
     public function testYearAutoExpandRange()
     {
-        $this->markTestSkipped('Still have to handle select generation for "year"');
-
-        $this->View->setRequest($this->View->getRequest()->withData('User.birthday', '1930-10-10'));
-        $result = $this->Form->year('User.birthday');
+        $this->View->setRequest($this->View->getRequest()->withData('birthday', '1930'));
+        $result = $this->Form->year('birthday');
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
         $result = $matches[1];
         $expected = range(date('Y') + 5, 1930);
         $this->assertEquals($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withData('Project.release', '2050-10-10'));
+        $this->View->setRequest($this->View->getRequest()->withData('release', '2050'));
         $this->Form->create();
-        $result = $this->Form->year('Project.release');
+        $result = $this->Form->year('release');
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
         $result = $matches[1];
         $expected = range(2050, date('Y') - 5);
         $this->assertEquals($expected, $result);
 
-        $this->View->setRequest($this->View->getRequest()->withData('Project.release', '1881-10-10'));
+        $this->View->setRequest($this->View->getRequest()->withData('release', '1881'));
         $this->Form->create();
-        $result = $this->Form->year('Project.release', [
-            'minYear' => 1890,
-            'maxYear' => 1900,
+        $result = $this->Form->year('release', [
+            'min' => 1890,
+            'max' => 1900,
         ]);
         preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
