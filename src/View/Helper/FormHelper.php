@@ -2236,17 +2236,15 @@ class FormHelper extends Helper
      */
     public function month(string $fieldName, array $options = []): string
     {
-        $options = $this->_singleDatetime($options, 'month');
+        $options += [
+            'value' => null,
+        ];
 
-        if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 12) {
-            $options['val'] = [
-                'year' => date('Y'),
-                'month' => (int)$options['val'],
-                'day' => date('d'),
-            ];
-        }
+        $options = $this->_initInputField($fieldName, $options);
+        $options = $this->_datetimeOptions($options);
+        $options['type'] = 'month';
 
-        return $this->dateTime($fieldName, $options);
+        return $this->widget('datetime', $options);
     }
 
     /**
@@ -2382,16 +2380,7 @@ class FormHelper extends Helper
     public function dateTime(string $fieldName, array $options = []): string
     {
         $options += [
-            'empty' => true,
             'value' => null,
-            'interval' => 1,
-            'round' => null,
-            'monthNames' => true,
-            'minYear' => null,
-            'maxYear' => null,
-            'orderYear' => 'desc',
-            'timeFormat' => 24,
-            'second' => false,
         ];
         $options = $this->_initInputField($fieldName, $options);
         $options = $this->_datetimeOptions($options);
@@ -2407,71 +2396,9 @@ class FormHelper extends Helper
      */
     protected function _datetimeOptions(array $options): array
     {
-        foreach ($this->_datetimeParts as $type) {
-            if (!array_key_exists($type, $options)) {
-                $options[$type] = [];
-            }
-            if ($options[$type] === true) {
-                $options[$type] = [];
-            }
-
-            // Pass empty options to each type.
-            if (!empty($options['empty']) &&
-                is_array($options[$type])
-            ) {
-                $options[$type]['empty'] = $options['empty'];
-            }
-
-            // Move empty options into each type array.
-            if (isset($options['empty'][$type])) {
-                $options[$type]['empty'] = $options['empty'][$type];
-            }
-            if (isset($options['required']) && is_array($options[$type])) {
-                $options[$type]['required'] = $options['required'];
-            }
+        if ($options['val'] === true || $options['val'] === null) {
+            $options['val'] = new DateTime();
         }
-
-        $hasYear = is_array($options['year']);
-        if ($hasYear && isset($options['minYear'])) {
-            $options['year']['start'] = $options['minYear'];
-        }
-        if ($hasYear && isset($options['maxYear'])) {
-            $options['year']['end'] = $options['maxYear'];
-        }
-        if ($hasYear && isset($options['orderYear'])) {
-            $options['year']['order'] = $options['orderYear'];
-        }
-        unset($options['minYear'], $options['maxYear'], $options['orderYear']);
-
-        if (is_array($options['month'])) {
-            $options['month']['names'] = $options['monthNames'];
-        }
-        unset($options['monthNames']);
-
-        if (is_array($options['hour']) && isset($options['timeFormat'])) {
-            $options['hour']['format'] = $options['timeFormat'];
-        }
-        unset($options['timeFormat']);
-
-        if (is_array($options['minute'])) {
-            $options['minute']['interval'] = $options['interval'];
-            $options['minute']['round'] = $options['round'];
-        }
-        unset($options['interval'], $options['round']);
-
-        if ($options['val'] === true || $options['val'] === null
-            && isset($options['empty'])
-            && $options['empty'] === false
-        ) {
-            $val = new DateTime();
-            $currentYear = $val->format('Y');
-            if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
-                $val->setDate((int)$options['year']['end'], (int)$val->format('n'), (int)$val->format('j'));
-            }
-            $options['val'] = $val;
-        }
-
-        unset($options['empty']);
 
         return $options;
     }
@@ -2491,16 +2418,11 @@ class FormHelper extends Helper
     public function time(string $fieldName, array $options = []): string
     {
         $options += [
-            'empty' => true,
             'value' => null,
-            'interval' => 1,
-            'round' => null,
-            'timeFormat' => 24,
-            'second' => false,
         ];
-        $options['year'] = $options['month'] = $options['day'] = false;
         $options = $this->_initInputField($fieldName, $options);
         $options = $this->_datetimeOptions($options);
+        $options['type'] = 'time';
 
         return $this->widget('datetime', $options);
     }
@@ -2520,18 +2442,12 @@ class FormHelper extends Helper
     public function date(string $fieldName, array $options = []): string
     {
         $options += [
-            'empty' => true,
             'value' => null,
-            'monthNames' => true,
-            'minYear' => null,
-            'maxYear' => null,
-            'orderYear' => 'desc',
         ];
-        $options['hour'] = $options['minute'] = false;
-        $options['meridian'] = $options['second'] = false;
 
         $options = $this->_initInputField($fieldName, $options);
         $options = $this->_datetimeOptions($options);
+        $options['type'] = 'date';
 
         return $this->widget('datetime', $options);
     }
