@@ -41,6 +41,7 @@ class HasManyTest extends TestCase
         'core.Articles',
         'core.Authors',
         'core.ArticlesTags',
+        'core.Tags',
     ];
 
     /**
