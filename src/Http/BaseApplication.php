@@ -233,16 +233,12 @@ abstract class BaseApplication implements
      * - Invoke the controller.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\ResponseInterface $response The response
-     * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
+    public function handle(
+        ServerRequestInterface $request
     ): ResponseInterface {
-        return $this->getDispatcher()->dispatch($request, $response);
+        return $this->getDispatcher()->dispatch($request);
     }
 
     /**
@@ -252,6 +248,6 @@ abstract class BaseApplication implements
      */
     protected function getDispatcher(): ActionDispatcher
     {
-        return new ActionDispatcher(null, $this->getEventManager());
+        return new ActionDispatcher();
     }
 }

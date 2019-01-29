@@ -17,59 +17,77 @@ namespace Cake\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Executes the middleware queue and provides the `next` callable
  * that allows the queue to be iterated.
  */
-class Runner
+class Runner implements RequestHandlerInterface
 {
     /**
      * The current index in the middleware queue.
      *
      * @var int
      */
-    protected $index;
+    protected $index = 0;
 
     /**
      * The middleware queue being run.
      *
      * @var \Cake\Http\MiddlewareQueue
      */
-    protected $middleware;
+    protected $queue;
 
     /**
-     * @param \Cake\Http\MiddlewareQueue $middleware The middleware queue
+     * Fallback handler to use if middleware queue does not generate response.
+     *
+     * @var \Psr\Http\Server\RequestHandlerInterface|null
+     */
+    protected $fallbackHandler;
+
+    /**
+     * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
-     * @param \Psr\Http\Message\ResponseInterface $response The response
+     * @param \Psr\Http\Server\RequestHandlerInterface $fallbackHandler Fallback request handler.
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
     public function run(
-        MiddlewareQueue $middleware,
+        MiddlewareQueue $queue,
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ?RequestHandlerInterface $fallbackHandler = null
     ): ResponseInterface {
-        $this->middleware = $middleware;
+        $this->queue = $queue;
         $this->index = 0;
+        $this->fallbackHandler = $fallbackHandler;
 
-        return $this->__invoke($request, $response);
+        return $this->handle($request);
     }
 
     /**
+     * Handle incoming server request and return a response.
+     *
      * @param \Psr\Http\Message\ServerRequestInterface $request The server request
-     * @param \Psr\Http\Message\ResponseInterface $response The response object
      * @return \Psr\Http\Message\ResponseInterface An updated response
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $next = $this->middleware->get($this->index);
-        if ($next) {
-            $this->index++;
+        $middleware = $this->queue->get($this->index++);
 
-            return $next($request, $response, $this);
+        if ($middleware) {
+            return $middleware->process($request, $this);
         }
 
-        // End of the queue
+        if ($this->fallbackHandler) {
+            return $this->fallbackHandler->handle($request);
+        }
+
+        $response = new Response([
+            'body' => 'Middleware queue was exhausted without returning a response '
+                . 'and no fallback request handler was set for Runner',
+            'status' => 500,
+        ]);
+
         return $response;
     }
 }

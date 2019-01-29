@@ -4,6 +4,7 @@ namespace TestApp\Http;
 
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -17,22 +18,23 @@ class MiddlewareApplication extends BaseApplication
     {
         $middleware
             ->add(function ($req, $res, $next) {
-                $res = $res->withHeader('X-First', 'first');
+                $res = $next($req, $res);
 
-                return $next($req, $res);
+                return $res->withHeader('X-First', 'first');
             })
             ->add(function ($req, $res, $next) {
-                $res = $res->withHeader('X-Second', 'second');
+                $res = $next($req, $res);
 
-                return $next($req, $res);
+                return $res->withHeader('X-Second', 'second');
             })
             ->add(function ($req, $res, $next) {
+                $res = $next($req, $res);
+
                 if ($req->hasHeader('X-pass')) {
                     $res = $res->withHeader('X-pass', $req->getHeaderLine('X-pass'));
                 }
-                $res = $res->withHeader('X-Second', 'second');
 
-                return $next($req, $res);
+                return $res->withHeader('X-Second', 'second');
             });
 
         return $middleware;
@@ -40,12 +42,12 @@ class MiddlewareApplication extends BaseApplication
 
     /**
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\ResponseInterface $request The response
-     * @param callable $next The next middleware
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $req, ResponseInterface $res, callable $next): ResponseInterface
+    public function handle(ServerRequestInterface $req): ResponseInterface
     {
-        return $res;
+        $res = new Response(['status' => 200]);
+
+        return $res->withHeader('X-testing', 'source header');
     }
 }

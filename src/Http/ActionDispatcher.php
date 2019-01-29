@@ -16,19 +16,15 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Controller\Controller;
-use Cake\Event\EventDispatcherInterface;
-use Cake\Event\EventDispatcherTrait;
-use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use LogicException;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Dispatch the request to a controller for generating a response.
  */
-class ActionDispatcher implements EventDispatcherInterface
+class ActionDispatcher
 {
-    use EventDispatcherTrait;
-
     /**
      * Controller factory instance.
      *
@@ -40,13 +36,9 @@ class ActionDispatcher implements EventDispatcherInterface
      * Constructor
      *
      * @param \Cake\Http\ControllerFactory|null $factory A controller factory instance.
-     * @param \Cake\Event\EventManager|null $eventManager An event manager if you want to inject one.
      */
-    public function __construct(?ControllerFactory $factory = null, ?EventManager $eventManager = null)
+    public function __construct(?ControllerFactory $factory = null)
     {
-        if ($eventManager) {
-            $this->setEventManager($eventManager);
-        }
         $this->factory = $factory ?: new ControllerFactory();
     }
 
@@ -54,58 +46,39 @@ class ActionDispatcher implements EventDispatcherInterface
      * Dispatches a Request & Response
      *
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
-     * @param \Cake\Http\Response $response The response to dispatch.
-     * @return \Cake\Http\Response A modified/replaced response.
-     * @throws \ReflectionException
+     * @param \Psr\Http\Message\ResponseInterface $response The response to dispatch.
+     * @return \Psr\Http\Message\ResponseInterface A modified/replaced response.
      */
-    public function dispatch(ServerRequest $request, Response $response): Response
+    public function dispatch(ServerRequest $request, ?ResponseInterface $response = null): ResponseInterface
     {
+        if ($response === null) {
+            $response = new Response();
+        }
         if (Router::getRequest(true) !== $request) {
             Router::pushRequest($request);
         }
-        $beforeEvent = $this->dispatchEvent('Dispatcher.beforeDispatch', compact('request', 'response'));
 
-        $request = $beforeEvent->getData('request');
-        if ($beforeEvent->getResult() instanceof Response) {
-            return $beforeEvent->getResult();
-        }
+        $controller = $this->factory->create($request, $response);
 
-        // Use the controller built by an beforeDispatch
-        // event handler if there is one.
-        if ($beforeEvent->getData('controller') instanceof Controller) {
-            $controller = $beforeEvent->getData('controller');
-        } else {
-            $controller = $this->factory->create($request, $response);
-        }
-
-        $response = $this->_invoke($controller);
-        if ($request->getParam('return')) {
-            return $response;
-        }
-
-        $afterEvent = $this->dispatchEvent('Dispatcher.afterDispatch', compact('request', 'response'));
-
-        return $afterEvent->getData('response');
+        return $this->_invoke($controller);
     }
 
     /**
      * Invoke a controller's action and wrapping methods.
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
-     * @return \Cake\Http\Response The response
+     * @return \Psr\Http\Message\ResponseInterface The response
      * @throws \LogicException If the controller action returns a non-response value.
      */
-    protected function _invoke(Controller $controller): Response
+    protected function _invoke(Controller $controller): ResponseInterface
     {
-        $this->dispatchEvent('Dispatcher.invokeController', ['controller' => $controller]);
-
         $result = $controller->startupProcess();
-        if ($result instanceof Response) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
 
         $response = $controller->invokeAction();
-        if ($response !== null && !($response instanceof Response)) {
+        if ($response !== null && !($response instanceof ResponseInterface)) {
             throw new LogicException('Controller actions can only return Cake\Http\Response or null.');
         }
 
@@ -114,7 +87,7 @@ class ActionDispatcher implements EventDispatcherInterface
         }
 
         $result = $controller->shutdownProcess();
-        if ($result instanceof Response) {
+        if ($result instanceof ResponseInterface) {
             return $result;
         }
         if (!$response) {

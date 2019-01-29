@@ -22,11 +22,11 @@ use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Server;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Http\MiddlewareApplication;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
 
 require_once __DIR__ . '/server_mocks.php';
 
@@ -86,15 +86,14 @@ class ServerTest extends TestCase
      *
      * @return void
      */
-    public function testRunWithRequestAndResponse()
+    public function testRunWithRequest()
     {
-        $response = new Response('php://memory', 200, ['X-testing' => 'source header']);
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
-        $res = $server->run($request, $response);
+        $res = $server->run($request);
         $this->assertEquals(
             'source header',
             $res->getHeaderLine('X-testing'),
@@ -115,7 +114,7 @@ class ServerTest extends TestCase
     public function testRunCallingPluginHooks()
     {
         $response = new Response('php://memory', 200, ['X-testing' => 'source header']);
-        $request = ServerRequestFactory::fromGlobals();
+        $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
         $app = $this->getMockBuilder(MiddlewareApplication::class)
@@ -186,7 +185,9 @@ class ServerTest extends TestCase
      */
     public function testEmit()
     {
-        $response = new Response('php://memory', 200, ['x-testing' => 'source header']);
+        $app = new MiddlewareApplication($this->config);
+        $server = new Server($app);
+        $response = $server->run();
         $final = $response
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
@@ -196,9 +197,7 @@ class ServerTest extends TestCase
             ->method('emit')
             ->with($final);
 
-        $app = new MiddlewareApplication($this->config);
-        $server = new Server($app);
-        $server->emit($server->run(null, $response), $emitter);
+        $server->emit($final, $emitter);
     }
 
     /**
@@ -244,8 +243,7 @@ class ServerTest extends TestCase
         });
         $server->run();
         $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
-        $this->assertInstanceOf('Closure', $this->middleware->get(3), '2nd last middleware is a closure');
-        $this->assertSame($app, $this->middleware->get(4), 'Last middleware is an app instance');
+        $this->assertInstanceOf('Closure', $this->middleware->get(3)->getCallable(), '2nd last middleware is a closure');
     }
 
     /**

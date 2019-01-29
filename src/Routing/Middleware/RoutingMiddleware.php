@@ -25,13 +25,15 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\RedirectResponse;
 
 /**
  * Applies routing rules to the request and creates the controller
  * instance if possible.
  */
-class RoutingMiddleware
+class RoutingMiddleware implements MiddlewareInterface
 {
     /**
      * Key used to store the route collection in the cache engine
@@ -119,15 +121,11 @@ class RoutingMiddleware
      * invoked.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Psr\Http\Message\ResponseInterface $response The response.
-     * @param callable $next The next middleware to call.
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
      * @return \Psr\Http\Message\ResponseInterface A response.
      */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         $this->loadRoutes();
         try {
             Router::setRequestContext($request);
@@ -148,18 +146,17 @@ class RoutingMiddleware
         } catch (RedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
-                $e->getCode(),
-                $response->getHeaders()
+                $e->getCode()
             );
         }
         $matching = Router::getRouteCollection()->getMiddleware($middleware);
         if (!$matching) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
-        $matching[] = $next;
+
         $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 
-        return $runner->run($middleware, $request, $response);
+        return $runner->run($middleware, $request, $this->app);
     }
 }

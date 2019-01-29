@@ -16,14 +16,13 @@ namespace Cake\Core;
 
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * An interface defining the methods that the
  * http server depend on.
  */
-interface HttpApplicationInterface
+interface HttpApplicationInterface extends RequestHandlerInterface
 {
     /**
      * Load all the application configuration and bootstrap logic.
@@ -51,18 +50,4 @@ interface HttpApplicationInterface
      * @return \Cake\Http\MiddlewareQueue
      */
     public function middleware(MiddlewareQueue $middleware): MiddlewareQueue;
-
-    /**
-     * Invoke the application.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request
-     * @param \Psr\Http\Message\ResponseInterface $response The response
-     * @param callable $next The next middleware
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface;
 }

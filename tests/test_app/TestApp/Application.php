@@ -51,13 +51,13 @@ class Application extends BaseApplication
      */
     public function middleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
-        $middleware->add(new RoutingMiddleware($this));
         $middleware->add(function ($req, $res, $next) {
             /** @var \Cake\Http\ServerRequest $res */
             $res = $next($req, $res);
 
             return $res->withHeader('X-Middleware', 'true');
         });
+        $middleware->add(new RoutingMiddleware($this));
 
         return $middleware;
     }

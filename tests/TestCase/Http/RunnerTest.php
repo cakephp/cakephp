@@ -16,8 +16,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase;
 
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
 use Cake\Http\Runner;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
 /**
@@ -33,7 +35,8 @@ class RunnerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->stack = new MiddlewareQueue();
+
+        $this->queue = new MiddlewareQueue();
 
         $this->ok = function ($req, $res, $next) {
             return $next($req, $res);
@@ -53,36 +56,12 @@ class RunnerTest extends TestCase
      */
     public function testRunSingle()
     {
-        $this->stack->add($this->ok);
+        $this->queue->add($this->ok);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
-        $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
 
         $runner = new Runner();
-        $result = $runner->run($this->stack, $req, $res);
-        $this->assertSame($res, $result);
-    }
-
-    /**
-     * Test replacing a response in a middleware.
-     *
-     * @return void
-     */
-    public function testRunResponseReplace()
-    {
-        $one = function ($req, $res, $next) {
-            $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
-
-            return $next($req, $res);
-        };
-        $this->stack->add($one);
-        $runner = new Runner();
-
-        $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
-        $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
-        $result = $runner->run($this->stack, $req, $res);
-
-        $this->assertNotSame($res, $result, 'Response was not replaced');
-        $this->assertInstanceOf('Psr\Http\Message\ResponseInterface', $result);
+        $result = $runner->run($this->queue, $req);
+        $this->assertInstanceof(ResponseInterface::class, $result);
     }
 
     /**
@@ -93,10 +72,10 @@ class RunnerTest extends TestCase
     public function testRunSequencing()
     {
         $log = [];
-        $one = function ($req, $res, $next) use (&$log) {
+        $one = function ($req, $handler) use (&$log) {
             $log[] = 'one';
 
-            return $next($req, $res);
+            return $handler->handle($req);
         };
         $two = function ($req, $res, $next) use (&$log) {
             $log[] = 'two';
@@ -108,14 +87,12 @@ class RunnerTest extends TestCase
 
             return $next($req, $res);
         };
-        $this->stack->add($one)->add($two)->add($three);
+        $this->queue->add($one)->add($two)->add($three);
         $runner = new Runner();
 
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
-        $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
-        $result = $runner->run($this->stack, $req, $res);
-
-        $this->assertSame($res, $result, 'Response is not correct');
+        $result = $runner->run($this->queue, $req);
+        $this->assertInstanceof(Response::class, $result);
 
         $expected = ['one', 'two', 'three'];
         $this->assertEquals($expected, $log);
@@ -129,11 +106,10 @@ class RunnerTest extends TestCase
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('A bad thing');
-        $this->stack->add($this->ok)->add($this->fail);
+        $this->queue->add($this->ok)->add($this->fail);
         $req = $this->getMockBuilder('Psr\Http\Message\ServerRequestInterface')->getMock();
-        $res = $this->getMockBuilder('Psr\Http\Message\ResponseInterface')->getMock();
 
         $runner = new Runner();
-        $runner->run($this->stack, $req, $res);
+        $runner->run($this->queue, $req);
     }
 }

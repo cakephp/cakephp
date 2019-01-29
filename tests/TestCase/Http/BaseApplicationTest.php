@@ -19,7 +19,6 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
-use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -56,12 +55,8 @@ class BaseApplicationTest extends TestCase
      *
      * @return void
      */
-    public function testInvoke()
+    public function testHandle()
     {
-        $next = function ($req, $res) {
-            return $res;
-        };
-        $response = new Response();
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
         $request = $request->withAttribute('params', [
             'controller' => 'Cakes',
@@ -71,7 +66,7 @@ class BaseApplicationTest extends TestCase
         ]);
 
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $result = $app($request, $response, $next);
+        $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
         $this->assertEquals('Hello Jane', '' . $result->getBody());
     }

@@ -16,8 +16,13 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Core\App;
+use Cake\Http\Middleware\CallableDecoratorMiddleware;
+use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
+use Closure;
 use Countable;
 use LogicException;
+use Psr\Http\Server\MiddlewareInterface;
+use ReflectionFunction;
 use RuntimeException;
 
 /**
@@ -34,11 +39,11 @@ class MiddlewareQueue implements Countable
     protected $queue = [];
 
     /**
-     * The queue of middleware callables.
+     * The queue of middlewares.
      *
-     * @var callable[]
+     * @var \Psr\Http\Server\MiddlewareInterface[]
      */
-    protected $callables = [];
+    protected $middlewares = [];
 
     /**
      * Constructor
@@ -54,51 +59,62 @@ class MiddlewareQueue implements Countable
      * Get the middleware at the provided index.
      *
      * @param int $index The index to fetch.
-     * @return callable|null Either the callable middleware or null
+     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
      *   if the index is undefined.
      */
-    public function get(int $index): ?callable
+    public function get(int $index): ?MiddlewareInterface
     {
-        if (isset($this->callables[$index])) {
-            return $this->callables[$index];
+        if (isset($this->middlewares[$index])) {
+            return $this->middlewares[$index];
         }
 
         return $this->resolve($index);
     }
 
     /**
-     * Resolve middleware name to callable.
+     * Resolve middleware name to a PSR 15 compliant middleware instance.
      *
      * @param int $index The index to fetch.
-     * @return callable|null Either the callable middleware or null
+     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
      *   if the index is undefined.
      * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve(int $index): ?callable
+    protected function resolve(int $index): ?MiddlewareInterface
     {
         if (!isset($this->queue[$index])) {
             return null;
         }
 
-        if (is_string($this->queue[$index])) {
-            $class = $this->queue[$index];
-            $className = App::className($class, 'Middleware', 'Middleware');
+        $middleware = $this->queue[$index];
+        if (is_string($middleware)) {
+            $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null || !class_exists($className)) {
                 throw new RuntimeException(sprintf(
                     'Middleware "%s" was not found.',
-                    $class
+                    $middleware
                 ));
             }
-            $callable = new $className();
-        } else {
-            $callable = $this->queue[$index];
+            $middleware = new $className();
         }
 
-        return $this->callables[$index] = $callable;
+        if ($middleware instanceof MiddlewareInterface) {
+            return $this->middlewares[$index] = $middleware;
+        }
+
+        if (!$middleware instanceof Closure) {
+            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
+        }
+
+        $info = new ReflectionFunction($middleware);
+        if ($info->getNumberOfParameters() > 2) {
+            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
+        }
+
+        return $this->middlewares[$index] = new CallableDecoratorMiddleware($middleware);
     }
 
     /**
-     * Append a middleware callable to the end of the queue.
+     * Append a middleware to the end of the queue.
      *
      * @param callable|string|array $middleware The middleware(s) to append.
      * @return $this

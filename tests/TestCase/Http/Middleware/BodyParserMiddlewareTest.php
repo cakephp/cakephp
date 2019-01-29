@@ -20,6 +20,7 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use TestApp\Http\TestRequestHandler;
 
 /**
  * Test for BodyParser
@@ -157,13 +158,12 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => 'a,b,c',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals([], $req->getParsedBody());
 
-            return $res;
-        };
-        $parser($request, $response, $next);
+            return new Response();
+        });
+        $parser->process($request, $handler);
     }
 
     /**
@@ -183,13 +183,12 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
 
-            return $res;
-        };
-        $parser($request, $response, $next);
+            return new Response();
+        });
+        $parser->process($request, $handler);
     }
 
     /**
@@ -209,13 +208,12 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
 
-            return $res;
-        };
-        $parser($request, $response, $next);
+            return new Response();
+        });
+        $parser->process($request, $handler);
     }
 
     /**
@@ -234,13 +232,12 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals(['title' => 'yay'], $req->getParsedBody());
 
-            return $res;
-        };
-        $parser($request, $response, $next);
+            return new Response();
+        });
+        $parser->process($request, $handler);
     }
 
     /**
@@ -260,13 +257,12 @@ class BodyParserMiddlewareTest extends TestCase
             ],
             'input' => '{"title": "yay"}',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals([], $req->getParsedBody());
 
-            return $res;
-        };
-        $parser($request, $response, $next);
+            return new Response();
+        });
+        $parser->process($request, $handler);
     }
 
     /**
@@ -290,18 +286,16 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $expected = [
                 'article' => ['title' => 'yay'],
             ];
             $this->assertEquals($expected, $req->getParsedBody());
 
-            return $res;
-        };
-
+            return new Response();
+        });
         $parser = new BodyParserMiddleware(['xml' => true]);
-        $parser($request, $response, $next);
+        $parser->process($request, $handler);
     }
 
     /**
@@ -325,8 +319,7 @@ XML;
             ],
             'input' => $xml,
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $expected = [
                 'article' => [
                     'id' => 1,
@@ -335,11 +328,10 @@ XML;
             ];
             $this->assertEquals($expected, $req->getParsedBody());
 
-            return $res;
-        };
-
+            return new Response();
+        });
         $parser = new BodyParserMiddleware(['xml' => true]);
-        $parser($request, $response, $next);
+        $parser->process($request, $handler);
     }
 
     /**
@@ -374,14 +366,13 @@ XML;
             'input' => $xml,
         ]);
         $response = new Response();
-        $next = function ($req, $res) {
+        $handler = new TestRequestHandler(function ($req) {
             $this->assertEquals([], $req->getParsedBody());
 
-            return $res;
-        };
-
+            return new Response();
+        });
         $parser = new BodyParserMiddleware(['xml' => true]);
-        $parser($request, $response, $next);
+        $parser->process($request, $handler);
     }
 
     /**
@@ -398,13 +389,11 @@ XML;
             ],
             'input' => 'lol',
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
-
+        $handler = new TestRequestHandler(function ($req) {
+            return new Response();
+        });
         $this->expectException(BadRequestException::class);
         $parser = new BodyParserMiddleware();
-        $parser($request, $response, $next);
+        $parser->process($request, $handler);
     }
 }
