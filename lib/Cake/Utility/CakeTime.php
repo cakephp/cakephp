@@ -369,7 +369,7 @@ class CakeTime {
 			$format = static::$niceFormat;
 		}
 		$convertedFormat = static::convertSpecifiers($format, $timestamp);
-		return static::__strftime($convertedFormat, $timestamp, $date, $timezone);
+		return static::__strftimeWithTimezone($convertedFormat, $timestamp, $date, $timezone);
 	}
 
 /**
@@ -394,19 +394,19 @@ class CakeTime {
 		$timestamp = static::fromString($date, $timezone);
 
 		if (static::isToday($date, $timezone)) {
-			$formattedDate = static::__strftime("%H:%M", $timestamp, $date, $timezone);
+			$formattedDate = static::__strftimeWithTimezone("%H:%M", $timestamp, $date, $timezone);
 			return __d('cake', 'Today, %s', $formattedDate);
 		}
 		if (static::wasYesterday($date, $timezone)) {
-			$formattedDate = static::__strftime("%H:%M", $timestamp, $date, $timezone);
+			$formattedDate = static::__strftimeWithTimezone("%H:%M", $timestamp, $date, $timezone);
 			return __d('cake', 'Yesterday, %s', $formattedDate);
 		}
 		if (static::isTomorrow($date, $timezone)) {
-			$formattedDate = static::__strftime("%H:%M", $timestamp, $date, $timezone);
+			$formattedDate = static::__strftimeWithTimezone("%H:%M", $timestamp, $date, $timezone);
 			return __d('cake', 'Tomorrow, %s', $formattedDate);
 		}
 
-		$d = static::__strftime("%w", $timestamp, $date, $timezone);
+		$d = static::__strftimeWithTimezone("%w", $timestamp, $date, $timezone);
 		$day = array(
 			__d('cake', 'Sunday'),
 			__d('cake', 'Monday'),
@@ -417,11 +417,11 @@ class CakeTime {
 			__d('cake', 'Saturday')
 		);
 		if (static::wasWithinLast('7 days', $date, $timezone)) {
-			$formattedDate = static::__strftime(static::$niceShortFormat, $timestamp, $date, $timezone);
+			$formattedDate = static::__strftimeWithTimezone(static::$niceShortFormat, $timestamp, $date, $timezone);
 			return sprintf('%s %s', $day[$d], $formattedDate);
 		}
 		if (static::isWithinNext('7 days', $date, $timezone)) {
-			$formattedDate = static::__strftime(static::$niceShortFormat, $timestamp, $date, $timezone);
+			$formattedDate = static::__strftimeWithTimezone(static::$niceShortFormat, $timestamp, $date, $timezone);
 			return __d('cake', 'On %s %s', $day[$d], $formattedDate);
 		}
 
@@ -430,7 +430,7 @@ class CakeTime {
 			$y = ' %Y';
 		}
 		$format = static::convertSpecifiers("%b %eS{$y}, %H:%M", $timestamp);
-		return static::__strftime($format, $timestamp, $date, $timezone);
+		return static::__strftimeWithTimezone($format, $timestamp, $date, $timezone);
 	}
 
 /**
@@ -1072,7 +1072,7 @@ class CakeTime {
 			$format = '%x';
 		}
 		$convertedFormat = static::convertSpecifiers($format, $timestamp);
-		return static::__strftime($convertedFormat, $timestamp, $date, $timezone);
+		return static::__strftimeWithTimezone($convertedFormat, $timestamp, $date, $timezone);
 	}
 
 /**
@@ -1193,7 +1193,7 @@ class CakeTime {
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object.
  * @return string Formatted date string with correct encoding.
  */
-	private static function __strftime($format, $timestamp, $date, $timezone) {
+	private static function __strftimeWithTimezone($format, $timestamp, $date, $timezone) {
 		$serverTimeZone = date_default_timezone_get();
 		if (
 			!empty($timezone) &&
