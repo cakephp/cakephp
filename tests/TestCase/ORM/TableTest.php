@@ -49,6 +49,13 @@ class UsersTable extends Table
 
 }
 
+class ProtectedEntity extends Entity
+{
+    protected $_accessible = [
+        'id' => true,
+    ];
+}
+
 /**
  * Tests Table class
  */
@@ -5857,6 +5864,24 @@ class TableTest extends TestCase
         $articles->setValidator('default', $validator);
 
         $articles->findOrCreate(['title' => '']);
+    }
+
+    /**
+     * Test that findOrCreate allows patching of all $search keys
+     *
+     * @return void
+     */
+    public function testFindOrCreateAccessibleFields()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->setEntityClass(ProtectedEntity::class);
+        $validator = new Validator();
+        $validator->notBlank('title');
+        $articles->setValidator('default', $validator);
+
+        $article = $articles->findOrCreate(['title' => 'test']);
+        $this->assertInstanceOf(ProtectedEntity::class, $article);
+        $this->assertSame('test', $article->title);
     }
 
     /**
