@@ -114,12 +114,12 @@ interface CookieInterface
     /**
      * Get the timestamp from the expiration time
      *
-     * Timestamps are strings as large timestamps can overflow MAX_INT
+     * Timestamps are integer as large timestamps can overflow MAX_INT
      * in 32bit systems.
      *
-     * @return string|null The expiry time as a string timestamp.
+     * @return int|null The expiry time as a string timestamp.
      */
-    public function getExpiresTimestamp(): ?string;
+    public function getExpiresTimestamp(): ?int;
 
     /**
      * Builds the expiration value part of the header string
