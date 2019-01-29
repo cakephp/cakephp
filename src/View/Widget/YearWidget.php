@@ -17,7 +17,7 @@ namespace Cake\View\Widget;
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use DateTime;
-use RuntimeException;
+use InvalidArgumentException;
 
 class YearWidget implements WidgetInterface
 {
@@ -54,83 +54,46 @@ class YearWidget implements WidgetInterface
      * @param array $data Data to render with.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string A generated select box.
-     * @throws \RuntimeException When option data is invalid.
      */
     public function render(array $data, ContextInterface $context): string
     {
         $data += [
             'name' => '',
             'val' => null,
-            'start' => date('Y', strtotime('-5 years')),
-            'end' => date('Y', strtotime('+5 years')),
             'order' => 'desc',
             'templateVars' => [],
         ];
 
-        if (!empty($data['min'])) {
-            $data['start'] = $data['min'];
+        if (empty($data['min'])) {
+            $data['min'] = date('Y', strtotime('-5 years'));
         }
 
-        if (!empty($data['max'])) {
-            $data['end'] = $data['max'];
+        if (empty($data['max'])) {
+            $data['max'] = date('Y', strtotime('+5 years'));
         }
+
+        $data['min'] = (int)$data['min'];
+        $data['max'] = (int)$data['max'];
 
         if (!empty($data['val'])) {
-            $data['start'] = min($data['val'], $data['start']);
-            $data['end'] = max($data['val'], $data['end']);
+            $data['min'] = min((int)$data['val'], $data['min']);
+            $data['max'] = max((int)$data['val'], $data['max']);
         }
 
-        if ($data['end'] < $data['start']) {
-            throw new RuntimeException('Max year cannot be less than min year');
+        if ($data['max'] < $data['min']) {
+            throw new InvalidArgumentException('Max year cannot be less than min year');
         }
 
-        $data['options'] = $this->_generateNumbers((int)$data['start'], (int)$data['end']);
         if ($data['order'] === 'desc') {
-            $data['options'] = array_reverse($data['options'], true);
+            $data['options'] = range($data['max'], $data['min']);
+        } else {
+            $data['options'] = range($data['min'], $data['max']);
         }
-        unset($data['start'], $data['end'], $data['order'], $data['min'], $data['max']);
+        $data['options'] = array_combine($data['options'], $data['options']);
+
+        unset($data['order'], $data['min'], $data['max']);
 
         return $this->_select->render($data, $context);
-    }
-
-    /**
-     * Generates a range of numbers
-     *
-     * ### Options
-     *
-     * - leadingZeroKey - Set to true to add a leading 0 to single digit keys.
-     * - leadingZeroValue - Set to true to add a leading 0 to single digit values.
-     * - interval - The interval to generate numbers for. Defaults to 1.
-     *
-     * @param int $start Start of the range of numbers to generate
-     * @param int $end End of the range of numbers to generate
-     * @param array $options Options list.
-     * @return array
-     */
-    protected function _generateNumbers(int $start, int $end, array $options = []): array
-    {
-        $options += [
-            'leadingZeroKey' => true,
-            'leadingZeroValue' => true,
-            'interval' => 1
-        ];
-
-        $numbers = [];
-        $i = $start;
-        while ($i <= $end) {
-            $key = (string)$i;
-            $value = (string)$i;
-            if ($options['leadingZeroKey'] === true) {
-                $key = sprintf('%02d', $key);
-            }
-            if ($options['leadingZeroValue'] === true) {
-                $value = sprintf('%02d', $value);
-            }
-            $numbers[$key] = $value;
-            $i += $options['interval'];
-        }
-
-        return $numbers;
     }
 
     /**
