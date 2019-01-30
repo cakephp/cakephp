@@ -114,7 +114,7 @@ interface CookieInterface
     /**
      * Get the timestamp from the expiration time
      *
-     * @return int|null The expiry time as a string timestamp.
+     * @return int|null The expiry time as an integer.
      */
     public function getExpiresTimestamp(): ?int;
 
