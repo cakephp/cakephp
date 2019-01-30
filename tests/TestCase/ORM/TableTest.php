@@ -53,6 +53,7 @@ class ProtectedEntity extends Entity
 {
     protected $_accessible = [
         'id' => true,
+        'title' => false,
     ];
 }
 
