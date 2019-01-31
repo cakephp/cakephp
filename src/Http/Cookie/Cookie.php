@@ -368,13 +368,13 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function getExpiresTimestamp(): ?string
+    public function getExpiresTimestamp(): ?int
     {
         if (!$this->expiresAt) {
             return null;
         }
 
-        return $this->expiresAt->format('U');
+        return (int)$this->expiresAt->format('U');
     }
 
     /**
