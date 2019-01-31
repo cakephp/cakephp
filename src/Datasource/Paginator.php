@@ -183,7 +183,6 @@ class Paginator implements PaginatorInterface
         return $results;
     }
 
-
     /**
      * Extract pagination data needed
      *
