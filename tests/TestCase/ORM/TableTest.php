@@ -32,6 +32,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
@@ -46,6 +47,14 @@ use InvalidArgumentException;
 class UsersTable extends Table
 {
 
+}
+
+class ProtectedEntity extends Entity
+{
+    protected $_accessible = [
+        'id' => true,
+        'title' => false,
+    ];
 }
 
 /**
@@ -5837,6 +5846,43 @@ class TableTest extends TestCase
         $this->assertFalse($article->isNew());
         $this->assertNotNull($article->id);
         $this->assertEquals('Success', $article->title);
+    }
+
+    /**
+     * Test that findOrCreate throws a PersistenceFailedException when it cannot save
+     * an entity created from $search
+     *
+     * @return void
+     */
+    public function testFindOrCreateWithInvalidEntity()
+    {
+        $this->expectException(PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity findOrCreate failure (title: "_empty").');
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $validator = new Validator();
+        $validator->notBlank('title');
+        $articles->setValidator('default', $validator);
+
+        $articles->findOrCreate(['title' => '']);
+    }
+
+    /**
+     * Test that findOrCreate allows patching of all $search keys
+     *
+     * @return void
+     */
+    public function testFindOrCreateAccessibleFields()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->setEntityClass(ProtectedEntity::class);
+        $validator = new Validator();
+        $validator->notBlank('title');
+        $articles->setValidator('default', $validator);
+
+        $article = $articles->findOrCreate(['title' => 'test']);
+        $this->assertInstanceOf(ProtectedEntity::class, $article);
+        $this->assertSame('test', $article->title);
     }
 
     /**
