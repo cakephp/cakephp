@@ -187,13 +187,31 @@ class Paginator implements PaginatorInterface
         $numResults = count($results);
         $count = $cleanQuery->count();
 
-        $page = $options['page'];
-        $limit = $options['limit'];
+        $this->_buildParams(
+            compact('options', 'count', 'defaults', 'finder', 'numResults', 'alias')
+        );
+
+        return $results;
+    }
+
+    /**
+     * Build pagination params
+     *
+     * @param array $data Paginator data containing keys 'alias', 'options', 'count', 'defaults', 'finder', 'numResults'
+     *
+     * @return void
+     */
+    protected function _buildParams($data)
+    {
+        $defaults = $data['defaults'];
+        $count = $data['count'];
+        $page = $data['options']['page'];
+        $limit = $data['options']['limit'];
         $pageCount = max((int)ceil($count / $limit), 1);
         $requestedPage = $page;
         $page = min($page, $pageCount);
 
-        $order = (array)$options['order'];
+        $order = (array)$data['options']['order'];
         $sortDefault = $directionDefault = false;
         if (!empty($defaults['order']) && count($defaults['order']) === 1) {
             $sortDefault = key($defaults['order']);
@@ -210,9 +228,9 @@ class Paginator implements PaginatorInterface
         }
 
         $paging = [
-            'finder' => $finder,
+            'finder' => $data['finder'],
             'page' => $page,
-            'current' => $numResults,
+            'current' => $data['numResults'],
             'count' => $count,
             'perPage' => $limit,
             'start' => $start,
@@ -220,16 +238,16 @@ class Paginator implements PaginatorInterface
             'prevPage' => $page > 1,
             'nextPage' => $count > ($page * $limit),
             'pageCount' => $pageCount,
-            'sort' => $options['sort'],
-            'direction' => isset($options['sort']) ? current($order) : null,
+            'sort' => $data['options']['sort'],
+            'direction' => isset($data['options']['sort']) ? current($order) : null,
             'limit' => $defaults['limit'] != $limit ? $limit : null,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
-            'scope' => $options['scope'],
+            'scope' => $data['options']['scope'],
             'completeSort' => $order,
         ];
 
-        $this->_pagingParams = [$alias => $paging];
+        $this->_pagingParams = [$data['alias'] => $paging];
 
         if ($requestedPage > $page) {
             throw new PageOutOfBoundsException([
@@ -237,8 +255,6 @@ class Paginator implements PaginatorInterface
                 'pagingParams' => $this->_pagingParams
             ]);
         }
-
-        return $results;
     }
 
     /**
