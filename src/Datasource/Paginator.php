@@ -166,6 +166,35 @@ class Paginator implements PaginatorInterface
             $object = $query->getRepository();
         }
 
+        $data = $this->_extractData($object, $params, $settings);
+
+        if (empty($query)) {
+            $query = $object->find($data['finder'], $data['options']);
+        } else {
+            $query->applyOptions($data['options']);
+        }
+
+        $cleanQuery = clone $query;
+        $results = $query->all();
+        $data['numResults'] = count($results);
+        $data['count'] = $cleanQuery->count();
+        $this->_buildParams($data);
+
+        return $results;
+    }
+
+
+    /**
+     * Extract pagination data needed
+     *
+     * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
+     * @param array $params Request params
+     * @param array $settings The settings/configuration used for pagination.
+     *
+     * @return array Array with keys 'alias', 'defaults', 'options' and 'finder'
+     */
+    protected function _extractData($object, array $params, array $settings)
+    {
         $alias = $object->getAlias();
         $defaults = $this->getDefaults($alias, $settings);
         $options = $this->mergeOptions($params, $defaults);
@@ -176,22 +205,7 @@ class Paginator implements PaginatorInterface
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
         list($finder, $options) = $this->_extractFinder($options);
 
-        if (empty($query)) {
-            $query = $object->find($finder, $options);
-        } else {
-            $query->applyOptions($options);
-        }
-
-        $cleanQuery = clone $query;
-        $results = $query->all();
-        $numResults = count($results);
-        $count = $cleanQuery->count();
-
-        $this->_buildParams(
-            compact('options', 'count', 'defaults', 'finder', 'numResults', 'alias')
-        );
-
-        return $results;
+        return compact('alias', 'defaults', 'options', 'finder');
     }
 
     /**
