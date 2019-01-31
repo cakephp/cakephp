@@ -2093,7 +2093,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
-        $filteredKeys = array_filter($primary, 'strlen');
+        $filteredKeys = array_filter($primary, function ($v) {
+            return $v !== null;
+        });
         $data += $filteredKeys;
 
         if (count($primary) > 1) {
@@ -2216,9 +2218,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to save due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet $entities Entities to save.
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
-     * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\ORM\ResultSet False on failure, entities list on success.
+     * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface False on failure, entities list on success.
+     * @throws \Exception
      */
     public function saveMany($entities, $options = [])
     {

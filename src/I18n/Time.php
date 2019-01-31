@@ -172,7 +172,7 @@ class Time extends MutableDateTime implements JsonSerializable
      */
     public function toQuarter($range = false)
     {
-        $quarter = ceil($this->format('m') / 3);
+        $quarter = (int)ceil($this->format('m') / 3);
         if ($range === false) {
             return $quarter;
         }
