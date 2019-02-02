@@ -82,11 +82,8 @@ trait QueryTrait
     protected $_eagerLoaded = false;
 
     /**
-     * Returns the default table object that will be used by this query,
-     * that is, the table that will appear in the from clause.
-     *
-     * When called with a Table argument, the default table object will be set
-     * and this query object will be returned for chaining.
+     * Set the default Table object that will be used by this query
+     * and form the `FROM` clause.
      *
      * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Table $table The default table object to use
      * @return $this

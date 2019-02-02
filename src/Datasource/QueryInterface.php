@@ -21,7 +21,6 @@ namespace Cake\Datasource;
  *
  * @method $this andWhere($conditions, $types = [])
  * @method $this select($fields = [], $overwrite = false)
- * @method \Cake\Datasource\RepositoryInterface getRepository()
  */
 interface QueryInterface
 {
@@ -258,13 +257,21 @@ interface QueryInterface
     public function toArray(): array;
 
     /**
-     * Returns the default repository object that will be used by this query,
-     * that is, the repository that will appear in the from clause.
+     * Set the default Table object that will be used by this query
+     * and form the `FROM` clause.
      *
      * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use
      * @return $this
      */
     public function repository(RepositoryInterface $repository);
+
+    /**
+     * Returns the default repository object that will be used by this query,
+     * that is, the repository that will appear in the from clause.
+     *
+     * @return \Cake\Datasource\RepositoryInterface|mixed $repository The default repository object to use
+     */
+    public function getRepository();
 
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this
