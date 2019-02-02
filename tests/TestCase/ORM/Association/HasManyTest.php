@@ -40,6 +40,8 @@ class HasManyTest extends TestCase
         'core.Comments',
         'core.Articles',
         'core.Authors',
+        'core.ArticlesTags',
+        'core.Tags',
     ];
 
     /**
@@ -50,6 +52,8 @@ class HasManyTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        $this->setAppNamespace('TestApp');
+
         $this->author = $this->getTableLocator()->get('Authors', [
             'schema' => [
                 'id' => ['type' => 'integer'],
@@ -457,23 +461,56 @@ class HasManyTest extends TestCase
      */
     public function testCascadeDelete()
     {
+        $articles = $this->getTableLocator()->get('Articles');
         $config = [
             'dependent' => true,
             'sourceTable' => $this->author,
-            'targetTable' => $this->article,
-            'conditions' => ['Articles.is_active' => true],
+            'targetTable' => $articles,
+            'conditions' => ['Articles.published' => 'Y'],
         ];
         $association = new HasMany('Articles', $config);
 
-        $this->article->expects($this->once())
-            ->method('deleteAll')
-            ->with([
-                'Articles.is_active' => true,
-                'Articles.author_id' => 1,
+        $entity = new Entity(['id' => 1, 'name' => 'PHP']);
+        $this->assertTrue($association->cascadeDelete($entity));
+
+        $published = $articles
+            ->find('published')
+            ->where([
+                'published' => 'Y',
+                'author_id' => 1,
             ]);
+        $this->assertCount(0, $published->all());
+    }
+
+    /**
+     * Test cascading deletes with a finder
+     *
+     * @return void
+     */
+    public function testCascadeDeleteFinder()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $config = [
+            'dependent' => true,
+            'sourceTable' => $this->author,
+            'targetTable' => $articles,
+            'finder' => 'published',
+        ];
+        // Exclude one record from the association finder
+        $articles->updateAll(
+            ['published' => 'N'],
+            ['author_id' => 1, 'title' => 'First Article']
+        );
+        $association = new HasMany('Articles', $config);
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
-        $association->cascadeDelete($entity);
+        $this->assertTrue($association->cascadeDelete($entity));
+
+        $published = $articles->find('published')->where(['author_id' => 1]);
+        $this->assertCount(0, $published->all(), 'Associated records should be removed');
+
+        $all = $articles->find()->where(['author_id' => 1]);
+        $this->assertCount(1, $all->all(), 'Record not in association finder should remain');
     }
 
     /**
@@ -1090,13 +1127,15 @@ class HasManyTest extends TestCase
             'dependent' => true,
         ]);
         $articles = $authors->Articles->getTarget();
+
+        // Remove an article from the association finder scope
         $articles->updateAll(['published' => 'N'], ['author_id' => 1, 'title' => 'Third Article']);
 
         $entity = $authors->get(1, ['contain' => ['Articles']]);
         $data = [
             'name' => 'updated',
             'articles' => [
-                ['title' => 'First Article', 'body' => 'New First', 'published' => 'N'],
+                ['title' => 'New First', 'body' => 'New First', 'published' => 'Y'],
             ],
         ];
         $entity = $authors->patchEntity($entity, $data, ['associated' => ['Articles']]);
@@ -1104,18 +1143,23 @@ class HasManyTest extends TestCase
 
         // Should only have one article left as we 'replaced' the others.
         $this->assertCount(1, $entity->articles);
-        $this->assertCount(1, $authors->Articles->find()->toArray());
+
+        // No additional records in db.
+        $this->assertCount(
+            1,
+            $authors->Articles->find()->where(['author_id' => 1])->toArray()
+        );
 
         $others = $articles->find('all')
-            ->where(['Articles.author_id' => 1])
+            ->where(['Articles.author_id' => 1, 'published' => 'N'])
             ->orderAsc('title')
             ->toArray();
         $this->assertCount(
             1,
             $others,
-            'Record not matching condition should stay. But does not'
+            'Record not matching association condition should stay'
         );
-        $this->assertSame('First Article', $others[0]->title);
+        $this->assertSame('Third Article', $others[0]->title);
     }
 
     /**

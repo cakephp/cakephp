@@ -287,6 +287,30 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Ensure that the `finder` option is applied to the target
+     * table.
+     *
+     * @return void
+     */
+    public function testFinderOption()
+    {
+        $this->setAppNamespace('TestApp');
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'finder' => 'published',
+        ]);
+        $articles->updateAll(['published' => 'N'], ['id' => 1]);
+        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $entity->articles, 'only one article should load');
+        $this->assertSame('Y', $entity->articles[0]->published);
+    }
+
+    /**
      * Test cascading deletes.
      *
      * @return void
@@ -811,6 +835,44 @@ class BelongsToManyTest extends TestCase
 
         $jointCount = $joint->find()->where(['article_id' => 1])->count();
         $this->assertSame(1, $jointCount, 'Non matching joint record should remain.');
+    }
+
+    /**
+     * Test that replaceLinks() will apply finder conditions
+     * defined in the junction table associations if they exist.
+     *
+     * @return void
+     */
+    public function testReplaceLinkWithFinderInJunctionAssociations()
+    {
+        $this->setAppNamespace('TestApp');
+
+        $joint = $this->getTableLocator()->get('ArticlesTags');
+        $articles = $this->getTableLocator()->get('Articles');
+        $tags = $this->getTableLocator()->get('Tags');
+
+        // Update an article to not match the association finder.
+        $articles->updateAll(['published' => 'N'], ['id' => 1]);
+        $assoc = $tags->belongsToMany('Articles', [
+            'sourceTable' => $tags,
+            'targetTable' => $articles,
+            'through' => $joint,
+            'finder' => 'published',
+        ]);
+        $entity = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(1, $entity->articles);
+
+        $result = $assoc->replaceLinks($entity, [], ['associated' => false]);
+        $this->assertTrue($result);
+        $this->assertSame([], $entity->articles, 'Articles should match replaced objects');
+        $this->assertFalse($entity->isDirty('articles'), 'Should be clean');
+
+        $fresh = $tags->get(1, ['contain' => 'Articles']);
+        $this->assertCount(0, $fresh->articles, 'Association should be empty');
+
+        $other = $joint->find()->where(['tag_id' => 1])->toArray();
+        $this->assertCount(1, $other, 'Non matching joint record should remain.');
+        $this->assertSame(1, $other[0]->article_id);
     }
 
     /**
