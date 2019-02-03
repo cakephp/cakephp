@@ -269,7 +269,7 @@ interface QueryInterface
      * Returns the default repository object that will be used by this query,
      * that is, the repository that will appear in the from clause.
      *
-     * @return \Cake\Datasource\RepositoryInterface|mixed $repository The default repository object to use
+     * @return \Cake\Datasource\RepositoryInterface|null $repository The default repository object to use
      */
     public function getRepository();
 
