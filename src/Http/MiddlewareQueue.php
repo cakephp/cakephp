@@ -48,13 +48,6 @@ class MiddlewareQueue implements Countable, SeekableIterator
     protected $queue = [];
 
     /**
-     * The queue of middlewares.
-     *
-     * @var \Psr\Http\Server\MiddlewareInterface[]
-     */
-    protected $middlewares = [];
-
-    /**
      * Constructor
      *
      * @param array $middleware The list of middleware to append.
@@ -73,28 +66,26 @@ class MiddlewareQueue implements Countable, SeekableIterator
      */
     public function get(int $index): ?MiddlewareInterface
     {
-        if (isset($this->middlewares[$index])) {
-            return $this->middlewares[$index];
+        if (!isset($this->queue[$index])) {
+            return null;
         }
 
-        return $this->resolve($index);
+        if ($this->queue[$index] instanceof MiddlewareInterface) {
+            return $this->queue[$index];
+        }
+
+        return $this->queue[$index] = $this->resolve($this->queue[$index]);
     }
 
     /**
      * Resolve middleware name to a PSR 15 compliant middleware instance.
      *
-     * @param int $index The index to fetch.
-     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
-     *   if the index is undefined.
+     * @param string|callable $middleware The middleware to resolve.
+     * @return \Psr\Http\Server\MiddlewareInterface
      * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve(int $index): ?MiddlewareInterface
+    protected function resolve($middleware): ?MiddlewareInterface
     {
-        if (!isset($this->queue[$index])) {
-            return null;
-        }
-
-        $middleware = $this->queue[$index];
         if (is_string($middleware)) {
             $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null || !class_exists($className)) {
@@ -106,20 +97,16 @@ class MiddlewareQueue implements Countable, SeekableIterator
             $middleware = new $className();
         }
 
-        if ($middleware instanceof MiddlewareInterface) {
-            return $this->middlewares[$index] = $middleware;
-        }
-
         if (!$middleware instanceof Closure) {
-            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
+            return new DoublePassDecoratorMiddleware($middleware);
         }
 
         $info = new ReflectionFunction($middleware);
         if ($info->getNumberOfParameters() > 2) {
-            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
+            return new DoublePassDecoratorMiddleware($middleware);
         }
 
-        return $this->middlewares[$index] = new CallableDecoratorMiddleware($middleware);
+        return new CallableDecoratorMiddleware($middleware);
     }
 
     /**
