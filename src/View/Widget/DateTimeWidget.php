@@ -19,6 +19,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use Exception;
 use InvalidArgumentException;
 
@@ -69,6 +70,7 @@ class DateTimeWidget implements WidgetInterface
      * - `val` The value attribute.
      * - `escape` Set to false to disable escaping on all attributes.
      * - `type` A valid HTML date/time input type. Defaults to "datetime-local".
+     * - `timezone` The timezone the input value should be converted to.
      *
      * All other keys will be converted into HTML attributes.
      *
@@ -83,11 +85,12 @@ class DateTimeWidget implements WidgetInterface
             'val' => null,
             'type' => 'datetime-local',
             'escape' => true,
+            'timezone' => null,
             'templateVars' => [],
         ];
 
         $data['value'] = $this->formatDateTime($data['val'], $data);
-        unset($data['val']);
+        unset($data['val'], $data['timezone']);
 
         return $this->_templates->format('input', [
             'name' => $data['name'],
@@ -116,20 +119,29 @@ class DateTimeWidget implements WidgetInterface
 
         try {
             if ($value instanceof DateTimeInterface) {
-                $date = clone $value;
+                $dateTime = clone $value;
             } elseif (is_string($value) && !is_numeric($value)) {
-                $date = new DateTime($value);
+                $dateTime = new DateTime($value);
             } elseif (is_int($value) || is_numeric($value)) {
-                $date = new DateTime('@' . $value);
+                $dateTime = new DateTime('@' . $value);
             } else {
-                $date = new DateTime();
+                $dateTime = new DateTime();
             }
         } catch (Exception $e) {
-            $date = new DateTime();
+            $dateTime = new DateTime();
+        }
+
+        if (isset($options['timezone'])) {
+            $timezone = $options['timezone'];
+            if (!$timezone instanceof DateTimeZone) {
+                $timezone = new DateTimeZone($timezone);
+            }
+
+            $dateTime = $dateTime->setTimezone($timezone);
         }
 
         if (isset($this->formatMap[$options['type']])) {
-            return $date->format($this->formatMap[$options['type']]);
+            return $dateTime->format($this->formatMap[$options['type']]);
         }
 
         throw new InvalidArgumentException(sprintf(

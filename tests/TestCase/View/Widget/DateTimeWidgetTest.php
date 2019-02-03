@@ -107,6 +107,27 @@ class DateTimeWidgetTest extends TestCase
     }
 
     /**
+     * testTimezoneOption
+     *
+     * @return void
+     */
+    public function testTimezoneOption()
+    {
+        $result = $this->DateTime->render([
+            'val' => '2019-02-03 10:00:00',
+            'timezone' => 'Asia/Kolkata'
+        ], $this->context);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => '',
+                'value' => '2019-02-03T15:30:00'
+            ],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test rendering with templateVars
      *
      * @return void
