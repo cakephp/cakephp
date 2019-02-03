@@ -42,7 +42,7 @@ class Runner implements RequestHandlerInterface
     /**
      * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
-     * @param \Psr\Http\Server\RequestHandlerInterface $fallbackHandler Fallback request handler.
+     * @param \Psr\Http\Server\RequestHandlerInterface|null $fallbackHandler Fallback request handler.
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
     public function run(

@@ -29,7 +29,7 @@ use SeekableIterator;
 
 /**
  * Provides methods for creating and manipulating a "queue" of middleware callables.
- * This queue is used to process a request and response via \Cake\Http\Runner.
+ * This queue is used to process a request and generate response via \Cake\Http\Runner.
  */
 class MiddlewareQueue implements Countable, SeekableIterator
 {
