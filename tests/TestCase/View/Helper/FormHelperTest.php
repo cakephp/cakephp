@@ -6054,7 +6054,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'time',
                 'name' => 'start_time',
-                'value' => '16:30',
+                'value' => '16:30:00',
             ],
         ];
         $this->assertHtml($expected, $result);
