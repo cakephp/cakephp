@@ -43,7 +43,7 @@ class DateTimeWidget implements WidgetInterface
      * @var array
      */
     protected $formatMap = [
-        'datetime-local' => 'Y-m-d\TH:i',
+        'datetime-local' => 'Y-m-d\TH:i:s',
         'date' => 'Y-m-d',
         'time' => 'H:i:s',
         'month' => 'Y-m',

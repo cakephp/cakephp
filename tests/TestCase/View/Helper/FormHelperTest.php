@@ -6100,7 +6100,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'date',
-                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}/',
+                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}(:\d{2})?/',
             ],
         ];
 
@@ -6165,7 +6165,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'updated',
-                'value' => '2009-06-01T11:15',
+                'value' => '2009-06-01T11:15:30',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -6177,7 +6177,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'updated',
-                'value' => '2009-06-01T11:15',
+                'value' => '2009-06-01T11:15:30',
             ],
         ];
         $this->assertHtml($expected, $result);
@@ -7716,7 +7716,7 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
-                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}/',
+                'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}(:\d{2})?/',
             ],
         ];
 

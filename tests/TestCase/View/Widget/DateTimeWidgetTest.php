@@ -101,7 +101,7 @@ class DateTimeWidgetTest extends TestCase
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);
         $expected = [
-            'input' => ['type' => 'datetime-local', 'name' => '', 'value' => '2014-01-20T12:30'],
+            'input' => ['type' => 'datetime-local', 'name' => '', 'value' => '2014-01-20T12:30:45'],
         ];
         $this->assertHtml($expected, $result);
     }
