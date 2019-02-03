@@ -21,16 +21,25 @@ use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
 use Closure;
 use Countable;
 use LogicException;
+use OutOfBoundsException;
 use Psr\Http\Server\MiddlewareInterface;
 use ReflectionFunction;
 use RuntimeException;
+use SeekableIterator;
 
 /**
  * Provides methods for creating and manipulating a "queue" of middleware callables.
  * This queue is used to process a request and response via \Cake\Http\Runner.
  */
-class MiddlewareQueue implements Countable
+class MiddlewareQueue implements Countable, SeekableIterator
 {
+    /**
+     * Internal position for iterator.
+     *
+     * @var int
+     */
+    protected $position = 0;
+
     /**
      * The queue of middlewares.
      *
@@ -247,5 +256,70 @@ class MiddlewareQueue implements Countable
     public function count(): int
     {
         return count($this->queue);
+    }
+
+    /**
+     * Seeks to a given position in the queue.
+     *
+     * @param int $position The position to seek to.
+     * @return void
+     * @see \SeekableIterator::seek()
+     */
+    public function seek($position) {
+        if (!isset($this->queue[$position])) {
+            throw new OutOfBoundsException("Invalid seek position ($position)");
+        }
+
+        $this->position = $position;
+    }
+
+    /**
+     * Rewinds back to the first element of the queue.
+     *
+     * @return void
+     * @see \Iterator::rewind()
+     */
+    public function rewind() {
+        $this->position = 0;
+    }
+
+    /**
+     *  Returns the current middleware.
+     *
+     * @return \Psr\Http\Server\MiddlewareInterface
+     * @see \Iterator::current()
+     */
+    public function current() {
+        return $this->get($this->position);
+    }
+
+    /**
+     * Return the key of the middleware.
+     *
+     * @return int
+     * @see \Iterator::key()
+     */
+    public function key() {
+        return $this->position;
+    }
+
+    /**
+     * Moves the current position to the next middleware.
+     *
+     * @return void
+     * @see \Iterator::next()
+     */
+    public function next() {
+        ++$this->position;
+    }
+
+    /**
+     * Checks if current position is valid.
+     *
+     * @return bool
+     * @see \Iterator::valid()
+     */
+    public function valid() {
+        return isset($this->queue[$this->position]);
     }
 }
