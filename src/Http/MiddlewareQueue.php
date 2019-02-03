@@ -252,7 +252,8 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \SeekableIterator::seek()
      */
-    public function seek($position) {
+    public function seek($position)
+    {
         if (!isset($this->queue[$position])) {
             throw new OutOfBoundsException("Invalid seek position ($position)");
         }
@@ -266,7 +267,8 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \Iterator::rewind()
      */
-    public function rewind() {
+    public function rewind()
+    {
         $this->position = 0;
     }
 
@@ -276,7 +278,8 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return \Psr\Http\Server\MiddlewareInterface
      * @see \Iterator::current()
      */
-    public function current() {
+    public function current()
+    {
         return $this->get($this->position);
     }
 
@@ -286,7 +289,8 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return int
      * @see \Iterator::key()
      */
-    public function key() {
+    public function key()
+    {
         return $this->position;
     }
 
@@ -296,7 +300,8 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \Iterator::next()
      */
-    public function next() {
+    public function next()
+    {
         ++$this->position;
     }
 
@@ -306,7 +311,8 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return bool
      * @see \Iterator::valid()
      */
-    public function valid() {
+    public function valid()
+    {
         return isset($this->queue[$this->position]);
     }
 }
