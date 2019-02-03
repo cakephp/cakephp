@@ -97,6 +97,10 @@ class MiddlewareQueue implements Countable, SeekableIterator
             $middleware = new $className();
         }
 
+        if ($middleware instanceof MiddlewareInterface) {
+            return $middleware;
+        }
+
         if (!$middleware instanceof Closure) {
             return new DoublePassDecoratorMiddleware($middleware);
         }
