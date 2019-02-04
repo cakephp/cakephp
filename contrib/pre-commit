@@ -28,7 +28,7 @@ done
 if [ "$SFILES" != "" ]
 then
     echo "Running PHPCS"
-    ./vendor/bin/phpcs --standard=vendor/cakephp/cakephp-codesniffer/CakePHP $SFILES
+    ./vendor/bin/phpcs $SFILES
     if [ $? != 0 ]
     then
         echo "PHPCS Errors found; commit aborted."
