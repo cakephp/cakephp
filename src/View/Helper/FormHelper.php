@@ -2240,7 +2240,6 @@ class FormHelper extends Helper
         ];
 
         $options = $this->_initInputField($fieldName, $options);
-        $options = $this->_datetimeOptions($options);
         $options['type'] = 'month';
 
         return $this->widget('datetime', $options);
@@ -2382,23 +2381,8 @@ class FormHelper extends Helper
             'value' => null,
         ];
         $options = $this->_initInputField($fieldName, $options);
-        $options = $this->_datetimeOptions($options);
 
         return $this->widget('datetime', $options);
-    }
-    /**
-     * Helper method for converting from FormHelper options data to widget format.
-     *
-     * @param array $options Options to convert.
-     * @return array Converted options.
-     */
-    protected function _datetimeOptions(array $options): array
-    {
-        if ($options['val'] === true || $options['val'] === null) {
-            $options['val'] = new DateTime();
-        }
-
-        return $options;
     }
 
     /**
@@ -2419,7 +2403,6 @@ class FormHelper extends Helper
             'value' => null,
         ];
         $options = $this->_initInputField($fieldName, $options);
-        $options = $this->_datetimeOptions($options);
         $options['type'] = 'time';
 
         return $this->widget('datetime', $options);
@@ -2444,7 +2427,6 @@ class FormHelper extends Helper
         ];
 
         $options = $this->_initInputField($fieldName, $options);
-        $options = $this->_datetimeOptions($options);
         $options['type'] = 'date';
 
         return $this->widget('datetime', $options);

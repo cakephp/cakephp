@@ -7716,6 +7716,17 @@ class FormHelperTest extends TestCase
             'input' => [
                 'type' => 'datetime-local',
                 'name' => 'created',
+                'value' => '',
+            ],
+        ];
+
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->datetime('created', ['default' => true]);
+        $expected = [
+            'input' => [
+                'type' => 'datetime-local',
+                'name' => 'created',
                 'value' => 'preg:/' . date('Y-m-d') . 'T\d{2}:\d{2}(:\d{2})?/',
             ],
         ];
