@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\View\Widget;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\DateTimeWidget;
-use Cake\View\Widget\SelectBoxWidget;
 
 /**
  * DateTimeWidget test case
@@ -115,13 +114,13 @@ class DateTimeWidgetTest extends TestCase
     {
         $result = $this->DateTime->render([
             'val' => '2019-02-03 10:00:00',
-            'timezone' => 'Asia/Kolkata'
+            'timezone' => 'Asia/Kolkata',
         ], $this->context);
         $expected = [
             'input' => [
                 'type' => 'datetime-local',
                 'name' => '',
-                'value' => '2019-02-03T15:30:00'
+                'value' => '2019-02-03T15:30:00',
             ],
         ];
         $this->assertHtml($expected, $result);
