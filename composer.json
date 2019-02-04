@@ -49,7 +49,7 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "dev-next",
-        "mikey179/vfsStream": "^1.6",
+        "mikey179/vfsstream": "^1.6",
         "phpunit/phpunit": "^7.0"
     },
     "autoload": {
