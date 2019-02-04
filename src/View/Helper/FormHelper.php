@@ -58,23 +58,6 @@ class FormHelper extends Helper
     public $helpers = ['Url', 'Html'];
 
     /**
-     * The various pickers that make up a datetime picker.
-     *
-     * @var array
-     */
-    protected $_datetimeParts = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
-
-    /**
-     * Special options used for datetime inputs.
-     *
-     * @var array
-     */
-    protected $_datetimeOptions = [
-        'interval', 'round', 'monthNames', 'minYear', 'maxYear',
-        'orderYear', 'timeFormat', 'second',
-    ];
-
-    /**
      * Default config for the helper.
      *
      * @var array
@@ -108,8 +91,6 @@ class FormHelper extends Helper
             'checkboxFormGroup' => '{{label}}',
             // Wrapper container for checkboxes.
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
-            // Widget ordering for date/time/datetime pickers.
-            'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}',
             // Error message wrapper elements.
             'error' => '<div class="error-message">{{content}}</div>',
             // Container for error items.
@@ -2132,63 +2113,6 @@ class FormHelper extends Helper
     }
 
     /**
-     * Helper method for the various single datetime component methods.
-     *
-     * @param array $options The options array.
-     * @param string $keep The option to not disable.
-     * @return array
-     */
-    protected function _singleDatetime(array $options, string $keep): array
-    {
-        $off = array_diff($this->_datetimeParts, [$keep]);
-        $off = array_combine(
-            $off,
-            array_fill(0, count($off), false)
-        );
-
-        $attributes = array_diff_key(
-            $options,
-            array_flip(array_merge($this->_datetimeOptions, ['value', 'empty']))
-        );
-        $options = $options + $off + [$keep => $attributes];
-
-        if (isset($options['value'])) {
-            $options['val'] = $options['value'];
-        }
-
-        return $options;
-    }
-
-    /**
-     * Returns a SELECT element for days.
-     *
-     * ### Options:
-     *
-     * - `empty` - If true, the empty select option is shown. If a string,
-     *   that string is displayed as the empty element.
-     * - `value` The selected value of the input.
-     *
-     * @param string|null $fieldName Prefix name for the SELECT element
-     * @param array $options Options & HTML attributes for the select element
-     * @return string A generated day select box.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-day-inputs
-     */
-    public function day(?string $fieldName = null, array $options = []): string
-    {
-        $options = $this->_singleDatetime($options, 'day');
-
-        if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 31) {
-            $options['val'] = [
-                'year' => date('Y'),
-                'month' => date('m'),
-                'day' => (int)$options['val'],
-            ];
-        }
-
-        return $this->dateTime($fieldName, $options);
-    }
-
-    /**
      * Returns a SELECT element for years
      *
      * ### Attributes:
@@ -2243,100 +2167,6 @@ class FormHelper extends Helper
         $options['type'] = 'month';
 
         return $this->widget('datetime', $options);
-    }
-
-    /**
-     * Returns a SELECT element for hours.
-     *
-     * ### Attributes:
-     *
-     * - `empty` - If true, the empty select option is shown. If a string,
-     *   that string is displayed as the empty element.
-     * - `value` The selected value of the input.
-     * - `format` Set to 12 or 24 to use 12 or 24 hour formatting. Defaults to 24.
-     *
-     * @param string $fieldName Prefix name for the SELECT element
-     * @param array $options List of HTML attributes
-     * @return string Completed hour select input
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-hour-inputs
-     */
-    public function hour(string $fieldName, array $options = []): string
-    {
-        $options += ['format' => 24];
-        $options = $this->_singleDatetime($options, 'hour');
-
-        $options['timeFormat'] = $options['format'];
-        unset($options['format']);
-
-        if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 24) {
-            $options['val'] = [
-                'hour' => (int)$options['val'],
-                'minute' => date('i'),
-            ];
-        }
-
-        return $this->dateTime($fieldName, $options);
-    }
-
-    /**
-     * Returns a SELECT element for minutes.
-     *
-     * ### Attributes:
-     *
-     * - `empty` - If true, the empty select option is shown. If a string,
-     *   that string is displayed as the empty element.
-     * - `value` The selected value of the input.
-     * - `interval` The interval that minute options should be created at.
-     * - `round` How you want the value rounded when it does not fit neatly into an
-     *   interval. Accepts 'up', 'down', and null.
-     *
-     * @param string $fieldName Prefix name for the SELECT element
-     * @param array $options Array of options.
-     * @return string Completed minute select input.
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-minute-inputs
-     */
-    public function minute(string $fieldName, array $options = []): string
-    {
-        $options = $this->_singleDatetime($options, 'minute');
-
-        if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 60) {
-            $options['val'] = [
-                'hour' => date('H'),
-                'minute' => (int)$options['val'],
-            ];
-        }
-
-        return $this->dateTime($fieldName, $options);
-    }
-
-    /**
-     * Returns a SELECT element for AM or PM.
-     *
-     * ### Attributes:
-     *
-     * - `empty` - If true, the empty select option is shown. If a string,
-     *   that string is displayed as the empty element.
-     * - `value` The selected value of the input.
-     *
-     * @param string $fieldName Prefix name for the SELECT element
-     * @param array $options Array of options
-     * @return string Completed meridian select input
-     * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-meridian-inputs
-     */
-    public function meridian(string $fieldName, array $options = []): string
-    {
-        $options = $this->_singleDatetime($options, 'meridian');
-
-        if (isset($options['val'])) {
-            $hour = date('H');
-            $options['val'] = [
-                'hour' => $hour,
-                'minute' => (int)$options['val'],
-                'meridian' => $hour > 11 ? 'pm' : 'am',
-            ];
-        }
-
-        return $this->dateTime($fieldName, $options);
     }
 
     /**
