@@ -288,7 +288,7 @@ class HasOneTest extends TestCase
             $this->listenerCalled = true;
             $this->assertInstanceOf('Cake\Event\Event', $event);
             $this->assertInstanceOf('Cake\ORM\Query', $query);
-            $this->assertInstanceOf('\ArrayObject', $options);
+            $this->assertInstanceOf('ArrayObject', $options);
             $this->assertFalse($primary);
         });
         $association = new HasOne('Profiles', $config);

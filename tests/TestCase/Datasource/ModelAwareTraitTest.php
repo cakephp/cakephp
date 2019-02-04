@@ -15,21 +15,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
-use Cake\Datasource\ModelAwareTrait;
 use Cake\TestSuite\TestCase;
-
-/**
- * Testing stub.
- */
-class Stub
-{
-    use ModelAwareTrait;
-
-    public function setProps($name)
-    {
-        $this->_setModelClass($name);
-    }
-}
+use TestApp\Stub\Stub;
 
 /**
  * ModelAwareTrait test case
@@ -111,8 +98,8 @@ class ModelAwareTraitTest extends TestCase
         });
 
         $result = $stub->loadModel('Magic', 'Table');
-        $this->assertInstanceOf('\StdClass', $result);
-        $this->assertInstanceOf('\StdClass', $stub->Magic);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertInstanceOf('stdClass', $stub->Magic);
         $this->assertEquals('Magic', $stub->Magic->name);
     }
 

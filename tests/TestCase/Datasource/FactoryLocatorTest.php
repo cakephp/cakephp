@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
 use Cake\TestSuite\TestCase;
+use TestApp\Stub\Stub;
 
 /**
  * FactoryLocatorTest test case
@@ -116,8 +117,8 @@ class FactoryLocatorTest extends TestCase
         });
 
         $result = $stub->loadModel('Magic', 'Table');
-        $this->assertInstanceOf('\StdClass', $result);
-        $this->assertInstanceOf('\StdClass', $stub->Magic);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertInstanceOf('stdClass', $stub->Magic);
         $this->assertEquals('Magic', $stub->Magic->name);
     }
 
@@ -140,8 +141,8 @@ class FactoryLocatorTest extends TestCase
         $stub->setModelType('Test');
 
         $result = $stub->loadModel('Magic');
-        $this->assertInstanceOf('\StdClass', $result);
-        $this->assertInstanceOf('\StdClass', $stub->Magic);
+        $this->assertInstanceOf('stdClass', $result);
+        $this->assertInstanceOf('stdClass', $stub->Magic);
         $this->assertEquals('Magic', $stub->Magic->name);
     }
 
