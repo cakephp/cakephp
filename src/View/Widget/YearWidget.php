@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,12 +17,10 @@ namespace Cake\View\Widget;
 
 use Cake\View\Form\ContextInterface;
 use Cake\View\StringTemplate;
-use DateTime;
 use InvalidArgumentException;
 
 class YearWidget implements WidgetInterface
 {
-
     /**
      * Select box widget.
      *
