@@ -15,17 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior;
 
-use Cake\ORM\Behavior\Translate\TranslateTrait;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-
-/**
- * Stub entity class
- */
-class NumberTree extends Entity
-{
-    use TranslateTrait;
-}
+use TestApp\Model\Entity\NumberTree;
 
 /**
  * Behavior regression tests
@@ -54,8 +45,9 @@ class BehaviorRegressionTest extends TestCase
         $table->setPrimaryKey(['id']);
         $table->addBehavior('Tree');
         $table->addBehavior('Translate', ['fields' => ['name']]);
-        $table->setEntityClass(__NAMESPACE__ . '\\NumberTree');
+        $table->setEntityClass(NumberTree::class);
 
+        /** @var \TestApp\Model\Entity\NumberTree[] $all */
         $all = $table->find('threaded')->find('translations');
         $results = [];
         foreach ($all as $node) {

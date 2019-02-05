@@ -18,100 +18,34 @@ use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
-
-/**
- * CakeStreamWrapper class
- */
-class CakeStreamWrapper implements \ArrayAccess
-{
-    private $_stream;
-
-    private $_query = [];
-
-    private $_data = [
-        'headers' => [
-            'HTTP/1.1 200 OK',
-        ],
-    ];
-
-    public function stream_open($path, $mode, $options, &$openedPath)
-    {
-        if ($path === 'http://throw_exception/') {
-            throw new \Exception();
-        }
-
-        $query = parse_url($path, PHP_URL_QUERY);
-        if ($query) {
-            parse_str($query, $this->_query);
-        }
-
-        $this->_stream = fopen('php://memory', 'rb+');
-        fwrite($this->_stream, str_repeat('x', 20000));
-        rewind($this->_stream);
-
-        return true;
-    }
-
-    public function stream_close()
-    {
-        return fclose($this->_stream);
-    }
-
-    public function stream_read($count)
-    {
-        if (isset($this->_query['sleep'])) {
-            sleep(1);
-        }
-
-        return fread($this->_stream, $count);
-    }
-
-    public function stream_eof()
-    {
-        return feof($this->_stream);
-    }
-
-    public function stream_set_option($option, $arg1, $arg2)
-    {
-        return false;
-    }
-
-    public function offsetExists($offset)
-    {
-        return isset($this->_data[$offset]);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->_data[$offset];
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->_data[$offset] = $value;
-    }
-
-    public function offsetUnset($offset)
-    {
-        unset($this->_data[$offset]);
-    }
-}
+use TestApp\Http\Client\Adapter\CakeStreamWrapper;
 
 /**
  * HTTP stream adapter test.
  */
 class StreamTest extends TestCase
 {
+    /**
+     * @var \Cake\Http\Client\Adapter\Stream|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $stream;
+
+    /**
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
-        $this->stream = $this->getMockBuilder('Cake\Http\Client\Adapter\Stream')
+        $this->stream = $this->getMockBuilder(Stream::class)
             ->setMethods(['_send'])
             ->getMock();
         stream_wrapper_unregister('http');
-        stream_wrapper_register('http', __NAMESPACE__ . '\CakeStreamWrapper');
+        stream_wrapper_register('http', CakeStreamWrapper::class);
     }
 
+    /**
+     * @return void
+     */
     public function tearDown()
     {
         parent::tearDown();
@@ -403,6 +337,7 @@ class StreamTest extends TestCase
         ];
         $content = 'This is the third page';
 
+        /** @var \Cake\Http\Client\Response[] $responses */
         $responses = $this->stream->createResponses($headers, $content);
         $this->assertCount(3, $responses);
         $this->assertEquals('close', $responses[0]->getHeaderLine('Connection'));
