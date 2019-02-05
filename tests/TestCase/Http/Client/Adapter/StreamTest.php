@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Http\Client\Adapter;
 
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\Request;
+use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -135,7 +136,7 @@ class StreamTest extends TestCase
         } catch (\Cake\Core\Exception\Exception $e) {
             $this->markTestSkipped('Could not connect to localhost, skipping');
         }
-        $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
+        $this->assertInstanceOf(Response::class, $responses[0]);
     }
 
     /**
@@ -148,8 +149,9 @@ class StreamTest extends TestCase
         $stream = new Stream();
         $request = new Request('http://dummy/');
 
+        /** @var \Cake\Http\Client\Response[] $responses */
         $responses = $stream->send($request, []);
-        $this->assertInstanceOf('Cake\Http\Client\Response', $responses[0]);
+        $this->assertInstanceOf(Response::class, $responses[0]);
 
         $this->assertEquals(20000, strlen($responses[0]->getStringBody()));
     }

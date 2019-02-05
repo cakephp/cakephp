@@ -22,6 +22,8 @@ use Cake\Controller\Controller;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Countable;
+use Traversable;
 
 /**
  * Extended FlashComponent
@@ -32,6 +34,11 @@ class FlashAliasComponent extends FlashComponent
 
 class ComponentRegistryTest extends TestCase
 {
+    /**
+     * @var \Cake\Controller\ComponentRegistry
+     */
+    protected $Components;
+
     /**
      * setUp
      *
@@ -280,7 +287,7 @@ class ComponentRegistryTest extends TestCase
     public function testCountable(): void
     {
         $this->Components->load('Auth');
-        $this->assertInstanceOf('\Countable', $this->Components);
+        $this->assertInstanceOf(Countable::class, $this->Components);
         $count = count($this->Components);
         $this->assertEquals(1, $count);
     }
@@ -293,7 +300,7 @@ class ComponentRegistryTest extends TestCase
     public function testTraversable(): void
     {
         $this->Components->load('Auth');
-        $this->assertInstanceOf('\Traversable', $this->Components);
+        $this->assertInstanceOf(Traversable::class, $this->Components);
 
         $result = null;
         foreach ($this->Components as $component) {

@@ -87,7 +87,7 @@ class LogTest extends TestCase
     {
         Log::setConfig('valid', ['engine' => 'File']);
         $stream = Log::engine('valid');
-        $this->assertInstanceOf('Cake\Log\Engine\FileLog', $stream);
+        $this->assertInstanceOf(FileLog::class, $stream);
     }
 
     /**
@@ -165,7 +165,7 @@ class LogTest extends TestCase
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
-        $this->assertInstanceOf('Cake\Log\Engine\FileLog', Log::engine('test'));
+        $this->assertInstanceOf(FileLog::class, Log::engine('test'));
         Log::drop('test');
     }
 
@@ -179,7 +179,7 @@ class LogTest extends TestCase
     {
         Log::setConfig('test', $settings);
         $this->assertContains('test', Log::configured());
-        $this->assertInstanceOf('Cake\Log\Engine\FileLog', Log::engine('test'));
+        $this->assertInstanceOf(FileLog::class, Log::engine('test'));
         Log::drop('test');
     }
 
