@@ -22,23 +22,18 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-
-/**
- * Used for testing counter cache with custom finder
- */
-class PostTable extends Table
-{
-    public function findPublished(Query $query, array $options)
-    {
-        return $query->where(['published' => true]);
-    }
-}
+use TestApp\Model\Table\PublishedPostsTable;
 
 /**
  * CounterCacheBehavior test case
  */
 class CounterCacheBehaviorTest extends TestCase
 {
+    /**
+     * @var \TestApp\Model\Table\PublishedPostsTable
+     */
+    protected $post;
+
     /**
      * Fixture
      *
@@ -78,7 +73,7 @@ class CounterCacheBehaviorTest extends TestCase
             'connection' => $this->connection,
         ]);
 
-        $this->post = new PostTable([
+        $this->post = new PublishedPostsTable([
             'alias' => 'Post',
             'table' => 'counter_cache_posts',
             'connection' => $this->connection,

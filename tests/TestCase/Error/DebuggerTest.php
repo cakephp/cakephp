@@ -20,13 +20,7 @@ use Cake\Core\Configure;
 use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
-
-/**
- * DebuggerTestCaseDebugger class
- */
-class DebuggerTestCaseDebugger extends Debugger
-{
-}
+use TestApp\Error\TestDebugger;
 
 class DebuggableThing
 {
@@ -572,16 +566,16 @@ TEXT;
     public function testGetInstance()
     {
         $result = Debugger::getInstance();
-        $this->assertInstanceOf('Cake\Error\Debugger', $result);
+        $this->assertInstanceOf(Debugger::class, $result);
 
-        $result = Debugger::getInstance(__NAMESPACE__ . '\DebuggerTestCaseDebugger');
-        $this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
+        $result = Debugger::getInstance(TestDebugger::class);
+        $this->assertInstanceOf(TestDebugger::class, $result);
 
         $result = Debugger::getInstance();
-        $this->assertInstanceOf(__NAMESPACE__ . '\DebuggerTestCaseDebugger', $result);
+        $this->assertInstanceOf(TestDebugger::class, $result);
 
-        $result = Debugger::getInstance('Cake\Error\Debugger');
-        $this->assertInstanceOf('Cake\Error\Debugger', $result);
+        $result = Debugger::getInstance(Debugger::class);
+        $this->assertInstanceOf(Debugger::class, $result);
     }
 
     /**

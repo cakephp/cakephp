@@ -25,39 +25,8 @@ use Cake\Log\Log;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-
-/**
- * Testing stub.
- */
-class TestErrorHandler extends ErrorHandler
-{
-    /**
-     * Access the response used.
-     *
-     * @var \Cake\Http\Response
-     */
-    public $response;
-
-    /**
-     * Stub output clearing in tests.
-     *
-     * @return void
-     */
-    protected function _clearOutput(): void
-    {
-        // noop
-    }
-
-    /**
-     * Stub sending responses
-     *
-     * @return void
-     */
-    protected function _sendResponse($response): void
-    {
-        $this->response = $response;
-    }
-}
+use Psr\Log\LoggerInterface;
+use TestApp\Error\TestErrorHandler;
 
 /**
  * ErrorHandlerTest class
@@ -65,6 +34,11 @@ class TestErrorHandler extends ErrorHandler
 class ErrorHandlerTest extends TestCase
 {
     protected $_restoreError = false;
+
+    /**
+     * @var \Psr\Log\LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $_logger;
 
     /**
      * error level property
@@ -92,7 +66,7 @@ class ErrorHandlerTest extends TestCase
         Router::setRequestInfo($request);
         Configure::write('debug', true);
 
-        $this->_logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
+        $this->_logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
 
         Log::reset();
         Log::setConfig('error_test', [
