@@ -162,10 +162,10 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested original fields
      * stored in this entity, indexed by field name.
      *
-     * @param array $field List of fields to be returned
+     * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginal(array $field);
+    public function extractOriginal(array $fields);
 
     /**
      * Returns an array with only the original fields

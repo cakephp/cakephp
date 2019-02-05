@@ -444,7 +444,8 @@ trait EntityTrait
      * @param string|array $field The field to unset.
      * @return $this
      */
-    public function unsetProperty($field) {
+    public function unsetProperty($field)
+    {
         return $this->unsetField($field);
     }
 
