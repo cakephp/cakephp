@@ -20,12 +20,9 @@ use Cake\Http\ServerRequest;
 
 /**
  * Session based persistent storage for authenticated user record.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 class SessionStorage implements StorageInterface
 {
-
     use InstanceConfigTrait;
 
     /**

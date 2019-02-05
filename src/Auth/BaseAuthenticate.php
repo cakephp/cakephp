@@ -22,12 +22,9 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 
 /**
  * Base Authentication class with common methods and properties.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class BaseAuthenticate implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
     use LocatorAwareTrait;
 

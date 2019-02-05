@@ -93,12 +93,9 @@ use Zend\Diactoros\Uri;
  * a proxy if you need to use one. The type sub option can be used to
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Client
 {
-
     use InstanceConfigTrait;
 
     /**
