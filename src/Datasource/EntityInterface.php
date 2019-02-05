@@ -27,57 +27,57 @@ use JsonSerializable;
 interface EntityInterface extends ArrayAccess, JsonSerializable
 {
     /**
-     * Sets hidden properties.
+     * Sets hidden fields.
      *
-     * @param array $properties An array of properties to hide from array exports.
-     * @param bool $merge Merge the new properties with the existing. By default false.
+     * @param array $fields An array of fields to hide from array exports.
+     * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
-    public function setHidden(array $properties, bool $merge = false);
+    public function setHidden(array $fields, bool $merge = false);
 
     /**
-     * Gets the hidden properties.
+     * Gets the hidden fields.
      *
      * @return array
      */
     public function getHidden(): array;
 
     /**
-     * Sets the virtual properties on this entity.
+     * Sets the virtual fields on this entity.
      *
-     * @param array $properties An array of properties to treat as virtual.
-     * @param bool $merge Merge the new properties with the existing. By default false.
+     * @param array $fields An array of fields to treat as virtual.
+     * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
-    public function setVirtual(array $properties, bool $merge = false);
+    public function setVirtual(array $fields, bool $merge = false);
 
     /**
-     * Gets the virtual properties on this entity.
+     * Gets the virtual fields on this entity.
      *
      * @return array
      */
     public function getVirtual(): array;
 
     /**
-     * Sets the dirty status of a single property.
+     * Sets the dirty status of a single field.
      *
-     * @param string $property the field to set or check status for
-     * @param bool $isDirty true means the property was changed, false means
+     * @param string $field the field to set or check status for
+     * @param bool $isDirty true means the field was changed, false means
      * it was not changed
      * @return $this
      */
-    public function setDirty(string $property, bool $isDirty);
+    public function setDirty(string $field, bool $isDirty);
 
     /**
-     * Checks if the entity is dirty or if a single property of it is dirty.
+     * Checks if the entity is dirty or if a single field of it is dirty.
      *
-     * @param string|null $property The field to check the status for. Null for the whole entity.
-     * @return bool Whether the property was changed or not
+     * @param string|null $field The field to check the status for. Null for the whole entity.
+     * @return bool Whether the field was changed or not
      */
-    public function isDirty(?string $property = null): bool;
+    public function isDirty(?string $field = null): bool;
 
     /**
-     * Gets the dirty properties.
+     * Gets the dirty fields.
      *
      * @return array
      */
@@ -126,22 +126,22 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function setError($field, $errors, bool $overwrite = false);
 
     /**
-     * Stores whether or not a property value can be changed or set in this entity.
+     * Stores whether or not a field value can be changed or set in this entity.
      *
-     * @param string|array $property single or list of properties to change its accessibility
-     * @param bool $set true marks the property as accessible, false will
+     * @param string|array $field single or list of fields to change its accessibility
+     * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($property, bool $set);
+    public function setAccess($field, bool $set);
 
     /**
-     * Checks if a property is accessible
+     * Checks if a field is accessible
      *
-     * @param string $property Property name to check
+     * @param string $field Field name to check
      * @return bool
      */
-    public function isAccessible(string $property): bool;
+    public function isAccessible(string $field): bool;
 
     /**
      * Sets the source alias
@@ -159,72 +159,72 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function getSource(): string;
 
     /**
-     * Returns an array with the requested original properties
-     * stored in this entity, indexed by property name.
+     * Returns an array with the requested original fields
+     * stored in this entity, indexed by field name.
      *
-     * @param array $properties List of properties to be returned
+     * @param array $field List of fields to be returned
      * @return array
      */
-    public function extractOriginal(array $properties);
+    public function extractOriginal(array $field);
 
     /**
-     * Returns an array with only the original properties
-     * stored in this entity, indexed by property name.
+     * Returns an array with only the original fields
+     * stored in this entity, indexed by field name.
      *
-     * @param array $properties List of properties to be returned
+     * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginalChanged(array $properties);
+    public function extractOriginalChanged(array $fields);
 
     /**
-     * Sets one or multiple properties to the specified value
+     * Sets one or multiple fields to the specified value
      *
-     * @param string|array $property the name of property to set or a list of
-     * properties with their respective values
-     * @param mixed $value The value to set to the property or an array if the
+     * @param string|array $field the name of field to set or a list of
+     * fields with their respective values
+     * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
-     * @param array $options options to be used for setting the property. Allowed option
+     * @param array $options options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
      * @return \Cake\Datasource\EntityInterface
      */
-    public function set($property, $value = null, array $options = []);
+    public function set($field, $value = null, array $options = []);
 
     /**
-     * Returns the value of a property by name
+     * Returns the value of a field by name
      *
-     * @param string $property the name of the property to retrieve
+     * @param string $field the name of the field to retrieve
      * @return mixed
      */
-    public function &get($property);
+    public function &get($field);
 
     /**
-     * Returns whether this entity contains a property named $property
+     * Returns whether this entity contains a field named $field
      * regardless of if it is empty.
      *
-     * @param string|array $property The property to check.
+     * @param string|array $field The field to check.
      * @return bool
      */
-    public function has($property);
+    public function has($field);
 
     /**
-     * Removes a property or list of properties from this entity
+     * Removes a field or list of fields from this entity
      *
-     * @param string|array $property The property to unset.
+     * @param string|array $field The field to unset.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function unsetProperty($property);
+    public function unsetField($field);
 
     /**
-     * Get the list of visible properties.
+     * Get the list of visible fields.
      *
-     * @return array A list of properties that are 'visible' in all representations.
+     * @return array A list of fields that are 'visible' in all representations.
      */
-    public function visibleProperties();
+    public function getVisible(): array;
 
     /**
-     * Returns an array with all the visible properties set in this entity.
+     * Returns an array with all the visible fields set in this entity.
      *
-     * *Note* hidden properties are not visible, and will not be output
+     * *Note* hidden fields are not visible, and will not be output
      * by toArray().
      *
      * @return array
@@ -232,18 +232,18 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     public function toArray();
 
     /**
-     * Returns an array with the requested properties
-     * stored in this entity, indexed by property name
+     * Returns an array with the requested fields
+     * stored in this entity, indexed by field name
      *
-     * @param array $properties list of properties to be returned
-     * @param bool $onlyDirty Return the requested property only if it is dirty
+     * @param array $fields list of fields to be returned
+     * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
-    public function extract(array $properties, $onlyDirty = false);
+    public function extract(array $fields, $onlyDirty = false);
 
     /**
      * Sets the entire entity as clean, which means that it will appear as
-     * no properties being modified or added at all. This is an useful call
+     * no fields being modified or added at all. This is an useful call
      * for an initial object hydration
      *
      * @return void

@@ -336,6 +336,7 @@ class EntityTest extends TestCase
      */
     public function testGetCacheClearedByUnset()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
@@ -346,7 +347,7 @@ class EntityTest extends TestCase
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->get('name'));
 
-        $entity->unsetProperty('name');
+        $entity->unsetField('name');
         $this->assertEquals('Dr. ', $entity->get('name'));
     }
 
@@ -516,10 +517,10 @@ class EntityTest extends TestCase
     public function testUnset()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
-        $entity->unsetProperty('id');
+        $entity->unsetField('id');
         $this->assertFalse($entity->has('id'));
         $this->assertTrue($entity->has('name'));
-        $entity->unsetProperty('name');
+        $entity->unsetField('name');
         $this->assertFalse($entity->has('id'));
     }
 
@@ -532,7 +533,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
         $this->assertTrue($entity->isDirty('name'));
-        $entity->unsetProperty('name');
+        $entity->unsetField('name');
         $this->assertFalse($entity->isDirty('name'), 'Removed properties are not dirty.');
     }
 
@@ -544,7 +545,7 @@ class EntityTest extends TestCase
     public function testUnsetMultiple()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar', 'thing' => 2]);
-        $entity->unsetProperty(['id', 'thing']);
+        $entity->unsetField(['id', 'thing']);
         $this->assertFalse($entity->has('id'));
         $this->assertTrue($entity->has('name'));
         $this->assertFalse($entity->has('thing'));
@@ -572,10 +573,10 @@ class EntityTest extends TestCase
     public function testMagicUnset()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['unsetProperty'])
+            ->setMethods(['unsetField'])
             ->getMock();
         $entity->expects($this->at(0))
-            ->method('unsetProperty')
+            ->method('unsetField')
             ->with('foo');
         unset($entity->foo);
     }
@@ -652,10 +653,10 @@ class EntityTest extends TestCase
     public function testUnsetArrayAccess()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['unsetProperty'])
+            ->setMethods(['unsetField'])
             ->getMock();
         $entity->expects($this->at(0))
-            ->method('unsetProperty')
+            ->method('unsetField')
             ->with('foo');
         unset($entity['foo']);
     }

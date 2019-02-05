@@ -185,8 +185,8 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $node = $table->get(6);
-        $node->unsetProperty('lft');
-        $node->unsetProperty('rght');
+        $node->unsetField('lft');
+        $node->unsetField('rght');
         $count = $this->table->childCount($node, false);
         $this->assertEquals(4, $count);
     }
@@ -499,8 +499,8 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $node = $table->get(8);
-        $node->unsetProperty('lft');
-        $node->unsetProperty('rght');
+        $node->unsetField('lft');
+        $node->unsetField('rght');
         $node = $table->moveUp($node, true);
         $this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
         $expected = [
@@ -629,8 +629,8 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $node = $table->get(1);
-        $node->unsetProperty('lft');
-        $node->unsetProperty('rght');
+        $node->unsetField('lft');
+        $node->unsetField('rght');
         $node = $table->moveDown($node, true);
         $this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
         $expected = [
@@ -1067,8 +1067,8 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = $table->get(6);
-        $entity->unsetProperty('lft');
-        $entity->unsetProperty('rght');
+        $entity->unsetField('lft');
+        $entity->unsetField('rght');
         $entity->parent_id = 2;
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals(9, $entity->lft);
@@ -1129,8 +1129,8 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = $table->get(2);
-        $entity->unsetProperty('lft');
-        $entity->unsetProperty('rght');
+        $entity->unsetField('lft');
+        $entity->unsetField('rght');
         $entity->parent_id = null;
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals(15, $entity->lft);
@@ -1278,8 +1278,8 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = $table->get(1);
-        $entity->unsetProperty('lft');
-        $entity->unsetProperty('rght');
+        $entity->unsetField('lft');
+        $entity->unsetField('rght');
         $this->assertTrue($table->delete($entity));
 
         $expected = [

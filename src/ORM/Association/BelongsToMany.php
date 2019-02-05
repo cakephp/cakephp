@@ -770,7 +770,7 @@ class BelongsToMany extends Association
             // or if we are updating an existing link.
             if ($changedKeys) {
                 $joint->isNew(true);
-                $joint->unsetProperty($junction->getPrimaryKey())
+                $joint->unsetField($junction->getPrimaryKey())
                     ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
             }
             $saved = $junction->save($joint, $options);
