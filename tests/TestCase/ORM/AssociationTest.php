@@ -126,7 +126,7 @@ class AssociationTest extends TestCase
     public function testSetNameAfterTarget()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Association name does not match target table alias.');
+        $this->expectExceptionMessage('Association name "Bar" does not match target table alias');
         $this->association->getTarget();
         $this->association->setName('Bar');
     }
@@ -163,7 +163,7 @@ class AssociationTest extends TestCase
     public function testSetClassNameAfterTarget()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class name doesn\'t match the target table\'s class name.');
+        $this->expectExceptionMessage('The class name "\TestApp\Model\Table\AuthorsTable" doesn\'t match the target table class name of');
         $this->association->getTarget();
         $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
     }
@@ -176,7 +176,7 @@ class AssociationTest extends TestCase
     public function testSetClassNameWithShortSyntaxAfterTarget()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class name doesn\'t match the target table\'s class name.');
+        $this->expectExceptionMessage('The class name "Authors" doesn\'t match the target table class name of');
         $this->association->getTarget();
         $this->association->setClassName('Authors');
     }
