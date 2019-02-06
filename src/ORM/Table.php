@@ -1530,7 +1530,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         } elseif ($search instanceof Query) {
             $query = $search;
         } else {
-            throw new InvalidArgumentException('Search criteria must be an array, callable or Query');
+            throw new InvalidArgumentException(sprintf(
+                'Search criteria must be an array, callable or Query. Got "%s"',
+                getTypeName($search)
+            ));
         }
         $row = $query->first();
         if ($row !== null) {
@@ -2225,9 +2228,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->_behaviors->callFinder($type, [$query, $options]);
         }
 
-        throw new BadMethodCallException(
-            sprintf('Unknown finder method "%s"', $type)
-        );
+        throw new BadMethodCallException(sprintf(
+            'Unknown finder method "%s" on %s.',
+            $type,
+            static::class
+        ));
     }
 
     /**
@@ -2315,7 +2320,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(
-            sprintf('Unknown method "%s"', $method)
+            sprintf('Unknown method "%s" called on %s', $method, static::class)
         );
     }
 
