@@ -751,10 +751,10 @@ class EntityTest extends TestCase
         $phone = $this->getMockBuilder(Entity::class)
             ->setMethods(['jsonSerialize'])
             ->getMock();
-        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue('12345'));
+        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue(['something']));
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
         $entity = new Entity($data);
-        $expected = ['name' => 'James', 'age' => 20, 'phone' => '12345'];
+        $expected = ['name' => 'James', 'age' => 20, 'phone' => ['something']];
         $this->assertEquals(json_encode($expected), json_encode($entity));
     }
 

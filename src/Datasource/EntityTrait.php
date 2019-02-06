@@ -679,7 +679,7 @@ trait EntityTrait
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
-    public function extract(array $fields, $onlyDirty = false)
+    public function extract(array $fields, $onlyDirty = false): array
     {
         $result = [];
         foreach ($fields as $field) {
@@ -701,7 +701,7 @@ trait EntityTrait
      * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginal(array $fields)
+    public function extractOriginal(array $fields): array
     {
         $result = [];
         foreach ($fields as $field) {
@@ -721,7 +721,7 @@ trait EntityTrait
      * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginalChanged(array $fields)
+    public function extractOriginalChanged(array $fields): array
     {
         $result = [];
         foreach ($fields as $field) {
@@ -958,7 +958,7 @@ trait EntityTrait
      * @param string $field the field in this entity to check for errors
      * @return array errors in nested entity if any
      */
-    protected function _nestedErrors($field)
+    protected function _nestedErrors($field): array
     {
         $path = explode('.', $field);
 
@@ -1026,7 +1026,7 @@ trait EntityTrait
      * @param string|null $path The field name for errors.
      * @return array
      */
-    protected function _readError($object, $path = null)
+    protected function _readError($object, $path = null): array
     {
         if ($path !== null && $object instanceof EntityInterface) {
             return $object->getError($path);
