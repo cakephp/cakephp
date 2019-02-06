@@ -160,7 +160,7 @@ trait EntityTrait
      */
     public function __unset($field)
     {
-        $this->unsetField($field);
+        $this->unset($field);
     }
 
     /**
@@ -314,7 +314,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getOriginalValues()
+    public function getOriginalValues(): array
     {
         $originals = $this->_original;
         $originalKeys = array_keys($originals);
@@ -354,7 +354,7 @@ trait EntityTrait
      * @param string|array $field The field or fields to check.
      * @return bool
      */
-    public function has($field)
+    public function has($field): bool
     {
         foreach ((array)$field as $prop) {
             if ($this->get($prop) === null) {
@@ -380,7 +380,7 @@ trait EntityTrait
      * @param string $field The field to check.
      * @return bool
      */
-    public function isEmpty($field)
+    public function isEmpty($field): bool
     {
         $value = $this->get($field);
         if ($value === null
@@ -409,7 +409,7 @@ trait EntityTrait
      * @param string $field The field to check.
      * @return bool
      */
-    public function hasValue($field)
+    public function hasValue($field): bool
     {
         return !$this->isEmpty($field);
     }
@@ -420,14 +420,14 @@ trait EntityTrait
      * ### Examples:
      *
      * ```
-     * $entity->unsetField('name');
-     * $entity->unsetField(['name', 'last_name']);
+     * $entity->unset('name');
+     * $entity->unset(['name', 'last_name']);
      * ```
      *
      * @param string|array $field The field to unset.
      * @return $this
      */
-    public function unsetField($field)
+    public function unset($field)
     {
         $field = (array)$field;
         foreach ($field as $p) {
@@ -440,13 +440,13 @@ trait EntityTrait
     /**
      * Removes a field or list of fields from this entity
      *
-     * @deprecated 4.0.0 Use unsetField() instead.
+     * @deprecated 4.0.0 Use unset() instead. Will be removed in 5.0.
      * @param string|array $field The field to unset.
      * @return $this
      */
     public function unsetProperty($field)
     {
-        return $this->unsetField($field);
+        return $this->unset($field);
     }
 
     /**
@@ -531,7 +531,7 @@ trait EntityTrait
     /**
      * Gets the list of visible fields.
      *
-     * @deprecated 4.0.0 Use getVisible() instead.
+     * @deprecated 4.0.0 Use getVisible() instead. Will be removed in 5.0.
      * @return array
      */
     public function visibleProperties(): array
@@ -548,7 +548,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $result = [];
         foreach ($this->getVisible() as $field) {
@@ -577,7 +577,7 @@ trait EntityTrait
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->extract($this->getVisible());
     }
@@ -585,10 +585,10 @@ trait EntityTrait
     /**
      * Implements isset($entity);
      *
-     * @param mixed $offset The offset to check.
+     * @param string $offset The offset to check.
      * @return bool Success
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
@@ -596,7 +596,7 @@ trait EntityTrait
     /**
      * Implements $entity[$offset];
      *
-     * @param mixed $offset The offset to get.
+     * @param string $offset The offset to get.
      * @return mixed
      */
     public function &offsetGet($offset)
@@ -607,7 +607,7 @@ trait EntityTrait
     /**
      * Implements $entity[$offset] = $value;
      *
-     * @param mixed $offset The offset to set.
+     * @param string $offset The offset to set.
      * @param mixed $value The value to set.
      * @return void
      */
@@ -619,12 +619,12 @@ trait EntityTrait
     /**
      * Implements unset($result[$offset]);
      *
-     * @param mixed $offset The offset to remove.
+     * @param string $offset The offset to remove.
      * @return void
      */
     public function offsetUnset($offset)
     {
-        $this->unsetField($offset);
+        $this->unset($offset);
     }
 
     /**

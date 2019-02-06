@@ -1960,7 +1960,7 @@ class TableTest extends TestCase
         $this->assertEquals($entity->id, self::$nextUserId);
 
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
-        $entity->unsetField('crazyness');
+        $entity->unset('crazyness');
         $this->assertEquals($entity->toArray(), $row->toArray());
     }
 
@@ -6012,7 +6012,7 @@ class TableTest extends TestCase
         $article = $table->get(1);
 
         $cloned = clone $article;
-        $cloned->unsetField('id');
+        $cloned->unset('id');
         $cloned->isNew(true);
         $this->assertSame($cloned, $table->save($cloned));
         $this->assertEquals(

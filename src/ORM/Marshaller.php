@@ -815,7 +815,7 @@ class Marshaller
 
             // Scalar data can't be handled
             if (!is_array($value)) {
-                $record->unsetField('_joinData');
+                $record->unset('_joinData');
                 continue;
             }
 

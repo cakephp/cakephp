@@ -111,7 +111,7 @@ trait TranslateStrategyTrait
             $fields = $translation->extract($this->_config['fields'], false);
             foreach ($fields as $field => $value) {
                 if (strlen($value) === 0) {
-                    $translation->unsetField($field);
+                    $translation->unset($field);
                 }
             }
 
@@ -127,7 +127,7 @@ trait TranslateStrategyTrait
         // If now, the whole _translations property is empty,
         // unset it completely and return
         if (empty($entity->get('_translations'))) {
-            $entity->unsetField('_translations');
+            $entity->unset('_translations');
         }
     }
 
@@ -187,6 +187,6 @@ trait TranslateStrategyTrait
      */
     public function afterSave(EventInterface $event, EntityInterface $entity)
     {
-        $entity->unsetField('_i18n');
+        $entity->unset('_i18n');
     }
 }

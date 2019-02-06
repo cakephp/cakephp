@@ -347,7 +347,7 @@ class EntityTest extends TestCase
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->get('name'));
 
-        $entity->unsetField('name');
+        $entity->unset('name');
         $this->assertEquals('Dr. ', $entity->get('name'));
     }
 
@@ -517,10 +517,10 @@ class EntityTest extends TestCase
     public function testUnset()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
-        $entity->unsetField('id');
+        $entity->unset('id');
         $this->assertFalse($entity->has('id'));
         $this->assertTrue($entity->has('name'));
-        $entity->unsetField('name');
+        $entity->unset('name');
         $this->assertFalse($entity->has('id'));
     }
 
@@ -533,7 +533,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
         $this->assertTrue($entity->isDirty('name'));
-        $entity->unsetField('name');
+        $entity->unset('name');
         $this->assertFalse($entity->isDirty('name'), 'Removed properties are not dirty.');
     }
 
@@ -545,7 +545,7 @@ class EntityTest extends TestCase
     public function testUnsetMultiple()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar', 'thing' => 2]);
-        $entity->unsetField(['id', 'thing']);
+        $entity->unset(['id', 'thing']);
         $this->assertFalse($entity->has('id'));
         $this->assertTrue($entity->has('name'));
         $this->assertFalse($entity->has('thing'));
@@ -573,12 +573,26 @@ class EntityTest extends TestCase
     public function testMagicUnset()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['unsetField'])
+            ->setMethods(['unset'])
             ->getMock();
         $entity->expects($this->at(0))
-            ->method('unsetField')
+            ->method('unset')
             ->with('foo');
         unset($entity->foo);
+    }
+
+    /**
+     * Tests the deprecated unsetProperty() method
+     *
+     * @return void
+     */
+    public function testUnsetDeprecated()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+
+        $entity->unsetProperty('foo');
+        $this->assertNull($entity->foo);
     }
 
     /**
@@ -653,10 +667,10 @@ class EntityTest extends TestCase
     public function testUnsetArrayAccess()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['unsetField'])
+            ->setMethods(['unset'])
             ->getMock();
         $entity->expects($this->at(0))
-            ->method('unsetField')
+            ->method('unset')
             ->with('foo');
         unset($entity['foo']);
     }
@@ -1145,6 +1159,36 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->getHidden());
+    }
+
+    /**
+     * Tests the getVisible() method
+     *
+     * @return void
+     */
+    public function testGetVisible()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+        $entity->bar = 'bar';
+
+        $expected = $entity->getVisible();
+        $this->assertSame(['foo', 'bar'], $expected);
+    }
+
+    /**
+     * Tests the deprecated visibleProperties() method
+     *
+     * @return void
+     */
+    public function testVisiblePropertiesDeprecated()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+        $entity->bar = 'bar';
+
+        $expected = $entity->visibleProperties();
+        $this->assertSame(['foo', 'bar'], $expected);
     }
 
     /**

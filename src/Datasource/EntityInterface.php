@@ -212,7 +212,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string|array $field The field to unset.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function unsetField($field);
+    public function unset($field);
 
     /**
      * Get the list of visible fields.
