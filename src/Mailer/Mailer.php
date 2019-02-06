@@ -69,7 +69,7 @@ use Cake\View\ViewBuilder;
  *     ];
  * }
  *
- * public function onRegistration(EventInterface $event, Entity $entity, ArrayObject $options)
+ * public function onRegistration(EventInterface $event, EntityInterface $entity, ArrayObject $options)
  * {
  *     if ($entity->isNew()) {
  *          $this->send('welcome', [$entity]);

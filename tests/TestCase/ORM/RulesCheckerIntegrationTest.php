@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\RulesChecker;
@@ -108,7 +109,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (Entity $entity) {
+                function (EntityInterface $entity) {
                     return false;
                 },
                 ['errorField' => 'title', 'message' => 'This is an error']
@@ -752,7 +753,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (EventInterface $event, Entity $entity, \ArrayObject $options, $operation) {
+            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -792,7 +793,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (EventInterface $event, Entity $entity, \ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, EntityInterface $entity, \ArrayObject $options, $result, $operation) {
                 $this->assertEquals(
                     [
                         'atomic' => true,

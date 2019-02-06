@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\Database\Connection;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -550,7 +551,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->at(1))
             ->method('save')
-            ->will($this->returnCallback(function (Entity $e, $opts) use ($entity) {
+            ->will($this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
                 $expected = ['article_id' => 1, 'tag_id' => 2];
                 $this->assertEquals($expected, $e->toArray());
                 $this->assertEquals(['foo' => 'bar'], $opts);
@@ -561,7 +562,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->at(2))
             ->method('save')
-            ->will($this->returnCallback(function (Entity $e, $opts) use ($entity) {
+            ->will($this->returnCallback(function (EntityInterface $e, $opts) use ($entity) {
                 $expected = ['article_id' => 1, 'tag_id' => 3];
                 $this->assertEquals($expected, $e->toArray());
                 $this->assertEquals(['foo' => 'bar'], $opts);
@@ -605,7 +606,7 @@ class BelongsToManyTest extends TestCase
 
         $joint->expects($this->once())
             ->method('save')
-            ->will($this->returnCallback(function (Entity $e, $opts) {
+            ->will($this->returnCallback(function (EntityInterface $e, $opts) {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;

@@ -2715,7 +2715,7 @@ class TableTest extends TestCase
             new Entity(['name' => 'jose']),
         ];
 
-        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, Entity $entity) {
+        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, EntityInterface $entity) {
             if ($entity->name === 'jose') {
                 throw new \Exception('Oh noes');
             }
@@ -4774,7 +4774,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -4809,7 +4809,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -4846,7 +4846,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -4879,13 +4879,13 @@ class TableTest extends TestCase
         $actualDeleteOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
             }
         );
@@ -4938,7 +4938,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -4974,7 +4974,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5017,7 +5017,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5054,13 +5054,13 @@ class TableTest extends TestCase
         $actualDeleteOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualSaveOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions) {
                 $actualSaveOptions = $options->getArrayCopy();
             }
         );
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualDeleteOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions) {
                 $actualDeleteOptions = $options->getArrayCopy();
             }
         );
@@ -5115,7 +5115,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5147,7 +5147,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$actualOptions) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions) {
                 $actualOptions = $options->getArrayCopy();
             }
         );
@@ -5932,14 +5932,14 @@ class TableTest extends TestCase
         );
         $eventManager->on(
             'Model.beforeRules',
-            function (EventInterface $event, Entity $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
                 $this->assertInternalType('string', $operation);
                 $beforeRulesCount ++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
-            function (EventInterface $event, Entity $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
                 $this->assertInternalType('bool', $result);
                 $this->assertInternalType('string', $operation);
                 $afterRulesCount ++;
@@ -5947,13 +5947,13 @@ class TableTest extends TestCase
         );
         $eventManager->on(
             'Model.beforeSave',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$beforeSaveCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount) {
                 $beforeSaveCount ++;
             }
         );
         $eventManager->on(
             'Model.afterSave',
-            $afterSaveCallback = function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$afterSaveCount) {
+            $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount) {
                 $afterSaveCount ++;
             }
         );
@@ -5969,13 +5969,13 @@ class TableTest extends TestCase
         $afterDeleteCount = 0;
         $eventManager->on(
             'Model.beforeDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$beforeDeleteCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount) {
                 $beforeDeleteCount ++;
             }
         );
         $eventManager->on(
             'Model.afterDelete',
-            function (EventInterface $event, Entity $entity, ArrayObject $options) use (&$afterDeleteCount) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount) {
                 $afterDeleteCount ++;
             }
         );
