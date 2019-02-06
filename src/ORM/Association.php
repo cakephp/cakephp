@@ -252,7 +252,11 @@ abstract class Association
         if ($this->_targetTable !== null) {
             $alias = $this->_targetTable->getAlias();
             if ($alias !== $name) {
-                throw new InvalidArgumentException('Association name does not match target table alias.');
+                throw new InvalidArgumentException(sprintf(
+                    'Association name "%s" does not match target table alias "%s".',
+                    $name,
+                    $alias
+                ));
             }
         }
 
@@ -308,9 +312,11 @@ abstract class Association
         if ($this->_targetTable !== null &&
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
-            throw new InvalidArgumentException(
-                'The class name doesn\'t match the target table\'s class name.'
-            );
+            throw new InvalidArgumentException(sprintf(
+                'The class name of "%s" doesn\'t match the target table\'s class name of "%s".',
+                $className,
+                get_class($this->_targetTable)
+            ));
         }
 
         $this->_className = $className;
@@ -620,9 +626,11 @@ abstract class Association
     public function setStrategy(string $name)
     {
         if (!in_array($name, $this->_validStrategies)) {
-            throw new InvalidArgumentException(
-                sprintf('Invalid strategy "%s" was provided', $name)
-            );
+            throw new InvalidArgumentException(sprintf(
+                'Invalid strategy "%s" was provided. Valid options are (%s).',
+                $name,
+                implode(', ', $this->_validStrategies)
+            ));
         }
         $this->_strategy = $name;
 
