@@ -58,26 +58,6 @@ class MiddlewareQueue implements Countable, SeekableIterator
     }
 
     /**
-     * Get the middleware at the provided index.
-     *
-     * @param int $index The index to fetch.
-     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
-     *   if the index is undefined.
-     */
-    public function get(int $index): ?MiddlewareInterface
-    {
-        if (!isset($this->queue[$index])) {
-            return null;
-        }
-
-        if ($this->queue[$index] instanceof MiddlewareInterface) {
-            return $this->queue[$index];
-        }
-
-        return $this->queue[$index] = $this->resolve($this->queue[$index]);
-    }
-
-    /**
      * Resolve middleware name to a PSR 15 compliant middleware instance.
      *
      * @param string|callable $middleware The middleware to resolve.
@@ -279,12 +259,20 @@ class MiddlewareQueue implements Countable, SeekableIterator
     /**
      *  Returns the current middleware.
      *
-     * @return \Psr\Http\Server\MiddlewareInterface
+     * @return \Psr\Http\Server\MiddlewareInterface|null
      * @see \Iterator::current()
      */
     public function current()
     {
-        return $this->get($this->position);
+        if (!isset($this->queue[$this->position])) {
+            return null;
+        }
+
+        if ($this->queue[$this->position] instanceof MiddlewareInterface) {
+            return $this->queue[$this->position];
+        }
+
+        return $this->queue[$this->position] = $this->resolve($this->queue[$this->position]);
     }
 
     /**
