@@ -17,6 +17,7 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
+use Cake\Utility\Security;
 
 /**
  * Digest Authentication adapter for AuthComponent.
