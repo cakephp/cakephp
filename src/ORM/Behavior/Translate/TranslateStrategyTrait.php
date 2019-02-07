@@ -105,12 +105,13 @@ trait TranslateStrategyTrait
      */
     protected function unsetEmptyFields($entity)
     {
+        /** @var \Cake\ORM\Entity[] $translations */
         $translations = (array)$entity->get('_translations');
         foreach ($translations as $locale => $translation) {
             $fields = $translation->extract($this->_config['fields'], false);
             foreach ($fields as $field => $value) {
                 if (strlen($value) === 0) {
-                    $translation->unsetProperty($field);
+                    $translation->unset($field);
                 }
             }
 
@@ -126,7 +127,7 @@ trait TranslateStrategyTrait
         // If now, the whole _translations property is empty,
         // unset it completely and return
         if (empty($entity->get('_translations'))) {
-            $entity->unsetProperty('_translations');
+            $entity->unset('_translations');
         }
     }
 
@@ -186,6 +187,6 @@ trait TranslateStrategyTrait
      */
     public function afterSave(EventInterface $event, EntityInterface $entity)
     {
-        $entity->unsetProperty('_i18n');
+        $entity->unset('_i18n');
     }
 }

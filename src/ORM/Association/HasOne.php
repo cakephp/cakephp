@@ -115,7 +115,7 @@ class HasOne extends Association
         $targetEntity->set($properties, ['guard' => false]);
 
         if (!$this->getTarget()->save($targetEntity, $options)) {
-            $targetEntity->unsetProperty(array_keys($properties));
+            $targetEntity->unset(array_keys($properties));
 
             return false;
         }

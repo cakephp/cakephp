@@ -23,26 +23,26 @@ use Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
- * methods for retrieving and storing properties associated in this row.
+ * methods for retrieving and storing fields associated in this row.
  */
 trait EntityTrait
 {
     /**
-     * Holds all properties and their values for this entity
+     * Holds all fields and their values for this entity.
      *
      * @var array
      */
-    protected $_properties = [];
+    protected $_fields = [];
 
     /**
-     * Holds all properties that have been changed and their original values for this entity
+     * Holds all fields that have been changed and their original values for this entity.
      *
      * @var array
      */
     protected $_original = [];
 
     /**
-     * List of property names that should **not** be included in JSON or Array
+     * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
      * @var array
@@ -59,7 +59,7 @@ trait EntityTrait
     protected $_virtual = [];
 
     /**
-     * Holds a list of the properties that were modified or added after this object
+     * Holds a list of the fields that were modified or added after this object
      * was originally created.
      *
      * @var array
@@ -83,27 +83,27 @@ trait EntityTrait
     protected $_new = true;
 
     /**
-     * List of errors per field as stored in this object
+     * List of errors per field as stored in this object.
      *
      * @var array
      */
     protected $_errors = [];
 
     /**
-     * List of invalid fields and their data for errors upon validation/patching
+     * List of invalid fields and their data for errors upon validation/patching.
      *
      * @var array
      */
     protected $_invalid = [];
 
     /**
-     * Map of properties in this entity that can be safely assigned, each
-     * property name points to a boolean indicating its status. An empty array
-     * means no properties are accessible
+     * Map of fields in this entity that can be safely assigned, each
+     * field name points to a boolean indicating its status. An empty array
+     * means no fields are accessible
      *
-     * The special property '\*' can also be mapped, meaning that any other property
+     * The special field '\*' can also be mapped, meaning that any other field
      * not defined in the map will take its value. For example, `'\*' => true`
-     * means that any property not defined in the map will be accessible by default
+     * means that any field not defined in the map will be accessible by default
      *
      * @var array
      */
@@ -117,54 +117,54 @@ trait EntityTrait
     protected $_registryAlias = '';
 
     /**
-     * Magic getter to access properties that have been set in this entity
+     * Magic getter to access fields that have been set in this entity
      *
-     * @param string $property Name of the property to access
+     * @param string $field Name of the field to access
      * @return mixed
      */
-    public function &__get($property)
+    public function &__get($field)
     {
-        return $this->get($property);
+        return $this->get($field);
     }
 
     /**
-     * Magic setter to add or edit a property in this entity
+     * Magic setter to add or edit a field in this entity
      *
-     * @param string $property The name of the property to set
-     * @param mixed $value The value to set to the property
+     * @param string $field The name of the field to set
+     * @param mixed $value The value to set to the field
      * @return void
      */
-    public function __set($property, $value)
+    public function __set($field, $value)
     {
-        $this->set($property, $value);
+        $this->set($field, $value);
     }
 
     /**
-     * Returns whether this entity contains a property named $property
+     * Returns whether this entity contains a field named $field
      * regardless of if it is empty.
      *
-     * @param string $property The property to check.
+     * @param string $field The field to check.
      * @return bool
      * @see \Cake\ORM\Entity::has()
      */
-    public function __isset($property)
+    public function __isset($field)
     {
-        return $this->has($property);
+        return $this->has($field);
     }
 
     /**
-     * Removes a property from this entity
+     * Removes a field from this entity
      *
-     * @param string $property The property to unset
+     * @param string $field The field to unset
      * @return void
      */
-    public function __unset($property)
+    public function __unset($field)
     {
-        $this->unsetProperty($property);
+        $this->unset($field);
     }
 
     /**
-     * Sets a single property inside this entity.
+     * Sets a single field inside this entity.
      *
      * ### Example:
      *
@@ -172,9 +172,9 @@ trait EntityTrait
      * $entity->set('name', 'Andrew');
      * ```
      *
-     * It is also possible to mass-assign multiple properties to this entity
-     * with one call by passing a hashed array as properties in the form of
-     * property => value pairs
+     * It is also possible to mass-assign multiple fields to this entity
+     * with one call by passing a hashed array as fields in the form of
+     * field => value pairs
      *
      * ### Example:
      *
@@ -185,7 +185,7 @@ trait EntityTrait
      * ```
      *
      * Some times it is handy to bypass setter functions in this entity when assigning
-     * properties. You can achieve this by disabling the `setter` option using the
+     * fields. You can achieve this by disabling the `setter` option using the
      * `$options` parameter:
      *
      * ```
@@ -194,91 +194,91 @@ trait EntityTrait
      * ```
      *
      * Mass assignment should be treated carefully when accepting user input, by default
-     * entities will guard all fields when properties are assigned in bulk. You can disable
+     * entities will guard all fields when fields are assigned in bulk. You can disable
      * the guarding for a single set call with the `guard` option:
      *
      * ```
      * $entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);
      * ```
      *
-     * You do not need to use the guard option when assigning properties individually:
+     * You do not need to use the guard option when assigning fields individually:
      *
      * ```
      * // No need to use the guard option.
      * $entity->set('name', 'Andrew');
      * ```
      *
-     * @param string|array $property the name of property to set or a list of
-     * properties with their respective values
-     * @param mixed $value The value to set to the property or an array if the
+     * @param string|array $field the name of field to set or a list of
+     * fields with their respective values
+     * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
-     * @param array $options options to be used for setting the property. Allowed option
+     * @param array $options options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function set($property, $value = null, array $options = [])
+    public function set($field, $value = null, array $options = [])
     {
-        if (is_string($property) && $property !== '') {
+        if (is_string($field) && $field !== '') {
             $guard = false;
-            $property = [$property => $value];
+            $field = [$field => $value];
         } else {
             $guard = true;
             $options = (array)$value;
         }
 
-        if (!is_array($property)) {
-            throw new InvalidArgumentException('Cannot set an empty property');
+        if (!is_array($field)) {
+            throw new InvalidArgumentException('Cannot set an empty field');
         }
         $options += ['setter' => true, 'guard' => $guard];
 
-        foreach ($property as $p => $value) {
-            if ($options['guard'] === true && !$this->isAccessible($p)) {
+        foreach ($field as $name => $value) {
+            if ($options['guard'] === true && !$this->isAccessible($name)) {
                 continue;
             }
 
-            $this->setDirty($p, true);
+            $this->setDirty($name, true);
 
-            if (!array_key_exists($p, $this->_original) &&
-                array_key_exists($p, $this->_properties) &&
-                $this->_properties[$p] !== $value
+            if (!array_key_exists($name, $this->_original) &&
+                array_key_exists($name, $this->_fields) &&
+                $this->_fields[$name] !== $value
             ) {
-                $this->_original[$p] = $this->_properties[$p];
+                $this->_original[$name] = $this->_fields[$name];
             }
 
             if (!$options['setter']) {
-                $this->_properties[$p] = $value;
+                $this->_fields[$name] = $value;
                 continue;
             }
 
-            $setter = static::_accessor($p, 'set');
+            $setter = static::_accessor($name, 'set');
             if ($setter) {
                 $value = $this->{$setter}($value);
             }
-            $this->_properties[$p] = $value;
+            $this->_fields[$name] = $value;
         }
 
         return $this;
     }
 
     /**
-     * Returns the value of a property by name
+     * Returns the value of a field by name
      *
-     * @param string $property the name of the property to retrieve
+     * @param string $field the name of the field to retrieve
      * @return mixed
-     * @throws \InvalidArgumentException if an empty property name is passed
+     * @throws \InvalidArgumentException if an empty field name is passed
      */
-    public function &get($property)
+    public function &get($field)
     {
-        if (!strlen((string)$property)) {
-            throw new InvalidArgumentException('Cannot get an empty property');
+        if (!strlen((string)$field)) {
+            throw new InvalidArgumentException('Cannot get an empty field');
         }
 
         $value = null;
-        $method = static::_accessor($property, 'get');
+        $method = static::_accessor($field, 'get');
 
-        if (isset($this->_properties[$property])) {
-            $value =& $this->_properties[$property];
+        if (isset($this->_fields[$field])) {
+            $value =& $this->_fields[$field];
         }
 
         if ($method) {
@@ -291,22 +291,22 @@ trait EntityTrait
     }
 
     /**
-     * Returns the value of an original property by name
+     * Returns the value of an original field by name
      *
-     * @param string $property the name of the property for which original value is retrieved.
+     * @param string $field the name of the field for which original value is retrieved.
      * @return mixed
-     * @throws \InvalidArgumentException if an empty property name is passed.
+     * @throws \InvalidArgumentException if an empty field name is passed.
      */
-    public function getOriginal($property)
+    public function getOriginal($field)
     {
-        if (!strlen((string)$property)) {
-            throw new InvalidArgumentException('Cannot get an empty property');
+        if (!strlen((string)$field)) {
+            throw new InvalidArgumentException('Cannot get an empty field');
         }
-        if (array_key_exists($property, $this->_original)) {
-            return $this->_original[$property];
+        if (array_key_exists($field, $this->_original)) {
+            return $this->_original[$field];
         }
 
-        return $this->get($property);
+        return $this->get($field);
     }
 
     /**
@@ -314,11 +314,11 @@ trait EntityTrait
      *
      * @return array
      */
-    public function getOriginalValues()
+    public function getOriginalValues(): array
     {
         $originals = $this->_original;
         $originalKeys = array_keys($originals);
-        foreach ($this->_properties as $key => $value) {
+        foreach ($this->_fields as $key => $value) {
             if (!in_array($key, $originalKeys)) {
                 $originals[$key] = $value;
             }
@@ -328,7 +328,7 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether this entity contains a property named $property
+     * Returns whether this entity contains a field named $field
      * that contains a non-null value.
      *
      * ### Example:
@@ -340,23 +340,23 @@ trait EntityTrait
      * $entity->has('last_name'); // false
      * ```
      *
-     * You can check multiple properties by passing an array:
+     * You can check multiple fields by passing an array:
      *
      * ```
      * $entity->has(['name', 'last_name']);
      * ```
      *
-     * All properties must not be null to get a truthy result.
+     * All fields must not be null to get a truthy result.
      *
-     * When checking multiple properties. All properties must not be null
+     * When checking multiple fields. All fields must not be null
      * in order for true to be returned.
      *
-     * @param string|array $property The property or properties to check.
+     * @param string|array $field The field or fields to check.
      * @return bool
      */
-    public function has($property)
+    public function has($field): bool
     {
-        foreach ((array)$property as $prop) {
+        foreach ((array)$field as $prop) {
             if ($this->get($prop) === null) {
                 return false;
             }
@@ -366,7 +366,7 @@ trait EntityTrait
     }
 
     /**
-     * Checks that a property is empty
+     * Checks that a field is empty
      *
      * This is not working like the PHP `empty()` function. The method will
      * return true for:
@@ -377,12 +377,12 @@ trait EntityTrait
      *
      * and false in all other cases.
      *
-     * @param string $property The property to check.
+     * @param string $field The field to check.
      * @return bool
      */
-    public function isEmpty($property)
+    public function isEmpty($field): bool
     {
-        $value = $this->get($property);
+        $value = $this->get($field);
         if ($value === null
             || (is_array($value) && empty($value)
             || (is_string($value) && empty($value)))
@@ -394,7 +394,7 @@ trait EntityTrait
     }
 
     /**
-     * Checks tha a property has a value.
+     * Checks tha a field has a value.
      *
      * This method will return true for
      *
@@ -406,60 +406,72 @@ trait EntityTrait
      *
      * and false in all other cases.
      *
-     * @param string $property The property to check.
+     * @param string $field The field to check.
      * @return bool
      */
-    public function hasValue($property)
+    public function hasValue($field): bool
     {
-        return !$this->isEmpty($property);
+        return !$this->isEmpty($field);
     }
 
     /**
-     * Removes a property or list of properties from this entity
+     * Removes a field or list of fields from this entity
      *
      * ### Examples:
      *
      * ```
-     * $entity->unsetProperty('name');
-     * $entity->unsetProperty(['name', 'last_name']);
+     * $entity->unset('name');
+     * $entity->unset(['name', 'last_name']);
      * ```
      *
-     * @param string|array $property The property to unset.
+     * @param string|array $field The field to unset.
      * @return $this
      */
-    public function unsetProperty($property)
+    public function unset($field)
     {
-        $property = (array)$property;
-        foreach ($property as $p) {
-            unset($this->_properties[$p], $this->_dirty[$p]);
+        $field = (array)$field;
+        foreach ($field as $p) {
+            unset($this->_fields[$p], $this->_dirty[$p]);
         }
 
         return $this;
     }
 
     /**
-     * Sets hidden properties.
+     * Removes a field or list of fields from this entity
      *
-     * @param array $properties An array of properties to hide from array exports.
-     * @param bool $merge Merge the new properties with the existing. By default false.
+     * @deprecated 4.0.0 Use unset() instead. Will be removed in 5.0.
+     * @param string|array $field The field to unset.
      * @return $this
      */
-    public function setHidden(array $properties, bool $merge = false)
+    public function unsetProperty($field)
+    {
+        return $this->unset($field);
+    }
+
+    /**
+     * Sets hidden fields.
+     *
+     * @param array $fields An array of fields to hide from array exports.
+     * @param bool $merge Merge the new fields with the existing. By default false.
+     * @return $this
+     */
+    public function setHidden(array $fields, bool $merge = false)
     {
         if ($merge === false) {
-            $this->_hidden = $properties;
+            $this->_hidden = $fields;
 
             return $this;
         }
 
-        $properties = array_merge($this->_hidden, $properties);
-        $this->_hidden = array_unique($properties);
+        $fields = array_merge($this->_hidden, $fields);
+        $this->_hidden = array_unique($fields);
 
         return $this;
     }
 
     /**
-     * Gets the hidden properties.
+     * Gets the hidden fields.
      *
      * @return array
      */
@@ -469,28 +481,28 @@ trait EntityTrait
     }
 
     /**
-     * Sets the virtual properties on this entity.
+     * Sets the virtual fields on this entity.
      *
-     * @param array $properties An array of properties to treat as virtual.
-     * @param bool $merge Merge the new properties with the existing. By default false.
+     * @param array $fields An array of fields to treat as virtual.
+     * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
-    public function setVirtual(array $properties, bool $merge = false)
+    public function setVirtual(array $fields, bool $merge = false)
     {
         if ($merge === false) {
-            $this->_virtual = $properties;
+            $this->_virtual = $fields;
 
             return $this;
         }
 
-        $properties = array_merge($this->_virtual, $properties);
-        $this->_virtual = array_unique($properties);
+        $fields = array_merge($this->_virtual, $fields);
+        $this->_virtual = array_unique($fields);
 
         return $this;
     }
 
     /**
-     * Gets the virtual properties on this entity.
+     * Gets the virtual fields on this entity.
      *
      * @return array
      */
@@ -500,49 +512,60 @@ trait EntityTrait
     }
 
     /**
-     * Get the list of visible properties.
+     * Gets the list of visible fields.
      *
-     * The list of visible properties is all standard properties
-     * plus virtual properties minus hidden properties.
+     * The list of visible fields is all standard fields
+     * plus virtual fields minus hidden fields.
      *
-     * @return array A list of properties that are 'visible' in all
+     * @return array A list of fields that are 'visible' in all
      *     representations.
      */
-    public function visibleProperties()
+    public function getVisible(): array
     {
-        $properties = array_keys($this->_properties);
-        $properties = array_merge($properties, $this->_virtual);
+        $fields = array_keys($this->_fields);
+        $fields = array_merge($fields, $this->_virtual);
 
-        return array_diff($properties, $this->_hidden);
+        return array_diff($fields, $this->_hidden);
     }
 
     /**
-     * Returns an array with all the properties that have been set
+     * Gets the list of visible fields.
+     *
+     * @deprecated 4.0.0 Use getVisible() instead. Will be removed in 5.0.
+     * @return array
+     */
+    public function visibleProperties(): array
+    {
+        return $this->getVisible();
+    }
+
+    /**
+     * Returns an array with all the fields that have been set
      * to this entity
      *
-     * This method will recursively transform entities assigned to properties
+     * This method will recursively transform entities assigned to fields
      * into arrays as well.
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         $result = [];
-        foreach ($this->visibleProperties() as $property) {
-            $value = $this->get($property);
+        foreach ($this->getVisible() as $field) {
+            $value = $this->get($field);
             if (is_array($value)) {
-                $result[$property] = [];
+                $result[$field] = [];
                 foreach ($value as $k => $entity) {
                     if ($entity instanceof EntityInterface) {
-                        $result[$property][$k] = $entity->toArray();
+                        $result[$field][$k] = $entity->toArray();
                     } else {
-                        $result[$property][$k] = $entity;
+                        $result[$field][$k] = $entity;
                     }
                 }
             } elseif ($value instanceof EntityInterface) {
-                $result[$property] = $value->toArray();
+                $result[$field] = $value->toArray();
             } else {
-                $result[$property] = $value;
+                $result[$field] = $value;
             }
         }
 
@@ -550,22 +573,22 @@ trait EntityTrait
     }
 
     /**
-     * Returns the properties that will be serialized as JSON
+     * Returns the fields that will be serialized as JSON
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
-        return $this->extract($this->visibleProperties());
+        return $this->extract($this->getVisible());
     }
 
     /**
      * Implements isset($entity);
      *
-     * @param mixed $offset The offset to check.
+     * @param string $offset The offset to check.
      * @return bool Success
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
@@ -573,7 +596,7 @@ trait EntityTrait
     /**
      * Implements $entity[$offset];
      *
-     * @param mixed $offset The offset to get.
+     * @param string $offset The offset to get.
      * @return mixed
      */
     public function &offsetGet($offset)
@@ -584,7 +607,7 @@ trait EntityTrait
     /**
      * Implements $entity[$offset] = $value;
      *
-     * @param mixed $offset The offset to set.
+     * @param string $offset The offset to set.
      * @param mixed $value The value to set.
      * @return void
      */
@@ -596,12 +619,12 @@ trait EntityTrait
     /**
      * Implements unset($result[$offset]);
      *
-     * @param mixed $offset The offset to remove.
+     * @param string $offset The offset to remove.
      * @return void
      */
     public function offsetUnset($offset)
     {
-        $this->unsetProperty($offset);
+        $this->unset($offset);
     }
 
     /**
@@ -649,19 +672,19 @@ trait EntityTrait
     }
 
     /**
-     * Returns an array with the requested properties
-     * stored in this entity, indexed by property name
+     * Returns an array with the requested fields
+     * stored in this entity, indexed by field name
      *
-     * @param array $properties list of properties to be returned
-     * @param bool $onlyDirty Return the requested property only if it is dirty
+     * @param array $fields list of fields to be returned
+     * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
-    public function extract(array $properties, $onlyDirty = false)
+    public function extract(array $fields, $onlyDirty = false): array
     {
         $result = [];
-        foreach ($properties as $property) {
-            if (!$onlyDirty || $this->isDirty($property)) {
-                $result[$property] = $this->get($property);
+        foreach ($fields as $field) {
+            if (!$onlyDirty || $this->isDirty($field)) {
+                $result[$field] = $this->get($field);
             }
         }
 
@@ -669,42 +692,42 @@ trait EntityTrait
     }
 
     /**
-     * Returns an array with the requested original properties
-     * stored in this entity, indexed by property name.
+     * Returns an array with the requested original fields
+     * stored in this entity, indexed by field name.
      *
-     * Properties that are unchanged from their original value will be included in the
+     * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array $properties List of properties to be returned
+     * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginal(array $properties)
+    public function extractOriginal(array $fields): array
     {
         $result = [];
-        foreach ($properties as $property) {
-            $result[$property] = $this->getOriginal($property);
+        foreach ($fields as $field) {
+            $result[$field] = $this->getOriginal($field);
         }
 
         return $result;
     }
 
     /**
-     * Returns an array with only the original properties
-     * stored in this entity, indexed by property name.
+     * Returns an array with only the original fields
+     * stored in this entity, indexed by field name.
      *
-     * This method will only return properties that have been modified since
-     * the entity was built. Unchanged properties will be omitted.
+     * This method will only return fields that have been modified since
+     * the entity was built. Unchanged fields will be omitted.
      *
-     * @param array $properties List of properties to be returned
+     * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginalChanged(array $properties)
+    public function extractOriginalChanged(array $fields): array
     {
         $result = [];
-        foreach ($properties as $property) {
-            $original = $this->getOriginal($property);
-            if ($original !== $this->get($property)) {
-                $result[$property] = $original;
+        foreach ($fields as $field) {
+            $original = $this->getOriginal($field);
+            if ($original !== $this->get($field)) {
+                $result[$field] = $original;
             }
         }
 
@@ -712,44 +735,44 @@ trait EntityTrait
     }
 
     /**
-     * Sets the dirty status of a single property.
+     * Sets the dirty status of a single field.
      *
-     * @param string $property the field to set or check status for
-     * @param bool $isDirty true means the property was changed, false means
+     * @param string $field the field to set or check status for
+     * @param bool $isDirty true means the field was changed, false means
      * it was not changed. Defaults to true.
      * @return $this
      */
-    public function setDirty(string $property, bool $isDirty = true)
+    public function setDirty(string $field, bool $isDirty = true)
     {
         if ($isDirty === false) {
-            unset($this->_dirty[$property]);
+            unset($this->_dirty[$field]);
 
             return $this;
         }
 
-        $this->_dirty[$property] = true;
-        unset($this->_errors[$property], $this->_invalid[$property]);
+        $this->_dirty[$field] = true;
+        unset($this->_errors[$field], $this->_invalid[$field]);
 
         return $this;
     }
 
     /**
-     * Checks if the entity is dirty or if a single property of it is dirty.
+     * Checks if the entity is dirty or if a single field of it is dirty.
      *
-     * @param string|null $property The field to check the status for. Null for the whole entity.
-     * @return bool Whether the property was changed or not
+     * @param string|null $field The field to check the status for. Null for the whole entity.
+     * @return bool Whether the field was changed or not
      */
-    public function isDirty(?string $property = null): bool
+    public function isDirty(?string $field = null): bool
     {
-        if ($property === null) {
+        if ($field === null) {
             return !empty($this->_dirty);
         }
 
-        return isset($this->_dirty[$property]);
+        return isset($this->_dirty[$field]);
     }
 
     /**
-     * Gets the dirty properties.
+     * Gets the dirty fields.
      *
      * @return string[]
      */
@@ -760,7 +783,7 @@ trait EntityTrait
 
     /**
      * Sets the entire entity as clean, which means that it will appear as
-     * no properties being modified or added at all. This is an useful call
+     * no fields being modified or added at all. This is an useful call
      * for an initial object hydration
      *
      * @return void
@@ -794,7 +817,7 @@ trait EntityTrait
         $new = (bool)$new;
 
         if ($new) {
-            foreach ($this->_properties as $k => $p) {
+            foreach ($this->_fields as $k => $p) {
                 $this->_dirty[$k] = true;
             }
         }
@@ -818,8 +841,8 @@ trait EntityTrait
             return false;
         }
 
-        foreach ($this->_properties as $property) {
-            if ($this->_readHasErrors($property)) {
+        foreach ($this->_fields as $field) {
+            if ($this->_readHasErrors($field)) {
                 return true;
             }
         }
@@ -834,7 +857,7 @@ trait EntityTrait
      */
     public function getErrors(): array
     {
-        $diff = array_diff_key($this->_properties, $this->_errors);
+        $diff = array_diff_key($this->_fields, $this->_errors);
 
         return $this->_errors + (new Collection($diff))
             ->filter(function ($value) {
@@ -935,7 +958,7 @@ trait EntityTrait
      * @param string $field the field in this entity to check for errors
      * @return array errors in nested entity if any
      */
-    protected function _nestedErrors($field)
+    protected function _nestedErrors($field): array
     {
         $path = explode('.', $field);
 
@@ -1003,7 +1026,7 @@ trait EntityTrait
      * @param string|null $path The field name for errors.
      * @return array
      */
-    protected function _readError($object, $path = null)
+    protected function _readError($object, $path = null): array
     {
         if ($path !== null && $object instanceof EntityInterface) {
             return $object->getError($path);
@@ -1042,9 +1065,7 @@ trait EntityTrait
      */
     public function getInvalidField(string $field)
     {
-        $value = $this->_invalid[$field] ?? null;
-
-        return $value;
+        return $this->_invalid[$field] ?? null;
     }
 
     /**
@@ -1086,13 +1107,13 @@ trait EntityTrait
     }
 
     /**
-     * Stores whether or not a property value can be changed or set in this entity.
-     * The special property `*` can also be marked as accessible or protected, meaning
-     * that any other property specified before will take its value. For example
-     * `$entity->setAccess('*', true)` means that any property not specified already
+     * Stores whether or not a field value can be changed or set in this entity.
+     * The special field `*` can also be marked as accessible or protected, meaning
+     * that any other field specified before will take its value. For example
+     * `$entity->setAccess('*', true)` means that any field not specified already
      * will be accessible by default.
      *
-     * You can also call this method with an array of properties, in which case they
+     * You can also call this method with an array of fields, in which case they
      * will each take the accessibility value specified in the second argument.
      *
      * ### Example:
@@ -1100,18 +1121,18 @@ trait EntityTrait
      * ```
      * $entity->setAccess('id', true); // Mark id as not protected
      * $entity->setAccess('author_id', false); // Mark author_id as protected
-     * $entity->setAccess(['id', 'user_id'], true); // Mark both properties as accessible
-     * $entity->setAccess('*', false); // Mark all properties as protected
+     * $entity->setAccess(['id', 'user_id'], true); // Mark both fields as accessible
+     * $entity->setAccess('*', false); // Mark all fields as protected
      * ```
      *
-     * @param string|array $property single or list of properties to change its accessibility
-     * @param bool $set true marks the property as accessible, false will
+     * @param string|array $field Single or list of fields to change its accessibility
+     * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
      * @return $this
      */
-    public function setAccess($property, bool $set)
+    public function setAccess($field, bool $set)
     {
-        if ($property === '*') {
+        if ($field === '*') {
             $this->_accessible = array_map(function ($p) use ($set) {
                 return (bool)$set;
             }, $this->_accessible);
@@ -1120,7 +1141,7 @@ trait EntityTrait
             return $this;
         }
 
-        foreach ((array)$property as $prop) {
+        foreach ((array)$field as $prop) {
             $this->_accessible[$prop] = (bool)$set;
         }
 
@@ -1128,7 +1149,7 @@ trait EntityTrait
     }
 
     /**
-     * Checks if a property is accessible
+     * Checks if a field is accessible
      *
      * ### Example:
      *
@@ -1136,12 +1157,12 @@ trait EntityTrait
      * $entity->isAccessible('id'); // Returns whether it can be set or not
      * ```
      *
-     * @param string $property Property name to check
+     * @param string $field Field name to check
      * @return bool
      */
-    public function isAccessible(string $property): bool
+    public function isAccessible(string $field): bool
     {
-        $value = $this->_accessible[$property] ??
+        $value = $this->_accessible[$field] ??
             null;
 
         return ($value === null && !empty($this->_accessible['*'])) || $value;
@@ -1188,12 +1209,12 @@ trait EntityTrait
      */
     public function __debugInfo(): array
     {
-        $properties = $this->_properties;
+        $fields = $this->_fields;
         foreach ($this->_virtual as $field) {
-            $properties[$field] = $this->$field;
+            $fields[$field] = $this->$field;
         }
 
-        return $properties + [
+        return $fields + [
             '[new]' => $this->isNew(),
             '[accessible]' => $this->_accessible,
             '[dirty]' => $this->_dirty,

@@ -336,6 +336,7 @@ class EntityTest extends TestCase
      */
     public function testGetCacheClearedByUnset()
     {
+        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
             ->setMethods(['_getName'])
             ->getMock();
@@ -346,7 +347,7 @@ class EntityTest extends TestCase
         $entity->set('name', 'Jones');
         $this->assertEquals('Dr. Jones', $entity->get('name'));
 
-        $entity->unsetProperty('name');
+        $entity->unset('name');
         $this->assertEquals('Dr. ', $entity->get('name'));
     }
 
@@ -516,10 +517,10 @@ class EntityTest extends TestCase
     public function testUnset()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
-        $entity->unsetProperty('id');
+        $entity->unset('id');
         $this->assertFalse($entity->has('id'));
         $this->assertTrue($entity->has('name'));
-        $entity->unsetProperty('name');
+        $entity->unset('name');
         $this->assertFalse($entity->has('id'));
     }
 
@@ -532,7 +533,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar']);
         $this->assertTrue($entity->isDirty('name'));
-        $entity->unsetProperty('name');
+        $entity->unset('name');
         $this->assertFalse($entity->isDirty('name'), 'Removed properties are not dirty.');
     }
 
@@ -544,7 +545,7 @@ class EntityTest extends TestCase
     public function testUnsetMultiple()
     {
         $entity = new Entity(['id' => 1, 'name' => 'bar', 'thing' => 2]);
-        $entity->unsetProperty(['id', 'thing']);
+        $entity->unset(['id', 'thing']);
         $this->assertFalse($entity->has('id'));
         $this->assertTrue($entity->has('name'));
         $this->assertFalse($entity->has('thing'));
@@ -572,12 +573,26 @@ class EntityTest extends TestCase
     public function testMagicUnset()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['unsetProperty'])
+            ->setMethods(['unset'])
             ->getMock();
         $entity->expects($this->at(0))
-            ->method('unsetProperty')
+            ->method('unset')
             ->with('foo');
         unset($entity->foo);
+    }
+
+    /**
+     * Tests the deprecated unsetProperty() method
+     *
+     * @return void
+     */
+    public function testUnsetDeprecated()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+
+        $entity->unsetProperty('foo');
+        $this->assertNull($entity->foo);
     }
 
     /**
@@ -652,10 +667,10 @@ class EntityTest extends TestCase
     public function testUnsetArrayAccess()
     {
         $entity = $this->getMockBuilder('Cake\ORM\Entity')
-            ->setMethods(['unsetProperty'])
+            ->setMethods(['unset'])
             ->getMock();
         $entity->expects($this->at(0))
-            ->method('unsetProperty')
+            ->method('unset')
             ->with('foo');
         unset($entity['foo']);
     }
@@ -736,10 +751,10 @@ class EntityTest extends TestCase
         $phone = $this->getMockBuilder(Entity::class)
             ->setMethods(['jsonSerialize'])
             ->getMock();
-        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue('12345'));
+        $phone->expects($this->once())->method('jsonSerialize')->will($this->returnValue(['something']));
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
         $entity = new Entity($data);
-        $expected = ['name' => 'James', 'age' => 20, 'phone' => '12345'];
+        $expected = ['name' => 'James', 'age' => 20, 'phone' => ['something']];
         $this->assertEquals(json_encode($expected), json_encode($entity));
     }
 
@@ -1144,6 +1159,36 @@ class EntityTest extends TestCase
         $expected = ['email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
         $this->assertEquals(['name'], $entity->getHidden());
+    }
+
+    /**
+     * Tests the getVisible() method
+     *
+     * @return void
+     */
+    public function testGetVisible()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+        $entity->bar = 'bar';
+
+        $expected = $entity->getVisible();
+        $this->assertSame(['foo', 'bar'], $expected);
+    }
+
+    /**
+     * Tests the deprecated visibleProperties() method
+     *
+     * @return void
+     */
+    public function testVisiblePropertiesDeprecated()
+    {
+        $entity = new Entity();
+        $entity->foo = 'foo';
+        $entity->bar = 'bar';
+
+        $expected = $entity->visibleProperties();
+        $this->assertSame(['foo', 'bar'], $expected);
     }
 
     /**

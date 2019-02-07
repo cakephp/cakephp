@@ -1826,7 +1826,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if (!$success && $isNew) {
-            $entity->unsetProperty($this->getPrimaryKey());
+            $entity->unset($this->getPrimaryKey());
             $entity->isNew(true);
         }
 
@@ -2028,9 +2028,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $isNew = [];
         $cleanup = function ($entities) use (&$isNew): void {
+            /** @var \Cake\Datasource\EntityInterface[] $entities */
             foreach ($entities as $key => $entity) {
                 if (isset($isNew[$key]) && $isNew[$key]) {
-                    $entity->unsetProperty($this->getPrimaryKey());
+                    $entity->unset($this->getPrimaryKey());
                     $entity->isNew(true);
                 }
             }
