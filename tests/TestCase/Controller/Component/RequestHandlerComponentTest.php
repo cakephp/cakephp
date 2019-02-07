@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Event\Event;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -26,22 +27,10 @@ use Cake\TestSuite\TestCase;
 use Cake\View\AjaxView;
 use Cake\View\JsonView;
 use Cake\View\XmlView;
+use TestApp\Controller\Component\RequestHandlerExtComponent;
 use TestApp\Controller\RequestHandlerTestController;
 use TestApp\View\AppView;
 use Zend\Diactoros\Stream;
-
-class RequestHandlerComponentExt extends RequestHandlerComponent
-{
-    public function getExt()
-    {
-        return $this->ext;
-    }
-
-    public function setExt($ext)
-    {
-        $this->ext = $ext;
-    }
-}
 
 /**
  * RequestHandlerComponentTest class
@@ -54,7 +43,7 @@ class RequestHandlerComponentTest extends TestCase
     public $Controller;
 
     /**
-     * @var RequestHandlerComponent
+     * @var \TestApp\Controller\Component\RequestHandlerExtComponent
      */
     public $RequestHandler;
 
@@ -91,11 +80,12 @@ class RequestHandlerComponentTest extends TestCase
     protected function _init(): void
     {
         $request = new ServerRequest(['url' => 'controller_posts/index']);
-        $response = $this->getMockBuilder('Cake\Http\Response')
+        /** @var \Cake\Http\Response|\PHPUnit\Framework\MockObject\MockObject $response */
+        $response = $this->getMockBuilder(Response::class)
             ->setMethods(['_sendHeader', 'stop'])
             ->getMock();
         $this->Controller = new RequestHandlerTestController($request, $response);
-        $this->RequestHandler = $this->Controller->components()->load(RequestHandlerComponentExt::class);
+        $this->RequestHandler = $this->Controller->components()->load(RequestHandlerExtComponent::class);
         $this->request = $request;
 
         Router::scope('/', function (RouteBuilder $routes): void {
@@ -127,7 +117,8 @@ class RequestHandlerComponentTest extends TestCase
         $config = [
             'viewClassMap' => ['json' => 'MyPlugin.MyJson'],
         ];
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
+        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
+        $controller = $this->getMockBuilder(Controller::class)
             ->setMethods(['redirect'])
             ->getMock();
         $collection = new ComponentRegistry($controller);
@@ -315,9 +306,12 @@ class RequestHandlerComponentTest extends TestCase
         $extensions = Router::extensions();
         Router::extensions('xml', false);
 
-        $this->Controller->setRequest($this->getMockBuilder('Cake\Http\ServerRequest')
+        /** @var \Cake\Http\ServerRequest|\PHPUnit\Framework\MockObject\MockObject $request */
+        $request = $this->getMockBuilder(ServerRequest::class)
             ->setMethods(['accepts'])
-            ->getMock());
+            ->getMock();
+
+        $this->Controller->setRequest($request);
         $this->Controller->getRequest()->expects($this->any())
             ->method('accepts')
             ->will($this->returnValue(['application/json']));
