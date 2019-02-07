@@ -48,7 +48,7 @@ trait CollectionTrait
      * Allows classes which use this trait to determine their own
      * type of returned collection interface
      *
-     * @param mixed ...$args
+     * @param mixed $args,.. Constructor arguments.
      * @return CollectionInterface
      */
     protected function newCollection(...$args)
