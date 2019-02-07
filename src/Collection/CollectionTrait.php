@@ -49,7 +49,7 @@ trait CollectionTrait
      * type of returned collection interface
      *
      * @param mixed $args,.. Constructor arguments.
-     * @return CollectionInterface
+     * @return \Cake\Collection\CollectionInterface
      */
     protected function newCollection(...$args)
     {
