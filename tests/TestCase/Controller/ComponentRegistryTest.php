@@ -23,14 +23,9 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
+use TestApp\Controller\Component\FlashAliasComponent;
+use TestPlugin\Controller\Component\OtherComponent;
 use Traversable;
-
-/**
- * Extended FlashComponent
- */
-class FlashAliasComponent extends FlashComponent
-{
-}
 
 class ComponentRegistryTest extends TestCase
 {
@@ -71,8 +66,8 @@ class ComponentRegistryTest extends TestCase
     public function testLoad(): void
     {
         $result = $this->Components->load('Flash');
-        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
-        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $this->Components->Flash);
+        $this->assertInstanceOf(FlashComponent::class, $result);
+        $this->assertInstanceOf(FlashComponent::class, $this->Components->Flash);
 
         $result = $this->Components->loaded();
         $this->assertEquals(['Flash'], $result, 'loaded() results are wrong.');
@@ -88,21 +83,21 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithAlias(): void
     {
-        $result = $this->Components->load('Flash', ['className' => __NAMESPACE__ . '\FlashAliasComponent', 'somesetting' => true]);
-        $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $result);
-        $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $this->Components->Flash);
+        $result = $this->Components->load('Flash', ['className' => FlashAliasComponent::class, 'somesetting' => true]);
+        $this->assertInstanceOf(FlashAliasComponent::class, $result);
+        $this->assertInstanceOf(FlashAliasComponent::class, $this->Components->Flash);
         $this->assertTrue($this->Components->Flash->getConfig('somesetting'));
 
         $result = $this->Components->loaded();
         $this->assertEquals(['Flash'], $result, 'loaded() results are wrong.');
 
         $result = $this->Components->load('Flash');
-        $this->assertInstanceOf(__NAMESPACE__ . '\FlashAliasComponent', $result);
+        $this->assertInstanceOf(FlashAliasComponent::class, $result);
 
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Components->load('SomeOther', ['className' => 'TestPlugin.Other']);
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->SomeOther);
+        $this->assertInstanceOf(OtherComponent::class, $result);
+        $this->assertInstanceOf(OtherComponent::class, $this->Components->SomeOther);
 
         $result = $this->Components->loaded();
         $this->assertEquals(['Flash', 'SomeOther'], $result, 'loaded() results are wrong.');
@@ -122,8 +117,8 @@ class ComponentRegistryTest extends TestCase
         $this->Components->getController()->setEventManager($mock);
 
         $result = $this->Components->load('Flash', ['enabled' => false]);
-        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $result);
-        $this->assertInstanceOf('Cake\Controller\Component\FlashComponent', $this->Components->Flash);
+        $this->assertInstanceOf(FlashComponent::class, $result);
+        $this->assertInstanceOf(FlashComponent::class, $this->Components->Flash);
     }
 
     /**
@@ -146,8 +141,8 @@ class ComponentRegistryTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Components->load('TestPlugin.Other');
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->Other, 'Class is wrong');
+        $this->assertInstanceOf(OtherComponent::class, $result, 'Component class is wrong.');
+        $this->assertInstanceOf(OtherComponent::class, $this->Components->Other, 'Class is wrong');
     }
 
     /**
@@ -159,8 +154,8 @@ class ComponentRegistryTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
-        $this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);
+        $this->assertInstanceOf(OtherComponent::class, $result);
+        $this->assertInstanceOf(OtherComponent::class, $this->Components->AliasedOther);
 
         $result = $this->Components->loaded();
         $this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');

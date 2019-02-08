@@ -21,33 +21,15 @@ use Cake\Controller\Controller;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
-use Cake\Datasource\Paginator;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\TestSuite\TestCase;
 use stdClass;
-
-/**
- * PaginatorTestController class
- */
-class PaginatorTestController extends Controller
-{
-    /**
-     * components property
-     *
-     * @var array
-     */
-    public $components = ['Paginator'];
-}
-
-/**
- * Custom paginator
- */
-class CustomPaginator extends Paginator
-{
-}
+use TestApp\Datasource\CustomPaginator;
 
 class PaginatorComponentTest extends TestCase
 {
@@ -67,6 +49,26 @@ class PaginatorComponentTest extends TestCase
      * @var bool
      */
     public $autoFixtures = false;
+
+    /**
+     * @var \Cake\Controller\Controller
+     */
+    protected $controller;
+
+    /**
+     * @var \Cake\Controller\ComponentRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var \Cake\Controller\Component\PaginatorComponent
+     */
+    protected $Paginator;
+
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $Post;
 
     /**
      * setup
@@ -283,9 +285,9 @@ class PaginatorComponentTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
         $tags->belongsToMany('Authors');
 
-        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', function ($q) {
-                return $q->matching('Authors', function ($q) {
+        $articles->getEventManager()->on('Model.beforeFind', function (EventInterface $event, Query $query): void {
+            $query ->matching('Tags', function (Query $q) {
+                return $q->matching('Authors', function (Query $q) {
                     return $q->where(['Authors.name' => 'larry']);
                 });
             });
@@ -1417,9 +1419,12 @@ class PaginatorComponentTest extends TestCase
         return $query;
     }
 
+    /**
+     * @return \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
     protected function getMockRepository()
     {
-        $model = $this->getMockBuilder('Cake\Datasource\RepositoryInterface')
+        $model = $this->getMockBuilder(RepositoryInterface::class)
             ->setMethods([
                 'getAlias', 'setAlias', 'setRegistryAlias', 'getRegistryAlias', 'hasField', 'find', 'get', 'query', 'updateAll', 'deleteAll',
                 'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities',

@@ -16,108 +16,20 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\Component\SecurityComponent;
-use Cake\Controller\Controller;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
-
-/**
- * TestSecurityComponent
- */
-class TestSecurityComponent extends SecurityComponent
-{
-    /**
-     * validatePost method
-     *
-     * @param Controller $controller
-     * @return bool
-     */
-    public function validatePost(Controller $controller): bool
-    {
-        return $this->_validatePost($controller);
-    }
-
-    /**
-     * authRequired method
-     *
-     * @param Controller $controller
-     * @return bool
-     */
-    public function authRequired(Controller $controller): bool
-    {
-        return $this->_authRequired($controller);
-    }
-}
-
-/**
- * SecurityTestController
- */
-class SecurityTestController extends Controller
-{
-    /**
-     * failed property
-     *
-     * @var bool
-     */
-    public $failed = false;
-
-    /**
-     * Used for keeping track of headers in test
-     *
-     * @var array
-     */
-    public $testHeaders = [];
-
-    public function initialize(): void
-    {
-        $this->loadComponent('TestSecurity', ['className' => 'Cake\Test\TestCase\Controller\Component\TestSecurityComponent']);
-    }
-
-    /**
-     * fail method
-     *
-     * @return void
-     */
-    public function fail(): void
-    {
-        $this->failed = true;
-    }
-
-    /**
-     * redirect method
-     *
-     * @param string|array $url
-     * @param int $status
-     * @return \Cake\Http\Response|null
-     */
-    public function redirect($url, ?int $status = null): ?Response
-    {
-        return $status;
-    }
-
-    /**
-     * Convenience method for header()
-     *
-     * @param string $status
-     * @return void
-     */
-    public function header(string $status): void
-    {
-        $this->testHeaders[] = $status;
-    }
-}
+use TestApp\Controller\SecurityTestController;
 
 /**
  * SecurityComponentTest class
  *
- * @property SecurityComponent Security
- * @property SecurityTestController Controller
+ * @property \TestApp\Controller\Component\TestSecurityComponent Security
  */
 class SecurityComponentTest extends TestCase
 {
@@ -131,7 +43,7 @@ class SecurityComponentTest extends TestCase
     /**
      * Controller property
      *
-     * @var SecurityTestController
+     * @var \TestApp\Controller\SecurityTestController
      */
     public $Controller;
 
