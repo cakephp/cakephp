@@ -63,6 +63,7 @@ class ContactsTable extends Table
     /**
      * Initializes the schema
      *
+     * @param array $config
      * @return void
      */
     public function initialize(array $config)
@@ -99,6 +100,7 @@ class ValidateUsersTable extends Table
     /**
      * Initializes the schema
      *
+     * @param array $config
      * @return void
      */
     public function initialize(array $config)
@@ -6073,7 +6075,7 @@ class FormHelperTest extends TestCase
      *
      * Ensure that timeFormat=24 has no merdian.
      *
-     * @return void.
+     * @return void
      */
     public function testTimeFormat24NoMeridian()
     {

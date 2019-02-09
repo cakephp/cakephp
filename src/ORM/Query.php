@@ -66,11 +66,9 @@ use RuntimeException;
  *   with the first rows of the query and each of the items, then the second rows and so on.
  * @method \Cake\Collection\CollectionInterface chunk($size) Groups the results in arrays of $size rows each.
  * @method bool isEmpty() Returns true if this query found no results.
- * @mixin \Cake\Datasource\QueryTrait
  */
 class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 {
-
     use QueryTrait {
         cache as private _cache;
         all as private _all;
