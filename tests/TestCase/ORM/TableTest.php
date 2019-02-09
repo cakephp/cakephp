@@ -5858,7 +5858,7 @@ class TableTest extends TestCase
     {
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
-            'Entity findOrCreate failure. ' . 
+            'Entity findOrCreate failure. ' .
             'Found the following errors (title._empty: "This field cannot be left empty").'
         );
 
