@@ -243,7 +243,8 @@ class ServerTest extends TestCase
         });
         $server->run();
         $this->assertTrue($this->called, 'Middleware added in the event was not triggered.');
-        $this->assertInstanceOf('Closure', $this->middleware->get(3)->getCallable(), '2nd last middleware is a closure');
+        $this->middleware->seek(3);
+        $this->assertInstanceOf('Closure', $this->middleware->current()->getCallable(), '2nd last middleware is a closure');
     }
 
     /**

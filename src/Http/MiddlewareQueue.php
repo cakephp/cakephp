@@ -21,29 +21,31 @@ use Cake\Http\Middleware\DoublePassDecoratorMiddleware;
 use Closure;
 use Countable;
 use LogicException;
+use OutOfBoundsException;
 use Psr\Http\Server\MiddlewareInterface;
 use ReflectionFunction;
 use RuntimeException;
+use SeekableIterator;
 
 /**
  * Provides methods for creating and manipulating a "queue" of middleware callables.
- * This queue is used to process a request and response via \Cake\Http\Runner.
+ * This queue is used to process a request and generate response via \Cake\Http\Runner.
  */
-class MiddlewareQueue implements Countable
+class MiddlewareQueue implements Countable, SeekableIterator
 {
+    /**
+     * Internal position for iterator.
+     *
+     * @var int
+     */
+    protected $position = 0;
+
     /**
      * The queue of middlewares.
      *
      * @var array
      */
     protected $queue = [];
-
-    /**
-     * The queue of middlewares.
-     *
-     * @var \Psr\Http\Server\MiddlewareInterface[]
-     */
-    protected $middlewares = [];
 
     /**
      * Constructor
@@ -56,36 +58,14 @@ class MiddlewareQueue implements Countable
     }
 
     /**
-     * Get the middleware at the provided index.
-     *
-     * @param int $index The index to fetch.
-     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
-     *   if the index is undefined.
-     */
-    public function get(int $index): ?MiddlewareInterface
-    {
-        if (isset($this->middlewares[$index])) {
-            return $this->middlewares[$index];
-        }
-
-        return $this->resolve($index);
-    }
-
-    /**
      * Resolve middleware name to a PSR 15 compliant middleware instance.
      *
-     * @param int $index The index to fetch.
-     * @return \Psr\Http\Server\MiddlewareInterface|null Either the middleware or null
-     *   if the index is undefined.
+     * @param string|callable $middleware The middleware to resolve.
+     * @return \Psr\Http\Server\MiddlewareInterface
      * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve(int $index): ?MiddlewareInterface
+    protected function resolve($middleware): ?MiddlewareInterface
     {
-        if (!isset($this->queue[$index])) {
-            return null;
-        }
-
-        $middleware = $this->queue[$index];
         if (is_string($middleware)) {
             $className = App::className($middleware, 'Middleware', 'Middleware');
             if ($className === null || !class_exists($className)) {
@@ -98,19 +78,19 @@ class MiddlewareQueue implements Countable
         }
 
         if ($middleware instanceof MiddlewareInterface) {
-            return $this->middlewares[$index] = $middleware;
+            return $middleware;
         }
 
         if (!$middleware instanceof Closure) {
-            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
+            return new DoublePassDecoratorMiddleware($middleware);
         }
 
         $info = new ReflectionFunction($middleware);
         if ($info->getNumberOfParameters() > 2) {
-            return $this->middlewares[$index] = new DoublePassDecoratorMiddleware($middleware);
+            return new DoublePassDecoratorMiddleware($middleware);
         }
 
-        return $this->middlewares[$index] = new CallableDecoratorMiddleware($middleware);
+        return new CallableDecoratorMiddleware($middleware);
     }
 
     /**
@@ -247,5 +227,84 @@ class MiddlewareQueue implements Countable
     public function count(): int
     {
         return count($this->queue);
+    }
+
+    /**
+     * Seeks to a given position in the queue.
+     *
+     * @param int $position The position to seek to.
+     * @return void
+     * @see \SeekableIterator::seek()
+     */
+    public function seek($position)
+    {
+        if (!isset($this->queue[$position])) {
+            throw new OutOfBoundsException("Invalid seek position ($position)");
+        }
+
+        $this->position = $position;
+    }
+
+    /**
+     * Rewinds back to the first element of the queue.
+     *
+     * @return void
+     * @see \Iterator::rewind()
+     */
+    public function rewind()
+    {
+        $this->position = 0;
+    }
+
+    /**
+     *  Returns the current middleware.
+     *
+     * @return \Psr\Http\Server\MiddlewareInterface|null
+     * @see \Iterator::current()
+     */
+    public function current()
+    {
+        if (!isset($this->queue[$this->position])) {
+            return null;
+        }
+
+        if ($this->queue[$this->position] instanceof MiddlewareInterface) {
+            return $this->queue[$this->position];
+        }
+
+        return $this->queue[$this->position] = $this->resolve($this->queue[$this->position]);
+    }
+
+    /**
+     * Return the key of the middleware.
+     *
+     * @return int
+     * @see \Iterator::key()
+     */
+    public function key()
+    {
+        return $this->position;
+    }
+
+    /**
+     * Moves the current position to the next middleware.
+     *
+     * @return void
+     * @see \Iterator::next()
+     */
+    public function next()
+    {
+        ++$this->position;
+    }
+
+    /**
+     * Checks if current position is valid.
+     *
+     * @return bool
+     * @see \Iterator::valid()
+     */
+    public function valid()
+    {
+        return isset($this->queue[$this->position]);
     }
 }

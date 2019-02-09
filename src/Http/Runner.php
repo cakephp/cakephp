@@ -26,13 +26,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class Runner implements RequestHandlerInterface
 {
     /**
-     * The current index in the middleware queue.
-     *
-     * @var int
-     */
-    protected $index = 0;
-
-    /**
      * The middleware queue being run.
      *
      * @var \Cake\Http\MiddlewareQueue
@@ -49,7 +42,7 @@ class Runner implements RequestHandlerInterface
     /**
      * @param \Cake\Http\MiddlewareQueue $queue The middleware queue
      * @param \Psr\Http\Message\ServerRequestInterface $request The Server Request
-     * @param \Psr\Http\Server\RequestHandlerInterface $fallbackHandler Fallback request handler.
+     * @param \Psr\Http\Server\RequestHandlerInterface|null $fallbackHandler Fallback request handler.
      * @return \Psr\Http\Message\ResponseInterface A response object
      */
     public function run(
@@ -58,7 +51,7 @@ class Runner implements RequestHandlerInterface
         ?RequestHandlerInterface $fallbackHandler = null
     ): ResponseInterface {
         $this->queue = $queue;
-        $this->index = 0;
+        $this->queue->rewind();
         $this->fallbackHandler = $fallbackHandler;
 
         return $this->handle($request);
@@ -72,9 +65,10 @@ class Runner implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $middleware = $this->queue->get($this->index++);
+        if ($this->queue->valid()) {
+            $middleware = $this->queue->current();
+            $this->queue->next();
 
-        if ($middleware) {
             return $middleware->process($request, $this);
         }
 
