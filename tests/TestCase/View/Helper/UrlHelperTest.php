@@ -570,9 +570,5 @@ class UrlHelperTest extends TestCase
         $result = $this->Helper->css('TestTheme.app.css');
         $expected = $cdnPrefix . 'app.css';
         $this->assertSame($expected, $result);
-
-        Configure::write('App.imageBaseUrl', $imageBaseUrl);
-        Configure::write('App.jsBaseUrl', $jsBaseUrl);
-        Configure::write('App.cssBaseUrl', $cssBaseUrl);
     }
 }
