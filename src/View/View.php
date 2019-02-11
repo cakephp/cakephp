@@ -614,10 +614,8 @@ class View implements EventDispatcherInterface
         }
 
         if (empty($options['ignoreMissing'])) {
-            list ($plugin, $name) = pluginSplit($name, true);
-            $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
-            $file = $plugin . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR . $name . $this->_ext;
-            throw new MissingElementException([$file]);
+            list($plugin) = $this->pluginSplit($name, $pluginCheck);
+            throw new MissingElementException($name, $this->_paths($plugin));
         }
     }
 
@@ -1250,12 +1248,15 @@ class View implements EventDispatcherInterface
             }
         }
 
-        foreach ($this->_paths($plugin) as $path) {
-            if (file_exists($path . $name . $this->_ext)) {
-                return $this->_checkFilePath($path . $name . $this->_ext, $path);
+        $name = $name . $this->_ext;
+        $paths = $this->_paths($plugin);
+        foreach ($paths as $path) {
+            if (file_exists($path . $name)) {
+                return $this->_checkFilePath($path . $name, $path);
             }
         }
-        throw new MissingTemplateException(['file' => $name . $this->_ext]);
+
+        throw new MissingTemplateException($name, $paths);
     }
 
     /**
@@ -1340,18 +1341,25 @@ class View implements EventDispatcherInterface
         list($plugin, $name) = $this->pluginSplit($name);
 
         $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
+        $name = $name . $this->_ext;
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
                 $currentPath = $path . $layoutPath;
-                if (file_exists($currentPath . $name . $this->_ext)) {
-                    return $this->_checkFilePath($currentPath . $name . $this->_ext, $currentPath);
+                if (file_exists($currentPath . $name)) {
+                    return $this->_checkFilePath($currentPath . $name, $currentPath);
                 }
             }
         }
-        throw new MissingLayoutException([
-            'file' => $layoutPaths[0] . $name . $this->_ext,
-        ]);
+
+        // Generate the searched paths so we can give a more helpful error.
+        $paths = [];
+        foreach ($this->_paths($plugin) as $path) {
+            foreach ($layoutPaths as $layoutPath) {
+                $paths[] = $path . $layoutPath;
+            }
+        }
+        throw new MissingLayoutException($name, $paths);
     }
 
     /**

@@ -13,15 +13,13 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Used when an element file cannot be found.
  */
-class MissingElementException extends Exception
+class MissingElementException extends MissingTemplateException
 {
     /**
-     * @inheritDoc
+     * @var string
      */
-    protected $_messageTemplate = 'Element file "%s" is missing.';
+    protected $type = 'Element';
 }

@@ -203,7 +203,7 @@ abstract class Cell implements EventDispatcherInterface
             try {
                 return $view->render($template);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
+                throw new MissingCellViewException($name, $template, $e->getAttributes()['paths'], null, $e);
             }
         };
 

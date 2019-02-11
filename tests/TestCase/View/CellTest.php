@@ -207,7 +207,10 @@ class CellTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('Cell view file "derp" is missing.', $e->getMessage());
+        $message = $e->getMessage();
+        $this->assertContains("Cell view file 'derp' could not be found.", $message);
+        $this->assertContains('The following paths', $message);
+        $this->assertContains(ROOT . DS . 'templates', $message);
         $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
     }
 

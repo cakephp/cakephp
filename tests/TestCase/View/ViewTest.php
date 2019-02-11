@@ -804,6 +804,9 @@ class ViewTest extends TestCase
     public function testMissingTemplate()
     {
         $this->expectException(\Cake\View\Exception\MissingTemplateException::class);
+        $this->expectExceptionMessage("Template file 'does_not_exist' could not be found");
+        $this->expectExceptionMessage('The following paths were searched');
+        $this->expectExceptionMessage('- ' . ROOT . DS . 'templates');
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
@@ -823,6 +826,9 @@ class ViewTest extends TestCase
     public function testMissingLayout()
     {
         $this->expectException(\Cake\View\Exception\MissingLayoutException::class);
+        $this->expectExceptionMessage("Layout file 'whatever' could not be found");
+        $this->expectExceptionMessage('The following paths were searched');
+        $this->expectExceptionMessage('- ' . ROOT . DS . 'templates' . DS . 'layout');
         $viewOptions = ['plugin' => null,
             'name' => 'Pages',
             'viewPath' => 'Pages',
@@ -914,14 +920,14 @@ class ViewTest extends TestCase
     }
 
     /**
-     * Test loading non-existent view element
+     * Test loading missing view element
      *
      * @return void
      */
-    public function testElementNonExistent()
+    public function testElementMissing()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessageRegExp('#^Element file "element[\\\\/]non_existent_element\.php" is missing\.$#');
+        $this->expectExceptionMessage("Element file 'non_existent_element' could not be found");
 
         $this->View->element('non_existent_element');
     }
@@ -931,12 +937,12 @@ class ViewTest extends TestCase
      *
      * @return void
      */
-    public function testElementInexistentPluginElement()
+    public function testElementMissingPluginElement()
     {
         $this->expectException(\Cake\View\Exception\MissingElementException::class);
-        $this->expectExceptionMessageRegExp('#^Element file "test_plugin\.element[\\\\/]plugin_element\.php" is missing\.$#');
+        $this->expectExceptionMessage("Element file 'TestPlugin.nope' could not be found");
 
-        $this->View->element('test_plugin.plugin_element');
+        $this->View->element('TestPlugin.nope');
     }
 
     /**

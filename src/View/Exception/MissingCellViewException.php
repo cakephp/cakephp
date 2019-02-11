@@ -13,15 +13,48 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Used when a view file for a cell cannot be found.
  */
-class MissingCellViewException extends Exception
+class MissingCellViewException extends MissingTemplateException
 {
     /**
-     * @inheritDoc
+     * @var string
      */
-    protected $_messageTemplate = 'Cell view file "%s" is missing.';
+    protected $name;
+
+    /**
+     * @var string
+     */
+    protected $type = 'Cell view';
+
+    /**
+     * Constructor
+     *
+     * @param string $name The Cell name that is missing a view.
+     * @param string $file The view filename.
+     * @param array $paths The path list that template could not be found in.
+     * @param int|null $code The code of the error.
+     * @param \Exception|null $previous the previous exception.
+     */
+    public function __construct(string $name, string $file, array $paths = [], $code = null, $previous = null)
+    {
+        $this->name = $name;
+
+        parent::__construct($file, $paths, $code, $previous);
+    }
+
+    /**
+     * Get the passed in attributes
+     *
+     * @return array
+     */
+    public function getAttributes(): array
+    {
+        return [
+            'name' => $this->name,
+            'file' => $this->file,
+            'paths' => $this->paths,
+        ];
+    }
 }

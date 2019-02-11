@@ -21,7 +21,64 @@ use Cake\Core\Exception\Exception;
 class MissingTemplateException extends Exception
 {
     /**
-     * @inheritDoc
+     * @var string
      */
-    protected $_messageTemplate = 'Template file "%s" is missing.';
+    protected $file;
+
+    /**
+     * @var array
+     */
+    protected $paths;
+
+    /**
+     * @var string
+     */
+    protected $type = 'Template';
+
+    /**
+     * Constructor
+     *
+     * @param string|array $file Either the file name as a string, or in an array *   for backwards compatibility.
+     * @param array $paths The path list that template could not be found in.
+     * @param int|null $code The code of the error.
+     * @param \Exception|null $previous the previous exception.
+     */
+    public function __construct($file, array $paths = [], $code = null, $previous = null)
+    {
+        $this->file = is_array($file) ? $file[0] : $file;
+        $this->paths = $paths;
+
+        parent::__construct($this->formatMessage(), $code, $previous);
+    }
+
+    /**
+     * Get the formatted exception message.
+     *
+     * @return string
+     */
+    public function formatMessage(): string
+    {
+        $message = "{$this->type} file '{$this->file}' could not be found.";
+        if ($this->paths) {
+            $message .= "\n\nThe following paths were searched:\n\n";
+            foreach ($this->paths as $path) {
+                $message .= "- {$path}\n";
+            }
+        }
+
+        return $message;
+    }
+
+    /**
+     * Get the passed in attributes
+     *
+     * @return array
+     */
+    public function getAttributes(): array
+    {
+        return [
+            'file' => $this->file,
+            'paths' => $this->paths,
+        ];
+    }
 }
