@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
-use Cake\View\Exception\MissingCellViewException;
+use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
@@ -203,7 +203,7 @@ class CellTest extends TestCase
         $e = null;
         try {
             $cell->render('derp');
-        } catch (MissingCellViewException $e) {
+        } catch (MissingCellTemplateException $e) {
         }
 
         $this->assertNotNull($e);

@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Cake\View\Exception;
 
 /**
- * Used when a view file for a cell cannot be found.
+ * Used when a template file for a cell cannot be found.
  */
-class MissingCellViewException extends MissingTemplateException
+class MissingCellTemplateException extends MissingTemplateException
 {
     /**
      * @var string
