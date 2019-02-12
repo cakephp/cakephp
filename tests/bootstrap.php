@@ -127,7 +127,8 @@ Log::setConfig([
 ]);
 
 Chronos::setTestNow(Chronos::now());
-Security::setSalt('a-long-but-not-random-value');;
+Security::setSalt('a-long-but-not-random-value');
+;
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');
