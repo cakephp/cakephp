@@ -45,7 +45,7 @@ class MissingTemplateException extends Exception
      */
     public function __construct($file, array $paths = [], $code = null, $previous = null)
     {
-        $this->file = is_array($file) ? $file[0] : $file;
+        $this->file = is_array($file) ? array_pop($file) : $file;
         $this->paths = $paths;
 
         parent::__construct($this->formatMessage(), $code, $previous);

@@ -26,7 +26,7 @@ class MissingCellTemplateException extends MissingTemplateException
     /**
      * @var string
      */
-    protected $type = 'Cell view';
+    protected $type = 'Cell template';
 
     /**
      * Constructor

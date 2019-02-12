@@ -21,6 +21,10 @@ use Cake\Error\FatalErrorException;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingElementException;
+use Cake\View\Exception\MissingLayoutException;
+use Cake\View\Exception\MissingCellTemplateException;
+use Cake\View\Exception\MissingTemplateException;
 use Exception;
 
 class ExceptionsTest extends TestCase
@@ -95,6 +99,47 @@ class ExceptionsTest extends TestCase
     }
 
     /**
+     * Test the template exceptions
+     *
+     * @return void
+     */
+    public function testMissingTemplateExceptions()
+    {
+        $previous = new Exception();
+
+        $error = new MissingTemplateException('view.ctp', ['path/a', 'path/b'], 100, $previous);
+        $this->assertContains("Template file 'view.ctp' could not be found", $error->getMessage());
+        $this->assertContains('- path/a', $error->getMessage());
+        $this->assertSame($previous, $error->getPrevious());
+        $this->assertSame(100, $error->getCode());
+        $attributes = $error->getAttributes();
+        $this->assertArrayHasKey('file', $attributes);
+        $this->assertArrayHasKey('paths', $attributes);
+
+        $error = new MissingLayoutException('default.ctp', ['path/a', 'path/b'], 100, $previous);
+        $this->assertContains("Layout file 'default.ctp' could not be found", $error->getMessage());
+        $this->assertContains('- path/a', $error->getMessage());
+        $this->assertSame($previous, $error->getPrevious());
+        $this->assertSame(100, $error->getCode());
+
+        $error = new MissingElementException('view.ctp', ['path/a', 'path/b'], 100, $previous);
+        $this->assertContains("Element file 'view.ctp' could not be found", $error->getMessage());
+        $this->assertContains('- path/a', $error->getMessage());
+        $this->assertSame($previous, $error->getPrevious());
+        $this->assertSame(100, $error->getCode());
+
+        $error = new MissingCellTemplateException('Articles', 'view.ctp', ['path/a', 'path/b'], 100, $previous);
+        $this->assertContains("Cell template file 'view.ctp' could not be found", $error->getMessage());
+        $this->assertContains('- path/a', $error->getMessage());
+        $this->assertSame($previous, $error->getPrevious());
+        $this->assertSame(100, $error->getCode());
+        $attributes = $error->getAttributes();
+        $this->assertArrayHasKey('name', $attributes);
+        $this->assertArrayHasKey('file', $attributes);
+        $this->assertArrayHasKey('paths', $attributes);
+    }
+
+    /**
      * Provides pairs of exception name and default code.
      *
      * @return array
@@ -153,11 +198,7 @@ class ExceptionsTest extends TestCase
             ['Cake\Routing\Exception\RedirectException', 302],
             ['Cake\Utility\Exception\XmlException', 0],
             ['Cake\View\Exception\MissingCellException', 500],
-            ['Cake\View\Exception\MissingCellViewException', 500],
-            ['Cake\View\Exception\MissingElementException', 500],
             ['Cake\View\Exception\MissingHelperException', 500],
-            ['Cake\View\Exception\MissingLayoutException', 500],
-            ['Cake\View\Exception\MissingTemplateException', 500],
             ['Cake\View\Exception\MissingViewException', 500],
         ];
     }
