@@ -22,7 +22,6 @@ use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Security;
 
 /**
  * Test case for FormAuthentication
@@ -275,7 +274,7 @@ class FormAuthenticateTest extends TestCase
         $PluginModel = $this->getTableLocator()->get('TestPlugin.AuthUsers');
         $user['id'] = 1;
         $user['username'] = 'gwoo';
-        $user['password'] = password_hash(Security::getSalt() . 'cake', PASSWORD_BCRYPT);
+        $user['password'] = password_hash('cake', PASSWORD_BCRYPT);
         $PluginModel->save(new Entity($user));
 
         $this->auth->setConfig('userModel', 'TestPlugin.AuthUsers');

@@ -56,14 +56,12 @@ class DigestAuthenticateTest extends TestCase
     {
         parent::setUp();
 
-        $salt = 'foo.bar';
-        Security::setSalt($salt);
         $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->auth = new DigestAuthenticate($this->Collection, [
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc',
-            'secret' => $salt,
+            'secret' => Security::getSalt(),
         ]);
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');

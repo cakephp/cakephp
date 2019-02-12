@@ -17,6 +17,7 @@ use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
+use Cake\Utility\Security;
 
 if (is_file('vendor/autoload.php')) {
     require_once 'vendor/autoload.php';
@@ -126,6 +127,7 @@ Log::setConfig([
 ]);
 
 Chronos::setTestNow(Chronos::now());
+Security::setSalt('a-long-but-not-random-value');;
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');
