@@ -6356,8 +6356,8 @@ class TableTest extends TestCase
         $entity = new Entity([
             'username' => 'bad',
             'articles' => [
-                new Entity(['title' => 'not an entity'])
-            ]
+                new Entity(['title' => 'not an entity']),
+            ],
         ]);
         $entity->articles[0]->setError('title', 'Bad value');
 

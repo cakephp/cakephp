@@ -21,7 +21,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class DateKeysFixture extends TestFixture
 {
-
     /**
      * fields property
      *
@@ -30,7 +29,7 @@ class DateKeysFixture extends TestFixture
     public $fields = [
         'id' => ['type' => 'date'],
         'title' => ['type' => 'string', 'null' => true],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
     ];
 
     /**
