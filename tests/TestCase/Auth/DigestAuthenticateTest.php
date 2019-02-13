@@ -19,13 +19,13 @@ namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\DigestAuthenticate;
 use Cake\Controller\ComponentRegistry;
-use Cake\Core\Configure;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 
 /**
  * Entity for testing with hidden fields.
@@ -61,9 +61,8 @@ class DigestAuthenticateTest extends TestCase
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc',
-            'secret' => 'foo.bar',
+            'secret' => Security::getSalt(),
         ]);
-        Configure::write('Security.salt', 'foo.bar');
 
         $password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
         $User = $this->getTableLocator()->get('Users');
@@ -477,7 +476,7 @@ DIGEST;
      */
     protected function generateNonce(?string $secret = null, ?int $expires = 300, ?int $time = null): string
     {
-        $secret = $secret ?: Configure::read('Security.salt');
+        $secret = $secret ?: Security::getSalt();
         $time = $time ?: microtime(true);
         $expiryTime = $time + $expires;
         $signatureValue = hash_hmac('sha256', $expiryTime . ':' . $secret, $secret);

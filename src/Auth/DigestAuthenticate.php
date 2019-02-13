@@ -17,6 +17,7 @@ namespace Cake\Auth;
 
 use Cake\Controller\ComponentRegistry;
 use Cake\Http\ServerRequest;
+use Cake\Utility\Security;
 
 /**
  * Digest Authentication adapter for AuthComponent.
@@ -86,7 +87,7 @@ class DigestAuthenticate extends BasicAuthenticate
     {
         $this->setConfig([
             'nonceLifetime' => 300,
-            'secret' => 'foo.bar',
+            'secret' => Security::getSalt(),
             'realm' => null,
             'qop' => 'auth',
             'opaque' => null,
