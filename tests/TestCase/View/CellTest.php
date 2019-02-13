@@ -109,7 +109,7 @@ class CellTest extends TestCase
         $capture = function ($errno, $msg) {
             restore_error_handler();
             $this->assertEquals(E_USER_WARNING, $errno);
-            $this->assertContains('Could not render cell - Cell view file', $msg);
+            $this->assertContains('Could not render cell - Cell template file', $msg);
         };
         set_error_handler($capture);
 
@@ -208,7 +208,7 @@ class CellTest extends TestCase
 
         $this->assertNotNull($e);
         $message = $e->getMessage();
-        $this->assertContains("Cell view file 'derp' could not be found.", $message);
+        $this->assertContains("Cell template file 'derp' could not be found.", $message);
         $this->assertContains('The following paths', $message);
         $this->assertContains(ROOT . DS . 'templates', $message);
         $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
