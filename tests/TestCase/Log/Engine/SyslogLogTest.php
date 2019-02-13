@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Log\Engine;
 
+use Cake\Log\Engine\SyslogLog;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,13 +30,14 @@ class SyslogLogTest extends TestCase
      */
     public function testOpenLog()
     {
-        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
+        $log = $this->getMockBuilder(SyslogLog::class)
             ->setMethods(['_open', '_write'])
             ->getMock();
         $log->expects($this->once())->method('_open')->with('', LOG_ODELAY, LOG_USER);
         $log->log('debug', 'message');
 
-        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+        $log = $this->getMockBuilder(SyslogLog::class)
             ->setMethods(['_open', '_write'])
             ->getMock();
         $log->setConfig([
@@ -57,7 +59,8 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteOneLine($type, $expected)
     {
-        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
+        $log = $this->getMockBuilder(SyslogLog::class)
             ->setMethods(['_open', '_write'])
             ->getMock();
         $log->expects($this->once())->method('_write')->with($expected, $type . ': Foo');
@@ -71,7 +74,8 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteMultiLine()
     {
-        $log = $this->getMockBuilder('Cake\Log\Engine\SyslogLog')
+        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
+        $log = $this->getMockBuilder(SyslogLog::class)
             ->setMethods(['_open', '_write'])
             ->getMock();
         $log->expects($this->at(1))->method('_write')->with(LOG_DEBUG, 'debug: Foo');

@@ -14,68 +14,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
-use Cake\Database\Expression\FunctionExpression;
-use Cake\Database\ExpressionInterface;
-use Cake\Database\Type\BaseType;
-use Cake\Database\Type\ExpressionTypeInterface;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Query;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-
-/**
- * Value object for testing mappings.
- */
-class UuidValue
-{
-    public $value;
-
-    public function __construct($value)
-    {
-        $this->value = $value;
-    }
-}
-
-/**
- * Custom type class that maps between value objects, and SQL expressions.
- */
-class OrderedUuidType extends BaseType implements ExpressionTypeInterface
-{
-    public function toPHP($value, Driver $d)
-    {
-        return new UuidValue($value);
-    }
-
-    public function toExpression($value): ExpressionInterface
-    {
-        if ($value instanceof UuidValue) {
-            $value = $value->value;
-        }
-        $substr = function ($start, $length = null) use ($value) {
-            return new FunctionExpression(
-                'SUBSTR',
-                $length === null ? [$value, $start] : [$value, $start, $length],
-                ['string', 'integer', 'integer']
-            );
-        };
-
-        return new FunctionExpression(
-            'CONCAT',
-            [$substr(15, 4), $substr(10, 4), $substr(1, 8), $substr(20, 4), $substr(25)]
-        );
-    }
-
-    public function marshal($value)
-    {
-        return $value;
-    }
-
-    public function toDatabase($value, Driver $d)
-    {
-        return $value;
-    }
-}
+use TestApp\Database\Type\OrderedUuidType;
+use TestApp\Database\Type\UuidValue;
 
 /**
  * Tests for Expression objects casting values to other expressions
@@ -85,6 +31,11 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
 class ExpressionTypeCastingIntegrationTest extends TestCase
 {
     public $fixtures = ['core.OrderedUuidItems'];
+
+    /**
+     * @var \Cake\Database\Connection
+     */
+    protected $connection;
 
     public function setUp()
     {
@@ -203,7 +154,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         $result = $this->connection->newQuery()
             ->select('id')
             ->from('ordered_uuid_items')
-            ->where(function ($exp) {
+            ->where(function (QueryExpression $exp) {
                 return $exp->between(
                     'id',
                     '482b7756-8da0-419a-b21f-27da40cf8569',
@@ -228,7 +179,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         $result = $this->connection->newQuery()
             ->select('id')
             ->from('ordered_uuid_items')
-            ->where(function ($exp, $q) {
+            ->where(function (QueryExpression $exp, Query $q) {
                 return $exp->eq(
                     'id',
                     $q->func()->concat(['48298a29-81c0-4c26-a7fb', '-413140cf8569'], []),
