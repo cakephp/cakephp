@@ -21,9 +21,9 @@ use Cake\Error\FatalErrorException;
 use Cake\ORM\Entity;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingElementException;
 use Cake\View\Exception\MissingLayoutException;
-use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 
