@@ -15,7 +15,6 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
 use Exception;
@@ -32,13 +31,6 @@ class FlashComponent extends Component
 {
 
     /**
-     * The Session object instance
-     *
-     * @var \Cake\Http\Session
-     */
-    protected $_session;
-
-    /**
      * Default configuration
      *
      * @var array
@@ -50,18 +42,6 @@ class FlashComponent extends Component
         'clear' => false,
         'duplicate' => true
     ];
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry for this component
-     * @param array $config Array of config.
-     */
-    public function __construct(ComponentRegistry $registry, array $config = [])
-    {
-        parent::__construct($registry, $config);
-        $this->_session = $registry->getController()->getRequest()->getSession();
-    }
 
     /**
      * Used to set a session variable that can be used to output messages in the view.
@@ -109,7 +89,7 @@ class FlashComponent extends Component
 
         $messages = [];
         if (!$options['clear']) {
-            $messages = (array)$this->_session->read('Flash.' . $options['key']);
+            $messages = (array)$this->getSession()->read('Flash.' . $options['key']);
         }
 
         if (!$options['duplicate']) {
@@ -127,7 +107,7 @@ class FlashComponent extends Component
             'params' => $options['params']
         ];
 
-        $this->_session->write('Flash.' . $options['key'], $messages);
+        $this->getSession()->write('Flash.' . $options['key'], $messages);
     }
 
     /**
@@ -171,5 +151,15 @@ class FlashComponent extends Component
         }
 
         $this->set($args[0], $options);
+    }
+
+    /**
+     * Returns current session object from a controller request.
+     *
+     * @return Session
+     */
+    protected function getSession()
+    {
+        return $this->getController()->getRequest()->getSession();
     }
 }
