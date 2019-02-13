@@ -19,39 +19,8 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\FileLog;
 use Cake\TestSuite\TestCase;
-use JsonSerializable;
-
-/**
- * used for testing when an object is passed to a logger
- */
-class StringObject
-{
-    /**
-     * String representation of the object
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return 'Hey!';
-    }
-}
-
-/**
- * used for testing when an serializable is passed to a logger
- */
-class JsonObject implements JsonSerializable
-{
-    /**
-     * String representation of the object
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return ['hello' => 'world'];
-    }
-}
+use TestApp\Log\Object\JsonObject;
+use TestApp\Log\Object\StringObject;
 
 /**
  * FileLogTest class

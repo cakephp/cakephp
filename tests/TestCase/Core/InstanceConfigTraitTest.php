@@ -15,74 +15,17 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
-use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
-use Exception;
+use TestApp\Config\ReadOnlyTestInstanceConfig;
+use TestApp\Config\TestInstanceConfig;
 
-/**
- * TestInstanceConfig
- */
-class TestInstanceConfig
-{
-    use InstanceConfigTrait;
-
-    /**
-     * _defaultConfig
-     *
-     * Some default config
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'some' => 'string',
-        'a' => [
-            'nested' => 'value',
-            'other' => 'value',
-        ],
-    ];
-}
-
-/**
- * ReadOnlyTestInstanceConfig
- */
-class ReadOnlyTestInstanceConfig
-{
-    use InstanceConfigTrait;
-
-    /**
-     * _defaultConfig
-     *
-     * Some default config
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'some' => 'string',
-        'a' => [
-            'nested' => 'value',
-            'other' => 'value',
-        ],
-    ];
-
-    /**
-     * Example of how to prevent modifying config at run time
-     *
-     * @throws \Exception
-     * @param mixed $key
-     * @param mixed $value
-     * @return void
-     */
-    protected function _configWrite($key, $value = null)
-    {
-        throw new Exception('This Instance is readonly');
-    }
-}
-
-/**
- * InstanceConfigTraitTest
- */
 class InstanceConfigTraitTest extends TestCase
 {
+    /**
+     * @var \TestApp\Config\TestInstanceConfig
+     */
+    protected $object;
+
     /**
      * setUp method
      *

@@ -16,26 +16,15 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Schema\TableSchema;
-use Cake\Database\Type\IntegerType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-
-/**
- * Mock class for testing baseType inheritance
- */
-class FooType extends IntegerType
-{
-    public function getBaseType(): string
-    {
-        return 'integer';
-    }
-}
+use TestApp\Database\Type\IntType;
 
 /**
  * Test case for Table
  */
-class TableTest extends TestCase
+class TableSchemaTest extends TestCase
 {
     public $fixtures = [
         'core.Articles',
@@ -215,19 +204,19 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests getting the base type as it is retuned by the Type class
+     * Tests getting the base type as it is returned by the Type class
      *
      * @return void
      */
     public function testBaseColumnTypeInherited()
     {
-        TypeFactory::map('foo', __NAMESPACE__ . '\FooType');
+        TypeFactory::map('int', IntType::class);
         $table = new TableSchema('articles');
         $table->addColumn('thing', [
-            'type' => 'foo',
+            'type' => 'int',
             'null' => false,
         ]);
-        $this->assertEquals('foo', $table->getColumnType('thing'));
+        $this->assertEquals('int', $table->getColumnType('thing'));
         $this->assertEquals('integer', $table->baseColumnType('thing'));
     }
 
