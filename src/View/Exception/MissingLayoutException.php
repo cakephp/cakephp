@@ -13,15 +13,13 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
  * Used when a layout file cannot be found.
  */
-class MissingLayoutException extends Exception
+class MissingLayoutException extends MissingTemplateException
 {
     /**
-     * @inheritDoc
+     * @var string
      */
-    protected $_messageTemplate = 'Layout file "%s" is missing.';
+    protected $type = 'Layout';
 }

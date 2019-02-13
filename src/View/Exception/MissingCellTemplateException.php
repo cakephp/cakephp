@@ -13,60 +13,35 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
-use Cake\Core\Exception\Exception;
-
 /**
- * Used when a template file cannot be found.
+ * Used when a template file for a cell cannot be found.
  */
-class MissingTemplateException extends Exception
+class MissingCellTemplateException extends MissingTemplateException
 {
     /**
      * @var string
      */
-    protected $file;
-
-    /**
-     * @var array
-     */
-    protected $paths;
+    protected $name;
 
     /**
      * @var string
      */
-    protected $type = 'Template';
+    protected $type = 'Cell template';
 
     /**
      * Constructor
      *
-     * @param string|array $file Either the file name as a string, or in an array *   for backwards compatibility.
+     * @param string $name The Cell name that is missing a view.
+     * @param string $file The view filename.
      * @param array $paths The path list that template could not be found in.
      * @param int|null $code The code of the error.
      * @param \Exception|null $previous the previous exception.
      */
-    public function __construct($file, array $paths = [], $code = null, $previous = null)
+    public function __construct(string $name, string $file, array $paths = [], $code = null, $previous = null)
     {
-        $this->file = is_array($file) ? array_pop($file) : $file;
-        $this->paths = $paths;
+        $this->name = $name;
 
-        parent::__construct($this->formatMessage(), $code, $previous);
-    }
-
-    /**
-     * Get the formatted exception message.
-     *
-     * @return string
-     */
-    public function formatMessage(): string
-    {
-        $message = "{$this->type} file '{$this->file}' could not be found.";
-        if ($this->paths) {
-            $message .= "\n\nThe following paths were searched:\n\n";
-            foreach ($this->paths as $path) {
-                $message .= "- {$path}\n";
-            }
-        }
-
-        return $message;
+        parent::__construct($file, $paths, $code, $previous);
     }
 
     /**
@@ -77,6 +52,7 @@ class MissingTemplateException extends Exception
     public function getAttributes(): array
     {
         return [
+            'name' => $this->name,
             'file' => $this->file,
             'paths' => $this->paths,
         ];

@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use Cake\View\Cell;
-use Cake\View\Exception\MissingCellViewException;
+use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
@@ -109,7 +109,7 @@ class CellTest extends TestCase
         $capture = function ($errno, $msg) {
             restore_error_handler();
             $this->assertEquals(E_USER_WARNING, $errno);
-            $this->assertContains('Could not render cell - Cell view file', $msg);
+            $this->assertContains('Could not render cell - Cell template file', $msg);
         };
         set_error_handler($capture);
 
@@ -203,11 +203,14 @@ class CellTest extends TestCase
         $e = null;
         try {
             $cell->render('derp');
-        } catch (MissingCellViewException $e) {
+        } catch (MissingCellTemplateException $e) {
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('Cell view file "derp" is missing.', $e->getMessage());
+        $message = $e->getMessage();
+        $this->assertContains("Cell template file 'derp' could not be found.", $message);
+        $this->assertContains('The following paths', $message);
+        $this->assertContains(ROOT . DS . 'templates', $message);
         $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
     }
 

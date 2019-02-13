@@ -25,7 +25,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
-use Cake\View\Exception\MissingCellViewException;
+use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Error;
 use Exception;
@@ -155,7 +155,8 @@ abstract class Cell implements EventDispatcherInterface
      * @param string|null $template Custom template name to render. If not provided (null), the last
      * value will be used. This value is automatically set by `CellTrait::cell()`.
      * @return string The rendered cell.
-     * @throws \Cake\View\Exception\MissingCellViewException When a MissingTemplateException is raised during rendering.
+     * @throws \Cake\View\Exception\MissingCellTemplateException
+     *   When a MissingTemplateException is raised during rendering.
      */
     public function render(?string $template = null): string
     {
@@ -203,7 +204,7 @@ abstract class Cell implements EventDispatcherInterface
             try {
                 return $view->render($template);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
+                throw new MissingCellTemplateException($name, $template, $e->getAttributes()['paths'], null, $e);
             }
         };
 
