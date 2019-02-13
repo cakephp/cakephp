@@ -21,8 +21,6 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * Storage engine for CakePHP caching
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class CacheEngine implements CacheInterface, CacheEngineInterface
 {

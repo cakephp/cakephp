@@ -26,8 +26,6 @@ use InvalidArgumentException;
  * CakePHP network socket connection class.
  *
  * Core base class for network communication.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Socket
 {

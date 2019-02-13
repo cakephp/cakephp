@@ -546,4 +546,31 @@ class UrlHelperTest extends TestCase
 
         Configure::write('App.wwwRoot', $webRoot);
     }
+
+    /**
+     * Test plugin based assets will NOT use the plugin name
+     *
+     * @return void
+     */
+    public function testPluginAssetsPrependImageBaseUrl()
+    {
+        $cdnPrefix = 'https://cdn.example.com/';
+        $imageBaseUrl = Configure::read('App.imageBaseUrl');
+        $jsBaseUrl = Configure::read('App.jsBaseUrl');
+        $cssBaseUrl = Configure::read('App.cssBaseUrl');
+        Configure::write('App.imageBaseUrl', $cdnPrefix);
+        $result = $this->Helper->image('TestTheme.text.jpg');
+        $expected = $cdnPrefix . 'text.jpg';
+        $this->assertSame($expected, $result);
+
+        Configure::write('App.jsBaseUrl', $cdnPrefix);
+        $result = $this->Helper->script('TestTheme.app.js');
+        $expected = $cdnPrefix . 'app.js';
+        $this->assertSame($expected, $result);
+
+        Configure::write('App.cssBaseUrl', $cdnPrefix);
+        $result = $this->Helper->css('TestTheme.app.css');
+        $expected = $cdnPrefix . 'app.css';
+        $this->assertSame($expected, $result);
+    }
 }

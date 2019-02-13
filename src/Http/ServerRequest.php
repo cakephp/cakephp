@@ -1266,8 +1266,8 @@ class ServerRequest implements ServerRequestInterface
     protected function _parseAcceptWithQualifier(string $header): array
     {
         $accept = [];
-        $header = explode(',', $header);
-        foreach (array_filter($header) as $value) {
+        $headers = explode(',', $header);
+        foreach (array_filter($headers) as $value) {
             $prefValue = '1.0';
             $value = trim($value);
 

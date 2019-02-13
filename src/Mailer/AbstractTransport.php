@@ -19,8 +19,6 @@ use Cake\Core\InstanceConfigTrait;
 
 /**
  * Abstract transport for sending email
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class AbstractTransport
 {

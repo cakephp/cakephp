@@ -434,6 +434,9 @@ class Configure
         if ($data === null) {
             $data = static::$_values;
         }
+        if (!class_exists(Cache::class)) {
+            throw new RuntimeException('You must install cakephp/cache to use Configure::store()');
+        }
 
         return Cache::write($name, $data, $cacheConfig);
     }
@@ -448,6 +451,9 @@ class Configure
      */
     public static function restore(string $name, string $cacheConfig = 'default'): bool
     {
+        if (!class_exists(Cache::class)) {
+            throw new RuntimeException('You must install cakephp/cache to use Configure::restore()');
+        }
         $values = Cache::read($name, $cacheConfig);
         if ($values) {
             static::write($values);

@@ -32,6 +32,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
@@ -45,6 +46,14 @@ use InvalidArgumentException;
  */
 class UsersTable extends Table
 {
+}
+
+class ProtectedEntity extends Entity
+{
+    protected $_accessible = [
+        'id' => true,
+        'title' => false,
+    ];
 }
 
 /**
@@ -5726,6 +5735,46 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that findOrCreate throws a PersistenceFailedException when it cannot save
+     * an entity created from $search
+     *
+     * @return void
+     */
+    public function testFindOrCreateWithInvalidEntity()
+    {
+        $this->expectException(PersistenceFailedException::class);
+        $this->expectExceptionMessage(
+            'Entity findOrCreate failure. ' .
+            'Found the following errors (title._empty: "This field cannot be left empty").'
+        );
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $validator = new Validator();
+        $validator->notBlank('title');
+        $articles->setValidator('default', $validator);
+
+        $articles->findOrCreate(['title' => '']);
+    }
+
+    /**
+     * Test that findOrCreate allows patching of all $search keys
+     *
+     * @return void
+     */
+    public function testFindOrCreateAccessibleFields()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->setEntityClass(ProtectedEntity::class);
+        $validator = new Validator();
+        $validator->notBlank('title');
+        $articles->setValidator('default', $validator);
+
+        $article = $articles->findOrCreate(['title' => 'test']);
+        $this->assertInstanceOf(ProtectedEntity::class, $article);
+        $this->assertSame('test', $article->title);
+    }
+
+    /**
      * Test that creating a table fires the initialize event.
      *
      * @return void
@@ -6282,7 +6331,7 @@ class TableTest extends TestCase
     public function testSaveOrFailErrorDisplay()
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
-        $this->expectExceptionMessage('Entity save failure (field: "Some message", multiple: "one, two")');
+        $this->expectExceptionMessage('Entity save failure. Found the following errors (field.0: "Some message", multiple.one: "One", multiple.two: "Two")');
 
         $entity = new Entity([
             'foo' => 'bar',
@@ -6290,6 +6339,30 @@ class TableTest extends TestCase
         $entity->setError('field', 'Some message');
         $entity->setError('multiple', ['one' => 'One', 'two' => 'Two']);
         $table = $this->getTableLocator()->get('users');
+
+        $table->saveOrFail($entity);
+    }
+
+    /**
+     * Tests that saveOrFail with nested errors
+     *
+     * @return void
+     */
+    public function testSaveOrFailNestedError()
+    {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity save failure. Found the following errors (articles.0.title.0: "Bad value")');
+
+        $entity = new Entity([
+            'username' => 'bad',
+            'articles' => [
+                new Entity(['title' => 'not an entity'])
+            ]
+        ]);
+        $entity->articles[0]->setError('title', 'Bad value');
+
+        $table = $this->getTableLocator()->get('Users');
+        $table->hasMany('Articles');
 
         $table->saveOrFail($entity);
     }
