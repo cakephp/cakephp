@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error;
 
-use Cake\Controller\Component;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
@@ -44,113 +43,10 @@ use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController;
+use TestApp\Error\Exception\MissingWidgetThing;
+use TestApp\Error\Exception\MissingWidgetThingException;
+use TestApp\Error\MyCustomExceptionRenderer;
 
-/**
- * BlueberryComponent class
- */
-class BlueberryComponent extends Component
-{
-    /**
-     * testName property
-     *
-     * @return void
-     */
-    public $testName = null;
-
-    /**
-     * initialize method
-     *
-     * @param array $config
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        $this->testName = 'BlueberryComponent';
-    }
-}
-
-/**
- * TestErrorController class
- */
-class TestErrorController extends Controller
-{
-    /**
-     * uses property
-     *
-     * @var array
-     */
-    public $uses = [];
-
-    /**
-     * components property
-     *
-     * @return void
-     */
-    public $components = ['Blueberry'];
-
-    /**
-     * beforeRender method
-     *
-     * @return \Cake\Http\Response|null
-     */
-    public function beforeRender(EventInterface $event): ?Response
-    {
-        echo $this->Blueberry->testName;
-
-        return null;
-    }
-
-    /**
-     * index method
-     *
-     * @return array
-     */
-    public function index()
-    {
-        $this->autoRender = false;
-
-        return 'what up';
-    }
-}
-
-/**
- * MyCustomExceptionRenderer class
- */
-class MyCustomExceptionRenderer extends ExceptionRenderer
-{
-    public function setController($controller)
-    {
-        $this->controller = $controller;
-    }
-
-    /**
-     * custom error message type.
-     *
-     * @return string
-     */
-    public function missingWidgetThing()
-    {
-        return 'widget thing is missing';
-    }
-}
-
-/**
- * Exception class for testing app error handlers and custom errors.
- */
-class MissingWidgetThingException extends NotFoundException
-{
-}
-
-/**
- * Exception class for testing app error handlers and custom errors.
- */
-class MissingWidgetThing extends \Exception
-{
-}
-
-/**
- * ExceptionRendererTest class
- */
 class ExceptionRendererTest extends TestCase
 {
     /**
@@ -792,6 +688,7 @@ class ExceptionRendererTest extends TestCase
         $exception = new MissingHelperException(['class' => 'Fail']);
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
+        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
@@ -821,6 +718,7 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException('Not there, sorry');
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
+        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['beforeRender'])
             ->getMock();
@@ -876,6 +774,7 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
+        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
@@ -907,6 +806,7 @@ class ExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
+        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
         $controller = $this->getMockBuilder('Cake\Controller\Controller')
             ->setMethods(['render'])
             ->getMock();
@@ -970,6 +870,7 @@ class ExceptionRendererTest extends TestCase
         $exceptionRenderer->render();
         $properties = $exceptionRenderer->__debugInfo();
 
+        /** @var \Cake\Http\ServerRequest $request */
         $request = $properties['controller']->getRequest();
         foreach (['controller', 'action', '_ext'] as $key) {
             $this->assertSame($routerRequest->getParam($key), $request->getParam($key));
@@ -1039,5 +940,46 @@ class ExceptionRendererTest extends TestCase
         $this->assertContains('There was an error in the SQL query', $result);
         $this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
         $this->assertContains("'seven' => (int) 7", $result);
+    }
+}
+
+class TestErrorController extends Controller
+{
+    /**
+     * uses property
+     *
+     * @var array
+     */
+    public $uses = [];
+
+    /**
+     * components property
+     *
+     * @return void
+     */
+    public $components = ['Blueberry'];
+
+    /**
+     * beforeRender method
+     *
+     * @return \Cake\Http\Response|null
+     */
+    public function beforeRender(EventInterface $event): ?Response
+    {
+        echo $this->Blueberry->testName;
+
+        return null;
+    }
+
+    /**
+     * index method
+     *
+     * @return array
+     */
+    public function index()
+    {
+        $this->autoRender = false;
+
+        return 'what up';
     }
 }

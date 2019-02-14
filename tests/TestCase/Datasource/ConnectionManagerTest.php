@@ -14,45 +14,7 @@ namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-
-class FakeConnection
-{
-    protected $_config = [];
-
-    /**
-     * Constructor.
-     *
-     * @param array $config configuration for connecting to database
-     */
-    public function __construct($config = [])
-    {
-        $this->_config = $config;
-    }
-
-    /**
-     * Returns the set config
-     *
-     * @return array
-     */
-    public function config()
-    {
-        return $this->_config;
-    }
-
-    /**
-     * Returns the set name
-     *
-     * @return string
-     */
-    public function configName()
-    {
-        if (empty($this->_config['name'])) {
-            return '';
-        }
-
-        return $this->_config['name'];
-    }
-}
+use TestApp\Datasource\FakeConnection;
 
 /**
  * ConnectionManager Test
@@ -81,7 +43,7 @@ class ConnectionManagerTest extends TestCase
     {
         return [
             'Array of data using classname key.' => [[
-                'className' => __NAMESPACE__ . '\FakeConnection',
+                'className' => FakeConnection::class,
                 'instance' => 'Sqlite',
                 'database' => ':memory:',
             ]],
@@ -101,7 +63,7 @@ class ConnectionManagerTest extends TestCase
         ConnectionManager::setConfig('test_variant', $settings);
 
         $ds = ConnectionManager::get('test_variant');
-        $this->assertInstanceOf(__NAMESPACE__ . '\FakeConnection', $ds);
+        $this->assertInstanceOf(FakeConnection::class, $ds);
         $this->assertContains('test_variant', ConnectionManager::configured());
     }
 
@@ -128,7 +90,7 @@ class ConnectionManagerTest extends TestCase
         $this->expectException(\BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot reconfigure existing key "test_variant"');
         $settings = [
-            'className' => __NAMESPACE__ . '\FakeConnection',
+            'className' => FakeConnection::class,
             'database' => ':memory:',
         ];
         ConnectionManager::setConfig('test_variant', $settings);
@@ -187,7 +149,7 @@ class ConnectionManagerTest extends TestCase
     public function testConfigured()
     {
         ConnectionManager::setConfig('test_variant', [
-            'className' => __NAMESPACE__ . '\FakeConnection',
+            'className' => FakeConnection::class,
             'database' => ':memory:',
         ]);
         $results = ConnectionManager::configured();
@@ -220,7 +182,7 @@ class ConnectionManagerTest extends TestCase
     public function testDrop()
     {
         ConnectionManager::setConfig('test_variant', [
-            'className' => __NAMESPACE__ . '\FakeConnection',
+            'className' => FakeConnection::class,
             'database' => ':memory:',
         ]);
         $result = ConnectionManager::configured();
@@ -241,7 +203,7 @@ class ConnectionManagerTest extends TestCase
     public function testAlias()
     {
         ConnectionManager::setConfig('test_variant', [
-            'className' => __NAMESPACE__ . '\FakeConnection',
+            'className' => FakeConnection::class,
             'database' => ':memory:',
         ]);
         ConnectionManager::alias('test_variant', 'other_name');
@@ -496,7 +458,7 @@ class ConnectionManagerTest extends TestCase
     {
         //Set with explicit name
         ConnectionManager::setConfig('test_variant', [
-            'className' => __NAMESPACE__ . '\FakeConnection',
+            'className' => FakeConnection::class,
             'database' => ':memory:',
         ]);
         $result = ConnectionManager::get('test_variant');
@@ -505,7 +467,7 @@ class ConnectionManagerTest extends TestCase
         ConnectionManager::drop('test_variant');
         ConnectionManager::setConfig([
             'test_variant' => [
-                'className' => __NAMESPACE__ . '\FakeConnection',
+                'className' => FakeConnection::class,
                 'database' => ':memory:',
             ],
         ]);

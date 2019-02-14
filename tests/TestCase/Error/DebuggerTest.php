@@ -21,19 +21,8 @@ use Cake\Error\Debugger;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use TestApp\Error\TestDebugger;
-
-class DebuggableThing
-{
-    public function __debugInfo()
-    {
-        return ['foo' => 'bar', 'inner' => new self()];
-    }
-}
-
-class SecurityThing
-{
-    public $password = 'pass1234';
-}
+use TestApp\Error\Thing\DebuggableThing;
+use TestApp\Error\Thing\SecurityThing;
 
 /**
  * DebuggerTest class
@@ -615,10 +604,10 @@ TEXT;
         $object = new DebuggableThing();
         $result = Debugger::exportVar($object, 2);
         $expected = <<<eos
-object(Cake\Test\TestCase\Error\DebuggableThing) {
+object(TestApp\Error\Thing\DebuggableThing) {
 
 	'foo' => 'bar',
-	'inner' => object(Cake\Test\TestCase\Error\DebuggableThing) {}
+	'inner' => object(TestApp\Error\Thing\DebuggableThing) {}
 
 }
 eos;
@@ -663,7 +652,7 @@ eos;
         Debugger::setOutputMask(['password' => '[**********]']);
         $object = new SecurityThing();
         $result = Debugger::exportVar($object);
-        $expected = 'object(Cake\\Test\\TestCase\\Error\\SecurityThing){password=>[**********]}';
+        $expected = 'object(TestApp\\Error\\Thing\\SecurityThing){password=>[**********]}';
         $this->assertEquals($expected, preg_replace('/\s+/', '', $result));
     }
 
@@ -749,7 +738,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
@@ -774,7 +763,7 @@ EXPECTED;
 ###########################
 
 EXPECTED;
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);

@@ -16,67 +16,9 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\StaticConfigTrait;
 use Cake\TestSuite\TestCase;
-
-/**
- * TestCacheStaticConfig
- */
-class TestCacheStaticConfig
-{
-    use StaticConfigTrait;
-
-    /**
-     * Cache driver class map.
-     *
-     * @var array
-     */
-    protected static $_dsnClassMap = [
-        'apcu' => 'Cake\Cache\Engine\ApcuEngine',
-        'file' => 'Cake\Cache\Engine\FileEngine',
-        'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
-        'null' => 'Cake\Cache\Engine\NullEngine',
-        'redis' => 'Cake\Cache\Engine\RedisEngine',
-        'wincache' => 'Cake\Cache\Engine\WincacheEngine',
-        'xcache' => 'Cake\Cache\Engine\XcacheEngine',
-    ];
-}
-
-/**
- * TestEmailStaticConfig
- */
-class TestEmailStaticConfig
-{
-    use StaticConfigTrait;
-
-    /**
-     * Email driver class map.
-     *
-     * @var array
-     */
-    protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
-    ];
-}
-
-/**
- * TestLogStaticConfig
- */
-class TestLogStaticConfig
-{
-    use StaticConfigTrait;
-
-    /**
-     * Log engine class map.
-     *
-     * @var array
-     */
-    protected static $_dsnClassMap = [
-        'console' => 'Cake\Log\Engine\ConsoleLog',
-        'file' => 'Cake\Log\Engine\FileLog',
-        'syslog' => 'Cake\Log\Engine\SyslogLog',
-    ];
-}
+use TestApp\Config\TestEmailStaticConfig;
+use TestApp\Config\TestLogStaticConfig;
+use TypeError;
 
 /**
  * StaticConfigTraitTest class
@@ -91,7 +33,7 @@ class StaticConfigTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->subject = $this->getObjectForTrait('Cake\Core\StaticConfigTrait');
+        $this->subject = $this->getObjectForTrait(StaticConfigTrait::class);
     }
 
     /**
@@ -123,7 +65,7 @@ class StaticConfigTraitTest extends TestCase
      */
     public function testParseBadType()
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(TypeError::class);
         $className = get_class($this->subject);
         $className::parseDsn(['url' => 'http://:80']);
     }
