@@ -15,6 +15,7 @@
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Traversable;
@@ -899,7 +900,7 @@ trait EntityTrait
      */
     public function hasErrors($includeNested = true)
     {
-        if (!empty($this->_errors)) {
+        if (Hash::filter($this->_errors)) {
             return true;
         }
 
