@@ -15,6 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\ComponentRegistry;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
 use Exception;
@@ -31,6 +32,13 @@ class FlashComponent extends Component
 {
 
     /**
+     * The Session object instance
+     *
+     * @var \Cake\Http\Session
+     */
+    protected $_session;
+
+    /**
      * Default configuration
      *
      * @var array
@@ -42,6 +50,18 @@ class FlashComponent extends Component
         'clear' => false,
         'duplicate' => true
     ];
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry for this component
+     * @param array $config Array of config.
+     */
+    public function __construct(ComponentRegistry $registry, array $config = [])
+    {
+        parent::__construct($registry, $config);
+        $this->_session = $registry->getController()->getRequest()->getSession();
+    }
 
     /**
      * Used to set a session variable that can be used to output messages in the view.
@@ -156,7 +176,7 @@ class FlashComponent extends Component
     /**
      * Returns current session object from a controller request.
      *
-     * @return Session
+     * @return \Cake\Http\Session
      */
     protected function getSession()
     {
