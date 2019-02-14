@@ -20,24 +20,10 @@ use Cake\Event\Event;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
-
-/**
- * Testing stub.
- */
-class SecondaryPostsTable extends Table
-{
-    /**
-     * @return string
-     */
-    public static function defaultConnectionName(): string
-    {
-        return 'secondary';
-    }
-}
+use TestApp\Model\Table\SecondaryPostsTable;
 
 /**
  * TestCaseTest
@@ -387,7 +373,7 @@ class TestCaseTest extends TestCase
     {
         ConnectionManager::alias('test', 'secondary');
 
-        $post = $this->getMockForModel(__NAMESPACE__ . '\SecondaryPostsTable', ['save']);
+        $post = $this->getMockForModel(SecondaryPostsTable::class, ['save']);
         $this->assertEquals('test', $post->getConnection()->configName());
     }
 

@@ -252,7 +252,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
         if (!in_array($this->table, $tables)) {
             throw new CakeException(
                 sprintf(
-                    'Cannot describe schema for table `%s` for fixture `%s` : the table does not exist.',
+                    'Cannot describe schema for table `%s` for fixture `%s`: the table does not exist.',
                     $this->table,
                     static::class
                 )
