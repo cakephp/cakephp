@@ -89,9 +89,9 @@ class SyslogLog extends BaseLog
      * @param string $level The severity level of log you are making.
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
-     * @return bool success of write.
+     * @return void
      */
-    public function log($level, $message, array $context = []): bool
+    public function log($level, $message, array $context = [])
     {
         if (!$this->_open) {
             $config = $this->_config;
@@ -109,8 +109,6 @@ class SyslogLog extends BaseLog
             $message = sprintf($this->_config['format'], $level, $message);
             $this->_write($priority, $message);
         }
-
-        return true;
     }
 
     /**
