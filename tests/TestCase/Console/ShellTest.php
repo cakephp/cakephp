@@ -22,24 +22,13 @@ use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
 use TestApp\Shell\MergeShell;
 use TestApp\Shell\ShellTestShell;
+use TestApp\Shell\Task\TestAppleTask;
+use TestApp\Shell\Task\TestBananaTask;
 use TestApp\Shell\TestingDispatchShell;
+use TestPlugin\Model\Table\TestPluginCommentsTable;
 
-/**
- * TestAppleTask class
- */
-class TestAppleTask extends Shell
-{
-}
-
-/**
- * TestBananaTask class
- */
-class TestBananaTask extends Shell
-{
-}
-
-class_alias(__NAMESPACE__ . '\TestAppleTask', 'Cake\Shell\Task\TestAppleTask');
-class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Shell\Task\TestBananaTask');
+class_alias(TestAppleTask::class, 'Cake\Shell\Task\TestAppleTask');
+class_alias(TestBananaTask::class, 'Cake\Shell\Task\TestBananaTask');
 
 /**
  * ShellTest class
@@ -61,7 +50,9 @@ class ShellTest extends TestCase
         'core.Users',
     ];
 
-    /** @var \Cake\Console\Shell */
+    /**
+     * @var \Cake\Console\Shell
+     */
     protected $Shell;
 
     /**
@@ -118,7 +109,7 @@ class ShellTest extends TestCase
 
         $this->assertTrue(isset($this->Shell->TestPluginComments));
         $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
+            TestPluginCommentsTable::class,
             $this->Shell->TestPluginComments
         );
         $this->clearPlugins();
@@ -143,11 +134,11 @@ class ShellTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
+            TestPluginCommentsTable::class,
             $result
         );
         $this->assertInstanceOf(
-            'TestPlugin\Model\Table\TestPluginCommentsTable',
+            TestPluginCommentsTable::class,
             $this->Shell->TestPluginComments
         );
         $this->clearPlugins();
@@ -537,7 +528,6 @@ class ShellTest extends TestCase
      */
     public function testCreateFileNoReply()
     {
-        $eol = PHP_EOL;
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
 
@@ -564,7 +554,6 @@ class ShellTest extends TestCase
      */
     public function testCreateFileOverwrite()
     {
-        $eol = PHP_EOL;
         $path = TMP . 'shell_test';
         $file = $path . DS . 'file1.php';
 
@@ -616,7 +605,6 @@ class ShellTest extends TestCase
      */
     public function testCreateFileOverwriteAll()
     {
-        $eol = PHP_EOL;
         $path = TMP . 'shell_test';
         $files = [
             $path . DS . 'file1.php' => 'My first content',
@@ -717,6 +705,7 @@ class ShellTest extends TestCase
     public function testRunCommandMain()
     {
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        /** @var \Cake\Console\Shell|\PHPUnit\Framework\MockObject\MockObject $shell */
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['main', 'startup'])
             ->setConstructorArgs([$io])
@@ -739,6 +728,7 @@ class ShellTest extends TestCase
     public function testRunCommandWithMethod()
     {
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        /** @var \Cake\Console\Shell|\PHPUnit\Framework\MockObject\MockObject $shell */
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['hitMe', 'startup'])
             ->setConstructorArgs([$io])
@@ -912,6 +902,7 @@ TEXT;
     public function testRunCommandAutoMethodOff()
     {
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
+        /** @var \Cake\Console\Shell|\PHPUnit\Framework\MockObject\MockObject $shell */
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['hit_me', 'startup'])
             ->setConstructorArgs([$io])
@@ -1031,6 +1022,7 @@ TEXT;
      */
     public function testRunCommandBaseClassMethod()
     {
+        /** @var \Cake\Console\Shell|\PHPUnit\Framework\MockObject\MockObject $shell */
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['startup', 'getOptionParser', 'hr'])
             ->disableOriginalConstructor()
@@ -1062,6 +1054,7 @@ TEXT;
      */
     public function testRunCommandMissingMethod()
     {
+        /** @var \Cake\Console\Shell|\PHPUnit\Framework\MockObject\MockObject $shell */
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['startup', 'getOptionParser', 'hr'])
             ->disableOriginalConstructor()
@@ -1120,6 +1113,7 @@ TEXT;
      */
     public function testRunCommandNotCallUnexposedTask()
     {
+        /** @var \Cake\Console\Shell|\PHPUnit\Framework\MockObject\MockObject $shell */
         $shell = $this->getMockBuilder('Cake\Console\Shell')
             ->setMethods(['startup', 'hasTask'])
             ->disableOriginalConstructor()

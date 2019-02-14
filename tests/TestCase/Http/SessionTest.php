@@ -16,50 +16,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Network;
 
 use Cake\Http\Session;
-use Cake\Http\Session\CacheSession;
-use Cake\Http\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
-
-/**
- * TestCacheSession
- */
-class TestCacheSession extends CacheSession
-{
-    protected function _writeSession()
-    {
-        return true;
-    }
-}
-
-/**
- * TestDatabaseSession
- */
-class TestDatabaseSession extends DatabaseSession
-{
-    protected function _writeSession()
-    {
-        return true;
-    }
-}
-
-/**
- * Overwrite Session to simulate a web session even if the test runs on CLI.
- */
-class TestWebSession extends Session
-{
-    protected function _hasSession(): bool
-    {
-        $isCLI = $this->_isCLI;
-        $this->_isCLI = false;
-
-        $result = parent::_hasSession();
-
-        $this->_isCLI = $isCLI;
-
-        return $result;
-    }
-}
+use TestApp\Http\Session\TestWebSession;
 
 /**
  * SessionTest class

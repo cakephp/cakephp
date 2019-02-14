@@ -30,84 +30,9 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
-
-/**
- * Test stub.
- */
-class Article extends Entity
-{
-}
-
-/**
- * Contact class
- */
-class ContactsTable extends Table
-{
-    /**
-     * Default schema
-     *
-     * @var array
-     */
-    protected $_schema = [
-        'id' => ['type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'],
-        'name' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
-        'email' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
-        'phone' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
-        'password' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
-        'published' => ['type' => 'date', 'null' => true, 'default' => null, 'length' => null],
-        'created' => ['type' => 'date', 'null' => '1', 'default' => '', 'length' => ''],
-        'updated' => ['type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null],
-        'age' => ['type' => 'integer', 'null' => '', 'default' => '', 'length' => null],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
-     * Initializes the schema
-     *
-     * @param array $config
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        $this->setSchema($this->_schema);
-    }
-}
-
-/**
- * ValidateUser class
- */
-class ValidateUsersTable extends Table
-{
-    /**
-     * schema method
-     *
-     * @var array
-     */
-    protected $_schema = [
-        'id' => ['type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'],
-        'name' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
-        'email' => ['type' => 'string', 'null' => '', 'default' => '', 'length' => '255'],
-        'balance' => ['type' => 'float', 'null' => false, 'length' => 5, 'precision' => 2],
-        'cost_decimal' => ['type' => 'decimal', 'null' => false, 'length' => 6, 'precision' => 3],
-        'null_decimal' => ['type' => 'decimal', 'null' => false, 'length' => null, 'precision' => null],
-        'ratio' => ['type' => 'decimal', 'null' => false, 'length' => 10, 'precision' => 6],
-        'population' => ['type' => 'decimal', 'null' => false, 'length' => 15, 'precision' => 0],
-        'created' => ['type' => 'date', 'null' => '1', 'default' => '', 'length' => ''],
-        'updated' => ['type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null],
-        '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
-    ];
-
-    /**
-     * Initializes the schema
-     *
-     * @param array $config
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        $this->setSchema($this->_schema);
-    }
-}
+use TestApp\Model\Entity\Article;
+use TestApp\Model\Table\ContactsTable;
+use TestApp\Model\Table\ValidateUsersTable;
 
 /**
  * FormHelperTest class
@@ -1377,7 +1302,7 @@ class FormHelperTest extends TestCase
     public function testTextFieldTypeNumberGenerationForIntegers()
     {
         $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
         $result = $this->Form->control('age');
@@ -1403,7 +1328,7 @@ class FormHelperTest extends TestCase
     public function testFileUploadFieldTypeGenerationForBinaries()
     {
         $table = $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $table->setSchema(['foo' => [
             'type' => 'binary',
@@ -2859,7 +2784,7 @@ class FormHelperTest extends TestCase
         $one = new Entity();
         $two = new Entity();
         $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $one->set('email', '');
         $one->setError('email', ['invalid email']);
@@ -2913,7 +2838,7 @@ class FormHelperTest extends TestCase
     public function testControl()
     {
         $this->getTableLocator()->get('ValidateUsers', [
-            'className' => __NAMESPACE__ . '\ValidateUsersTable',
+            'className' => ValidateUsersTable::class,
         ]);
         $this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
         $result = $this->Form->control('ValidateUsers.balance');
@@ -2960,7 +2885,7 @@ class FormHelperTest extends TestCase
     public function testControlCustomization()
     {
         $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
         $result = $this->Form->control('Contact.email', ['id' => 'custom']);
@@ -3326,7 +3251,7 @@ class FormHelperTest extends TestCase
     public function testControlZero()
     {
         $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
         $result = $this->Form->control('0');
@@ -3447,7 +3372,7 @@ class FormHelperTest extends TestCase
     public function testControlHidden()
     {
         $this->getTableLocator()->get('ValidateUsers', [
-            'className' => __NAMESPACE__ . '\ValidateUsersTable',
+            'className' => ValidateUsersTable::class,
         ]);
         $this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
 
@@ -3953,7 +3878,7 @@ class FormHelperTest extends TestCase
     public function testControlMagicSelectForTypeNumber()
     {
         $this->getTableLocator()->get('ValidateUsers', [
-            'className' => __NAMESPACE__ . '\ValidateUsersTable',
+            'className' => ValidateUsersTable::class,
         ]);
         $entity = new Entity(['balance' => 1]);
         $this->Form->create($entity, ['context' => ['table' => 'ValidateUsers']]);
@@ -7444,7 +7369,7 @@ class FormHelperTest extends TestCase
     public function testFormMagicControlLabel()
     {
         $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $this->Form->create([], ['context' => ['table' => 'Contacts']]);
         $this->Form->setTemplates(['inputContainer' => '{{content}}']);
@@ -7721,7 +7646,7 @@ class FormHelperTest extends TestCase
             ->notBlank('phone');
 
         $table = $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $table->setValidator('default', $validator);
         $contact = new Entity();
@@ -7797,7 +7722,7 @@ class FormHelperTest extends TestCase
             ->notBlank('phone');
 
         $table = $this->getTableLocator()->get('Contacts', [
-            'className' => __NAMESPACE__ . '\ContactsTable',
+            'className' => ContactsTable::class,
         ]);
         $table->setValidator('default', $validator);
         $contact = new Entity();

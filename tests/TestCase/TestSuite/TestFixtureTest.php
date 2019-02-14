@@ -19,123 +19,12 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
-use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Exception;
-
-/**
- * ArticlesFixture class
- */
-class ArticlesFixture extends TestFixture
-{
-    /**
-     * Table property
-     *
-     * @var string
-     */
-    public $table = 'articles';
-
-    /**
-     * Fields array
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string', 'length' => '255'],
-        'created' => ['type' => 'datetime'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
-    ];
-
-    /**
-     * Records property
-     *
-     * @var array
-     */
-    public $records = [
-        ['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
-        ['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
-        ['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00'],
-    ];
-}
-
-/**
- * StringsTestsFixture class
- */
-class StringsTestsFixture extends TestFixture
-{
-    /**
-     * Table property
-     *
-     * @var string
-     */
-    public $table = 'strings';
-
-    /**
-     * Fields array
-     *
-     * @var array
-     */
-    public $fields = [
-        'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string', 'length' => '255'],
-        'email' => ['type' => 'string', 'length' => '255'],
-        'age' => ['type' => 'integer', 'default' => 10],
-    ];
-
-    /**
-     * Records property
-     *
-     * @var array
-     */
-    public $records = [
-        ['name' => 'Mark Doe', 'email' => 'mark.doe@email.com'],
-        ['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
-        ['email' => 'jane.doe@email.com', 'name' => 'Jane Doe', 'age' => 30],
-    ];
-}
-
-/**
- * ImportsFixture class
- */
-class ImportsFixture extends TestFixture
-{
-    /**
-     * Import property
-     *
-     * @var mixed
-     */
-    public $import = ['table' => 'posts', 'connection' => 'test'];
-
-    /**
-     * Records property
-     *
-     * @var array
-     */
-    public $records = [
-        ['title' => 'Hello!', 'body' => 'Hello world!'],
-    ];
-}
-
-/**
- * This class allows testing the fixture data insertion when the properties
- * $fields and $import are not set
- */
-class LettersFixture extends TestFixture
-{
-    /**
-     * records property
-     *
-     * @var array
-     */
-    public $records = [
-        ['letter' => 'a'],
-        ['letter' => 'b'],
-        ['letter' => 'c'],
-    ];
-}
+use TestApp\Fixture\ArticlesFixture;
+use TestApp\Fixture\ImportsFixture;
+use TestApp\Fixture\LettersFixture;
+use TestApp\Fixture\StringsTestsFixture;
 
 /**
  * Test case for TestFixture
@@ -259,7 +148,7 @@ class TestFixtureTest extends TestCase
     public function testInitNoImportNoFieldsException()
     {
         $this->expectException(\Cake\Core\Exception\Exception::class);
-        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `Cake\Test\TestCase\TestSuite\LettersFixture` : the table does not exist.');
+        $this->expectExceptionMessage('Cannot describe schema for table `letters` for fixture `' . LettersFixture::class . '`: the table does not exist.');
         $fixture = new LettersFixture();
         $fixture->init();
     }
