@@ -15,14 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Behavior\Translate;
 
-use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-
-class TestEntity extends Entity
-{
-    use TranslateTrait;
-}
+use TestApp\Model\Entity\TranslateTestEntity;
 
 /**
  * Translate behavior test case
@@ -36,7 +31,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationCreate()
     {
-        $entity = new TestEntity();
+        $entity = new TranslateTestEntity();
         $entity->translation('eng')->set('title', 'My Title');
         $this->assertEquals('My Title', $entity->translation('eng')->get('title'));
 
@@ -54,7 +49,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationModify()
     {
-        $entity = new TestEntity();
+        $entity = new TranslateTestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
             'spa' => new Entity(['title' => 'Titulo']),
@@ -70,13 +65,13 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationEmpty()
     {
-        $entity = new TestEntity();
+        $entity = new TranslateTestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
             'spa' => new Entity(['title' => 'Titulo']),
         ]);
         $this->assertTrue($entity->translation('pol')->isNew());
-        $this->assertInstanceOf('Cake\Test\TestCase\ORM\Behavior\Translate\TestEntity', $entity->translation('pol'));
+        $this->assertInstanceOf(TranslateTestEntity::class, $entity->translation('pol'));
     }
 
     /**
@@ -88,7 +83,7 @@ class TranslateTraitTest extends TestCase
      */
     public function testTranslationDirty()
     {
-        $entity = new TestEntity();
+        $entity = new TranslateTestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
             'spa' => new Entity(['title' => 'Titulo']),

@@ -18,22 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-
-/**
- * A Test double used to assert that default tables are created
- */
-class TestTable extends Table
-{
-    public function initialize(array $config = []): void
-    {
-        $this->setSchema(['id' => ['type' => 'integer']]);
-    }
-
-    public function findPublished($query)
-    {
-        return $query->applyOptions(['this' => 'worked']);
-    }
-}
+use TestApp\Model\Table\TestTable;
 
 /**
  * Tests Association class
@@ -55,7 +40,7 @@ class AssociationTest extends TestCase
         parent::setUp();
         $this->source = new TestTable();
         $config = [
-            'className' => 'Cake\Test\TestCase\ORM\TestTable',
+            'className' => TestTable::class,
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
@@ -150,7 +135,7 @@ class AssociationTest extends TestCase
      */
     public function testSetClassNameBeforeTarget()
     {
-        $this->assertEquals('Cake\Test\TestCase\ORM\TestTable', $this->association->getClassName());
+        $this->assertEquals(TestTable::class, $this->association->getClassName());
         $this->assertSame($this->association, $this->association->setClassName('\TestApp\Model\Table\AuthorsTable'));
         $this->assertEquals('\TestApp\Model\Table\AuthorsTable', $this->association->getClassName());
     }
@@ -242,7 +227,7 @@ class AssociationTest extends TestCase
         $this->getTableLocator()->get('Test');
 
         $config = [
-            'className' => 'Cake\Test\TestCase\ORM\TestTable',
+            'className' => TestTable::class,
         ];
         $this->association = $this->getMockBuilder('Cake\ORM\Association')
             ->setMethods([
@@ -263,7 +248,7 @@ class AssociationTest extends TestCase
     public function testTargetTableDescendant()
     {
         $this->getTableLocator()->get('Test', [
-            'className' => 'Cake\Test\TestCase\ORM\TestTable',
+            'className' => TestTable::class,
         ]);
         $className = 'Cake\ORM\Table';
 
@@ -384,7 +369,7 @@ class AssociationTest extends TestCase
     public function testSetTarget()
     {
         $table = $this->association->getTarget();
-        $this->assertInstanceOf(__NAMESPACE__ . '\TestTable', $table);
+        $this->assertInstanceOf(TestTable::class, $table);
 
         $other = new Table();
         $this->assertSame($this->association, $this->association->setTarget($other));
@@ -497,7 +482,7 @@ class AssociationTest extends TestCase
         $this->source->setSchema(['foo' => ['type' => 'string']]);
 
         $config = [
-            'className' => 'Cake\Test\TestCase\ORM\TestTable',
+            'className' => TestTable::class,
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
@@ -563,7 +548,7 @@ class AssociationTest extends TestCase
     public function testFinderInConstructor()
     {
         $config = [
-            'className' => 'Cake\Test\TestCase\ORM\TestTable',
+            'className' => TestTable::class,
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
@@ -605,7 +590,7 @@ class AssociationTest extends TestCase
     {
         $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
         $config = [
-            'className' => 'Cake\Test\TestCase\ORM\TestTable',
+            'className' => TestTable::class,
             'tableLocator' => $locator,
         ];
         $assoc = $this->getMockBuilder('Cake\ORM\Association')

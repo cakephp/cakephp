@@ -21,76 +21,12 @@ use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
-use Cake\ORM\Query;
-use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-
-/**
- * Test entity for mass assignment.
- */
-class OpenEntity extends Entity
-{
-    protected $_accessible = [
-        '*' => true,
-    ];
-}
-
-/**
- * Test entity for mass assignment.
- */
-class Tag extends Entity
-{
-    protected $_accessible = [
-        'tag' => true,
-    ];
-}
-
-/**
- * Test entity for mass assignment.
- */
-class ProtectedArticle extends Entity
-{
-    protected $_accessible = [
-        'title' => true,
-        'body' => true,
-    ];
-}
-
-/**
- * Test stub for greedy find operations.
- */
-class GreedyCommentsTable extends Table
-{
-    /**
-     * initialize hook
-     *
-     * @param array $config Config data.
-     * @return void
-     */
-    public function initialize(array $config): void
-    {
-        $this->setTable('comments');
-        $this->setAlias('Comments');
-    }
-
-    /**
-     * Overload find to cause issues.
-     *
-     * @param string $type Find type
-     * @param array $options find options
-     * @return \Cake\ORM\Query
-     */
-    public function find(string $type = 'all', $options = []): Query
-    {
-        if (empty($options['conditions'])) {
-            $options['conditions'] = [];
-        }
-        $options['conditions'] = array_merge($options['conditions'], ['Comments.published' => 'Y']);
-
-        return parent::find($type, $options);
-    }
-}
+use TestApp\Model\Entity\OpenArticleEntity;
+use TestApp\Model\Entity\OpenTag;
+use TestApp\Model\Entity\ProtectedArticle;
+use TestApp\Model\Table\GreedyCommentsTable;
 
 /**
  * Marshaller test case
@@ -154,11 +90,11 @@ class MarshallerTest extends TestCase
         $this->comments->belongsTo('Articles');
         $this->comments->belongsTo('Users');
 
-        $this->articles->setEntityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->comments->setEntityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->users->setEntityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->tags->setEntityClass(__NAMESPACE__ . '\OpenEntity');
-        $this->articleTags->setEntityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->articles->setEntityClass(OpenArticleEntity::class);
+        $this->comments->setEntityClass(OpenArticleEntity::class);
+        $this->users->setEntityClass(OpenArticleEntity::class);
+        $this->tags->setEntityClass(OpenArticleEntity::class);
+        $this->articleTags->setEntityClass(OpenArticleEntity::class);
     }
 
     /**
@@ -281,7 +217,7 @@ class MarshallerTest extends TestCase
             'author_id' => 'derp',
             'created' => 'fale',
         ];
-        $this->articles->setEntityClass(__NAMESPACE__ . '\OpenEntity');
+        $this->articles->setEntityClass(OpenArticleEntity::class);
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
 
@@ -303,11 +239,11 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
             'not_in_schema' => true,
         ];
-        $this->articles->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->articles->setEntityClass(ProtectedArticle::class);
         $marshall = new Marshaller($this->articles);
         $result = $marshall->one($data, []);
 
-        $this->assertInstanceOf(__NAMESPACE__ . '\ProtectedArticle', $result);
+        $this->assertInstanceOf(ProtectedArticle::class, $result);
         $this->assertNull($result->author_id);
         $this->assertNull($result->not_in_schema);
     }
@@ -325,7 +261,7 @@ class MarshallerTest extends TestCase
             'author_id' => 1,
             'not_in_schema' => true,
         ];
-        $this->articles->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->articles->setEntityClass(ProtectedArticle::class);
 
         $marshall = new Marshaller($this->articles);
 
@@ -421,8 +357,8 @@ class MarshallerTest extends TestCase
                 'username' => 'mark',
             ],
         ];
-        $this->articles->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
-        $this->users->setEntityClass(__NAMESPACE__ . '\ProtectedArticle');
+        $this->articles->setEntityClass(ProtectedArticle::class);
+        $this->users->setEntityClass(ProtectedArticle::class);
 
         $marshall = new Marshaller($this->articles);
 
@@ -827,7 +763,7 @@ class MarshallerTest extends TestCase
      */
     public function testBelongsToManyAddingNewExisting()
     {
-        $this->tags->setEntityClass(__NAMESPACE__ . '\Tag');
+        $this->tags->setEntityClass(OpenTag::class);
         $data = [
             'title' => 'My title',
             'body' => 'My content',
@@ -2376,8 +2312,8 @@ class MarshallerTest extends TestCase
     public function testMergeManySimple()
     {
         $entities = [
-            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
-            new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
         ];
         $entities[0]->clean();
         $entities[1]->clean();
@@ -2406,8 +2342,8 @@ class MarshallerTest extends TestCase
     public function testMergeManyInvalidData()
     {
         $entities = [
-            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
-            new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
         ];
         $entities[0]->clean();
         $entities[1]->clean();
@@ -2433,8 +2369,8 @@ class MarshallerTest extends TestCase
     public function testMergeManyWithAppend()
     {
         $entities = [
-            new OpenEntity(['comment' => 'First post', 'user_id' => 2]),
-            new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
+            new OpenArticleEntity(['comment' => 'First post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
         ];
         $entities[0]->clean();
         $entities[1]->clean();
@@ -2467,8 +2403,8 @@ class MarshallerTest extends TestCase
         $articlesTags = $this->getTableLocator()->get('ArticlesTags');
 
         $entities = [
-            new OpenEntity(['article_id' => 1, 'tag_id' => 2]),
-            new OpenEntity(['article_id' => 1, 'tag_id' => 1]),
+            new OpenArticleEntity(['article_id' => 1, 'tag_id' => 2]),
+            new OpenArticleEntity(['article_id' => 1, 'tag_id' => 1]),
         ];
         $entities[0]->clean();
         $entities[1]->clean();
@@ -2493,7 +2429,7 @@ class MarshallerTest extends TestCase
     public function testMergeManyExistingQueryAliases()
     {
         $entities = [
-            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2], ['markClean' => true]),
+            new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2], ['markClean' => true]),
         ];
 
         $data = [
@@ -2529,7 +2465,7 @@ class MarshallerTest extends TestCase
             ['id' => 3, 'comment' => 'New 1'],
         ];
         $comments = $this->getTableLocator()->get('GreedyComments', [
-            'className' => __NAMESPACE__ . '\\GreedyCommentsTable',
+            'className' => GreedyCommentsTable::class,
         ]);
         $marshall = new Marshaller($comments);
         $result = $marshall->mergeMany($entities, $data);
@@ -2618,13 +2554,13 @@ class MarshallerTest extends TestCase
         $result = $marshall->one($data, ['associated' => ['Users']]);
         $this->assertEmpty($result->getErrors());
         $this->assertEquals(1, $result->author_id);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $result->user);
+        $this->assertInstanceOf(OpenArticleEntity::class, $result->user);
         $this->assertEquals('mark', $result->user->username);
 
         $translations = $result->get('_translations');
         $this->assertCount(2, $translations);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertInstanceOf(OpenArticleEntity::class, $translations['en']);
+        $this->assertInstanceOf(OpenArticleEntity::class, $translations['es']);
         $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
     }
 
@@ -2690,8 +2626,8 @@ class MarshallerTest extends TestCase
     public function testMergeManyFields()
     {
         $entities = [
-            new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
-            new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+            new OpenArticleEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2]),
         ];
         $entities[0]->clean();
         $entities[1]->clean();
@@ -3177,8 +3113,8 @@ class MarshallerTest extends TestCase
 
         $translations = $result->get('_translations');
         $this->assertCount(2, $translations);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['en']);
-        $this->assertInstanceOf(__NAMESPACE__ . '\OpenEntity', $translations['es']);
+        $this->assertInstanceOf(OpenArticleEntity::class, $translations['en']);
+        $this->assertInstanceOf(OpenArticleEntity::class, $translations['es']);
         $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
     }
 

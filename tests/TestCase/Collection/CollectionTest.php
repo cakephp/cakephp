@@ -18,70 +18,13 @@ namespace Cake\Test\TestCase\Collection;
 use ArrayIterator;
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
-use Cake\Collection\CollectionTrait;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use NoRewindIterator;
-
-class TestCollection extends \IteratorIterator implements CollectionInterface
-{
-    use CollectionTrait;
-
-    public function __construct(iterable $items)
-    {
-        if (is_array($items)) {
-            $items = new \ArrayIterator($items);
-        }
-
-        if (!($items instanceof \Traversable)) {
-            $msg = 'Only an array or \Traversable is allowed for Collection';
-            throw new \InvalidArgumentException($msg);
-        }
-
-        parent::__construct($items);
-    }
-}
-
-/**
- * Special class to test that extending \ArrayIterator works as expected
- */
-class TestIterator extends ArrayIterator
-{
-    use CollectionTrait;
-
-    public $data = [];
-
-    public function __construct($data)
-    {
-        $this->data = $data;
-
-        parent::__construct($data);
-    }
-
-    public function checkValues()
-    {
-        return true;
-    }
-}
-
-class CountableIterator extends \IteratorIterator implements \Countable
-{
-    public function __construct($items)
-    {
-        $f = function () use ($items) {
-            foreach ($items as $e) {
-                yield $e;
-            }
-        };
-        parent::__construct($f());
-    }
-
-    public function count()
-    {
-        return 6;
-    }
-}
+use stdClass;
+use TestApp\Collection\CountableIterator;
+use TestApp\Collection\TestCollection;
+use TestApp\Collection\TestIterator;
 
 /**
  * Collection Test
@@ -274,7 +217,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
         $callable->expects($this->at(0))
@@ -322,7 +265,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -370,7 +313,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -398,7 +341,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -415,7 +358,7 @@ class CollectionTest extends TestCase
 
         $items = [];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -439,7 +382,7 @@ class CollectionTest extends TestCase
 
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -464,7 +407,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -543,7 +486,7 @@ class CollectionTest extends TestCase
     public function testReduceWithInitialValue($items)
     {
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -575,7 +518,7 @@ class CollectionTest extends TestCase
     public function testReduceWithoutInitialValue($items)
     {
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -1284,7 +1227,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = new Collection($items);
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 
@@ -2773,7 +2716,7 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = (new Collection($items))->lazy();
-        $callable = $this->getMockBuilder(\StdClass::class)
+        $callable = $this->getMockBuilder(stdClass::class)
             ->setMethods(['__invoke'])
             ->getMock();
 

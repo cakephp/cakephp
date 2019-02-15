@@ -21,20 +21,8 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Infrastructure\Table\AddressesTable;
+use TestApp\Model\Table\MyUsersTable;
 use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
-
-/**
- * Used to test correct class is instantiated when using $this->_locator->get();
- */
-class MyUsersTable extends Table
-{
-    /**
-     * Overrides default table name
-     *
-     * @var string
-     */
-    protected $_table = 'users';
-}
 
 /**
  * Test case for TableLocator
@@ -118,9 +106,12 @@ class TableLocatorTest extends TestCase
      */
     public function testConfigOnDefinedInstance()
     {
+        $users = $this->_locator->get('Users');
+        $this->assertNotEmpty($users);
+
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('You cannot configure "Users", it has already been constructed.');
-        $users = $this->_locator->get('Users');
+
         $this->_locator->setConfig('Users', ['table' => 'my_users']);
     }
 
@@ -254,10 +245,10 @@ class TableLocatorTest extends TestCase
     public function testGetWithConfigClassName()
     {
         $this->_locator->setConfig('MyUsersTableAlias', [
-            'className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable',
+            'className' => MyUsersTable::class,
         ]);
         $result = $this->_locator->get('MyUsersTableAlias');
-        $this->assertInstanceOf('Cake\Test\TestCase\ORM\Locator\MyUsersTable', $result, 'Should use getConfig() data className option.');
+        $this->assertInstanceOf(MyUsersTable::class, $result, 'Should use getConfig() data className option.');
     }
 
     /**
@@ -267,9 +258,12 @@ class TableLocatorTest extends TestCase
      */
     public function testGetExistingWithConfigData()
     {
+        $users = $this->_locator->get('Users');
+        $this->assertNotEmpty($users);
+
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('You cannot configure "Users", it already exists in the registry.');
-        $users = $this->_locator->get('Users');
+
         $this->_locator->get('Users', ['table' => 'my_users']);
     }
 
@@ -281,8 +275,8 @@ class TableLocatorTest extends TestCase
      */
     public function testGetWithSameOption()
     {
-        $result = $this->_locator->get('Users', ['className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable']);
-        $result2 = $this->_locator->get('Users', ['className' => 'Cake\Test\TestCase\ORM\Locator\MyUsersTable']);
+        $result = $this->_locator->get('Users', ['className' => MyUsersTable::class]);
+        $result2 = $this->_locator->get('Users', ['className' => MyUsersTable::class]);
         $this->assertEquals($result, $result2);
     }
 
@@ -430,8 +424,8 @@ class TableLocatorTest extends TestCase
         $this->assertEmpty($this->_locator->getConfig());
 
         $this->_locator->setConfig('users', $options);
-        $table = $this->_locator->get('users', ['className' => __NAMESPACE__ . '\MyUsersTable']);
-        $this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
+        $table = $this->_locator->get('users', ['className' => MyUsersTable::class]);
+        $this->assertInstanceOf(MyUsersTable::class, $table);
         $this->assertEquals('users', $table->getTable());
         $this->assertEquals('users', $table->getAlias());
         $this->assertSame($connection, $table->getConnection());

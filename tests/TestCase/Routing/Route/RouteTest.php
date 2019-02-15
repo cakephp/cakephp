@@ -22,21 +22,6 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
- * Used to expose protected methods for testing.
- */
-class RouteProtected extends Route
-{
-    /**
-     * @param $url
-     * @return array
-     */
-    public function parseExtension($url)
-    {
-        return $this->_parseExtension($url);
-    }
-}
-
-/**
  * Test case for Route
  */
 class RouteTest extends TestCase
