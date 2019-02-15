@@ -35,7 +35,7 @@ class FlashComponent extends Component
      * The Session object instance
      *
      * @var \Cake\Http\Session
-     * @deprecated 3.8.0 This property will be removed in 4.0.0 in favor of `getSession()` method.
+     * @deprecated 3.7.5 This property will be removed in 4.0.0 in favor of `getSession()` method.
      */
     protected $_session;
 
