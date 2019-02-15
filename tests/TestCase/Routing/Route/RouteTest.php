@@ -20,6 +20,7 @@ use Cake\Http\ServerRequest;
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use TestApp\Routing\Route\ProtectedRoute;
 
 /**
  * Test case for Route
@@ -307,7 +308,7 @@ class RouteTest extends TestCase
      */
     public function testMatchParseExtension($url, array $expected, array $ext)
     {
-        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => $ext]);
+        $route = new ProtectedRoute('/:controller/:action/*', [], ['_ext' => $ext]);
         $result = $route->parseExtension($url);
         $this->assertEquals($expected, $result);
     }
@@ -337,7 +338,7 @@ class RouteTest extends TestCase
      */
     public function testNoMatchParseExtension($url, array $ext)
     {
-        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => $ext]);
+        $route = new ProtectedRoute('/:controller/:action/*', [], ['_ext' => $ext]);
         list($outUrl, $outExt) = $route->parseExtension($url);
         $this->assertEquals($url, $outUrl);
         $this->assertNull($outExt);
@@ -350,7 +351,7 @@ class RouteTest extends TestCase
      */
     public function testSetExtensions()
     {
-        $route = new RouteProtected('/:controller/:action/*', []);
+        $route = new ProtectedRoute('/:controller/:action/*', []);
         $this->assertEquals([], $route->getExtensions());
         $route->setExtensions(['xml']);
         $this->assertEquals(['xml'], $route->getExtensions());
@@ -359,7 +360,7 @@ class RouteTest extends TestCase
         $route->setExtensions([]);
         $this->assertEquals([], $route->getExtensions());
 
-        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
+        $route = new ProtectedRoute('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
         $this->assertEquals(['one', 'two'], $route->getExtensions());
     }
 
@@ -370,13 +371,13 @@ class RouteTest extends TestCase
      */
     public function testGetExtensions()
     {
-        $route = new RouteProtected('/:controller/:action/*', []);
+        $route = new ProtectedRoute('/:controller/:action/*', []);
         $this->assertEquals([], $route->getExtensions());
 
-        $route = new RouteProtected('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
+        $route = new ProtectedRoute('/:controller/:action/*', [], ['_ext' => ['one', 'two']]);
         $this->assertEquals(['one', 'two'], $route->getExtensions());
 
-        $route = new RouteProtected('/:controller/:action/*', []);
+        $route = new ProtectedRoute('/:controller/:action/*', []);
         $this->assertEquals([], $route->getExtensions());
         $route->setExtensions(['xml', 'json', 'zip']);
         $this->assertEquals(['xml', 'json', 'zip'], $route->getExtensions());
