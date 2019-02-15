@@ -23,8 +23,18 @@ use Cake\View\Widget\WidgetLocator;
 /**
  * WidgetLocator test case
  */
-class WidgetLocatorTestCase extends TestCase
+class WidgetLocatorTest extends TestCase
 {
+    /**
+     * @var \Cake\View\StringTemplate
+     */
+    protected $templates;
+
+    /**
+     * @var \Cake\View\View
+     */
+    protected $view;
+
     /**
      * setup method
      *
