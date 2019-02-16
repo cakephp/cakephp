@@ -26,6 +26,14 @@ use Composer\CaBundle\CaBundle;
  */
 class CurlTest extends TestCase
 {
+    /**
+     * @var \Cake\Http\Client\Adapter\Curl
+     */
+    protected $curl;
+
+    /**
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
@@ -53,6 +61,7 @@ class CurlTest extends TestCase
         }
         $this->assertCount(1, $responses);
 
+        /** @var \Cake\Http\Response $response */
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
         $this->assertNotEmpty($response->getHeaders());
@@ -71,11 +80,12 @@ class CurlTest extends TestCase
         ]);
         try {
             $responses = $this->curl->send($request, []);
-        } catch (\Cake\Core\Exception\Exception $e) {
+        } catch (\Cake\Http\Client\Exception\NetworkException $e) {
             $this->markTestSkipped('Could not connect to book.cakephp.org, skipping');
         }
         $this->assertCount(1, $responses);
 
+        /** @var \Cake\Http\Response $response */
         $response = $responses[0];
         $this->assertInstanceOf(Response::class, $response);
         $this->assertTrue($response->hasHeader('Date'));

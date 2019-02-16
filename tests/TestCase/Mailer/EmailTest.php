@@ -23,52 +23,7 @@ use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
 use SimpleXmlElement;
-
-/**
- * Help to test Email
- */
-class TestEmail extends Email
-{
-    /**
-     * Wrap to protected method
-     *
-     * @return array
-     */
-    public function formatAddress($address)
-    {
-        return parent::_formatAddress($address);
-    }
-
-    /**
-     * Get the boundary attribute
-     *
-     * @return string
-     */
-    public function getBoundary()
-    {
-        return $this->_boundary;
-    }
-
-    /**
-     * Encode to protected method
-     *
-     * @return string
-     */
-    public function encode($text)
-    {
-        return $this->_encode($text);
-    }
-
-    /**
-     * Decode to protected method
-     *
-     * @return string
-     */
-    public function decode($text)
-    {
-        return $this->_decode($text);
-    }
-}
+use TestApp\Mailer\Email\TestEmail;
 
 /**
  * EmailTest class
@@ -78,7 +33,7 @@ class EmailTest extends TestCase
     public $fixtures = ['core.Users'];
 
     /**
-     * @var \Cake\Test\TestCase\Mailer\TestEmail
+     * @var \TestApp\Mailer\Email\TestEmail
      */
     protected $Email;
 

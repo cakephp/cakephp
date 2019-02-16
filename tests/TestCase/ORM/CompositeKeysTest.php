@@ -24,21 +24,12 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use PDO;
-
-/**
- * Test entity for mass assignment.
- */
-class OpenArticleEntity extends Entity
-{
-    protected $_accessible = [
-        '*' => true,
-    ];
-}
+use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
  * Integration tests for table operations involving composite keys
  */
-class CompositeKeyTest extends TestCase
+class CompositeKeysTest extends TestCase
 {
     /**
      * Fixture to be used
@@ -496,7 +487,7 @@ class CompositeKeyTest extends TestCase
     public function testOneGenerateBelongsToManyEntitiesFromIds()
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
-        $articles->setEntityClass(__NAMESPACE__ . '\OpenArticleEntity');
+        $articles->setEntityClass(OpenArticleEntity::class);
         $tags = $this->getTableLocator()->get('SiteTags');
         $junction = $this->getTableLocator()->get('SiteArticlesTags');
         $articles->belongsToMany('SiteTags', [

@@ -23,17 +23,9 @@ use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
-
-/**
- * Entity for testing with hidden fields.
- */
-class ProtectedUser extends Entity
-{
-    protected $_hidden = ['password'];
-}
+use TestApp\Model\Entity\ProtectedUser;
 
 /**
  * Test case for DigestAuthentication
@@ -48,6 +40,11 @@ class DigestAuthenticateTest extends TestCase
     public $fixtures = ['core.AuthUsers', 'core.Users'];
 
     /**
+     * @var \Cake\Controller\ComponentRegistry|\PHPUnit\Framework\MockObject\MockObject
+     */
+    protected $collection;
+
+    /**
      * setup
      *
      * @return void
@@ -56,8 +53,8 @@ class DigestAuthenticateTest extends TestCase
     {
         parent::setUp();
 
-        $this->Collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
-        $this->auth = new DigestAuthenticate($this->Collection, [
+        $this->collection = $this->getMockBuilder(ComponentRegistry::class)->getMock();
+        $this->auth = new DigestAuthenticate($this->collection, [
             'realm' => 'localhost',
             'nonce' => 123,
             'opaque' => '123abc',
@@ -78,7 +75,7 @@ class DigestAuthenticateTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $object = new DigestAuthenticate($this->Collection, [
+        $object = new DigestAuthenticate($this->collection, [
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'pass'],
             'nonce' => 123456,
@@ -350,7 +347,7 @@ class DigestAuthenticateTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['SERVER_NAME' => 'localhost'],
         ]);
-        $this->auth = new DigestAuthenticate($this->Collection, [
+        $this->auth = new DigestAuthenticate($this->collection, [
             'realm' => 'localhost',
         ]);
         $result = $this->auth->loginHeaders($request);

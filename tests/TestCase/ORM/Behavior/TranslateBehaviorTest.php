@@ -18,19 +18,11 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\I18n\I18n;
-use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-
-/**
- * Stub entity class
- */
-class Article extends Entity
-{
-    use TranslateTrait;
-}
+use TestApp\Model\Entity\TranslateArticle;
 
 /**
  * Translate behavior test case
@@ -63,7 +55,7 @@ class TranslateBehaviorTest extends TestCase
      * Returns an array with all the translations found for a set of records
      *
      * @param array|\Traversable $data
-     * @return Collection
+     * @return \Cake\Collection\CollectionInterface
      */
     protected function _extractTranslations($data)
     {
@@ -1133,7 +1125,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setEntityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(TranslateArticle::class);
         I18n::setLocale('fra');
         $translations = [
             'fra' => ['title' => 'Un article'],
@@ -1311,7 +1303,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title']]);
-        $table->setEntityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(TranslateArticle::class);
         I18n::setLocale('fra');
         $article = $table->get(1);
         $article->set('body', 'New Body');
@@ -1333,7 +1325,7 @@ class TranslateBehaviorTest extends TestCase
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
-        $table->setEntityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(TranslateArticle::class);
 
         $data = [
             'author_id' => 1,
@@ -1417,7 +1409,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setEntityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(TranslateArticle::class);
 
         $data = [
             '_translations' => [
@@ -1450,7 +1442,7 @@ class TranslateBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setEntityClass(__NAMESPACE__ . '\Article');
+        $table->setEntityClass(TranslateArticle::class);
 
         $data = [
             'author_id' => 1,

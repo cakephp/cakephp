@@ -17,21 +17,7 @@ namespace Cake\Test\TestCase\Mailer;
 
 use Cake\Mailer\Renderer;
 use Cake\TestSuite\TestCase;
-
-class TestRenderer extends Renderer
-{
-    /**
-     * Wrap to protected method
-     *
-     * @param string $text
-     * @param int $length
-     * @return array
-     */
-    public function doWrap($text, $length = Renderer::LINE_LENGTH_MUST)
-    {
-        return $this->wrap($text, $length);
-    }
-}
+use TestApp\Renderer\TestRenderer;
 
 /**
  * RendererTest class

@@ -21,20 +21,10 @@ use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\EavStrategy;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
-use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Behavior\TranslateBehavior;
-use Cake\ORM\Entity;
 use Cake\Utility\Hash;
-
-class BakedArticle extends Entity
-{
-    use TranslateTrait;
-
-    protected $_accessible = [
-        'title' => true,
-        'body' => true,
-    ];
-}
+use TestApp\Model\Entity\TranslateArticle;
+use TestApp\Model\Entity\TranslateBakedArticle;
 
 /**
  * TranslateBehavior test case
@@ -775,7 +765,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     public function testSaveWithAccessibleFalse()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $table->setEntityClass(BakedArticle::class);
+        $table->setEntityClass(TranslateBakedArticle::class);
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 
         $article = $table->get(1);
@@ -846,7 +836,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setEntityClass('Cake\Test\TestCase\ORM\Behavior\Article');
+        $table->setEntityClass(TranslateArticle::class);
 
         $data = [
             'author_id' => 1,
@@ -890,7 +880,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             'fields' => ['title'],
             'validator' => (new \Cake\Validation\Validator())->add('title', 'notBlank', ['rule' => 'notBlank']),
         ]);
-        $table->setEntityClass('Cake\Test\TestCase\ORM\Behavior\Article');
+        $table->setEntityClass(TranslateArticle::class);
 
         $data = [
             'author_id' => 1,
