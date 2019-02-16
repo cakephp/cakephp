@@ -805,7 +805,7 @@ class ValidatorTest extends TestCase
     public function testNotEmptyString()
     {
         $validator = new Validator();
-        $validator->notEmptyString('title');
+        $validator->notEmptyString('title', 'not empty');
 
         $this->assertFalse($validator->isEmptyAllowed('title', true));
         $this->assertFalse($validator->isEmptyAllowed('title', false));
@@ -819,6 +819,12 @@ class ValidatorTest extends TestCase
 
         $data = ['title' => []];
         $this->assertEmpty($validator->errors($data), 'empty array is no good');
+
+        $expected = [
+            'title' => ['_empty' => 'not empty'],
+        ];
+        $data = ['title' => ''];
+        $this->assertSame($expected, $validator->errors($data, true));
     }
 
     /**
@@ -887,7 +893,15 @@ class ValidatorTest extends TestCase
         ];
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
+    }
 
+    /**
+     * Test allowEmptyArray with update mode
+     *
+     * @return void
+     */
+    public function testAllowEmptyArrayUpdate()
+    {
         $validator = new Validator();
         $validator->allowEmptyArray('items', 'update', 'message');
         $this->assertFalse($validator->isEmptyAllowed('items', true));
@@ -901,6 +915,40 @@ class ValidatorTest extends TestCase
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyArray method
+     *
+     * @return void
+     */
+    public function testNotEmptyArray()
+    {
+        $validator = new Validator();
+        $validator->notEmptyArray('items', 'not empty');
+
+        $this->assertFalse($validator->field('items')->isEmptyAllowed());
+
+        $error = [
+            'items' => ['_empty' => 'not empty']
+        ];
+        $data = ['items' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['items' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['items' => []];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = [
+            'items' => [1],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
     }
 
     /**

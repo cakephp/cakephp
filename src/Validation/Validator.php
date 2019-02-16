@@ -847,6 +847,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Require a field to be a non-empty array
+     *
+     * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
+     * EMPTY_ARRAY flags.
+     *
+     * @param string $field The name of the field.
+     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     * @param string|null $message The message to show if the field is not
+     * Valid values are false (always), 'create', 'update'. If a callable is passed then
+     * the field will allowed to be empty only when the callback returns false.
+     * @return $this
+     * @since 3.8.0
+     */
+    public function notEmptyArray($field, $message = null, $when = false)
+    {
+        $when = $this->invertWhenClause($when);
+        return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_ARRAY, $when, $message);
+    }
+
+    /**
      * Allows a field to be an empty file.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_FILE flag.
