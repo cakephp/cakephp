@@ -41,6 +41,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 use TestApp\Model\Entity\ProtectedEntity;
+use TestApp\Model\Entity\VirtualUser;
 use TestApp\Model\Table\UsersTable;
 
 /**
@@ -1322,7 +1323,7 @@ class TableTest extends TestCase
         $table = new Table([
             'table' => 'users',
             'connection' => $this->connection,
-            'entityClass' => '\TestApp\Model\Entity\VirtualUser',
+            'entityClass' => VirtualUser::class,
         ]);
         $table->setDisplayField('bonus');
 

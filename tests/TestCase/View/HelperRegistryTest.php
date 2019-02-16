@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\TestSuite\TestCase;
+use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\HelperRegistry;
 use Cake\View\View;
@@ -36,6 +37,11 @@ class HelperRegistryTest extends TestCase
      * @var \Cake\Event\EventManager
      */
     public $Events;
+
+    /**
+     * @var \Cake\View\View
+     */
+    public $View;
 
     /**
      * setUp
@@ -88,7 +94,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(HtmlHelper::class, $result);
 
         $result = $this->Helpers->Form;
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
+        $this->assertInstanceOf(FormHelper::class, $result);
 
         $this->View->setPlugin('TestPlugin');
         $this->loadPlugins(['TestPlugin']);

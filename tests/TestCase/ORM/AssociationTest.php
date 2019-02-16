@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TestTable;
 
 /**
@@ -136,8 +137,8 @@ class AssociationTest extends TestCase
     public function testSetClassNameBeforeTarget()
     {
         $this->assertEquals(TestTable::class, $this->association->getClassName());
-        $this->assertSame($this->association, $this->association->setClassName('\TestApp\Model\Table\AuthorsTable'));
-        $this->assertEquals('\TestApp\Model\Table\AuthorsTable', $this->association->getClassName());
+        $this->assertSame($this->association, $this->association->setClassName(AuthorsTable::class));
+        $this->assertEquals(AuthorsTable::class, $this->association->getClassName());
     }
 
     /**
@@ -148,9 +149,9 @@ class AssociationTest extends TestCase
     public function testSetClassNameAfterTarget()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The class name "\TestApp\Model\Table\AuthorsTable" doesn\'t match the target table class name of');
+        $this->expectExceptionMessage('The class name "' . AuthorsTable::class . '" doesn\'t match the target table class name of');
         $this->association->getTarget();
-        $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
+        $this->association->setClassName(AuthorsTable::class);
     }
 
     /**
@@ -187,7 +188,7 @@ class AssociationTest extends TestCase
     {
         Configure::write('App.namespace', 'TestApp');
 
-        $this->association->setClassName('\TestApp\Model\Table\AuthorsTable');
+        $this->association->setClassName(AuthorsTable::class);
         $className = get_class($this->association->getTarget());
         $this->assertEquals('TestApp\Model\Table\AuthorsTable', $className);
         $this->association->setClassName('Authors');
