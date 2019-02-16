@@ -2779,7 +2779,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'associations' => $associations ? $associations->keys() : false,
             'behaviors' => $behaviors ? $behaviors->loaded() : false,
             'defaultConnection' => static::defaultConnectionName(),
-            'connectionName' => $conn ? $conn->configName() : null,
+            'connectionName' => $conn->configName(),
         ];
     }
 }
