@@ -22,6 +22,7 @@ use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionInterface;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\RepositoryInterface;
@@ -458,10 +459,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the connection instance.
      *
-     * @return \Cake\Database\Connection|null
+     * @return \Cake\Database\Connection
      */
-    public function getConnection(): ?Connection
+    public function getConnection(): Connection
     {
+        if (!$this->_connection) {
+            $this->_connection = ConnectionManager::get(static::defaultConnectionName());
+        }
+
         return $this->_connection;
     }
 
