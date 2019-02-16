@@ -19,29 +19,10 @@ use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\TextHelper;
 use Cake\View\View;
-
-/**
- * TextHelperTestObject
- */
-class TextHelperTestObject extends TextHelper
-{
-    public function attach(StringMock $string)
-    {
-        $this->_engine = $string;
-    }
-
-    public function engine()
-    {
-        return $this->_engine;
-    }
-}
-
-/**
- * StringMock class
- */
-class StringMock
-{
-}
+use TestApp\Utility\TestAppEngine;
+use TestApp\Utility\TextMock;
+use TestApp\View\Helper\TextHelperTestObject;
+use TestPlugin\Utility\TestPluginEngine;
 
 /**
  * TextHelperTest class
@@ -90,10 +71,10 @@ class TextHelperTest extends TestCase
         $methods = [
             'stripLinks', 'toList',
         ];
-        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+        $String = $this->getMockBuilder(TextMock::class)
             ->setMethods($methods)
             ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
+        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
             $String->expects($this->at(0))->method($method)->willReturn('');
@@ -103,10 +84,10 @@ class TextHelperTest extends TestCase
         $methods = [
             'excerpt',
         ];
-        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+        $String = $this->getMockBuilder(TextMock::class)
             ->setMethods($methods)
             ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
+        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
             $String->expects($this->at(0))->method($method)->willReturn('');
@@ -116,10 +97,10 @@ class TextHelperTest extends TestCase
         $methods = [
             'highlight',
         ];
-        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+        $String = $this->getMockBuilder(TextMock::class)
             ->setMethods($methods)
             ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
+        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
             $String->expects($this->at(0))->method($method)->willReturn('');
@@ -129,10 +110,10 @@ class TextHelperTest extends TestCase
         $methods = [
             'tail', 'truncate',
         ];
-        $String = $this->getMockBuilder(__NAMESPACE__ . '\StringMock')
+        $String = $this->getMockBuilder(TextMock::class)
             ->setMethods($methods)
             ->getMock();
-        $Text = new TextHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\StringMock']);
+        $Text = new TextHelperTestObject($this->View, ['engine' => TextMock::class]);
         $Text->attach($String);
         foreach ($methods as $method) {
             $String->expects($this->at(0))->method($method)->willReturn('');
@@ -148,11 +129,11 @@ class TextHelperTest extends TestCase
     public function testEngineOverride()
     {
         $Text = new TextHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-        $this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Text->engine());
+        $this->assertInstanceOf(TestAppEngine::class, $Text->engine());
 
         $this->loadPlugins(['TestPlugin']);
         $Text = new TextHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
-        $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Text->engine());
+        $this->assertInstanceOf(TestPluginEngine::class, $Text->engine());
         $this->clearPlugins();
     }
 

@@ -21,244 +21,16 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\EventInterface;
-use Cake\Event\EventListenerInterface;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
-use Cake\View\Helper;
 use Cake\View\View;
-use TestApp\View\AppView;
-
-/**
- * ViewPostsController class
- */
-class ViewPostsController extends Controller
-{
-    /**
-     * name property
-     *
-     * @var string
-     */
-    public $name = 'Posts';
-
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        $this->set([
-            'testData' => 'Some test data',
-            'test2' => 'more data',
-            'test3' => 'even more data',
-        ]);
-    }
-
-    /**
-     * nocache_tags_with_element method
-     *
-     * @return void
-     */
-    public function nocache_multiple_element()
-    {
-        $this->set('foo', 'this is foo var');
-        $this->set('bar', 'this is bar var');
-    }
-}
-
-/**
- * ThemePostsController class
- */
-class ThemePostsController extends Controller
-{
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        $this->set('testData', 'Some test data');
-        $test2 = 'more data';
-        $test3 = 'even more data';
-        $this->set(compact('test2', 'test3'));
-    }
-}
-
-/**
- * TestView class
- */
-class TestView extends AppView
-{
-    public function initialize(): void
-    {
-        $this->loadHelper('Html', ['mykey' => 'myval']);
-    }
-
-    /**
-     * getViewFileName method
-     *
-     * @param string $name Controller action to find template filename for
-     * @return string Template filename
-     */
-    public function getViewFileName($name = null)
-    {
-        return $this->_getViewFileName($name);
-    }
-
-    /**
-     * getLayoutFileName method
-     *
-     * @param string $name The name of the layout to find.
-     * @return string Filename for layout file (.php).
-     */
-    public function getLayoutFileName($name = null)
-    {
-        return $this->_getLayoutFileName($name);
-    }
-
-    /**
-     * paths method
-     *
-     * @param string $plugin Optional plugin name to scan for view files.
-     * @param bool $cached Set to true to force a refresh of view paths.
-     * @return array paths
-     */
-    public function paths($plugin = null, $cached = true)
-    {
-        return $this->_paths($plugin, $cached);
-    }
-
-    /**
-     * Setter for extension.
-     *
-     * @param string $ext The extension
-     * @return void
-     */
-    public function ext($ext)
-    {
-        $this->_ext = $ext;
-    }
-}
-
-/**
- * TestBeforeAfterHelper class
- */
-class TestBeforeAfterHelper extends Helper
-{
-    /**
-     * property property
-     *
-     * @var string
-     */
-    public $property = '';
-
-    /**
-     * beforeLayout method
-     *
-     * @param string $viewFile View file name.
-     * @return void
-     */
-    public function beforeLayout($viewFile)
-    {
-        $this->property = 'Valuation';
-    }
-
-    /**
-     * afterLayout method
-     *
-     * @param string $layoutFile Layout file name.
-     * @return void
-     */
-    public function afterLayout($layoutFile)
-    {
-        $this->_View->append('content', 'modified in the afterlife');
-    }
-}
-
-/**
- * TestObjectWithToString
- *
- * An object with the magic method __toString() for testing with view blocks.
- */
-class TestObjectWithToString
-{
-    /**
-     * Return string value.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return "I'm ObjectWithToString";
-    }
-}
-
-/**
- * TestObjectWithoutToString
- *
- * An object without the magic method __toString() for testing with view blocks.
- */
-class TestObjectWithoutToString
-{
-}
-
-/**
- * TestViewEventListenerInterface
- *
- * An event listener to test cakePHP events
- */
-class TestViewEventListenerInterface implements EventListenerInterface
-{
-    /**
-     * type of view before rendering has occurred
-     *
-     * @var string
-     */
-    public $beforeRenderViewType;
-
-    /**
-     * type of view after rendering has occurred
-     *
-     * @var string
-     */
-    public $afterRenderViewType;
-
-    /**
-     * implementedEvents method
-     *
-     * @return array
-     */
-    public function implementedEvents(): array
-    {
-        return [
-            'View.beforeRender' => 'beforeRender',
-            'View.afterRender' => 'afterRender',
-        ];
-    }
-
-    /**
-     * beforeRender method
-     *
-     * @param \Cake\Event\EventInterface $event the event being sent
-     * @return void
-     */
-    public function beforeRender(EventInterface $event)
-    {
-        $this->beforeRenderViewType = $event->getSubject()->getCurrentType();
-    }
-
-    /**
-     * afterRender method
-     *
-     * @param \Cake\Event\EventInterface $event the event being sent
-     * @return void
-     */
-    public function afterRender(EventInterface $event)
-    {
-        $this->afterRenderViewType = $event->getSubject()->getCurrentType();
-    }
-}
+use TestApp\Controller\ThemePostsController;
+use TestApp\Controller\ViewPostsController;
+use TestApp\View\Helper\TestBeforeAfterHelper;
+use TestApp\View\Object\TestObjectWithoutToString;
+use TestApp\View\Object\TestObjectWithToString;
+use TestApp\View\TestView;
+use TestApp\View\TestViewEventListenerInterface;
 
 /**
  * ViewTest class
@@ -278,9 +50,14 @@ class ViewTest extends TestCase
     public $View;
 
     /**
-     * @var ViewPostsController
+     * @var \TestApp\Controller\ViewPostsController
      */
     public $PostsController;
+
+    /**
+     * @var \TestApp\Controller\ThemePostsController
+     */
+    public $ThemePostsController;
 
     /**
      * setUp method
@@ -1255,7 +1032,7 @@ class ViewTest extends TestCase
     public function testBeforeLayout()
     {
         $this->PostsController->viewBuilder()->setHelpers([
-            'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
+            'TestBeforeAfter' => ['className' => TestBeforeAfterHelper::class],
             'Html',
         ]);
         $View = $this->PostsController->createView();
@@ -1272,7 +1049,7 @@ class ViewTest extends TestCase
     public function testAfterLayout()
     {
         $this->PostsController->viewBuilder()->setHelpers([
-            'TestBeforeAfter' => ['className' => __NAMESPACE__ . '\TestBeforeAfterHelper'],
+            'TestBeforeAfter' => ['className' => TestBeforeAfterHelper::class],
             'Html',
         ]);
         $this->PostsController->set('variable', 'values');
@@ -1294,7 +1071,7 @@ class ViewTest extends TestCase
     public function testRenderLoadHelper()
     {
         $this->PostsController->viewBuilder()->setHelpers(['Form', 'Number']);
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
 
         $result = $View->render('index', false);
@@ -1307,7 +1084,7 @@ class ViewTest extends TestCase
         $this->PostsController->viewBuilder()->setHelpers(
             ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
         );
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
 
         $result = $View->render('index', false);
@@ -1325,7 +1102,7 @@ class ViewTest extends TestCase
      */
     public function testRender()
     {
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
@@ -1333,7 +1110,7 @@ class ViewTest extends TestCase
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $result = $View->render(false, 'ajax2');
 
         $this->assertRegExp('/Ajax\!/', $result);
@@ -1344,7 +1121,7 @@ class ViewTest extends TestCase
         );
         Configure::write('Cache.check', true);
 
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
         $result = $View->render('index');
 
@@ -1359,7 +1136,7 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingViewProperty()
     {
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
         $View->setTemplate('cache_form');
 
@@ -1380,7 +1157,7 @@ class ViewTest extends TestCase
         $error->queryString = 'this is sql string';
         $message = 'it works';
 
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        $View = $this->PostsController->createView(TestView::class);
         $View->set(compact('error', 'message'));
         $View->setTemplatePath('Error');
 
@@ -1399,7 +1176,8 @@ class ViewTest extends TestCase
     {
         $this->PostsController->setPlugin('TestPlugin');
         $this->PostsController->setName('Posts');
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        /** @var \TestApp\View\TestView $View */
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath('element');
 
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
@@ -1433,7 +1211,8 @@ class ViewTest extends TestCase
      */
     public function testViewFileName()
     {
-        $View = $this->PostsController->createView('Cake\Test\TestCase\View\TestView');
+        /** @var \TestApp\View\TestView $View */
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath('Posts');
 
         $result = $View->getViewFileName('index');
