@@ -464,7 +464,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function getConnection(): Connection
     {
         if (!$this->_connection) {
-            $this->_connection = ConnectionManager::get(static::defaultConnectionName());
+            /** @var \Cake\Database\Connection $connection */
+            $connection = ConnectionManager::get(static::defaultConnectionName());
+            $this->_connection = $connection;
         }
 
         return $this->_connection;
