@@ -383,6 +383,7 @@ class SecurityComponent extends Component
         ksort($lockedFields, SORT_STRING);
         $fieldList += $lockedFields;
 
+        /** @psalm-suppress InvalidReturnStatement */
         return $fieldList;
     }
 

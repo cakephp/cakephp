@@ -153,7 +153,7 @@ class IdentifierQuoter
     {
         $result = [];
         foreach ($joins as $value) {
-            $alias = null;
+            $alias = '';
             if (!empty($value['alias'])) {
                 $alias = $this->_driver->quoteIdentifier($value['alias']);
                 $value['alias'] = $alias;

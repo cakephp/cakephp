@@ -131,7 +131,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      */
     public function nice($timezone = null, $locale = null): string
     {
-        return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
+        return (string)$this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
 
     /**

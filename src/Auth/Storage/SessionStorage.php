@@ -84,6 +84,7 @@ class SessionStorage implements StorageInterface
 
         $this->_user = $this->_session->read($this->_config['key']) ?: false;
 
+        /** @psalm-suppress InvalidReturnStatement */
         return $this->_user ?: null;
     }
 

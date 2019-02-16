@@ -53,7 +53,7 @@ class ServerRequest implements ServerRequestInterface
      * In PUT/PATCH/DELETE requests this property will contain the form-urlencoded
      * data.
      *
-     * @var null|array|object
+     * @var null|array
      */
     protected $data = [];
 

@@ -127,6 +127,7 @@ class ApcuEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
+        /** @psalm-suppress InvalidReturnStatement */
         return apcu_delete($key);
     }
 
