@@ -798,6 +798,55 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the notEmptyString method
+     *
+     * @return void
+     */
+    public function testNotEmptyString()
+    {
+        $validator = new Validator();
+        $validator->notEmptyString('title');
+
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertFalse($validator->isEmptyAllowed('title', false));
+
+        $data = ['title' => '0'];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = ['title' => 0];
+        $this->assertEmpty($validator->errors($data), 'empty ok on create');
+        $this->assertEmpty($validator->errors($data, false), 'empty ok on update');
+
+        $data = ['title' => []];
+        $this->assertEmpty($validator->errors($data), 'empty array is no good');
+    }
+
+    /**
+     * Test notEmptyString with explicit create.
+     *
+     * @return void
+     */
+    public function testNotEmptyStringCreate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyString('title', 'message', 'create');
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $expected = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $data = ['title' => null];
+        $this->assertSame($expected, $validator->errors($data, true));
+
+        $data = ['title' => ''];
+        $this->assertSame($expected, $validator->errors($data, true));
+
+        $data = ['title' => ''];
+        $this->assertEmpty($validator->errors($data, false), 'empty allowed on update');
+    }
+
+    /**
      * Tests the allowEmptyArray method
      *
      * @return void

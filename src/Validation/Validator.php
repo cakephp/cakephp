@@ -807,6 +807,26 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Requires a field to be not be an empty string.
+     *
+     * Creates rules that are complements to allowEmptyString()
+     *
+     * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
+     * @param bool|string|callable $when Indicates when the field is not allowed
+     *   to be empty. Valid values are false (always), 'create', 'update'. If a
+     *   callable is passed then the field will allowed to be empty only when
+     *   the callback returns false.
+     * @return $this
+     * @since 3.8.0
+     */
+    public function notEmptyString($field, $message = null, $when = false)
+    {
+        $when = $this->invertWhenClause($when);
+        return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
+    }
+
+    /**
      * Allows a field to be an empty array.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
@@ -1012,15 +1032,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         foreach ($field as $fieldName => $setting) {
             $settings = $this->_convertValidatorToArray($fieldName, $defaults, $setting);
             $fieldName = current(array_keys($settings));
-            $whenSetting = $settings[$fieldName]['when'];
 
-            if ($whenSetting === 'create' || $whenSetting === 'update') {
-                $whenSetting = $whenSetting === 'create' ? 'update' : 'create';
-            } elseif (is_callable($whenSetting)) {
-                $whenSetting = function ($context) use ($whenSetting) {
-                    return !$whenSetting($context);
-                };
-            }
+            $whenSetting = $this->invertWhenClause($settings[$fieldName]['when']);
 
             $this->field($fieldName)->allowEmpty($whenSetting);
             if ($settings[$fieldName]['message']) {
@@ -1029,6 +1042,28 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         return $this;
+    }
+
+    /**
+     * Invert a when clause for creating notEmpty rules
+     *
+     * @param bool|string|callable $when Indicates when the field is not allowed
+     *   to be empty. Valid values are true (always), 'create', 'update'. If a
+     *   callable is passed then the field will allowed to be empty only when
+     *   the callback returns false.
+     * @return bool|string|callable
+     */
+    protected function invertWhenClause($when)
+    {
+        if ($when === 'create' || $when === 'update') {
+            return $when === 'create' ? 'update' : 'create';
+        } elseif (is_callable($when)) {
+            return function ($context) use ($when) {
+                return !$when($context);
+            };
+        }
+
+        return $when;
     }
 
     /**
