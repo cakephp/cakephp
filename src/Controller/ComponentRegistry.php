@@ -44,17 +44,15 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     public function __construct(?Controller $controller = null)
     {
-        if ($controller) {
-            $this->setController($controller);
-        }
+        $this->setController($controller ?: new Controller());
     }
 
     /**
      * Get the controller associated with the collection.
      *
-     * @return \Cake\Controller\Controller|null Controller instance
+     * @return \Cake\Controller\Controller Controller instance
      */
-    public function getController(): ?Controller
+    public function getController(): Controller
     {
         return $this->_Controller;
     }
