@@ -179,7 +179,7 @@ class FlashComponent extends Component
      *
      * @return \Cake\Http\Session
      */
-    protected function getSession()
+    public function getSession()
     {
         return $this->getController()->getRequest()->getSession();
     }
