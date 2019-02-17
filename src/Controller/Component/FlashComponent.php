@@ -150,11 +150,14 @@ class FlashComponent extends Component
      *
      * @param string $name Element name to use.
      * @param array $args Parameters to pass when calling `FlashComponent::set()`.
-     * @return void
+     * @return \Cake\Http\Session|void
      * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
     public function __call($name, $args)
     {
+        if ($name === 'getSession') {
+            return $this->getSession();
+        }
         $element = Inflector::underscore($name);
 
         if (count($args) < 1) {
