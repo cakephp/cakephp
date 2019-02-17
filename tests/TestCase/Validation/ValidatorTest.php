@@ -913,7 +913,7 @@ class ValidatorTest extends TestCase
 
         $data = ['photo' => []];
         $result = $validator->errors($data);
-        $this->assertEmpty($result);
+        $this->assertSame($expected, $result);
 
         $validator = new Validator();
         $validator->allowEmptyArray('photo', 'update', 'message');
