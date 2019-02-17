@@ -47,8 +47,8 @@ use RuntimeException;
  * There are 7 built-in caching engines:
  *
  * - `ApcuEngine` - Uses the APCu object cache, one of the fastest caching engines.
- * - `ArrayEngine` - Uses only memory to store all data, not actually a persistent engin.
- *    Can be useful in test or CLI enviroment.
+ * - `ArrayEngine` - Uses only memory to store all data, not actually a persistent engine.
+ *    Can be useful in test or CLI environment.
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
  *    storing large objects, or things that are not IO sensitive. Well suited to development
  *    as it is an easy cache to inspect and manually flush.
