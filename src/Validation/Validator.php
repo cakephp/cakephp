@@ -2339,7 +2339,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return true;
         }
 
-        if ($data === [] && ($flags & self::EMPTY_ARRAY)) {
+        $arrayTypes = (self::EMPTY_ARRAY | self::EMPTY_DATE | self::EMPTY_TIME | self::EMPTY_FILE);
+        if ($data === [] && ($flags & $arrayTypes)) {
             return true;
         }
 
