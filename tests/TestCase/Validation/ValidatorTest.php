@@ -853,6 +853,34 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Test notEmptyString with callback
+     *
+     * @return void
+     */
+    public function testNotEmptyStringCallbackWhen()
+    {
+        $validator = new Validator();
+        $validator->notEmptyString('title', 'message', function ($context) {
+            if (!isset($context['data']['emptyOk'])) {
+                return true;
+            }
+            return $context['data']['emptyOk'];
+        });
+
+        $error = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $data = ['title' => ''];
+        $this->assertSame($error, $validator->errors($data));
+
+        $data = ['title' => '', 'emptyOk' => false];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = ['title' => '', 'emptyOk' => true];
+        $this->assertSame($error, $validator->errors($data));
+    }
+
+    /**
      * Tests the allowEmptyArray method
      *
      * @return void
