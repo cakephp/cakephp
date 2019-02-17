@@ -1203,6 +1203,71 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the notEmptyDate method
+     *
+     * @return void
+     */
+    public function testNotEmptyDate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDate('date', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('date', true));
+        $this->assertFalse($validator->isEmptyAllowed('date', false));
+
+        $error = ['date' => ['_empty' => 'required field']];
+        $data = [
+            'date' => [
+                'year' => '',
+                'month' => '',
+                'day' => ''
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['date' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['date' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['date' => []];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = [
+            'date' => [
+                'year' => 2019,
+                'month' => 2,
+                'day' => 17
+            ]
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test notEmptyDate with update mode
+     *
+     * @return void
+     */
+    public function testNotEmptyDateUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDate('date', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('date', true));
+        $this->assertFalse($validator->isEmptyAllowed('date', false));
+
+        $data = ['date' => null];
+        $expected = ['date' => ['_empty' => 'message']];
+        $this->assertSame($expected, $validator->errors($data, false));
+        $this->assertEmpty($validator->errors($data, true));
+    }
+
+    /**
      * Tests the allowEmptyDate method
      *
      * @return void
