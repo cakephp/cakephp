@@ -809,7 +809,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Requires a field to be not be an empty string.
      *
-     * Creates rules that are complements to allowEmptyString()
+     * Opposite to allowEmptyString()
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
@@ -818,6 +818,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   callable is passed then the field will allowed to be empty only when
      *   the callback returns false.
      * @return $this
+     * @see \Cake\Validation\Validator::allowEmptyString()
      * @since 3.8.0
      */
     public function notEmptyString($field, $message = null, $when = false)
@@ -849,8 +850,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Require a field to be a non-empty array
      *
-     * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
-     * EMPTY_ARRAY flags.
+     * Opposite to allowEmptyArray()
      *
      * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
@@ -858,6 +858,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Valid values are false (always), 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns false.
      * @return $this
+     * @see \Cake\Validation\Validator::allowEmptyArray()
      * @since 3.8.0
      */
     public function notEmptyArray($field, $message = null, $when = false)
@@ -870,11 +871,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Allows a field to be an empty file.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_FILE flag.
+     * File fields will not accept `''`, or `[]` as empty values. Only `null` and a file
+     * upload with `error` equal to `UPLOAD_ERR_NO_FILE` will be treated as empty.
      *
      * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
-     * Valid values are true, false, 'create', 'update'. If a callable is passed then
-     * the field will allowed to be empty only when the callback returns true.
+     *   Valid values are true, 'create', 'update'. If a callable is passed then
+     *   the field will allowed to be empty only when the callback returns true.
      * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
@@ -888,8 +891,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Require a field to be a not-empty file.
      *
-     * Empty string, and empty array values will not be caught as empty
-     * and you should use additional validators to check uploaded files.
+     * Opposite to allowEmptyFile()
      *
      * @param string $field The name of the field.
      * @param string|null $message The message to show if the field is not
@@ -898,7 +900,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   the field will required to be not empty when the callback returns false.
      * @return $this
      * @since 3.7.0
-     * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
+     * @see \Cake\Validation\Validator::allowEmptyFile()
      */
     public function notEmptyFile($field, $message = null, $when = false)
     {
@@ -909,8 +911,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Allows a field to be an empty date.
      *
-     * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
-     * EMPTY_DATE flags.
+     * Empty date values are `null`, `''`, `[]` and arrays where all values are `''`
+     * and the `year` key is present.
      *
      * @param string $field The name of the field.
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
@@ -928,6 +930,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Allows a field to be an empty time.
+     *
+     * Empty date values are `null`, `''`, `[]` and arrays where all values are `''`
+     * and the `hour` key is present.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
      * EMPTY_TIME flags.
@@ -948,6 +953,9 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
     /**
      * Allows a field to be an empty date/time.
+     *
+     * Empty date values are `null`, `''`, `[]` and arrays where all values are `''`
+     * and the `year` and `hour` keys are present.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
      * EMPTY_DATE + EMPTY_TIME flags.
