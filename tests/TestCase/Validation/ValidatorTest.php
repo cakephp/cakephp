@@ -1149,60 +1149,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the allowEmptyTime method
-     *
-     * @return void
-     */
-    public function testAllowEmptyTime()
-    {
-        $validator = new Validator();
-        $validator->allowEmptyTime('time')
-            ->time('time');
-
-        $this->assertTrue($validator->field('time')->isEmptyAllowed());
-
-        $data = [
-            'time' => [
-                'hour' => '',
-                'minute' => '',
-                'second' => '',
-            ],
-        ];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result);
-
-        $data = [
-            'time' => '',
-        ];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result);
-
-        $data = [
-            'time' => null,
-        ];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result);
-
-        $data = ['time' => []];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result);
-
-        $validator = new Validator();
-        $validator->allowEmptyArray('time', 'update', 'message');
-        $this->assertFalse($validator->isEmptyAllowed('time', true));
-        $this->assertTrue($validator->isEmptyAllowed('time', false));
-
-        $data = [
-            'time' => null,
-        ];
-        $expected = [
-            'time' => ['_empty' => 'message'],
-        ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
-    }
-
-    /**
      * Tests the notEmptyDate method
      *
      * @return void
@@ -1265,6 +1211,119 @@ class ValidatorTest extends TestCase
         $expected = ['date' => ['_empty' => 'message']];
         $this->assertSame($expected, $validator->errors($data, false));
         $this->assertEmpty($validator->errors($data, true));
+    }
+
+    /**
+     * Tests the allowEmptyTime method
+     *
+     * @return void
+     */
+    public function testAllowEmptyTime()
+    {
+        $validator = new Validator();
+        $validator->allowEmptyTime('time')
+            ->time('time');
+
+        $this->assertTrue($validator->field('time')->isEmptyAllowed());
+
+        $data = [
+            'time' => [
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'time' => '',
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = [
+            'time' => null,
+        ];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $data = ['time' => []];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+
+        $validator = new Validator();
+        $validator->allowEmptyArray('time', 'update', 'message');
+        $this->assertFalse($validator->isEmptyAllowed('time', true));
+        $this->assertTrue($validator->isEmptyAllowed('time', false));
+
+        $data = [
+            'time' => null,
+        ];
+        $expected = [
+            'time' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyTime method
+     *
+     * @return void
+     */
+    public function testNotEmptyTime()
+    {
+        $validator = new Validator();
+        $validator->notEmptyTime('time', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('time', true));
+        $this->assertFalse($validator->isEmptyAllowed('time', false));
+
+        $error = ['time' => ['_empty' => 'required field']];
+        $data = [
+            'time' => [
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => []];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['time' => ['hour' => 12, 'minute' => 12, 'second' => 12]];
+        $result = $validator->errors($data);
+        $this->assertEmpty($result);
+    }
+
+    /**
+     * Test notEmptyTime with update mode
+     *
+     * @return void
+     */
+    public function testNotEmptyTimeUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyTime('time', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('time', true));
+        $this->assertFalse($validator->isEmptyAllowed('time', false));
+
+        $data = ['time' => null];
+        $expected = ['time' => ['_empty' => 'message']];
+        $this->assertEmpty($validator->errors($data, true));
+        $this->assertSame($expected, $validator->errors($data, false));
     }
 
     /**
