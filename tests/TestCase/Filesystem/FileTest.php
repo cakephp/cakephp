@@ -187,14 +187,12 @@ class FileTest extends TestCase
             ['نام فارسی.txt', null, true],
             ['/نام.txt', null, true],
             ['/نام فارسی.txt', null, true],
-            //
             ['folder/نام.txt', 'txt', false],
             ['folder/نام فارسی.txt', 'txt', false],
             ['نام.txt', 'txt', true],
             ['نام فارسی.txt', 'txt', true],
             ['/نام.txt', 'txt', true],
             ['/نام فارسی.txt', 'txt', true],
-            //
             ['abcde.ab', 'abe', false],
             ['/etc/sudoers.d', null, true],
             ['/etc/.d', 'd', true],
