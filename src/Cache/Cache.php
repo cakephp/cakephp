@@ -44,7 +44,7 @@ use RuntimeException;
  * In general all Cache operations are supported by all cache engines.
  * However, Cache::increment() and Cache::decrement() are not supported by File caching.
  *
- * There are 6 built-in caching engines:
+ * There are 7 built-in caching engines:
  *
  * - `ApcuEngine` - Uses the APCu object cache, one of the fastest caching engines.
  * - `ArrayEngine` - Uses only memory to store all data, not actually a persistent engin.
