@@ -23,24 +23,9 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
 use TestApp\Model\Entity\Tag;
-
-/**
- * Test stub.
- */
-class Article extends Entity
-{
-    /**
-     * Testing stub method.
-     *
-     * @return bool
-     */
-    public function isRequired()
-    {
-        return true;
-    }
-}
 
 /**
  * Entity context test case.
@@ -53,6 +38,11 @@ class EntityContextTest extends TestCase
      * @var array
      */
     public $fixtures = ['core.Articles', 'core.Comments', 'core.ArticlesTags', 'core.Tags'];
+
+    /**
+     * @var \Cake\Http\ServerRequest
+     */
+    protected $request;
 
     /**
      * setup method.
@@ -1321,7 +1311,7 @@ class EntityContextTest extends TestCase
         $articles->belongsTo('Users');
         $articles->belongsToMany('Tags');
         $articles->hasMany('Comments');
-        $articles->setEntityClass(__NAMESPACE__ . '\Article');
+        $articles->setEntityClass(Article::class);
 
         $articlesTags = $this->getTableLocator()->get('ArticlesTags');
         $comments = $this->getTableLocator()->get('Comments');

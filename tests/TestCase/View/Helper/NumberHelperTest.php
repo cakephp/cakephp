@@ -19,31 +19,11 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
-use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
-
-/**
- * NumberHelperTestObject class
- */
-class NumberHelperTestObject extends NumberHelper
-{
-    public function attach(NumberMock $cakeNumber)
-    {
-        $this->_engine = $cakeNumber;
-    }
-
-    public function engine()
-    {
-        return $this->_engine;
-    }
-}
-
-/**
- * NumberMock class
- */
-class NumberMock
-{
-}
+use TestApp\Utility\NumberMock;
+use TestApp\Utility\TestAppEngine;
+use TestApp\View\Helper\NumberHelperTestObject;
+use TestPlugin\Utility\TestPluginEngine;
 
 /**
  * NumberHelperTest class
@@ -105,10 +85,10 @@ class NumberHelperTest extends TestCase
      */
     public function testNumberHelperProxyMethodCalls($method)
     {
-        $number = $this->getMockBuilder(__NAMESPACE__ . '\NumberMock')
+        $number = $this->getMockBuilder(NumberMock::class)
             ->setMethods([$method])
             ->getMock();
-        $helper = new NumberHelperTestObject($this->View, ['engine' => __NAMESPACE__ . '\NumberMock']);
+        $helper = new NumberHelperTestObject($this->View, ['engine' => NumberMock::class]);
         $helper->attach($number);
         $number->expects($this->at(0))
             ->method($method)
@@ -125,11 +105,11 @@ class NumberHelperTest extends TestCase
     public function testEngineOverride()
     {
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestAppEngine']);
-        $this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
+        $this->assertInstanceOf(TestAppEngine::class, $Number->engine());
 
         $this->loadPlugins(['TestPlugin']);
         $Number = new NumberHelperTestObject($this->View, ['engine' => 'TestPlugin.TestPluginEngine']);
-        $this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());
+        $this->assertInstanceOf(TestPluginEngine::class, $Number->engine());
         $this->removePlugins(['TestPlugin']);
     }
 }

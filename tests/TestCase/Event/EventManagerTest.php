@@ -21,6 +21,8 @@ use Cake\Event\EventList;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
+use TestApp\TestCase\Event\CustomTestEventListenerInterface;
+use TestApp\TestCase\Event\EventTestListener;
 
 /**
  * Tests the Cake\Event\EventManager class functionality
@@ -217,9 +219,9 @@ class EventManagerTest extends TestCase
     public function testDispatch()
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+        $listener = $this->getMockBuilder(EventTestListener::class)
             ->getMock();
-        $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+        $anotherListener = $this->getMockBuilder(EventTestListener::class)
             ->getMock();
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
@@ -256,9 +258,9 @@ class EventManagerTest extends TestCase
     public function testDispatchReturnValue()
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+        $listener = $this->getMockBuilder(EventTestListener::class)
             ->getMock();
-        $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+        $anotherListener = $this->getMockBuilder(EventTestListener::class)
             ->getMock();
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
@@ -283,9 +285,9 @@ class EventManagerTest extends TestCase
     public function testDispatchFalseStopsEvent()
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+        $listener = $this->getMockBuilder(EventTestListener::class)
             ->getMock();
-        $anotherListener = $this->getMockBuilder(__NAMESPACE__ . '\EventTestListener')
+        $anotherListener = $this->getMockBuilder(EventTestListener::class)
             ->getMock();
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
@@ -329,7 +331,7 @@ class EventManagerTest extends TestCase
     public function testOnSubscriber()
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
+        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
             ->setMethods(['secondListenerFunction'])
             ->getMock();
         $manager->on($listener);
@@ -356,7 +358,7 @@ class EventManagerTest extends TestCase
     public function testOnSubscriberMultiple()
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
+        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
             ->setMethods(['listenerFunction', 'thirdListenerFunction'])
             ->getMock();
         $manager->on($listener);
@@ -378,7 +380,7 @@ class EventManagerTest extends TestCase
     public function testDetachSubscriber()
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(__NAMESPACE__ . '\CustomTestEventListenerInterface')
+        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
             ->setMethods(['secondListenerFunction'])
             ->getMock();
         $manager->on($listener);
@@ -816,72 +818,5 @@ class EventManagerTest extends TestCase
 
         $returnValue = $eventManager->unsetEventList();
         $this->assertSame($eventManager, $returnValue);
-    }
-}
-
-/**
- * Mock class used to test event dispatching
- */
-class EventTestListener
-{
-    public $callList = [];
-
-    /**
-     * Test function to be used in event dispatching
-     *
-     * @return void
-     */
-    public function listenerFunction()
-    {
-        $this->callList[] = __FUNCTION__;
-    }
-
-    /**
-     * Test function to be used in event dispatching
-     *
-     * @return void
-     */
-    public function secondListenerFunction()
-    {
-        $this->callList[] = __FUNCTION__;
-    }
-
-    /**
-     * Auxiliary function to help in stopPropagation testing
-     *
-     * @param \Cake\Event\EventInterface $event
-     * @return void
-     */
-    public function stopListener($event)
-    {
-        $event->stopPropagation();
-    }
-}
-
-/**
- * Mock used for testing the subscriber objects
- */
-class CustomTestEventListenerInterface extends EventTestListener implements EventListenerInterface
-{
-    public function implementedEvents(): array
-    {
-        return [
-            'fake.event' => 'listenerFunction',
-            'another.event' => ['callable' => 'secondListenerFunction'],
-            'multiple.handlers' => [
-                ['callable' => 'listenerFunction'],
-                ['callable' => 'thirdListenerFunction'],
-            ],
-        ];
-    }
-
-    /**
-     * Test function to be used in event dispatching
-     *
-     * @return void
-     */
-    public function thirdListenerFunction()
-    {
-        $this->callList[] = __FUNCTION__;
     }
 }

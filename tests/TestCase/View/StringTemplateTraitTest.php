@@ -15,25 +15,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\View;
 
-use Cake\Core\InstanceConfigTrait;
 use Cake\TestSuite\TestCase;
-use Cake\View\StringTemplateTrait;
-
-/**
- * TestStringTemplate
- */
-class TestStringTemplate
-{
-    use InstanceConfigTrait;
-    use StringTemplateTrait;
-
-    /**
-     * _defaultConfig
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [];
-}
+use Cake\View\StringTemplate;
+use TestApp\View\TestStringTemplate;
 
 /**
  * StringTemplateTraitTest class
@@ -41,7 +25,7 @@ class TestStringTemplate
 class StringTemplateTraitTest extends TestCase
 {
     /**
-     * @var TestStringTemplate
+     * @var \TestApp\View\TestStringTemplate
      */
     public $Template;
 
@@ -130,6 +114,6 @@ class StringTemplateTraitTest extends TestCase
         ];
         $this->Template->setTemplates($templates);
         $result = $this->Template->templater();
-        $this->assertInstanceOf('Cake\View\StringTemplate', $result);
+        $this->assertInstanceOf(StringTemplate::class, $result);
     }
 }

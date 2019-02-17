@@ -23,6 +23,7 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use TestApp\Model\Entity\TranslateArticle;
+use TestApp\Model\Table\I18nTable;
 
 /**
  * Translate behavior test case
@@ -81,15 +82,15 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
 
         $table->addBehavior('Translate', [
-            'translationTable' => '\TestApp\Model\Table\I18nTable',
+            'translationTable' => I18nTable::class,
             'fields' => ['title', 'body'],
         ]);
 
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('\TestApp\Model\Table\I18nTable', $i18n->getName());
-        $this->assertInstanceOf('TestApp\Model\Table\I18nTable', $i18n->getTarget());
+        $this->assertEquals(I18nTable::class, $i18n->getName());
+        $this->assertInstanceOf(I18nTable::class, $i18n->getTarget());
         $this->assertEquals('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
         $this->assertEquals('custom_i18n_table', $i18n->getTarget()->getTable());
     }
