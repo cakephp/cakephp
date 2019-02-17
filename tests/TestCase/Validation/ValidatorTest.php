@@ -1327,7 +1327,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the allowEmptyDate method
+     * Tests the allowEmptyDateTime method
      *
      * @return void
      */
@@ -1380,6 +1380,75 @@ class ValidatorTest extends TestCase
         ];
         $this->assertSame($expected, $validator->errors($data, true));
         $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Tests the notEmptyDateTime method
+     *
+     * @return void
+     */
+    public function testNotEmptyDateTime()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDate('published', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('published', true));
+        $this->assertFalse($validator->isEmptyAllowed('published', false));
+
+        $error = ['published' => ['_empty' => 'required field']];
+        $data = [
+            'published' => [
+                'year' => '',
+                'month' => '',
+                'day' => '',
+                'hour' => '',
+                'minute' => '',
+                'second' => '',
+            ],
+        ];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['published' => ''];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['published' => null];
+        $result = $validator->errors($data);
+        $this->assertSame($error, $result);
+
+        $data = ['published' => []];
+        $this->assertSame($error, $validator->errors($data));
+
+        $data = [
+            'published' => [
+                'year' => '2018',
+                'month' => '2',
+                'day' => '17',
+                'hour' => '14',
+                'minute' => '32',
+                'second' => '33',
+            ],
+        ];
+        $this->assertEmpty($validator->errors($data));
+    }
+
+    /**
+     * Test notEmptyDateTime with update mode
+     *
+     * @return voi
+     */
+    public function testNotEmptyDateTimeUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyDatetime('published', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('published', true));
+        $this->assertFalse($validator->isEmptyAllowed('published', false));
+
+        $data = ['published' => null];
+        $expected = ['published' => ['_empty' => 'message']];
+        $this->assertSame($expected, $validator->errors($data, false));
+        $this->assertEmpty($validator->errors($data, true));
     }
 
     /**
