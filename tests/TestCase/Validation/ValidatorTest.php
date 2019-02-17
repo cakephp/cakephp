@@ -1028,6 +1028,73 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Tests the notEmptyFile method
+     *
+     * @return void
+     */
+    public function testNotEmptyFile()
+    {
+        $validator = new Validator();
+        $validator->notEmptyFile('photo', 'required field');
+
+        $this->assertFalse($validator->isEmptyAllowed('photo', true));
+        $this->assertFalse($validator->isEmptyAllowed('photo', false));
+
+        $data = [
+            'photo' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_NO_FILE,
+            ]
+        ];
+        $error = ['photo' => ['_empty' => 'required field']];
+        $this->assertSame($error, $validator->errors($data));
+
+        $data = ['photo' => null];
+        $this->assertSame($error, $validator->errors($data));
+
+        // Empty string and empty array don't trigger errors
+        // as rejecting them here would mean accepting them in
+        // allowEmptyFile() which is not desirable.
+        $data = ['photo' => ''];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = ['photo' => []];
+        $this->assertEmpty($validator->errors($data));
+
+        $data = [
+            'photo' => [
+                'name' => '',
+                'type' => '',
+                'tmp_name' => '',
+                'error' => UPLOAD_ERR_FORM_SIZE,
+            ]
+        ];
+        $this->assertEmpty($validator->errors($data));
+    }
+
+    /**
+     * Test notEmptyFile with update mode.
+     *
+     * @retrn void
+     */
+    public function testNotEmptyFileUpdate()
+    {
+        $validator = new Validator();
+        $validator->notEmptyArray('photo', 'message', 'update');
+        $this->assertTrue($validator->isEmptyAllowed('photo', true));
+        $this->assertFalse($validator->isEmptyAllowed('photo', false));
+
+        $data = ['photo' => null];
+        $expected = [
+            'photo' => ['_empty' => 'message'],
+        ];
+        $this->assertEmpty($validator->errors($data, true));
+        $this->assertSame($expected, $validator->errors($data, false));
+    }
+
+    /**
      * Tests the allowEmptyDate method
      *
      * @return void
@@ -1173,11 +1240,8 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $this->assertEmpty($result);
 
-        $data = [
-            'published' => [],
-        ];
-        $result = $validator->errors($data);
-        $this->assertEmpty($result);
+        $data = ['published' => []];
+        $this->assertEmpty($validator->errors($data));
 
         $validator = new Validator();
         $validator->allowEmptyArray('published', 'update', 'message');

@@ -886,6 +886,27 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Require a field to be a not-empty file.
+     *
+     * Empty string, and empty array values will not be caught as empty
+     * and you should use additional validators to check uploaded files.
+     *
+     * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
+     * @param bool|string|callable $when Indicates when the field is allowed to be empty
+     *   Valid values are false (always), 'create', 'update'. If a callable is passed then
+     *   the field will required to be not empty when the callback returns false.
+     * @return $this
+     * @since 3.7.0
+     * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
+     */
+    public function notEmptyFile($field, $message = null, $when = false)
+    {
+        $when = $this->invertWhenClause($when);
+        return $this->allowEmptyFor($field, self::EMPTY_FILE, $when, $message);
+    }
+
+    /**
      * Allows a field to be an empty date.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING +
