@@ -1119,9 +1119,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Because this and `allowEmpty()` modify the same internal state, the last
      * method called will take precedence.
      *
-     * @deprecated 3.7.0 Use allowEmptyString(), allowEmptyArray(), allowEmptyFile(),
-     *   allowEmptyDate(), allowEmptyTime() or allowEmptyDateTime() with reversed
-     *   conditions instead.
+     * @deprecated 3.7.0 Use notEmptyString(), notEmptyArray(), notEmptyFile(),
+     *   notEmptyDate(), notEmptyTime() or notEmptyDateTime() instead.
      * @param string|array $field the name of the field or list of fields
      * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is not allowed
