@@ -139,6 +139,7 @@ class TableTest extends TestCase
         $table = new UsersTable();
         $this->assertEquals('users', $table->getTable());
 
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingsTable')
@@ -171,6 +172,7 @@ class TableTest extends TestCase
         $table = new UsersTable();
         $this->assertEquals('Users', $table->getAlias());
 
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingTable')
@@ -202,7 +204,7 @@ class TableTest extends TestCase
     public function testSetConnection()
     {
         $table = new Table(['table' => 'users']);
-        $this->assertNull($table->getConnection());
+        $this->assertSame($this->connection, $table->getConnection());
         $this->assertSame($table, $table->setConnection($this->connection));
         $this->assertSame($this->connection, $table->getConnection());
     }
