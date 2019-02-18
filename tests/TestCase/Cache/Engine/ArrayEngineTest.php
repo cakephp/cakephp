@@ -283,6 +283,22 @@ class ArrayEngineTest extends TestCase
     }
 
     /**
+     * Test writeMany() with Traversable
+     *
+     * @return void
+     */
+    public function testWriteMany()
+    {
+        $data = new \ArrayObject([
+            'a' => 1,
+            'b' => 'foo',
+        ]);
+
+        $result = Cache::writeMany($data, 'array');
+        $this->assertTrue($result);
+    }
+
+    /**
      * Test that passing a non iterable argument to setMultiple() throws exception.
      *
      * @return void

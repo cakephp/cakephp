@@ -287,12 +287,12 @@ class Cache
      * Cache::writeMany(['cached_data_1' => 'data 1', 'cached_data_2' => 'data 2'], 'long_term');
      * ```
      *
-     * @param array $data An array of data to be stored in the cache
+     * @param iterable $data An array or Traversable of data to be stored in the cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True on success, false on failure
-     * @throws \RuntimeException
+     * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function writeMany(array $data, string $config = 'default'): bool
+    public static function writeMany($data, string $config = 'default'): bool
     {
         return static::pool($config)->setMultiple($data);
     }
@@ -341,12 +341,13 @@ class Cache
      * Cache::readMany(['my_data_1', 'my_data_2], 'long_term');
      * ```
      *
-     * @param array $keys an array of keys to fetch from the cache
+     * @param iterable $keys An array or Traversable of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return array An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
+     * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function readMany(array $keys, string $config = 'default'): array
+    public static function readMany($keys, string $config = 'default'): array
     {
         return static::pool($config)->getMultiple($keys);
     }
@@ -432,11 +433,12 @@ class Cache
      * Cache::deleteMany(['my_data_1', 'my_data_2], 'long_term');
      * ```
      *
-     * @param array $keys Array of cache keys to be deleted
+     * @param iterable $keys Array or Traversable of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True on success, false on failure.
+     * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function deleteMany(array $keys, string $config = 'default'): bool
+    public static function deleteMany($keys, string $config = 'default'): bool
     {
         return static::pool($config)->deleteMultiple($keys);
     }
