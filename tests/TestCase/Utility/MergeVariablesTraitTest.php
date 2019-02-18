@@ -16,8 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\MergeVariablesTrait;
-use TestApp\Utility\Base;
 use TestApp\Utility\Child;
 use TestApp\Utility\Grandchild;
 
