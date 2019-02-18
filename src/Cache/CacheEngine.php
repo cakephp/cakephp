@@ -337,7 +337,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return string Prefixed key with potentially unsafe characters replaced.
      * @throws \Cake\Cache\InvalidArgumentException If key's value is invalid.
      */
-    protected function _key(string $key)
+    protected function _key($key)
     {
         $this->ensureValidKey($key);
 
