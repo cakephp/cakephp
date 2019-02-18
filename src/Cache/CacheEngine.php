@@ -98,14 +98,19 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     }
 
     /**
-     * Ensure the validity of the given cache keys.
+     * Ensure the validity of the argument type and cache keys.
      *
      * @param iterable $iterable The iterable to check.
      * @param string $check Whether to check keys or values.
      * @return void
+     * @throws \Cake\Cache\InvalidArgumentException
      */
-    protected function ensureValidKeys(iterable $iterable, string $check = self::CHECK_VALUE)
+    protected function ensureValidType($iterable, string $check = self::CHECK_VALUE)
     {
+        if (!is_iterable($iterable)) {
+            throw new InvalidArgumentException('A cache set / keys set must be either an array or a Traversable.');
+        }
+
         foreach ($iterable as $key => $value) {
             if ($check === self::CHECK_VALUE) {
                 $this->ensureValidKey($value);
@@ -126,11 +131,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function getMultiple($keys, $default = null): array
     {
-        if (!is_iterable($keys)) {
-            throw new InvalidArgumentException('A cache keys set must be either an array or a Traversable.');
-        }
-
-        $this->ensureValidKeys($keys);
+        $this->ensureValidType($keys);
 
         $results = [];
         foreach ($keys as $key) {
@@ -153,11 +154,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function setMultiple($values, $ttl = null): bool
     {
-        if (!is_iterable($values)) {
-            throw new InvalidArgumentException('A cache set must be either an array or a Traversable.');
-        }
-
-        $this->ensureValidKeys($values, self::CHECK_KEY);
+        $this->ensureValidType($values, self::CHECK_KEY);
 
         if ($ttl !== null) {
             $restore = $this->getConfig('duration');
@@ -192,11 +189,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteMultiple($keys): bool
     {
-        if (!is_iterable($keys)) {
-            throw new InvalidArgumentException('A cache keys set must be either an array or a Traversable.');
-        }
-
-        $this->ensureValidKeys($keys);
+        $this->ensureValidType($keys);
 
         foreach ($keys as $key) {
             $result = $this->delete($key);
