@@ -101,7 +101,7 @@ class Comparison implements ExpressionInterface, FieldInterface
         }
 
         if ($isMultiple) {
-            list($value, $this->_valueExpressions) = $this->_collectExpressions($value);
+            [$value, $this->_valueExpressions] = $this->_collectExpressions($value);
         }
 
         $this->_isMultiple = $isMultiple;
@@ -157,7 +157,7 @@ class Comparison implements ExpressionInterface, FieldInterface
             $template = '%s %s (%s)';
             $value = $this->_value->sql($generator);
         } else {
-            list($template, $value) = $this->_stringExpression($generator);
+            [$template, $value] = $this->_stringExpression($generator);
         }
 
         return sprintf($template, $field, $this->_operator, $value);

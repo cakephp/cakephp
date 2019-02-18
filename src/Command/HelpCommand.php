@@ -108,12 +108,12 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
                 continue;
             }
 
-            list ($prefix, $name) = explode('.', $prefixedName, 2);
+            [$prefix, $name] = explode('.', $prefixedName, 2);
             $prefix = Inflector::camelize($prefix);
 
             $shortestName = $this->getShortestName($names);
             if (strpos($shortestName, '.') !== false) {
-                list (, $shortestName) = explode('.', $shortestName, 2);
+                [, $shortestName] = explode('.', $shortestName, 2);
             }
 
             $prefixed[$prefix][] = $shortestName;

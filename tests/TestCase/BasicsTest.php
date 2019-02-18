@@ -536,13 +536,13 @@ EXPECTED;
     public function testStackTrace()
     {
         ob_start();
-        list($r, $expected) = [stackTrace(), \Cake\Error\Debugger::trace()];
+        [$r, $expected] = [stackTrace(), \Cake\Error\Debugger::trace()];
         $result = ob_get_clean();
         $this->assertEquals($expected, $result);
 
         $opts = ['args' => true];
         ob_start();
-        list($r, $expected) = [stackTrace($opts), \Cake\Error\Debugger::trace($opts)];
+        [$r, $expected] = [stackTrace($opts), \Cake\Error\Debugger::trace($opts)];
         $result = ob_get_clean();
         $this->assertEquals($expected, $result);
     }

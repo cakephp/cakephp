@@ -720,7 +720,7 @@ class QueryExpression implements ExpressionInterface, Countable
         $parts = explode(' ', trim($field), 2);
 
         if (count($parts) > 1) {
-            list($expression, $operator) = $parts;
+            [$expression, $operator] = $parts;
         }
 
         $type = $this->getTypeMap()->type($expression);

@@ -36,7 +36,7 @@ class SqlserverStatement extends PDOStatement
             $type = 'string';
         }
         if (!ctype_digit($type)) {
-            list($value, $type) = $this->cast($value, $type);
+            [$value, $type] = $this->cast($value, $type);
         }
         if ($type === PDO::PARAM_LOB) {
             $this->_statement->bindParam($column, $value, $type, 0, PDO::SQLSRV_ENCODING_BINARY);

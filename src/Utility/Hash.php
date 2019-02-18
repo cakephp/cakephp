@@ -156,7 +156,7 @@ class Hash
         foreach ($tokens as $token) {
             $next = [];
 
-            list($token, $conditions) = self::_splitConditions($token);
+            [$token, $conditions] = self::_splitConditions($token);
 
             foreach ($context[$_key] as $item) {
                 if (is_object($item) && method_exists($item, 'toArray')) {
@@ -322,7 +322,7 @@ class Hash
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
 
-        list($token, $conditions) = static::_splitConditions($token);
+        [$token, $conditions] = static::_splitConditions($token);
 
         foreach ($data as $k => $v) {
             if (static::_matchToken($k, $token)) {
@@ -412,7 +412,7 @@ class Hash
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
 
-        list($token, $conditions) = self::_splitConditions($token);
+        [$token, $conditions] = self::_splitConditions($token);
 
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
@@ -593,7 +593,7 @@ class Hash
             }
 
             if (empty($needle) && !empty($stack)) {
-                list($needle, $data) = array_pop($stack);
+                [$needle, $data] = array_pop($stack);
             }
         }
 
@@ -688,7 +688,7 @@ class Hash
             }
 
             if (empty($data) && !empty($stack)) {
-                list($data, $path) = array_pop($stack);
+                [$data, $path] = array_pop($stack);
                 reset($data);
             }
         }

@@ -194,7 +194,7 @@ trait DateFormatTrait
         $locale = (string)$locale;
 
         if (is_array($format)) {
-            list($dateFormat, $timeFormat) = $format;
+            [$dateFormat, $timeFormat] = $format;
         } elseif (is_numeric($format)) {
             $dateFormat = $format;
         } else {
@@ -307,7 +307,7 @@ trait DateFormatTrait
         $timeFormat = $pattern = null;
 
         if (is_array($dateFormat)) {
-            list($newDateFormat, $timeFormat) = $dateFormat;
+            [$newDateFormat, $timeFormat] = $dateFormat;
             $dateFormat = $newDateFormat;
         } else {
             $pattern = $dateFormat;

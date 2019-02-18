@@ -176,7 +176,7 @@ class Paginator implements PaginatorInterface
 
         $options += ['page' => 1, 'scope' => null];
         $options['page'] = (int)$options['page'] < 1 ? 1 : (int)$options['page'];
-        list($finder, $options) = $this->_extractFinder($options);
+        [$finder, $options] = $this->_extractFinder($options);
 
         if (empty($query)) {
             $query = $object->find($finder, $options);
@@ -424,7 +424,7 @@ class Paginator implements PaginatorInterface
                 continue;
             }
 
-            list ($alias, $currentField) = explode('.', $field);
+            [$alias, $currentField] = explode('.', $field);
 
             if ($alias === $model) {
                 $result[$currentField] = $sort;
@@ -458,7 +458,7 @@ class Paginator implements PaginatorInterface
             $alias = $tableAlias;
 
             if (strpos($key, '.') !== false) {
-                list($alias, $field) = explode('.', $key);
+                [$alias, $field] = explode('.', $key);
             }
             $correctAlias = ($tableAlias === $alias);
 

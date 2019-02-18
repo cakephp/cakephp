@@ -136,7 +136,7 @@ abstract class BaseErrorHandler
             return false;
         }
         $this->_handled = true;
-        list($error, $log) = static::mapErrorCode($code);
+        [$error, $log] = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
         }

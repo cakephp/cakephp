@@ -289,7 +289,7 @@ class ServerRequest implements ServerRequestInterface
         // UriInterface implementations happy.
         $querystr = '';
         if (strpos($config['url'], '?') !== false) {
-            list($config['url'], $querystr) = explode('?', $config['url']);
+            [$config['url'], $querystr] = explode('?', $config['url']);
         }
         if (strlen($config['url'])) {
             $uri = $uri->withPath('/' . $config['url']);
@@ -1962,7 +1962,7 @@ class ServerRequest implements ServerRequestInterface
             return $this->uri->getPath();
         }
 
-        list($path) = explode('?', $this->requestTarget);
+        [$path] = explode('?', $this->requestTarget);
 
         return $path;
     }

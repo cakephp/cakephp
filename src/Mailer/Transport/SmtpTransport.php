@@ -217,7 +217,7 @@ class SmtpTransport extends AbstractTransport
         } else {
             $httpHost = env('HTTP_HOST');
             if ($httpHost) {
-                list($host) = explode(':', $httpHost);
+                [$host] = explode(':', $httpHost);
             }
         }
 

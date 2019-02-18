@@ -166,7 +166,7 @@ class Marshaller
      */
     public function one(array $data, array $options = []): EntityInterface
     {
-        list($data, $options) = $this->_prepareDataAndOptions($data, $options);
+        [$data, $options] = $this->_prepareDataAndOptions($data, $options);
 
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entityClass = $this->_table->getEntityClass();
@@ -524,7 +524,7 @@ class Marshaller
      */
     public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
-        list($data, $options) = $this->_prepareDataAndOptions($data, $options);
+        [$data, $options] = $this->_prepareDataAndOptions($data, $options);
 
         $isNew = $entity->isNew();
         $keys = [];

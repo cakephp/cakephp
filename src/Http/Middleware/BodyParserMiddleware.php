@@ -136,7 +136,7 @@ class BodyParserMiddleware implements MiddlewareInterface
         if (!in_array($request->getMethod(), $this->methods)) {
             return $handler->handle($request);
         }
-        list($type) = explode(';', $request->getHeaderLine('Content-Type'));
+        [$type] = explode(';', $request->getHeaderLine('Content-Type'));
         $type = strtolower($type);
         if (!isset($this->parsers[$type])) {
             return $handler->handle($request);

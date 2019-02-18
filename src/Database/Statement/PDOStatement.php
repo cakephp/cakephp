@@ -67,7 +67,7 @@ class PDOStatement extends StatementDecorator
             $type = 'string';
         }
         if (!ctype_digit($type)) {
-            list($value, $type) = $this->cast($value, $type);
+            [$value, $type] = $this->cast($value, $type);
         }
         $this->_statement->bindValue($column, $value, $type);
     }

@@ -627,7 +627,7 @@ class EagerLoader
         }
 
         $driver = $query->getConnection()->getDriver();
-        list($collected, $statement) = $this->_collectKeys($external, $query, $statement);
+        [$collected, $statement] = $this->_collectKeys($external, $query, $statement);
 
         foreach ($external as $meta) {
             $contain = $meta->associations();

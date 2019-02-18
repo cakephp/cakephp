@@ -46,7 +46,7 @@ trait FileConfigTrait
             throw new Exception('Cannot load/dump configuration files with ../ in them.');
         }
 
-        list($plugin, $key) = pluginSplit($key);
+        [$plugin, $key] = pluginSplit($key);
 
         if ($plugin) {
             $file = Plugin::configPath($plugin) . $key;

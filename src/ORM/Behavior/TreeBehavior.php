@@ -380,7 +380,7 @@ class TreeBehavior extends Behavior
         }
 
         $config = $this->getConfig();
-        list($left, $right) = array_map(
+        [$left, $right] = array_map(
             function ($field) {
                 return $this->_table->aliasField($field);
             },
@@ -441,14 +441,14 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         $options += ['for' => null, 'direct' => false];
-        list($parent, $left, $right) = array_map(
+        [$parent, $left, $right] = array_map(
             function ($field) {
                 return $this->_table->aliasField($field);
             },
             [$config['parent'], $config['left'], $config['right']]
         );
 
-        list($for, $direct) = [$options['for'], $options['direct']];
+        [$for, $direct] = [$options['for'], $options['direct']];
 
         if (empty($for)) {
             throw new InvalidArgumentException("The 'for' key is required for find('children')");
@@ -630,8 +630,8 @@ class TreeBehavior extends Behavior
     protected function _moveUp(EntityInterface $node, $number)
     {
         $config = $this->getConfig();
-        list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-        list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
+        [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
+        [$nodeParent, $nodeLeft, $nodeRight] = array_values($node->extract([$parent, $left, $right]));
 
         $targetNode = null;
         if ($number !== true) {
@@ -664,7 +664,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        list($targetLeft) = array_values($targetNode->extract([$left, $right]));
+        [$targetLeft] = array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
         $leftBoundary = $targetLeft;
         $rightBoundary = $nodeLeft - 1;
@@ -720,8 +720,8 @@ class TreeBehavior extends Behavior
     protected function _moveDown(EntityInterface $node, $number)
     {
         $config = $this->getConfig();
-        list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
-        list($nodeParent, $nodeLeft, $nodeRight) = array_values($node->extract([$parent, $left, $right]));
+        [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
+        [$nodeParent, $nodeLeft, $nodeRight] = array_values($node->extract([$parent, $left, $right]));
 
         $targetNode = null;
         if ($number !== true) {
@@ -754,7 +754,7 @@ class TreeBehavior extends Behavior
             }
         }
 
-        list(, $targetRight) = array_values($targetNode->extract([$left, $right]));
+        [, $targetRight] = array_values($targetNode->extract([$left, $right]));
         $edge = $this->_getMax();
         $leftBoundary = $nodeRight + 1;
         $rightBoundary = $targetRight;
@@ -785,7 +785,7 @@ class TreeBehavior extends Behavior
     protected function _getNode($id): EntityInterface
     {
         $config = $this->getConfig();
-        list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+        [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
         $primaryKey = $this->_getPrimaryKey();
         $fields = [$parent, $left, $right];
         if ($config['level']) {
@@ -828,7 +828,7 @@ class TreeBehavior extends Behavior
     protected function _recoverTree(int $counter = 0, $parentId = null, $level = -1): int
     {
         $config = $this->getConfig();
-        list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+        [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
         $primaryKey = $this->_getPrimaryKey();
         $aliasedPrimaryKey = $this->_table->aliasField($primaryKey);
         $order = $config['recoverOrder'] ?: $aliasedPrimaryKey;

@@ -56,7 +56,7 @@ class App
             return $class;
         }
 
-        list($plugin, $name) = pluginSplit($class);
+        [$plugin, $name] = pluginSplit($class);
         $base = $plugin ?: Configure::read('App.namespace');
         $base = str_replace('/', '\\', rtrim($base, '\\'));
         $fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;

@@ -184,7 +184,7 @@ class Shell
     public function __construct(?ConsoleIo $io = null, ?LocatorInterface $locator = null)
     {
         if (!$this->name) {
-            list(, $class) = namespaceSplit(static::class);
+            [, $class] = namespaceSplit(static::class);
             $this->name = str_replace(['Shell', 'Task'], '', $class);
         }
         $this->_io = $io ?: new ConsoleIo();
@@ -390,7 +390,7 @@ class Shell
      */
     public function dispatchShell(): int
     {
-        list($args, $extra) = $this->parseDispatchArguments(func_get_args());
+        [$args, $extra] = $this->parseDispatchArguments(func_get_args());
 
         if (!isset($extra['requested'])) {
             $extra['requested'] = true;
@@ -466,7 +466,7 @@ class Shell
         $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
         $this->OptionParser = $this->getOptionParser();
         try {
-            list($this->params, $this->args) = $this->OptionParser->parse($argv);
+            [$this->params, $this->args] = $this->OptionParser->parse($argv);
         } catch (ConsoleException $e) {
             $this->err('Error: ' . $e->getMessage());
 

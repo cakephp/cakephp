@@ -186,7 +186,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->name === null) {
-            list(, $name) = namespaceSplit(static::class);
+            [, $name] = namespaceSplit(static::class);
             $this->name = substr($name, 0, -10);
         }
 
@@ -278,7 +278,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function loadComponent(string $name, array $config = []): Component
     {
-        list(, $prop) = pluginSplit($name);
+        [, $prop] = pluginSplit($name);
 
         return $this->{$prop} = $this->components()->load($name, $config);
     }
@@ -291,7 +291,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get(string $name)
     {
-        list($plugin, $class) = pluginSplit($this->modelClass, true);
+        [$plugin, $class] = pluginSplit($this->modelClass, true);
         if ($class === $name) {
             return $this->loadModel($plugin . $class);
         }

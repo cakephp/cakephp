@@ -1106,7 +1106,7 @@ class Validation
             throw new RuntimeException('Can not determine the mimetype.');
         }
 
-        list($mime) = explode(';', $finfo);
+        [$mime] = explode(';', $finfo);
 
         if (is_string($mimeTypes)) {
             return self::_check($mime, $mimeTypes);
@@ -1284,7 +1284,7 @@ class Validation
 
         $file = static::getFilename($file);
 
-        list($width, $height) = getimagesize($file);
+        [$width, $height] = getimagesize($file);
         $validHeight = null;
         $validWidth = null;
 

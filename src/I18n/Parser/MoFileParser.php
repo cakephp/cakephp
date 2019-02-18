@@ -106,11 +106,11 @@ class MoFileParser
             $singularId = fread($stream, $length);
 
             if (strpos($singularId, "\x04") !== false) {
-                list($context, $singularId) = explode("\x04", $singularId);
+                [$context, $singularId] = explode("\x04", $singularId);
             }
 
             if (strpos($singularId, "\000") !== false) {
-                list($singularId, $pluralId) = explode("\000", $singularId);
+                [$singularId, $pluralId] = explode("\000", $singularId);
             }
 
             fseek($stream, $offsetTranslated + $i * 8);

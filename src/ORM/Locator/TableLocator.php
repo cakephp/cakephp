@@ -176,7 +176,7 @@ class TableLocator implements LocatorInterface
         }
 
         $this->_options[$alias] = $options;
-        list(, $classAlias) = pluginSplit($alias);
+        [, $classAlias] = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;
 
         if (isset($this->_config[$alias])) {
@@ -191,7 +191,7 @@ class TableLocator implements LocatorInterface
                 $options['className'] = Inflector::camelize($alias);
             }
             if (!isset($options['table']) && strpos($options['className'], '\\') === false) {
-                list(, $table) = pluginSplit($options['className']);
+                [, $table] = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }
             $options['className'] = 'Cake\ORM\Table';

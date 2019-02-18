@@ -60,12 +60,12 @@ trait CellTrait
         $parts = explode('::', $cell);
 
         if (count($parts) === 2) {
-            list($pluginAndCell, $action) = [$parts[0], $parts[1]];
+            [$pluginAndCell, $action] = [$parts[0], $parts[1]];
         } else {
-            list($pluginAndCell, $action) = [$parts[0], 'display'];
+            [$pluginAndCell, $action] = [$parts[0], 'display'];
         }
 
-        list($plugin) = pluginSplit($pluginAndCell);
+        [$plugin] = pluginSplit($pluginAndCell);
         $className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
         if (!$className) {

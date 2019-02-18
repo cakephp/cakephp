@@ -373,7 +373,7 @@ class MemcachedEngineTest extends TestCase
         $Memcached = new \Memcached();
 
         foreach ($servers as $server) {
-            list($host, $port) = explode(':', $server);
+            [$host, $port] = explode(':', $server);
             // phpcs:disable
             if (!$Memcached->addServer($host, (int)$port)) {
                 $available = false;

@@ -185,7 +185,7 @@ class Response extends Message implements ResponseInterface
             if (strpos($value, ':') === false) {
                 continue;
             }
-            list($name, $value) = explode(':', $value, 2);
+            [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
             $name = trim($name);
 

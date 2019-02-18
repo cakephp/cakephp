@@ -77,7 +77,7 @@ class BelongsTo extends Association
      */
     protected function _propertyName(): string
     {
-        list(, $name) = pluginSplit($this->_name);
+        [, $name] = pluginSplit($this->_name);
 
         return Inflector::underscore(Inflector::singularize($name));
     }

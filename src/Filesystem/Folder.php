@@ -258,7 +258,7 @@ class Folder
      */
     public function find(string $regexpPattern = '.*', $sort = false): array
     {
-        list(, $files) = $this->read($sort);
+        [, $files] = $this->read($sort);
 
         return array_values(preg_grep('/^' . $regexpPattern . '$/i', $files));
     }
@@ -291,7 +291,7 @@ class Folder
      */
     protected function _findRecursive(string $pattern, bool $sort = false): array
     {
-        list($dirs, $files) = $this->read($sort);
+        [$dirs, $files] = $this->read($sort);
         $found = [];
 
         foreach ($files as $file) {

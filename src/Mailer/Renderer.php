@@ -443,8 +443,8 @@ class Renderer
 
         $view = $this->createView();
 
-        list($templatePlugin) = pluginSplit($view->getTemplate());
-        list($layoutPlugin) = pluginSplit((string)$view->getLayout());
+        [$templatePlugin] = pluginSplit($view->getTemplate());
+        [$layoutPlugin] = pluginSplit((string)$view->getLayout());
         if ($templatePlugin) {
             $view->setPlugin($templatePlugin);
         } elseif ($layoutPlugin) {

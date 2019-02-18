@@ -912,7 +912,7 @@ class ConsoleOptionParser
     {
         $name = substr($option, 2);
         if (strpos($name, '=') !== false) {
-            list($name, $value) = explode('=', $name, 2);
+            [$name, $value] = explode('=', $name, 2);
             array_unshift($this->_tokens, $value);
         }
 

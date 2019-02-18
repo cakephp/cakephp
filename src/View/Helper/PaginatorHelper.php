@@ -457,7 +457,7 @@ class PaginatorHelper extends Helper
         $sortKey = $this->sortKey($options['model']);
         $defaultModel = $this->defaultModel();
         $model = $options['model'] ?: $defaultModel;
-        list($table, $field) = explode('.', $key . '.');
+        [$table, $field] = explode('.', $key . '.');
         if (!$field) {
             $field = $table;
             $table = $model;
@@ -610,7 +610,7 @@ class PaginatorHelper extends Helper
             return $field;
         }
 
-        list ($alias, $currentField) = explode('.', $field);
+        [$alias, $currentField] = explode('.', $field);
 
         if ($alias === $currentModel) {
             return $currentField;
@@ -693,7 +693,7 @@ class PaginatorHelper extends Helper
         if (!$this->_View->getRequest()->getParam('paging')) {
             return null;
         }
-        list($this->_defaultModel) = array_keys($this->_View->getRequest()->getParam('paging'));
+        [$this->_defaultModel] = array_keys($this->_View->getRequest()->getParam('paging'));
 
         return $this->_defaultModel;
     }
@@ -884,7 +884,7 @@ class PaginatorHelper extends Helper
         $out = '';
         $ellipsis = $templater->format('ellipsis', []);
 
-        list($start, $end) = $this->_getNumbersStartAndEnd($params, $options);
+        [$start, $end] = $this->_getNumbersStartAndEnd($params, $options);
 
         $out .= $this->_firstNumber($ellipsis, $params, $start, $options);
         $out .= $options['before'];

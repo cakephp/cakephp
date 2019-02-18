@@ -168,7 +168,7 @@ class SelectLoader
         /* @var \Cake\ORM\Query $query */
         $query = $finder();
         if (isset($options['finder'])) {
-            list($finderName, $opts) = $this->_extractFinder($options['finder']);
+            [$finderName, $opts] = $this->_extractFinder($options['finder']);
             $query = $query->find($finderName, $opts);
         }
 

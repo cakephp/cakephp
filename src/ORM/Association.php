@@ -230,7 +230,7 @@ abstract class Association
             $this->_className = $alias;
         }
 
-        list(, $name) = pluginSplit($alias);
+        [, $name] = pluginSplit($alias);
         $this->_name = $name;
 
         $this->_options($options);
@@ -379,7 +379,7 @@ abstract class Association
     {
         if (!$this->_targetTable) {
             if (strpos((string)$this->_className, '.')) {
-                list($plugin) = pluginSplit($this->_className, true);
+                [$plugin] = pluginSplit($this->_className, true);
                 $registryAlias = $plugin . $this->_name;
             } else {
                 $registryAlias = $this->_name;
@@ -609,7 +609,7 @@ abstract class Association
      */
     protected function _propertyName(): string
     {
-        list(, $name) = pluginSplit($this->_name);
+        [, $name] = pluginSplit($this->_name);
 
         return Inflector::underscore($name);
     }
@@ -735,7 +735,7 @@ abstract class Association
             }
         }
 
-        list($finder, $opts) = $this->_extractFinder($options['finder']);
+        [$finder, $opts] = $this->_extractFinder($options['finder']);
         $dummy = $this
             ->find($finder, $opts)
             ->eagerLoaded(true);
@@ -844,7 +844,7 @@ abstract class Association
     public function find($type = null, array $options = []): Query
     {
         $type = $type ?: $this->getFinder();
-        list($type, $opts) = $this->_extractFinder($type);
+        [$type, $opts] = $this->_extractFinder($type);
 
         return $this->getTarget()
             ->find($type, $options + $opts)

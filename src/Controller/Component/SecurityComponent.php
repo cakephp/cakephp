@@ -285,7 +285,7 @@ class SecurityComponent extends Component
 
         $token = urldecode($check['_Token']['fields']);
         if (strpos($token, ':')) {
-            list($token, ) = explode(':', $token, 2);
+            [$token, ] = explode(':', $token, 2);
         }
 
         return $token;
@@ -330,7 +330,7 @@ class SecurityComponent extends Component
         $unlocked = $this->_unlocked($check);
 
         if (strpos($token, ':')) {
-            list($token, $locked) = explode(':', $token, 2);
+            [$token, $locked] = explode(':', $token, 2);
         }
         unset($check['_Token'], $check['_csrfToken']);
 

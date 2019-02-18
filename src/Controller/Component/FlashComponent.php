@@ -99,7 +99,7 @@ class FlashComponent extends Component
             $options['params']['escape'] = $options['escape'];
         }
 
-        list($plugin, $element) = pluginSplit($options['element']);
+        [$plugin, $element] = pluginSplit($options['element']);
 
         if ($plugin) {
             $options['element'] = $plugin . '.Flash/' . $element;

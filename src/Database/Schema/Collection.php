@@ -59,7 +59,7 @@ class Collection implements CollectionInterface
      */
     public function listTables(): array
     {
-        list($sql, $params) = $this->_dialect->listTablesSql($this->_connection->config());
+        [$sql, $params] = $this->_dialect->listTablesSql($this->_connection->config());
         $result = [];
         $statement = $this->_connection->execute($sql, $params);
         while ($row = $statement->fetch()) {
@@ -90,7 +90,7 @@ class Collection implements CollectionInterface
     {
         $config = $this->_connection->config();
         if (strpos($name, '.')) {
-            list($config['schema'], $name) = explode('.', $name);
+            [$config['schema'], $name] = explode('.', $name);
         }
         $table = new TableSchema($name);
 
@@ -121,7 +121,7 @@ class Collection implements CollectionInterface
         $describeMethod = "describe{$stage}Sql";
         $convertMethod = "convert{$stage}Description";
 
-        list($sql, $params) = $this->_dialect->{$describeMethod}($name, $config);
+        [$sql, $params] = $this->_dialect->{$describeMethod}($name, $config);
         if (empty($sql)) {
             return;
         }
