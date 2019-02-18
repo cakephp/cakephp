@@ -16,7 +16,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\MergeVariablesTrait;
+use TestApp\Utility\Child;
+use TestApp\Utility\Grandchild;
 
 /**
  * MergeVariablesTrait test case
@@ -110,60 +111,4 @@ class MergeVariablesTraitTest extends TestCase
         $object->mergeVars(['hasBoolean']);
         $this->assertEquals(['test'], $object->hasBoolean);
     }
-}
-
-class Base
-{
-    use MergeVariablesTrait;
-
-    public $hasBoolean = false;
-
-    public $listProperty = ['One'];
-
-    public $assocProperty = ['Red'];
-
-    public function mergeVars($properties, $options = [])
-    {
-        return $this->_mergeVars($properties, $options);
-    }
-}
-
-class Child extends Base
-{
-    public $hasBoolean = ['test'];
-
-    public $listProperty = ['Two', 'Three'];
-
-    public $assocProperty = [
-        'Green' => ['lime'],
-        'Orange',
-    ];
-
-    public $nestedProperty = [
-        'Red' => [
-            'apple' => 'gala',
-        ],
-        'Green' => [
-            'citrus' => 'lime',
-        ],
-    ];
-}
-
-class Grandchild extends Child
-{
-    public $listProperty = ['Four', 'Five'];
-
-    public $assocProperty = [
-        'Green' => ['apple'],
-        'Yellow' => ['banana'],
-    ];
-
-    public $nestedProperty = [
-        'Red' => [
-            'citrus' => 'blood orange',
-        ],
-        'Green' => [
-            'citrus' => 'key lime',
-        ],
-    ];
 }

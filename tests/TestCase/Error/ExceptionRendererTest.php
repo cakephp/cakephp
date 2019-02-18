@@ -30,7 +30,6 @@ use Cake\Http\Exception\HttpException;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\ORM\Exception\MissingBehaviorException;
@@ -940,46 +939,5 @@ class ExceptionRendererTest extends TestCase
         $this->assertContains('There was an error in the SQL query', $result);
         $this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
         $this->assertContains("'seven' => (int) 7", $result);
-    }
-}
-
-class TestErrorController extends Controller
-{
-    /**
-     * uses property
-     *
-     * @var array
-     */
-    public $uses = [];
-
-    /**
-     * components property
-     *
-     * @return void
-     */
-    public $components = ['Blueberry'];
-
-    /**
-     * beforeRender method
-     *
-     * @return \Cake\Http\Response|null
-     */
-    public function beforeRender(EventInterface $event): ?Response
-    {
-        echo $this->Blueberry->testName;
-
-        return null;
-    }
-
-    /**
-     * index method
-     *
-     * @return array
-     */
-    public function index()
-    {
-        $this->autoRender = false;
-
-        return 'what up';
     }
 }

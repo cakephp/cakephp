@@ -9,4 +9,13 @@ use Cake\ORM\Entity;
  */
 class Article extends Entity
 {
+    /**
+     * Testing stub method.
+     *
+     * @return bool
+     */
+    public function isRequired()
+    {
+        return true;
+    }
 }

@@ -41,6 +41,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 use TestApp\Model\Entity\ProtectedEntity;
+use TestApp\Model\Entity\VirtualUser;
 use TestApp\Model\Table\UsersTable;
 
 /**
@@ -138,6 +139,7 @@ class TableTest extends TestCase
         $table = new UsersTable();
         $this->assertEquals('users', $table->getTable());
 
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingsTable')
@@ -170,6 +172,7 @@ class TableTest extends TestCase
         $table = new UsersTable();
         $this->assertEquals('Users', $table->getAlias());
 
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['find'])
             ->setMockClassName('SpecialThingTable')
@@ -201,7 +204,7 @@ class TableTest extends TestCase
     public function testSetConnection()
     {
         $table = new Table(['table' => 'users']);
-        $this->assertNull($table->getConnection());
+        $this->assertSame($this->connection, $table->getConnection());
         $this->assertSame($table, $table->setConnection($this->connection));
         $this->assertSame($this->connection, $table->getConnection());
     }
@@ -1322,7 +1325,7 @@ class TableTest extends TestCase
         $table = new Table([
             'table' => 'users',
             'connection' => $this->connection,
-            'entityClass' => '\TestApp\Model\Entity\VirtualUser',
+            'entityClass' => VirtualUser::class,
         ]);
         $table->setDisplayField('bonus');
 

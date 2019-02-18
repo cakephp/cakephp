@@ -20,6 +20,7 @@ use Cake\Event\Event;
 use Cake\Event\EventList;
 use Cake\Event\EventManager;
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
@@ -423,11 +424,11 @@ class TestCaseTest extends TestCase
         $Mock = $this->getMockForModel(
             'Table',
             ['save'],
-            ['alias' => 'Comments', 'className' => 'Cake\ORM\Table']
+            ['alias' => 'Comments', 'className' => Table::class]
         );
 
         $result = $this->getTableLocator()->get('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertEquals('Comments', $Mock->getAlias());
 
         $Mock->expects($this->at(0))
@@ -444,19 +445,19 @@ class TestCaseTest extends TestCase
         $allMethodsStubs = $this->getMockForModel(
             'Table',
             [],
-            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+            ['alias' => 'Comments', 'className' => Table::class]
         );
         $result = $this->getTableLocator()->get('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertEmpty([], $allMethodsStubs->getAlias());
 
         $allMethodsMocks = $this->getMockForModel(
             'Table',
             null,
-            ['alias' => 'Comments', 'className' => '\Cake\ORM\Table']
+            ['alias' => 'Comments', 'className' => Table::class]
         );
         $result = $this->getTableLocator()->get('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertEquals('Comments', $allMethodsMocks->getAlias());
 
         $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);

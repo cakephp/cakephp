@@ -20,28 +20,8 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\View\Helper;
 use Cake\View\View;
-
-class TestHelper extends Helper
-{
-    /**
-     * Settings for this helper.
-     *
-     * @var array
-     */
-    protected $_defaultConfig = [
-        'key1' => 'val1',
-        'key2' => ['key2.1' => 'val2.1', 'key2.2' => 'val2.2'],
-    ];
-
-    /**
-     * Helpers for this helper.
-     *
-     * @var array
-     */
-    public $helpers = ['Html', 'TestPlugin.OtherHelper'];
-}
+use TestApp\View\Helper\TestHelper;
 
 /**
  * HelperTest class
