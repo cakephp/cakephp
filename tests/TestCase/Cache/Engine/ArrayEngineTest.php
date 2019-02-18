@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Engine\ArrayEngine;
+use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -278,5 +280,19 @@ class ArrayEngineTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'array');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test that passing a non iterable argument to setMultiple() throws exception.
+     *
+     * @return void
+     */
+    public function testSetMultipleException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache set must be either an array or a Traversable.');
+
+        $engine = new ArrayEngine();
+        $engine->setMultiple('foo');
     }
 }
