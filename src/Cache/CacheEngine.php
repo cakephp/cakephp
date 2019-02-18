@@ -126,6 +126,10 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function getMultiple($keys, $default = null): array
     {
+        if (!is_iterable($keys)) {
+            throw new InvalidArgumentException('A cache keys set must be either an array or a Traversable.');
+        }
+
         $this->ensureValidKeys($keys);
 
         $results = [];
@@ -188,6 +192,10 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteMultiple($keys): bool
     {
+        if (!is_iterable($keys)) {
+            throw new InvalidArgumentException('A cache keys set must be either an array or a Traversable.');
+        }
+
         $this->ensureValidKeys($keys);
 
         foreach ($keys as $key) {

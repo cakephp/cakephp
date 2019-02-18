@@ -295,4 +295,32 @@ class ArrayEngineTest extends TestCase
         $engine = new ArrayEngine();
         $engine->setMultiple('foo');
     }
+
+    /**
+     * Test that passing a non iterable argument to getMultiple() throws exception.
+     *
+     * @return void
+     */
+    public function testGetMultipleException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache keys set must be either an array or a Traversable.');
+
+        $engine = new ArrayEngine();
+        $engine->getMultiple('foo');
+    }
+
+    /**
+     * Test that passing a non iterable argument to deleteMultiple() throws exception.
+     *
+     * @return void
+     */
+    public function testDeleteMultipleException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache keys set must be either an array or a Traversable.');
+
+        $engine = new ArrayEngine();
+        $engine->deleteMultiple('foo');
+    }
 }
