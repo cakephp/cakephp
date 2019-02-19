@@ -949,6 +949,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notEmptyDate($field, $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_DATE, $when, $message);
     }
 
@@ -993,6 +994,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notEmptyTime($field, $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_TIME, $when, $message);
     }
 
@@ -1037,6 +1039,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notEmptyDateTime($field, $message = null, $when = true)
     {
         $when = $this->invertWhenClause($when);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_DATE | self::EMPTY_TIME, $when, $message);
     }
 
