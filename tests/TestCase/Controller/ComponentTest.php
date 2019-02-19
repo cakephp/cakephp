@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Controller;
 use Cake\Controller\Component\FlashComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
+use Cake\Core\Exception\Exception;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use TestApp\Controller\Component\AppleComponent;
@@ -49,7 +50,7 @@ class ComponentTest extends TestCase
      */
     public function testInnerComponentConstruction(): void
     {
-        $Collection = new ComponentRegistry();
+        $Collection = new ComponentRegistry(new Controller());
         $Component = new AppleComponent($Collection);
 
         $this->assertInstanceOf(OrangeComponent::class, $Component->Orange, 'class is wrong');
@@ -62,7 +63,7 @@ class ComponentTest extends TestCase
      */
     public function testNestedComponentLoading(): void
     {
-        $Collection = new ComponentRegistry();
+        $Collection = new ComponentRegistry(new Controller());
         $Apple = new AppleComponent($Collection);
 
         $this->assertInstanceOf(OrangeComponent::class, $Apple->Orange, 'class is wrong');
@@ -99,7 +100,7 @@ class ComponentTest extends TestCase
      */
     public function testMultipleComponentInitialize(): void
     {
-        $Collection = new ComponentRegistry();
+        $Collection = new ComponentRegistry(new Controller());
         $Banana = $Collection->load('Banana');
         $Orange = $Collection->load('Orange');
 
@@ -197,7 +198,11 @@ class ComponentTest extends TestCase
      */
     public function testLazyLoading(): void
     {
-        $Component = new ConfiguredComponent(new ComponentRegistry(), [], ['Apple', 'Banana', 'Orange']);
+        $Component = new ConfiguredComponent(
+            new ComponentRegistry(new Controller()),
+            [],
+            ['Apple', 'Banana', 'Orange']
+        );
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
         $this->assertInstanceOf(OrangeComponent::class, $Component->Orange, 'class is wrong');
         $this->assertInstanceOf(BananaComponent::class, $Component->Banana, 'class is wrong');
@@ -267,5 +272,19 @@ class ComponentTest extends TestCase
 
         $Component = new ConfiguredComponent($Collection, [], ['Apple' => ['enabled' => false]]);
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
+    }
+
+    /**
+     * Test that calling getController() without setting a controller throws exception
+     *
+     * @return void
+     */
+    public function testGetControllerException()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Controller not set for ComponentRegistry');
+
+        $collection = new ComponentRegistry();
+        $collection->getController();
     }
 }

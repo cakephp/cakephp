@@ -17,6 +17,7 @@ namespace Cake\Controller;
 
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
+use Cake\Core\Exception\Exception;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -33,7 +34,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * The controller that this collection was initialized with.
      *
-     * @var \Cake\Controller\Controller
+     * @var \Cake\Controller\Controller|null
      */
     protected $_Controller;
 
@@ -52,10 +53,14 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     /**
      * Get the controller associated with the collection.
      *
-     * @return \Cake\Controller\Controller|null Controller instance
+     * @return \Cake\Controller\Controller Controller instance
      */
-    public function getController(): ?Controller
+    public function getController(): Controller
     {
+        if ($this->_Controller === null) {
+            throw new Exception('Controller not set for ComponentRegistry');
+        }
+
         return $this->_Controller;
     }
 
@@ -63,12 +68,14 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Set the controller associated with the collection.
      *
      * @param \Cake\Controller\Controller $controller Controller instance.
-     * @return void
+     * @return $this
      */
-    public function setController(Controller $controller): void
+    public function setController(Controller $controller)
     {
         $this->_Controller = $controller;
         $this->setEventManager($controller->getEventManager());
+
+        return $this;
     }
 
     /**
