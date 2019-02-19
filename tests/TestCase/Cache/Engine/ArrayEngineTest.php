@@ -306,7 +306,7 @@ class ArrayEngineTest extends TestCase
     public function testSetMultipleException()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache set / keys set must be either an array or a Traversable.');
+        $this->expectExceptionMessage('A cache set must be either an array or a Traversable.');
 
         $engine = new ArrayEngine();
         $engine->setMultiple('foo');
@@ -320,7 +320,7 @@ class ArrayEngineTest extends TestCase
     public function testGetMultipleException()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache set / keys set must be either an array or a Traversable.');
+        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
 
         $engine = new ArrayEngine();
         $engine->getMultiple('foo');
@@ -334,7 +334,7 @@ class ArrayEngineTest extends TestCase
     public function testDeleteMultipleException()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('A cache set / keys set must be either an array or a Traversable.');
+        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
 
         $engine = new ArrayEngine();
         $engine->deleteMultiple('foo');

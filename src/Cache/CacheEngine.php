@@ -108,7 +108,10 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     protected function ensureValidType($iterable, string $check = self::CHECK_VALUE)
     {
         if (!is_iterable($iterable)) {
-            throw new InvalidArgumentException('A cache set / keys set must be either an array or a Traversable.');
+            throw new InvalidArgumentException(sprintf(
+                'A cache %s must be either an array or a Traversable.',
+                $check === self::CHECK_VALUE ? 'key set' : 'set'
+            ));
         }
 
         foreach ($iterable as $key => $value) {
