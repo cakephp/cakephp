@@ -287,7 +287,7 @@ class ArrayEngineTest extends TestCase
      *
      * @return void
      */
-    public function testWriteMany()
+    public function testWriteManyTraversable()
     {
         $data = new \ArrayObject([
             'a' => 1,
@@ -296,6 +296,9 @@ class ArrayEngineTest extends TestCase
 
         $result = Cache::writeMany($data, 'array');
         $this->assertTrue($result);
+
+        $this->assertSame(1, Cache::read('a', 'array'));
+        $this->assertSame('foo', Cache::read('b', 'array'));
     }
 
     /**
