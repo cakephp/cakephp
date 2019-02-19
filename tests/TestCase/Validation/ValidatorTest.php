@@ -864,6 +864,7 @@ class ValidatorTest extends TestCase
             if (!isset($context['data']['emptyOk'])) {
                 return true;
             }
+
             return $context['data']['emptyOk'];
         });
 

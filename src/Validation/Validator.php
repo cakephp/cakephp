@@ -824,6 +824,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notEmptyString($field, $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
     }
 
@@ -865,6 +866,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notEmptyArray($field, $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_ARRAY, $when, $message);
     }
 
@@ -907,6 +909,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notEmptyFile($field, $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
+
         return $this->allowEmptyFor($field, self::EMPTY_FILE, $when, $message);
     }
 
