@@ -747,7 +747,7 @@ class Connection implements ConnectionInterface
      */
     public function quote($value, $type = null): string
     {
-        list($value, $type) = $this->cast($value, $type);
+        [$value, $type] = $this->cast($value, $type);
 
         return $this->_driver->quote($value, $type);
     }

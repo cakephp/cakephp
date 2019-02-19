@@ -228,7 +228,7 @@ trait QueryTrait
         $aliasedField = $field;
 
         if ($namespaced) {
-            list($alias, $field) = explode('.', $field);
+            [$alias, $field] = explode('.', $field);
         }
 
         if (!$alias) {

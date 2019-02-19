@@ -78,7 +78,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             $name = $objectName;
             $objectName = $config['className'];
         } else {
-            list(, $name) = pluginSplit($objectName);
+            [, $name] = pluginSplit($objectName);
         }
 
         $loaded = isset($this->_loaded[$name]);
@@ -91,7 +91,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
         $className = $this->_resolveClassName($objectName);
         if ($className === null || (is_string($className) && !class_exists($className))) {
-            list($plugin, $objectName) = pluginSplit($objectName);
+            [$plugin, $objectName] = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
         $instance = $this->_create($className, $name, $config);
@@ -278,7 +278,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
                 $config = (array)$objectName;
                 $objectName = $i;
             }
-            list(, $name) = pluginSplit($objectName);
+            [, $name] = pluginSplit($objectName);
             if (isset($config['class'])) {
                 $normal[$name] = $config;
             } else {
@@ -317,7 +317,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function set(string $objectName, $object): self
     {
-        list(, $name) = pluginSplit($objectName);
+        [, $name] = pluginSplit($objectName);
 
         // Just call unload if the object was loaded before
         if (array_key_exists($objectName, $this->_loaded)) {
@@ -342,7 +342,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function unload(string $objectName): self
     {
         if (empty($this->_loaded[$objectName])) {
-            list($plugin, $objectName) = pluginSplit($objectName);
+            [$plugin, $objectName] = pluginSplit($objectName);
             $this->_throwMissingClassError($objectName, $plugin);
         }
 

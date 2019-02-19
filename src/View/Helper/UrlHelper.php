@@ -170,7 +170,7 @@ class UrlHelper extends Helper
             return ltrim($this->build($path), '/');
         }
         if (!array_key_exists('plugin', $options) || $options['plugin'] !== false) {
-            list($plugin, $path) = $this->_View->pluginSplit($path, false);
+            [$plugin, $path] = $this->_View->pluginSplit($path, false);
         }
         if (!empty($options['pathPrefix']) && $path[0] !== '/') {
             $path = $options['pathPrefix'] . $path;

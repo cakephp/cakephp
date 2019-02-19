@@ -139,7 +139,7 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
     protected static function marshalUriFromSapi(array $server, array $headers): UriInterface
     {
         $uri = marshalUriFromSapi($server, $headers);
-        list($base, $webroot) = static::getBase($uri, $server);
+        [$base, $webroot] = static::getBase($uri, $server);
 
         // Look in PATH_INFO first, as this is the exact value we need prepared
         // by PHP.

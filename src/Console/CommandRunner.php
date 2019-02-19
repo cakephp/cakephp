@@ -149,7 +149,7 @@ class CommandRunner implements EventDispatcherInterface
 
         $io = $io ?: new ConsoleIo();
 
-        list($name, $argv) = $this->longestCommandName($commands, $argv);
+        [$name, $argv] = $this->longestCommandName($commands, $argv);
         $name = $this->resolveName($commands, $io, $name);
 
         $result = Shell::CODE_ERROR;

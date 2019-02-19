@@ -120,7 +120,7 @@ class RelativeTimeFormatter
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
-        list($fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds) = array_values($diffData);
+        [$fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds] = array_values($diffData);
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {
@@ -196,24 +196,24 @@ class RelativeTimeFormatter
         // If more than a week, then take into account the length of months
         if ($diff >= 604800) {
             $future = [];
-            list(
+            [
                 $future['H'],
                 $future['i'],
                 $future['s'],
                 $future['d'],
                 $future['m'],
-                $future['Y']
-            ) = explode('/', date('H/i/s/d/m/Y', $futureTime));
+                $future['Y'],
+            ] = explode('/', date('H/i/s/d/m/Y', $futureTime));
 
             $past = [];
-            list(
+            [
                 $past['H'],
                 $past['i'],
                 $past['s'],
                 $past['d'],
                 $past['m'],
-                $past['Y']
-            ) = explode('/', date('H/i/s/d/m/Y', $pastTime));
+                $past['Y'],
+            ] = explode('/', date('H/i/s/d/m/Y', $pastTime));
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
             $years = $future['Y'] - $past['Y'];
@@ -342,7 +342,7 @@ class RelativeTimeFormatter
         }
 
         $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
-        list($fNum, $fWord, $years, $months, $weeks, $days) = array_values($diffData);
+        [$fNum, $fWord, $years, $months, $weeks, $days] = array_values($diffData);
 
         $relativeDate = [];
         if ($fNum >= 1 && $years > 0) {

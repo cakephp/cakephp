@@ -263,7 +263,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      */
     protected function _method(Throwable $exception)
     {
-        list(, $baseClass) = namespaceSplit(get_class($exception));
+        [, $baseClass] = namespaceSplit(get_class($exception));
 
         if (substr($baseClass, -9) === 'Exception') {
             $baseClass = substr($baseClass, 0, -9);

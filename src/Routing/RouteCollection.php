@@ -152,7 +152,7 @@ class RouteCollection
 
             $queryParameters = null;
             if (strpos($url, '?') !== false) {
-                list($url, $queryParameters) = explode('?', $url, 2);
+                [$url, $queryParameters] = explode('?', $url, 2);
                 parse_str($queryParameters, $queryParameters);
             }
             /* @var \Cake\Routing\Route\Route $route */

@@ -50,7 +50,7 @@ class LegacyShellDispatcher extends ShellDispatcher
      */
     protected function _createShell(string $className, string $shortName): Shell
     {
-        list($plugin) = pluginSplit($shortName);
+        [$plugin] = pluginSplit($shortName);
         $instance = new $className($this->_io);
         if ($plugin) {
             $instance->plugin = trim($plugin, '.');

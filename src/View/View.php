@@ -614,7 +614,7 @@ class View implements EventDispatcherInterface
         }
 
         if (empty($options['ignoreMissing'])) {
-            list($plugin) = $this->pluginSplit($name, $pluginCheck);
+            [$plugin] = $this->pluginSplit($name, $pluginCheck);
             throw new MissingElementException($name, $this->_paths($plugin));
         }
     }
@@ -970,7 +970,7 @@ class View implements EventDispatcherInterface
                 case static::TYPE_ELEMENT:
                     $parent = $this->_getElementFileName($name);
                     if (!$parent) {
-                        list($plugin, $name) = $this->pluginSplit($name);
+                        [$plugin, $name] = $this->pluginSplit($name);
                         $paths = $this->_paths($plugin);
                         $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                         throw new LogicException(sprintf(
@@ -1130,7 +1130,7 @@ class View implements EventDispatcherInterface
      */
     public function loadHelper(string $name, array $config = []): Helper
     {
-        list(, $class) = pluginSplit($name);
+        [, $class] = pluginSplit($name);
         $helpers = $this->helpers();
 
         return $this->{$class} = $helpers->load($name, $config);
@@ -1233,7 +1233,7 @@ class View implements EventDispatcherInterface
             $name = $this->template;
         }
 
-        list($plugin, $name) = $this->pluginSplit($name);
+        [$plugin, $name] = $this->pluginSplit($name);
         $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
         if (strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
@@ -1309,7 +1309,7 @@ class View implements EventDispatcherInterface
     public function pluginSplit(string $name, bool $fallback = true): array
     {
         $plugin = null;
-        list($first, $second) = pluginSplit($name);
+        [$first, $second] = pluginSplit($name);
         if ($first && Plugin::isLoaded($first)) {
             $name = $second;
             $plugin = $first;
@@ -1338,7 +1338,7 @@ class View implements EventDispatcherInterface
         if ($this->layoutPath) {
             $subDir = $this->layoutPath . DIRECTORY_SEPARATOR;
         }
-        list($plugin, $name) = $this->pluginSplit($name);
+        [$plugin, $name] = $this->pluginSplit($name);
 
         $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
         $name = $name . $this->_ext;
@@ -1371,7 +1371,7 @@ class View implements EventDispatcherInterface
      */
     protected function _getElementFileName(string $name, bool $pluginCheck = true)
     {
-        list($plugin, $name) = $this->pluginSplit($name, $pluginCheck);
+        [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
         $paths = $this->_paths($plugin);
         $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
@@ -1496,7 +1496,7 @@ class View implements EventDispatcherInterface
         }
 
         $plugin = null;
-        list($plugin, $name) = $this->pluginSplit($name);
+        [$plugin, $name] = $this->pluginSplit($name);
 
         $underscored = null;
         if ($plugin) {

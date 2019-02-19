@@ -466,7 +466,7 @@ class ExtractTask extends Shell
                 continue;
             }
 
-            list($type, $string, $line) = $countToken;
+            [$type, $string, $line] = $countToken;
             if (($type === T_STRING) && ($string === $functionName) && ($firstParenthesis === '(')) {
                 $position = $count;
                 $depth = 0;

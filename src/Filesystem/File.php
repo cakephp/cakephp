@@ -608,7 +608,7 @@ class File
             if (!$type) {
                 return false;
             }
-            list($type) = explode(';', $type);
+            [$type] = explode(';', $type);
 
             return $type;
         }

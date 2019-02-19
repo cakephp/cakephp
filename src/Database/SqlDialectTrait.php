@@ -232,7 +232,7 @@ trait SqlDialectTrait
                     return $condition;
                 }
 
-                list(, $field) = explode('.', $field);
+                [, $field] = explode('.', $field);
                 $condition->setField($field);
 
                 return $condition;

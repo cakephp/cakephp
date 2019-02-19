@@ -133,10 +133,10 @@ class EventManager implements EventManagerInterface
             $options = [];
             $method = $function;
             if (is_array($function) && isset($function['callable'])) {
-                list($method, $options) = $this->_extractCallable($function, $subscriber);
+                [$method, $options] = $this->_extractCallable($function, $subscriber);
             } elseif (is_array($function) && is_numeric(key($function))) {
                 foreach ($function as $f) {
-                    list($method, $options) = $this->_extractCallable($f, $subscriber);
+                    [$method, $options] = $this->_extractCallable($f, $subscriber);
                     $this->on($eventKey, $options, $method);
                 }
                 continue;

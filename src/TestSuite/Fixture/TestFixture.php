@@ -160,7 +160,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      */
     protected function _tableFromClass(): string
     {
-        list(, $class) = namespaceSplit(static::class);
+        [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
         $table = $class;
 
@@ -328,7 +328,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     public function insert(ConnectionInterface $db)
     {
         if (isset($this->records) && !empty($this->records)) {
-            list($fields, $values, $types) = $this->_getRecords();
+            [$fields, $values, $types] = $this->_getRecords();
             $query = $db->newQuery()
                 ->insert($fields, $types)
                 ->into($this->table);

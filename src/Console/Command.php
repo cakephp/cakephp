@@ -108,7 +108,7 @@ class Command
      */
     public function getOptionParser(): ConsoleOptionParser
     {
-        list($root, $name) = explode(' ', $this->name, 2);
+        [$root, $name] = explode(' ', $this->name, 2);
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
 
@@ -152,7 +152,7 @@ class Command
 
         $parser = $this->getOptionParser();
         try {
-            list($options, $arguments) = $parser->parse($argv);
+            [$options, $arguments] = $parser->parse($argv);
             $args = new Arguments(
                 $arguments,
                 $options,

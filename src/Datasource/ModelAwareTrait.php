@@ -97,7 +97,7 @@ trait ModelAwareTrait
             }
         }
 
-        list(, $alias) = pluginSplit($modelClass, true);
+        [, $alias] = pluginSplit($modelClass, true);
 
         if (isset($this->{$alias})) {
             return $this->{$alias};

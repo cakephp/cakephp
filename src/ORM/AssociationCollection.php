@@ -67,7 +67,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function add(string $alias, Association $association): Association
     {
-        list(, $alias) = pluginSplit($alias);
+        [, $alias] = pluginSplit($alias);
 
         return $this->_items[strtolower($alias)] = $association;
     }
@@ -167,7 +167,7 @@ class AssociationCollection implements IteratorAggregate
         $class = array_map('strtolower', (array)$class);
 
         $out = array_filter($this->_items, function ($assoc) use ($class) {
-            list(, $name) = namespaceSplit(get_class($assoc));
+            [, $name] = namespaceSplit(get_class($assoc));
 
             return in_array(strtolower($name), $class, true);
         });

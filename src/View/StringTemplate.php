@@ -136,7 +136,7 @@ class StringTemplate
         if (empty($this->_configStack)) {
             return;
         }
-        list($this->_config, $this->_compiled) = array_pop($this->_configStack);
+        [$this->_config, $this->_compiled] = array_pop($this->_configStack);
     }
 
     /**
@@ -230,7 +230,7 @@ class StringTemplate
         if (!isset($this->_compiled[$name])) {
             throw new RuntimeException("Cannot find template named '$name'.");
         }
-        list($template, $placeholders) = $this->_compiled[$name];
+        [$template, $placeholders] = $this->_compiled[$name];
 
         if (isset($data['templateVars'])) {
             $data += $data['templateVars'];

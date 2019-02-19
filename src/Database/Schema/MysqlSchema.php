@@ -93,7 +93,7 @@ class MysqlSchema extends BaseSchema
         if (isset($matches[2])) {
             $length = $matches[2];
             if (strpos($matches[2], ',') !== false) {
-                list($length, $precision) = explode(',', $length);
+                [$length, $precision] = explode(',', $length);
             }
             $length = (int)$length;
             $precision = (int)$precision;

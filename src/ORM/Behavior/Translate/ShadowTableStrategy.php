@@ -65,7 +65,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     public function __construct(Table $table, array $config = [])
     {
         $tableAlias = $table->getAlias();
-        list($plugin) = pluginSplit($table->getRegistryAlias(), true);
+        [$plugin] = pluginSplit($table->getRegistryAlias(), true);
         $tableReferenceName = $config['referenceName'];
 
         $config += [

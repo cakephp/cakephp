@@ -587,7 +587,7 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
 
-            list($description, $expressions, $itemNum) = $assertion;
+            [$description, $expressions, $itemNum] = $assertion;
             $expression = null;
             foreach ((array)$expressions as $expression) {
                 $expression = sprintf('/^%s/s', $expression);
@@ -751,7 +751,7 @@ abstract class TestCase extends BaseTestCase
 
         $locator = $this->getTableLocator();
 
-        list(, $baseClass) = pluginSplit($alias);
+        [, $baseClass] = pluginSplit($alias);
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
 

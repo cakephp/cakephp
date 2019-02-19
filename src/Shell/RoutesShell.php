@@ -142,7 +142,7 @@ class RoutesShell extends Shell
         $out = [];
         foreach ($args as $arg) {
             if (strpos($arg, ':') !== false) {
-                list($key, $value) = explode(':', $arg);
+                [$key, $value] = explode(':', $arg);
                 if (in_array($value, ['true', 'false'])) {
                     $value = $value === 'true';
                 }

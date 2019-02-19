@@ -339,7 +339,7 @@ class RouteTest extends TestCase
     public function testNoMatchParseExtension($url, array $ext)
     {
         $route = new ProtectedRoute('/:controller/:action/*', [], ['_ext' => $ext]);
-        list($outUrl, $outExt) = $route->parseExtension($url);
+        [$outUrl, $outExt] = $route->parseExtension($url);
         $this->assertEquals($url, $outUrl);
         $this->assertNull($outExt);
     }

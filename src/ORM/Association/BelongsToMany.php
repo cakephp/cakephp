@@ -1025,7 +1025,7 @@ class BelongsToMany extends Association
     public function find($type = null, array $options = []): Query
     {
         $type = $type ?: $this->getFinder();
-        list($type, $opts) = $this->_extractFinder($type);
+        [$type, $opts] = $this->_extractFinder($type);
         $query = $this->getTarget()
             ->find($type, $options + $opts)
             ->where($this->targetConditions())

@@ -177,7 +177,7 @@ class FixtureManager
             }
 
             if (strpos($fixture, '.')) {
-                list($type, $pathName) = explode('.', $fixture, 2);
+                [$type, $pathName] = explode('.', $fixture, 2);
                 $path = explode('/', $pathName);
                 $name = array_pop($path);
                 $additionalPath = implode('\\', $path);
@@ -187,7 +187,7 @@ class FixtureManager
                 } elseif ($type === 'app') {
                     $baseNamespace = Configure::read('App.namespace');
                 } elseif ($type === 'plugin') {
-                    list($plugin, $name) = explode('.', $pathName);
+                    [$plugin, $name] = explode('.', $pathName);
                     $baseNamespace = str_replace('/', '\\', $plugin);
                     $additionalPath = null;
                 } else {

@@ -144,7 +144,7 @@ class EntityContext implements ContextInterface
                 $table = $entity->getSource();
             }
             if (!$table && $isEntity && get_class($entity) !== Entity::class) {
-                list(, $entityClass) = namespaceSplit(get_class($entity));
+                [, $entityClass] = namespaceSplit(get_class($entity));
                 $table = Inflector::pluralize($entityClass);
             }
         }

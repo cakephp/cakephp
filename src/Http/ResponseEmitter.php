@@ -106,7 +106,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitBodyRange(array $range, ResponseInterface $response, int $maxBufferLength): void
     {
-        list($unit, $first, $last, $length) = $range;
+        [$unit, $first, $last, $length] = $range;
 
         $body = $response->getBody();
 
@@ -218,7 +218,7 @@ class ResponseEmitter implements EmitterInterface
                 $parts = preg_split('/\;[ \t]*/', $cookie);
             }
 
-            list($name, $value) = explode('=', array_shift($parts), 2);
+            [$name, $value] = explode('=', array_shift($parts), 2);
             $data = [
                 'name' => urldecode($name),
                 'value' => urldecode($value),
@@ -231,7 +231,7 @@ class ResponseEmitter implements EmitterInterface
 
             foreach ($parts as $part) {
                 if (strpos($part, '=') !== false) {
-                    list($key, $value) = explode('=', $part);
+                    [$key, $value] = explode('=', $part);
                 } else {
                     $key = $part;
                     $value = true;

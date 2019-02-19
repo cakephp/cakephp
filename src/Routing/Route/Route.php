@@ -420,7 +420,7 @@ class Route
         if (empty($this->_compiledRoute)) {
             $this->compile();
         }
-        list($url, $ext) = $this->_parseExtension($url);
+        [$url, $ext] = $this->_parseExtension($url);
 
         if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
             return null;

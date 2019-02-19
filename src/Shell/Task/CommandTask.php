@@ -207,7 +207,7 @@ class CommandTask extends Shell
      */
     public function getShell(string $commandName)
     {
-        list($pluginDot, $name) = pluginSplit($commandName, true);
+        [$pluginDot, $name] = pluginSplit($commandName, true);
 
         if (in_array(strtolower((string)$pluginDot), ['app.', 'core.'])) {
             $commandName = $name;

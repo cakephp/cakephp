@@ -355,7 +355,7 @@ class CookieCollection implements IteratorAggregate, Countable
             ];
             foreach ($parts as $i => $part) {
                 if (strpos($part, '=') !== false) {
-                    list($key, $value) = explode('=', $part, 2);
+                    [$key, $value] = explode('=', $part, 2);
                 } else {
                     $key = $part;
                     $value = true;

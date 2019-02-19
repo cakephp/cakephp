@@ -159,7 +159,7 @@ class ConnectionTest extends TestCase
         $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
         $this->assertInstanceOf('TestPlugin\Database\Driver\TestDriver', $connection->getDriver());
 
-        list(, $name) = namespaceSplit(get_class($this->connection->getDriver()));
+        [, $name] = namespaceSplit(get_class($this->connection->getDriver()));
         $connection = new Connection(['driver' => $name]);
         $this->assertInstanceOf(get_class($this->connection->getDriver()), $connection->getDriver());
     }
