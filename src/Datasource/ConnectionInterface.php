@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.1.0
+ * @since         4.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
@@ -18,18 +18,6 @@ namespace Cake\Datasource;
  * This interface defines the methods you can depend on in
  * a connection.
  *
- * @method object getLogger() Get the current logger instance
- * @method $this setLogger($logger) Set the current logger.
- * @method bool supportsDynamicConstraints()
- * @method \Cake\Database\Schema\Collection getSchemaCollection()
- * @method \Cake\Database\Query newQuery()
- * @method \Cake\Database\StatementInterface prepare($sql)
- * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
- * @method $this enableQueryLogging($value)
- * @method $this disableQueryLogging()
- * @method $this disableSavePoints()
- * @method bool isQueryLoggingEnabled()
- * @method string quote($value, $type = null)
  */
 interface ConnectionInterface
 {
@@ -76,21 +64,71 @@ interface ConnectionInterface
     public function disableConstraints(callable $operation);
 
     /**
-     * Enables or disables query logging for this connection.
-     *
-     * @param bool|null $enable whether to turn logging on or disable it.
-     *   Use null to read current value.
      * @return bool
      */
-    public function logQueries($enable = null);
+    public function supportsDynamicConstraints();
 
     /**
-     * Sets the logger object instance. When called with no arguments
-     * it returns the currently setup logger instance.
-     *
-     * @param object|null $instance logger object instance
-     * @return object logger instance
-     * @deprecated 3.5.0 Will be replaced by getLogger()/setLogger()
+     * @return \Cake\Database\Schema\Collection
      */
-    public function logger($instance = null);
+    public function getSchemaCollection();
+
+    /**
+     * @return \Cake\Database\Query
+     */
+    public function newQuery();
+
+    /**
+     * @param string $sql
+     * @return \Cake\Database\StatementInterface
+     */
+    public function prepare(string $sql);
+
+    /**
+     * @param string $query
+     * @param array $params
+     * @param array $types
+     * @return mixed
+     */
+    public function execute(string $query, array $params = [], array $types = []);
+
+    /**
+     * @param $value
+     * @return $this
+     */
+    public function enableQueryLogging(bool $value);
+
+    /**
+     * @return $this
+     */
+    public function disableQueryLogging();
+
+    /**
+     * @return $this
+     */
+    public function disableSavePoints();
+
+    /**
+     * @return bool
+     */
+    public function isQueryLoggingEnabled();
+
+    /**
+     * @param $value
+     * @param null $type
+     * @return string
+     */
+    public function quote($value, $type = null);
+
+    /**
+     * @param $logger \Cake\Database\Log\QueryLogger
+     * @return self
+     */
+    public function setLogger($logger);
+
+    /**
+     * Get the current logger instance
+     * @return \Cake\Database\Log\QueryLogger
+     */
+    public function getLogger();
 }
