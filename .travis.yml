@@ -47,7 +47,7 @@ matrix:
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
-  - if [[ ${TRAVIS_PHP_VERSION} != "7.3" ]]; then phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
@@ -88,16 +88,16 @@ before_script:
   - if [[ $PREFER_LOWEST == 1 ]]; then composer require --dev dereuromark/composer-prefer-lowest; fi
 
 script:
-  - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
+  - if [[ $DEFAULT == 1 ]]; then vendor/bin/phpunit; fi
   - if [[ $PREFER_LOWEST == 1 ]]; then vendor/bin/validate-prefer-lowest; fi
 
-  - if [[ $CODECOVERAGE = 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $CODECOVERAGE == 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
 
-  - if [[ $CHECKS = 1 ]]; then composer require --dev "phpstan/phpstan:^0.10" && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src/; fi
-  - if [[ $CHECKS = 1 ]]; then composer cs-check; fi
+  - if [[ $CHECKS == 1 ]]; then composer require --dev "phpstan/phpstan:^0.10" && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src/; fi
+  - if [[ $CHECKS == 1 ]]; then composer cs-check; fi
 
 after_success:
-  - if [[ $CODECOVERAGE = 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [[ $CODECOVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false
