@@ -47,7 +47,7 @@ matrix:
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
-  - if [[ $CODECOVERAGE != 1 ]]; then phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
