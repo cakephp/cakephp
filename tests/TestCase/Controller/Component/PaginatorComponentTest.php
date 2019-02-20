@@ -69,6 +69,11 @@ class PaginatorComponentTest extends TestCase
     public $autoFixtures = false;
 
     /**
+     * @var \Cake\Controller\Component\PaginatorComponent
+     */
+    protected $Paginator;
+
+    /**
      * setup
      *
      * @return void

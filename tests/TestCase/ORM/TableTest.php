@@ -6414,7 +6414,7 @@ class TableTest extends TestCase
     public function testSaveOrFailErrorDisplay()
     {
         $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
-        $this->expectExceptionMessage('Entity save failure (field: "Some message", multiple: "one, two")');
+        $this->expectExceptionMessage('Entity save failure. Found the following errors (field.0: "Some message", multiple.one: "One", multiple.two: "Two")');
 
         $entity = new Entity([
             'foo' => 'bar'
@@ -6422,6 +6422,30 @@ class TableTest extends TestCase
         $entity->setError('field', 'Some message');
         $entity->setError('multiple', ['one' => 'One', 'two' => 'Two']);
         $table = $this->getTableLocator()->get('users');
+
+        $table->saveOrFail($entity);
+    }
+
+    /**
+     * Tests that saveOrFail with nested errors
+     *
+     * @return void
+     */
+    public function testSaveOrFailNestedError()
+    {
+        $this->expectException(\Cake\ORM\Exception\PersistenceFailedException::class);
+        $this->expectExceptionMessage('Entity save failure. Found the following errors (articles.0.title.0: "Bad value")');
+
+        $entity = new Entity([
+            'username' => 'bad',
+            'articles' => [
+                new Entity(['title' => 'not an entity'])
+            ]
+        ]);
+        $entity->articles[0]->setError('title', 'Bad value');
+
+        $table = $this->getTableLocator()->get('Users');
+        $table->hasMany('Articles');
 
         $table->saveOrFail($entity);
     }

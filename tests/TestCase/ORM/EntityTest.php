@@ -1315,6 +1315,9 @@ class EntityTest extends TestCase
         $nestedEntity->clean();
         $hasErrors = $entity->hasErrors();
         $this->assertFalse($hasErrors);
+
+        $entity->setError('foo', []);
+        $this->assertFalse($entity->hasErrors());
     }
 
     /**

@@ -26,7 +26,8 @@
         "cakephp/utility": "^3.6.0"
     },
     "suggest": {
-        "cakephp/event": "To use PluginApplicationInterface or plugin applications."
+        "cakephp/event": "To use PluginApplicationInterface or plugin applications.",
+        "cakephp/cache": "To use Configure::store() and restore()."
     },
     "autoload": {
         "psr-4": {

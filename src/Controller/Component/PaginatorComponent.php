@@ -30,6 +30,7 @@ use InvalidArgumentException;
  * You configure pagination when calling paginate(). See that method for more details.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/pagination.html
+ * @mixin \Cake\Datasource\Paginator
  */
 class PaginatorComponent extends Component
 {

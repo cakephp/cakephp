@@ -25,6 +25,9 @@ use Countable;
  * Represents a SQL Query expression. Internally it stores a tree of
  * expressions that can be compiled by converting this object to string
  * and will contain a correctly parenthesized and nested expression.
+ *
+ * @method $this and(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
+ * @method $this or(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
  */
 class QueryExpression implements ExpressionInterface, Countable
 {
