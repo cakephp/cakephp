@@ -782,6 +782,7 @@ class Query implements ExpressionInterface, IteratorAggregate
             $table = current($table);
         }
 
+        /** @psalm-suppress InvalidReturnStatement */
         return [
             $alias => [
                 'table' => $table,

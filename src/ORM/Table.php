@@ -1432,6 +1432,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $query->cache($cacheKey, $cacheConfig);
         }
 
+        /** @psalm-suppress InvalidReturnStatement */
         return $query->firstOrFail();
     }
 
@@ -1525,9 +1526,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   created entities. This callback will be called *before* the entity
      *   is persisted.
      * @param array $options The options to use when saving.
-     * @return \Cake\Datasource\EntityInterface An entity.
+     * @return \Cake\Datasource\EntityInterface|array An entity.
      */
-    protected function _processFindOrCreate($search, ?callable $callback = null, $options = []): EntityInterface
+    protected function _processFindOrCreate($search, ?callable $callback = null, $options = [])
     {
         if (is_callable($search)) {
             $query = $this->find();

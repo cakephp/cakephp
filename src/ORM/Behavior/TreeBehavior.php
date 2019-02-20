@@ -801,6 +801,7 @@ class TreeBehavior extends Behavior
             throw new RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
         }
 
+        /** @psalm-suppress InvalidReturnStatement */
         return $node;
     }
 

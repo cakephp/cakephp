@@ -2288,7 +2288,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 ($allowed === static::WHEN_UPDATE && !$newRecord);
         }
 
-        return $allowed;
+        return (bool)$allowed;
     }
 
     /**

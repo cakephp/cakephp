@@ -353,7 +353,7 @@ class TimeHelper extends Helper
      *   strtotime() valid string or DateTime object).
      * @param false|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return string|false Formatted and translated date string
+     * @return string|int|false Formatted and translated date string
      * @see \Cake\I18n\Time::i18nFormat()
      */
     public function format($date, $format = null, $invalid = false, $timezone = null)
@@ -369,7 +369,7 @@ class TimeHelper extends Helper
      * @param string|null $format Intl compatible format string.
      * @param false|string $invalid Default value to display on invalid dates
      * @param string|\DateTimeZone|null $timezone User's timezone string or DateTimeZone object
-     * @return string|false Formatted and translated date string or value for `$invalid` on failure.
+     * @return string|int|false Formatted and translated date string or value for `$invalid` on failure.
      * @throws \Exception When the date cannot be parsed
      * @see \Cake\I18n\Time::i18nFormat()
      */

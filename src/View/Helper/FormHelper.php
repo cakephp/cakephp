@@ -1179,7 +1179,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName the field name
      * @param array $options The options for the input element
-     * @return string|array The generated input element
+     * @return string The generated input element
      */
     protected function _getInput(string $fieldName, array $options)
     {

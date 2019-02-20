@@ -183,7 +183,9 @@ class ShellDispatcher
         try {
             $result = $this->_dispatch($extra);
         } catch (StopException $e) {
-            return $e->getCode();
+            $code = $e->getCode();
+
+            return $code === null ? $code : (int)$code;
         }
         if ($result === null || $result === true) {
             return Shell::CODE_SUCCESS;

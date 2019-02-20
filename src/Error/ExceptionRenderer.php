@@ -342,7 +342,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             $code = $errorCode;
         }
 
-        return $code;
+        return (int)$code;
     }
 
     /**

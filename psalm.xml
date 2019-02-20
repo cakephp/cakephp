@@ -96,7 +96,6 @@
         <MoreSpecificImplementedParamType errorLevel="info" />
         <LessSpecificImplementedReturnType errorLevel="info" />
 
-        <InvalidReturnStatement errorLevel="info" />
         <InvalidReturnType errorLevel="info" />
 
         <!-- level 7 issues - even worse -->
