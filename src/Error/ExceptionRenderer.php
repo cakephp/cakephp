@@ -360,8 +360,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            if (
-                $e instanceof MissingLayoutException ||
+            if ($e instanceof MissingLayoutException ||
                 (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false)
             ) {
                 return $this->_outputMessageSafe('error500');
