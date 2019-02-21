@@ -197,27 +197,27 @@ class RelativeTimeFormatter
             list($past['H'], $past['i'], $past['s'], $past['d'], $past['m'], $past['Y']) = explode('/', date('H/i/s/d/m/Y', $pastTime));
             $weeks = $days = $hours = $minutes = $seconds = 0;
 
-            $years = $future['Y'] - $past['Y'];
-            $months = $future['m'] + ((12 * $years) - $past['m']);
+            $years = (int)$future['Y'] - (int)$past['Y'];
+            $months = (int)$future['m'] + ((12 * $years) - (int)$past['m']);
 
             if ($months >= 12) {
                 $years = floor($months / 12);
                 $months -= ($years * 12);
             }
-            if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] === 1) {
+            if ((int)$future['m'] < (int)$past['m'] && (int)$future['Y'] - (int)$past['Y'] === 1) {
                 $years--;
             }
 
-            if ($future['d'] >= $past['d']) {
-                $days = $future['d'] - $past['d'];
+            if ((int)$future['d'] >= (int)$past['d']) {
+                $days = (int)$future['d'] - (int)$past['d'];
             } else {
-                $daysInPastMonth = date('t', $pastTime);
-                $daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
+                $daysInPastMonth = (int)date('t', $pastTime);
+                $daysInFutureMonth = (int)date('t', mktime(0, 0, 0, (int)$future['m'] - 1, 1, (int)$future['Y']));
 
                 if (!$backwards) {
-                    $days = ($daysInPastMonth - $past['d']) + $future['d'];
+                    $days = ($daysInPastMonth - (int)$past['d']) + (int)$future['d'];
                 } else {
-                    $days = ($daysInFutureMonth - $past['d']) + $future['d'];
+                    $days = ($daysInFutureMonth - (int)$past['d']) + (int)$future['d'];
                 }
 
                 if ($future['m'] != $past['m']) {
