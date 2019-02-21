@@ -15,10 +15,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Routing\Middleware;
 
-use Cake\Http\Response;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
+use TestApp\Http\TestRequestHandler;
 
 /**
  * Test for AssetMiddleware
@@ -59,12 +59,9 @@ class AssetMiddlewareTest extends TestCase
             'REQUEST_URI' => '/test_plugin/root.js',
             'HTTP_IF_MODIFIED_SINCE' => date('D, j M Y G:i:s \G\M\T', $modified),
         ]);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
         $this->assertEquals('', $body);
@@ -80,13 +77,10 @@ class AssetMiddlewareTest extends TestCase
     public function testMissingPluginAsset()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/not_found.js']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
         $this->assertEquals('', $body);
@@ -131,13 +125,10 @@ class AssetMiddlewareTest extends TestCase
     public function testPluginAsset($url, $expectedFile)
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => $url]);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
         $this->assertStringEqualsFile($expectedFile, $body);
@@ -151,17 +142,14 @@ class AssetMiddlewareTest extends TestCase
     public function testPluginAssetHeaders()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/root.js']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $expires = strtotime('+4 hours');
         $time = time();
 
         $middleware = new AssetMiddleware(['cacheTime' => '+4 hours']);
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
 
         $this->assertEquals(
             'application/javascript',
@@ -193,13 +181,10 @@ class AssetMiddlewareTest extends TestCase
     public function test404OnDoubleSlash()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '//index.php']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
         $this->assertEmpty($res->getBody()->getContents());
     }
 
@@ -211,13 +196,10 @@ class AssetMiddlewareTest extends TestCase
     public function test404OnDoubleDot()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/../webroot/root.js']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
         $this->assertEmpty($res->getBody()->getContents());
     }
 
@@ -229,13 +211,10 @@ class AssetMiddlewareTest extends TestCase
     public function test404OnHiddenFile()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfile']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
         $this->assertEmpty($res->getBody()->getContents());
     }
 
@@ -247,13 +226,10 @@ class AssetMiddlewareTest extends TestCase
     public function test404OnHiddenFolder()
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/test_plugin/.hiddenfolder/some.js']);
-        $response = new Response();
-        $next = function ($req, $res) {
-            return $res;
-        };
+        $handler = new TestRequestHandler();
 
         $middleware = new AssetMiddleware();
-        $res = $middleware($request, $response, $next);
+        $res = $middleware->process($request, $handler);
         $this->assertEmpty($res->getBody()->getContents());
     }
 }
