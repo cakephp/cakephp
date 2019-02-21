@@ -18,7 +18,10 @@ namespace Cake\Routing\Middleware;
 use Cake\Core\Plugin;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use SplFileInfo;
 use Zend\Diactoros\Stream;
 
@@ -29,7 +32,7 @@ use Zend\Diactoros\Stream;
  * has sub-optimal performance when compared to serving files
  * with a real webserver.
  */
-class AssetMiddleware
+class AssetMiddleware implements MiddlewareInterface
 {
     /**
      * The amount of time to cache the asset.
@@ -54,30 +57,29 @@ class AssetMiddleware
      * Serve assets if the path matches one.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @param \Cake\Http\Response $response The response.
-     * @param callable $next Callback to invoke the next middleware.
-     * @return \Cake\Http\Response A response
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
+     * @return \Psr\Http\Message\ResponseInterface A response.
      */
-    public function __invoke(ServerRequestInterface $request, Response $response, callable $next): Response
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $url = $request->getUri()->getPath();
         if (strpos($url, '..') !== false || strpos($url, '.') === false) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         if (strpos($url, '/.') !== false) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         $assetFile = $this->_getAssetFile($url);
         if ($assetFile === null || !file_exists($assetFile)) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         $file = new SplFileInfo($assetFile);
         $modifiedTime = $file->getMTime();
         if ($this->isNotModified($request, $file)) {
-            return $response
+            return (new Response())
                 ->withStringBody('')
                 ->withStatus(304)
                 ->withHeader(
@@ -86,7 +88,7 @@ class AssetMiddleware
                 );
         }
 
-        return $this->deliverAsset($request, $response, $file);
+        return $this->deliverAsset($request, $file);
     }
 
     /**
@@ -138,20 +140,21 @@ class AssetMiddleware
      * Sends an asset file to the client
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object to use.
-     * @param \Cake\Http\Response $response The response object to use.
      * @param \SplFileInfo $file The file wrapper for the file.
      * @return \Cake\Http\Response The response with the file & headers.
      */
-    protected function deliverAsset(ServerRequestInterface $request, Response $response, SplFileInfo $file): Response
+    protected function deliverAsset(ServerRequestInterface $request, SplFileInfo $file): Response
     {
+        $stream = new Stream(fopen($file->getPathname(), 'rb'));
+
+        $response = new Response(['stream' => $stream]);
+
         $contentType = $response->getMimeType($file->getExtension()) ?: 'application/octet-stream';
         $modified = $file->getMTime();
         $expire = strtotime($this->cacheTime);
         $maxAge = $expire - time();
 
-        $stream = new Stream(fopen($file->getPathname(), 'rb'));
-
-        return $response->withBody($stream)
+        return $response
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
             ->withHeader('Date', gmdate('D, j M Y G:i:s \G\M\T', time()))
