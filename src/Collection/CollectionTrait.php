@@ -521,7 +521,7 @@ trait CollectionTrait
     {
         $list = new AppendIterator();
         $list->append($this->unwrap());
-        $list->append(($this->newCollection($items))->unwrap());
+        $list->append($this->newCollection($items)->unwrap());
 
         return $this->newCollection($list);
     }
