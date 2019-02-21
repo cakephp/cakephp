@@ -1422,7 +1422,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @return \Cake\Mailer\Renderer
      */
-    protected function getRenderer(): Renderer
+    public function getRenderer(): Renderer
     {
         if ($this->renderer === null) {
             $this->renderer = new Renderer($this->_appCharset);
@@ -1437,7 +1437,7 @@ class Email implements JsonSerializable, Serializable
      * @param \Cake\Mailer\Renderer $renderer Render instance.
      * @return $this
      */
-    protected function setRenderer(Renderer $renderer): self
+    public function setRenderer(Renderer $renderer): self
     {
         $this->renderer = $renderer;
 
