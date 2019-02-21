@@ -1,4 +1,5 @@
 <?php
+
 use Cake\Core\Configure;
 
 Configure::write('PluginTest.test_plugin_five.bootstrap', 'loaded plugin five bootstrap');
