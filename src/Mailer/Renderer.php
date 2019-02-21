@@ -90,17 +90,17 @@ class Renderer
      */
     public function render(Email $email, ?string $content = null): array
     {
+        $rendered = $this->renderTemplates($email, $content);
+
         $this->email = $email;
         $textMessage = $htmlMessage = '';
-
-        $rendered = $this->renderTemplates($content);
 
         $this->createBoundary();
         $msg = [];
 
-        $contentIds = array_filter((array)Hash::extract($this->email->getAttachments(), '{s}.contentId'));
+        $contentIds = array_filter((array)Hash::extract($email->getAttachments(), '{s}.contentId'));
         $hasInlineAttachments = count($contentIds) > 0;
-        $hasAttachments = !empty($this->email->getAttachments());
+        $hasAttachments = !empty($email->getAttachments());
         $hasMultipleTypes = count($rendered) > 1;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
@@ -123,8 +123,8 @@ class Renderer
         if (isset($rendered[Email::MESSAGE_TEXT])) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
-                $msg[] = 'Content-Type: text/plain; charset=' . $this->email->getContentTypeCharset();
-                $msg[] = 'Content-Transfer-Encoding: ' . $this->email->getContentTransferEncoding();
+                $msg[] = 'Content-Type: text/plain; charset=' . $email->getContentTypeCharset();
+                $msg[] = 'Content-Transfer-Encoding: ' . $email->getContentTransferEncoding();
                 $msg[] = '';
             }
             $textMessage = $rendered[Email::MESSAGE_TEXT];
@@ -137,8 +137,8 @@ class Renderer
         if (isset($rendered[Email::MESSAGE_HTML])) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
-                $msg[] = 'Content-Type: text/html; charset=' . $this->email->getContentTypeCharset();
-                $msg[] = 'Content-Transfer-Encoding: ' . $this->email->getContentTransferEncoding();
+                $msg[] = 'Content-Type: text/html; charset=' . $email->getContentTypeCharset();
+                $msg[] = 'Content-Transfer-Encoding: ' . $email->getContentTransferEncoding();
                 $msg[] = '';
             }
             $htmlMessage = $rendered[Email::MESSAGE_HTML];
@@ -402,11 +402,12 @@ class Renderer
     /**
      * Gets the text body types that are in this email message
      *
+     * @param \Cake\Mailer\Email $email Email instance.
      * @return array Array of types. Valid types are Email::MESSAGE_TEXT and Email::MESSAGE_HTML
      */
-    protected function getTypes(): array
+    protected function getTypes(Email $email): array
     {
-        $format = $this->email->getEmailFormat();
+        $format = $email->getEmailFormat();
 
         $types = [$format];
         if ($format === Email::MESSAGE_BOTH) {
@@ -421,18 +422,19 @@ class Renderer
      * If there is no template set, the $content will be returned in a hash
      * of the text content types for the email.
      *
+     * @param \Cake\Mailer\Email $email Email instance.
      * @param string|null $content The content passed in from send() in most cases.
      * @return array The rendered content with html and text keys.
      */
-    protected function renderTemplates(?string $content = null): array
+    public function renderTemplates(Email $email, ?string $content = null): array
     {
-        $types = $this->getTypes();
+        $types = $this->getTypes($email);
         $rendered = [];
         $template = $this->viewBuilder()->getTemplate();
         if (empty($template)) {
             foreach ($types as $type) {
                 $content = str_replace(["\r\n", "\r"], "\n", $content);
-                $rendered[$type] = $this->encodeString($content, $this->email->getCharset());
+                $rendered[$type] = $this->encodeString($content, $email->getCharset());
                 $rendered[$type] = $this->wrap($rendered[$type]);
                 $rendered[$type] = implode("\n", $rendered[$type]);
                 $rendered[$type] = rtrim($rendered[$type], "\n");
@@ -461,7 +463,7 @@ class Renderer
 
             $render = $view->render();
             $render = str_replace(["\r\n", "\r"], "\n", $render);
-            $rendered[$type] = $this->encodeString($render, $this->email->getCharset());
+            $rendered[$type] = $this->encodeString($render, $email->getCharset());
         }
 
         foreach ($rendered as $type => $content) {
