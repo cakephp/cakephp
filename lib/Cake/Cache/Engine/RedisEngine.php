@@ -228,7 +228,7 @@ class RedisEngine extends CacheEngine {
  * Disconnects from the redis server
  */
 	public function __destruct() {
-		if (empty($this->settings['persistent']) && !is_null($this->_Redis)) {
+		if (empty($this->settings['persistent']) && $this->_Redis !== null) {
 			$this->_Redis->close();
 		}
 	}
