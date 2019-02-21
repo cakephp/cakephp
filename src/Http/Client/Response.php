@@ -19,6 +19,7 @@ use Cake\Http\Cookie\CookieCollection as CookiesCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Serializable;
 use Zend\Diactoros\MessageTrait;
 use Zend\Diactoros\Stream;
 
@@ -80,7 +81,7 @@ use Zend\Diactoros\Stream;
  * $content = $response->getStatusCode();
  * ```
  */
-class Response extends Message implements ResponseInterface
+class Response extends Message implements ResponseInterface, Serializable
 {
     use MessageTrait;
 
@@ -118,6 +119,20 @@ class Response extends Message implements ResponseInterface
      * @var array
      */
     protected $_json;
+
+    /**
+     * Stream mode options.
+     *
+     * @var string
+     */
+    protected $_streamMode = 'wb+';
+
+    /**
+     * Stream target or resource object.
+     *
+     * @var string|resource
+     */
+    protected $_streamTarget = 'php://memory';
 
     /**
      * Map of public => property names for __get()
@@ -163,6 +178,16 @@ class Response extends Message implements ResponseInterface
         $stream->write($body);
         $stream->rewind();
         $this->stream = $stream;
+    }
+
+    /**
+     * Creates the stream object.
+     *
+     * @return void
+     */
+    protected function _createStream()
+    {
+        $this->stream = new Stream($this->_streamTarget, $this->_streamMode);
     }
 
     /**
@@ -226,6 +251,32 @@ class Response extends Message implements ResponseInterface
                 $this->headerNames[$normalized] = $name;
             }
         }
+    }
+
+    /**
+     * String representation of object
+     *
+     * @return string The string representation of the object
+     */
+    public function serialize()
+    {
+        return serialize([$this, (string)$this->getBody()]);
+    }
+
+    /**
+     * Constructs the object
+     *
+     * @param string $serialized The string representation of the object
+     * @return Cake\Http\Client\Response
+     */
+    public function unserialize($serialized)
+    {
+        list($response, $body) = unserialize($serialized);
+
+        $response->_createStream();
+        $response->stream->write((string)$body);
+
+        return $response;
     }
 
     /**

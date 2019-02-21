@@ -426,6 +426,17 @@ XML;
     }
 
     /**
+     * Test serialize and unserialize the object
+     *
+     * @return void
+     */
+    public function testSerialize()
+    {
+        $response = unserialize(serialize(new Response([], 'a body string')));
+        $this->assertSame('a body string', (string)$response->getBody());
+    }
+
+    /**
      * Test reading the encoding out.
      *
      * @return void
