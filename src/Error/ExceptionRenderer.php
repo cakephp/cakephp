@@ -27,6 +27,7 @@ use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use PDOException;
@@ -359,7 +360,10 @@ class ExceptionRenderer implements ExceptionRendererInterface
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
             $attributes = $e->getAttributes();
-            if (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false) {
+            if (
+                $e instanceof MissingLayoutException ||
+                (isset($attributes['file']) && strpos($attributes['file'], 'error500') !== false)
+            ) {
                 return $this->_outputMessageSafe('error500');
             }
 

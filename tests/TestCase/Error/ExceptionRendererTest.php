@@ -764,6 +764,37 @@ class ExceptionRendererTest extends TestCase
     }
 
     /**
+     * Test that missing layout don't cause other fatal errors.
+     *
+     * @return void
+     */
+    public function testMissingLayoutRenderSafe()
+    {
+        $this->called = false;
+        $exception = new NotFoundException();
+        $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+
+        $controller = new Controller();
+        $controller->getEventManager()->on(
+            'Controller.beforeRender',
+            function (EventInterface $event) {
+                $this->called = true;
+                $event->getSubject()->viewBuilder()->setTemplatePath('Error');
+                $event->getSubject()->viewBuilder()->setLayout('does-not-exist');
+            }
+        );
+        $controller->setRequest(new ServerRequest());
+        $ExceptionRenderer->setController($controller);
+
+        $response = $ExceptionRenderer->render();
+        $this->assertEquals('text/html', $response->getType());
+        $this->assertContains('Not Found', (string)$response->getBody());
+        $this->assertTrue($this->called, 'Listener added was not triggered.');
+        $this->assertEquals('', $controller->viewBuilder()->getLayoutPath());
+        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+    }
+
+    /**
      * Test that missing plugin disables Controller::$plugin if the two are the same plugin.
      *
      * @return void
