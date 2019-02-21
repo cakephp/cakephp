@@ -790,8 +790,8 @@ class ExceptionRendererTest extends TestCase
         $this->assertEquals('text/html', $response->getType());
         $this->assertContains('Not Found', (string)$response->getBody());
         $this->assertTrue($this->called, 'Listener added was not triggered.');
-        $this->assertEquals('', $controller->viewBuilder()->getLayoutPath());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('', $controller->viewBuilder()->getLayoutPath());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
     }
 
     /**
