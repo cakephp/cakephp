@@ -141,7 +141,7 @@ class ShellDispatcher {
 		}
 
 		// $boot is used by Cake/bootstrap.php file
-		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
+		$boot = file_exists(CONFIG . 'bootstrap.php');
 		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
 
 		if (!file_exists(CONFIG . 'core.php')) {
