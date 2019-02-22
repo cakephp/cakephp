@@ -172,7 +172,7 @@ class BodyParserMiddleware
         try {
             $xml = Xml::build($body, ['return' => 'domdocument', 'readFile' => false]);
             // We might not get child nodes if there are nested inline entities.
-            if ($xml->childNodes->length > 0) {
+            if ((int)$xml->childNodes->length > 0) {
                 return Xml::toArray($xml);
             }
 
