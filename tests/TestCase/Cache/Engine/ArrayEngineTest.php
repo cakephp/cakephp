@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Engine\ArrayEngine;
+use Cake\Cache\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -278,5 +280,66 @@ class ArrayEngineTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'array');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test writeMany() with Traversable
+     *
+     * @return void
+     */
+    public function testWriteManyTraversable()
+    {
+        $data = new \ArrayObject([
+            'a' => 1,
+            'b' => 'foo',
+        ]);
+
+        $result = Cache::writeMany($data, 'array');
+        $this->assertTrue($result);
+
+        $this->assertSame(1, Cache::read('a', 'array'));
+        $this->assertSame('foo', Cache::read('b', 'array'));
+    }
+
+    /**
+     * Test that passing a non iterable argument to setMultiple() throws exception.
+     *
+     * @return void
+     */
+    public function testSetMultipleException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache set must be either an array or a Traversable.');
+
+        $engine = new ArrayEngine();
+        $engine->setMultiple('foo');
+    }
+
+    /**
+     * Test that passing a non iterable argument to getMultiple() throws exception.
+     *
+     * @return void
+     */
+    public function testGetMultipleException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
+
+        $engine = new ArrayEngine();
+        $engine->getMultiple('foo');
+    }
+
+    /**
+     * Test that passing a non iterable argument to deleteMultiple() throws exception.
+     *
+     * @return void
+     */
+    public function testDeleteMultipleException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A cache key set must be either an array or a Traversable.');
+
+        $engine = new ArrayEngine();
+        $engine->deleteMultiple('foo');
     }
 }

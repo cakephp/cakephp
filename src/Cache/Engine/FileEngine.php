@@ -422,7 +422,7 @@ class FileEngine extends CacheEngine
      * @param string $key the key passed over
      * @return mixed string $key or false
      */
-    protected function _key(string $key)
+    protected function _key($key)
     {
         $key = parent::_key($key);
 

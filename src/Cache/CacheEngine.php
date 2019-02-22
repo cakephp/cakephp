@@ -26,6 +26,10 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
 {
     use InstanceConfigTrait;
 
+    protected const CHECK_KEY = 'key';
+
+    protected const CHECK_VALUE = 'value';
+
     /**
      * The default cache configuration is overridden in most cache adapters. These are
      * the keys that are common to all adapters. If overridden, this property is not used.
@@ -94,20 +98,28 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     }
 
     /**
-     * Ensure the validity of the given cache keys.
+     * Ensure the validity of the argument type and cache keys.
      *
-     * @param mixed $keys The keys to check.
+     * @param iterable $iterable The iterable to check.
+     * @param string $check Whether to check keys or values.
      * @return void
-     * @throws \Cake\Cache\InvalidArgumentException When the keys are not valid.
+     * @throws \Cake\Cache\InvalidArgumentException
      */
-    protected function ensureValidKeys($keys)
+    protected function ensureValidType($iterable, string $check = self::CHECK_VALUE)
     {
-        if (!is_array($keys) && !($keys instanceof \Traversable)) {
-            throw new InvalidArgumentException('A cache key set must be either an array or a Traversable.');
+        if (!is_iterable($iterable)) {
+            throw new InvalidArgumentException(sprintf(
+                'A cache %s must be either an array or a Traversable.',
+                $check === self::CHECK_VALUE ? 'key set' : 'set'
+            ));
         }
 
-        foreach ($keys as $key) {
-            $this->ensureValidKey($key);
+        foreach ($iterable as $key => $value) {
+            if ($check === self::CHECK_VALUE) {
+                $this->ensureValidKey($value);
+            } else {
+                $this->ensureValidKey($key);
+            }
         }
     }
 
@@ -122,7 +134,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function getMultiple($keys, $default = null): array
     {
-        $this->ensureValidKeys($keys);
+        $this->ensureValidType($keys);
 
         $results = [];
         foreach ($keys as $key) {
@@ -145,7 +157,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function setMultiple($values, $ttl = null): bool
     {
-        $this->ensureValidKeys(array_keys($values));
+        $this->ensureValidType($values, self::CHECK_KEY);
 
         if ($ttl !== null) {
             $restore = $this->getConfig('duration');
@@ -180,7 +192,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      */
     public function deleteMultiple($keys): bool
     {
-        $this->ensureValidKeys($keys);
+        $this->ensureValidType($keys);
 
         foreach ($keys as $key) {
             $result = $this->delete($key);
@@ -321,7 +333,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return string Prefixed key with potentially unsafe characters replaced.
      * @throws \Cake\Cache\InvalidArgumentException If key's value is invalid.
      */
-    protected function _key(string $key)
+    protected function _key($key)
     {
         $this->ensureValidKey($key);
 
