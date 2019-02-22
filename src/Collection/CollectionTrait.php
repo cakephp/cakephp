@@ -545,7 +545,7 @@ trait CollectionTrait
      */
     public function prepend($items)
     {
-        return ($this->newCollection($items))->append($this);
+        return $this->newCollection($items)->append($this);
     }
 
     /**
@@ -645,7 +645,7 @@ trait CollectionTrait
             $parents[$key][$nestingKey] = $children;
         };
 
-        return ($this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer)))
+        return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
             ->map(function ($value) use (&$isObject) {
                 /** @var \ArrayIterator $value */
                 return $isObject ? $value : $value->getArrayCopy();
