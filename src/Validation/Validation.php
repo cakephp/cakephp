@@ -1336,9 +1336,10 @@ class Validation
     /**
      * Validates the size of an uploaded image.
      *
-     * @param array|\Psr\Http\Message\UploadedFileInterface  $file The uploaded file data from PHP.
+     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
      * @param array $options Options to validate width and height.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public static function imageSize($file, $options)
     {
@@ -1346,9 +1347,11 @@ class Validation
             throw new InvalidArgumentException('Invalid image size validation parameters! Missing `width` and / or `height`.');
         }
 
-        $file = static::getFilename($file);
+        $filename = static::getFilename($file);
 
-        list($width, $height) = getimagesize($file);
+        list($width, $height) = getimagesize($filename);
+
+        $validHeight = $validWidth= null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
@@ -1356,13 +1359,13 @@ class Validation
         if (isset($options['width'])) {
             $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
         }
-        if (isset($validHeight, $validWidth)) {
+        if ($validHeight !== null && $validWidth !== null) {
             return ($validHeight && $validWidth);
         }
-        if (isset($validHeight)) {
+        if ($validHeight !== null) {
             return $validHeight;
         }
-        if (isset($validWidth)) {
+        if ($validWidth !== null) {
             return $validWidth;
         }
 
