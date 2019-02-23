@@ -1270,9 +1270,10 @@ class Validation
     /**
      * Validates the size of an uploaded image.
      *
-     * @param array|\Psr\Http\Message\UploadedFileInterface  $file The uploaded file data from PHP.
+     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
      * @param array $options Options to validate width and height.
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public static function imageSize($file, array $options): bool
     {
@@ -1294,13 +1295,13 @@ class Validation
         if (isset($options['width'])) {
             $validWidth = self::comparison($width, $options['width'][0], $options['width'][1]);
         }
-        if (isset($validHeight, $validWidth)) {
+        if ($validHeight !== null && $validWidth !== null) {
             return $validHeight && $validWidth;
         }
-        if (isset($validHeight)) {
+        if ($validHeight !== null) {
             return $validHeight;
         }
-        if (isset($validWidth)) {
+        if ($validWidth !== null) {
             return $validWidth;
         }
 

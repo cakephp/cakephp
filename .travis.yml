@@ -46,7 +46,7 @@ matrix:
 
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
-  - if [[ ${TRAVIS_PHP_VERSION} != "7.3" ]]; then phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini
 
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
   - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
@@ -82,7 +82,7 @@ script:
       fi
 
 after_success:
-  - if [[ $CODECOVERAGE = 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [[ $CODECOVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
 
 notifications:
   email: false

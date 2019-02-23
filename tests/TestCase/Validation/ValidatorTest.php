@@ -911,17 +911,9 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $this->assertSame($expected, $result);
 
-        $data = [
-            'photo' => [],
-        ];
+        $data = ['photo' => []];
         $result = $validator->errors($data);
-        $expected = [
-            'photo' => [
-                'uploadedFile' => 'The provided value is invalid',
-            ],
-        ];
         $this->assertSame($expected, $result);
-        $this->assertNotEmpty($result);
 
         $validator = new Validator();
         $validator->allowEmptyArray('photo', 'update', 'message');
@@ -973,16 +965,9 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $this->assertEmpty($result);
 
-        $data = [
-            'date' => [],
-        ];
-        $expected = [
-            'date' => [
-                'date' => 'The provided value is invalid',
-            ],
-        ];
+        $data = ['date' => []];
         $result = $validator->errors($data);
-        $this->assertSame($expected, $result);
+        $this->assertEmpty($result);
 
         $validator = new Validator();
         $validator->allowEmptyArray('date', 'update', 'message');
@@ -1000,7 +985,7 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Tests the allowEmptyDate method
+     * Tests the allowEmptyTime method
      *
      * @return void
      */
@@ -1034,16 +1019,9 @@ class ValidatorTest extends TestCase
         $result = $validator->errors($data);
         $this->assertEmpty($result);
 
-        $data = [
-            'time' => [],
-        ];
-        $expected = [
-            'time' => [
-                'time' => 'The provided value is invalid',
-            ],
-        ];
+        $data = ['time' => []];
         $result = $validator->errors($data);
-        $this->assertSame($expected, $result);
+        $this->assertEmpty($result);
 
         $validator = new Validator();
         $validator->allowEmptyArray('time', 'update', 'message');
@@ -1101,13 +1079,8 @@ class ValidatorTest extends TestCase
         $data = [
             'published' => [],
         ];
-        $expected = [
-            'published' => [
-                'dateTime' => 'The provided value is invalid',
-            ],
-        ];
         $result = $validator->errors($data);
-        $this->assertSame($expected, $result);
+        $this->assertEmpty($result);
 
         $validator = new Validator();
         $validator->allowEmptyArray('published', 'update', 'message');
