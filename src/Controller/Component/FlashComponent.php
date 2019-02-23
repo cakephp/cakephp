@@ -32,14 +32,6 @@ use Exception;
 class FlashComponent extends Component
 {
     /**
-     * The Session object instance
-     *
-     * @var \Cake\Http\Session
-     * @deprecated 3.7.5 This property will be removed in 4.0.0 in favor of `getSession()` method.
-     */
-    protected $_session;
-
-    /**
      * Default configuration
      *
      * @var array
@@ -51,18 +43,6 @@ class FlashComponent extends Component
         'clear' => false,
         'duplicate' => true,
     ];
-
-    /**
-     * Constructor
-     *
-     * @param \Cake\Controller\ComponentRegistry $registry A ComponentRegistry for this component
-     * @param array $config Array of config.
-     */
-    public function __construct(ComponentRegistry $registry, array $config = [])
-    {
-        parent::__construct($registry, $config);
-        $this->_session = $registry->getController()->getRequest()->getSession();
-    }
 
     /**
      * Used to set a session variable that can be used to output messages in the view.
