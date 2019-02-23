@@ -310,18 +310,6 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Clone Renderer instance when email object is cloned.
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        if ($this->renderer) {
-            $this->renderer = clone $this->renderer;
-        }
-    }
-
-    /**
      * Sets "from" address.
      *
      * @param string|array $email Null to get, String with email,
