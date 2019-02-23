@@ -23,7 +23,7 @@ use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
 use SimpleXmlElement;
-use TestApp\Mailer\Email\TestEmail;
+use TestApp\Mailer\TestEmail;
 
 /**
  * EmailTest class
@@ -380,35 +380,41 @@ class EmailTest extends TestCase
      */
     public function testFormatAddress()
     {
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
+        $result = $this->Email->getMessage()->formatAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
         $expected = ['cake@cakephp.org'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'cake@cakephp.org', 'php@cakephp.org' => 'php@cakephp.org']);
+        $result = $this->Email->getMessage()->formatAddress([
+            'cake@cakephp.org' => 'cake@cakephp.org',
+            'php@cakephp.org' => 'php@cakephp.org'
+        ]);
         $expected = ['cake@cakephp.org', 'php@cakephp.org'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'CakePHP', 'php@cakephp.org' => 'Cake']);
+        $result = $this->Email->getMessage()->formatAddress([
+            'cake@cakephp.org' => 'CakePHP',
+            'php@cakephp.org' => 'Cake'
+        ]);
         $expected = ['CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['me@example.com' => 'Last, First']);
+        $result = $this->Email->getMessage()->formatAddress(['me@example.com' => 'Last, First']);
         $expected = ['"Last, First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['me@example.com' => '"Last" First']);
+        $result = $this->Email->getMessage()->formatAddress(['me@example.com' => '"Last" First']);
         $expected = ['"\"Last\" First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['me@example.com' => 'Last First']);
+        $result = $this->Email->getMessage()->formatAddress(['me@example.com' => 'Last First']);
         $expected = ['Last First <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'ÄÖÜTest']);
+        $result = $this->Email->getMessage()->formatAddress(['cake@cakephp.org' => 'ÄÖÜTest']);
         $expected = ['=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => '日本語Test']);
+        $result = $this->Email->getMessage()->formatAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
     }
@@ -421,11 +427,11 @@ class EmailTest extends TestCase
     public function testFormatAddressJapanese()
     {
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => '日本語Test']);
+        $result = $this->Email->getMessage()->formatAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
+        $result = $this->Email->getMessage()->formatAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
         $expected = ["=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n" .
@@ -1979,7 +1985,7 @@ class EmailTest extends TestCase
         $this->Email->reset();
 
         $this->assertSame('utf-8', $this->Email->getCharset());
-        $this->assertNull($this->Email->getHeaderCharset());
+        $this->assertSame('utf-8', $this->Email->getHeaderCharset());
     }
 
     /**
@@ -2277,12 +2283,12 @@ class EmailTest extends TestCase
     public function testEncode()
     {
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->encode('日本語');
+        $result = $this->Email->getMessage()->encode('日本語');
         $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=';
         $this->assertSame($expected, $result);
 
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
+        $result = $this->Email->getMessage()->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
         $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=';
@@ -2297,12 +2303,12 @@ class EmailTest extends TestCase
     public function testDecode()
     {
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
+        $result = $this->Email->getMessage()->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
         $expected = '日本語';
         $this->assertSame($expected, $result);
 
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
+        $result = $this->Email->getMessage()->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=');
         $expected = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
@@ -2694,7 +2700,6 @@ XML;
             '_domain' => 'foo.bar',
             '_appCharset' => 'UTF-8',
             'charset' => 'utf-8',
-            'headerCharset' => 'utf-8',
             'viewConfig' => [
                 '_template' => 'default',
                 '_layout' => 'test',

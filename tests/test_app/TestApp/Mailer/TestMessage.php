@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
-namespace TestApp\Mailer\Email;
+namespace TestApp\Mailer;
 
-use Cake\Mailer\Email;
+use Cake\Mailer\Message;
 
 /**
- * Help to test Email
+ * Help to test Message
  */
-class TestEmail extends Email
+class TestMessage extends Message
 {
     /**
      * Wrap to protected method
