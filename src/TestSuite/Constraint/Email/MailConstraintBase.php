@@ -42,20 +42,20 @@ abstract class MailConstraintBase extends Constraint
     /**
      * Gets the email or emails to check
      *
-     * @return \Cake\Mailer\Email[]
+     * @return \Cake\Mailer\Message[]
      */
-    public function getEmails()
+    public function getMessages()
     {
-        $emails = TestEmailTransport::getEmails();
+        $messages = TestEmailTransport::getMessages();
 
         if ($this->at) {
-            if (!isset($emails[$this->at])) {
+            if (!isset($messages[$this->at])) {
                 return [];
             }
 
-            return [$emails[$this->at]];
+            return [$messages[$this->at]];
         }
 
-        return $emails;
+        return $messages;
     }
 }

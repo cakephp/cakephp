@@ -494,10 +494,10 @@ class Email implements JsonSerializable, Serializable
         /** @var \Cake\Mailer\Email $instance */
         $instance = new $class($config);
         if ($to !== null) {
-            $instance->setTo($to);
+            $instance->getMessage()->setTo($to);
         }
         if ($subject !== null) {
-            $instance->setSubject($subject);
+            $instance->getMessage()->setSubject($subject);
         }
         if (is_array($message)) {
             $instance->setViewVars($message);

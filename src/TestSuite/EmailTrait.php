@@ -52,7 +52,7 @@ trait EmailTrait
      */
     public function cleanupEmailTrait()
     {
-        TestEmailTransport::clearEmails();
+        TestEmailTransport::clearMessages();
     }
 
     /**

@@ -37,9 +37,9 @@ class MailContains extends MailConstraintBase
      */
     public function matches($other): bool
     {
-        $emails = $this->getEmails();
-        foreach ($emails as $email) {
-            $message = implode("\r\n", (array)$email->message($this->type));
+        $messages = $this->getMessages();
+        foreach ($messages as $message) {
+            $message = implode("\r\n", (array)$message->message($this->type));
 
             if (preg_match("/$other/", $message) > 0) {
                 return true;

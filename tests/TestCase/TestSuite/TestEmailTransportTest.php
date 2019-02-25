@@ -97,9 +97,9 @@ class TestEmailTransportTest extends TestCase
         (new Email())
             ->setTo('test@example.com')
             ->send('test');
-        $this->assertCount(1, TestEmailTransport::getEmails());
+        $this->assertCount(1, TestEmailTransport::getMessages());
 
-        TestEmailTransport::clearEmails();
-        $this->assertCount(0, TestEmailTransport::getEmails());
+        TestEmailTransport::clearMessages();
+        $this->assertCount(0, TestEmailTransport::getMessages());
     }
 }
