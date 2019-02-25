@@ -305,7 +305,7 @@ class Message implements JsonSerializable, Serializable
         }
 
         if ($config) {
-            $this->setProfile($config);
+            $this->setConfig($config);
         }
     }
 

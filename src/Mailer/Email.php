@@ -529,7 +529,6 @@ class Email implements JsonSerializable, Serializable
     {
         $this->message->reset();
         $this->_transport = null;
-        $this->_priority = null;
         $this->_profile = [];
 
         $this->getRenderer()->viewBuilder()
