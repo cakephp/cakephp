@@ -386,14 +386,14 @@ class EmailTest extends TestCase
 
         $result = $this->Email->getMessage()->formatAddress([
             'cake@cakephp.org' => 'cake@cakephp.org',
-            'php@cakephp.org' => 'php@cakephp.org'
+            'php@cakephp.org' => 'php@cakephp.org',
         ]);
         $expected = ['cake@cakephp.org', 'php@cakephp.org'];
         $this->assertSame($expected, $result);
 
         $result = $this->Email->getMessage()->formatAddress([
             'cake@cakephp.org' => 'CakePHP',
-            'php@cakephp.org' => 'Cake'
+            'php@cakephp.org' => 'Cake',
         ]);
         $expected = ['CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>'];
         $this->assertSame($expected, $result);
