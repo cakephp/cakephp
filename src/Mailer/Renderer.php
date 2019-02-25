@@ -461,13 +461,10 @@ class Renderer
             $view->setTemplatePath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
             $view->setLayoutPath(static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . $type);
 
-            $render = $view->render();
-            $render = str_replace(["\r\n", "\r"], "\n", $render);
-            $rendered[$type] = $this->encodeString($render, $email->getCharset());
-        }
-
-        foreach ($rendered as $type => $content) {
-            $rendered[$type] = $this->wrap($content);
+            $content = $view->render();
+            $content = str_replace(["\r\n", "\r"], "\n", $content);
+            $rendered[$type] = $this->encodeString($content, $email->getCharset());
+            $rendered[$type] = $this->wrap($rendered[$type]);
             $rendered[$type] = implode("\n", $rendered[$type]);
             $rendered[$type] = rtrim($rendered[$type], "\n");
         }
