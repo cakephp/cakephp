@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentRegistry;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
 use Exception;
