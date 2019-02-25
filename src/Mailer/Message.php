@@ -1180,12 +1180,12 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Get generated message (used by transport classes)
+     * Get generated message body.
      *
      * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
      * @return string|array String if type is given, array if type is null
      */
-    public function message(?string $type = null)
+    public function getBody(?string $type = null)
     {
         switch ($type) {
             case static::MESSAGE_HTML:
@@ -1430,7 +1430,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Set message body.
      *
-     * @param string $content Content array with keys "text" and/or "html" with
+     * @param array $content Content array with keys "text" and/or "html" with
      *   content string of respective type.
      * @return $this
      */

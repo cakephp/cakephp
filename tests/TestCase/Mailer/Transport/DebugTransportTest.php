@@ -45,7 +45,7 @@ class DebugTransportTest extends TestCase
     public function testSend()
     {
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['message'])
+            ->setMethods(['getBody'])
             ->getMock();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
@@ -55,7 +55,7 @@ class DebugTransportTest extends TestCase
         $message->setSubject('Testing Message');
         $date = date(DATE_RFC2822);
         $message->setHeaders(['Date' => $date]);
-        $message->expects($this->once())->method('message')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
+        $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
         $headers .= "To: CakePHP <cake@cakephp.org>\r\n";

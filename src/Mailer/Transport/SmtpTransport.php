@@ -347,7 +347,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareMessage(Message $message): string
     {
-        $lines = $message->message();
+        $lines = $message->getBody();
         $messages = [];
         foreach ($lines as $line) {
             if (!empty($line) && ($line[0] === '.')) {

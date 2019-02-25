@@ -350,7 +350,7 @@ class SmtpTransportTest extends TestCase
     public function testSendData()
     {
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['message'])
+            ->setMethods(['getBody'])
             ->getMock();
         /** @var \Cake\Mailer\Message $message */
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
@@ -363,7 +363,7 @@ class SmtpTransportTest extends TestCase
         $date = date(DATE_RFC2822);
         $message->setHeaders(['Date' => $date]);
         $message->expects($this->once())
-            ->method('message')
+            ->method('getBody')
             ->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $data = "From: CakePHP Test <noreply@cakephp.org>\r\n";
@@ -598,12 +598,12 @@ class SmtpTransportTest extends TestCase
         $this->SmtpTransport->setConfig(['keepAlive' => true]);
 
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['message'])
+            ->setMethods(['getBody'])
             ->getMock();
         /** @var \Cake\Mailer\Message $message */
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->exactly(2))->method('message')->will($this->returnValue(['First Line']));
+        $message->expects($this->exactly(2))->method('getBody')->will($this->returnValue(['First Line']));
 
         $callback = function ($arg) {
             $this->assertNotEquals("QUIT\r\n", $arg);
@@ -654,12 +654,12 @@ class SmtpTransportTest extends TestCase
     public function testSendDefaults()
     {
         $message = $this->getMockBuilder(Message::class)
-            ->setMethods(['message'])
+            ->setMethods(['getBody'])
             ->getMock();
         /** @var \Cake\Mailer\Message $message */
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->once())->method('message')->will($this->returnValue(['First Line']));
+        $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line']));
 
         $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
 
