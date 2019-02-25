@@ -85,13 +85,6 @@ class Email implements JsonSerializable, Serializable
     protected $renderer;
 
     /**
-     * If set, boundary to use for multipart mime messages
-     *
-     * @var string|null
-     */
-    protected $_boundary;
-
-    /**
      * A copy of the configuration profile for this
      * instance. This copy can be modified with Email::profile().
      *
@@ -389,10 +382,13 @@ class Email implements JsonSerializable, Serializable
      */
     public function render(?string $content = null): void
     {
-        $data = $this->getRenderer()->render($this, $content);
-        $this->_boundary = $data['boundary'];
-
-        $this->message->setContent($data);
+        $content = $this->getRenderer()->getContent(
+            $content,
+            $this->message->getBodyTypes()
+        );
+        foreach ($content as $type => $body) {
+            $this->message->setBody($body, $type);
+        }
     }
 
     /**

@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
-use Cake\Mailer\Renderer;
+use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -2486,7 +2486,7 @@ class EmailTest extends TestCase
      */
     public function testWrapLongLine()
     {
-        $message = '<a href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST) . '</a>';
+        $message = '<a href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST) . '</a>';
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2495,7 +2495,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('Wordwrap Test');
         $this->Email->setProfile(['empty']);
         $result = $this->Email->send($message);
-        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST - 26) . "\r\n" .
+        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST - 26) . "\r\n" .
             str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
@@ -2503,24 +2503,24 @@ class EmailTest extends TestCase
         $str1 = 'a ';
         $str2 = ' b';
         $length = strlen($str1) + strlen($str2);
-        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length - 1) . $str2;
+        $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length - 1) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length) . $str2;
+        $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . $str2;
+        $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . $str2;
 
         $result = $this->Email->send($message);
-        $expected = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
+        $expected = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -2538,7 +2538,7 @@ class EmailTest extends TestCase
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST + 1);
+        $message = $str . str_repeat('x', Message::LINE_LENGTH_MUST + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2563,7 +2563,7 @@ HTML;
     {
         $str = 'foo<bar';
         $length = strlen($str);
-        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1);
+        $message = $str . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2748,8 +2748,8 @@ XML;
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
             $this->assertTrue(
-                strlen($line) <= Renderer::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Renderer::LINE_LENGTH_MUST'
+                strlen($line) <= Message::LINE_LENGTH_MUST,
+                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
             );
         }
     }

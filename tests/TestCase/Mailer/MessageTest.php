@@ -15,14 +15,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer;
 
-use Cake\Mailer\Renderer;
+use Cake\Mailer\Message;
 use Cake\TestSuite\TestCase;
-use TestApp\Renderer\TestRenderer;
+use TestApp\Mailer\TestMessage;
 
 /**
- * RendererTest class
+ * MessageTest class
  */
-class RendererTest extends TestCase
+class MessageTest extends TestCase
 {
     /**
      * testWrap method
@@ -31,10 +31,10 @@ class RendererTest extends TestCase
      */
     public function testWrap()
     {
-        $renderer = new TestRenderer();
+        $renderer = new TestMessage();
 
         $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Message::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac turpis orci,',
             'non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.',
@@ -43,7 +43,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan amet.';
-        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Message::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum dolor sit amet, consectetur < adipiscing elit. Donec ac turpis',
             'orci, non commodo odio. Morbi nibh nisi, vehicula > pellentesque accumsan',
@@ -53,7 +53,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula pellentesque accumsan amet.<hr></p>';
-        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Message::LINE_LENGTH_SHOULD);
         $expected = [
             '<p>Lorem ipsum dolor sit amet,<br> consectetur adipiscing elit.<br> Donec ac',
             'turpis orci, non <b>commodo</b> odio. <br /> Morbi nibh nisi, vehicula',
@@ -63,7 +63,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac <a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh nisi, vehicula pellentesque accumsan amet.';
-        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Message::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac',
             '<a href="http://cakephp.org">turpis</a> orci, non commodo odio. Morbi nibh',
@@ -73,7 +73,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum <a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">ok</a>';
-        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Message::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum',
             '<a href="http://www.cakephp.org/controller/action/param1/param2" class="nice cool fine amazing awesome">',
@@ -83,7 +83,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $result);
 
         $text = 'Lorem ipsum withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite ok.';
-        $result = $renderer->doWrap($text, Renderer::LINE_LENGTH_SHOULD);
+        $result = $renderer->doWrap($text, Message::LINE_LENGTH_SHOULD);
         $expected = [
             'Lorem ipsum',
             'withonewordverybigMorethanthelineshouldsizeofrfcspecificationbyieeeavailableonieeesite',

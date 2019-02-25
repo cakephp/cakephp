@@ -48,4 +48,16 @@ class TestMessage extends Message
     {
         return $this->_decode($text);
     }
+
+    /**
+     * Wrap to protected method
+     *
+     * @param string $text
+     * @param int $length
+     * @return array
+     */
+    public function doWrap($text, $length = Message::LINE_LENGTH_MUST)
+    {
+        return $this->wrap($text, $length);
+    }
 }
