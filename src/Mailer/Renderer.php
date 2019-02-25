@@ -15,11 +15,6 @@ declare(strict_types=1);
  */
 namespace Cake\Mailer;
 
-use Cake\Core\Configure;
-use Cake\Http\Client\FormDataPart;
-use Cake\Utility\Hash;
-use Cake\Utility\Security;
-use Cake\Utility\Text;
 use Cake\View\ViewVarsTrait;
 
 /**
@@ -42,6 +37,7 @@ class Renderer
      * of the text content types for the email.
      *
      * @param string|null $content The content.
+     * @param array $types Content types to render.
      * @return array The rendered content with "html" and/or "text" keys.
      */
     public function getContent(?string $content = null, array $types = []): array

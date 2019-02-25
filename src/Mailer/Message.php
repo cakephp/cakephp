@@ -1214,7 +1214,7 @@ class Message implements JsonSerializable, Serializable
     /**
      * Generate full message.
      *
-     * @return void
+     * @return array
      */
     protected function generateMessage()
     {
