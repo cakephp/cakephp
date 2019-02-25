@@ -14,9 +14,9 @@ class TestMessage extends Message
      *
      * @return array
      */
-    public function formatAddress($address)
+    public function fmtAddress($address)
     {
-        return parent::_formatAddress($address);
+        return parent::formatAddress($address);
     }
 
     /**
@@ -26,7 +26,7 @@ class TestMessage extends Message
      */
     public function getBoundary()
     {
-        return $this->_boundary;
+        return $this->boundary;
     }
 
     /**
@@ -36,7 +36,7 @@ class TestMessage extends Message
      */
     public function encode($text)
     {
-        return $this->_encode($text);
+        return parent::encodeForHeader($text);
     }
 
     /**
@@ -46,7 +46,7 @@ class TestMessage extends Message
      */
     public function decode($text)
     {
-        return $this->_decode($text);
+        return parent::decodeForHeader($text);
     }
 
     /**
