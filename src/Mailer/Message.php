@@ -1243,7 +1243,9 @@ class Message implements JsonSerializable, Serializable
             $textBoundary = 'alt-' . $boundary;
         }
 
-        if ($this->_textMessage) {
+        if ($this->_emailFormat === self::MESSAGE_TEXT
+            || $this->_emailFormat === self::MESSAGE_BOTH
+        ) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
                 $msg[] = 'Content-Type: text/plain; charset=' . $this->getContentTypeCharset();
@@ -1256,7 +1258,9 @@ class Message implements JsonSerializable, Serializable
             $msg[] = '';
         }
 
-        if ($this->_htmlMessage) {
+        if ($this->_emailFormat === self::MESSAGE_HTML
+            || $this->_emailFormat === self::MESSAGE_BOTH
+        ) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
                 $msg[] = 'Content-Type: text/html; charset=' . $this->getContentTypeCharset();
