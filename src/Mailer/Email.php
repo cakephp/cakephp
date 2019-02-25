@@ -368,7 +368,7 @@ class Email implements JsonSerializable, Serializable
                 ' a transport in the set profile?';
             throw new BadMethodCallException($msg);
         }
-        $contents = $transport->send($this);
+        $contents = $transport->send($this->message);
         $this->_logDelivery($contents);
 
         return $contents;

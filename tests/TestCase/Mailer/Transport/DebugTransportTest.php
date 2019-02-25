@@ -17,6 +17,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Mailer\Transport;
 
+use Cake\Mailer\Message;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 
@@ -43,18 +44,18 @@ class DebugTransportTest extends TestCase
      */
     public function testSend()
     {
-        $email = $this->getMockBuilder('Cake\Mailer\Email')
+        $message = $this->getMockBuilder(Message::class)
             ->setMethods(['message'])
             ->getMock();
-        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
-        $email->setTo('cake@cakephp.org', 'CakePHP');
-        $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
-        $email->setBcc('phpnut@cakephp.org');
-        $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
-        $email->setSubject('Testing Message');
+        $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $message->setTo('cake@cakephp.org', 'CakePHP');
+        $message->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
+        $message->setBcc('phpnut@cakephp.org');
+        $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+        $message->setSubject('Testing Message');
         $date = date(DATE_RFC2822);
-        $email->setHeaders(['Date' => $date]);
-        $email->expects($this->once())->method('message')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
+        $message->setHeaders(['Date' => $date]);
+        $message->expects($this->once())->method('message')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
         $headers .= "To: CakePHP <cake@cakephp.org>\r\n";
@@ -70,7 +71,7 @@ class DebugTransportTest extends TestCase
         $data .= "Second Line\r\n";
         $data .= ".Third Line\r\n"; // Not use 'RFC5321 4.5.2.Transparency' in DebugTransport.
 
-        $result = $this->DebugTransport->send($email);
+        $result = $this->DebugTransport->send($message);
 
         $this->assertEquals($headers, $result['headers']);
         $this->assertEquals($data, $result['message']);
