@@ -1461,6 +1461,32 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
+     * Set text body for message.
+     *
+     * @param string $content Content string
+     * @return $this
+     */
+    public function setBodyText(string $content)
+    {
+        $this->setBody([self::MESSAGE_TEXT => $content]);
+
+        return $this;
+    }
+
+    /**
+     * Set HTML body for message.
+     *
+     * @param string $content Content string
+     * @return $this
+     */
+    public function setBodyHtml(string $content)
+    {
+        $this->setBody([self::MESSAGE_HTML => $content]);
+
+        return $this;
+    }
+
+    /**
      * Translates a string for one charset to another if the App.encoding value
      * differs and the mb_convert_encoding function exists
      *
