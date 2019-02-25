@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Mailer;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\Exception;
 use Cake\Http\Client\FormDataPart;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -606,15 +607,18 @@ class Message implements JsonSerializable, Serializable
      */
     public function setTransferEncoding(?string $encoding): self
     {
-        $encoding = strtolower($encoding);
-        if (!in_array($encoding, $this->_transferEncodingAvailable)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Transfer encoding not available. Can be : %s.',
-                    implode(', ', $this->_transferEncodingAvailable)
-                )
-            );
+        if ($encoding !== null) {
+            $encoding = strtolower($encoding);
+            if (!in_array($encoding, $this->_transferEncodingAvailable)) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Transfer encoding not available. Can be : %s.',
+                        implode(', ', $this->_transferEncodingAvailable)
+                    )
+                );
+            }
         }
+
         $this->transferEncoding = $encoding;
 
         return $this;
@@ -918,9 +922,9 @@ class Message implements JsonSerializable, Serializable
 
         $headers['MIME-Version'] = '1.0';
         if ($this->_attachments) {
-            $headers['Content-Type'] = 'multipart/mixed; boundary="' . $this->_boundary . '"';
+            $headers['Content-Type'] = 'multipart/mixed; boundary="' . (string)$this->_boundary . '"';
         } elseif ($this->_emailFormat === static::MESSAGE_BOTH) {
-            $headers['Content-Type'] = 'multipart/alternative; boundary="' . $this->_boundary . '"';
+            $headers['Content-Type'] = 'multipart/alternative; boundary="' . (string)$this->_boundary . '"';
         } elseif ($this->_emailFormat === static::MESSAGE_TEXT) {
             $headers['Content-Type'] = 'text/plain; charset=' . $this->getContentTypeCharset();
         } elseif ($this->_emailFormat === static::MESSAGE_HTML) {
@@ -1227,7 +1231,9 @@ class Message implements JsonSerializable, Serializable
         $hasMultipleTypes = $this->_emailFormat === self::MESSAGE_BOTH;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
-        $boundary = $relBoundary = $textBoundary = $this->_boundary;
+        /** @var string $boundary */
+        $boundary = $this->_boundary;
+        $relBoundary = $textBoundary = $boundary;
 
         if ($hasInlineAttachments) {
             $msg[] = '--' . $boundary;
@@ -1308,6 +1314,7 @@ class Message implements JsonSerializable, Serializable
     protected function attachFiles(?string $boundary = null): array
     {
         if ($boundary === null) {
+            /** @var string $boundary */
             $boundary = $this->_boundary;
         }
 
@@ -1347,6 +1354,7 @@ class Message implements JsonSerializable, Serializable
     protected function attachInlineFiles(?string $boundary = null): array
     {
         if ($boundary === null) {
+            /** @var string $boundary */
             $boundary = $this->_boundary;
         }
 
@@ -1610,6 +1618,11 @@ class Message implements JsonSerializable, Serializable
      */
     protected function _encode(string $text): string
     {
+        if ($this->_appCharset === null) {
+            return $text;
+        }
+
+        /** @var string $restore */
         $restore = mb_internal_encoding();
         mb_internal_encoding($this->_appCharset);
         $return = mb_encode_mimeheader($text, $this->getHeaderCharset(), 'B');
@@ -1626,6 +1639,11 @@ class Message implements JsonSerializable, Serializable
      */
     protected function _decode(string $text): string
     {
+        if ($this->_appCharset === null) {
+            return $text;
+        }
+
+        /** @var string $restore */
         $restore = mb_internal_encoding();
         mb_internal_encoding($this->_appCharset);
         $return = mb_decode_mimeheader($text);
@@ -1698,6 +1716,7 @@ class Message implements JsonSerializable, Serializable
             '_attachments', '_messageId', '_headers', '_appCharset', 'charset', 'headerCharset',
         ];
 
+        $array = [];
         foreach ($properties as $property) {
             $array[$property] = $this->{$property};
         }
@@ -1750,10 +1769,15 @@ class Message implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return static Configured email instance.
+     * @return static Configured message instance.
      */
     public function unserialize($data): self
     {
-        return $this->createFromArray(unserialize($data));
+        $array = unserialize($data);
+        if (!is_array($array)) {
+            throw new Exception('Unable to unserialize message.');
+        }
+
+        return $this->createFromArray($array);
     }
 }
