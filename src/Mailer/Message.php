@@ -1428,23 +1428,31 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
-     * Set message content.
+     * Set message body.
      *
-     * @param string $content Content.
-     * @param string $type Content type. Valid types are:
-     *   Message::MESSAGE_TEXT, Message::MESSAGE_HTML
+     * @param string $content Content array with keys "text" and/or "html" with
+     *   content string of respective type.
      * @return $this
      */
-    public function setBody(string $content, string $type = self::MESSAGE_TEXT)
+    public function setBody(array $content)
     {
-        $content = str_replace(["\r\n", "\r"], "\n", $content);
-        $content = $this->encodeString($content, $this->getCharset());
-        $content = $this->wrap($content);
-        $content = implode("\n", $content);
-        $content = rtrim($content, "\n");
+        foreach ($content as $type => $text) {
+            if (!in_array($type, $this->_emailFormatAvailable)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid message type: "$s". Valid types are: "text", "html".',
+                    $type
+                ));
+            }
 
-        $property = "_{$type}Message";
-        $this->$property = $content;
+            $text = str_replace(["\r\n", "\r"], "\n", $text);
+            $text = $this->encodeString($text, $this->getCharset());
+            $text = $this->wrap($text);
+            $text = implode("\n", $text);
+            $text = rtrim($text, "\n");
+
+            $property = "_{$type}Message";
+            $this->$property = $text;
+        }
 
         $this->_boundary = null;
         $this->_message = [];

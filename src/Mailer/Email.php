@@ -380,15 +380,18 @@ class Email implements JsonSerializable, Serializable
      * @param string|null $content Content array or string
      * @return void
      */
-    public function render(?string $content = null): void
+    public function render($content = null): void
     {
-        $content = $this->getRenderer()->getContent(
-            $content,
-            $this->message->getBodyTypes()
-        );
-        foreach ($content as $type => $body) {
-            $this->message->setBody($body, $type);
+        if (is_array($content)) {
+            $content = implode("\n", $content) . "\n";
         }
+
+        $this->message->setBody(
+            $this->getRenderer()->getContent(
+                (string)$content,
+                $this->message->getBodyTypes()
+            )
+        );
     }
 
     /**
