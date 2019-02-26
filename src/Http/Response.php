@@ -400,7 +400,7 @@ class Response implements ResponseInterface
     /**
      * Collection of cookies to send to the client
      *
-     * @var \Cake\Http\Cookie\CookieCollection
+     * @var \Cake\Http\Cookie\CookieCollectionInterface
      */
     protected $_cookies = null;
 
@@ -1318,12 +1318,12 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Sets the CookieCollection to the response
+     * Sets the CookieCollection to the response.
      *
-     * @return \Cake\Http\Cookie\CookieCollection
+     * @param \Cake\Http\Cookie\CookieCollectionInterface $cookieCollection Cookie collection to set.
      * @return static
      */
-    public function withCookieCollection(CookieCollectionInterface $cookieCollection): ResponseInterface
+    public function withCookieCollection(CookieCollectionInterface $cookieCollection): self
     {
         $new = clone $this;
         $new->_cookies = $cookieCollection;
@@ -1334,7 +1334,7 @@ class Response implements ResponseInterface
     /**
      * Get the CookieCollection from the response
      *
-     * @return \Cake\Http\Cookie\CookieCollection
+     * @return \Cake\Http\Cookie\CookieCollectionInterface
      */
     public function getCookieCollection(): CookieCollectionInterface
     {

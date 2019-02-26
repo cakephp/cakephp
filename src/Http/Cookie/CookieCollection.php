@@ -101,7 +101,7 @@ class CookieCollection implements CookieCollectionInterface
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
      * @return static
      */
-    public function add(CookieInterface $cookie)
+    public function add(CookieInterface $cookie): CookieCollectionInterface
     {
         $new = clone $this;
         $new->cookies[$cookie->getId()] = $cookie;

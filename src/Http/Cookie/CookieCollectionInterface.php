@@ -9,7 +9,7 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         3.5.0
+ * @since         4.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Http\Cookie;
@@ -32,7 +32,7 @@ interface CookieCollectionInterface extends IteratorAggregate, Countable
      * @param \Cake\Http\Cookie\CookieInterface $cookie Cookie instance to add.
      * @return static
      */
-    public function add(CookieInterface $cookie);
+    public function add(CookieInterface $cookie): self;
 
     /**
      * Get the first cookie by name.
