@@ -777,6 +777,7 @@ class ResponseTest extends TestCase
         $collection = new CookieCollection();
         $newResponse = $response->withCookieCollection($collection);
 
+        $this->assertNotSame($response, $newResponse);
         $this->assertNotSame($response->getCookieCollection(), $newResponse->getCookieCollection());
     }
 
