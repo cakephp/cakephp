@@ -48,7 +48,7 @@ trait CollectionTrait
      * Allows classes which use this trait to determine their own
      * type of returned collection interface
      *
-     * @param mixed $args,.. Constructor arguments.
+     * @param mixed ...$args Constructor arguments.
      * @return \Cake\Collection\CollectionInterface
      */
     protected function newCollection(...$args)
