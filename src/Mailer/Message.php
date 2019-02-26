@@ -1790,7 +1790,7 @@ class Message implements JsonSerializable, Serializable
         $array = $this->jsonSerialize();
         array_walk_recursive($array, function (&$item, $key) {
             if ($item instanceof SimpleXMLElement) {
-                $item = jsondecodeForHeader(jsonencode((array)$item), true);
+                $item = json_decode(json_encode((array)$item), true);
             }
         });
 
