@@ -1200,6 +1200,18 @@ class Message implements JsonSerializable, Serializable
     }
 
     /**
+     * Alias of getBody().
+     *
+     * @param string|null $type Use MESSAGE_* constants or null to return the
+     *   full message as array.
+     * @return string|array String if type is given, array if type is null
+     */
+    public function message($type = null)
+    {
+        return $this->getBody();
+    }
+
+    /**
      * Create unique boundary identifier
      *
      * @return void
