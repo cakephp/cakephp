@@ -46,6 +46,7 @@ class Email implements JsonSerializable, Serializable
      * Type of message - HTML
      *
      * @var string
+     * @deprecated 4.0.0 Use Message::MESSAGE_HTML instead.
      */
     public const MESSAGE_HTML = 'html';
 
@@ -53,6 +54,7 @@ class Email implements JsonSerializable, Serializable
      * Type of message - TEXT
      *
      * @var string
+     * @deprecated 4.0.0 Use Message::MESSAGE_TEXT instead.
      */
     public const MESSAGE_TEXT = 'text';
 
@@ -60,6 +62,7 @@ class Email implements JsonSerializable, Serializable
      * Type of message - BOTH
      *
      * @var string
+     * @deprecated 4.0.0 Use Message::MESSAGE_BOTH instead.
      */
     public const MESSAGE_BOTH = 'both';
 
@@ -67,6 +70,7 @@ class Email implements JsonSerializable, Serializable
      * Holds the regex pattern for email validation
      *
      * @var string
+     * @deprecated 4.0.0 Use Message::EMAIL_PATTERN instead.
      */
     public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
@@ -93,7 +97,7 @@ class Email implements JsonSerializable, Serializable
     protected $_profile = [];
 
     /**
-     * Message instance.
+     * Message class name.
      *
      * @var string
      */
