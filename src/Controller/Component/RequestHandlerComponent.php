@@ -377,7 +377,7 @@ class RequestHandlerComponent extends Component
      *
      * @param string|array|null $type An optional array of 'friendly' content-type names, i.e.
      *   'html', 'xml', 'js', etc.
-     * @return mixed If $type is null or not provided, the first content-type in the
+     * @return string|bool|null If $type is null or not provided, the first content-type in the
      *    list, based on preference, is returned. If a single type is provided
      *    a boolean will be returned if that type is preferred.
      *    If an array of types are provided then the first preferred type is returned.

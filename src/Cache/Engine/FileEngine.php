@@ -417,16 +417,13 @@ class FileEngine extends CacheEngine
     }
 
     /**
-     * Generates a safe key for use with cache engine storage engines.
-     *
-     * @param string $key the key passed over
-     * @return mixed string $key or false
+     * @inheritDoc
      */
     protected function _key($key)
     {
         $key = parent::_key($key);
 
-        if (preg_match('/[\/\\<>?:|*"]/', (string)$key)) {
+        if (preg_match('/[\/\\<>?:|*"]/', $key)) {
             throw new InvalidArgumentException(
                 "Cache key `{$key}` contains invalid characters. " .
                 'You cannot use /, \\, <, >, ?, :, |, *, or " in cache keys.'

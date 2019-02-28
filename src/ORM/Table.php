@@ -1347,7 +1347,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * composite keys when comparing values.
      *
      * @param array $options the original options passed to a finder
-     * @param array $keys the keys to check in $options to build matchers from
+     * @param string[] $keys the keys to check in $options to build matchers from
      * the associated value
      * @return array
      */
@@ -2259,7 +2259,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.
-     * @return mixed
+     * @return \Cake\ORM\Query
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
