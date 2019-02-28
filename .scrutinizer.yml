@@ -17,5 +17,22 @@ build:
               file: phpcs-checks.xml
               format: "php-cs-checkstyle"
 
+    static-analysis:
+      environment:
+        php:
+          ini:
+            'memory_limit': -1
+          pecl_extensions:
+            - redis
+            - memcached
+            - apcu
+      dependencies:
+        override:
+          - composer stan-setup
+      tests:
+        override:
+          - vendor/bin/phpstan analyse src/
+          - vendor/bin/psalm --show-info=false
+
 build_failure_conditions:
 - 'project.metric_change("scrutinizer.test_coverage", < -0.01)'

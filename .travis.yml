@@ -33,10 +33,6 @@ cache:
 matrix:
   fast_finish: true
 
-  include:
-    - php: 7.1
-      env: STATIC_ANALYSIS=1 DEFAULT=0
-
 before_install:
   - echo cakephp version && tail -1 VERSION.txt
   - phpenv config-rm xdebug.ini
@@ -50,7 +46,7 @@ before_install:
   - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
 
   - |
-      if [[ ${TRAVIS_PHP_VERSION} != "7.3" && $PHPCS = 0 ]]; then
+      if [[ ${TRAVIS_PHP_VERSION} != "7.3" ]]; then
         echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini;
       fi
   - if [[ $PHPCS = 0 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
@@ -65,12 +61,6 @@ before_script:
 script:
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION == 7.1 ]]; then CODECOVERAGE=1 phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.1 ]]; then vendor/bin/phpunit; fi
-
-  - |
-      if [[ $STATIC_ANALYSIS = 1 ]]; then
-        composer stan-setup
-        composer stan
-      fi
 
 after_success:
   - |
