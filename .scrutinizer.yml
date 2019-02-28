@@ -32,5 +32,5 @@ build:
           - vendor/bin/psalm --show-info=false
 
 build_failure_conditions:
-  - 'issues.label("coding-style").exists'
+  - 'issues.count > 0'
   - 'project.metric_change("scrutinizer.test_coverage", < -0.01)'

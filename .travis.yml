@@ -72,7 +72,7 @@ script:
   - if [[ $CODECOVERAGE == 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
   - if [[ $CODECOVERAGE != 1 ]]; then vendor/bin/phpunit; fi
 
-after_success:
+after_script:
   - |
       if [[ $CODECOVERAGE == 1 ]]; then
         wget https://scrutinizer-ci.com/ocular.phar
