@@ -1,5 +1,21 @@
-checks:
-  php: true
+tools:
+  external_code_coverage:
+    timeout: 1800
+    runs: 3
 
-filter:
-  paths: ['src/*']
+build:
+  environment:
+    php:
+      version: 7.1
+
+  nodes:
+    phpcs:
+      tests:
+        override:
+          - command: vendor/bin/phpcs --report=checkstyle src/ tests/ > phpcs-checks.xml
+            analysis:
+              file: phpcs-checks.xml
+              format: "php-cs-checkstyle"
+
+build_failure_conditions:
+- 'project.metric_change("scrutinizer.test_coverage", < -0.01)'

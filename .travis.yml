@@ -14,7 +14,6 @@ env:
     - DB=sqlite db_dsn='sqlite:///:memory:'
   global:
     - DEFAULT=1
-    - CODECOVERAGE=0
     - PHPCS=0
 
 services:
@@ -35,12 +34,6 @@ matrix:
   fast_finish: true
 
   include:
-    - php: 7.2
-      env: CODECOVERAGE=1 DEFAULT=0
-
-    - php: 7.2
-      env: PHPCS=1 DEFAULT=0
-
     - php: 7.1
       env: STATIC_ANALYSIS=1 DEFAULT=0
 
@@ -70,10 +63,8 @@ before_script:
   - composer install --prefer-dist --no-interaction
 
 script:
-  - if [[ $CODECOVERAGE = 1 ]]; then phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
-  - if [[ $DEFAULT = 1 ]]; then vendor/bin/phpunit; fi
-
-  - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION == 7.1 ]]; then CODECOVERAGE=1 phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.1 ]]; then vendor/bin/phpunit; fi
 
   - |
       if [[ $STATIC_ANALYSIS = 1 ]]; then
@@ -82,7 +73,11 @@ script:
       fi
 
 after_success:
-  - if [[ $CODECOVERAGE == 1 ]]; then bash <(curl -s https://codecov.io/bash); fi
+  - |
+      if [[ -f clover.xml ]]; then
+        wget https://scrutinizer-ci.com/ocular.phar
+        php ocular.phar code-coverage:upload --format=php-clover clover.xml
+      fi
 
 notifications:
   email: false
