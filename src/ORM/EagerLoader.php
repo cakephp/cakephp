@@ -753,7 +753,7 @@ class EagerLoader
      * Helper function used to return the keys from the query records that will be used
      * to eagerly load associations.
      *
-     * @param array $external the list of external associations to be loaded
+     * @param \Cake\ORM\EagerLoadable[] $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
      * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
      * @return array
@@ -761,7 +761,6 @@ class EagerLoader
     protected function _collectKeys(array $external, Query $query, $statement): array
     {
         $collectKeys = [];
-        /* @var \Cake\ORM\EagerLoadable $meta */
         foreach ($external as $meta) {
             $instance = $meta->instance();
             if (!$instance->requiresKeys($meta->getConfig())) {

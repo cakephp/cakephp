@@ -97,7 +97,7 @@ class ClassLoader
      *
      * @param string $prefix The namespace prefix.
      * @param string $relativeClass The relative class name.
-     * @return mixed Boolean false if no mapped file can be loaded, or the
+     * @return string|false Boolean false if no mapped file can be loaded, or the
      * name of the mapped file that was loaded.
      */
     protected function _loadMappedFile(string $prefix, string $relativeClass)
