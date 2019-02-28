@@ -12,10 +12,7 @@ build:
     phpcs:
       tests:
         override:
-          - command: vendor/bin/phpcs --report=checkstyle src/ tests/ > phpcs-checks.xml
-            analysis:
-              file: phpcs-checks.xml
-              format: "php-cs-checkstyle"
+          - phpcs-run src/ tests/
 
     static-analysis:
       environment:
@@ -35,4 +32,5 @@ build:
           - vendor/bin/psalm --show-info=false
 
 build_failure_conditions:
-- 'project.metric_change("scrutinizer.test_coverage", < -0.01)'
+  - 'issues.label("coding-style").exists'
+  - 'project.metric_change("scrutinizer.test_coverage", < -0.01)'
