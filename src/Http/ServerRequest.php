@@ -88,7 +88,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * The URL string used for the request.
      *
      * @var string
-     * @deprecated 3.6.0 This public property will be removed in 4.0.0. Use getRequestTarget() instead.
+     * @deprecated 3.6.0 This public property will be removed in 4.0.0. Use getPath() instead.
      */
     protected $url;
 
