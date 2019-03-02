@@ -214,10 +214,10 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Sets path for layout files.
      *
-     * @param string|null|false $path Path for layout files.
+     * @param string|null $path Path for layout files.
      * @return $this
      */
-    public function setLayoutPath($path): self
+    public function setLayoutPath(?string $path): self
     {
         $this->_layoutPath = $path;
 
@@ -227,9 +227,9 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets path for layout files.
      *
-     * @return string|null|false
+     * @return string|null
      */
-    public function getLayoutPath()
+    public function getLayoutPath(): ?string
     {
         return $this->_layoutPath;
     }

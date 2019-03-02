@@ -42,14 +42,14 @@ class Stream implements AdapterInterface
      *
      * @var array
      */
-    protected $_contextOptions;
+    protected $_contextOptions = [];
 
     /**
      * Array of options/content for the SSL stream context.
      *
      * @var array
      */
-    protected $_sslContextOptions;
+    protected $_sslContextOptions = [];
 
     /**
      * The stream resource.

@@ -83,7 +83,7 @@ class EagerLoader
     /**
      * Another EagerLoader instance that will be used for 'matching' associations.
      *
-     * @var \Cake\ORM\EagerLoader
+     * @var \Cake\ORM\EagerLoader|null
      */
     protected $_matching;
 

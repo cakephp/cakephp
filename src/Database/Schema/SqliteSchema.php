@@ -224,6 +224,7 @@ class SqliteSchema extends BaseSchema
         $statement = $this->_driver->prepare($sql);
         $statement->execute();
         $columns = [];
+        /** @psalm-suppress PossiblyFalseIterator */
         foreach ($statement->fetchAll('assoc') as $column) {
             $columns[] = $column['name'];
         }
