@@ -396,6 +396,7 @@ trait CollectionTrait
         }
 
         $result = null;
+        /** @var iterable $iterator */
         foreach ($iterator as $result) {
             // No-op
         }
@@ -990,7 +991,7 @@ trait CollectionTrait
      * Unwraps this iterator and returns the simplest
      * traversable that can be used for getting the data out
      *
-     * @return \Traversable|array
+     * @return iterable
      */
     protected function optimizeUnwrap(): iterable
     {

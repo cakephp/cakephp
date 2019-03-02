@@ -24,11 +24,18 @@
         <MissingClosureReturnType errorLevel="info" />
         <MissingReturnType errorLevel="info" />
         <MissingPropertyType errorLevel="info" />
-        <InvalidDocblock errorLevel="info" />
-        <MisplacedRequiredParam errorLevel="info" />
 
         <PropertyNotSetInConstructor errorLevel="info" />
-        <MissingConstructor errorLevel="info" />
+        <MissingConstructor>
+            <errorLevel type="suppress">
+                <file name="src/Cache/Engine/MemcachedEngine.php" />
+                <file name="src/Cache/Engine/RedisEngine.php" />
+                <file name="src/Console/HelperRegistry.php" />
+                <file name="src/Http/Client/Adapter/Stream.php" />
+                <file name="src/Http/Client/FormData.php" />
+                <file name="src/Http/Runner.php" />
+            </errorLevel>
+        </MissingConstructor>
         <MissingClosureParamType errorLevel="info" />
         <MissingParamType errorLevel="info" />
 
@@ -43,30 +50,19 @@
 
         <UnresolvableInclude errorLevel="info" />
 
-        <RawObjectIteration errorLevel="info" />
-
         <!-- level 4 issues - points to possible deficiencies in logic, higher false-positives -->
 
         <MoreSpecificReturnType errorLevel="info" />
         <LessSpecificReturnStatement errorLevel="info" />
         <TypeCoercion errorLevel="info" />
 
-        <PossiblyFalseArgument errorLevel="info" />
-        <PossiblyFalseIterator errorLevel="info" />
-        <PossiblyFalseOperand errorLevel="info" />
-        <PossiblyFalsePropertyAssignmentValue errorLevel="info" />
-        <PossiblyFalseReference errorLevel="info" />
-        <PossiblyInvalidArgument errorLevel="info" />
         <PossiblyInvalidArrayAccess errorLevel="info" />
-        <PossiblyInvalidArrayAssignment errorLevel="info" />
         <PossiblyInvalidArrayOffset errorLevel="info" />
         <PossiblyInvalidFunctionCall errorLevel="info" />
         <PossiblyInvalidIterator errorLevel="info" />
         <PossiblyInvalidMethodCall errorLevel="info" />
         <PossiblyInvalidOperand errorLevel="info" />
         <PossiblyInvalidPropertyAssignment errorLevel="info" />
-        <PossiblyInvalidPropertyAssignmentValue errorLevel="info" />
-        <PossiblyInvalidPropertyFetch errorLevel="info" />
         <PossiblyNullArgument errorLevel="info" />
         <PossiblyNullArrayAccess errorLevel="info" />
         <PossiblyNullArrayAssignment errorLevel="info" />

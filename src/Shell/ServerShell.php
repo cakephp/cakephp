@@ -80,16 +80,16 @@ class ServerShell extends Shell
     public function startup(): void
     {
         if ($this->param('host')) {
-            $this->_host = $this->param('host');
+            $this->_host = (string)$this->param('host');
         }
         if ($this->param('port')) {
             $this->_port = (int)$this->param('port');
         }
         if ($this->param('document_root')) {
-            $this->_documentRoot = $this->param('document_root');
+            $this->_documentRoot = (string)$this->param('document_root');
         }
         if ($this->param('ini_path')) {
-            $this->_iniPath = $this->param('ini_path');
+            $this->_iniPath = (string)$this->param('ini_path');
         }
 
         // For Windows

@@ -473,9 +473,7 @@ class Shell
             return false;
         }
 
-        if (!empty($extra) && is_array($extra)) {
-            $this->params = array_merge($this->params, $extra);
-        }
+        $this->params = array_merge($this->params, $extra);
         $this->_setOutputLevel();
         $this->command = $command;
         if (!empty($this->params['help'])) {

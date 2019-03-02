@@ -298,6 +298,7 @@ class Comparison implements ExpressionInterface, FieldInterface
         $isArray = is_array($values);
 
         if ($isArray) {
+            /** @var array $result */
             $result = $values;
         }
 

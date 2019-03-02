@@ -214,20 +214,30 @@ class RedisEngineTest extends TestCase
         $this->_configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'redis');
-        $expecting = '';
-        $this->assertEquals($expecting, $result);
+        $this->assertNull($result);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('test', $data, 'redis');
         $this->assertTrue($result);
 
         $result = Cache::read('test', 'redis');
-        $expecting = $data;
-        $this->assertEquals($expecting, $result);
+        $this->assertEquals($data, $result);
 
         $data = [1, 2, 3];
         $this->assertTrue(Cache::write('array_data', $data, 'redis'));
         $this->assertEquals($data, Cache::read('array_data', 'redis'));
+
+        $result = Cache::write('test', false, 'redis');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test', 'redis');
+        $this->assertFalse($result);
+
+        $result = Cache::write('test', null, 'redis');
+        $this->assertTrue($result);
+
+        $result = Cache::read('test', 'redis');
+        $this->assertNull($result);
 
         Cache::delete('test', 'redis');
     }

@@ -57,7 +57,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @var string
      */
-    protected $_groupPrefix;
+    protected $_groupPrefix = '';
 
     /**
      * Initialize the cache engine

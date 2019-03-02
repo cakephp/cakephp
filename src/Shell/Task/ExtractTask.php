@@ -114,9 +114,10 @@ class ExtractTask extends Shell
 
     /**
      * Displays marker error(s) if true
+     *
      * @var bool
      */
-    protected $_markerError;
+    protected $_markerError = false;
 
     /**
      * Count number of marker errors found
@@ -260,8 +261,8 @@ class ExtractTask extends Shell
             $this->_merge = strtolower((string)$response) === 'y';
         }
 
-        $this->_markerError = $this->param('marker-error');
-        $this->_relativePaths = $this->param('relative-paths');
+        $this->_markerError = (bool)$this->param('marker-error');
+        $this->_relativePaths = (bool)$this->param('relative-paths');
 
         if (empty($this->_files)) {
             $this->_searchFiles();

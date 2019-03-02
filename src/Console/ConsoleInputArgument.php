@@ -69,6 +69,7 @@ class ConsoleInputArgument
                 $this->{'_' . $key} = $value;
             }
         } else {
+            /** @psalm-suppress PossiblyInvalidPropertyAssignmentValue */
             $this->_name = $name;
             $this->_help = $help;
             $this->_required = $required;

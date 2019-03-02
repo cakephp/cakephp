@@ -166,15 +166,11 @@ class RedisEngine extends CacheEngine
         if ($value === false) {
             return $default;
         }
-        $isString = is_string($value);
-        if ($isString && preg_match('/^[-]?\d+$/', $value)) {
+        if (preg_match('/^[-]?\d+$/', $value)) {
             return (int)$value;
         }
-        if ($isString) {
-            return unserialize($value);
-        }
 
-        return $value;
+        return unserialize($value);
     }
 
     /**
