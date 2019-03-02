@@ -125,6 +125,20 @@ class DateTimeTypeTest extends TestCase
             $expected,
             $this->type->manyToPHP($values, array_keys($values), $this->driver)
         );
+
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $values = [
+            'a' => null,
+            'b' => '2001-01-04 12:13:14',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('2001-01-04 06:43:14'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**

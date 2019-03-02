@@ -200,7 +200,7 @@ class DateTimeType extends BaseType
             $instance = clone $this->_datetimeInstance;
             $instance = $instance->modify($values[$field]);
             if ($instance->getTimezone()->getName() !== date_default_timezone_get()) {
-                $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
+                $instance = $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
             }
 
             if ($this->setToDateStart) {
