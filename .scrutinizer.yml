@@ -1,5 +1,36 @@
-checks:
-  php: true
+tools:
+  external_code_coverage:
+    timeout: 1800
+    runs: 3
 
-filter:
-  paths: ['src/*']
+build:
+  environment:
+    php:
+      version: 7.1
+
+  nodes:
+    phpcs:
+      tests:
+        override:
+          - phpcs-run src/ tests/
+
+    static-analysis:
+      environment:
+        php:
+          ini:
+            'memory_limit': -1
+          pecl_extensions:
+            - redis
+            - memcached
+            - apcu
+      dependencies:
+        override:
+          - composer stan-setup
+      tests:
+        override:
+          - vendor/bin/phpstan analyse src/
+          - vendor/bin/psalm --show-info=false
+
+build_failure_conditions:
+  - 'issues.count > 0'
+  - 'project.metric_change("scrutinizer.test_coverage", < -0.01)'
