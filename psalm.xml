@@ -50,8 +50,6 @@
 
         <UnresolvableInclude errorLevel="info" />
 
-        <RawObjectIteration errorLevel="info" />
-
         <!-- level 4 issues - points to possible deficiencies in logic, higher false-positives -->
 
         <MoreSpecificReturnType errorLevel="info" />
@@ -65,8 +63,6 @@
         <PossiblyInvalidMethodCall errorLevel="info" />
         <PossiblyInvalidOperand errorLevel="info" />
         <PossiblyInvalidPropertyAssignment errorLevel="info" />
-        <PossiblyInvalidPropertyAssignmentValue errorLevel="info" />
-        <PossiblyInvalidPropertyFetch errorLevel="info" />
         <PossiblyNullArgument errorLevel="info" />
         <PossiblyNullArrayAccess errorLevel="info" />
         <PossiblyNullArrayAssignment errorLevel="info" />

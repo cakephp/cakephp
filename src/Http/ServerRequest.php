@@ -1476,8 +1476,8 @@ class ServerRequest implements ServerRequestInterface
      * post data. For other content types, it may be the deserialized request
      * body.
      *
-     * @return null|array|object The deserialized body parameters, if any.
-     *     These will typically be an array or object.
+     * @return null|array The deserialized body parameters, if any.
+     *     These will typically be an array.
      */
     public function getParsedBody()
     {
@@ -1487,7 +1487,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Update the parsed body and get a new instance.
      *
-     * @param null|array|object $data The deserialized body data. This will
+     * @param null|array $data The deserialized body data. This will
      *     typically be in an array or object.
      * @return static
      */

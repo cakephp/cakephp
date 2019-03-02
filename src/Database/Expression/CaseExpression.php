@@ -106,14 +106,13 @@ class CaseExpression implements ExpressionInterface
      * Iterates over the passed in conditions and ensures that there is a matching true value for each.
      * If no matching true value, then it is defaulted to '1'.
      *
-     * @param array|\Cake\Database\ExpressionInterface $conditions Must be a ExpressionInterface instance,
-     *   or an array of ExpressionInterface instances.
-     * @param array|\Cake\Database\ExpressionInterface $values associative array of values of each condition
+     * @param array $conditions Array of ExpressionInterface instances.
+     * @param array $values associative array of values of each condition
      * @param array $types associative array of types to be associated with the values
      *
      * @return void
      */
-    protected function _addExpressions($conditions, $values, $types): void
+    protected function _addExpressions(array $conditions, array $values, array $types): void
     {
         $rawValues = array_values($values);
         $keyValues = array_keys($values);

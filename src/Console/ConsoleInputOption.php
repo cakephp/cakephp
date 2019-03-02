@@ -101,6 +101,7 @@ class ConsoleInputOption
                 $this->{'_' . $key} = $value;
             }
         } else {
+            /** @psalm-suppress PossiblyInvalidPropertyAssignmentValue */
             $this->_name = $name;
             $this->_short = $short;
             $this->_help = $help;
