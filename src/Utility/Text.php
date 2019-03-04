@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use InvalidArgumentException;
+use Transliterator;
 
 /**
  * Text handling methods.
@@ -1049,7 +1050,7 @@ class Text
      * @return \Transliterator|null Either a Transliterator instance, or `null`
      *   in case no transliterator has been set yet.
      */
-    public static function getTransliterator()
+    public static function getTransliterator(): ?Transliterator
     {
         return static::$_defaultTransliterator;
     }
@@ -1060,7 +1061,7 @@ class Text
      * @param \Transliterator $transliterator A `Transliterator` instance.
      * @return void
      */
-    public static function setTransliterator(\Transliterator $transliterator)
+    public static function setTransliterator(Transliterator $transliterator): void
     {
         static::$_defaultTransliterator = $transliterator;
     }
@@ -1070,7 +1071,7 @@ class Text
      *
      * @return string Transliterator identifier.
      */
-    public static function getTransliteratorId()
+    public static function getTransliteratorId(): ?string
     {
         return static::$_defaultTransliteratorId;
     }
@@ -1081,7 +1082,7 @@ class Text
      * @param string $transliteratorId Transliterator identifier.
      * @return void
      */
-    public static function setTransliteratorId($transliteratorId)
+    public static function setTransliteratorId(string $transliteratorId)
     {
         static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;
