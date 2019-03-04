@@ -195,7 +195,7 @@ class Comparison implements ExpressionInterface, FieldInterface
     public function __clone()
     {
         foreach (['_value', '_field'] as $prop) {
-            if ($prop instanceof ExpressionInterface) {
+            if ($this->{$prop} instanceof ExpressionInterface) {
                 $this->{$prop} = clone $this->{$prop};
             }
         }
