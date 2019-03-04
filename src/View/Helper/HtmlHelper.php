@@ -16,10 +16,8 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Http\Response;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
-use Cake\View\View;
 
 /**
  * Html Helper class for easy use of HTML widgets.
