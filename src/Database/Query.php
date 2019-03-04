@@ -618,13 +618,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->join(['something' => 'different_table'], [], true); // resets joins list
      * ```
      *
-     * @param array|string|null $tables list of tables to be joined in the query
+     * @param array|string $tables list of tables to be joined in the query
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
      * @see \Cake\Database\Type
      * @return $this
      */
-    public function join($tables = null, $types = [], $overwrite = false)
+    public function join($tables, $types = [], $overwrite = false)
     {
         if (is_string($tables) || isset($tables['table'])) {
             $tables = [$tables];
@@ -632,6 +632,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $joins = [];
         $i = count($this->_parts['join']);
+        /** @var array $tables */
         foreach ($tables as $alias => $t) {
             if (!is_array($t)) {
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];

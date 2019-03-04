@@ -449,7 +449,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
-    protected function _appendNotMatching(QueryInterface $query, array $options): void
+    protected function _appendNotMatching(Query $query, array $options): void
     {
         if (empty($options['negateMatch'])) {
             return;

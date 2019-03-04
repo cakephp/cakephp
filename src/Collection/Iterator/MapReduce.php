@@ -52,7 +52,7 @@ class MapReduce implements IteratorAggregate
     /**
      * Holds the original data that needs to be processed
      *
-     * @var \Traversable|null
+     * @var \Traversable
      */
     protected $_data;
 
@@ -177,12 +177,12 @@ class MapReduce implements IteratorAggregate
         foreach ($this->_data as $key => $val) {
             $mapper($val, $key, $this);
         }
-        $this->_data = null;
 
         if (!empty($this->_intermediate) && empty($this->_reducer)) {
             throw new LogicException('No reducer function was provided');
         }
 
+        /** @var callable $reducer */
         $reducer = $this->_reducer;
         foreach ($this->_intermediate as $key => $list) {
             $reducer($list, $key, $this);

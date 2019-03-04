@@ -132,6 +132,7 @@ class RequestHandlerComponent extends Component
             return;
         }
 
+        /** @var array $accepts */
         $accepts = $response->mapType($accept);
         $preferredTypes = current($accepts);
         if (array_intersect($preferredTypes, ['html', 'xhtml'])) {
