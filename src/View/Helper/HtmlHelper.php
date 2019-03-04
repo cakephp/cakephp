@@ -16,10 +16,8 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
-use Cake\Http\Response;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
-use Cake\View\View;
 
 /**
  * Html Helper class for easy use of HTML widgets.
@@ -39,13 +37,6 @@ class HtmlHelper extends Helper
      * @var array
      */
     public $helpers = ['Url'];
-
-    /**
-     * Reference to the Response object
-     *
-     * @var \Cake\Http\Response
-     */
-    public $response;
 
     /**
      * Default config for this class
@@ -117,28 +108,6 @@ class HtmlHelper extends Helper
         'xhtml11' => '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
         // phpcs:enable Generic.Files.LineLength
     ];
-
-    /**
-     * Constructor
-     *
-     * ### Settings
-     *
-     * - `templates` Either a filename to a config containing templates.
-     *   Or an array of templates to load. See Cake\View\StringTemplate for
-     *   template formatting.
-     *
-     * ### Customizing tag sets
-     *
-     * Using the `templates` option you can redefine the tag HtmlHelper will use.
-     *
-     * @param \Cake\View\View $view The View this helper is being attached to.
-     * @param array $config Configuration settings for the helper.
-     */
-    public function __construct(View $view, array $config = [])
-    {
-        parent::__construct($view, $config);
-        $this->response = $this->_View->getResponse() ?: new Response();
-    }
 
     /**
      * Returns a doctype string.
@@ -1040,7 +1009,7 @@ class HtmlHelper extends Helper
                 }
                 if (!isset($source['type'])) {
                     $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
-                    $source['type'] = $this->response->getMimeType($ext);
+                    $source['type'] = $this->_View->getResponse()->getMimeType($ext);
                 }
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
                 $sourceTags .= $this->formatTemplate('tagselfclosing', [
@@ -1062,7 +1031,7 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->response->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
+                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
             }
             if (preg_match('#^video/#', $mimeType)) {
                 $tag = 'video';
