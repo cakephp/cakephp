@@ -17,6 +17,7 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
+use InvalidArgumentException;
 use SimpleXMLElement;
 
 /**
@@ -58,19 +59,25 @@ class ConsoleInputSubcommand
      */
     public function __construct($name, $help = '', $parser = null)
     {
-        if (is_array($name) && isset($name['name'])) {
-            foreach ($name as $key => $value) {
-                $this->{'_' . $key} = $value;
+        if (is_array($name)) {
+            $data = $name + ['name' => null, 'help' => '', 'parser' => null];
+            if (empty($data['name'])) {
+                throw new InvalidArgumentException('"name" not provided for console option parser');
             }
-        } else {
-            $this->_name = $name;
-            $this->_help = $help;
-            $this->_parser = $parser;
+
+            $name = $data['name'];
+            $help = $data['help'];
+            $parser = $data['parser'];
         }
-        if (is_array($this->_parser)) {
-            $this->_parser['command'] = $this->_name;
-            $this->_parser = ConsoleOptionParser::buildFromArray($this->_parser);
+
+        if (is_array($parser)) {
+            $parser['command'] = $name;
+            $parser = ConsoleOptionParser::buildFromArray($parser);
         }
+
+        $this->_name = $name;
+        $this->_help = $help;
+        $this->_parser = $parser;
     }
 
     /**

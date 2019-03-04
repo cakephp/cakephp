@@ -289,7 +289,7 @@ class ResultSet implements ResultSetInterface
     public function first()
     {
         foreach ($this as $result) {
-            if ($this->_statement && !$this->_useBuffering) {
+            if ($this->_statement !== null && !$this->_useBuffering) {
                 $this->_statement->closeCursor();
             }
 
@@ -351,7 +351,7 @@ class ResultSet implements ResultSetInterface
         if ($this->_count !== null) {
             return $this->_count;
         }
-        if ($this->_statement) {
+        if ($this->_statement !== null) {
             return $this->_count = $this->_statement->rowCount();
         }
 
@@ -426,7 +426,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _fetchResult()
     {
-        if (!$this->_statement) {
+        if ($this->_statement === null) {
             return false;
         }
 

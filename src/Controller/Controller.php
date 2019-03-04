@@ -493,9 +493,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function invokeAction()
     {
         $request = $this->request;
-        if (!$request) {
-            throw new LogicException('No Request object configured. Cannot invoke action');
-        }
+
         if (!$this->isAction($request->getParam('action'))) {
             throw new MissingActionException([
                 'controller' => $this->name . 'Controller',
@@ -700,10 +698,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function referer($default = '/', bool $local = true): string
     {
-        if (!$this->request) {
-            return Router::url($default, !$local);
-        }
-
         $referer = $this->request->referer($local);
         if ($referer === null) {
             $url = Router::url($default, !$local);

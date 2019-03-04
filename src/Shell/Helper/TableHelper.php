@@ -120,7 +120,7 @@ class TableHelper extends Helper
             $this->_rowSeparator($widths);
         }
 
-        if (!$rows) {
+        if (empty($rows)) {
             return;
         }
 

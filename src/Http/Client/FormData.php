@@ -90,7 +90,7 @@ class FormData implements Countable
      * If the $value is an array, multiple parts will be added.
      * Files will be read from their current position and saved in memory.
      *
-     * @param string|\Cake\Http\Client\FormData $name The name of the part to add,
+     * @param string|\Cake\Http\Client\FormData|\Cake\Http\Client\FormDataPart $name The name of the part to add,
      *   or the part data object.
      * @param mixed $value The value for the part.
      * @return $this

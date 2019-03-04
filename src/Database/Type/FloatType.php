@@ -44,7 +44,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     /**
      * Convert integer data into the database format.
      *
-     * @param string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
      */

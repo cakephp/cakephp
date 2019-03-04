@@ -43,10 +43,10 @@ class SessionEquals extends Constraint
     /**
      * Constructor
      *
-     * @param \Cake\Http\Session $session Session
+     * @param \Cake\Http\Session|null $session Session
      * @param string $path Session Path
      */
-    public function __construct(Session $session, string $path)
+    public function __construct(?Session $session, string $path)
     {
         parent::__construct();
 

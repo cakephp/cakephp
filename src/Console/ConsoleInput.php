@@ -65,7 +65,12 @@ class ConsoleInput
             return $line;
         }
 
-        return fgets($this->_input);
+        $line = fgets($this->_input);
+        if ($line === false) {
+            return '';
+        }
+
+        return $line;
     }
 
     /**

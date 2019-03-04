@@ -382,7 +382,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function buildCookieCollection(): void
     {
-        if ($this->cookies) {
+        if ($this->cookies !== null) {
             return;
         }
         $this->cookies = CookieCollection::createFromHeader($this->getHeader('Set-Cookie'));
@@ -456,7 +456,7 @@ class Response extends Message implements ResponseInterface
      */
     protected function _getXml(): ?SimpleXMLElement
     {
-        if ($this->_xml) {
+        if ($this->_xml !== null) {
             return $this->_xml;
         }
         libxml_use_internal_errors();

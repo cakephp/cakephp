@@ -37,7 +37,7 @@ class ValidationRule
     /**
      * The 'on' key
      *
-     * @var string
+     * @var string|callable
      */
     protected $_on;
 

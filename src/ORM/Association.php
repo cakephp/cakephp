@@ -377,7 +377,7 @@ abstract class Association
      */
     public function getTarget(): Table
     {
-        if (!$this->_targetTable) {
+        if ($this->_targetTable === null) {
             if (strpos((string)$this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
                 $registryAlias = $plugin . $this->_name;
@@ -404,7 +404,7 @@ abstract class Association
 
                     throw new RuntimeException(sprintf(
                         $errorMessage,
-                        $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
+                        $this->_sourceTable === null ? 'null' : get_class($this->_sourceTable),
                         $this->getName(),
                         $this->type(),
                         get_class($this->_targetTable),

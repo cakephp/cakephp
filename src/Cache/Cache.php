@@ -111,7 +111,7 @@ class Cache
      */
     public static function getRegistry(): CacheRegistry
     {
-        if (!static::$_registry) {
+        if (static::$_registry === null) {
             static::$_registry = new CacheRegistry();
         }
 

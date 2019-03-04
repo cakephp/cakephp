@@ -141,7 +141,7 @@ class TranslatorRegistry extends TranslatorLocator
             return $this->registry[$name][$locale];
         }
 
-        if (!$this->_cacher) {
+        if ($this->_cacher === null) {
             return $this->registry[$name][$locale] = $this->_getTranslator($name, $locale);
         }
 

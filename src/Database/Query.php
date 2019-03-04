@@ -1548,7 +1548,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * or by providing an array of value sets. Additionally $data can be a Query
      * instance to insert data from another SELECT statement.
      *
-     * @param array|\Cake\Database\Query $data The data to insert.
+     * @param array|\Cake\Database\Query|\Cake\Database\Expression\ValuesExpression $data The data to insert.
      * @return $this
      * @throws \Cake\Database\Exception if you try to set values before declaring columns.
      *   Or if you try to set values on non-insert queries.
@@ -1632,7 +1632,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param mixed $value The value to update $key to. Can be null if $key is an
      *    array or QueryExpression. When $key is an array, this parameter will be
      *    used as $types instead.
-     * @param array $types The column types to treat data as.
+     * @param array|string $types The column types to treat data as.
      * @return $this
      */
     public function set($key, $value = null, $types = [])

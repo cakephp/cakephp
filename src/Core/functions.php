@@ -61,9 +61,6 @@ if (!function_exists('h')) {
         static $defaultCharset = false;
         if ($defaultCharset === false) {
             $defaultCharset = mb_internal_encoding();
-            if ($defaultCharset === null) {
-                $defaultCharset = 'UTF-8';
-            }
         }
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);

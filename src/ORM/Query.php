@@ -128,7 +128,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * A callable function that can be used to calculate the total amount of
      * records this query will match when not using `limit`
      *
-     * @var callable
+     * @var callable|null
      */
     protected $_counter;
 
@@ -167,7 +167,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         parent::__construct($connection);
         $this->repository($table);
 
-        if ($this->_repository) {
+        if ($this->_repository !== null) {
             $this->addDefaultTypes($this->_repository);
         }
     }
@@ -856,7 +856,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     public function __clone()
     {
         parent::__clone();
-        if ($this->_eagerLoader) {
+        if ($this->_eagerLoader !== null) {
             $this->_eagerLoader = clone $this->_eagerLoader;
         }
     }
@@ -886,7 +886,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
-        if ($counter) {
+        if ($counter !== null) {
             $query->counter(null);
 
             return (int)$counter($query);

@@ -488,11 +488,6 @@ class EagerLoader
     {
         $defaults = $this->_containOptions;
         $instance = $parent->getAssociation($alias);
-        if (!$instance) {
-            throw new InvalidArgumentException(
-                sprintf('%s is not associated with %s', $parent->getAlias(), $alias)
-            );
-        }
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
         $paths['aliasPath'] .= '.' . $alias;

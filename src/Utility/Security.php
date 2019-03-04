@@ -263,8 +263,8 @@ class Security
     /**
      * A timing attack resistant comparison that prefers native PHP implementations.
      *
-     * @param string $original The original value.
-     * @param string $compare The comparison value.
+     * @param mixed $original The original value.
+     * @param mixed $compare The comparison value.
      * @return bool
      * @see https://github.com/resonantcore/php-future/
      * @since 3.6.2

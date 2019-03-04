@@ -91,10 +91,6 @@ trait ModelAwareTrait
         }
         if ($modelType === null) {
             $modelType = $this->getModelType();
-
-            if ($modelType === null) {
-                throw new UnexpectedValueException('No model type has been defined');
-            }
         }
 
         [, $alias] = pluginSplit($modelClass, true);

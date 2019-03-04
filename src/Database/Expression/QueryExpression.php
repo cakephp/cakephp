@@ -313,7 +313,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * "field IN (value1, value2)".
      *
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
-     * @param string|array $values the value to be bound to $field for comparison
+     * @param string|array|\Cake\Database\ExpressionInterface $values the value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
@@ -351,7 +351,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * "field NOT IN (value1, value2)".
      *
      * @param string|\Cake\Database\ExpressionInterface $field Database field to be compared against value
-     * @param array $values the value to be bound to $field for comparison
+     * @param array|\Cake\Database\ExpressionInterface $values the value to be bound to $field for comparison
      * @param string|null $type the type name for $value as configured using the Type map.
      * @return $this
      */
