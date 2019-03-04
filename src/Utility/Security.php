@@ -266,7 +266,6 @@ class Security
      * @param mixed $original The original value.
      * @param mixed $compare The comparison value.
      * @return bool
-     * @see https://github.com/resonantcore/php-future/
      * @since 3.6.2
      */
     public static function constantEquals($original, $compare)
@@ -274,20 +273,8 @@ class Security
         if (!is_string($original) || !is_string($compare)) {
             return false;
         }
-        if (function_exists('hash_equals')) {
-            return hash_equals($original, $compare);
-        }
-        $originalLength = mb_strlen($original, '8bit');
-        $compareLength = mb_strlen($compare, '8bit');
-        if ($originalLength !== $compareLength) {
-            return false;
-        }
-        $result = 0;
-        for ($i = 0; $i < $originalLength; $i++) {
-            $result |= (ord($original[$i]) ^ ord($compare[$i]));
-        }
 
-        return $result === 0;
+        return hash_equals($original, $compare);
     }
 
     /**
