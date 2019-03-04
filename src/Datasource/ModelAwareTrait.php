@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
-use UnexpectedValueException;
 
 /**
  * Provides functionality for loading table classes

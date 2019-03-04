@@ -28,7 +28,6 @@ use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
-use LogicException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
