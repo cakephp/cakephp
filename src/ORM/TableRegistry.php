@@ -71,7 +71,7 @@ class TableRegistry
      */
     public static function getTableLocator(): LocatorInterface
     {
-        if (!static::$_locator) {
+        if (static::$_locator === null) {
             static::$_locator = new static::$_defaultLocatorClass();
         }
 

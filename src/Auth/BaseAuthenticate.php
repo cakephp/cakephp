@@ -176,7 +176,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      */
     public function passwordHasher(): AbstractPasswordHasher
     {
-        if ($this->_passwordHasher) {
+        if ($this->_passwordHasher !== null) {
             return $this->_passwordHasher;
         }
 

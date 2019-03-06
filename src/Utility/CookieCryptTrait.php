@@ -43,13 +43,13 @@ trait CookieCryptTrait
     /**
      * Encrypts $value using public $type method in Security class
      *
-     * @param string $value Value to encrypt
+     * @param string|array $value Value to encrypt
      * @param string|bool $encrypt Encryption mode to use. False
      *   disabled encryption.
      * @param string|null $key Used as the security salt if specified.
      * @return string Encoded values
      */
-    protected function _encrypt(string $value, $encrypt, ?string $key = null): string
+    protected function _encrypt($value, $encrypt, ?string $key = null): string
     {
         if (is_array($value)) {
             $value = $this->_implode($value);

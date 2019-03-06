@@ -377,7 +377,7 @@ abstract class Association
      */
     public function getTarget(): Table
     {
-        if (!$this->_targetTable) {
+        if ($this->_targetTable === null) {
             if (strpos((string)$this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
                 $registryAlias = $plugin . $this->_name;
@@ -404,7 +404,7 @@ abstract class Association
 
                     throw new RuntimeException(sprintf(
                         $errorMessage,
-                        $this->_sourceTable ? get_class($this->_sourceTable) : 'null',
+                        $this->_sourceTable === null ? 'null' : get_class($this->_sourceTable),
                         $this->getName(),
                         $this->type(),
                         get_class($this->_targetTable),
@@ -767,11 +767,11 @@ abstract class Association
      * Conditionally adds a condition to the passed Query that will make it find
      * records where there is no match with this association.
      *
-     * @param \Cake\Datasource\QueryInterface $query The query to modify
+     * @param \Cake\ORM\Query $query The query to modify
      * @param array $options Options array containing the `negateMatch` key.
      * @return void
      */
-    protected function _appendNotMatching(QueryInterface $query, array $options): void
+    protected function _appendNotMatching(Query $query, array $options): void
     {
         $target = $this->_targetTable;
         if (!empty($options['negateMatch'])) {

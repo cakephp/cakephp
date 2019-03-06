@@ -618,13 +618,13 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->join(['something' => 'different_table'], [], true); // resets joins list
      * ```
      *
-     * @param array|string|null $tables list of tables to be joined in the query
+     * @param array|string $tables list of tables to be joined in the query
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset joins with passed list or not
      * @see \Cake\Database\Type
      * @return $this
      */
-    public function join($tables = null, $types = [], $overwrite = false)
+    public function join($tables, $types = [], $overwrite = false)
     {
         if (is_string($tables) || isset($tables['table'])) {
             $tables = [$tables];
@@ -632,6 +632,7 @@ class Query implements ExpressionInterface, IteratorAggregate
 
         $joins = [];
         $i = count($this->_parts['join']);
+        /** @var array $tables */
         foreach ($tables as $alias => $t) {
             if (!is_array($t)) {
                 $t = ['table' => $t, 'conditions' => $this->newExpr()];
@@ -1548,7 +1549,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * or by providing an array of value sets. Additionally $data can be a Query
      * instance to insert data from another SELECT statement.
      *
-     * @param array|\Cake\Database\Query $data The data to insert.
+     * @param array|\Cake\Database\Query|\Cake\Database\Expression\ValuesExpression $data The data to insert.
      * @return $this
      * @throws \Cake\Database\Exception if you try to set values before declaring columns.
      *   Or if you try to set values on non-insert queries.
@@ -1632,7 +1633,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param mixed $value The value to update $key to. Can be null if $key is an
      *    array or QueryExpression. When $key is an array, this parameter will be
      *    used as $types instead.
-     * @param array $types The column types to treat data as.
+     * @param array|string $types The column types to treat data as.
      * @return $this
      */
     public function set($key, $value = null, $types = [])

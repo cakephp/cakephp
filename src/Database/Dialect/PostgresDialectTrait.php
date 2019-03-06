@@ -168,7 +168,7 @@ trait PostgresDialectTrait
      */
     public function schemaDialect(): BaseSchema
     {
-        if (!$this->_schemaDialect) {
+        if ($this->_schemaDialect === null) {
             $this->_schemaDialect = new PostgresSchema($this);
         }
 

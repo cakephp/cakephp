@@ -58,7 +58,7 @@ class Translator extends BaseTranslator
             unset($tokensValues['_context']);
         }
 
-        if (!$tokensValues) {
+        if (empty($tokensValues)) {
             // Fallback for plurals that were using the singular key
             if (is_array($message)) {
                 return array_values($message + [''])[0];

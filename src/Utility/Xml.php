@@ -450,6 +450,7 @@ class Xml
         $data = [];
 
         foreach ($namespaces as $namespace) {
+            /** @psalm-suppress PossiblyNullIterator */
             foreach ($xml->attributes($namespace, true) as $key => $value) {
                 if (!empty($namespace)) {
                     $key = $namespace . ':' . $key;

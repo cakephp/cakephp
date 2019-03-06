@@ -50,7 +50,7 @@ class TransportFactory
      */
     public static function getRegistry(): TransportRegistry
     {
-        if (!static::$_registry) {
+        if (static::$_registry === null) {
             static::$_registry = new TransportRegistry();
         }
 

@@ -442,7 +442,7 @@ class SmtpTransport extends AbstractTransport
             $startTime = time();
             while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
                 $bytes = $this->_socket->read();
-                if ($bytes === false || $bytes === null) {
+                if ($bytes === null) {
                     break;
                 }
                 $response .= $bytes;

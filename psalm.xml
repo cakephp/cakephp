@@ -10,7 +10,6 @@
     <projectFiles>
         <directory name="src" />
         <ignoreFiles>
-            <directory name="vendor" />
             <directory name="src/TestSuite" />
             <directory name="src/Filesystem"/>
         </ignoreFiles>
@@ -67,8 +66,6 @@
         <PossiblyNullArrayAccess errorLevel="info" />
         <PossiblyNullArrayAssignment errorLevel="info" />
         <PossiblyNullArrayOffset errorLevel="info" />
-        <PossiblyNullFunctionCall errorLevel="info" />
-        <PossiblyNullIterator errorLevel="info" />
         <PossiblyNullOperand errorLevel="info" />
         <PossiblyNullPropertyAssignment errorLevel="info" />
         <PossiblyNullPropertyAssignmentValue errorLevel="info" />
@@ -99,7 +96,6 @@
 
         <InvalidPropertyAssignmentValue>
             <errorLevel type="suppress">
-                <file name="src/Console/ConsoleInputSubcommand.php" />
                 <file name="src/I18n/DateFormatTrait.php" />
             </errorLevel>
         </InvalidPropertyAssignmentValue>
@@ -165,9 +161,6 @@
             <errorLevel type="suppress">
                 <file name="src/Console/Shell.php" />
                 <file name="src/Controller/Component/AuthComponent.php" />
-                <file name="src/Datasource/Paginator.php" />
-                <file name="src/ORM/Association.php" />
-                <file name="src/ORM/Association/BelongsToMany.php" />
             </errorLevel>
         </UndefinedMethod>
 
@@ -180,22 +173,9 @@
         <PossiblyUndefinedMethod>
             <errorLevel type="suppress">
                 <file name="src/ORM/LazyEagerLoader.php" />
-                <file name="src/ORM/ResultSet.php" />
                 <file name="src/View/XmlView.php" />
             </errorLevel>
         </PossiblyUndefinedMethod>
-
-        <InvalidPassByReference>
-            <errorLevel type="suppress">
-                <file name="src/Console/ConsoleInput.php" />
-            </errorLevel>
-        </InvalidPassByReference>
-
-        <InvalidCast>
-            <errorLevel type="suppress">
-                <file name="src/Core/functions.php" />
-            </errorLevel>
-        </InvalidCast>
 
     </issueHandlers>
 </psalm>

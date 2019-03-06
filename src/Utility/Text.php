@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use InvalidArgumentException;
+use Transliterator;
 
 /**
  * Text handling methods.
@@ -25,7 +26,7 @@ class Text
     /**
      * Default transliterator.
      *
-     * @var \Transliterator Transliterator instance.
+     * @var \Transliterator|null Transliterator instance.
      */
     protected static $_defaultTransliterator;
 
@@ -501,8 +502,6 @@ class Text
             'limit' => -1,
         ];
         $options += $defaults;
-        $html = $format = $ellipsis = $exact = $limit = null;
-        extract($options);
 
         if (is_array($phrase)) {
             $replace = [];
@@ -510,23 +509,28 @@ class Text
 
             foreach ($phrase as $key => $segment) {
                 $segment = '(' . preg_quote($segment, '|') . ')';
-                if ($html) {
+                if ($options['html']) {
                     $segment = "(?![^<]+>)$segment(?![^<]+>)";
                 }
 
-                $with[] = is_array($format) ? $format[$key] : $format;
+                $with[] = is_array($options['format']) ? $options['format'][$key] : $options['format'];
                 $replace[] = sprintf($options['regex'], $segment);
             }
 
-            return preg_replace($replace, $with, $text, $limit);
+            return preg_replace($replace, $with, $text, $options['limit']);
         }
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
-        if ($html) {
+        if ($options['html']) {
             $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
         }
 
-        return preg_replace(sprintf($options['regex'], $phrase), $format, $text, $limit);
+        return preg_replace(
+            sprintf($options['regex'], $phrase),
+            $options['format'],
+            $text,
+            $options['limit']
+        );
     }
 
     /**
@@ -551,15 +555,14 @@ class Text
             'ellipsis' => '...', 'exact' => true,
         ];
         $options += $default;
-        $exact = $ellipsis = null;
-        extract($options);
+        $ellipsis = $options['ellipsis'];
 
         if (mb_strlen($text) <= $length) {
             return $text;
         }
 
         $truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($ellipsis));
-        if (!$exact) {
+        if (!$options['exact']) {
             $spacepos = mb_strpos($truncate, ' ');
             $truncate = $spacepos === false ? '' : trim(mb_substr($truncate, $spacepos));
         }
@@ -1047,7 +1050,7 @@ class Text
      * @return \Transliterator|null Either a Transliterator instance, or `null`
      *   in case no transliterator has been set yet.
      */
-    public static function getTransliterator()
+    public static function getTransliterator(): ?Transliterator
     {
         return static::$_defaultTransliterator;
     }
@@ -1058,7 +1061,7 @@ class Text
      * @param \Transliterator $transliterator A `Transliterator` instance.
      * @return void
      */
-    public static function setTransliterator(\Transliterator $transliterator)
+    public static function setTransliterator(Transliterator $transliterator): void
     {
         static::$_defaultTransliterator = $transliterator;
     }
@@ -1068,7 +1071,7 @@ class Text
      *
      * @return string Transliterator identifier.
      */
-    public static function getTransliteratorId()
+    public static function getTransliteratorId(): ?string
     {
         return static::$_defaultTransliteratorId;
     }
@@ -1079,7 +1082,7 @@ class Text
      * @param string $transliteratorId Transliterator identifier.
      * @return void
      */
-    public static function setTransliteratorId($transliteratorId)
+    public static function setTransliteratorId(string $transliteratorId)
     {
         static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;
@@ -1098,7 +1101,7 @@ class Text
      */
     public static function transliterate(string $string, $transliterator = null): string
     {
-        if (!$transliterator) {
+        if (empty($transliterator)) {
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
         }
 

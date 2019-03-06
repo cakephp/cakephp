@@ -255,7 +255,7 @@ class BelongsToMany extends Association
      */
     public function junction($table = null): Table
     {
-        if ($table === null && $this->_junctionTable) {
+        if ($table === null && $this->_junctionTable !== null) {
             return $this->_junctionTable;
         }
 
@@ -449,7 +449,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
-    protected function _appendNotMatching(QueryInterface $query, array $options): void
+    protected function _appendNotMatching(Query $query, array $options): void
     {
         if (empty($options['negateMatch'])) {
             return;
@@ -711,7 +711,7 @@ class BelongsToMany extends Association
             if (!empty($options['atomic'])) {
                 $original[$k]->setErrors($entity->getErrors());
             }
-            if (!$saved) {
+            if ($saved === false) {
                 return false;
             }
         }

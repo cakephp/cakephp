@@ -64,7 +64,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Exception render.
      *
-     * @var \Cake\Error\ExceptionRendererInterface|callable|string|null
+     * @var \Cake\Error\ExceptionRendererInterface|callable|string
      */
     protected $exceptionRenderer;
 
@@ -161,6 +161,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return new $class($exception, $request);
         }
 
+        /** @var callable $factory */
         $factory = $this->exceptionRenderer;
 
         return $factory($exception, $request);

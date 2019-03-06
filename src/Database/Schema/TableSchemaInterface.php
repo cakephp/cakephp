@@ -185,10 +185,11 @@ interface TableSchemaInterface extends SchemaInterface
      * - `columns` The columns in the index.
      *
      * @param string $name The name of the index.
-     * @param array $attrs The attributes for the index.
+     * @param array|string $attrs The attributes for the index.
+     *   If string it will be used as `type`.
      * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function addIndex(string $name, array $attrs);
+    public function addIndex(string $name, $attrs);
 
     /**
      * Read information about an index based on name.
@@ -222,10 +223,11 @@ interface TableSchemaInterface extends SchemaInterface
      * The default for 'update' & 'delete' is 'cascade'.
      *
      * @param string $name The name of the constraint.
-     * @param array $attrs The attributes for the constraint.
+     * @param array|string $attrs The attributes for the constraint.
+     *   If string it will be used as `type`.
      * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function addConstraint(string $name, array $attrs);
+    public function addConstraint(string $name, $attrs);
 
     /**
      * Read information about a constraint based on name.

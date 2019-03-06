@@ -781,7 +781,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getBehavior(string $name): Behavior
     {
-        /** @var \Cake\ORM\Behavior $behavior */
+        /** @var \Cake\ORM\Behavior|null $behavior */
         $behavior = $this->_behaviors->get($name);
         if ($behavior === null) {
             throw new InvalidArgumentException(sprintf(
@@ -1490,7 +1490,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param array|\Cake\ORM\Query $search The criteria to find existing
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
@@ -1520,7 +1520,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param array|callable $search The criteria to find an existing record by, or a callable tha will
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -2221,7 +2221,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $finder = 'find' . $type;
 
-        return method_exists($this, $finder) || ($this->_behaviors && $this->_behaviors->hasFinder($type));
+        return method_exists($this, $finder) || $this->_behaviors->hasFinder($type);
     }
 
     /**
@@ -2243,7 +2243,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $this->{$finder}($query, $options);
         }
 
-        if ($this->_behaviors && $this->_behaviors->hasFinder($type)) {
+        if ($this->_behaviors->hasFinder($type)) {
             return $this->_behaviors->callFinder($type, [$query, $options]);
         }
 
@@ -2331,7 +2331,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __call($method, $args)
     {
-        if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
+        if ($this->_behaviors->hasMethod($method)) {
             return $this->_behaviors->call($method, $args);
         }
         if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
@@ -2769,16 +2769,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function __debugInfo()
     {
         $conn = $this->getConnection();
-        $associations = $this->_associations;
-        $behaviors = $this->_behaviors;
 
         return [
             'registryAlias' => $this->getRegistryAlias(),
             'table' => $this->getTable(),
             'alias' => $this->getAlias(),
             'entityClass' => $this->getEntityClass(),
-            'associations' => $associations ? $associations->keys() : false,
-            'behaviors' => $behaviors ? $behaviors->loaded() : false,
+            'associations' => $this->_associations->keys(),
+            'behaviors' => $this->_behaviors->loaded(),
             'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn->configName(),
         ];

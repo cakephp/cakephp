@@ -168,7 +168,7 @@ trait SqliteDialectTrait
      */
     public function schemaDialect(): BaseSchema
     {
-        if (!$this->_schemaDialect) {
+        if ($this->_schemaDialect === null) {
             $this->_schemaDialect = new SqliteSchema($this);
         }
 

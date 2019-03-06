@@ -227,7 +227,7 @@ class Validation
     /**
      * Used to check the count of a given value of type array or Countable.
      *
-     * @param array|\Countable $check The value to check the count on.
+     * @param mixed $check The value to check the count on.
      * @param string $operator Can be either a word or operand
      *    is greater >, is less <, greater or equal >=
      *    less or equal <=, is less <, equal to ==, not equal !=
@@ -1214,7 +1214,7 @@ class Validation
      * - `optional` - Whether or not this file is optional. Defaults to false.
      *   If true a missing file will pass the validator regardless of other constraints.
      *
-     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
+     * @param mixed $file The uploaded file data from PHP.
      * @param array $options An array of options for the validation.
      * @return bool
      */
@@ -1270,7 +1270,7 @@ class Validation
     /**
      * Validates the size of an uploaded image.
      *
-     * @param array|\Psr\Http\Message\UploadedFileInterface $file The uploaded file data from PHP.
+     * @param mixed $file The uploaded file data from PHP.
      * @param array $options Options to validate width and height.
      * @return bool
      * @throws \InvalidArgumentException

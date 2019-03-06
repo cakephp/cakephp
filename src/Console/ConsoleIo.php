@@ -433,7 +433,7 @@ class ConsoleIo
      * @param string|null $default Default input value. Pass null to omit.
      * @return string Either the default value, or the user-provided input.
      */
-    protected function _getInput(string $prompt, $options, $default): string
+    protected function _getInput(string $prompt, ?string $options, ?string $default): string
     {
         $optionsText = '';
         if (isset($options)) {
@@ -448,7 +448,7 @@ class ConsoleIo
         $result = $this->_in->read();
 
         $result = trim($result);
-        if ($default !== null && ($result === '' || $result === null)) {
+        if ($default !== null && $result === '') {
             return $default;
         }
 

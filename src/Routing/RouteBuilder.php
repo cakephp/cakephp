@@ -363,6 +363,7 @@ class RouteBuilder
             'path' => null,
         ];
 
+        /** @psalm-suppress PossiblyNullIterator */
         foreach ($options['map'] as $k => $mapped) {
             $options['map'][$k] += ['method' => 'GET', 'path' => $k, 'action' => ''];
         }
