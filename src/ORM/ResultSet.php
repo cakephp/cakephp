@@ -285,6 +285,7 @@ class ResultSet implements ResultSetInterface
      * This method will also close the underlying statement cursor.
      *
      * @return array|object
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function first()
     {

@@ -680,9 +680,11 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * Return array which should be serialized to JSON.
+     *
+     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

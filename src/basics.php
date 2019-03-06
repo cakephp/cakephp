@@ -100,7 +100,7 @@ if (!function_exists('breakpoint')) {
      * ```
      * eval(breakpoint());
      * ```
-     * @return string
+     * @return string|null
      */
     function breakpoint()
     {

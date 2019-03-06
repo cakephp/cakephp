@@ -93,7 +93,7 @@ class SqlserverTest extends TestCase
     public function testDnsString($constructorArgs, $dnsString)
     {
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect'])
+            ->setMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
 
@@ -104,6 +104,10 @@ class SqlserverTest extends TestCase
                 return true;
             }))
             ->will($this->returnValue(true));
+
+        $driver->method('getConnection')
+            ->will($this->returnValue(null));
+
         $driver->connect();
     }
 

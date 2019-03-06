@@ -37,7 +37,7 @@ use RuntimeException;
  * Is the equivalent of Cake\Controller\Controller on the command line.
  *
  * @deprecated 3.6.0 ShellDispatcher and Shell will be removed in 5.0
- * @method int|bool|null main(...$args)
+ * @method int|bool|null|void main(...$args)
  */
 class Shell
 {
@@ -788,6 +788,7 @@ class Shell
      * @throws \Cake\Console\Exception\StopException
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#styling-output
+     * @psalm-return never-return
      */
     public function abort(string $message, int $exitCode = self::CODE_ERROR): void
     {

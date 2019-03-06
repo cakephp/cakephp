@@ -19,6 +19,7 @@ use Aura\Intl\FormatterLocator;
 use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorInterface;
 use Cake\Cache\Cache;
+use Cake\Core\Exception\Exception;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
@@ -152,6 +153,12 @@ class I18n
         }
 
         $translator = $translators->get($name);
+        if ($translator === null) {
+            throw new Exception(sprintf(
+                'Translator for domain "%s" could not be found.',
+                $name
+            ));
+        }
 
         if (isset($currentLocale)) {
             $translators->setLocale($currentLocale);

@@ -152,6 +152,14 @@ interface StatementInterface
     public function fetchAll($type = 'num');
 
     /**
+     * Returns the value of the result at position.
+     *
+     * @param int $position The numeric position of the column to retrieve in the result
+     * @return mixed|false Returns the specific value of the column designated at $position
+     */
+    public function fetchColumn(int $position);
+
+    /**
      * Returns the number of rows affected by this SQL statement
      *
      * ### Example:

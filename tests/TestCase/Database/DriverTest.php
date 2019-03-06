@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\ValueBinder;
@@ -267,7 +268,8 @@ class DriverTest extends TestCase
         $this->driver->setConnection(true);
         $this->driver->__destruct();
 
-        $this->assertNull($this->driver->getConnection());
+        $this->expectException(MissingConnectionException::class);
+        $this->driver->getConnection();
     }
 
     /**

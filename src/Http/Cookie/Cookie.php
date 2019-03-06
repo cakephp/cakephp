@@ -236,7 +236,8 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     * @psalm-suppress InvalidReturnType
      */
     public function getStringValue()
     {

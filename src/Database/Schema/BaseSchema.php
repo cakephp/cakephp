@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Driver;
+use InvalidArgumentException;
 
 /**
  * Base class for schema implementations.
@@ -69,6 +70,8 @@ abstract class BaseSchema
         if ($on === TableSchema::ACTION_NO_ACTION) {
             return 'NO ACTION';
         }
+
+        throw new InvalidArgumentException('Invalid value for "on": ' . $on);
     }
 
     /**

@@ -277,6 +277,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * ```
      *
      * @return \Cake\Database\StatementInterface|\PDOStatement
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function getIterator()
     {
@@ -349,6 +350,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * Returns the statement object that was decorated by this class.
      *
      * @return \Cake\Database\StatementInterface|\PDOStatement
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function getInnerStatement()
     {

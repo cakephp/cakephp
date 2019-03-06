@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Statement\PDOStatement;
 use InvalidArgumentException;
@@ -117,6 +118,10 @@ abstract class Driver implements DriverInterface
      */
     public function getConnection()
     {
+        if ($this->_connection === null) {
+            throw new MissingConnectionException(['reason' => 'Unknown']);
+        }
+
         return $this->_connection;
     }
 

@@ -100,7 +100,7 @@ trait DateFormatTrait
      */
     public function nice($timezone = null, $locale = null): string
     {
-        return $this->i18nFormat(static::$niceFormat, $timezone, $locale);
+        return (string)$this->i18nFormat(static::$niceFormat, $timezone, $locale);
     }
 
     /**
@@ -414,7 +414,8 @@ trait DateFormatTrait
     /**
      * Get the difference formatter instance.
      *
-     * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
+     * @return \Cake\I18n\RelativeTimeFormatter
+     * @psalm-suppress InvalidReturnType
      */
     public static function getDiffFormatter(): RelativeTimeFormatter
     {

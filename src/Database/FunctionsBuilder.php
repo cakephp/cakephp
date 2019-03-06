@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Expression\FunctionExpression;
+use InvalidArgumentException;
 
 /**
  * Contains methods related to generating FunctionExpression objects
@@ -275,6 +276,8 @@ class FunctionsBuilder
         if ($type === 'time') {
             return $this->_build('CURRENT_TIME')->setReturnType('time');
         }
+
+        throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type);
     }
 
     /**

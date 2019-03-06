@@ -176,6 +176,7 @@ class ExtractTask extends Shell
      * Execution method always used for tasks
      *
      * @return void
+     * @psalm-suppress InvalidReturnType
      */
     public function main(): void
     {

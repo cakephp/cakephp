@@ -200,6 +200,7 @@ class Email implements JsonSerializable, Serializable
      * Gets view class for render.
      *
      * @return string
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function getViewRenderer(): string
     {

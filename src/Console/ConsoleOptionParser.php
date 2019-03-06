@@ -1029,6 +1029,8 @@ class ConsoleOptionParser
 
             return $args;
         }
+
+        throw new ConsoleException('Invalid choice for argument: ' . $argument);
     }
 
     /**

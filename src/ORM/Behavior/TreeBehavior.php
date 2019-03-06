@@ -781,6 +781,7 @@ class TreeBehavior extends Behavior
      * @param mixed $id Record id.
      * @return \Cake\Datasource\EntityInterface
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
+     * @psalm-suppress InvalidReturnType
      */
     protected function _getNode($id): EntityInterface
     {
@@ -878,11 +879,11 @@ class TreeBehavior extends Behavior
             ->orderDesc($rightField)
             ->first();
 
-        if (empty($edge->{$field})) {
+        if (empty($edge[$field])) {
             return 0;
         }
 
-        return $edge->{$field};
+        return $edge[$field];
     }
 
     /**

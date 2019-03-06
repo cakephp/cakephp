@@ -21,7 +21,6 @@
         <!-- level 3 issues - slightly lazy code writing, but provably low false-negatives -->
 
         <MissingClosureReturnType errorLevel="info" />
-        <MissingReturnType errorLevel="info" />
         <MissingPropertyType errorLevel="info" />
 
         <PropertyNotSetInConstructor errorLevel="info" />
@@ -83,13 +82,10 @@
 
         <!-- level 6 issues - really bad things -->
 
-        <InvalidNullableReturnType errorLevel="info" />
         <NullableReturnStatement errorLevel="info" />
 
         <MoreSpecificImplementedParamType errorLevel="info" />
         <LessSpecificImplementedReturnType errorLevel="info" />
-
-        <InvalidReturnType errorLevel="info" />
 
         <!-- level 7 issues - even worse -->
         <InvalidArgument errorLevel="info" />
