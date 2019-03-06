@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\Mailer\Transport;
 
 use Cake\Mailer\AbstractTransport;
-use Cake\Mailer\Email;
+use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Exception;
@@ -152,11 +152,11 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send mail
      *
-     * @param \Cake\Mailer\Email $email Email instance
+     * @param \Cake\Mailer\Message $message Message instance
      * @return array
      * @throws \Cake\Network\Exception\SocketException
      */
-    public function send(Email $email): array
+    public function send(Message $message): array
     {
         if (!$this->connected()) {
             $this->_connect();
@@ -165,8 +165,8 @@ class SmtpTransport extends AbstractTransport
             $this->_smtpSend('RSET');
         }
 
-        $this->_sendRcpt($email);
-        $this->_sendData($email);
+        $this->_sendRcpt($message);
+        $this->_sendData($message);
 
         if (!$this->_config['keepAlive']) {
             $this->_disconnect();
@@ -278,36 +278,36 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the `MAIL FROM` SMTP command.
      *
-     * @param string $email The email address to send with the command.
+     * @param string $message The email address to send with the command.
      * @return string
      */
-    protected function _prepareFromCmd(string $email): string
+    protected function _prepareFromCmd(string $message): string
     {
-        return 'MAIL FROM:<' . $email . '>';
+        return 'MAIL FROM:<' . $message . '>';
     }
 
     /**
      * Prepares the `RCPT TO` SMTP command.
      *
-     * @param string $email The email address to send with the command.
+     * @param string $message The email address to send with the command.
      * @return string
      */
-    protected function _prepareRcptCmd(string $email): string
+    protected function _prepareRcptCmd(string $message): string
     {
-        return 'RCPT TO:<' . $email . '>';
+        return 'RCPT TO:<' . $message . '>';
     }
 
     /**
      * Prepares the `from` email address.
      *
-     * @param \Cake\Mailer\Email $email Email instance
+     * @param \Cake\Mailer\Message $message Message instance
      * @return array
      */
-    protected function _prepareFromAddress(Email $email): array
+    protected function _prepareFromAddress(Message $message): array
     {
-        $from = $email->getReturnPath();
+        $from = $message->getReturnPath();
         if (empty($from)) {
-            $from = $email->getFrom();
+            $from = $message->getFrom();
         }
 
         return $from;
@@ -316,14 +316,14 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the recipient email addresses.
      *
-     * @param \Cake\Mailer\Email $email Email instance
+     * @param \Cake\Mailer\Message $message Message instance
      * @return array
      */
-    protected function _prepareRecipientAddresses(Email $email): array
+    protected function _prepareRecipientAddresses(Message $message): array
     {
-        $to = $email->getTo();
-        $cc = $email->getCc();
-        $bcc = $email->getBcc();
+        $to = $message->getTo();
+        $cc = $message->getCc();
+        $bcc = $message->getBcc();
 
         return array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
     }
@@ -331,23 +331,23 @@ class SmtpTransport extends AbstractTransport
     /**
      * Prepares the message headers.
      *
-     * @param \Cake\Mailer\Email $email Email instance
+     * @param \Cake\Mailer\Message $message Message instance
      * @return array
      */
-    protected function _prepareMessageHeaders(Email $email): array
+    protected function _prepareMessageHeaders(Message $message): array
     {
-        return $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject', 'returnPath']);
+        return $message->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject', 'returnPath']);
     }
 
     /**
      * Prepares the message body.
      *
-     * @param \Cake\Mailer\Email $email Email instance
+     * @param \Cake\Mailer\Message $message Message instance
      * @return string
      */
-    protected function _prepareMessage(Email $email): string
+    protected function _prepareMessage(Message $message): string
     {
-        $lines = $email->message();
+        $lines = $message->getBody();
         $messages = [];
         foreach ($lines as $line) {
             if (!empty($line) && ($line[0] === '.')) {
@@ -363,17 +363,17 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send emails
      *
-     * @param \Cake\Mailer\Email $email Cake Email
+     * @param \Cake\Mailer\Message $message Message message
      * @throws \Cake\Network\Exception\SocketException
      * @return void
      */
-    protected function _sendRcpt(Email $email): void
+    protected function _sendRcpt(Message $message): void
     {
-        $from = $this->_prepareFromAddress($email);
+        $from = $this->_prepareFromAddress($message);
         $this->_smtpSend($this->_prepareFromCmd(key($from)));
 
-        $emails = $this->_prepareRecipientAddresses($email);
-        foreach ($emails as $mail) {
+        $messages = $this->_prepareRecipientAddresses($message);
+        foreach ($messages as $mail) {
             $this->_smtpSend($this->_prepareRcptCmd($mail));
         }
     }
@@ -381,16 +381,16 @@ class SmtpTransport extends AbstractTransport
     /**
      * Send Data
      *
-     * @param \Cake\Mailer\Email $email Email instance
+     * @param \Cake\Mailer\Message $message Message message
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _sendData(Email $email): void
+    protected function _sendData(Message $message): void
     {
         $this->_smtpSend('DATA', '354');
 
-        $headers = $this->_headersToString($this->_prepareMessageHeaders($email));
-        $message = $this->_prepareMessage($email);
+        $headers = $this->_headersToString($this->_prepareMessageHeaders($message));
+        $message = $this->_prepareMessage($message);
 
         $this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
         $this->_content = ['headers' => $headers, 'message' => $message];

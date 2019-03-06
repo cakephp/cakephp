@@ -34,10 +34,10 @@ abstract class AbstractTransport
     /**
      * Send mail
      *
-     * @param \Cake\Mailer\Email $email Email instance.
+     * @param \Cake\Mailer\Message $message Email mesage.
      * @return array
      */
-    abstract public function send(Email $email): array;
+    abstract public function send(Message $message): array;
 
     /**
      * Constructor

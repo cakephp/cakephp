@@ -248,7 +248,7 @@ abstract class Mailer implements EventListenerInterface
                 ]);
             }
 
-            $this->_email->setHeaders($headers);
+            $this->_email->getMessage()->setHeaders($headers);
             if (!$this->_email->viewBuilder()->getTemplate()) {
                 $this->_email->viewBuilder()->setTemplate($action);
             }

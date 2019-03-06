@@ -18,12 +18,12 @@ namespace Cake\Test\TestCase\Mailer;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
-use Cake\Mailer\Renderer;
+use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
 use Exception;
 use SimpleXmlElement;
-use TestApp\Mailer\Email\TestEmail;
+use TestApp\Mailer\TestEmail;
 
 /**
  * EmailTest class
@@ -380,35 +380,41 @@ class EmailTest extends TestCase
      */
     public function testFormatAddress()
     {
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
+        $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
         $expected = ['cake@cakephp.org'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'cake@cakephp.org', 'php@cakephp.org' => 'php@cakephp.org']);
+        $result = $this->Email->getMessage()->fmtAddress([
+            'cake@cakephp.org' => 'cake@cakephp.org',
+            'php@cakephp.org' => 'php@cakephp.org',
+        ]);
         $expected = ['cake@cakephp.org', 'php@cakephp.org'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'CakePHP', 'php@cakephp.org' => 'Cake']);
+        $result = $this->Email->getMessage()->fmtAddress([
+            'cake@cakephp.org' => 'CakePHP',
+            'php@cakephp.org' => 'Cake',
+        ]);
         $expected = ['CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['me@example.com' => 'Last, First']);
+        $result = $this->Email->getMessage()->fmtAddress(['me@example.com' => 'Last, First']);
         $expected = ['"Last, First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['me@example.com' => '"Last" First']);
+        $result = $this->Email->getMessage()->fmtAddress(['me@example.com' => '"Last" First']);
         $expected = ['"\"Last\" First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['me@example.com' => 'Last First']);
+        $result = $this->Email->getMessage()->fmtAddress(['me@example.com' => 'Last First']);
         $expected = ['Last First <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => 'ÄÖÜTest']);
+        $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => 'ÄÖÜTest']);
         $expected = ['=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => '日本語Test']);
+        $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
     }
@@ -421,11 +427,11 @@ class EmailTest extends TestCase
     public function testFormatAddressJapanese()
     {
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => '日本語Test']);
+        $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->Email->formatAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
+        $result = $this->Email->getMessage()->fmtAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
         $expected = ["=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n" .
@@ -1979,7 +1985,7 @@ class EmailTest extends TestCase
         $this->Email->reset();
 
         $this->assertSame('utf-8', $this->Email->getCharset());
-        $this->assertNull($this->Email->getHeaderCharset());
+        $this->assertSame('utf-8', $this->Email->getHeaderCharset());
     }
 
     /**
@@ -2277,12 +2283,12 @@ class EmailTest extends TestCase
     public function testEncode()
     {
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->encode('日本語');
+        $result = $this->Email->getMessage()->encode('日本語');
         $expected = '=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=';
         $this->assertSame($expected, $result);
 
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
+        $result = $this->Email->getMessage()->encode('長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？');
         $expected = "=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=';
@@ -2297,12 +2303,12 @@ class EmailTest extends TestCase
     public function testDecode()
     {
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
+        $result = $this->Email->getMessage()->decode('=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=');
         $expected = '日本語';
         $this->assertSame($expected, $result);
 
         $this->Email->setHeaderCharset('ISO-2022-JP');
-        $result = $this->Email->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
+        $result = $this->Email->getMessage()->decode("=?ISO-2022-JP?B?GyRCRDkkJEQ5JCREOSQkGyhCU3ViamVjdBskQiROPmw5ZyRPGyhCZm9s?=\r\n" .
             " =?ISO-2022-JP?B?ZGluZxskQiQ5JGskTiQsQDUkNyQkJHMkQCQxJEkkJCRDJD8kJCRJGyhC?=\r\n" .
             ' =?ISO-2022-JP?B?GyRCJCYkSiRrJHMkQCRtJCYhKRsoQg==?=');
         $expected = '長い長い長いSubjectの場合はfoldingするのが正しいんだけどいったいどうなるんだろう？';
@@ -2480,7 +2486,7 @@ class EmailTest extends TestCase
      */
     public function testWrapLongLine()
     {
-        $message = '<a href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST) . '</a>';
+        $message = '<a href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST) . '</a>';
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2489,7 +2495,7 @@ class EmailTest extends TestCase
         $this->Email->setSubject('Wordwrap Test');
         $this->Email->setProfile(['empty']);
         $result = $this->Email->send($message);
-        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Renderer::LINE_LENGTH_MUST - 26) . "\r\n" .
+        $expected = "<a\r\n" . 'href="http://cakephp.org">' . str_repeat('x', Message::LINE_LENGTH_MUST - 26) . "\r\n" .
             str_repeat('x', 26) . "\r\n</a>\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
@@ -2497,24 +2503,24 @@ class EmailTest extends TestCase
         $str1 = 'a ';
         $str2 = ' b';
         $length = strlen($str1) + strlen($str2);
-        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length - 1) . $str2;
+        $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length - 1) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length) . $str2;
+        $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length) . $str2;
 
         $result = $this->Email->send($message);
         $expected = "{$message}\r\n\r\n";
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
 
-        $message = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . $str2;
+        $message = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . $str2;
 
         $result = $this->Email->send($message);
-        $expected = $str1 . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
+        $expected = $str1 . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1) . sprintf("\r\n%s\r\n\r\n", trim($str2));
         $this->assertEquals($expected, $result['message']);
         $this->assertLineLengths($result['message']);
     }
@@ -2532,7 +2538,7 @@ class EmailTest extends TestCase
         style="font-weight: bold">The tag is across multiple lines</th>
 </table>
 HTML;
-        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST + 1);
+        $message = $str . str_repeat('x', Message::LINE_LENGTH_MUST + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2557,7 +2563,7 @@ HTML;
     {
         $str = 'foo<bar';
         $length = strlen($str);
-        $message = $str . str_repeat('x', Renderer::LINE_LENGTH_MUST - $length + 1);
+        $message = $str . str_repeat('x', Message::LINE_LENGTH_MUST - $length + 1);
 
         $this->Email->reset();
         $this->Email->setTransport('debug');
@@ -2683,18 +2689,17 @@ XML;
         };
 
         $expected = [
-            '_to' => ['cakephp@cakephp.org' => 'CakePHP'],
-            '_from' => ['noreply@cakephp.org' => 'noreply@cakephp.org'],
-            '_replyTo' => ['cakephp@cakephp.org' => 'cakephp@cakephp.org'],
-            '_cc' => ['mark@cakephp.org' => 'mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'],
-            '_bcc' => ['phpnut@cakephp.org' => 'phpnut@cakephp.org'],
-            '_subject' => 'Test Serialize',
-            '_emailFormat' => 'text',
-            '_messageId' => '<uuid@server.com>',
-            '_domain' => 'foo.bar',
-            '_appCharset' => 'UTF-8',
+            'to' => ['cakephp@cakephp.org' => 'CakePHP'],
+            'from' => ['noreply@cakephp.org' => 'noreply@cakephp.org'],
+            'replyTo' => ['cakephp@cakephp.org' => 'cakephp@cakephp.org'],
+            'cc' => ['mark@cakephp.org' => 'mark@cakephp.org', 'juan@cakephp.org' => 'Juan Basso'],
+            'bcc' => ['phpnut@cakephp.org' => 'phpnut@cakephp.org'],
+            'subject' => 'Test Serialize',
+            'emailFormat' => 'text',
+            'messageId' => '<uuid@server.com>',
+            'domain' => 'foo.bar',
+            'appCharset' => 'UTF-8',
             'charset' => 'utf-8',
-            'headerCharset' => 'utf-8',
             'viewConfig' => [
                 '_template' => 'default',
                 '_layout' => 'test',
@@ -2712,7 +2717,7 @@ XML;
                     ],
                 ],
             ],
-            '_attachments' => [
+            'attachments' => [
                 'test.txt' => [
                     'data' => $encode(TEST_APP . 'config' . DS . 'empty.ini'),
                     'mimetype' => 'text/plain',
@@ -2722,7 +2727,7 @@ XML;
                     'mimetype' => 'image/png',
                 ],
             ],
-            '_emailPattern' => '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui',
+            'emailPattern' => '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui',
         ];
         $this->assertEquals($expected, $result);
 
@@ -2743,8 +2748,8 @@ XML;
         $lines = explode("\r\n", $message);
         foreach ($lines as $line) {
             $this->assertTrue(
-                strlen($line) <= Renderer::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Renderer::LINE_LENGTH_MUST'
+                strlen($line) <= Message::LINE_LENGTH_MUST,
+                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
             );
         }
     }

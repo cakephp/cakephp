@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Cake\Mailer\Transport;
 
 use Cake\Mailer\AbstractTransport;
-use Cake\Mailer\Email;
+use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 
 /**
@@ -27,28 +27,34 @@ use Cake\Network\Exception\SocketException;
 class MailTransport extends AbstractTransport
 {
     /**
-     * Send mail
-     *
-     * @param \Cake\Mailer\Email $email Cake Email
-     * @return array
+     * @inheritDoc
      */
-    public function send(Email $email): array
+    public function send(Message $message): array
     {
         $eol = PHP_EOL;
         if (isset($this->_config['eol'])) {
             $eol = $this->_config['eol'];
         }
-        $headers = $email->getHeaders(['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc']);
+        $headers = $message->getHeaders([
+            'from',
+            'sender',
+            'replyTo',
+            'readReceipt',
+            'returnPath',
+            'to',
+            'cc',
+            'bcc',
+        ]);
         $to = $headers['To'];
         unset($headers['To']);
         foreach ($headers as $key => $header) {
             $headers[$key] = str_replace(["\r", "\n"], '', $header);
         }
         $headers = $this->_headersToString($headers, $eol);
-        $subject = str_replace(["\r", "\n"], '', $email->getSubject());
+        $subject = str_replace(["\r", "\n"], '', $message->getSubject());
         $to = str_replace(["\r", "\n"], '', $to);
 
-        $message = implode($eol, $email->message());
+        $message = implode($eol, $message->getBody());
 
         $params = $this->_config['additionalParameters'] ?? null;
         $this->_mail($to, $subject, $message, $headers, $params);

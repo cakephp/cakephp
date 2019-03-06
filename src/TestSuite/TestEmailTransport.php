@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\Mailer\AbstractTransport;
-use Cake\Mailer\Email;
+use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 
 /**
@@ -31,17 +31,17 @@ class TestEmailTransport extends AbstractTransport
     /**
      * @var array
      */
-    private static $emails = [];
+    private static $messages = [];
 
     /**
      * Stores email for later assertions
      *
-     * @param \Cake\Mailer\Email $email Email
+     * @param \Cake\Mailer\Message $message Message
      * @return array
      */
-    public function send(Email $email): array
+    public function send(Message $message): array
     {
-        static::$emails[] = $email;
+        static::$messages[] = $message;
 
         return [
             'result' => 'Success',
@@ -68,11 +68,11 @@ class TestEmailTransport extends AbstractTransport
     /**
      * Gets emails sent
      *
-     * @return \Cake\Mailer\Email[]
+     * @return \Cake\Mailer\Message[]
      */
-    public static function getEmails()
+    public static function getMessages()
     {
-        return static::$emails;
+        return static::$messages;
     }
 
     /**
@@ -80,8 +80,8 @@ class TestEmailTransport extends AbstractTransport
      *
      * @return void
      */
-    public static function clearEmails(): void
+    public static function clearMessages(): void
     {
-        static::$emails = [];
+        static::$messages = [];
     }
 }
