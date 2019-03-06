@@ -149,6 +149,8 @@ class DateTimeType extends BaseType
         }
         $this->dbTimezone = $timezone;
 
+        $this->_datetimeInstance = new $this->_className(null, $this->dbTimezone);
+
         return $this;
     }
 
@@ -167,6 +169,9 @@ class DateTimeType extends BaseType
 
         $instance = clone $this->_datetimeInstance;
         $instance = $instance->modify($value);
+        if ($instance->getTimezone()->getName() !== date_default_timezone_get()) {
+            $instance = $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        }
 
         if ($this->setToDateStart) {
             $instance = $instance->setTime(0, 0, 0);
@@ -194,6 +199,9 @@ class DateTimeType extends BaseType
 
             $instance = clone $this->_datetimeInstance;
             $instance = $instance->modify($values[$field]);
+            if ($instance->getTimezone()->getName() !== date_default_timezone_get()) {
+                $instance = $instance->setTimezone(new DateTimeZone(date_default_timezone_get()));
+            }
 
             if ($this->setToDateStart) {
                 $instance = $instance->setTime(0, 0, 0);
@@ -353,7 +361,7 @@ class DateTimeType extends BaseType
             $class = $fallback;
         }
         $this->_className = $class;
-        $this->_datetimeInstance = new $this->_className();
+        $this->_datetimeInstance = new $this->_className(null, $this->dbTimezone);
     }
 
     /**

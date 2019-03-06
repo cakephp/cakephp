@@ -94,6 +94,16 @@ class DateTimeTypeTest extends TestCase
         $this->assertEquals('12', $result->format('H'));
         $this->assertEquals('13', $result->format('i'));
         $this->assertEquals('14', $result->format('s'));
+
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $result = $this->type->toPHP('2001-01-04 12:00:00', $this->driver);
+        $this->assertInstanceOf(FrozenTime::class, $result);
+        $this->assertEquals('2001', $result->format('Y'));
+        $this->assertEquals('01', $result->format('m'));
+        $this->assertEquals('04', $result->format('d'));
+        $this->assertEquals('06', $result->format('H'));
+        $this->assertEquals('30', $result->format('i'));
+        $this->assertEquals('00', $result->format('s'));
     }
 
     /**
@@ -110,6 +120,20 @@ class DateTimeTypeTest extends TestCase
         $expected = [
             'a' => null,
             'b' => new Time('2001-01-04 12:13:14'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
+
+        $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
+        $values = [
+            'a' => null,
+            'b' => '2001-01-04 12:13:14',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Time('2001-01-04 06:43:14'),
         ];
         $this->assertEquals(
             $expected,
