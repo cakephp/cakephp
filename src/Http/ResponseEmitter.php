@@ -33,6 +33,9 @@ use Zend\Diactoros\Response\EmitterInterface;
  *
  * - It logs headers sent using CakePHP's logging tools.
  * - Cookies are emitted using setcookie() to not conflict with ext/session
+ * - For fastcgi servers with PHP-FPM session_write_close() is called just
+ *   before fastcgi_finish_request() to make sure session data is saved
+ *   correctly (especially on slower session backends).
  */
 class ResponseEmitter implements EmitterInterface
 {
@@ -63,6 +66,7 @@ class ResponseEmitter implements EmitterInterface
         }
 
         if (function_exists('fastcgi_finish_request')) {
+            session_write_close();
             fastcgi_finish_request();
         }
     }
