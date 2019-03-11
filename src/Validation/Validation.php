@@ -400,7 +400,7 @@ class Validation
      * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
      * - `y` 2006 just the year without any separators
      *
-     * @param string|\DateTimeInterface $check a valid date string/object
+     * @param mixed $check a valid date string/object
      * @param string|array $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', etc]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
@@ -469,7 +469,7 @@ class Validation
      *
      * All values matching the "date" core validation rule, and the "time" one will be valid
      *
-     * @param string|\DateTimeInterface $check Value to check
+     * @param mixed $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used
      *   this is the only validation that will occur.
@@ -505,7 +505,7 @@ class Validation
      * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
      * Does not allow/validate seconds.
      *
-     * @param string|\DateTimeInterface $check a valid time string/object
+     * @param mixed $check a valid time string/object
      * @return bool Success
      */
     public static function time($check): bool
@@ -531,7 +531,7 @@ class Validation
      * Date and/or time string validation.
      * Uses `I18n::Time` to parse the date. This means parsing is locale dependent.
      *
-     * @param string|\DateTime $check a date string or object (will always pass)
+     * @param mixed $check a date string or object (will always pass)
      * @param string $type Parser type, one out of 'date', 'time', and 'datetime'
      * @param string|int|null $format any format accepted by IntlDateFormatter
      * @return bool Success

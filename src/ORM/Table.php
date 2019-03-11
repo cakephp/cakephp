@@ -2045,6 +2045,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function saveMany(iterable $entities, $options = [])
     {
+        /** @var bool[] $isNew */
         $isNew = [];
         $cleanup = function ($entities) use (&$isNew): void {
             /** @var \Cake\Datasource\EntityInterface[] $entities */

@@ -145,7 +145,7 @@ class Email implements JsonSerializable, Serializable
             $this->renderer = clone $this->renderer;
         }
 
-        if ($this->message) {
+        if ($this->message !== null) {
             $this->message = clone $this->message;
         }
     }
@@ -397,7 +397,7 @@ class Email implements JsonSerializable, Serializable
     /**
      * Render email.
      *
-     * @param string|null $content Content array or string
+     * @param string|array|null $content Content array or string
      * @return void
      */
     public function render($content = null): void
@@ -589,7 +589,7 @@ class Email implements JsonSerializable, Serializable
             unset($config['viewConfig']);
         }
 
-        if (!$this->message) {
+        if ($this->message === null) {
             $this->message = new $this->messageClass();
         }
         $this->message->createFromArray($config);
