@@ -66,16 +66,16 @@ interface TypeInterface
      * but still want the rest of the framework to use the same assumptions it would
      * do about the base type it inherits from.
      *
-     * @return string The base type name that this class is inheriting.
+     * @return string|null The base type name that this class is inheriting.
      */
-    public function getBaseType(): string;
+    public function getBaseType(): ?string;
 
     /**
      * Returns type identifier name for this object.
      *
-     * @return string The type identifier name for this object.
+     * @return string|null The type identifier name for this object.
      */
-    public function getName(): string;
+    public function getName(): ?string;
 
     /**
      * Generate a new primary key value for a given type.

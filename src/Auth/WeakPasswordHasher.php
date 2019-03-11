@@ -48,12 +48,9 @@ class WeakPasswordHasher extends AbstractPasswordHasher
     }
 
     /**
-     * Generates password hash.
-     *
-     * @param string $password Plain text password to hash.
-     * @return string Password hash
+     * @inheritDoc
      */
-    public function hash(string $password): string
+    public function hash(string $password)
     {
         return Security::hash($password, $this->_config['hashType'], true);
     }

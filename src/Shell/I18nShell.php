@@ -47,6 +47,7 @@ class I18nShell extends Shell
      * @throws \InvalidArgumentException
      * @throws \Cake\Core\Exception\MissingPluginException
      * @throws \Cake\Console\Exception\StopException
+     * @psalm-suppress InvalidReturnType
      */
     public function main(): void
     {

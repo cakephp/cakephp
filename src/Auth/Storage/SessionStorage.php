@@ -75,6 +75,7 @@ class SessionStorage implements StorageInterface
      * Read user record from session.
      *
      * @return \ArrayAccess|array|null User record if available else null.
+     * @psalm-suppress InvalidReturnType
      */
     public function read()
     {

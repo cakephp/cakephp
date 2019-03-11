@@ -41,8 +41,9 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      * Generates password hash.
      *
      * @param string $password Plain text password to hash.
-     * @return bool|string Password hash or false on failure
+     * @return string|false Password hash or false on failure
      * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#hashing-passwords
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function hash(string $password)
     {

@@ -168,7 +168,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * Returns the quarter
      *
      * @param bool $range Range.
-     * @return int|array 1, 2, 3, or 4 quarter of year, or array if $range true
+     * @return string[]|int 1, 2, 3, or 4 quarter of year, or array if $range true
      */
     public function toQuarter($range = false)
     {
@@ -185,9 +185,10 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
                 return [$year . '-04-01', $year . '-06-30'];
             case 3:
                 return [$year . '-07-01', $year . '-09-30'];
-            case 4:
-                return [$year . '-10-01', $year . '-12-31'];
         }
+
+        // 4th quarter
+        return [$year . '-10-01', $year . '-12-31'];
     }
 
     /**

@@ -264,6 +264,7 @@ class Route
      * and populates $this->names with the named routing elements.
      *
      * @return string Returns a string regular expression of the compiled route.
+     * @psalm-suppress InvalidNullableReturnType
      */
     public function compile(): string
     {

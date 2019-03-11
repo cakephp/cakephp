@@ -161,6 +161,8 @@ class Response extends Message implements ResponseInterface
         if (substr($body, $offset, 1) === "\x08") {
             return gzinflate(substr($body, $offset + 8));
         }
+
+        throw new RuntimeException('Invalid gzip response');
     }
 
     /**

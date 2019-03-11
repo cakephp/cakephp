@@ -773,6 +773,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * to use for joining.
      * @param string $type the join type to use
      * @return array
+     * @psalm-suppress InvalidReturnType
      */
     protected function _makeJoin($table, $conditions, $type): array
     {

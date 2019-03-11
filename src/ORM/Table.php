@@ -1390,6 +1390,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @throws \Cake\Datasource\Exception\InvalidPrimaryKeyException When $primaryKey has an
      *      incorrect number of elements.
+     * @psalm-suppress InvalidReturnType
      */
     public function get($primaryKey, $options = []): EntityInterface
     {

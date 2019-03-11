@@ -535,6 +535,8 @@ class Inflector
                 return static::$_cache['pluralize'][$word];
             }
         }
+
+        return $word;
     }
 
     /**

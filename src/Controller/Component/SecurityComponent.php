@@ -88,7 +88,7 @@ class SecurityComponent extends Component
      * Component startup. All security checking happens here.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @return mixed
+     * @return void
      */
     public function startup(EventInterface $event)
     {
@@ -322,6 +322,7 @@ class SecurityComponent extends Component
      *
      * @param array $check Data array
      * @return array
+     * @psalm-suppress InvalidReturnType
      */
     protected function _fieldsList(array $check): array
     {

@@ -44,7 +44,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
-    public function getName(): string
+    public function getName(): ?string
     {
         return $this->_name;
     }
@@ -52,7 +52,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
-    public function getBaseType(): string
+    public function getBaseType(): ?string
     {
         return $this->_name;
     }

@@ -1028,7 +1028,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getMethod()
     {
-        return $this->getEnv('REQUEST_METHOD');
+        return (string)$this->getEnv('REQUEST_METHOD');
     }
 
     /**
@@ -1099,9 +1099,9 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get the host that the request was handled on.
      *
-     * @return string
+     * @return string|null
      */
-    public function host(): string
+    public function host(): ?string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_HOST')) {
             return $this->getEnv('HTTP_X_FORWARDED_HOST');
@@ -1113,9 +1113,9 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get the port the request was handled on.
      *
-     * @return string
+     * @return string|null
      */
-    public function port(): string
+    public function port(): ?string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_PORT')) {
             return $this->getEnv('HTTP_X_FORWARDED_PORT');
@@ -1129,9 +1129,9 @@ class ServerRequest implements ServerRequestInterface
      *
      * e.g. 'http', or 'https'
      *
-     * @return string The scheme used for the request.
+     * @return string|null The scheme used for the request.
      */
-    public function scheme(): string
+    public function scheme(): ?string
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_PROTO')) {
             return $this->getEnv('HTTP_X_FORWARDED_PROTO');
