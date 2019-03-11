@@ -95,7 +95,7 @@ class Xml
      *
      * If using array as input, you can pass `options` from Xml::fromArray.
      *
-     * @param string|array $input XML string, a path to a file, a URL or an array
+     * @param string|array|object $input XML string, a path to a file, a URL or an array
      * @param array $options The options to use
      * @return \SimpleXMLElement|\DOMDocument SimpleXMLElement or DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
