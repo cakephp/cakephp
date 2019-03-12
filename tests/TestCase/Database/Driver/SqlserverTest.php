@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -212,6 +213,7 @@ class SqlserverTest extends TestCase
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
 
+        $this->expectException(MissingConnectionException::class);
         $driver->connect();
     }
 
