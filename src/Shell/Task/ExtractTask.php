@@ -522,7 +522,9 @@ class ExtractTask extends Shell
                     $occurrences = [];
                     foreach ($files as $file => $lines) {
                         $lines = array_unique($lines);
-                        $occurrences[] = $file . ':' . implode(';', $lines);
+                        foreach ($lines as $line) {
+                            $occurrences[] = $file . ':' . $line;
+                        }
                     }
                     $occurrences = implode("\n#: ", $occurrences);
                     $header = '';
