@@ -499,7 +499,13 @@ class Text
             'limit' => -1,
         ];
         $options += $defaults;
-        $html = $format = $ellipsis = $exact = $limit = null;
+
+        $html = $format = $limit = null;
+        /**
+         * @var bool $html
+         * @var string|array $format
+         * @var int $limit
+         */
         extract($options);
 
         if (is_array($phrase)) {
@@ -555,7 +561,7 @@ class Text
      *
      * ### Options:
      *
-     * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+     * - `ellipsis` Will be used as beginning and prepended to the trimmed string
      * - `exact` If false, $text will not be cut mid-word
      *
      * @param string $text String to truncate.
@@ -570,6 +576,10 @@ class Text
         ];
         $options += $default;
         $exact = $ellipsis = null;
+        /**
+         * @var string $ellipsis
+         * @var bool $exact
+         */
         extract($options);
 
         if (mb_strlen($text) <= $length) {
