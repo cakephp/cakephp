@@ -486,7 +486,12 @@ class ExtractTask extends Shell
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
-                    $singular = null;
+                    $singular = $plural = $context = null;
+                    /**
+                     * @var string $singular
+                     * @var string|null $plural
+                     * @var string|null $context
+                     */
                     extract(array_combine($map, $strings));
                     $domain = isset($domain) ? $domain : 'default';
                     $details = [
@@ -496,10 +501,10 @@ class ExtractTask extends Shell
                     if ($this->_relativePaths) {
                         $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
                     }
-                    if (isset($plural)) {
+                    if ($plural !== null) {
                         $details['msgid_plural'] = $plural;
                     }
-                    if (isset($context)) {
+                    if ($context !== null) {
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
