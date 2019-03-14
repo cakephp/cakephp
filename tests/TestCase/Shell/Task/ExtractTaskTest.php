@@ -93,7 +93,8 @@ class ExtractTaskTest extends TestCase
         $this->assertFileNotExists($this->path . DS . 'cake.pot');
 
         // extract.ctp
-        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+;\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
+        $pattern .= '\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
         $this->assertRegExp($pattern, $result);
 
