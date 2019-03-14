@@ -783,7 +783,31 @@ class ValidatorTest extends TestCase
         $this->assertNotEmpty($validator->errors($data));
 
         $validator = new Validator();
-        $validator->allowEmptyString('title', 'update', 'message');
+        $validator->allowEmptyString('title', 'message', 'update');
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $data = [
+            'title' => null,
+        ];
+        $expected = [
+            'title' => ['_empty' => 'message'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
+     * Ensure that allowEmptyString() works with deprecated arguments
+     *
+     * @return void
+     */
+    public function testAllowEmptyStringDeprecatedArguments()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyString('title', 'update', 'message');
+        });
         $this->assertFalse($validator->isEmptyAllowed('title', true));
         $this->assertTrue($validator->isEmptyAllowed('title', false));
 

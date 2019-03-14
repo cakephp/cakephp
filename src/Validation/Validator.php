@@ -713,13 +713,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
-     * Indicate that a field can be empty.
+     * Low-level method to indicate that a field can be empty.
      *
-     * Using an array will let you provide the following keys:
+     * This method should generally not be used and instead you should
+     * use:
      *
-     * - `flags` individual flags for field
-     * - `when` individual when condition for field
-     * - `message` individual message for field
+     * - `allowEmptyString()`
+     * - `allowEmptyArray()`
+     * - `allowEmptyFile()`
+     * - `allowEmptyDate()`
+     * - `allowEmptyDatetime()`
+     * - `allowEmptyTime()`
+     *
+     * Should be used as their APIs are simpler to operate and read.
      *
      * You can also set flags, when and message for all passed fields, the individual
      * setting takes precedence over group settings.
@@ -788,21 +794,59 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Compatibility shim for the allowEmpty* methods that enable
+     * us to support both the `$when, $message` signature (deprecated)
+     * and the `$message, $when` format which is preferred.
+     *
+     * A deprecation warning will be emitted when a deprecated form
+     * is used.
+     *
+     * @param mixed $first The message or when to be sorted.
+     * @param mixed $second The message or when to be sorted.
+     * @param string $method The called method
+     * @return array A list of [$message, $when]
+     */
+    protected function sortMessageAndWhen($first, $second, $method)
+    {
+        // Called with `$message, $when`. No order change necessary
+        if (
+            (
+                in_array($second, [true, false, 'create', 'update'], true) ||
+                is_callable($second)
+            ) && (
+                is_string($first) || $first === null
+            )
+        ) {
+            return [$first, $second];
+        }
+        deprecationWarning(
+            "You are using a deprecated argument order for ${method}. " .
+            "You should reverse the order of your `when` and `message` arguments " .
+            "so that they are `message, when`."
+        );
+
+        // Called with `$when, $message`. Reverse the
+        // order to match the expected return value.
+        return [$second, $first];
+    }
+
+    /**
      * Allows a field to be an empty string.
      *
      * This method is equivalent to calling allowEmptyFor() with EMPTY_STRING flag.
      *
      * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
-     * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
      * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
      */
-    public function allowEmptyString($field, $when = true, $message = null)
+    public function allowEmptyString($field, $message = null, $when = true)
     {
+        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
         return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
     }
 
