@@ -2801,7 +2801,7 @@ class Model extends CakeObject implements CakeEventListener {
 			list(, $joinModel) = pluginSplit($data['with']);
 			$Model = $this->{$joinModel};
 			$records = $Model->find('all', array(
-				'conditions' => array($Model->escapeField($data['foreignKey']) => $id),
+				'conditions' => $this->_getConditionsForDeletingLinks($Model, $id, $data),
 				'fields' => $Model->primaryKey,
 				'recursive' => -1,
 				'callbacks' => false
@@ -2813,6 +2813,19 @@ class Model extends CakeObject implements CakeEventListener {
 				}
 			}
 		}
+	}
+
+/**
+ * Returns the conditions to be applied to Model::find() when determining which HABTM records should be deleted via
+ * Model::_deleteLinks()
+ *
+ * @param Model $Model HABTM join model instance
+ * @param mixed $id The ID of the primary model which is being deleted
+ * @param array $relationshipConfig The relationship config defined on the primary model
+ * @return array
+ */
+	protected function _getConditionsForDeletingLinks(Model $Model, $id, array $relationshipConfig) {
+		return array($Model->escapeField($relationshipConfig['foreignKey']) => $id);
 	}
 
 /**
