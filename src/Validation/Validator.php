@@ -879,16 +879,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * EMPTY_ARRAY flags.
      *
      * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
-     * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
-     * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
+     * @see \Cake\Validation\Validator::allowEmptyFor() for examples.
      */
-    public function allowEmptyArray($field, $when = true, $message = null)
+    public function allowEmptyArray($field, $message = null, $when = true)
     {
+        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_ARRAY, $when, $message);
     }
 
@@ -922,16 +924,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * upload with `error` equal to `UPLOAD_ERR_NO_FILE` will be treated as empty.
      *
      * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      *   Valid values are true, 'create', 'update'. If a callable is passed then
      *   the field will allowed to be empty only when the callback returns true.
-     * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
      * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
      */
-    public function allowEmptyFile($field, $when = true, $message = null)
+    public function allowEmptyFile($field, $message = null, $when = true)
     {
+        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+
         return $this->allowEmptyFor($field, self::EMPTY_FILE, $when, $message);
     }
 
@@ -964,16 +968,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * and the `year` key is present.
      *
      * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
-     * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
-     * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
+     * @see \Cake\Validation\Validator::allowEmptyFor() for examples
      */
-    public function allowEmptyDate($field, $when = true, $message = null)
+    public function allowEmptyDate($field, $message = null, $when = true)
     {
+        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_DATE, $when, $message);
     }
 
@@ -988,7 +994,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   the callback returns true.
      * @return $this
      * @since 3.8.0
-     * @see \Cake\Validation\Validator::allowEmptyDate() For detail usage
+     * @see \Cake\Validation\Validator::allowEmptyDate() for examples
      */
     public function notEmptyDate($field, $message = null, $when = false)
     {
@@ -1007,16 +1013,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * EMPTY_TIME flags.
      *
      * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      * Valid values are true, false, 'create', 'update'. If a callable is passed then
      * the field will allowed to be empty only when the callback returns true.
-     * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
-     * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
+     * @see \Cake\Validation\Validator::allowEmptyFor() for examples.
      */
-    public function allowEmptyTime($field, $when = true, $message = null)
+    public function allowEmptyTime($field, $message = null, $when = true)
     {
+        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_TIME, $when, $message);
     }
 
@@ -1052,16 +1060,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * EMPTY_DATE + EMPTY_TIME flags.
      *
      * @param string $field The name of the field.
+     * @param string|null $message The message to show if the field is not
      * @param bool|string|callable $when Indicates when the field is allowed to be empty
      *   Valid values are true, false, 'create', 'update'. If a callable is passed then
      *   the field will allowed to be empty only when the callback returns false.
-     * @param string|null $message The message to show if the field is not
      * @return $this
      * @since 3.7.0
-     * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
+     * @see \Cake\Validation\Validator::allowEmptyFor() for examples.
      */
-    public function allowEmptyDateTime($field, $when = true, $message = null)
+    public function allowEmptyDateTime($field, $message = null, $when = true)
     {
+        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_DATE | self::EMPTY_TIME, $when, $message);
     }
 
