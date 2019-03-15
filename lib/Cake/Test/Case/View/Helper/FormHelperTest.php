@@ -2093,10 +2093,10 @@ class FormHelperTest extends CakeTestCase {
 		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors['password'] = array('Please provide a password');
 
-		$result = $this->Form->input('Contact.password',array(
+		$result = $this->Form->input('Contact.password', array(
 			'error' => array(
-			    'attributes' => array('class' => 'special-error-class'),
-            )
+				'attributes' => array('class' => 'special-error-class'),
+			)
 		));
 		$expected = array(
 			'div' => array('class' => 'input password error'),
@@ -2115,7 +2115,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$Contact->validationErrors['password'] = array('Please provide a password<br>otherwise you will not be able to login');
-		$result = $this->Form->input('Contact.password',array(
+		$result = $this->Form->input('Contact.password', array(
 			'error' => array(
 				'attributes' => array(
 					'class' => 'special-error-class',
