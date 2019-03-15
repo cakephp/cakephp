@@ -30,9 +30,6 @@ parameters:
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'
         -
-            message: '#Strict comparison using === between array and false will always evaluate to false#'
-            path: 'src/Cache/Engine/MemcachedEngine.php'
-        -
             message: '#Call to function method_exists\(\) with string and [^ ]+ will always evaluate to false#'
             path: 'src/Controller/Component/AuthComponent.php'
         -
