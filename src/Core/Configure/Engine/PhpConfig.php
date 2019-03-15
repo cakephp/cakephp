@@ -85,12 +85,14 @@ class PhpConfig implements ConfigEngineInterface
     {
         $file = $this->_getFilePath($key, true);
 
+        $config = null;
+
         $return = include $file;
         if (is_array($return)) {
             return $return;
         }
 
-        if (!isset($config)) {
+        if ($config === null) {
             throw new Exception(sprintf('Config file "%s" did not return an array', $key . '.php'));
         }
         deprecationWarning(sprintf(
