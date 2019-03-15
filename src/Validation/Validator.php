@@ -809,8 +809,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected function sortMessageAndWhen($first, $second, $method)
     {
         // Called with `$message, $when`. No order change necessary
-        if (
-            (
+        if ((
                 in_array($second, [true, false, 'create', 'update'], true) ||
                 is_callable($second)
             ) && (
@@ -847,6 +846,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function allowEmptyString($field, $message = null, $when = true)
     {
         list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+
         return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
     }
 
