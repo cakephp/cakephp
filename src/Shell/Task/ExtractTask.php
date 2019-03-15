@@ -535,14 +535,18 @@ class ExtractTask extends Shell
                 foreach ($contexts as $context => $details) {
                     $plural = $details['msgid_plural'];
                     $files = $details['references'];
-                    $occurrences = [];
-                    foreach ($files as $file => $lines) {
-                        $lines = array_unique($lines);
-                        $occurrences[] = $file . ':' . implode(';', $lines);
-                    }
-                    $occurrences = implode("\n#: ", $occurrences);
                     $header = '';
+
                     if (!$this->param('no-location')) {
+                        $occurrences = [];
+                        foreach ($files as $file => $lines) {
+                            $lines = array_unique($lines);
+                            foreach ($lines as $line) {
+                                $occurrences[] = $file . ':' . $line;
+                            }
+                        }
+                        $occurrences = implode("\n#: ", $occurrences);
+
                         $header = '#: ' . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences)) . "\n";
                     }
 
