@@ -100,9 +100,9 @@ class JsonView extends SerializedView
      *
      * @param string|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
-     * @return string|null The rendered view.
+     * @return string The rendered view.
      */
-    public function render($view = null, $layout = null): ?string
+    public function render($view = null, $layout = null): string
     {
         $return = parent::render($view, $layout);
 

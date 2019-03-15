@@ -47,6 +47,7 @@ class DefaultPasswordHasher extends AbstractPasswordHasher
      */
     public function hash(string $password)
     {
+        /** @psalm-suppress NullableReturnStatement */
         return password_hash(
             $password,
             $this->_config['hashType'],

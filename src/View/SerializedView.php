@@ -86,9 +86,9 @@ abstract class SerializedView extends View
      *
      * @param string|false|null $view The view being rendered.
      * @param string|null $layout The layout being rendered.
-     * @return string|null The rendered view.
+     * @return string The rendered view.
      */
-    public function render($view = null, $layout = null): ?string
+    public function render($view = null, $layout = null): string
     {
         $serialize = false;
         if (isset($this->viewVars['_serialize'])) {
@@ -103,10 +103,7 @@ abstract class SerializedView extends View
 
             return $result;
         }
-        if ($view !== false && $this->_getViewFileName($view)) {
-            return parent::render($view, false);
-        }
 
-        return null;
+        return parent::render($view, false);
     }
 }

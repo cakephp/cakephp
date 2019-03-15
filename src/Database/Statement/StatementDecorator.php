@@ -285,6 +285,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
             $this->execute();
         }
 
+        /** @psalm-suppress NullableReturnStatement */
         return $this->_statement;
     }
 
@@ -354,6 +355,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      */
     public function getInnerStatement()
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->_statement;
     }
 }

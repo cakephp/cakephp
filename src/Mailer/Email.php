@@ -204,6 +204,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function getViewRenderer(): string
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->getRenderer()->viewBuilder()->getClassName();
     }
 
