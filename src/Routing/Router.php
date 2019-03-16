@@ -18,7 +18,10 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
+use Throwable;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -585,8 +588,19 @@ class Router
     protected static function _applyUrlFilters($url)
     {
         $request = static::getRequest(true);
-        foreach (static::$_urlFilters as $filter) {
-            $url = $filter($url, $request);
+        $e = null;
+        foreach (static::$_urlFilters as $index => $filter) {
+            try {
+                $url = $filter($url, $request);
+            } catch (Exception $e) {
+                // fall through
+            } catch (Throwable $e) {
+                // fall through
+            }
+            if ($e !== null) {
+                $message = 'URL filter at index %s could not be applied. The filter failed with: %s';
+                throw new RuntimeException(sprintf($message, $index, $e->getMessage()), $e->getCode(), $e);
+            }
         }
 
         return $url;

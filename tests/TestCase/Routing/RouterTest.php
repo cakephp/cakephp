@@ -23,6 +23,7 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * RouterTest class
@@ -1336,6 +1337,32 @@ class RouterTest extends TestCase
         $result = Router::url(['controller' => 'tasks', 'action' => 'edit']);
         $this->assertEquals('/en/tasks/edit/1234', $result);
         $this->assertEquals(2, $calledCount);
+    }
+
+    /**
+     * Test that url filter failure gives better errors
+     *
+     * @return void
+     */
+    public function testUrlGenerationWithUrlFilterFailure()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('URL filter at index 0 could not be applied. The filter failed with: nope');
+        Router::connect('/:lang/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'lang' => 'en',
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
+        ]);
+        Router::pushRequest($request);
+
+        Router::addUrlFilter(function ($url, $request) {
+            throw new RuntimeException('nope');
+        });
+        Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
     }
 
     /**
