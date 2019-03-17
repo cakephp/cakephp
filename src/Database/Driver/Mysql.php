@@ -79,9 +79,6 @@ class Mysql extends Driver
         if (!empty($config['timezone'])) {
             $config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
         }
-        if (!empty($config['encoding'])) {
-            $config['init'][] = sprintf('SET NAMES %s', $config['encoding']);
-        }
 
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
@@ -100,7 +97,7 @@ class Mysql extends Driver
         if (empty($config['unix_socket'])) {
             $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']};charset={$config['encoding']}";
         } else {
-            $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+            $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']};charset={$config['encoding']}";
         }
 
         $this->_connect($dsn, $config);
