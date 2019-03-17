@@ -541,7 +541,7 @@ class Text
      *
      * ### Options:
      *
-     * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+     * - `ellipsis` Will be used as beginning and prepended to the trimmed string
      * - `exact` If false, $text will not be cut mid-word
      *
      * @param string $text String to truncate.

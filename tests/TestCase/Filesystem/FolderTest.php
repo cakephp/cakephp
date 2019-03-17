@@ -960,16 +960,17 @@ class FolderTest extends TestCase
      */
     public function testCopy()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1001,16 +1002,17 @@ class FolderTest extends TestCase
      */
     public function testCopyWithMerge()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1041,16 +1043,17 @@ class FolderTest extends TestCase
      */
     public function testCopyWithSkip()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1118,16 +1121,17 @@ class FolderTest extends TestCase
      */
     public function testCopyWithOverwrite()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1163,16 +1167,17 @@ class FolderTest extends TestCase
      */
     public function testCopyWithoutRecursive()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1247,16 +1252,17 @@ class FolderTest extends TestCase
      */
     public function testMove()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1327,16 +1333,17 @@ class FolderTest extends TestCase
      */
     public function testMoveWithSkip()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 
@@ -1395,16 +1402,17 @@ class FolderTest extends TestCase
 
     public function testMoveWithoutRecursive()
     {
-        /** @var string $path
-         *  @var string $folderOne
-         *  @var string $folderOneA
-         *  @var string $folderTwo
-         *  @var string $folderTwoB
-         *  @var string $folderThree
-         *  @var string $fileOne
-         *  @var string $fileTwo
-         *  @var string $fileOneA
-         *  @var string $fileTwoB
+        /**
+         * @var string $path
+         * @var string $folderOne
+         * @var string $folderOneA
+         * @var string $folderTwo
+         * @var string $folderTwoB
+         * @var string $folderThree
+         * @var string $fileOne
+         * @var string $fileTwo
+         * @var string $fileOneA
+         * @var string $fileTwoB
          */
         extract($this->_setupFilesystem());
 

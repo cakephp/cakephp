@@ -497,9 +497,12 @@ class ExtractTask extends Shell
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
-                    $singular = null;
-                    $plural = null;
-                    $context = null;
+                    $singular = $plural = $context = null;
+                    /**
+                     * @var string $singular
+                     * @var string|null $plural
+                     * @var string|null $context
+                     */
                     extract(array_combine($map, $strings));
                     $domain = $domain ?? 'default';
                     $details = [
@@ -509,10 +512,10 @@ class ExtractTask extends Shell
                     if ($this->_relativePaths) {
                         $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
                     }
-                    if (isset($plural)) {
+                    if ($plural !== null) {
                         $details['msgid_plural'] = $plural;
                     }
-                    if (isset($context)) {
+                    if ($context !== null) {
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);
@@ -543,14 +546,18 @@ class ExtractTask extends Shell
                 foreach ($contexts as $context => $details) {
                     $plural = $details['msgid_plural'];
                     $files = $details['references'];
-                    $occurrences = [];
-                    foreach ($files as $file => $lines) {
-                        $lines = array_unique($lines);
-                        $occurrences[] = $file . ':' . implode(';', $lines);
-                    }
-                    $occurrences = implode("\n#: ", $occurrences);
                     $header = '';
+
                     if (!$this->param('no-location')) {
+                        $occurrences = [];
+                        foreach ($files as $file => $lines) {
+                            $lines = array_unique($lines);
+                            foreach ($lines as $line) {
+                                $occurrences[] = $file . ':' . $line;
+                            }
+                        }
+                        $occurrences = implode("\n#: ", $occurrences);
+
                         $header = '#: '
                             . str_replace(DIRECTORY_SEPARATOR, '/', str_replace($paths, '', $occurrences))
                             . "\n";

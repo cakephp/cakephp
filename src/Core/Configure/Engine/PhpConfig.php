@@ -83,6 +83,8 @@ class PhpConfig implements ConfigEngineInterface
     {
         $file = $this->_getFilePath($key, true);
 
+        $config = null;
+
         $return = include $file;
         if (is_array($return)) {
             return $return;

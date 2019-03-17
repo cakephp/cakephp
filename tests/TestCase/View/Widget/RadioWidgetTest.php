@@ -237,6 +237,46 @@ class RadioWidgetTest extends TestCase
     }
 
     /**
+     * Test rendering inputs with label options
+     *
+     * @return void
+     */
+    public function testRenderComplexLabelAttributes()
+    {
+        $label = new NestingLabelWidget($this->templates);
+        $radio = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'Crayons[color]',
+            'options' => [
+                ['value' => 'r', 'text' => 'Red', 'label' => ['style' => 'color:red']],
+                ['value' => 'b', 'text' => 'Black', 'label' => ['data-test' => 'yes']],
+            ]
+        ];
+        $result = $radio->render($data, $this->context);
+        $expected = [
+            ['label' => ['for' => 'crayons-color-r', 'style' => 'color:red']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Crayons[color]',
+                'value' => 'r',
+                'id' => 'crayons-color-r',
+            ]],
+            'Red',
+            '/label',
+            ['label' => ['for' => 'crayons-color-b', 'data-test' => 'yes']],
+            ['input' => [
+                'type' => 'radio',
+                'name' => 'Crayons[color]',
+                'value' => 'b',
+                'id' => 'crayons-color-b',
+            ]],
+            'Black',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test that id suffixes are generated to not collide
      *
      * @return void

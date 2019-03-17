@@ -234,7 +234,9 @@ class RadioWidget implements WidgetInterface
      */
     protected function _renderLabel(array $radio, $label, $input, $context, $escape)
     {
-        if ($label === false) {
+        if (isset($radio['label'])) {
+            $label = $radio['label'];
+        } elseif ($label === false) {
             return false;
         }
         $labelAttrs = is_array($label) ? $label : [];
