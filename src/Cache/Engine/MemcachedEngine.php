@@ -67,7 +67,7 @@ class MemcachedEngine extends CacheEngine
         'host' => null,
         'username' => null,
         'password' => null,
-        'persistent' => false,
+        'persistent' => null,
         'port' => null,
         'prefix' => 'cake_',
         'serialize' => 'php',
@@ -137,7 +137,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         if ($this->_config['persistent']) {
-            $this->_Memcached = new Memcached((string)$this->_config['persistent']);
+            $this->_Memcached = new Memcached($this->_config['persistent']);
         } else {
             $this->_Memcached = new Memcached();
         }

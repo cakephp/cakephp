@@ -97,7 +97,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 null,
                 null,
-                null,
+                '',
             ],
 
             // Test render with False in _serialize.
@@ -105,7 +105,7 @@ class JsonViewTest extends TestCase
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
                 false,
                 null,
-                null,
+                '',
             ],
 
             // Test render with True in _serialize.

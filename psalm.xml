@@ -82,7 +82,11 @@
 
         <!-- level 6 issues - really bad things -->
 
-        <NullableReturnStatement errorLevel="info" />
+        <NullableReturnStatement>
+            <errorLevel type="suppress">
+                <file name="src/Utility/Inflector.php" />
+            </errorLevel>
+        </NullableReturnStatement>
 
         <MoreSpecificImplementedParamType errorLevel="info" />
         <LessSpecificImplementedReturnType errorLevel="info" />

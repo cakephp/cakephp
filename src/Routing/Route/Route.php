@@ -273,6 +273,7 @@ class Route
         }
         $this->_writeRoute();
 
+        /** @psalm-suppress NullableReturnStatement */
         return $this->_compiledRoute;
     }
 

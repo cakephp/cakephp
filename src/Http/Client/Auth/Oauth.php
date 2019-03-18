@@ -48,6 +48,8 @@ class Oauth
         if (empty($credentials['method'])) {
             $credentials['method'] = 'hmac-sha1';
         }
+
+        $value = '';
         $credentials['method'] = strtoupper($credentials['method']);
 
         $value = null;

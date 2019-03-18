@@ -686,12 +686,12 @@ class View implements EventDispatcherInterface
      *
      * @param string|false|null $view Name of view file to use
      * @param string|null|false $layout Layout to use. False to disable.
-     * @return string|null Rendered content or null if content already rendered and returned earlier.
+     * @return string Rendered content.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$viewFileName]
      * @triggers View.afterRender $this, [$viewFileName]
      */
-    public function render($view = null, $layout = null): ?string
+    public function render($view = null, $layout = null): string
     {
         $defaultLayout = null;
         if ($layout !== null) {
