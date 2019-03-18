@@ -112,7 +112,7 @@ class ArrayContext implements ContextInterface
         }
         foreach ($this->_context['schema']['_constraints'] as $data) {
             if (isset($data['type']) && $data['type'] === 'primary') {
-                return isset($data['columns']) ? (array)$data['columns'] : [];
+                return (array)($data['columns'] ?? []);
             }
         }
 
