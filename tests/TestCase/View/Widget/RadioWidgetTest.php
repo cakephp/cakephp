@@ -250,7 +250,7 @@ class RadioWidgetTest extends TestCase
             'options' => [
                 ['value' => 'r', 'text' => 'Red', 'label' => ['style' => 'color:red']],
                 ['value' => 'b', 'text' => 'Black', 'label' => ['data-test' => 'yes']],
-            ]
+            ],
         ];
         $result = $radio->render($data, $this->context);
         $expected = [

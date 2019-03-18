@@ -1007,7 +1007,7 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->field('items')->isEmptyAllowed());
 
         $error = [
-            'items' => ['_empty' => 'not empty']
+            'items' => ['_empty' => 'not empty'],
         ];
         $data = ['items' => ''];
         $result = $validator->errors($data);
@@ -1147,7 +1147,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_NO_FILE,
-            ]
+            ],
         ];
         $error = ['photo' => ['_empty' => 'required field']];
         $this->assertSame($error, $validator->errors($data));
@@ -1170,7 +1170,7 @@ class ValidatorTest extends TestCase
                 'type' => '',
                 'tmp_name' => '',
                 'error' => UPLOAD_ERR_FORM_SIZE,
-            ]
+            ],
         ];
         $this->assertEmpty($validator->errors($data));
     }
@@ -1299,7 +1299,7 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => '',
                 'month' => '',
-                'day' => ''
+                'day' => '',
             ],
         ];
         $result = $validator->errors($data);
@@ -1321,8 +1321,8 @@ class ValidatorTest extends TestCase
             'date' => [
                 'year' => 2019,
                 'month' => 2,
-                'day' => 17
-            ]
+                'day' => 17,
+            ],
         ];
         $result = $validator->errors($data);
         $this->assertEmpty($result);

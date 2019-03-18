@@ -830,7 +830,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyString($field, ?string $message = null, $when = true)
     {
-        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+        [$message, $when] = $this->sortMessageAndWhen($message, $when, __METHOD__);
 
         return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
     }
@@ -874,7 +874,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyArray(string $field, ?string $message = null, $when = true)
     {
-        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+        [$message, $when] = $this->sortMessageAndWhen($message, $when, __METHOD__);
 
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_ARRAY, $when, $message);
     }
@@ -918,7 +918,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyFile(string $field, ?string $message = null, $when = true)
     {
-        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+        [$message, $when] = $this->sortMessageAndWhen($message, $when, __METHOD__);
 
         return $this->allowEmptyFor($field, self::EMPTY_FILE, $when, $message);
     }
@@ -961,7 +961,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyDate(string $field, ?string $message = null, $when = true)
     {
-        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+        [$message, $when] = $this->sortMessageAndWhen($message, $when, __METHOD__);
 
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_DATE, $when, $message);
     }
@@ -1005,7 +1005,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyTime(string $field, ?string $message = null, $when = true)
     {
-        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+        [$message, $when] = $this->sortMessageAndWhen($message, $when, __METHOD__);
 
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_TIME, $when, $message);
     }
@@ -1052,7 +1052,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function allowEmptyDateTime(string $field, ?string $message = null, $when = true)
     {
-        list($message, $when) = $this->sortMessageAndWhen($message, $when, __METHOD__);
+        [$message, $when] = $this->sortMessageAndWhen($message, $when, __METHOD__);
 
         return $this->allowEmptyFor($field, self::EMPTY_STRING | self::EMPTY_DATE | self::EMPTY_TIME, $when, $message);
     }
