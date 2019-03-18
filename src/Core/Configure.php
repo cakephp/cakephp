@@ -373,7 +373,7 @@ class Configure
             throw new Exception(sprintf('There is no "%s" config engine.', $config));
         }
         $values = static::$_values;
-        if (!empty($keys) && is_array($keys)) {
+        if (!empty($keys)) {
             $values = array_intersect_key($values, array_flip($keys));
         }
 

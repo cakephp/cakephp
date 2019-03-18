@@ -118,7 +118,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     protected function _checkDuplicate(string $name, array $config): void
     {
-        /** @var \Cake\Core\InstanceConfigTrait $existing */
+        /** @psalm-suppress UndefinedClass */
         $existing = $this->_loaded[$name];
         $msg = sprintf('The "%s" alias has already been loaded', $name);
         $hasConfig = method_exists($existing, 'getConfig');
@@ -128,6 +128,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (empty($config)) {
             return;
         }
+        /** @psalm-suppress UndefinedClass */
         $existingConfig = $existing->getConfig();
         unset($config['enabled'], $existingConfig['enabled']);
 

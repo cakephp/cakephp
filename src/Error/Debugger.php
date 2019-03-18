@@ -914,7 +914,6 @@ TEXT;
                 $lineInfo = sprintf('%s (line %s)', $file, $line);
             }
         }
-        /** @psalm-suppress RedundantCondition */
         if ($showHtml === null && $template !== $text) {
             $showHtml = true;
         }
