@@ -73,6 +73,8 @@ class ApplicationControllerTest extends ControllerTestCase {
 
 /**
  * Tests the redirect and session config with use_trans_sid=1.
+ *
+ * @return void
  */
 	public function testRedirect() {
 		$sessionId = 'o7k64tlhil9pakp89j6d8ovlqk';
