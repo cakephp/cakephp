@@ -20,6 +20,8 @@ use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionFunction;
+use ReflectionMethod;
 use RuntimeException;
 use Throwable;
 
@@ -589,7 +591,7 @@ class Router
     {
         $request = static::getRequest(true);
         $e = null;
-        foreach (static::$_urlFilters as $index => $filter) {
+        foreach (static::$_urlFilters as $filter) {
             try {
                 $url = $filter($url, $request);
             } catch (Exception $e) {
@@ -598,8 +600,18 @@ class Router
                 // fall through
             }
             if ($e !== null) {
-                $message = 'URL filter at index %s could not be applied. The filter failed with: %s';
-                throw new RuntimeException(sprintf($message, $index, $e->getMessage()), $e->getCode(), $e);
+                if (is_array($filter)) {
+                    $ref = new ReflectionMethod($filter[0], $filter[1]);
+                } else {
+                    $ref = new ReflectionFunction($filter);
+                }
+                $message = sprintf(
+                    'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
+                    $ref->getFileName(),
+                    $ref->getStartLine(),
+                    $e->getMessage()
+                );
+                throw new RuntimeException($message, $e->getCode(), $e);
             }
         }
 

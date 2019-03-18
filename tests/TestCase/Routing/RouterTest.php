@@ -24,6 +24,8 @@ use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use stdClass;
+
 
 /**
  * RouterTest class
@@ -1344,10 +1346,13 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function testUrlGenerationWithUrlFilterFailure()
+    public function testUrlGenerationWithUrlFilterFailureClosure()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('URL filter at index 0 could not be applied. The filter failed with: nope');
+        $this->expectExceptionMessageRegExp(
+            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
+            ' The filter failed with: nope/'
+        );
         Router::connect('/:lang/:controller/:action/*');
         $request = new ServerRequest([
             'params' => [
@@ -1363,6 +1368,43 @@ class RouterTest extends TestCase
             throw new RuntimeException('nope');
         });
         Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
+    }
+
+    /**
+     * Test that url filter failure gives better errors
+     *
+     * @return void
+     */
+    public function testUrlGenerationWithUrlFilterFailureMethod()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageRegExp(
+            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
+            ' The filter failed with: /'
+        );
+        Router::connect('/:lang/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'lang' => 'en',
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
+        ]);
+        Router::pushRequest($request);
+
+        Router::addUrlFilter([$this, 'badFilter']);
+        Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
+    }
+
+    /**
+     * Testing stub for broken URL filters.
+     *
+     * @throws \RuntimeException
+     */
+    public function badFilter()
+    {
+        throw new RuntimeException('nope');
     }
 
     /**
