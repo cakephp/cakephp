@@ -34,7 +34,7 @@ class TransSessionIdController extends AppController {
 			'controller' => 'trans_session_id',
 			'action' => 'next_step',
 			'?' => array(
-				htmlspecialchars($sessionName) => htmlspecialchars($sessionId),
+				$sessionName => $sessionId,
 			),
 		));
 	}
@@ -78,8 +78,7 @@ class ApplicationControllerTest extends ControllerTestCase {
  */
 	public function testRedirect() {
 		$sessionId = 'o7k64tlhil9pakp89j6d8ovlqk';
-		CakeSession::id($sessionId);
-		$this->testAction('/trans_session_id/next');
+		$this->testAction('/trans_session_id/next?CAKEPHP=' . $sessionId);
 		$this->assertContains('/trans_session_id/next_step?CAKEPHP=' . $sessionId, $this->headers['Location']);
 		$expectedConfig = array(
 			'cookie' => 'CAKEPHP',
@@ -100,7 +99,6 @@ class ApplicationControllerTest extends ControllerTestCase {
 		);
 		$actualConfig = Configure::read('Session');
 		$this->assertEquals($expectedConfig, $actualConfig);
-		$this->assertTrue(false, __METHOD__ . ' test has been run');
 	}
 
 }
