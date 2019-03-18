@@ -41,6 +41,6 @@
 			"@test"
 		],
 		"cs-check": "./vendors/bin/phpcs -p --extensions=php --standard=CakePHP ./lib/Cake",
-		"test": "./lib/Cake/Console/cake test core AllTests --stderr"
+		"test": "./lib/Cake/Console/cake test core AllTests --stderr --verbose"
 	}
 }
