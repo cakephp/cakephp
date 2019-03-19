@@ -524,7 +524,7 @@ class Client implements ClientInterface
      */
     protected function _createRequest(string $method, string $url, $data, $options): Request
     {
-        $headers = isset($options['headers']) ? (array)$options['headers'] : [];
+        $headers = (array)($options['headers'] ?? []);
         if (isset($options['type'])) {
             $headers = array_merge($headers, $this->_typeHeaders($options['type']));
         }

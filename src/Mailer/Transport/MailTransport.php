@@ -86,7 +86,7 @@ class MailTransport extends AbstractTransport
         // phpcs:disable
         if (!@mail($to, $subject, $message, $headers, $params)) {
             $error = error_get_last();
-            $msg = 'Could not send email: ' . (isset($error['message']) ? $error['message'] : 'unknown');
+            $msg = 'Could not send email: ' . ($error['message'] ?? 'unknown');
             throw new SocketException($msg);
         }
         // phpcs:enable
