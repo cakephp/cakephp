@@ -128,7 +128,7 @@ class Number
      *
      * - `places` - Minimum number or decimals to use, e.g 0
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
-     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `locale` - The locale name to use for formatting the number, e.g. fr_FR
      * - `before` - The string to place before whole numbers, e.g. '['
      * - `after` - The string to place after decimal numbers, e.g. ']'
@@ -204,7 +204,7 @@ class Number
      * - `zero` - The text to use for zero values, can be a string or a number. e.g. 0, 'Free!'
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
-     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
@@ -277,7 +277,7 @@ class Number
      *    numbers representing money or a NumberFormatter constant.
      * - `places` - Number of decimal places to use. e.g. 2
      * - `precision` - Maximum Number of decimal places to use, e.g. 2
-     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,###.00
+     * - `pattern` - An ICU number pattern to use for formatting the number. e.g #,##0.00
      * - `useIntlCode` - Whether or not to replace the currency symbol with the international
      *   currency code.
      *
