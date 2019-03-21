@@ -16,7 +16,6 @@ namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
 use Cake\Collection\Collection;
-use Cake\Core\Plugin;
 use Cake\Database\Exception;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
@@ -52,8 +51,9 @@ class UsersTable extends Table
 class ProtectedEntity extends Entity
 {
     protected $_accessible = [
-        'id' => true,
+        'id' => false,
         'title' => false,
+        'body' => true,
     ];
 }
 
@@ -5886,6 +5886,29 @@ class TableTest extends TestCase
         $article = $articles->findOrCreate(['title' => 'test']);
         $this->assertInstanceOf(ProtectedEntity::class, $article);
         $this->assertSame('test', $article->title);
+    }
+
+    /**
+     * Test that findOrCreate cannot accidentally bypass required validation.
+     *
+     * @return void
+     */
+    public function testFindOrCreatePartialValidation()
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->setEntityClass(ProtectedEntity::class);
+        $validator = new Validator();
+        $validator->notBlank('title')->requirePresence('title', 'create');
+        $validator->notBlank('body')->requirePresence('body', 'create');
+        $articles->setValidator('default', $validator);
+
+        $this->expectException(PersistenceFailedException::class);
+        $this->expectExceptionMessage(
+            'Entity findOrCreate failure. ' .
+            'Found the following errors (title._required: "This field is required").'
+        );
+
+        $articles->findOrCreate(['body' => 'test']);
     }
 
     /**
