@@ -803,7 +803,7 @@ class HasManyTest extends TestCase
             'saveStrategy' => HasMany::SAVE_APPEND,
         ]);
 
-        $entity = $articles->newEntity();
+        $entity = $articles->createEntity();
         $entity->set('comments', 'oh noes');
 
         $association->saveAssociated($entity);
@@ -842,7 +842,7 @@ class HasManyTest extends TestCase
         $comments = $association->find();
         $this->assertNotEmpty($comments);
 
-        $entity = $articles->newEntity();
+        $entity = $articles->createEntity();
         $entity->set('comments', $value);
 
         $this->assertSame($entity, $association->saveAssociated($entity));
@@ -899,7 +899,7 @@ class HasManyTest extends TestCase
         $comments = $association->find();
         $this->assertNotEmpty($comments);
 
-        $entity = $articles->newEntity();
+        $entity = $articles->createEntity();
         $entity->set('comments', $value);
 
         $this->assertSame($entity, $association->saveAssociated($entity));

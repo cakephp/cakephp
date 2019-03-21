@@ -3104,7 +3104,7 @@ class MarshallerTest extends TestCase
         ];
 
         $marshall = new Marshaller($this->articles);
-        $entity = $this->articles->newEntity();
+        $entity = $this->articles->createEntity();
         $result = $marshall->merge($entity, $data, []);
 
         $this->assertSame($entity, $result);
