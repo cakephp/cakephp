@@ -161,11 +161,13 @@ trait TranslateStrategyTrait
                     }
                     foreach ($value as $language => $fields) {
                         if (!isset($translations[$language])) {
-                            $translations[$language] = $this->table->newEntity();
+                            $translations[$language] = $this->table->createEntity();
                         }
                         $marshaller->merge($translations[$language], $fields, $options);
-                        if ((bool)$translations[$language]->getErrors()) {
-                            $errors[$language] = $translations[$language]->getErrors();
+                        /** @var \Cake\Datasource\EntityInterface $entity */
+                        $entity = $translations[$language];
+                        if ((bool)$entity->getErrors()) {
+                            $errors[$language] = $entity->getErrors();
                         }
                     }
                     // Set errors into the root entity, so validation errors

@@ -162,6 +162,17 @@ interface RepositoryInterface
     public function delete(EntityInterface $entity, $options = []): bool;
 
     /**
+     * This creates a new entity object.
+     *
+     * Careful: This does not trigger any field validation.
+     * This entity can be persisted without validation error as empty record.
+     * Always patch in required fields before saving.
+     *
+     * @return \Cake\Datasource\EntityInterface
+     */
+    public function createEntity(): EntityInterface;
+
+    /**
      * Create a new entity + associated entities from an array.
      *
      * This is most useful when hydrating request data back into entities.
@@ -175,11 +186,11 @@ interface RepositoryInterface
      * on the primary key data existing in the database when the entity
      * is saved. Until the entity is saved, it will be a detached record.
      *
-     * @param array|null $data The data to build an entity with.
+     * @param array $data The data to build an entity with.
      * @param array $options A list of options for the object hydration.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function newEntity(?array $data = null, array $options = []): EntityInterface;
+    public function newEntity(array $data, array $options = []): EntityInterface;
 
     /**
      * Create a list of entities + associated entities from an array.

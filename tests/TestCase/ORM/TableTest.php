@@ -1805,6 +1805,7 @@ class TableTest extends TestCase
      */
     public function testImplementedEvents()
     {
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods([
                 'buildValidator',
@@ -1849,7 +1850,7 @@ class TableTest extends TestCase
         $this->assertSame($entity, $table->save($entity));
         $this->assertEquals($entity->id, self::$nextUserId);
 
-        $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+        $row = $table->find()->where(['id' => self::$nextUserId])->first();
         $this->assertEquals($entity->toArray(), $row->toArray());
     }
 
@@ -1874,6 +1875,7 @@ class TableTest extends TestCase
      */
     public function testSaveNewEntityNoExists()
     {
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['exists'])
             ->setConstructorArgs([[
@@ -1899,6 +1901,7 @@ class TableTest extends TestCase
     public function testSavePrimaryKeyEntityExists()
     {
         $this->skipIfSqlServer();
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['exists'])
             ->setConstructorArgs([[
@@ -1923,6 +1926,7 @@ class TableTest extends TestCase
     public function testSavePrimaryKeyEntityNoExists()
     {
         $this->skipIfSqlServer();
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['exists'])
             ->setConstructorArgs([[
@@ -1977,7 +1981,7 @@ class TableTest extends TestCase
             'created' => new Time('2013-10-10 00:00'),
             'updated' => new Time('2013-10-10 00:00'),
         ]);
-        $listener = function ($e, $entity, $options) use ($data) {
+        $listener = function ($event, EntityInterface $entity, $options) use ($data) {
             $this->assertSame($data, $entity);
             $entity->set('password', 'foo');
         };
@@ -2003,10 +2007,10 @@ class TableTest extends TestCase
             'created' => new Time('2013-10-10 00:00'),
             'updated' => new Time('2013-10-10 00:00'),
         ]);
-        $listener1 = function ($e, $entity, $options) {
+        $listener1 = function ($event, $entity, $options) {
             $options['crazy'] = true;
         };
-        $listener2 = function ($e, $entity, $options) {
+        $listener2 = function ($event, $entity, $options) {
             $this->assertTrue($options['crazy']);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener1);
@@ -2033,8 +2037,8 @@ class TableTest extends TestCase
             'created' => new Time('2013-10-10 00:00'),
             'updated' => new Time('2013-10-10 00:00'),
         ]);
-        $listener = function ($e, $entity) {
-            $e->stopPropagation();
+        $listener = function (EventInterface $event, $entity) {
+            $event->stopPropagation();
 
             return $entity;
         };
@@ -3218,27 +3222,38 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('TestPlugin.Authors');
 
         $existingAuthor = $table->find()->first();
-        $newAuthor = $table->newEntity();
+        $newAuthor = $table->createEntity();
 
         $this->assertEquals('TestPlugin.Authors', $existingAuthor->getSource());
         $this->assertEquals('TestPlugin.Authors', $newAuthor->getSource());
     }
 
     /**
-     * Tests that calling an entity with an empty array will run validation
-     * whereas calling it with no parameters will not run any validation.
+     * Tests that calling an entity with an empty array will run validation.
      *
      * @return void
      */
     public function testNewEntityAndValidation()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $validator = $table->getValidator()->requirePresence('title');
+        $table->getValidator()->requirePresence('title');
+
         $entity = $table->newEntity([]);
         $errors = $entity->getErrors();
         $this->assertNotEmpty($errors['title']);
+    }
 
-        $entity = $table->newEntity();
+    /**
+     * Tests that creating an entity will not run any validation.
+     *
+     * @return void
+     */
+    public function testCreateEntityAndValidation()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->getValidator()->requirePresence('title');
+
+        $entity = $table->createEntity();
         $this->assertEmpty($entity->getErrors());
     }
 
@@ -5710,12 +5725,12 @@ class TableTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $article = $articles->findOrCreate(function ($query) {
-            $this->assertInstanceOf('Cake\ORM\Query', $query);
+        $article = $articles->findOrCreate(function (Query $query) {
+            $this->assertInstanceOf(Query::class, $query);
             $query->where(['title' => 'Find Something New']);
             $this->assertFalse($this->connection->inTransaction());
         }, function ($article) {
-            $this->assertInstanceOf('Cake\Datasource\EntityInterface', $article);
+            $this->assertInstanceOf(EntityInterface::class, $article);
             $this->assertFalse($this->connection->inTransaction());
             $article->title = 'Success';
         }, ['atomic' => false]);
@@ -6024,18 +6039,18 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that calling newEntity() on a table sets the right source alias
+     * Tests that calling createEntity() on a table sets the right source alias.
      *
      * @return void
      */
     public function testSetEntitySource()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $this->assertEquals('Articles', $table->newEntity()->getSource());
+        $this->assertEquals('Articles', $table->createEntity()->getSource());
 
         $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Comments');
-        $this->assertEquals('TestPlugin.Comments', $table->newEntity()->getSource());
+        $this->assertEquals('TestPlugin.Comments', $table->createEntity()->getSource());
     }
 
     /**

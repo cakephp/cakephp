@@ -1528,6 +1528,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   is persisted.
      * @param array $options The options to use when saving.
      * @return \Cake\Datasource\EntityInterface|array An entity.
+     * @throws \Cake\ORM\Exception\PersistenceFailedException
+     * @throws \InvalidArgumentException
      */
     protected function _processFindOrCreate($search, ?callable $callback = null, $options = [])
     {
@@ -1548,7 +1550,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($row !== null) {
             return $row;
         }
-        $entity = $this->newEntity();
+        $entity = $this->createEntity();
         if ($options['defaults'] && is_array($search)) {
             $accessibleFields = array_combine(array_keys($search), array_fill(0, count($search), true));
             $entity = $this->patchEntity($entity, $search, ['accessibleFields' => $accessibleFields]);
@@ -2396,6 +2398,18 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * {@inheritDoc}
      *
+     * @return \Cake\Datasource\EntityInterface
+     */
+    public function createEntity(): EntityInterface
+    {
+        $class = $this->getEntityClass();
+
+        return new $class([], ['source' => $this->getRegistryAlias()]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * By default all the associations on this table will be hydrated. You can
      * limit which associations are built, or include deeper associations
      * using the options parameter:
@@ -2447,13 +2461,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can use the `Model.beforeMarshal` event to modify request data
      * before it is converted into entities.
      */
-    public function newEntity(?array $data = null, array $options = []): EntityInterface
+    public function newEntity(array $data, array $options = []): EntityInterface
     {
-        if ($data === null) {
-            $class = $this->getEntityClass();
-
-            return new $class([], ['source' => $this->getRegistryAlias()]);
-        }
         if (!isset($options['associated'])) {
             $options['associated'] = $this->_associations->keys();
         }
