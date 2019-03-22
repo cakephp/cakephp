@@ -43,27 +43,27 @@ class MarshallerTest extends TestCase
     ];
 
     /**
-     * @var Table
+     * @var \Cake\ORM\Table
      */
     protected $articles;
 
     /**
-     * @var Table
+     * @var \Cake\ORM\Table
      */
     protected $comments;
 
     /**
-     * @var Table
+     * @var \Cake\ORM\Table
      */
     protected $users;
 
     /**
-     * @var Table
+     * @var \Cake\ORM\Table
      */
     protected $tags;
 
     /**
-     * @var Table
+     * @var \Cake\ORM\Table
      */
     protected $articleTags;
 
@@ -3104,7 +3104,7 @@ class MarshallerTest extends TestCase
         ];
 
         $marshall = new Marshaller($this->articles);
-        $entity = $this->articles->createEntity();
+        $entity = $this->articles->newEmptyEntity();
         $result = $marshall->merge($entity, $data, []);
 
         $this->assertSame($entity, $result);
@@ -3115,7 +3115,10 @@ class MarshallerTest extends TestCase
         $this->assertCount(2, $translations);
         $this->assertInstanceOf(OpenArticleEntity::class, $translations['en']);
         $this->assertInstanceOf(OpenArticleEntity::class, $translations['es']);
-        $this->assertEquals($data['_translations']['en'], $translations['en']->toArray());
+
+        /** @var \Cake\Datasource\EntityInterface $translation */
+        $translation = $translations['en'];
+        $this->assertEquals($data['_translations']['en'], $translation->toArray());
     }
 
     /**

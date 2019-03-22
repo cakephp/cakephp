@@ -170,7 +170,7 @@ interface RepositoryInterface
      *
      * @return \Cake\Datasource\EntityInterface
      */
-    public function createEntity(): EntityInterface;
+    public function newEmptyEntity(): EntityInterface;
 
     /**
      * Create a new entity + associated entities from an array.

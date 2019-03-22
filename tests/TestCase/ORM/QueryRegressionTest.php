@@ -438,7 +438,7 @@ class QueryRegressionTest extends TestCase
             return $query->contain('Authors');
         });
 
-        $article = $articles->createEntity();
+        $article = $articles->newEmptyEntity();
         $article->title = 'Foo';
         $article->body = 'Bar';
         $this->assertSame($article, $articles->save($article));
@@ -454,7 +454,7 @@ class QueryRegressionTest extends TestCase
     {
         $this->loadFixtures('Articles');
         $articles = $this->getTableLocator()->get('Articles');
-        $article = $articles->createEntity();
+        $article = $articles->newEmptyEntity();
         $article->title = new QueryExpression("SELECT 'jose'");
         $this->assertSame($article, $articles->save($article));
     }

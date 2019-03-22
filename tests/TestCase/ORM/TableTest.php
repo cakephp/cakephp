@@ -3222,7 +3222,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('TestPlugin.Authors');
 
         $existingAuthor = $table->find()->first();
-        $newAuthor = $table->createEntity();
+        $newAuthor = $table->newEmptyEntity();
 
         $this->assertEquals('TestPlugin.Authors', $existingAuthor->getSource());
         $this->assertEquals('TestPlugin.Authors', $newAuthor->getSource());
@@ -3253,7 +3253,7 @@ class TableTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->getValidator()->requirePresence('title');
 
-        $entity = $table->createEntity();
+        $entity = $table->newEmptyEntity();
         $this->assertEmpty($entity->getErrors());
     }
 
@@ -6039,18 +6039,18 @@ class TableTest extends TestCase
     }
 
     /**
-     * Tests that calling createEntity() on a table sets the right source alias.
+     * Tests that calling newEmptyEntity() on a table sets the right source alias.
      *
      * @return void
      */
     public function testSetEntitySource()
     {
         $table = $this->getTableLocator()->get('Articles');
-        $this->assertEquals('Articles', $table->createEntity()->getSource());
+        $this->assertEquals('Articles', $table->newEmptyEntity()->getSource());
 
         $this->loadPlugins(['TestPlugin']);
         $table = $this->getTableLocator()->get('TestPlugin.Comments');
-        $this->assertEquals('TestPlugin.Comments', $table->createEntity()->getSource());
+        $this->assertEquals('TestPlugin.Comments', $table->newEmptyEntity()->getSource());
     }
 
     /**

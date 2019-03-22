@@ -1342,7 +1342,7 @@ class TranslateBehaviorTest extends TestCase
             ],
         ];
 
-        $article = $table->patchEntity($table->createEntity(), $data);
+        $article = $table->patchEntity($table->newEmptyEntity(), $data);
         $result = $table->save($article);
 
         $this->assertNotFalse($result);
@@ -1586,7 +1586,7 @@ class TranslateBehaviorTest extends TestCase
         $translate = $table->behaviors()->get('Translate');
 
         $map = $translate->buildMarshalMap($table->marshaller(), [], []);
-        $entity = $table->createEntity();
+        $entity = $table->newEmptyEntity();
         $result = $map['_translations']('garbage', $entity);
         $this->assertNull($result, 'Non-array should not error out.');
         $this->assertEmpty($entity->getErrors());
@@ -1605,7 +1605,7 @@ class TranslateBehaviorTest extends TestCase
         $translate = $table->behaviors()->get('Translate');
 
         $map = $translate->buildMarshalMap($table->marshaller(), [], []);
-        $entity = $table->createEntity();
+        $entity = $table->newEmptyEntity();
         $data = [
             'en' => [
                 'title' => 'English Title',
@@ -1641,7 +1641,7 @@ class TranslateBehaviorTest extends TestCase
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
-        $entity = $table->createEntity();
+        $entity = $table->newEmptyEntity();
         $map = $translate->buildMarshalMap($table->marshaller(), [], []);
         $data = [
             'en' => [
@@ -1679,7 +1679,7 @@ class TranslateBehaviorTest extends TestCase
         ]);
         $translate = $table->behaviors()->get('Translate');
 
-        $entity = $table->createEntity();
+        $entity = $table->newEmptyEntity();
         $es = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
         $en = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
         $entity->set('_translations', [
@@ -1724,7 +1724,7 @@ class TranslateBehaviorTest extends TestCase
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
-        $entity = $table->createEntity();
+        $entity = $table->newEmptyEntity();
         $es = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
         $en = $table->newEntity(['title' => 'Old title', 'body' => 'Old body']);
         $entity->set('_translations', [

@@ -3275,7 +3275,7 @@ class FormHelperTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->getSchema()->addColumn('active', ['type' => 'boolean', 'default' => null]);
-        $article = $articles->createEntity();
+        $article = $articles->newEmptyEntity();
 
         $this->Form->create($article);
 
@@ -4368,7 +4368,7 @@ class FormHelperTest extends TestCase
             ['default' => 'default title'] + $title
         );
 
-        $entity = $Articles->createEntity();
+        $entity = $Articles->newEmptyEntity();
         $this->Form->create($entity);
 
         // Get default value from schema
@@ -4704,7 +4704,7 @@ class FormHelperTest extends TestCase
             ['default' => '1'] + $title
         );
 
-        $this->Form->create($Articles->createEntity());
+        $this->Form->create($Articles->newEmptyEntity());
 
         $result = $this->Form->radio('title', ['option A', 'option B']);
         $expected = [
@@ -5863,7 +5863,7 @@ class FormHelperTest extends TestCase
             ['type' => 'boolean', 'null' => false, 'default' => true]
         );
 
-        $this->Form->create($Articles->createEntity());
+        $this->Form->create($Articles->newEmptyEntity());
         $result = $this->Form->checkbox('published', ['hiddenField' => false]);
         $expected = ['input' => ['type' => 'checkbox', 'name' => 'published', 'value' => '1', 'checked' => 'checked']];
         $this->assertHtml($expected, $result);
@@ -8396,7 +8396,7 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withQueryParams(['category' => 'sesame-cookies']));
 
         $articles = $this->getTableLocator()->get('Articles');
-        $entity = $articles->createEntity();
+        $entity = $articles->newEmptyEntity();
         $this->Form->create($entity);
 
         $this->Form->setValueSources(['query', 'context']);

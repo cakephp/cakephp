@@ -161,7 +161,7 @@ trait TranslateStrategyTrait
                     }
                     foreach ($value as $language => $fields) {
                         if (!isset($translations[$language])) {
-                            $translations[$language] = $this->table->createEntity();
+                            $translations[$language] = $this->table->newEmptyEntity();
                         }
                         $marshaller->merge($translations[$language], $fields, $options);
                         /** @var \Cake\Datasource\EntityInterface $translation */

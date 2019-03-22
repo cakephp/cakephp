@@ -1550,7 +1550,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($row !== null) {
             return $row;
         }
-        $entity = $this->createEntity();
+        $entity = $this->newEmptyEntity();
         if ($options['defaults'] && is_array($search)) {
             $accessibleFields = array_combine(array_keys($search), array_fill(0, count($search), true));
             $entity = $this->patchEntity($entity, $search, ['accessibleFields' => $accessibleFields]);
@@ -2400,7 +2400,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return \Cake\Datasource\EntityInterface
      */
-    public function createEntity(): EntityInterface
+    public function newEmptyEntity(): EntityInterface
     {
         $class = $this->getEntityClass();
 
