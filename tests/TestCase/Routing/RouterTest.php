@@ -24,8 +24,6 @@ use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
-use stdClass;
-
 
 /**
  * RouterTest class
