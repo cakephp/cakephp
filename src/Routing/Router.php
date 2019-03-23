@@ -18,7 +18,12 @@ use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionFunction;
+use ReflectionMethod;
+use RuntimeException;
+use Throwable;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -585,8 +590,29 @@ class Router
     protected static function _applyUrlFilters($url)
     {
         $request = static::getRequest(true);
+        $e = null;
         foreach (static::$_urlFilters as $filter) {
-            $url = $filter($url, $request);
+            try {
+                $url = $filter($url, $request);
+            } catch (Exception $e) {
+                // fall through
+            } catch (Throwable $e) {
+                // fall through
+            }
+            if ($e !== null) {
+                if (is_array($filter)) {
+                    $ref = new ReflectionMethod($filter[0], $filter[1]);
+                } else {
+                    $ref = new ReflectionFunction($filter);
+                }
+                $message = sprintf(
+                    'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
+                    $ref->getFileName(),
+                    $ref->getStartLine(),
+                    $e->getMessage()
+                );
+                throw new RuntimeException($message, $e->getCode(), $e);
+            }
         }
 
         return $url;
