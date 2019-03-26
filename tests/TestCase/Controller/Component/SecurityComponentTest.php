@@ -19,6 +19,7 @@ use Cake\Controller\Controller;
 use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\Event;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
@@ -249,6 +250,34 @@ class SecurityComponentTest extends TestCase
         $this->assertFalse($this->Controller->failed);
         $this->Controller->Security->startup($event);
         $this->assertTrue($this->Controller->failed, 'Request was blackholed.');
+    }
+
+    /**
+     * test blackholeCallback returning a response
+     *
+     * @return void
+     */
+    public function testBlackholeReturnResponse()
+    {
+        $request = new ServerRequest([
+            'url' => 'posts/index',
+            'session' => $this->Security->session,
+            'method' => 'POST',
+            'params' => [
+                'controller' => 'posts',
+                'action' => 'index'
+            ],
+            'post' => [
+                'key' => 'value'
+            ]
+        ]);
+        $Controller = new \TestApp\Controller\SomePagesController($request);
+        $event = new Event('Controller.startup', $Controller);
+        $Security = new SecurityComponent($Controller->components());
+        $Security->setConfig('blackHoleCallback', 'responseGenerator');
+
+        $result = $Security->startup($event);
+        $this->assertInstanceOf(Response::class, $result);
     }
 
     /**

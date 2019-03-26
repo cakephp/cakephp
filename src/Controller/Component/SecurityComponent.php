@@ -121,10 +121,10 @@ class SecurityComponent extends Component
                 $isNotRequestAction &&
                 $this->_config['validatePost']
             ) {
-                    $this->_validatePost($controller);
+                $this->_validatePost($controller);
             }
         } catch (SecurityException $se) {
-            $this->blackHole($controller, $se->getType(), $se);
+            return $this->blackHole($controller, $se->getType(), $se);
         }
 
         $request = $this->generateToken($request);
