@@ -160,7 +160,7 @@ class CommandRunner implements EventDispatcherInterface
         list($name, $argv) = $this->longestCommandName($commands, $argv);
         $name = $this->resolveName($commands, $io, $name);
 
-        $result = Shell::CODE_ERROR;
+        $result = Command::CODE_ERROR;
         $shell = $this->getShell($io, $commands, $name);
         if ($shell instanceof Shell) {
             $result = $this->runShell($shell, $argv);
@@ -170,13 +170,13 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         if ($result === null || $result === true) {
-            return Shell::CODE_SUCCESS;
+            return Command::CODE_SUCCESS;
         }
         if (is_int($result)) {
             return $result;
         }
 
-        return Shell::CODE_ERROR;
+        return Command::CODE_ERROR;
     }
 
     /**
