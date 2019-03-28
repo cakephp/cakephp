@@ -1126,7 +1126,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function addHeaders(array $headers)
     {
-        $this->_headers = array_merge($this->_headers, $headers);
+        $this->_headers = Hash::merge($this->_headers, $headers);
 
         return $this;
     }
