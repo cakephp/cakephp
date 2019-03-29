@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\ChronosInterface;
+use Cake\Chronos\DifferenceFormatterInterface;
 use JsonSerializable;
 
 /**
@@ -206,15 +207,15 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
     /**
      * Get the difference formatter instance.
      *
-     * @return \Cake\I18n\RelativeTimeFormatter The formatter instance.
+     * @return \Cake\Chronos\DifferenceFormatterInterface The formatter instance.
      */
-    public static function getDiffFormatter(): RelativeTimeFormatter;
+    public static function getDiffFormatter(): DifferenceFormatterInterface;
 
     /**
      * Set the difference formatter instance.
      *
-     * @param \Cake\I18n\RelativeTimeFormatter $formatter The formatter instance when setting.
+     * @param \Cake\Chronos\DifferenceFormatterInterface $formatter The formatter instance when setting.
      * @return void
      */
-    public static function setDiffFormatter(RelativeTimeFormatter $formatter): void;
+    public static function setDiffFormatter(DifferenceFormatterInterface $formatter): void;
 }

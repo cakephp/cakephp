@@ -32,7 +32,7 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
         "aura/intl": "^3.0.0",
-        "cakephp/chronos": "^1.0.1",
+        "cakephp/chronos": "2.x-dev",
         "composer/ca-bundle": "^1.0",
         "psr/http-client": "^1.0",
         "psr/http-server-handler": "^1.0",

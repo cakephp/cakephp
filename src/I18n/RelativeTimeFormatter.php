@@ -15,25 +15,28 @@ declare(strict_types=1);
  */
 namespace Cake\I18n;
 
+use Cake\Chronos\ChronosInterface;
+use Cake\Chronos\DifferenceFormatterInterface;
+
 /**
  * Helper class for formatting relative dates & times.
  *
  * @internal
  */
-class RelativeTimeFormatter
+class RelativeTimeFormatter implements DifferenceFormatterInterface
 {
     /**
      * Get the difference in a human readable format.
      *
-     * @param \Cake\I18n\I18nDateTimeInterface $date The datetime to start with.
-     * @param \Cake\I18n\I18nDateTimeInterface|null $other The datetime to compare against.
-     * @param bool $absolute removes time difference modifiers ago, after, etc
-     * @return string The difference between the two days in a human readable format
+     * @param \Cake\Chronos\ChronosInterface $date The datetime to start with.
+     * @param \Cake\Chronos\ChronosInterface|null $other The datetime to compare against.
+     * @param bool $absolute Removes time difference modifiers ago, after, etc.
+     * @return string The difference between the two days in a human readable format.
      * @see \Cake\Chronos\ChronosInterface::diffForHumans
      */
     public function diffForHumans(
-        I18nDateTimeInterface $date,
-        ?I18nDateTimeInterface $other = null,
+        ChronosInterface $date,
+        ?ChronosInterface $other = null,
         bool $absolute = false
     ): string {
         $isNow = $other === null;

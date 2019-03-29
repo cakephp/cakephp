@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\Date as ChronosDate;
+use Cake\Chronos\DifferenceFormatterInterface;
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
 use RuntimeException;
@@ -241,7 +242,7 @@ trait DateFormatTrait
     /**
      * @inheritDoc
      */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->i18nFormat();
     }
@@ -414,10 +415,10 @@ trait DateFormatTrait
     /**
      * Get the difference formatter instance.
      *
-     * @return \Cake\I18n\RelativeTimeFormatter
+     * @return \Cake\Chronos\DifferenceFormatterInterface
      * @psalm-suppress InvalidReturnType
      */
-    public static function getDiffFormatter(): RelativeTimeFormatter
+    public static function getDiffFormatter(): DifferenceFormatterInterface
     {
         // Use the static property defined in chronos.
         if (static::$diffFormatter === null) {
@@ -430,10 +431,10 @@ trait DateFormatTrait
     /**
      * Set the difference formatter instance.
      *
-     * @param \Cake\I18n\RelativeTimeFormatter $formatter The formatter instance when setting.
+     * @param \Cake\Chronos\DifferenceFormatterInterface $formatter The formatter instance when setting.
      * @return void
      */
-    public static function setDiffFormatter(RelativeTimeFormatter $formatter): void
+    public static function setDiffFormatter(DifferenceFormatterInterface $formatter): void
     {
         static::$diffFormatter = $formatter;
     }
@@ -443,7 +444,7 @@ trait DateFormatTrait
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'time' => $this->toIso8601String(),
