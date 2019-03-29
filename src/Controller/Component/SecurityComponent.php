@@ -88,7 +88,7 @@ class SecurityComponent extends Component
      * Component startup. All security checking happens here.
      *
      * @param \Cake\Event\EventInterface $event An Event instance
-     * @return void
+     * @return \Cake\Http\Response|null
      */
     public function startup(EventInterface $event)
     {
@@ -114,10 +114,10 @@ class SecurityComponent extends Component
                 $isNotRequestAction &&
                 $this->_config['validatePost']
             ) {
-                    $this->_validatePost($controller);
+                $this->_validatePost($controller);
             }
         } catch (SecurityException $se) {
-            $this->blackHole($controller, $se->getType(), $se);
+            return $this->blackHole($controller, $se->getType(), $se);
         }
 
         $request = $this->generateToken($request);

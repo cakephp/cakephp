@@ -1531,23 +1531,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processFindOrCreate($search, ?callable $callback = null, $options = [])
     {
-        if (is_callable($search)) {
-            $query = $this->find();
-            $search($query);
-        } elseif (is_array($search)) {
-            $query = $this->find()->where($search);
-        } elseif ($search instanceof Query) {
-            $query = $search;
-        } else {
-            throw new InvalidArgumentException(sprintf(
-                'Search criteria must be an array, callable or Query. Got "%s"',
-                getTypeName($search)
-            ));
-        }
+        $query = $this->_getFindOrCreateQuery($search);
+
         $row = $query->first();
         if ($row !== null) {
             return $row;
         }
+
         $entity = $this->newEntity();
         if ($options['defaults'] && is_array($search)) {
             $accessibleFields = array_combine(array_keys($search), array_fill(0, count($search), true));
@@ -1570,16 +1560,26 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find existing records by.
      * @return \Cake\ORM\Query
      */
     protected function _getFindOrCreateQuery($search): Query
     {
-        if ($search instanceof Query) {
-            return $search;
+        if (is_callable($search)) {
+            $query = $this->find();
+            $search($query);
+        } elseif (is_array($search)) {
+            $query = $this->find()->where($search);
+        } elseif ($search instanceof Query) {
+            $query = $search;
+        } else {
+            throw new InvalidArgumentException(sprintf(
+                'Search criteria must be an array, callable or Query. Got "%s"',
+                getTypeName($search)
+            ));
         }
 
-        return $this->find()->where($search);
+        return $query;
     }
 
     /**

@@ -54,13 +54,15 @@ class DebugTransportTest extends TestCase
         $message->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
         $message->setSubject('Testing Message');
         $date = date(DATE_RFC2822);
-        $message->setHeaders(['Date' => $date]);
+        $message->setHeaders(['Date' => $date, 'o:tag' => ['foo', 'bar']]);
         $message->expects($this->once())->method('getBody')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
         $headers .= "To: CakePHP <cake@cakephp.org>\r\n";
         $headers .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
         $headers .= 'Date: ' . $date . "\r\n";
+        $headers .= 'o:tag: foo' . "\r\n";
+        $headers .= 'o:tag: bar' . "\r\n";
         $headers .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
         $headers .= "Subject: Testing Message\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
