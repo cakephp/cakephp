@@ -2085,6 +2085,62 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test validation errors with error options
+ *
+ * @return void
+ */
+	public function testPasswordValidationWithOptions() {
+		$Contact = ClassRegistry::getObject('Contact');
+		$Contact->validationErrors['password'] = array('Please provide a password');
+
+		$result = $this->Form->input('Contact.password', array(
+			'error' => array(
+				'attributes' => array('class' => 'special-error-class'),
+			)
+		));
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'special-error-class')),
+			'Please provide a password',
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$Contact->validationErrors['password'] = array('Please provide a password<br>otherwise you will not be able to login');
+		$result = $this->Form->input('Contact.password', array(
+			'error' => array(
+				'attributes' => array(
+					'class' => 'special-error-class',
+					'escape' => false,
+				)
+			)
+		));
+		$expected = array(
+			'div' => array('class' => 'input password error'),
+			'label' => array('for' => 'ContactPassword'),
+			'Password',
+			'/label',
+			'input' => array(
+				'type' => 'password', 'name' => 'data[Contact][password]',
+				'id' => 'ContactPassword', 'class' => 'form-error'
+			),
+			array('div' => array('class' => 'special-error-class')),
+			'Please provide a password<br>otherwise you will not be able to login',
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test validation errors, when validation message is an empty string.
  *
  * @return void
