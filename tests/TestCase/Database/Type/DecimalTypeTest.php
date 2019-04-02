@@ -131,13 +131,16 @@ class DecimalTypeTest extends TestCase
         $this->assertSame('0.000000', $result);
 
         $result = $this->type->toDatabase(2, $this->driver);
-        $this->assertSame('2.000000', $result);
+        $this->assertSame('2', $result);
 
         $result = $this->type->toDatabase(2.99, $this->driver);
-        $this->assertSame('2.990000', $result);
+        $this->assertSame('2.99', $result);
 
         $result = $this->type->toDatabase('2.51', $this->driver);
         $this->assertSame('2.51', $result);
+
+        $result = $this->type->toDatabase(0.12345678, $this->driver);
+        $this->assertSame('0.12345678', $result);
     }
 
     /**
