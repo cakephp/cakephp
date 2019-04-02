@@ -61,8 +61,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
                 getTypeName($value)
             ));
         }
-        if (is_string($value) && is_numeric($value)) {
-            return $value;
+        if (is_numeric($value)) {
+            return strval($value);
         }
 
         return sprintf('%F', $value);
