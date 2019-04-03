@@ -1,0 +1,99 @@
+{
+    "name": "cakephp/cakephp",
+    "description": "The CakePHP framework",
+    "type": "library",
+    "keywords": [
+        "framework",
+        "mvc",
+        "rapid-development",
+        "conventions over configuration",
+        "dry",
+        "orm",
+        "form",
+        "validation",
+        "psr-7"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/cakephp/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/cakephp"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "ext-intl": "*",
+        "ext-mbstring": "*",
+        "cakephp/chronos": "^1.0.0",
+        "aura/intl": "^3.0.0",
+        "psr/log": "^1.0.0",
+        "zendframework/zend-diactoros": "^1.4.0"
+    },
+    "suggest": {
+        "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
+        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7|^6.0",
+        "cakephp/cakephp-codesniffer": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\": "src"
+        },
+        "files": [
+            "src/Core/functions.php",
+            "src/Collection/functions.php",
+            "src/I18n/functions.php",
+            "src/Utility/bootstrap.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cake\\PHPStan\\": "tests/PHPStan",
+            "Cake\\Test\\": "tests",
+            "TestApp\\": "tests/test_app/TestApp",
+            "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src",
+            "TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests",
+            "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src",
+            "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src",
+            "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests",
+            "PluginJs\\": "tests/test_app/Plugin/PluginJs/src"
+        }
+    },
+    "replace": {
+        "cakephp/cache": "self.version",
+        "cakephp/collection": "self.version",
+        "cakephp/core": "self.version",
+        "cakephp/datasource": "self.version",
+        "cakephp/database": "self.version",
+        "cakephp/event": "self.version",
+        "cakephp/filesystem": "self.version",
+        "cakephp/form": "self.version",
+        "cakephp/i18n": "self.version",
+        "cakephp/log": "self.version",
+        "cakephp/orm": "self.version",
+        "cakephp/utility": "self.version",
+        "cakephp/validation": "self.version"
+    },
+    "conflict": {
+        "phpunit/phpunit": "<5.7"
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs --colors -p ./src ./tests",
+        "cs-fix": "phpcbf --colors ./src ./tests",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover=clover.xml"
+    }
+}

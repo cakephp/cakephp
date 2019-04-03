@@ -1,0 +1,40 @@
+{
+    "name": "cakephp/database",
+    "description": "Flexible and powerful Database abstraction library with a familiar PDO-like API",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "database",
+        "abstraction",
+        "database abstraction",
+        "pdo"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/database/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/database"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "cakephp/core": "^3.0.0",
+        "cakephp/datasource": "^3.0.0"
+    },
+    "suggest": {
+        "cakephp/log": "Require this if you want to use the built-in query logger",
+        "cakephp/cache": "Require this if you decide to use the schema caching feature"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Database\\": "."
+        }
+    }
+}

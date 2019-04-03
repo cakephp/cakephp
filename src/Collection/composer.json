@@ -1,0 +1,36 @@
+{
+    "name": "cakephp/collection",
+    "description": "Work easily with arrays and iterators by having a battery of utility traversal methods",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "collections",
+        "iterators",
+        "arrays"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/collection/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/collection"
+    },
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Collection\\": "."
+        },
+        "files": [
+            "functions.php"
+        ]
+    }
+}

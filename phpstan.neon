@@ -1,0 +1,36 @@
+parameters:
+    autoload_files:
+        - %rootDir%/../../../tests/bootstrap.php
+    ignoreErrors:
+        - '#Function wincache_ucache_[a-zA-Z0-9_]+ not found#'
+        - '#Function xcache_[a-zA-Z0-9_]+ not found#'
+        - '#Cake\\Database\\Type\\[a-zA-Z0-9_]+Type::__construct\(\) does not call parent constructor from Cake\\Database\\Type#'
+        - '#Constructor of class Cake\\[a-zA-Z0-9_\\]+ has an unused parameter#'
+        - '#Access to undefined constant Memcached::OPT_CLIENT_MODE#'
+        - '#Access to undefined constant Memcached::DYNAMIC_CLIENT_MODE#'
+        - '#Access to undefined constant PDO::SQLSRV_ATTR_ENCODING#'
+        - '#Access to undefined constant PDO::SQLSRV_ENCODING_BINARY#'
+        - '#Constant XC_TYPE_VAR not found#'
+        - '#Class PHPUnit_Runner_Version not found and could not be autoloaded#'
+        - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
+        - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
+        - '#Call to an undefined method Psr\\Http\\Message\\ResponseInterface::getCookies\(\)#'
+        - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$webroot#'
+        - '#Access to an undefined property Psr\\Http\\Message\\UriInterface::\$base#'
+        - '#Call to an undefined method Cake\\Collection\\Iterator\\ZipIterator::getInnerIterator\(\)#'
+        - '#Call to an undefined method Cake\\ORM\\ResultSet::getInnerIterator\(\)#'
+        - '#Result of method Cake\\Http\\Response::send\(\) \(void\) is used#'
+        - '#Method Cake\\View\\Form\\ContextInterface::val\(\) invoked with 2 parameters, 1 required#'
+        - '#Access to an undefined property Exception::\$queryString#'
+        - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
+        - '#Method Redis::#'
+    earlyTerminatingMethodCalls:
+        Cake\Shell\Shell:
+            - abort
+
+services:
+    -
+        class: Cake\PHPStan\AssociationTableMixinClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+            - phpstan.broker.propertiesClassReflectionExtension

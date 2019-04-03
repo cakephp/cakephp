@@ -1,0 +1,9 @@
+<?php
+// Test file for testing config file without .php extension.
+$config = array(
+	'Deep' => array(
+		'Third' => array(
+			'ThirdDeepest' => 'buried3'
+		)
+	)
+);

@@ -1,0 +1,33 @@
+{
+    "name": "cakephp/event",
+    "description": "CakePHP event dispatcher library that helps implementing the observer pattern",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "event",
+        "dispatcher",
+        "observer pattern"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/event/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/event"
+    },
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Event\\": "."
+        }
+    }
+}

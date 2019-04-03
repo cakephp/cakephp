@@ -1,0 +1,1 @@
+test plugin default layout

@@ -1,0 +1,38 @@
+#!/bin/sh
+FILES=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+PROJECT=`php -r "echo dirname(dirname(realpath('$0')));"`
+
+# Determine if a file list is passed
+if [ "$#" -eq 1 ]
+then
+    oIFS=$IFS
+    IFS='
+    '
+    SFILES="$1"
+    IFS=$oIFS
+fi
+SFILES=${SFILES:-$FILES}
+
+echo "Checking PHP Lint..."
+for FILE in $SFILES
+do
+    php -l -d display_errors=0 $PROJECT/$FILE
+    if [ $? != 0 ]
+    then
+        echo "Fix the error before commit."
+        exit 1
+    fi
+    FILES="$FILES $PROJECT/$FILE"
+done
+
+if [ "$SFILES" != "" ]
+then
+    echo "Running PHPCS"
+    ./vendor/bin/phpcs --standard=vendor/cakephp/cakephp-codesniffer/CakePHP $SFILES
+    if [ $? != 0 ]
+    then
+        echo "PHPCS Errors found; commit aborted."
+        exit 1
+    fi
+fi
+exit $?

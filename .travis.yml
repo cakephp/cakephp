@@ -1,0 +1,84 @@
+language: php
+
+php:
+  - 7.0
+  - 5.6
+  - 7.1
+  - 7.2
+
+dist: trusty
+
+env:
+  matrix:
+    - DB=mysql db_dsn='mysql://root@127.0.0.1/cakephp_test'
+    - DB=pgsql db_dsn='postgres://postgres@127.0.0.1/cakephp_test'
+    - DB=sqlite db_dsn='sqlite:///:memory:'
+  global:
+    - DEFAULT=1
+
+services:
+  - memcached
+  - redis-server
+  - postgresql
+  - mysql
+
+addons:
+  postgresql: "9.4"
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
+matrix:
+  fast_finish: true
+
+  allow_failures:
+    - php: 7.2
+
+  include:
+    - php: 7.0
+      env: PHPCS=1 DEFAULT=0
+
+    - php: 7.0
+      env: PHPSTAN=1 DEFAULT=0
+
+    - php: 7.1
+      env: PHPSTAN=1 DEFAULT=0
+
+before_install:
+  - if [ $TRAVIS_PHP_VERSION != 7.0 && $TRAVIS_PHP_VERSION != 'nightly' ]; then phpenv config-rm xdebug.ini; fi
+
+  - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test;'; fi
+  - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test2;'; fi
+  - if [ $DB = 'mysql' ]; then mysql -u root -e 'CREATE DATABASE cakephp_test3;'; fi
+
+  - if [ $DB = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi
+  - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi
+  - if [ $DB = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi
+
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then pecl channel-update pecl.php.net; fi;
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'extension = redis.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ $DEFAULT = 1 || $PHPSTAN = 1 ]] ; then echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install channel://pecl.php.net/apcu-5.1.5 || true; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" && $DB = 'mysql' ]] ; then wget http://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.gz; tar xf xcache-3.2.0.tar.gz; pushd xcache-3.2.0; phpize; ./configure; make; NO_INTERACTION=1 make test; make install; popd;printf "extension=xcache.so\nxcache.size=64M\nxcache.var_size=16M\nxcache.test=On" > ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi
+  - sudo locale-gen da_DK
+
+before_script:
+  - composer install --prefer-dist --no-interaction
+
+script:
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then export CODECOVERAGE=1; vendor/bin/phpunit --coverage-clover=clover.xml; fi
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION != 7.0 ]]; then vendor/bin/phpunit; fi
+
+  - if [[ $PHPCS = 1 ]]; then composer cs-check; fi
+  - if [[ $PHPSTAN = 1 ]]; then composer require --dev phpstan/phpstan:^0.8 && vendor/bin/phpstan analyse -c phpstan.neon -l 2 src; fi
+
+after_success:
+  - if [[ $DEFAULT = 1 && $TRAVIS_PHP_VERSION = 7.0 ]]; then bash <(curl -s https://codecov.io/bash); fi
+
+notifications:
+  email: false

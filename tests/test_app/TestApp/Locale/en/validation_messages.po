@@ -1,0 +1,5 @@
+msgid "Validation failed: %s"
+msgstr "Translated validation failed: %s"
+
+msgid "arg1"
+msgstr "Translated arg1"

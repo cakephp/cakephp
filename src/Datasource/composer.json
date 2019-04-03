@@ -1,0 +1,39 @@
+{
+    "name": "cakephp/datasource",
+    "description": "Provides connection managing and traits for Entities and Queries that can be reused for different datastores",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "datasource",
+        "connection management",
+        "entity",
+        "query"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/datasource/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/datasource"
+    },
+    "require": {
+        "php": ">=5.6.0",
+        "cakephp/core": "^3.0.0"
+    },
+    "suggest": {
+        "cakephp/utility": "Require this if you decide to use EntityTrait",
+        "cakephp/collection": "Require this if you decide to use ResultSetInterface"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Datasource\\": "."
+        }
+    }
+}
