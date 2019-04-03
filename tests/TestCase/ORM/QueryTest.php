@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Collection\Collection;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -3180,6 +3181,8 @@ class QueryTest extends TestCase
      */
     public function testSelectLargeNumbers()
     {
+        $this->skipIf($this->connection->getDriver() instanceof Sqlite);
+
         $this->loadFixtures('Datatypes');
 
         $big = '1234567890123456789.2';
