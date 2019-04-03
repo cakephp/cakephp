@@ -26,7 +26,7 @@ class DatatypesFixture extends TestFixture
      */
     public $fields = [
         'id' => ['type' => 'biginteger'],
-        'cost' => ['type' => 'decimal', 'length' => 20, 'precision' => 0, 'null' => true],
+        'cost' => ['type' => 'decimal', 'length' => 20, 'precision' => 1, 'null' => true],
         'floaty' => ['type' => 'float', 'null' => true],
         'small' => ['type' => 'smallinteger', 'null' => true],
         'tiny' => ['type' => 'tinyinteger', 'null' => true],

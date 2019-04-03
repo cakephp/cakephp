@@ -219,9 +219,9 @@ class TypeFactoryTest extends TestCase
         $type = TypeFactory::build('decimal');
         $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
 
-        $this->assertSame(3.14159, $type->toPHP('3.14159', $driver));
-        $this->assertSame(3.14159, $type->toPHP(3.14159, $driver));
-        $this->assertSame(3.0, $type->toPHP(3, $driver));
+        $this->assertSame('3.14159', $type->toPHP('3.14159', $driver));
+        $this->assertSame('3.14159', $type->toPHP(3.14159, $driver));
+        $this->assertSame('3', $type->toPHP(3, $driver));
     }
 
     /**

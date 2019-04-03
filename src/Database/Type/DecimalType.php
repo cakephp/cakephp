@@ -45,50 +45,55 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * Convert integer data into the database format.
      *
-     * @param string|int|float $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return string|null
+     * @return mixed
      * @throws \InvalidArgumentException
      */
-    public function toDatabase($value, Driver $driver): ?string
+    public function toDatabase($value, Driver $driver)
     {
         if ($value === null || $value === '') {
             return null;
         }
-        if (!is_scalar($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to a decimal',
-                getTypeName($value)
-            ));
-        }
+
         if (is_numeric($value)) {
+            return $value;
+        }
+
+        if (is_object($value)
+            && method_exists($value, '__toString')
+            && is_numeric(strval($value))
+        ) {
             return strval($value);
         }
 
-        return sprintf('%F', $value);
+        throw new InvalidArgumentException(sprintf(
+            'Cannot convert value of type `%s` to a decimal',
+            getTypeName($value)
+        ));
     }
 
     /**
      * Convert float values to PHP floats
      *
-     * @param null|string|resource $value The value to convert.
+     * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
-     * @return float|null
+     * @return string|null
      * @throws \Cake\Core\Exception\Exception
      */
-    public function toPHP($value, Driver $driver): ?float
+    public function toPHP($value, Driver $driver): ?string
     {
         if ($value === null) {
-            return $value;
+            return null;
         }
 
-        return (float)$value;
+        return (string)$value;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return array
+     * @return string[]
      */
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
@@ -97,7 +102,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
                 continue;
             }
 
-            $values[$field] = (float)$values[$field];
+            $values[$field] = (string)$values[$field];
         }
 
         return $values;
@@ -119,9 +124,9 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * Marshalls request data into PHP floats.
      *
      * @param mixed $value The value to convert.
-     * @return mixed Converted value.
+     * @return string|null Converted value.
      */
-    public function marshal($value)
+    public function marshal($value): ?string
     {
         if ($value === null || $value === '') {
             return null;
@@ -130,7 +135,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return $this->_parseValue($value);
         }
         if (is_numeric($value)) {
-            return (float)$value;
+            return (string)$value;
         }
         if (is_string($value) && preg_match('/^[0-9,. ]+$/', $value)) {
             return $value;
@@ -170,13 +175,13 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * aware parser.
      *
      * @param string $value The value to parse and convert to an float.
-     * @return float
+     * @return string
      */
-    protected function _parseValue(string $value): float
+    protected function _parseValue(string $value): string
     {
         /* @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
-        return $class::parseFloat($value);
+        return (string)$class::parseFloat($value);
     }
 }

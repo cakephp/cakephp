@@ -3182,7 +3182,7 @@ class QueryTest extends TestCase
     {
         $this->loadFixtures('Datatypes');
 
-        $big = 1234567890123456789.2;
+        $big = '1234567890123456789.2';
         $table = $this->getTableLocator()->get('Datatypes');
         $entity = $table->newEntity([]);
         $entity->cost = $big;
@@ -3190,11 +3190,13 @@ class QueryTest extends TestCase
         $entity->small = 10;
 
         $table->save($entity);
-        $out = $table->find()->where([
-            'cost' => $big,
-        ])->first();
+        $out = $table->find()
+            ->where([
+                'cost' => $big,
+            ])
+            ->first();
         $this->assertNotEmpty($out, 'Should get a record');
-        $this->assertSame(sprintf('%F', $big), sprintf('%F', $out->cost));
+        $this->assertSame($big, $out->cost);
     }
 
     /**

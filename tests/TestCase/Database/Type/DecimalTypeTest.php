@@ -84,10 +84,10 @@ class DecimalTypeTest extends TestCase
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
         $result = $this->type->toPHP('2', $this->driver);
-        $this->assertSame(2.0, $result);
+        $this->assertSame('2', $result);
 
         $result = $this->type->toPHP('15.3', $this->driver);
-        $this->assertSame(15.3, $result);
+        $this->assertSame('15.3', $result);
     }
 
     /**
@@ -128,20 +128,23 @@ class DecimalTypeTest extends TestCase
         $result = $this->type->toDatabase(null, $this->driver);
         $this->assertNull($result);
 
-        $result = $this->type->toDatabase('some data', $this->driver);
-        $this->assertSame('0.000000', $result);
-
         $result = $this->type->toDatabase(2, $this->driver);
-        $this->assertSame('2', $result);
+        $this->assertSame(2, $result);
 
         $result = $this->type->toDatabase(2.99, $this->driver);
-        $this->assertSame('2.99', $result);
+        $this->assertSame(2.99, $result);
 
         $result = $this->type->toDatabase('2.51', $this->driver);
         $this->assertSame('2.51', $result);
 
-        $result = $this->type->toDatabase(0.12345678, $this->driver);
-        $this->assertSame('0.12345678', $result);
+        $result = $this->type->toDatabase(0.123456789, $this->driver);
+        $this->assertSame(0.123456789, $result);
+
+        $result = $this->type->toDatabase('1234567890123456789.2', $this->driver);
+        $this->assertSame('1234567890123456789.2', $result);
+
+        $result = $this->type->toDatabase(1234567890123456789.2, $this->driver);
+        $this->assertSame('1.2345678901235E+18', (string)$result);
     }
 
     /**
@@ -153,6 +156,17 @@ class DecimalTypeTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase(['3', '4'], $this->driver);
+    }
+
+    /**
+     * Non numeric strings are invalid.
+     *
+     * @return void
+     */
+    public function testToDatabaseInvalid2()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->type->toDatabase('some data', $this->driver);
     }
 
     /**
@@ -169,7 +183,7 @@ class DecimalTypeTest extends TestCase
         $this->assertNull($result);
 
         $result = $this->type->marshal('2.51');
-        $this->assertSame(2.51, $result);
+        $this->assertSame('2.51', $result);
 
         // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
         $result = $this->type->marshal('1 230,73');
@@ -180,6 +194,12 @@ class DecimalTypeTest extends TestCase
 
         $result = $this->type->marshal(['3', '4']);
         $this->assertNull($result);
+
+        // This test is to indicate the problem that will occur if you use
+        // float/double values which get converted to scientific notation by PHP.
+        // To avoid this problem always using strings to indicate decimals values.
+        $result = $this->type->marshal(1234567890123456789.2);
+        $this->assertSame('1.2345678901235E+18', $result);
     }
 
     /**
@@ -218,7 +238,7 @@ class DecimalTypeTest extends TestCase
         I18n::setLocale('da_DK');
 
         $this->type->useLocaleParser();
-        $expected = 47500.0;
+        $expected = '47500';
         $result = $this->type->marshal('47.500');
         $this->assertSame($expected, $result);
     }
