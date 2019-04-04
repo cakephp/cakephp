@@ -195,6 +195,9 @@ class DecimalTypeTest extends TestCase
         $result = $this->type->marshal(['3', '4']);
         $this->assertNull($result);
 
+        $result = $this->type->marshal('0.1234567890123456789');
+        $this->assertSame('0.1234567890123456789', $result);
+
         // This test is to indicate the problem that will occur if you use
         // float/double values which get converted to scientific notation by PHP.
         // To avoid this problem always using strings to indicate decimals values.

@@ -3181,6 +3181,7 @@ class QueryTest extends TestCase
      */
     public function testSelectLargeNumbers()
     {
+        // Sqlite only supports maximum 16 digits for decimals.
         $this->skipIf($this->connection->getDriver() instanceof Sqlite);
 
         $this->loadFixtures('Datatypes');
@@ -3200,6 +3201,31 @@ class QueryTest extends TestCase
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
         $this->assertSame($big, $out->cost);
+
+        $small = '0.1234567890123456789';
+        $entity = $table->newEntity(['fraction' => $small]);
+
+        $table->save($entity);
+        $out = $table->find()
+            ->where([
+                'fraction' => $small,
+            ])
+            ->first();
+        $this->assertNotEmpty($out, 'Should get a record');
+        $this->assertSame($small, $out->fraction);
+
+        $small = 0.1234567890123456789;
+        $entity = $table->newEntity(['fraction' => $small]);
+
+        $table->save($entity);
+        $out = $table->find()
+            ->where([
+                'fraction' => $small,
+            ])
+            ->first();
+        $this->assertNotEmpty($out, 'Should get a record');
+        // There will be loss of precision if too large/small value is set as float instead of string.
+        $this->assertSame('0.1234567890123500000', $out->fraction);
     }
 
     /**
