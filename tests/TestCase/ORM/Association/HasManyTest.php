@@ -24,7 +24,6 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Hash;
 
 /**
  * Tests HasMany class
@@ -1144,7 +1143,7 @@ class HasManyTest extends TestCase
 
         $entity = $authors->save($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
-        $this->assertEquals($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
         $articleId = $entity->articles[0]->id;
         $entity->articles = [
@@ -1152,9 +1151,9 @@ class HasManyTest extends TestCase
             'two' => $entity->articles[2],
         ];
 
-        $authors->save($entity, ['associated' => ['Articles']]);
+        $authors->saveOrFail($entity, ['associated' => ['Articles']]);
 
-        $this->assertEquals($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertSame($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
         $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
     }
 
