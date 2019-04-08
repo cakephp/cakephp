@@ -21,6 +21,7 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 
 /**
@@ -50,6 +51,17 @@ class CommandTest extends TestCase
         $command = new Command();
         $command->loadModel('Comments');
         $this->assertInstanceOf(Table::class, $command->Comments);
+    }
+
+    /**
+     * test loadModel is configured properly
+     *
+     * @return void
+     */
+    public function testConstructorAutoLoadModel()
+    {
+        $command = new AutoLoadModelCommand();
+        $this->assertInstanceOf(Table::class, $command->Posts);
     }
 
     /**
