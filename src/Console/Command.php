@@ -63,6 +63,10 @@ class Command
         $this->modelFactory('Table', function ($alias) {
             return $this->getTableLocator()->get($alias);
         });
+
+        if (isset($this->modelClass)) {
+            $this->loadModel();
+        }
     }
 
     /**
