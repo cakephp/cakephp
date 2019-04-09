@@ -1141,7 +1141,7 @@ class HasManyTest extends TestCase
             ]
         ], ['associated' => ['Articles']]);
 
-        $entity = $authors->save($entity, ['associated' => ['Articles']]);
+        $entity = $authors->saveOrFail($entity, ['associated' => ['Articles']]);
         $sizeArticles = count($entity->articles);
         $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
 
