@@ -44,7 +44,7 @@ class TableHelper extends Helper
         $widths = [];
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
-                $columnLength = mb_strwidth((string)$v);
+                $columnLength = $this->_cellWidth($v);
                 if ($columnLength >= ($widths[$k] ?? 0)) {
                     $widths[$k] = $columnLength;
                 }
@@ -52,6 +52,28 @@ class TableHelper extends Helper
         }
 
         return $widths;
+    }
+
+    /**
+     * Get the width of a cell exclusive of style tags.
+     *
+     * @param string|null $text The text to calculate a width for.
+     * @return int The width of the textual content in visible characters.
+     */
+    protected function _cellWidth(?string $text): int
+    {
+        if ($text === null) {
+            return 0;
+        }
+
+        if (strpos($text, '<') === false && strpos($text, '>') === false) {
+            return mb_strwidth($text);
+        }
+        $styles = array_keys($this->_io->styles());
+        $tags = implode('|', $styles);
+        $text = preg_replace('#</?(?:' . $tags . ')>#', '', $text);
+
+        return mb_strwidth($text);
     }
 
     /**
@@ -86,7 +108,7 @@ class TableHelper extends Helper
 
         $out = '';
         foreach (array_values($row) as $i => $column) {
-            $pad = $widths[$i] - mb_strwidth((string)$column);
+            $pad = $widths[$i] - $this->_cellWidth($column);
             if (!empty($options['style'])) {
                 $column = $this->_addStyle($column, $options['style']);
             }

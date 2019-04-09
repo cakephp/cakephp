@@ -197,7 +197,7 @@ abstract class TestCase extends BaseTestCase
      * Useful to test how plugins being loaded/not loaded interact with other
      * elements in CakePHP or applications.
      *
-     * @param array $plugins list of Plugins to load
+     * @param array $plugins List of Plugins to load.
      * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins(array $plugins = []): BaseApplication
@@ -208,11 +208,11 @@ abstract class TestCase extends BaseTestCase
             ['']
         );
 
-        foreach ($plugins as $k => $opts) {
-            if (is_array($opts)) {
-                $app->addPlugin($k, $opts);
+        foreach ($plugins as $pluginName => $config) {
+            if (is_array($config)) {
+                $app->addPlugin($pluginName, $config);
             } else {
-                $app->addPlugin($opts);
+                $app->addPlugin($config);
             }
         }
         $app->pluginBootstrap();

@@ -206,15 +206,15 @@ trait EmailTrait
     }
 
     /**
-     * Asserts an email contains expected text contents
+     * Asserts an email contains an expected text content
      *
-     * @param string $contents Contents
-     * @param string $message Message
+     * @param string $contents Expected text.
+     * @param string $message Message to display if assertion fails.
      * @return void
      */
     public function assertMailContainsText(string $contents, string $message = ''): void
     {
-        $this->assertThat($contents, new MailContainsText(), $message);
+        $this->assertThat($expectedText, new MailContainsText(), $message);
     }
 
     /**

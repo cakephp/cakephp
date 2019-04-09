@@ -469,7 +469,7 @@ class HasMany extends Association
                 return !in_array(null, $v, true);
             }
         )
-        ->toArray();
+        ->toList();
 
         $conditions = $foreignKeyReference;
 

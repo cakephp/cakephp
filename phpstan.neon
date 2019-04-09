@@ -21,6 +21,8 @@ parameters:
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
+        - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
+        - '#Call to an undefined method DOMNode::setAttribute\(\)#'
         - '#Binary operation "\+" between array|false and array results in an error#'
         - '#Static property Cake\\Chronos\\(Date|Chronos|MutableDate|MutableDateTime)::\$diffFormatter \(Cake\\Chronos\\DifferenceFormatter\) does not accept Cake\\I18n\\RelativeTimeFormatter#'
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
