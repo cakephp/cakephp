@@ -1123,6 +1123,42 @@ class HasManyTest extends TestCase
 
     /**
      * Test that the associated entities are unlinked and deleted when they are dependent
+     * when associated entities array is indexed by string keys
+     *
+     * @return void
+     */
+    public function testSaveReplaceSaveStrategyDependentWithStringKeys()
+    {
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
+
+        $entity = $authors->newEntity([
+            'name' => 'mylux',
+            'articles' => [
+                ['title' => 'One Random Post', 'body' => 'The cake is not a lie'],
+                ['title' => 'Another Random Post', 'body' => 'The cake is nice'],
+                ['title' => 'One more random post', 'body' => 'The cake is forever']
+            ]
+        ], ['associated' => ['Articles']]);
+
+        $entity = $authors->saveOrFail($entity, ['associated' => ['Articles']]);
+        $sizeArticles = count($entity->articles);
+        $this->assertSame($sizeArticles, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+
+        $articleId = $entity->articles[0]->id;
+        $entity->articles = [
+            'one' => $entity->articles[1],
+            'two' => $entity->articles[2],
+        ];
+
+        $authors->saveOrFail($entity, ['associated' => ['Articles']]);
+
+        $this->assertSame($sizeArticles - 1, $authors->Articles->find('all')->where(['author_id' => $entity['id']])->count());
+        $this->assertFalse($authors->Articles->exists(['id' => $articleId]));
+    }
+
+    /**
+     * Test that the associated entities are unlinked and deleted when they are dependent
      *
      * In the future this should change and apply the finder.
      *
