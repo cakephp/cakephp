@@ -55,3 +55,8 @@ phpunit.xml.dist export-ignore
 tests/test_app export-ignore
 tests/TestCase export-ignore
 .github export-ignore
+.mailmap export-ignore
+.varci.yml export-ignore
+phpcs.xml.dist export-ignore
+phpstan.neon export-ignore
+contrib export-ignore
