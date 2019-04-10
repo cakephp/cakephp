@@ -52,7 +52,7 @@ trait CollectionTrait
      * @param mixed ...$args Constructor arguments.
      * @return \Cake\Collection\CollectionInterface
      */
-    protected function newCollection(...$args)
+    protected function newCollection(...$args): CollectionInterface
     {
         return new Collection(...$args);
     }
@@ -942,7 +942,9 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
+            // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterFirst
             for ($changeIndex = $lastIndex;
+                // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterSecond
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;
                 $changeIndex--) {
                 $currentIndexes[$changeIndex] = 0;
