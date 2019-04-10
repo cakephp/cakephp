@@ -170,7 +170,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      * @param bool $range Range.
      * @return string[]|int 1, 2, 3, or 4 quarter of year, or array if $range true
      */
-    public function toQuarter($range = false)
+    public function toQuarter(bool $range = false)
     {
         $quarter = (int)ceil($this->format('m') / 3);
         if ($range === false) {
@@ -240,6 +240,7 @@ class Time extends MutableDateTime implements I18nDateTimeInterface
      */
     public function timeAgoInWords(array $options = []): string
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return static::getDiffFormatter()->timeAgoInWords($this, $options);
     }
 
