@@ -942,7 +942,9 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
+            // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterFirst
             for ($changeIndex = $lastIndex;
+                // phpcs:ignore Squiz.ControlStructures.ForLoopDeclaration.SpacingAfterSecond
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;
                 $changeIndex--) {
                 $currentIndexes[$changeIndex] = 0;
