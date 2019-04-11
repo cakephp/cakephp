@@ -798,30 +798,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Ensure that allowEmptyString() works with deprecated arguments
-     *
-     * @return void
-     */
-    public function testAllowEmptyStringDeprecatedArguments()
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator) {
-            $validator->allowEmptyString('title', 'update', 'message');
-        });
-        $this->assertFalse($validator->isEmptyAllowed('title', true));
-        $this->assertTrue($validator->isEmptyAllowed('title', false));
-
-        $data = [
-            'title' => null,
-        ];
-        $expected = [
-            'title' => ['_empty' => 'message'],
-        ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
-    }
-
-    /**
      * Tests the notEmptyString method
      *
      * @return void
@@ -971,30 +947,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * Test allowEmptyArray with update mode
-     *
-     * @return void
-     */
-    public function testAllowEmptyArrayUpdateDeprecatedOrder()
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator) {
-            $validator->allowEmptyArray('items', 'update', 'message');
-        });
-        $this->assertFalse($validator->isEmptyAllowed('items', true));
-        $this->assertTrue($validator->isEmptyAllowed('items', false));
-
-        $data = [
-            'items' => null,
-        ];
-        $expected = [
-            'items' => ['_empty' => 'message'],
-        ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
-    }
-
-    /**
      * Tests the notEmptyArray method
      *
      * @return void
@@ -1091,30 +1043,6 @@ class ValidatorTest extends TestCase
 
         $validator = new Validator();
         $validator->allowEmptyFile('photo', 'message', 'update');
-        $this->assertFalse($validator->isEmptyAllowed('photo', true));
-        $this->assertTrue($validator->isEmptyAllowed('photo', false));
-
-        $data = [
-            'photo' => null,
-        ];
-        $expected = [
-            'photo' => ['_empty' => 'message'],
-        ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
-    }
-
-    /**
-     * Test deprecated argument order for allowEmptyFile
-     *
-     * @return void
-     */
-    public function testAllowEmptyFileDeprecated()
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator) {
-            $validator->allowEmptyFile('photo', 'update', 'message');
-        });
         $this->assertFalse($validator->isEmptyAllowed('photo', true));
         $this->assertTrue($validator->isEmptyAllowed('photo', false));
 
@@ -1258,30 +1186,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * test allowEmptyDate() with an update condition
-     *
-     * @return void
-     */
-    public function testAllowEmptyDateUpdateDeprecatedArguments()
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator) {
-            $validator->allowEmptyArray('date', 'update', 'be valid');
-        });
-        $this->assertFalse($validator->isEmptyAllowed('date', true));
-        $this->assertTrue($validator->isEmptyAllowed('date', false));
-
-        $data = [
-            'date' => null,
-        ];
-        $expected = [
-            'date' => ['_empty' => 'be valid'],
-        ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
-    }
-
-    /**
      * Tests the notEmptyDate method
      *
      * @return void
@@ -1395,30 +1299,6 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->allowEmptyTime('time', 'valid time', 'update');
-        $this->assertFalse($validator->isEmptyAllowed('time', true));
-        $this->assertTrue($validator->isEmptyAllowed('time', false));
-
-        $data = [
-            'time' => null,
-        ];
-        $expected = [
-            'time' => ['_empty' => 'valid time'],
-        ];
-        $this->assertSame($expected, $validator->errors($data, true));
-        $this->assertEmpty($validator->errors($data, false));
-    }
-
-    /**
-     * test allowEmptyTime with deprecated argument order
-     *
-     * @return void
-     */
-    public function testAllowEmptyTimeConditionDeprecated()
-    {
-        $validator = new Validator();
-        $this->deprecated(function () use ($validator) {
-            $validator->allowEmptyTime('time', 'update', 'valid time');
-        });
         $this->assertFalse($validator->isEmptyAllowed('time', true));
         $this->assertTrue($validator->isEmptyAllowed('time', false));
 

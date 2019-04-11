@@ -834,7 +834,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function addHeaders(array $headers)
     {
-        $this->headers = array_merge($this->headers, $headers);
+        $this->headers = Hash::merge($this->headers, $headers);
 
         return $this;
     }

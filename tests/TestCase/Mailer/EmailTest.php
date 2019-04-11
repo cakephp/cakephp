@@ -734,6 +734,11 @@ class EmailTest extends TestCase
 
         $result = $this->Email->setHeaders([]);
         $this->assertInstanceOf('Cake\Mailer\Email', $result);
+
+        $this->Email->setHeaders(['o:tag' => ['foo']]);
+        $this->Email->addHeaders(['o:tag' => ['bar']]);
+        $result = $this->Email->getHeaders();
+        $this->assertEquals(['foo', 'bar'], $result['o:tag']);
     }
 
     /**

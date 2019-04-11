@@ -582,7 +582,6 @@ class TimeTest extends TestCase
     {
         return [
             [null],
-            [false],
             [''],
         ];
     }

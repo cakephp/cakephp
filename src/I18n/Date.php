@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Chronos\MutableDate;
+use DateTimeInterface;
 use IntlDateFormatter;
 
 /**
@@ -95,6 +96,25 @@ class Date extends MutableDate implements I18nDateTimeInterface
     public static $wordEnd = '+1 month';
 
     /**
+     * Create a new FrozenDate instance.
+     *
+     * Date instances lack time components, however due to limitations in PHP's
+     * internal Datetime object the time will always be set to 00:00:00, and the
+     * timezone will always be UTC. Normalizing the timezone allows for
+     * subtraction/addition to have deterministic results.
+     *
+     * @param string|int|null|\DateTimeInterface $time Fixed or relative time
+     */
+    public function __construct($time = 'now')
+    {
+        if ($time instanceof DateTimeInterface) {
+            $time = $time->format('Y-m-d 00:00:00');
+        }
+
+        parent::__construct($time);
+    }
+
+    /**
      * Returns either a relative or a formatted absolute date depending
      * on the difference between the current date and this object.
      *
@@ -130,6 +150,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
      */
     public function timeAgoInWords(array $options = []): string
     {
+        /** @psalm-suppress UndefinedInterfaceMethod */
         return static::getDiffFormatter()->dateAgoInWords($this, $options);
     }
 }

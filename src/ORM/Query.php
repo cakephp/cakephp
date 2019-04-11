@@ -748,8 +748,6 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     }
 
     /**
-     * {@inheritDoc}
-     *
      * Populates or adds parts to current query clauses using an array.
      * This is handy for passing all query clauses at once. The option array accepts:
      *
@@ -784,6 +782,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *   ->where(['created >=' => '2013-01-01'])
      *   ->limit(10)
      * ```
+     *
+     * @param array $options the options to be applied
+     * @return $this
      */
     public function applyOptions(array $options)
     {

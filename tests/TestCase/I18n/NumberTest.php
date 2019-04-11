@@ -261,6 +261,14 @@ class NumberTest extends TestCase
         $expected = '£0.00';
         $this->assertEquals($expected, $result);
 
+        $result = $this->Number->currency(0, 'GBP', ['pattern' => '¤#,###.00;¤-#,###.00']);
+        $expected = '£.00';
+        $this->assertEquals($expected, $result);
+
+        $result = $this->Number->currency(0, 'GBP', ['pattern' => '¤#,##0.00;¤-#,##0.00']);
+        $expected = '£0.00';
+        $this->assertEquals($expected, $result);
+
         $result = $this->Number->currency(0.00000, 'GBP');
         $expected = '£0.00';
         $this->assertEquals($expected, $result);

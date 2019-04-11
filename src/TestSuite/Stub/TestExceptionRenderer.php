@@ -15,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Stub;
 
-use Exception;
+use Throwable;
 
 /**
  * Test Exception Renderer.
@@ -32,11 +32,11 @@ class TestExceptionRenderer
     /**
      * Simply rethrow the given exception
      *
-     * @param \Exception $exception Exception.
+     * @param \Throwable $exception Exception.
      * @return void
-     * @throws \Exception $exception Rethrows the passed exception.
+     * @throws \Throwable $exception Rethrows the passed exception.
      */
-    public function __construct(Exception $exception)
+    public function __construct(Throwable $exception)
     {
         throw $exception;
     }

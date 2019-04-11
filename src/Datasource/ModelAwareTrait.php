@@ -76,7 +76,8 @@ trait ModelAwareTrait
      * If a repository provider does not return an object a MissingModelException will
      * be thrown.
      *
-     * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass
+     * @param string|null $modelClass Name of model class to load. Defaults to $this->modelClass.
+     *  The name can be an alias like `'Post'` or FQCN like `App\Model\Table\PostsTable::class`.
      * @param string|null $modelType The type of repository to load. Defaults to the modelType() value.
      * @return \Cake\Datasource\RepositoryInterface The model instance created.
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
@@ -92,7 +93,19 @@ trait ModelAwareTrait
             $modelType = $this->getModelType();
         }
 
-        [, $alias] = pluginSplit($modelClass, true);
+        $alias = null;
+        $options = [];
+        if (strpos($modelClass, '\\') === false) {
+            [, $alias] = pluginSplit($modelClass, true);
+        } else {
+            $options['className'] = $modelClass;
+            $alias = substr(
+                $modelClass,
+                strrpos($modelClass, '\\') + 1,
+                -strlen($modelType)
+            );
+            $modelClass = $alias;
+        }
 
         if (isset($this->{$alias})) {
             return $this->{$alias};
@@ -104,7 +117,7 @@ trait ModelAwareTrait
         if (!isset($factory)) {
             $factory = FactoryLocator::get($modelType);
         }
-        $this->{$alias} = $factory($modelClass);
+        $this->{$alias} = $factory($modelClass, $options);
         if (!$this->{$alias}) {
             throw new MissingModelException([$modelClass, $modelType]);
         }
