@@ -1223,7 +1223,7 @@ class View implements EventDispatcherInterface
             'templatePath' => 'getTemplatePath',
             'template' => 'getTemplate',
             'layout' => 'getLayout',
-            'layoutPath' => 'setLayoutPath',
+            'layoutPath' => 'getLayoutPath',
             'autoLayout' => 'isAutoLayoutEnabled',
             'theme' => 'getTheme',
             'request' => 'getRequest',
