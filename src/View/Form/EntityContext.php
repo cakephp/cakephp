@@ -356,7 +356,7 @@ class EntityContext implements ContextInterface
             if (!$isLast && $next === null && $prop !== '_ids') {
                 $table = $this->_getTable($path);
 
-                return $table->newEntity();
+                return $table->newEmptyEntity();
             }
 
             $isTraversable = (

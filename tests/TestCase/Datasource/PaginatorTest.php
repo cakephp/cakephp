@@ -974,7 +974,8 @@ class PaginatorTest extends TestCase
     {
         $model = $this->getMockBuilder(RepositoryInterface::class)
             ->setMethods([
-                'getAlias', 'setAlias', 'setRegistryAlias', 'getRegistryAlias', 'hasField', 'find', 'get', 'query', 'updateAll', 'deleteAll',
+                'getAlias', 'setAlias', 'setRegistryAlias', 'getRegistryAlias', 'hasField',
+                'find', 'get', 'query', 'updateAll', 'deleteAll', 'newEmptyEntity',
                 'exists', 'save', 'delete', 'newEntity', 'newEntities', 'patchEntity', 'patchEntities',
             ])
             ->getMock();

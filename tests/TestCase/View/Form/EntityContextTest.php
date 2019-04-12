@@ -698,7 +698,7 @@ class EntityContextTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $column = $table->getSchema()->getColumn('title');
         $table->getSchema()->addColumn('title', ['default' => 'default title'] + $column);
-        $row = $table->newEntity();
+        $row = $table->newEmptyEntity();
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -719,7 +719,7 @@ class EntityContextTest extends TestCase
         $associatedTable = $table->hasMany('Comments')->getTarget();
         $column = $associatedTable->getSchema()->getColumn('comment');
         $associatedTable->getSchema()->addColumn('comment', ['default' => 'default comment'] + $column);
-        $row = $table->newEntity();
+        $row = $table->newEmptyEntity();
 
         $context = new EntityContext($this->request, [
             'entity' => $row,
@@ -745,7 +745,7 @@ class EntityContextTest extends TestCase
             'default' => 'default join table column value',
             'type' => 'text',
         ]);
-        $row = $table->newEntity();
+        $row = $table->newEmptyEntity();
 
         $context = new EntityContext($this->request, [
             'entity' => $row,

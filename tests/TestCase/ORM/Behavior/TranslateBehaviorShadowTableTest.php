@@ -896,7 +896,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             ],
         ];
 
-        $article = $table->patchEntity($table->newEntity(), $data);
+        $article = $table->patchEntity($table->newEmptyEntity(), $data);
         $result = $table->save($article);
 
         $this->assertNotFalse($result);
@@ -1041,7 +1041,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $translate = $table->behaviors()->get('Translate');
 
         $map = $translate->buildMarshalMap($table->marshaller(), [], []);
-        $entity = $table->newEntity();
+        $entity = $table->newEmptyEntity();
         $data = [
             'en' => [
                 'title' => 'English Title',
