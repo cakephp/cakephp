@@ -39,6 +39,7 @@ class HelpCommandTest extends TestCase
         $this->setAppNamespace();
         $this->useCommandRunner();
         Plugin::getCollection()->clear();
+
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
             ['']
@@ -89,12 +90,15 @@ class HelpCommandTest extends TestCase
      */
     protected function assertCommandList()
     {
-        $this->assertOutputContains('- widget', 'plugin command');
+        $this->assertOutputContains('<info>TestPlugin</info>', 'plugin header should appear');
+        $this->assertOutputContains('- widget', 'plugin command should appear');
         $this->assertOutputNotContains(
             '- test_plugin.widget',
             'only short alias for plugin command.'
         );
+        $this->assertOutputContains('<info>App</info>', 'app header should appear');
         $this->assertOutputContains('- sample', 'app shell');
+        $this->assertOutputContains('<info>CakePHP</info>', 'cakephp header should appear');
         $this->assertOutputContains('- routes', 'core shell');
         $this->assertOutputContains('- example', 'short plugin name');
         $this->assertOutputContains('- abort', 'command object');
