@@ -1092,6 +1092,10 @@ class ResponseTest extends TestCase
         $new = $response->withModified($now);
         $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
 
+        $now = new \DateTimeImmutable();
+        $new = $response->withModified($now);
+        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
         $time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
         $new = $response->withModified('+1 day');
         $this->assertEquals($time->format($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
