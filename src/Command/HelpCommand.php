@@ -108,9 +108,8 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);
-            if ($namespace === $appNamespace) {
-                $prefix = 'App';
-            } elseif ($namespace === 'Cake') {
+            $prefix = 'App';
+            if ($namespace === 'Cake') {
                 $prefix = 'CakePHP';
             } elseif (in_array($namespace, $plugins)) {
                 $prefix = $namespace;
