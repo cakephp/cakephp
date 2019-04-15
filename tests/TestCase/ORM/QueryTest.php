@@ -3225,7 +3225,7 @@ class QueryTest extends TestCase
             ->first();
         $this->assertNotEmpty($out, 'Should get a record');
         // There will be loss of precision if too large/small value is set as float instead of string.
-        $this->assertSame('0.1234567890123500000', $out->fraction);
+        $this->assertRegExp('/^0?\.123456789012350+$/', $out->fraction);
     }
 
     /**
