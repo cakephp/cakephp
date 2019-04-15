@@ -264,7 +264,7 @@ class Configure
      * Use Configure::isConfigured() instead.
      *
      * @param string|null $name Engine name.
-     * @return array|bool Array of the configured Engine objects, bool for specific name.
+     * @return string[]|bool Array of the configured Engine objects, bool for specific name.
      */
     public static function configured($name = null)
     {
