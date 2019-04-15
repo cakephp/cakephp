@@ -5969,7 +5969,7 @@ class TableTest extends TestCase
             'Model.beforeFind',
             function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
                 $this->assertInternalType('bool', $primary);
-                $associationBeforeFindCount ++;
+                $associationBeforeFindCount++;
             }
         );
 
@@ -5978,7 +5978,7 @@ class TableTest extends TestCase
             'Model.beforeFind',
             function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
                 $this->assertInternalType('bool', $primary);
-                $beforeFindCount ++;
+                $beforeFindCount++;
             }
         );
         $table->find()->contain('authors')->first();
@@ -5990,7 +5990,7 @@ class TableTest extends TestCase
             'Model.buildValidator',
             $callback = function (EventInterface $event, Validator $validator, $name) use (&$buildValidatorCount) {
                 $this->assertInternalType('string', $name);
-                $buildValidatorCount ++;
+                $buildValidatorCount++;
             }
         );
         $table->getValidator();
@@ -6004,14 +6004,14 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildRules',
             function (EventInterface $event, RulesChecker $rules) use (&$buildRulesCount) {
-                $buildRulesCount ++;
+                $buildRulesCount++;
             }
         );
         $eventManager->on(
             'Model.beforeRules',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
                 $this->assertInternalType('string', $operation);
-                $beforeRulesCount ++;
+                $beforeRulesCount++;
             }
         );
         $eventManager->on(
@@ -6019,19 +6019,19 @@ class TableTest extends TestCase
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
                 $this->assertInternalType('bool', $result);
                 $this->assertInternalType('string', $operation);
-                $afterRulesCount ++;
+                $afterRulesCount++;
             }
         );
         $eventManager->on(
             'Model.beforeSave',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount) {
-                $beforeSaveCount ++;
+                $beforeSaveCount++;
             }
         );
         $eventManager->on(
             'Model.afterSave',
             $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount) {
-                $afterSaveCount ++;
+                $afterSaveCount++;
             }
         );
         $entity = new Entity(['title' => 'Title']);
@@ -6047,13 +6047,13 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount) {
-                $beforeDeleteCount ++;
+                $beforeDeleteCount++;
             }
         );
         $eventManager->on(
             'Model.afterDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount) {
-                $afterDeleteCount ++;
+                $afterDeleteCount++;
             }
         );
         $this->assertTrue($table->delete($entity, ['checkRules' => false]));

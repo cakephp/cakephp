@@ -23,7 +23,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
+use Cake\Core\Plugin;
 use SimpleXMLElement;
 
 /**
@@ -98,56 +98,44 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             }
             $invert[$class][] = $name;
         }
-
-        $prefixed = [];
+        $grouped = [];
+        $appNamespace = Configure::read('App.namespace');
+        $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
-            $prefixedName = $this->findPrefixedName($names);
-            if (!$prefixedName) {
-                $prefix = preg_match('#^Cake\\\\(Command|Shell)\\\\#', $class) ? '[core]' : '[app]';
-                $prefixed[$prefix][] = $this->getShortestName($names);
+            preg_match('/^(.+)\\\\(Command|Shell)/', $class, $matches);
+            // Probably not a useful class
+            if (empty($matches)) {
                 continue;
             }
-
-            [$prefix, $name] = explode('.', $prefixedName, 2);
-            $prefix = Inflector::camelize($prefix);
-
+            $namespace = str_replace('\\', '/', $matches[1]);
+            if ($namespace === $appNamespace) {
+                $prefix = 'App';
+            } elseif ($namespace === 'Cake') {
+                $prefix = 'CakePHP';
+            } elseif (in_array($namespace, $plugins)) {
+                $prefix = $namespace;
+            }
             $shortestName = $this->getShortestName($names);
             if (strpos($shortestName, '.') !== false) {
                 [, $shortestName] = explode('.', $shortestName, 2);
             }
 
-            $prefixed[$prefix][] = $shortestName;
+            $grouped[$prefix][] = $shortestName;
         }
 
-        ksort($prefixed);
+        ksort($grouped);
 
-        foreach ($prefixed as $prefix => $names) {
-            $io->out($prefix . ':');
+        foreach ($grouped as $prefix => $names) {
+            $io->out("<info>{$prefix}</info>:");
             sort($names);
             foreach ($names as $name) {
                 $io->out(' - ' . $name);
             }
+            $io->out('');
         }
-        $io->out('');
 
         $io->out('To run a command, type <info>`cake command_name [args|options]`</info>');
         $io->out('To get help on a specific command, type <info>`cake command_name --help`</info>', 2);
-    }
-
-    /**
-     * @param string[] $names Names
-     *
-     * @return string|null
-     */
-    protected function findPrefixedName(array $names)
-    {
-        foreach ($names as $name) {
-            if (strpos($name, '.') !== false) {
-                return $name;
-            }
-        }
-
-        return null;
     }
 
     /**
