@@ -2152,6 +2152,20 @@ TEXT;
     }
 
     /**
+     * Test getName() and getPlugin().
+     *
+     * @return void
+     */
+    public function testGetNamePlugin()
+    {
+        $this->assertSame('Posts', $this->View->getName());
+        $this->assertNull($this->View->getPlugin());
+
+        $this->assertSame($this->View, $this->View->setPlugin('TestPlugin'));
+        $this->assertSame('TestPlugin', $this->View->getPlugin());
+    }
+
+    /**
      * Test testHasRendered property
      *
      * @return void
