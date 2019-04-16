@@ -496,8 +496,7 @@ class Cache
      *
      * @param array $keys Array of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
-     * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
-     * couldn't be removed
+     * @return bool True if the items were successfully removed. False if there was an error.
      */
     public static function deleteMany($keys, $config = 'default')
     {
