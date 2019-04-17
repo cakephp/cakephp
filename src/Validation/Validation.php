@@ -14,6 +14,7 @@
  */
 namespace Cake\Validation;
 
+use Cake\Chronos\Date;
 use Cake\I18n\Time;
 use Cake\Utility\Text;
 use DateTimeInterface;
@@ -458,7 +459,7 @@ class Validation
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
         }
-        $parts = explode(' ', $check);
+        $parts = preg_split("/[\sT]+/", $check);
         if (!empty($parts) && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);

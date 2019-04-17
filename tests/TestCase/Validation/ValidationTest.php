@@ -1584,6 +1584,19 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to pass a date with a T separator
+     *
+     * @return void
+     */
+    public function testDateTimeISO()
+    {
+        $this->assertFalse(Validation::dateTime('2007/10/04T1:50'));
+        $this->assertTrue(Validation::dateTime('2007/10/04T01:50'));
+        $this->assertTrue(Validation::dateTime('2017/12/04T15:38'));
+        $this->assertFalse(Validation::dateTime('2007/10/04T58:38'));
+    }
+
+    /**
      * Test localizedTime
      *
      * @return void
