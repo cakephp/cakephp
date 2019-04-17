@@ -46,7 +46,7 @@ class FlashHelperTest extends TestCase
                     [
                         'key' => 'flash',
                         'message' => 'This is a calling',
-                        'element' => 'Flash/default',
+                        'element' => 'flash/default',
                         'params' => [],
                     ],
                 ],
@@ -73,7 +73,7 @@ class FlashHelperTest extends TestCase
                     [
                         'key' => 'flash',
                         'message' => 'This is a calling',
-                        'element' => 'Flash/default',
+                        'element' => 'flash/default',
                         'params' => [],
                     ],
                     [
@@ -177,7 +177,7 @@ class FlashHelperTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
 
-        $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
+        $result = $this->Flash->render('flash', ['element' => 'TestPlugin.flash/plugin_element']);
         $expected = 'this is the plugin element';
         $this->assertEquals($expected, $result);
     }

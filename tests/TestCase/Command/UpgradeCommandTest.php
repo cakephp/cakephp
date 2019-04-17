@@ -33,7 +33,10 @@ class UpgradeCommandTest extends TestCase
             'src' => [
                 'Template' => [
                     'Email' => ['html' => ['def.php' => '']],
-                    'Element' => ['foo.ctp' => ''],
+                    'Element' => [
+                        'Flash' => ['default.ctp' => ''],
+                        'foo.ctp' => '',
+                    ],
                     'Layout' => ['default.ctp' => ''],
                     'Cell' => [
                         'MyCell' => ['display.ctp' => ''],
@@ -176,7 +179,10 @@ class UpgradeCommandTest extends TestCase
             'src' => [],
             'templates' => [
                 'email' => ['html' => ['def.php' => '']],
-                'element' => ['foo.php' => ''],
+                'element' => [
+                    'flash' => ['default.php' => ''],
+                    'foo.php' => '',
+                ],
                 'layout' => ['default.php' => ''],
                 'cell' => [
                     'MyCell' => ['display.php' => ''],

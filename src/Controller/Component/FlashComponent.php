@@ -82,9 +82,9 @@ class FlashComponent extends Component
         [$plugin, $element] = pluginSplit($options['element']);
 
         if ($plugin) {
-            $options['element'] = $plugin . '.Flash/' . $element;
+            $options['element'] = $plugin . '.flash/' . $element;
         } else {
-            $options['element'] = 'Flash/' . $element;
+            $options['element'] = 'flash/' . $element;
         }
 
         $messages = [];
