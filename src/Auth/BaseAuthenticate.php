@@ -18,17 +18,15 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventListenerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 /**
  * Base Authentication class with common methods and properties.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class BaseAuthenticate implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
+    use LocatorAwareTrait;
 
     /**
      * Default config for this object.
@@ -91,6 +89,13 @@ abstract class BaseAuthenticate implements EventListenerInterface
     {
         $this->_registry = $registry;
         $this->setConfig($config);
+
+        if ($this->getConfig('scope') || $this->getConfig('contain')) {
+            deprecationWarning(
+                'The `scope` and `contain` options for Authentication are deprecated. ' .
+                'Use the `finder` option instead to define additional conditions.'
+            );
+        }
     }
 
     /**
@@ -109,8 +114,15 @@ abstract class BaseAuthenticate implements EventListenerInterface
         $result = $this->_query($username)->first();
 
         if (empty($result)) {
-            $hasher = $this->passwordHasher();
-            $hasher->hash((string)$password);
+            // Waste time hashing the password, to prevent
+            // timing side-channels. However, don't hash
+            // null passwords as authentication systems
+            // like digest auth don't use passwords
+            // and hashing *could* create a timing side-channel.
+            if ($password !== null) {
+                $hasher = $this->passwordHasher();
+                $hasher->hash($password);
+            }
 
             return false;
         }
@@ -145,7 +157,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     protected function _query($username)
     {
         $config = $this->_config;
-        $table = TableRegistry::get($config['userModel']);
+        $table = $this->getTableLocator()->get($config['userModel']);
 
         $options = [
             'conditions' => [$table->aliasField($config['fields']['username']) => $username]

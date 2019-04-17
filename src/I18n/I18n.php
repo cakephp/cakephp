@@ -122,9 +122,14 @@ class I18n
      * @param callable|null $loader A callback function or callable class responsible for
      * constructing a translations package instance.
      * @return \Aura\Intl\TranslatorInterface|null The configured translator.
+     * @throws \Aura\Intl\Exception
      */
     public static function translator($name = 'default', $locale = null, callable $loader = null)
     {
+        deprecationWarning(
+            'I18n::translator() is deprecated. ' .
+            'Use I18n::setTranslator()/getTranslator() instead.'
+        );
         if ($loader !== null) {
             static::setTranslator($name, $loader, $locale);
 
@@ -191,6 +196,7 @@ class I18n
      * @param string $name The domain of the translation messages.
      * @param string|null $locale The locale for the translator.
      * @return \Aura\Intl\TranslatorInterface The configured translator.
+     * @throws \Aura\Intl\Exception
      */
     public static function getTranslator($name = 'default', $locale = null)
     {
@@ -271,6 +277,10 @@ class I18n
      */
     public static function locale($locale = null)
     {
+        deprecationWarning(
+            'I18n::locale() is deprecated. ' .
+            'Use I18n::setLocale()/getLocale() instead.'
+        );
         if (!empty($locale)) {
             static::setLocale($locale);
 
@@ -324,6 +334,8 @@ class I18n
      */
     public static function defaultLocale()
     {
+        deprecationWarning('I18n::defaultLocale() is deprecated. Use I18n::getDefaultLocale() instead.');
+
         return static::getDefaultLocale();
     }
 
@@ -359,6 +371,11 @@ class I18n
      */
     public static function defaultFormatter($name = null)
     {
+        deprecationWarning(
+            'I18n::defaultFormatter() is deprecated. ' .
+            'Use I18n::setDefaultFormatter()/getDefaultFormatter() instead.'
+        );
+
         return static::translators()->defaultFormatter($name);
     }
 

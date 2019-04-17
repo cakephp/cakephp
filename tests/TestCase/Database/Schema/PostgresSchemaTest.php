@@ -35,7 +35,7 @@ class PostgresSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Postgres') === false, 'Not using Postgres for test config');
     }
 
@@ -97,119 +97,128 @@ SQL;
         return [
             // Timestamp
             [
-                'TIMESTAMP',
+                ['type' => 'TIMESTAMP'],
                 ['type' => 'timestamp', 'length' => null]
             ],
             [
-                'TIMESTAMP WITHOUT TIME ZONE',
+                ['type' => 'TIMESTAMP WITHOUT TIME ZONE'],
                 ['type' => 'timestamp', 'length' => null]
             ],
             // Date & time
             [
-                'DATE',
+                ['type' => 'DATE'],
                 ['type' => 'date', 'length' => null]
             ],
             [
-                'TIME',
+                ['type' => 'TIME'],
                 ['type' => 'time', 'length' => null]
             ],
             [
-                'TIME WITHOUT TIME ZONE',
+                ['type' => 'TIME WITHOUT TIME ZONE'],
                 ['type' => 'time', 'length' => null]
             ],
             // Integer
             [
-                'SMALLINT',
+                ['type' => 'SMALLINT'],
                 ['type' => 'smallinteger', 'length' => 5]
             ],
             [
-                'INTEGER',
+                ['type' => 'INTEGER'],
                 ['type' => 'integer', 'length' => 10]
             ],
             [
-                'SERIAL',
+                ['type' => 'SERIAL'],
                 ['type' => 'integer', 'length' => 10]
             ],
             [
-                'BIGINT',
+                ['type' => 'BIGINT'],
                 ['type' => 'biginteger', 'length' => 20]
             ],
             [
-                'BIGSERIAL',
+                ['type' => 'BIGSERIAL'],
                 ['type' => 'biginteger', 'length' => 20]
             ],
             // Decimal
             [
-                'NUMERIC',
+                ['type' => 'NUMERIC'],
                 ['type' => 'decimal', 'length' => null, 'precision' => null]
             ],
             [
-                'DECIMAL(10,2)',
+                ['type' => 'NUMERIC', 'default' => 'NULL::numeric'],
+                ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null]
+            ],
+            [
+                ['type' => 'DECIMAL(10,2)', 'column_precision' => 10, 'column_scale' => 2],
                 ['type' => 'decimal', 'length' => 10, 'precision' => 2]
             ],
             // String
             [
-                'VARCHAR',
+                ['type' => 'VARCHAR'],
                 ['type' => 'string', 'length' => null]
             ],
             [
-                'VARCHAR(10)',
+                ['type' => 'VARCHAR(10)'],
                 ['type' => 'string', 'length' => 10]
             ],
             [
-                'CHARACTER VARYING',
+                ['type' => 'CHARACTER VARYING'],
                 ['type' => 'string', 'length' => null]
             ],
             [
-                'CHARACTER VARYING(10)',
+                ['type' => 'CHARACTER VARYING(10)'],
                 ['type' => 'string', 'length' => 10]
             ],
             [
-                'CHAR(10)',
+                ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
+                ['type' => 'string', 'length' => 255, 'default' => null]
+            ],
+            [
+                ['type' => 'CHAR(10)'],
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
             ],
             [
-                'CHARACTER(10)',
+                ['type' => 'CHARACTER(10)'],
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
             ],
             [
-                'MONEY',
+                ['type' => 'MONEY'],
                 ['type' => 'string', 'length' => null]
             ],
             // UUID
             [
-                'UUID',
+                ['type' => 'UUID'],
                 ['type' => 'uuid', 'length' => null]
             ],
             [
-                'INET',
+                ['type' => 'INET'],
                 ['type' => 'string', 'length' => 39]
             ],
             // Text
             [
-                'TEXT',
+                ['type' => 'TEXT'],
                 ['type' => 'text', 'length' => null]
             ],
             // Blob
             [
-                'BYTEA',
+                ['type' => 'BYTEA'],
                 ['type' => 'binary', 'length' => null]
             ],
             // Float
             [
-                'REAL',
+                ['type' => 'REAL'],
                 ['type' => 'float', 'length' => null]
             ],
             [
-                'DOUBLE PRECISION',
+                ['type' => 'DOUBLE PRECISION'],
                 ['type' => 'float', 'length' => null]
             ],
+            // Json
             [
-                'JSON',
+                ['type' => 'JSON'],
                 ['type' => 'json', 'length' => null]
             ],
             [
-                'JSONB',
+                ['type' => 'JSONB'],
                 ['type' => 'json', 'length' => null]
             ],
         ];
@@ -221,11 +230,10 @@ SQL;
      * @dataProvider convertColumnProvider
      * @return void
      */
-    public function testConvertColumn($type, $expected)
+    public function testConvertColumn($field, $expected)
     {
-        $field = [
+        $field += [
             'name' => 'field',
-            'type' => $type,
             'null' => 'YES',
             'default' => 'Default value',
             'comment' => 'Comment section',
@@ -240,11 +248,6 @@ SQL;
             'comment' => 'Comment section',
             'collate' => 'ja_JP.utf8',
         ];
-
-        if ($field['type'] === 'NUMERIC' || strpos($field['type'], 'DECIMAL') !== false) {
-            $field['column_precision'] = $expected['length'];
-            $field['column_scale'] = $expected['precision'];
-        }
 
         $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
         $dialect = new PostgresSchema($driver);
@@ -404,7 +407,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field));
+            $this->assertEquals($definition, $result->getColumn($field));
         }
     }
 
@@ -431,8 +434,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
 
     /**
@@ -497,7 +500,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field), "Mismatch in $field column");
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in $field column");
         }
     }
 
@@ -513,7 +516,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_authors');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -527,8 +530,8 @@ SQL;
             ]
         ];
         $this->assertCount(2, $result->constraints());
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['unique_position'], $result->constraint('unique_position'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['unique_position'], $result->getConstraint('unique_position'));
     }
 
     /**
@@ -543,7 +546,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -577,9 +580,9 @@ SQL;
                 'delete' => 'restrict',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -587,7 +590,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -630,8 +633,42 @@ SQL;
             'columns' => ['group_id', 'grade'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('schema_index_nulls'));
+        $this->assertEquals($expected, $result->getIndex('schema_index_nulls'));
         $connection->execute('DROP TABLE schema_index');
+    }
+
+    /**
+     * Test describing a table with postgres function defaults
+     *
+     * @return void
+     */
+    public function testDescribeTableFunctionDefaultValue()
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_function_defaults (
+    "id" SERIAL,
+    year INT DEFAULT DATE_PART('year'::text, NOW()),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_function_defaults');
+        $connection->execute('DROP TABLE schema_function_defaults');
+
+        $expected = [
+            'type' => 'integer',
+            'default' => "date_part('year'::text, now())",
+            'null' => true,
+            'precision' => null,
+            'length' => 10,
+            'comment' => null,
+            'unsigned' => null,
+            'autoIncrement' => null,
+        ];
+        $this->assertEquals($expected, $result->getColumn('year'));
     }
 
     /**
@@ -661,6 +698,11 @@ SQL;
             [
                 'id',
                 ['type' => 'uuid', 'length' => 36, 'null' => false],
+                '"id" UUID NOT NULL'
+            ],
+            [
+                'id',
+                ['type' => 'binaryuuid', 'length' => null, 'null' => false],
                 '"id" UUID NOT NULL'
             ],
             [
@@ -1126,7 +1168,7 @@ SQL;
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }
@@ -1259,7 +1301,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }

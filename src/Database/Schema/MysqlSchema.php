@@ -134,9 +134,12 @@ class MysqlSchema extends BaseSchema
 
             return ['type' => TableSchema::TYPE_TEXT, 'length' => $length];
         }
-        if (strpos($col, 'blob') !== false || $col === 'binary') {
+        if ($col === 'binary' && $length === 16) {
+            return ['type' => TableSchema::TYPE_BINARY_UUID, 'length' => null];
+        }
+        if (strpos($col, 'blob') !== false || in_array($col, ['binary', 'varbinary'])) {
             $lengthName = substr($col, 0, -4);
-            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : null;
+            $length = isset(TableSchema::$columnLengths[$lengthName]) ? TableSchema::$columnLengths[$lengthName] : $length;
 
             return ['type' => TableSchema::TYPE_BINARY, 'length' => $length];
         }
@@ -314,6 +317,7 @@ class MysqlSchema extends BaseSchema
             TableSchema::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchema::TYPE_INTEGER => ' INTEGER',
             TableSchema::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchema::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchema::TYPE_FLOAT => ' FLOAT',
             TableSchema::TYPE_DECIMAL => ' DECIMAL',
@@ -355,16 +359,22 @@ class MysqlSchema extends BaseSchema
                     break;
                 case TableSchema::TYPE_BINARY:
                     $isKnownLength = in_array($data['length'], TableSchema::$columnLengths);
-                    if (empty($data['length']) || !$isKnownLength) {
+                    if ($isKnownLength) {
+                        $length = array_search($data['length'], TableSchema::$columnLengths);
+                        $out .= ' ' . strtoupper($length) . 'BLOB';
+                        break;
+                    }
+
+                    if (empty($data['length'])) {
                         $out .= ' BLOB';
                         break;
                     }
 
-                    if ($isKnownLength) {
-                        $length = array_search($data['length'], TableSchema::$columnLengths);
-                        $out .= ' ' . strtoupper($length) . 'BLOB';
+                    if ($data['length'] > 2) {
+                        $out .= ' VARBINARY(' . $data['length'] . ')';
+                    } else {
+                        $out .= ' BINARY(' . $data['length'] . ')';
                     }
-
                     break;
             }
         }

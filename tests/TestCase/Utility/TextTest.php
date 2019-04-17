@@ -65,7 +65,7 @@ class TextTest extends TestCase
             $result = Text::uuid();
             $match = (bool)preg_match($pattern, $result);
             $this->assertTrue($match);
-            $this->assertFalse(in_array($result, $check));
+            $this->assertNotContains($result, $check);
             $check[] = $result;
         }
     }
@@ -468,7 +468,7 @@ TEXT;
     }
 
     /**
-     * test wrapBlock() indentical to wrap()
+     * test wrapBlock() identical to wrap()
      *
      * @return void
      */
@@ -837,43 +837,46 @@ HTML;
     /**
      * testStripLinks method
      *
+     * @group deprecated
      * @return void
      */
     public function testStripLinks()
     {
-        $text = 'This is a test text';
-        $expected = 'This is a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $text = 'This is a test text';
+            $expected = 'This is a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This is a <a href="#">test</a> text';
-        $expected = 'This is a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This is a <a href="#">test</a> text';
+            $expected = 'This is a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This <strong>is</strong> a <a href="#">test</a> <a href="#">text</a>';
-        $expected = 'This <strong>is</strong> a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This <strong>is</strong> a <a href="#">test</a> <a href="#">text</a>';
+            $expected = 'This <strong>is</strong> a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This <strong>is</strong> a <a href="#">test</a> and <abbr>some</abbr> other <a href="#">text</a>';
-        $expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This <strong>is</strong> a <a href="#">test</a> and <abbr>some</abbr> other <a href="#">text</a>';
+            $expected = 'This <strong>is</strong> a test and <abbr>some</abbr> other text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = 'This <strong><a href="#">is</a></strong> a <a href="javascript:void(0)">test</a> text';
-        $expected = 'This <strong>is</strong> a test text';
-        $result = $this->Text->stripLinks($text);
-        $this->assertEquals($expected, $result);
+            $text = 'This <strong><a href="#">is</a></strong> a <a href="javascript:void(0)">test</a> text';
+            $expected = 'This <strong>is</strong> a test text';
+            $result = $this->Text->stripLinks($text);
+            $this->assertEquals($expected, $result);
 
-        $text = '<a<a h> href=\'bla\'>test</a</a>>';
-        $this->assertEquals('test', $this->Text->stripLinks($text));
+            $text = '<a<a h> href=\'bla\'>test</a</a>>';
+            $this->assertEquals('test', $this->Text->stripLinks($text));
 
-        $text = '<a/href="#">test</a/>';
-        $this->assertEquals('test', $this->Text->stripLinks($text));
+            $text = '<a/href="#">test</a/>';
+            $this->assertEquals('test', $this->Text->stripLinks($text));
 
-        $text = '<a href="#"';
-        $this->assertEquals('', $this->Text->stripLinks($text));
+            $text = '<a href="#"';
+            $this->assertEquals('', $this->Text->stripLinks($text));
+        });
     }
 
     /**
@@ -1678,6 +1681,25 @@ HTML;
     }
 
     /**
+     * Test getting/setting default transliterator.
+     *
+     * @return void
+     */
+    public function testGetSetTransliterator()
+    {
+        $this->assertNull(Text::getTransliterator());
+
+        $transliterator = \Transliterator::createFromRules('
+            $nonletter = [:^Letter:];
+            $nonletter → \'*\';
+            ::Latin-ASCII;
+        ');
+        $this->assertInstanceOf(\Transliterator::class, $transliterator);
+        Text::setTransliterator($transliterator);
+        $this->assertSame($transliterator, Text::getTransliterator());
+    }
+
+    /**
      * Test getting/setting default transliterator id.
      *
      * @return void
@@ -1687,9 +1709,12 @@ HTML;
         $defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
         $this->assertEquals($defaultTransliteratorId, Text::getTransliteratorId());
 
-        $expected = 'Latin-ASCII; [\u0080-\u7fff] remove';
+        $expected = 'Latin-ASCII;[\u0080-\u7fff] remove';
         Text::setTransliteratorId($expected);
         $this->assertEquals($expected, Text::getTransliteratorId());
+
+        $this->assertInstanceOf(\Transliterator::class, Text::getTransliterator());
+        $this->assertEquals($expected, Text::getTransliterator()->id);
 
         Text::setTransliteratorId($defaultTransliteratorId);
     }
@@ -1711,8 +1736,23 @@ HTML;
                 'A ae Ubermensch pa hoyeste niva! I a lublu PHP! est. fi '
             ],
             [
-                'Äpfel Über Öl grün ärgert groß öko', null,
-                'Apfel Uber Ol grun argert gross oko'
+                'Äpfel Über Öl grün ärgert groß öko',
+                transliterator_create_from_rules('
+                    $AE = [Ä {A \u0308}];
+                    $OE = [Ö {O \u0308}];
+                    $UE = [Ü {U \u0308}];
+                    [ä {a \u0308}] → ae;
+                    [ö {o \u0308}] → oe;
+                    [ü {u \u0308}] → ue;
+                    {$AE} [:Lowercase:] → Ae;
+                    {$OE} [:Lowercase:] → Oe;
+                    {$UE} [:Lowercase:] → Ue;
+                    $AE → AE;
+                    $OE → OE;
+                    $UE → UE;
+                    ::Latin-ASCII;
+                '),
+                'Aepfel Ueber Oel gruen aergert gross oeko'
             ],
             [
                 'La langue française est un attribut de souveraineté en France', null,
@@ -1745,14 +1785,14 @@ HTML;
      * testTransliterate method
      *
      * @param string $string String
-     * @param string $transliteratorId Transliterator Id
-     * @param String $expected Exepected string
+     * @param \Transliterator|string|null $transliterator Transliterator
+     * @param String $expected Expected string
      * @return void
      * @dataProvider transliterateInputProvider
      */
-    public function testTransliterate($string, $transliteratorId, $expected)
+    public function testTransliterate($string, $transliterator, $expected)
     {
-        $result = Text::transliterate($string, $transliteratorId);
+        $result = Text::transliterate($string, $transliterator);
         $this->assertEquals($expected, $result);
     }
 
@@ -1847,7 +1887,7 @@ HTML;
      *
      * @param string $string String
      * @param array $options Options
-     * @param String $expected Exepected string
+     * @param String $expected Expected string
      * @return void
      * @dataProvider slugInputProvider
      */

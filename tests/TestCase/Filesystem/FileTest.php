@@ -4,7 +4,7 @@
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * For full copyright and license information, please see the LICENSE
  * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -66,7 +66,7 @@ class FileTest extends TestCase
      */
     public function testBasic()
     {
-        $file = CORE_PATH . DS . 'LICENSE.txt';
+        $file = CORE_PATH . DS . 'LICENSE';
 
         $this->File = new File($file, false);
 
@@ -78,7 +78,6 @@ class FileTest extends TestCase
         $expecting = [
             'dirname' => dirname($file),
             'basename' => basename($file),
-            'extension' => 'txt',
             'filename' => 'LICENSE',
             'filesize' => filesize($file),
             'mime' => 'text/plain'
@@ -93,8 +92,7 @@ class FileTest extends TestCase
         $this->assertEquals($expecting, $result);
 
         $result = $this->File->ext();
-        $expecting = 'txt';
-        $this->assertEquals($expecting, $result);
+        $this->assertEquals('', $result);
 
         $result = $this->File->name();
         $expecting = 'LICENSE';
@@ -266,7 +264,7 @@ class FileTest extends TestCase
         $result = $this->File->read();
         $expecting = file_get_contents(__FILE__);
         $this->assertEquals($expecting, $result);
-        $this->assertTrue(!is_resource($this->File->handle));
+        $this->assertNotInternalType('resource', $this->File->handle);
 
         $this->File->lock = true;
         $result = $this->File->read();
@@ -297,7 +295,7 @@ class FileTest extends TestCase
         $result = $this->File->offset();
         $this->assertFalse($result);
 
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertNull($this->File->handle);
         $success = $this->File->offset(0);
         $this->assertTrue($success);
         $this->assertInternalType('resource', $this->File->handle);
@@ -334,12 +332,12 @@ class FileTest extends TestCase
         $handle = $this->File->handle;
         $r = $this->File->open();
         $this->assertTrue($r);
-        $this->assertTrue($handle === $this->File->handle);
+        $this->assertSame($handle, $this->File->handle);
         $this->assertInternalType('resource', $this->File->handle);
 
         $r = $this->File->open('r', true);
         $this->assertTrue($r);
-        $this->assertFalse($handle === $this->File->handle);
+        $this->assertNotSame($handle, $this->File->handle);
         $this->assertInternalType('resource', $this->File->handle);
     }
 
@@ -351,9 +349,9 @@ class FileTest extends TestCase
     public function testClose()
     {
         $this->File->handle = null;
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertNull($this->File->handle);
         $this->assertTrue($this->File->close());
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertNull($this->File->handle);
 
         $this->File->handle = fopen(__FILE__, 'r');
         $this->assertInternalType('resource', $this->File->handle);
@@ -509,23 +507,21 @@ class FileTest extends TestCase
      */
     public function testWrite()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
+        $tmpFile = $this->_getTmpFile();
         if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
 
         $TmpFile = new File($tmpFile);
         $this->assertFileNotExists($tmpFile);
-        $this->assertNotInternalType('resource', $TmpFile->handle);
+        $this->assertNull($TmpFile->handle);
 
         $testData = ['CakePHP\'s', ' test suite', ' was here ...', ''];
         foreach ($testData as $data) {
             $r = $TmpFile->write($data);
             $this->assertTrue($r);
             $this->assertFileExists($tmpFile);
-            $this->assertEquals($data, file_get_contents($tmpFile));
+            $this->assertStringEqualsFile($tmpFile, $data);
             $this->assertInternalType('resource', $TmpFile->handle);
             $TmpFile->close();
         }
@@ -539,9 +535,7 @@ class FileTest extends TestCase
      */
     public function testAppend()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
+        $tmpFile = $this->_getTmpFile();
         if (file_exists($tmpFile)) {
             unlink($tmpFile);
         }
@@ -557,7 +551,7 @@ class FileTest extends TestCase
             $this->assertTrue($r);
             $this->assertFileExists($tmpFile);
             $data = $data . $fragment;
-            $this->assertEquals($data, file_get_contents($tmpFile));
+            $this->assertStringEqualsFile($tmpFile, $data);
             $newSize = $TmpFile->size();
             $this->assertTrue($newSize > $size);
             $size = $newSize;
@@ -565,7 +559,7 @@ class FileTest extends TestCase
         }
 
         $TmpFile->append('');
-        $this->assertEquals($data, file_get_contents($tmpFile));
+        $this->assertStringEqualsFile($tmpFile, $data);
         $TmpFile->close();
     }
 
@@ -576,10 +570,7 @@ class FileTest extends TestCase
      */
     public function testDelete()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
-
+        $tmpFile = $this->_getTmpFile();
         if (!file_exists($tmpFile)) {
             touch($tmpFile);
         }
@@ -602,9 +593,7 @@ class FileTest extends TestCase
      */
     public function testDeleteAfterRead()
     {
-        if (!$tmpFile = $this->_getTmpFile()) {
-            return false;
-        }
+        $tmpFile = $this->_getTmpFile();
         if (!file_exists($tmpFile)) {
             touch($tmpFile);
         }
@@ -665,23 +654,19 @@ class FileTest extends TestCase
      * @param bool $paintSkip
      * @return void
      */
-    protected function _getTmpFile($paintSkip = true)
+    protected function _getTmpFile()
     {
         $tmpFile = TMP . 'tests/cakephp.file.test.tmp';
         if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
             return $tmpFile;
         }
 
-        if ($paintSkip) {
-            $trace = debug_backtrace();
-            $caller = $trace[0]['function'];
-            $shortPath = dirname($tmpFile);
+        $trace = debug_backtrace();
+        $caller = $trace[0]['function'];
+        $shortPath = dirname($tmpFile);
 
-            $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
-            $this->markTestSkipped($message);
-        }
-
-        return false;
+        $message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
+        $this->markTestSkipped($message);
     }
 
     /**

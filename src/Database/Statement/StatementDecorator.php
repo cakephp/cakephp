@@ -32,7 +32,6 @@ use IteratorAggregate;
  */
 class StatementDecorator implements StatementInterface, Countable, IteratorAggregate
 {
-
     use TypeConverterTrait;
 
     /**
@@ -191,9 +190,38 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @return array|false Result array containing columns and values or false if no results
      * are left
      */
-    public function fetch($type = 'num')
+    public function fetch($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetch($type);
+    }
+
+    /**
+     * Returns the next row in a result set as an associative array. Calling this function is the same as calling
+     * $statement->fetch(StatementDecorator::FETCH_TYPE_ASSOC). If no results are found false is returned.
+     *
+     * @return array Result array containing columns and values an an associative array or an empty array if no results
+     */
+    public function fetchAssoc()
+    {
+        $result = $this->fetch(static::FETCH_TYPE_ASSOC);
+
+        return $result ?: [];
+    }
+
+    /**
+     * Returns the value of the result at position.
+     *
+     * @param int $position The numeric position of the column to retrieve in the result
+     * @return mixed|false Returns the specific value of the column designated at $position
+     */
+    public function fetchColumn($position)
+    {
+        $result = $this->fetch(static::FETCH_TYPE_NUM);
+        if (isset($result[$position])) {
+            return $result[$position];
+        }
+
+        return false;
     }
 
     /**
@@ -210,7 +238,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      * @param string $type num for fetching columns as positional keys or assoc for column names as keys
      * @return array List of all results from database for this statement
      */
-    public function fetchAll($type = 'num')
+    public function fetchAll($type = self::FETCH_TYPE_NUM)
     {
         return $this->_statement->fetchAll($type);
     }
@@ -300,13 +328,13 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @param string|null $table table name or sequence to get last insert value from
      * @param string|null $column the name of the column representing the primary key
-     * @return string
+     * @return string|int
      */
     public function lastInsertId($table = null, $column = null)
     {
         $row = null;
         if ($column && $this->columnCount()) {
-            $row = $this->fetch('assoc');
+            $row = $this->fetch(static::FETCH_TYPE_ASSOC);
         }
         if (isset($row[$column])) {
             return $row[$column];

@@ -15,6 +15,7 @@
 namespace TestApp\Controller;
 
 use Cake\Event\Event;
+use Cake\Http\Cookie\Cookie;
 
 /**
  * PostsController class
@@ -28,7 +29,9 @@ class PostsController extends AppController
      */
     public $components = [
         'Flash',
-        'RequestHandler',
+        'RequestHandler' => [
+            'enableBeforeRedirect' => false
+        ],
         'Security',
     ];
 
@@ -39,7 +42,7 @@ class PostsController extends AppController
      */
     public function beforeFilter(Event $event)
     {
-        if ($this->request->param('action') !== 'securePost') {
+        if ($this->request->getParam('action') !== 'securePost') {
             $this->getEventManager()->off($this->Security);
         }
     }
@@ -53,10 +56,7 @@ class PostsController extends AppController
     public function index($layout = 'default')
     {
         $this->Flash->error('An error message');
-        $this->response->cookie([
-            'name' => 'remember_me',
-            'value' => 1
-        ]);
+        $this->response = $this->response->withCookie(new Cookie('remember_me', 1));
         $this->set('test', 'value');
         $this->viewBuilder()->setLayout($layout);
     }
@@ -64,7 +64,7 @@ class PostsController extends AppController
     /**
      * Sets a flash message and redirects (no rendering)
      *
-     * @return \Cake\Network\Response
+     * @return \Cake\Http\Response
      */
     public function flashNoRender()
     {
@@ -84,21 +84,56 @@ class PostsController extends AppController
     }
 
     /**
+     * Stub AJAX method
+     *
+     * @return void
+     */
+    public function ajax()
+    {
+        $data = [];
+
+        $this->set(compact('data'));
+        $this->set('_serialize', ['data']);
+    }
+
+    /**
      * Post endpoint for integration testing with security component.
      *
      * @return void
      */
     public function securePost()
     {
-        $this->response->body('Request was accepted');
-
-        return $this->response;
+        return $this->response->withStringBody('Request was accepted');
     }
 
     public function file()
     {
-        $this->response->file(__FILE__);
+        return $this->response->withFile(__FILE__);
+    }
 
-        return $this->response;
+    public function header()
+    {
+        return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function empty_response()
+    {
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function stacked_flash()
+    {
+        $this->Flash->error('Error 1');
+        $this->Flash->error('Error 2');
+        $this->Flash->success('Success 1', ['key' => 'custom']);
+        $this->Flash->success('Success 2', ['key' => 'custom']);
+
+        return $this->getResponse()->withStringBody('');
+    }
+
+    public function throw_exception()
+    {
+        $this->Flash->error('Error 1');
+        throw new \OutOfBoundsException('oh no!');
     }
 }

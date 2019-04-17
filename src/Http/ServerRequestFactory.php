@@ -15,7 +15,6 @@
 namespace Cake\Http;
 
 use Cake\Core\Configure;
-use Cake\Network\Session;
 use Cake\Utility\Hash;
 use Zend\Diactoros\ServerRequestFactory as BaseFactory;
 
@@ -80,7 +79,7 @@ abstract class ServerRequestFactory extends BaseFactory
      * Build a UriInterface object.
      *
      * Add in some CakePHP specific logic/properties that help
-     * perserve backwards compatibility.
+     * preserve backwards compatibility.
      *
      * @param array $server The server parameters.
      * @param array $headers The normalized headers
@@ -131,7 +130,7 @@ abstract class ServerRequestFactory extends BaseFactory
         if (empty($path) || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
-        $endsWithIndex = '/webroot/index.php';
+        $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
         $endsWithLength = strlen($endsWithIndex);
         if (strlen($path) >= $endsWithLength &&
             substr($path, -$endsWithLength) === $endsWithIndex

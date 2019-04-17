@@ -46,11 +46,10 @@ abstract class SerializedView extends View
         EventManager $eventManager = null,
         array $viewOptions = []
     ) {
-        parent::__construct($request, $response, $eventManager, $viewOptions);
-
         if ($response && $response instanceof Response) {
-            $response->type($this->_responseType);
+            $response = $response->withType($this->_responseType);
         }
+        parent::__construct($request, $response, $eventManager, $viewOptions);
     }
 
     /**

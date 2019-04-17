@@ -72,9 +72,9 @@ class CookieTest extends TestCase
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $result = $cookie->toHeaderValue();
-        $this->assertEquals('cakephp=cakephp-rocks', $result);
+        $this->assertEquals('cakephp=cakephp-rocks; path=/', $result);
 
-        $date = Chronos::createFromFormat('m/d/Y h:m:s', '12/1/2027 12:00:00');
+        $date = Chronos::createFromFormat('m/d/Y h:i:s', '12/1/2027 12:00:00');
 
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $cookie = $cookie->withDomain('cakephp.org')
@@ -83,7 +83,7 @@ class CookieTest extends TestCase
             ->withSecure(true);
         $result = $cookie->toHeaderValue();
 
-        $expected = 'cakephp=cakephp-rocks; expires=Tue, 01-Dec-2026 12:00:00 GMT; domain=cakephp.org; secure; httponly';
+        $expected = 'cakephp=cakephp-rocks; expires=Wed, 01-Dec-2027 12:00:00 GMT; path=/; domain=cakephp.org; secure; httponly';
         $this->assertEquals($expected, $result);
     }
 
@@ -210,6 +210,17 @@ class CookieTest extends TestCase
         $this->assertNotSame($new, $cookie, 'Should make a clone');
         $this->assertNotContains('path=/api', $cookie->toHeaderValue(), 'old instance not modified');
         $this->assertContains('path=/api', $new->toHeaderValue());
+    }
+
+    /**
+     * Test default path in cookies
+     *
+     * @return void
+     */
+    public function testDefaultPath()
+    {
+        $cookie = new Cookie('cakephp', 'cakephp-rocks');
+        $this->assertContains('path=/', $cookie->toHeaderValue());
     }
 
     /**
@@ -550,10 +561,10 @@ class CookieTest extends TestCase
     public function testGetId()
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $this->assertEquals('cakephp;;', $cookie->getId());
+        $this->assertEquals('cakephp;;/', $cookie->getId());
 
         $cookie = new Cookie('CAKEPHP', 'cakephp-rocks');
-        $this->assertEquals('cakephp;;', $cookie->getId());
+        $this->assertEquals('CAKEPHP;;/', $cookie->getId());
 
         $cookie = new Cookie('test', 'val', null, '/path', 'example.com');
         $this->assertEquals('test;example.com;/path', $cookie->getId());

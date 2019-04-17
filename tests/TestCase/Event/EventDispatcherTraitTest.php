@@ -14,6 +14,8 @@
 
 namespace Cake\Test\TestCase\Event;
 
+use Cake\Event\Event;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 
@@ -23,7 +25,7 @@ use Cake\TestSuite\TestCase;
 class EventDispatcherTraitTest extends TestCase
 {
     /**
-     * @var EventDispatcherTrait
+     * @var \Cake\Event\EventDispatcherTrait
      */
     public $subject;
 
@@ -36,7 +38,7 @@ class EventDispatcherTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->subject = $this->getObjectForTrait('Cake\Event\EventDispatcherTrait');
+        $this->subject = $this->getObjectForTrait(EventDispatcherTrait::class);
     }
 
     /**
@@ -52,15 +54,17 @@ class EventDispatcherTraitTest extends TestCase
     /**
      * testEventManager
      *
+     * @group deprecated
      * @return void
      */
     public function testEventManager()
     {
-        $eventManager = new EventManager();
+        $this->deprecated(function () {
+            $eventManager = new EventManager();
+            $this->subject->eventManager($eventManager);
 
-        $this->subject->eventManager($eventManager);
-
-        $this->assertSame($eventManager, $this->subject->eventManager());
+            $this->assertSame($eventManager, $this->subject->eventManager());
+        });
     }
 
     /**
@@ -96,9 +100,9 @@ class EventDispatcherTraitTest extends TestCase
     {
         $event = $this->subject->dispatchEvent('some.event', ['foo' => 'bar']);
 
-        $this->assertInstanceOf('Cake\Event\Event', $event);
-        $this->assertSame($this->subject, $event->subject());
-        $this->assertEquals('some.event', $event->name());
-        $this->assertEquals(['foo' => 'bar'], $event->data());
+        $this->assertInstanceOf(Event::class, $event);
+        $this->assertSame($this->subject, $event->getSubject());
+        $this->assertEquals('some.event', $event->getName());
+        $this->assertEquals(['foo' => 'bar'], $event->getData());
     }
 }

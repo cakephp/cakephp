@@ -189,6 +189,28 @@ class Configure
     }
 
     /**
+     * Used to consume information stored in Configure. It's not
+     * possible to store `null` values in Configure.
+     *
+     * Acts as a wrapper around Configure::consume() and Configure::check().
+     * The configure key/value pair consumed via this method is expected to exist.
+     * In case it does not an exception will be thrown.
+     *
+     * @param string $var Variable to consume. Use '.' to access array elements.
+     * @return mixed Value stored in configure.
+     * @throws \RuntimeException if the requested configuration is not set.
+     * @since 3.6.0
+     */
+    public static function consumeOrFail($var)
+    {
+        if (static::check($var) === false) {
+            throw new RuntimeException(sprintf('Expected configuration key "%s" not found.', $var));
+        }
+
+        return static::consume($var);
+    }
+
+    /**
      * Used to read and delete a variable from Configure.
      *
      * This is primarily used during bootstrapping to move configuration data
@@ -238,16 +260,35 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
+     * Checking if a specific engine has been configured with this method is deprecated.
+     * Use Configure::isConfigured() instead.
+     *
      * @param string|null $name Engine name.
      * @return array|bool Array of the configured Engine objects, bool for specific name.
      */
     public static function configured($name = null)
     {
         if ($name !== null) {
+            deprecationWarning(
+                'Checking for a named engine with configured() is deprecated. ' .
+                'Use Configure::isConfigured() instead.'
+            );
+
             return isset(static::$_engines[$name]);
         }
 
         return array_keys(static::$_engines);
+    }
+
+    /**
+     * Returns true if the Engine objects is configured.
+     *
+     * @param string $name Engine name.
+     * @return bool
+     */
+    public static function isConfigured($name)
+    {
+        return isset(static::$_engines[$name]);
     }
 
     /**
@@ -405,6 +446,9 @@ class Configure
         if ($data === null) {
             $data = static::$_values;
         }
+        if (!class_exists(Cache::class)) {
+            throw new RuntimeException('You must install cakephp/cache to use Configure::store()');
+        }
 
         return Cache::write($name, $data, $cacheConfig);
     }
@@ -419,6 +463,9 @@ class Configure
      */
     public static function restore($name, $cacheConfig = 'default')
     {
+        if (!class_exists(Cache::class)) {
+            throw new RuntimeException('You must install cakephp/cache to use Configure::restore()');
+        }
         $values = Cache::read($name, $cacheConfig);
         if ($values) {
             return static::write($values);

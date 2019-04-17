@@ -25,7 +25,7 @@ class ContactForm extends Form
             ->addField('body', ['type' => 'text']);
     }
 
-    protected function _buildValidator(Validator $validator)
+    public function validationDefault(Validator $validator)
     {
         return $validator->add('name', 'length', [
                 'rule' => ['minLength', 10],
@@ -47,7 +47,7 @@ class ContactForm extends Form
 In the above example we see the 3 hook methods that forms provide:
 
 - `_buildSchema()` is used to define the schema data. You can define field type, length, and precision.
-- `_buildValidator()` Gets a `Cake\Validation\Validator` instance that you can attach validators to.
+- `validationDefault()` Gets a `Cake\Validation\Validator` instance that you can attach validators to.
 - `_execute()` lets you define the behavior you want to happen when `execute()` is called and the data is valid.
 
 You can always define additional public methods as you need as well.
@@ -55,7 +55,7 @@ You can always define additional public methods as you need as well.
 ```php
 $contact = new ContactForm();
 $success = $contact->execute($data);
-$errors = $contact->errors();
+$errors = $contact->getErrors();
 ```
 
 ## Documentation

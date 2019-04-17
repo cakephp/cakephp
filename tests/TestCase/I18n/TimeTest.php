@@ -33,7 +33,6 @@ class TimeTest extends TestCase
     {
         parent::setUp();
         $this->now = Time::getTestNow();
-        $this->frozenNow = FrozenTime::getTestNow();
         $this->locale = Time::getDefaultLocale();
         Time::setDefaultLocale('en_US');
         FrozenTime::setDefaultLocale('en_US');
@@ -52,7 +51,6 @@ class TimeTest extends TestCase
         Time::resetToStringFormat();
         Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
 
-        FrozenTime::setTestNow($this->frozenNow);
         FrozenTime::setDefaultLocale($this->locale);
         FrozenTime::resetToStringFormat();
         FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
@@ -74,7 +72,7 @@ class TimeTest extends TestCase
     /**
      * Provider for ensuring that Time and FrozenTime work the same way.
      *
-     * @return void
+     * @return array
      */
     public static function classNameProvider()
     {
@@ -152,7 +150,7 @@ class TimeTest extends TestCase
     /**
      * provider for timeAgo with an end date.
      *
-     * @return void
+     * @return array
      */
     public function timeAgoEndProvider()
     {
@@ -459,15 +457,15 @@ class TimeTest extends TestCase
         $this->assertTimeFormat($expected, $result, 'Default locale should not be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'fa-SA');
-        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ (GMT)';
+        $expected = 'پنجشنبه ۱۴ ژانویهٔ ۲۰۱۰، ساعت ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result, 'fa-SA locale should be used');
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-IR@calendar=persian');
         $expected = 'Thursday, Dey 24, 1388 at 1:59:28 PM GMT';
         $this->assertTimeFormat($expected, $result);
 
-        $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'ps-IR@calendar=persian');
-        $expected = 'پنجشنبه د  ۱۳۸۸ د مرغومی ۲۴ ۱۳:۵۹:۲۸ (GMT)';
+        $result = $time->i18nFormat(\IntlDateFormatter::SHORT, null, 'fa-IR@calendar=persian');
+        $expected = '۱۳۸۸/۱۰/۲۴،‏ ۱۳:۵۹:۲۸ GMT';
         $this->assertTimeFormat($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-KW@calendar=islamic');
@@ -527,12 +525,12 @@ class TimeTest extends TestCase
         $this->assertTrue(isset($return['America']['America/Argentina/Buenos_Aires']));
         $this->assertEquals('Argentina/Buenos_Aires', $return['America']['America/Argentina/Buenos_Aires']);
         $this->assertTrue(isset($return['UTC']['UTC']));
-        $this->assertFalse(isset($return['Cuba']));
-        $this->assertFalse(isset($return['US']));
+        $this->assertArrayNotHasKey('Cuba', $return);
+        $this->assertArrayNotHasKey('US', $return);
 
         $return = $class::listTimezones('#^Asia/#');
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
-        $this->assertFalse(isset($return['Pacific']));
+        $this->assertArrayNotHasKey('Pacific', $return);
 
         $return = $class::listTimezones(null, null, ['abbr' => true]);
         $this->assertTrue(isset($return['Asia']['Asia/Jakarta']));
@@ -548,16 +546,16 @@ class TimeTest extends TestCase
         $this->assertEquals('Regina (CST)', $return['America']['America/Regina']);
 
         $return = $class::listTimezones('#^(America|Pacific)/#', null, false);
-        $this->assertTrue(isset($return['America/Argentina/Buenos_Aires']));
-        $this->assertTrue(isset($return['Pacific/Tahiti']));
+        $this->assertArrayHasKey('America/Argentina/Buenos_Aires', $return);
+        $this->assertArrayHasKey('Pacific/Tahiti', $return);
 
         $return = $class::listTimezones(\DateTimeZone::ASIA);
         $this->assertTrue(isset($return['Asia']['Asia/Bangkok']));
-        $this->assertFalse(isset($return['Pacific']));
+        $this->assertArrayNotHasKey('Pacific', $return);
 
         $return = $class::listTimezones(\DateTimeZone::PER_COUNTRY, 'US', false);
-        $this->assertTrue(isset($return['Pacific/Honolulu']));
-        $this->assertFalse(isset($return['Asia/Bangkok']));
+        $this->assertArrayHasKey('Pacific/Honolulu', $return);
+        $this->assertArrayNotHasKey('Asia/Bangkok', $return);
     }
 
     /**
@@ -682,7 +680,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansAbsolute($class)
     {
-        $class::setTestNow(new $class('2015-12-12 10:10:10'));
+        Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year', $time->diffForHumans(null, ['absolute' => true]));
 
@@ -701,7 +699,7 @@ class TimeTest extends TestCase
      */
     public function testDiffForHumansNow($class)
     {
-        $class::setTestNow(new $class('2015-12-12 10:10:10'));
+        Time::setTestNow(new $class('2015-12-12 10:10:10'));
         $time = new $class('2014-04-20 10:10:10');
         $this->assertEquals('1 year ago', $time->diffForHumans());
 
@@ -917,8 +915,14 @@ class TimeTest extends TestCase
         $expected = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $expected);
         $expected = str_replace(['  '], ' ', $expected);
 
+        $result = str_replace('Temps universel coordonné', 'UTC', $result);
+        $result = str_replace('tiempo universal coordinado', 'GMT', $result);
+        $result = str_replace('Coordinated Universal Time', 'GMT', $result);
+
         $result = str_replace([',', '(', ')', ' at', ' م.', ' ه‍.ش.', ' AP', ' AH', ' SAKA', 'à '], '', $result);
         $result = str_replace(['گرینویچ'], 'GMT', $result);
+        $result = str_replace('زمان هماهنگ جهانی', 'GMT', $result);
+        $result = str_replace('همغږۍ نړیواله موده', 'GMT', $result);
         $result = str_replace(['  '], ' ', $result);
 
         $this->assertSame($expected, $result, $message);

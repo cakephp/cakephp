@@ -17,6 +17,7 @@ use ArrayIterator;
 use Countable;
 use DateTimeImmutable;
 use DateTimeZone;
+use Exception;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Psr\Http\Message\RequestInterface;
@@ -182,7 +183,7 @@ class CookieCollection implements IteratorAggregate, Countable
                     sprintf(
                         'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
-                        is_object($cookie) ? get_class($cookie) : gettype($cookie),
+                        getTypeName($cookie),
                         $index
                     )
                 );
@@ -223,8 +224,17 @@ class CookieCollection implements IteratorAggregate, Countable
         $cookies = array_merge($cookies, $extraCookies);
         $cookiePairs = [];
         foreach ($cookies as $key => $value) {
-            $cookiePairs[] = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
+            $cookie = sprintf("%s=%s", rawurlencode($key), rawurlencode($value));
+            $size = strlen($cookie);
+            if ($size > 4096) {
+                triggerWarning(sprintf(
+                    'The cookie `%s` exceeds the recommended maximum cookie length of 4096 bytes.',
+                    $key
+                ));
+            }
+            $cookiePairs[] = $cookie;
         }
+
         if (empty($cookiePairs)) {
             return $request;
         }
@@ -360,22 +370,30 @@ class CookieCollection implements IteratorAggregate, Countable
                     $cookie[$key] = $value;
                 }
             }
-            $expires = null;
-            if ($cookie['max-age'] !== null) {
-                $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
-            } elseif ($cookie['expires']) {
-                $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+            try {
+                $expires = null;
+                if ($cookie['max-age'] !== null) {
+                    $expires = new DateTimeImmutable('@' . (time() + $cookie['max-age']));
+                } elseif ($cookie['expires']) {
+                    $expires = new DateTimeImmutable('@' . strtotime($cookie['expires']));
+                }
+            } catch (Exception $e) {
+                $expires = null;
             }
 
-            $cookies[] = new Cookie(
-                $name,
-                $cookie['value'],
-                $expires,
-                $cookie['path'],
-                $cookie['domain'],
-                $cookie['secure'],
-                $cookie['httponly']
-            );
+            try {
+                $cookies[] = new Cookie(
+                    $name,
+                    $cookie['value'],
+                    $expires,
+                    $cookie['path'],
+                    $cookie['domain'],
+                    $cookie['secure'],
+                    $cookie['httponly']
+                );
+            } catch (Exception $e) {
+                // Don't blow up on invalid cookies
+            }
         }
 
         return $cookies;

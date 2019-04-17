@@ -85,7 +85,7 @@ class StringTemplateTraitTest extends TestCase
      */
     public function testInitStringTemplatesArrayForm()
     {
-        $this->Template->config(
+        $this->Template->setConfig(
             'templates.text',
             '<p>{{text}}</p>'
         );

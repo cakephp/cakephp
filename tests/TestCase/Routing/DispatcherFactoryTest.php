@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
  */
 class DispatcherFactoryTest extends TestCase
 {
+    protected $errorLevel;
 
     /**
      * setup function
@@ -34,6 +35,18 @@ class DispatcherFactoryTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         DispatcherFactory::clear();
+        $this->errorLevel = error_reporting(E_ALL ^ E_USER_DEPRECATED);
+    }
+
+    /**
+     * teardown function
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        error_reporting($this->errorLevel);
     }
 
     /**
@@ -82,8 +95,8 @@ class DispatcherFactoryTest extends TestCase
         $config = ['config' => 'value', 'priority' => 999];
         $result = DispatcherFactory::add('Routing', $config);
         $this->assertInstanceOf('Cake\Routing\Filter\RoutingFilter', $result);
-        $this->assertEquals($config['config'], $result->config('config'));
-        $this->assertEquals($config['priority'], $result->config('priority'));
+        $this->assertEquals($config['config'], $result->getConfig('config'));
+        $this->assertEquals($config['priority'], $result->getConfig('priority'));
     }
 
     /**

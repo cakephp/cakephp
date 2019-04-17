@@ -39,11 +39,12 @@ class PasswordHasherFactoryTest extends TestCase
             'hashOptions' => ['foo' => 'bar']
         ]);
         $this->assertInstanceof('Cake\Auth\DefaultPasswordHasher', $hasher);
-        $this->assertEquals(['foo' => 'bar'], $hasher->config('hashOptions'));
+        $this->assertEquals(['foo' => 'bar'], $hasher->getConfig('hashOptions'));
 
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $hasher = PasswordHasherFactory::build('TestPlugin.Legacy');
         $this->assertInstanceof('TestPlugin\Auth\LegacyPasswordHasher', $hasher);
+        $this->clearPlugins();
     }
 
     /**

@@ -180,7 +180,7 @@ class StringTemplate
             }
 
             $template = str_replace('%', '%%', $template);
-            preg_match_all('#\{\{([\w\d\._]+)\}\}#', $template, $matches);
+            preg_match_all('#\{\{([\w\._]+)\}\}#', $template, $matches);
             $this->_compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
                 $matches[1]

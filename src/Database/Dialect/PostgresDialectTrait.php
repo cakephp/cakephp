@@ -132,6 +132,9 @@ trait PostgresDialectTrait
             case 'NOW':
                 $expression->setName('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
                 break;
+            case 'RAND':
+                $expression->setName('RANDOM');
+                break;
             case 'DATE_ADD':
                 $expression
                     ->setName('')

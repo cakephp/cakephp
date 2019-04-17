@@ -14,7 +14,9 @@
  */
 namespace Cake\Routing\Middleware;
 
-use Cake\Http\BaseApplication;
+use Cake\Cache\Cache;
+use Cake\Core\HttpApplicationInterface;
+use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Routing\Exception\RedirectException;
@@ -30,24 +32,46 @@ use Zend\Diactoros\Response\RedirectResponse;
 class RoutingMiddleware
 {
     /**
+     * Key used to store the route collection in the cache engine
+     */
+    const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
+
+    /**
      * The application that will have its routing hook invoked.
      *
-     * @var \Cake\Http\BaseApplication
+     * @var \Cake\Core\HttpApplicationInterface|null
      */
     protected $app;
 
     /**
+     * The cache configuration name to use for route collection caching,
+     * null to disable caching
+     *
+     * @var string|null
+     */
+    protected $cacheConfig;
+
+    /**
      * Constructor
      *
-     * @param \Cake\Http\BaseApplication $app The application instance that routes are defined on.
+     * @param \Cake\Core\HttpApplicationInterface|null $app The application instance that routes are defined on.
+     * @param string|null $cacheConfig The cache config name to use or null to disable routes cache
      */
-    public function __construct(BaseApplication $app = null)
+    public function __construct(HttpApplicationInterface $app = null, $cacheConfig = null)
     {
+        if ($app === null) {
+            deprecationWarning(
+                'RoutingMiddleware should be passed an application instance. ' .
+                'Failing to do so can cause plugin routes to not behave correctly.'
+            );
+        }
         $this->app = $app;
+        $this->cacheConfig = $cacheConfig;
     }
 
     /**
      * Trigger the application's routes() hook if the application exists and Router isn't initialized.
+     * Uses the routes cache if enabled via configuration param "Router.cache"
      *
      * If the middleware is created without an Application, routes will be
      * loaded via the automatic route loading that pre-dates the routes() hook.
@@ -56,10 +80,44 @@ class RoutingMiddleware
      */
     protected function loadRoutes()
     {
-        if ($this->app) {
-            $builder = Router::createRouteBuilder('/');
-            $this->app->routes($builder);
+        if (!$this->app) {
+            return;
         }
+
+        $routeCollection = $this->buildRouteCollection();
+        Router::setRouteCollection($routeCollection);
+    }
+
+    /**
+     * Check if route cache is enabled and use the configured Cache to 'remember' the route collection
+     *
+     * @return \Cake\Routing\RouteCollection
+     */
+    protected function buildRouteCollection()
+    {
+        if (Cache::enabled() && $this->cacheConfig !== null) {
+            return Cache::remember(static::ROUTE_COLLECTION_CACHE_KEY, function () {
+                return $this->prepareRouteCollection();
+            }, $this->cacheConfig);
+        }
+
+        return $this->prepareRouteCollection();
+    }
+
+    /**
+     * Generate the route collection using the builder
+     *
+     * @return \Cake\Routing\RouteCollection
+     */
+    protected function prepareRouteCollection()
+    {
+        $builder = Router::createRouteBuilder('/');
+        $this->app->routes($builder);
+        if ($this->app instanceof PluginApplicationInterface) {
+            $this->app->pluginRoutes($builder);
+        }
+
+        return Router::getRouteCollection();
     }
 
     /**

@@ -1,30 +1,4 @@
 <?php
-/**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @since         3.0.0
- * @license       https://opensource.org/licenses/mit-license.php MIT License
- */
-namespace Cake\Network\Exception;
-
-/**
- * Not Implemented Exception - used when an API method is not implemented
- */
-class NotImplementedException extends HttpException
-{
-
-    /**
-     * {@inheritDoc}
-     */
-    protected $_messageTemplate = '%s is not implemented.';
-
-    /**
-     * {@inheritDoc}
-     */
-    protected $_defaultCode = 501;
-}
+// @deprecated 3.6.0 Backward compatibility alias
+class_alias('Cake\Http\Exception\NotImplementedException', 'Cake\Network\Exception\NotImplementedException');
+deprecationWarning('Use Cake\Http\Exception\NotImplementedException instead of Cake\Network\Exception\NotImplementedException.');

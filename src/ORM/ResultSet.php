@@ -65,7 +65,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Default table instance
      *
-     * @var \Cake\ORM\Table
+     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
      */
     protected $_defaultTable;
 
@@ -175,10 +175,11 @@ class ResultSet implements ResultSetInterface
      */
     public function __construct($query, $statement)
     {
-        $repository = $query->repository();
+        /** @var \Cake\ORM\Table $repository */
+        $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $query->repository();
+        $this->_defaultTable = $query->getRepository();
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();
@@ -432,6 +433,7 @@ class ResultSet implements ResultSetInterface
      */
     protected function _calculateTypeMap()
     {
+        deprecationWarning('ResultSet::_calculateTypeMap() is deprecated, and will be removed in 4.0.0.');
     }
 
     /**
@@ -446,7 +448,7 @@ class ResultSet implements ResultSetInterface
     {
         $types = [];
         $schema = $table->getSchema();
-        $map = array_keys(Type::map() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
+        $map = array_keys((array)Type::getMap() + ['string' => 1, 'text' => 1, 'boolean' => 1]);
         $typeMap = array_combine(
             $map,
             array_map(['Cake\Database\Type', 'build'], $map)
@@ -526,6 +528,13 @@ class ResultSet implements ResultSetInterface
             $presentAliases[$table] = true;
         }
 
+        // If the default table is not in the results, set
+        // it to an empty array so that any contained
+        // associations hydrate correctly.
+        if (!isset($results[$defaultAlias])) {
+            $results[$defaultAlias] = [];
+        }
+
         unset($presentAliases[$defaultAlias]);
 
         foreach ($this->_containMap as $assoc) {
@@ -584,7 +593,7 @@ class ResultSet implements ResultSetInterface
             $results[$defaultAlias]['_matchingData'] = $results['_matchingData'];
         }
 
-        $options['source'] = $this->_defaultTable->registryAlias();
+        $options['source'] = $this->_defaultTable->getRegistryAlias();
         if (isset($results[$defaultAlias])) {
             $results = $results[$defaultAlias];
         }
@@ -606,6 +615,8 @@ class ResultSet implements ResultSetInterface
      */
     protected function _castValues($alias, $values)
     {
+        deprecationWarning('ResultSet::_castValues() is deprecated, and will be removed in 4.0.0.');
+
         return $values;
     }
 

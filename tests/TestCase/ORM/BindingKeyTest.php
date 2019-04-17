@@ -14,7 +14,6 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,15 +28,15 @@ class BindingKeyTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.auth_users',
-        'core.site_authors',
-        'core.users'
+        'core.AuthUsers',
+        'core.SiteAuthors',
+        'core.Users'
     ];
 
     /**
      * Data provider for the two types of strategies BelongsTo and HasOne implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderJoinable()
     {
@@ -47,7 +46,7 @@ class BindingKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany and BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderExternal()
     {
@@ -62,7 +61,7 @@ class BindingKeyTest extends TestCase
      */
     public function testBelongsto($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->belongsTo('AuthUsers', [
             'bindingKey' => 'username',
             'foreignKey' => 'username',
@@ -94,7 +93,7 @@ class BindingKeyTest extends TestCase
      */
     public function testHasOne($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->hasOne('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
@@ -118,7 +117,7 @@ class BindingKeyTest extends TestCase
      */
     public function testHasMany($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $authors = $users->hasMany('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',

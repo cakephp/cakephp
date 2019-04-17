@@ -18,6 +18,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Exception\XmlException;
 use Cake\Utility\Xml;
 
 /**
@@ -38,7 +39,7 @@ class XmlTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.users'
+        'core.Articles', 'core.Users'
     ];
 
     /**
@@ -64,6 +65,19 @@ class XmlTest extends TestCase
         Configure::write('App.encoding', $this->_appEncoding);
     }
 
+    public function testExceptionChainingForInvalidInput()
+    {
+        try {
+            $value = "invalid-xml-input<<";
+            Xml::build($value);
+            $this->fail('This line should not be executed because of exception above.');
+        } catch (XmlException $exception) {
+            $cause = $exception->getPrevious();
+            $this->assertNotNull($cause);
+            $this->assertInstanceOf(\Exception::class, $cause);
+        }
+    }
+
     /**
      * testBuild method
      *
@@ -73,7 +87,7 @@ class XmlTest extends TestCase
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tag', (string)$obj->getName());
         $this->assertEquals('value', (string)$obj);
 
@@ -81,7 +95,7 @@ class XmlTest extends TestCase
         $this->assertEquals($obj, Xml::build($xml));
 
         $obj = Xml::build($xml, ['return' => 'domdocument']);
-        $this->assertTrue($obj instanceof \DOMDocument);
+        $this->assertInstanceOf(\DOMDocument::class, $obj);
         $this->assertEquals('tag', $obj->firstChild->nodeName);
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
@@ -234,6 +248,54 @@ class XmlTest extends TestCase
     }
 
     /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $htmlFile = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($htmlFile);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
+        $xml = Xml::loadHtml($html);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        $this->expectException(XmlException::class);
+        Xml::loadHtml(null);
+    }
+
+    /**
      * testFromArray method
      *
      * @return void
@@ -270,7 +332,7 @@ class XmlTest extends TestCase
             ]
         ];
         $obj = Xml::fromArray($xml, 'attributes');
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
@@ -283,7 +345,7 @@ XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $obj = Xml::fromArray($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML

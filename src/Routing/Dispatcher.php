@@ -24,6 +24,9 @@ use Cake\Http\ServerRequest;
  * Dispatcher converts Requests into controller actions. It uses the dispatched Request
  * to locate and load the correct controller. If found, the requested action is called on
  * the controller
+ *
+ * @deprecated 3.6.0 Dispatcher is deprecated. You should update your application to use
+ *   the Http\Server implementation instead.
  */
 class Dispatcher
 {
@@ -56,9 +59,13 @@ class Dispatcher
      */
     public function dispatch(ServerRequest $request, Response $response)
     {
+        deprecationWarning(
+            'Dispatcher is deprecated. You should update your application to use ' .
+            'the Http\Server implementation instead.'
+        );
         $actionDispatcher = new ActionDispatcher(null, $this->getEventManager(), $this->_filters);
         $response = $actionDispatcher->dispatch($request, $response);
-        if (isset($request->params['return'])) {
+        if ($request->getParam('return', null) !== null) {
             return $response->body();
         }
 

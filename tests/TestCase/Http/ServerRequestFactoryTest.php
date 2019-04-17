@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Http;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequestFactory;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -136,7 +137,7 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $res = ServerRequestFactory::fromGlobals($server);
         $session = $res->getAttribute('session');
-        $this->assertInstanceOf('Cake\Network\Session', $session);
+        $this->assertInstanceOf(Session::class, $session);
         $this->assertEquals('/basedir/', ini_get('session.cookie_path'), 'Needs trailing / for cookie to work');
     }
 
@@ -209,19 +210,19 @@ class ServerRequestFactoryTest extends TestCase
     {
         Configure::write('App', [
             'dir' => 'app',
-            'webroot' => 'webroot',
+            'webroot' => 'www',
             'base' => false,
             'baseUrl' => '/cake/index.php'
         ]);
         $server = [
             'DOCUMENT_ROOT' => '/Users/markstory/Sites',
-            'SCRIPT_FILENAME' => '/Users/markstory/Sites/cake/webroot/index.php',
-            'PHP_SELF' => '/cake/webroot/index.php/posts/index',
-            'REQUEST_URI' => '/cake/webroot/index.php',
+            'SCRIPT_FILENAME' => '/Users/markstory/Sites/cake/www/index.php',
+            'PHP_SELF' => '/cake/www/index.php/posts/index',
+            'REQUEST_URI' => '/cake/www/index.php',
         ];
         $res = ServerRequestFactory::fromGlobals($server);
 
-        $this->assertSame('/cake/webroot/', $res->getAttribute('webroot'));
+        $this->assertSame('/cake/www/', $res->getAttribute('webroot'));
         $this->assertSame('/cake/index.php', $res->getAttribute('base'));
         $this->assertSame('/', $res->getUri()->getPath());
     }

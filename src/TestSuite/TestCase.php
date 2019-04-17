@@ -15,10 +15,13 @@ namespace Cake\TestSuite;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Event\EventManager;
+use Cake\Http\BaseApplication;
+use Cake\ORM\Entity;
 use Cake\ORM\Exception\MissingTableClassException;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\EventFired;
 use Cake\TestSuite\Constraint\EventFiredWith;
@@ -31,6 +34,8 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 abstract class TestCase extends BaseTestCase
 {
+
+    use LocatorAwareTrait;
 
     /**
      * The class responsible for managing the creation, loading and removing of fixtures
@@ -88,6 +93,41 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Helper method for tests that needs to use error_reporting()
+     *
+     * @param int $errorLevel value of error_reporting() that needs to use
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function withErrorReporting($errorLevel, $callable)
+    {
+        $default = error_reporting();
+        error_reporting($errorLevel);
+        try {
+            $callable();
+        } finally {
+            error_reporting($default);
+        }
+    }
+
+    /**
+     * Helper method for check deprecation methods
+     *
+     * @param callable $callable callable function that will receive asserts
+     * @return void
+     */
+    public function deprecated($callable)
+    {
+        $errorLevel = error_reporting();
+        error_reporting(E_ALL ^ E_USER_DEPRECATED);
+        try {
+            $callable();
+        } finally {
+            error_reporting($errorLevel);
+        }
+    }
+
+    /**
      * Setup the test case, backup the static object values so they can be restored.
      * Specifically backs up the contents of Configure and paths in App if they have
      * not already been backed up.
@@ -120,7 +160,7 @@ abstract class TestCase extends BaseTestCase
             Configure::clear();
             Configure::write($this->_configure);
         }
-        TableRegistry::clear();
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -149,6 +189,65 @@ abstract class TestCase extends BaseTestCase
             $this->fixtureManager->load($this);
             $this->autoFixtures = $autoFixtures;
         }
+    }
+
+    /**
+     * Load plugins into a simulated application.
+     *
+     * Useful to test how plugins being loaded/not loaded interact with other
+     * elements in CakePHP or applications.
+     *
+     * @param array $plugins List of Plugins to load.
+     * @return \Cake\Http\BaseApplication
+     */
+    public function loadPlugins(array $plugins = [])
+    {
+        /** @var \Cake\Http\BaseApplication $app */
+        $app = $this->getMockForAbstractClass(
+            BaseApplication::class,
+            ['']
+        );
+
+        foreach ($plugins as $pluginName => $config) {
+            if (is_array($config)) {
+                $app->addPlugin($pluginName, $config);
+            } else {
+                $app->addPlugin($config);
+            }
+        }
+        $app->pluginBootstrap();
+        $builder = Router::createRouteBuilder('/');
+        $app->pluginRoutes($builder);
+
+        return $app;
+    }
+
+    /**
+     * Remove plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @param array $plugins A list of plugins you want to remove.
+     * @return void
+     */
+    public function removePlugins(array $plugins = [])
+    {
+        $collection = Plugin::getCollection();
+        foreach ($plugins as $plugin) {
+            $collection->remove($plugin);
+        }
+    }
+
+    /**
+     * Clear all plugins from the global plugin collection.
+     *
+     * Useful in test case teardown methods.
+     *
+     * @return void
+     */
+    public function clearPlugins()
+    {
+        Plugin::getCollection()->clear();
     }
 
     /**
@@ -328,10 +427,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function assertTags($string, $expected, $fullDebug = false)
     {
-        trigger_error(
-            'assertTags() is deprecated, use assertHtml() instead.',
-            E_USER_DEPRECATED
-        );
+        deprecationWarning('TestCase::assertTags() is deprecated. Use TestCase::assertHtml() instead.');
         $this->assertHtml($expected, $string, $fullDebug);
     }
 
@@ -638,12 +734,58 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array $methods The list of methods to mock
+     * @param array|null $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getMockForModel($alias, array $methods = [], array $options = [])
+    public function getMockForModel($alias, $methods = [], array $options = [])
+    {
+        /** @var \Cake\ORM\Table $className */
+        $className = $this->_getTableClassName($alias, $options);
+        $connectionName = $className::defaultConnectionName();
+        $connection = ConnectionManager::get($connectionName);
+
+        $locator = $this->getTableLocator();
+
+        list(, $baseClass) = pluginSplit($alias);
+        $options += ['alias' => $baseClass, 'connection' => $connection];
+        $options += $locator->getConfig($alias);
+
+        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
+        $mock = $this->getMockBuilder($className)
+            ->setMethods($methods)
+            ->setConstructorArgs([$options])
+            ->getMock();
+
+        if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
+            $parts = explode('\\', $className);
+            $entityAlias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
+            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $entityAlias;
+            if (class_exists($entityClass)) {
+                $mock->setEntityClass($entityClass);
+            }
+        }
+
+        if (stripos($mock->getTable(), 'mock') === 0) {
+            $mock->setTable(Inflector::tableize($baseClass));
+        }
+
+        $locator->set($baseClass, $mock);
+        $locator->set($alias, $mock);
+
+        return $mock;
+    }
+
+    /**
+     * Gets the class name for the table.
+     *
+     * @param string $alias The model to get a mock for.
+     * @param array $options The config data for the mock's constructor.
+     * @return string
+     * @throws \Cake\ORM\Exception\MissingTableClassException
+     */
+    protected function _getTableClassName($alias, array $options)
     {
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
@@ -654,36 +796,7 @@ abstract class TestCase extends BaseTestCase
             $options['className'] = $className;
         }
 
-        $connectionName = $options['className']::defaultConnectionName();
-        $connection = ConnectionManager::get($connectionName);
-
-        list(, $baseClass) = pluginSplit($alias);
-        $options += ['alias' => $baseClass, 'connection' => $connection];
-        $options += TableRegistry::config($alias);
-
-        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
-        $mock = $this->getMockBuilder($options['className'])
-            ->setMethods($methods)
-            ->setConstructorArgs([$options])
-            ->getMock();
-
-        if (empty($options['entityClass']) && $mock->entityClass() === '\Cake\ORM\Entity') {
-            $parts = explode('\\', $options['className']);
-            $entityAlias = Inflector::singularize(substr(array_pop($parts), 0, -5));
-            $entityClass = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $entityAlias;
-            if (class_exists($entityClass)) {
-                $mock->entityClass($entityClass);
-            }
-        }
-
-        if (stripos($mock->getTable(), 'mock') === 0) {
-            $mock->setTable(Inflector::tableize($baseClass));
-        }
-
-        TableRegistry::set($baseClass, $mock);
-        TableRegistry::set($alias, $mock);
-
-        return $mock;
+        return $options['className'];
     }
 
     /**

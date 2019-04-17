@@ -121,6 +121,13 @@ class ConsoleOptionParser
     protected $_subcommands = [];
 
     /**
+     * Subcommand sorting option
+     *
+     * @var bool
+     */
+    protected $_subcommandSort = true;
+
+    /**
      * Command name.
      *
      * @var string
@@ -310,6 +317,10 @@ class ConsoleOptionParser
      */
     public function command($text = null)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::command() is deprecated. ' .
+            'Use ConsoleOptionParser::setCommand()/getCommand() instead.'
+        );
         if ($text !== null) {
             return $this->setCommand($text);
         }
@@ -354,6 +365,10 @@ class ConsoleOptionParser
      */
     public function description($text = null)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::description() is deprecated. ' .
+            'Use ConsoleOptionParser::setDescription()/getDescription() instead.'
+        );
         if ($text !== null) {
             return $this->setDescription($text);
         }
@@ -400,11 +415,38 @@ class ConsoleOptionParser
      */
     public function epilog($text = null)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::epliog() is deprecated. ' .
+            'Use ConsoleOptionParser::setEpilog()/getEpilog() instead.'
+        );
         if ($text !== null) {
             return $this->setEpilog($text);
         }
 
         return $this->getEpilog();
+    }
+
+    /**
+     * Enables sorting of subcommands
+     *
+     * @param bool $value Whether or not to sort subcommands
+     * @return $this
+     */
+    public function enableSubcommandSort($value = true)
+    {
+        $this->_subcommandSort = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Checks whether or not sorting is enabled for subcommands.
+     *
+     * @return bool
+     */
+    public function isSubcommandSortEnabled()
+    {
+        return $this->_subcommandSort;
     }
 
     /**
@@ -595,7 +637,9 @@ class ConsoleOptionParser
             $command = new ConsoleInputSubcommand($options);
         }
         $this->_subcommands[$name] = $command;
-        asort($this->_subcommands);
+        if ($this->_subcommandSort) {
+            asort($this->_subcommands);
+        }
 
         return $this;
     }
@@ -640,6 +684,21 @@ class ConsoleOptionParser
     public function arguments()
     {
         return $this->_args;
+    }
+
+    /**
+     * Get the list of argument names.
+     *
+     * @return string[]
+     */
+    public function argumentNames()
+    {
+        $out = [];
+        foreach ($this->_args as $arg) {
+            $out[] = $arg->name();
+        }
+
+        return $out;
     }
 
     /**
@@ -746,8 +805,15 @@ class ConsoleOptionParser
         if (isset($this->_subcommands[$subcommand])) {
             $command = $this->_subcommands[$subcommand];
             $subparser = $command->parser();
+
+            // Generate a parser as the subcommand didn't define one.
             if (!($subparser instanceof self)) {
-                $subparser = clone $this;
+                // $subparser = clone $this;
+                $subparser = new self($subcommand);
+                $subparser
+                    ->setDescription($command->getRawHelp())
+                    ->addOptions($this->options())
+                    ->addArguments($this->arguments());
             }
             if (strlen($subparser->getDescription()) === 0) {
                 $subparser->setDescription($command->getRawHelp());
@@ -770,6 +836,10 @@ class ConsoleOptionParser
      */
     public function setHelpAlias($alias)
     {
+        deprecationWarning(
+            'ConsoleOptionParser::setHelpAlias() is deprecated. ' .
+            'Use ConsoleOptionParser::setRootName() instead.'
+        );
         $this->rootName = $alias;
     }
 
@@ -879,7 +949,7 @@ class ConsoleOptionParser
      * algorithm.
      *
      * @param string $needle Unknown item (either a subcommand name or an option for instance) trying to be used.
-     * @param array $haystack List of items available for the type $needle belongs to.
+     * @param string[] $haystack List of items available for the type $needle belongs to.
      * @return string|null The closest name to the item submitted by the user.
      */
     protected function findClosestItem($needle, $haystack)

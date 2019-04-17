@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Mailer\Email;
+use Cake\Mailer\TransportFactory;
 use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\EmailAssertTrait;
 use Cake\TestSuite\TestCase;
@@ -28,13 +29,13 @@ class EmailAssertTraitTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Email::configTransport('debug', ['className' => DebugTransport::class]);
+        TransportFactory::setConfig('debug', ['className' => DebugTransport::class]);
     }
 
     public function tearDown()
     {
         parent::tearDown();
-        Email::dropTransport('debug');
+        TransportFactory::drop('debug');
     }
 
     public function testFunctional()

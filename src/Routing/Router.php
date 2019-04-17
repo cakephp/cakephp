@@ -16,8 +16,14 @@ namespace Cake\Routing;
 
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Utility\Inflector;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use ReflectionFunction;
+use ReflectionMethod;
+use RuntimeException;
+use Throwable;
 
 /**
  * Parses the request URL into controller, action, and parameters. Uses the connected routes
@@ -190,7 +196,7 @@ class Router
      * Compatibility proxy to \Cake\Routing\RouteBuilder::connect() in the `/` scope.
      *
      * @param string $route A string describing the template of the route
-     * @param array $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -205,6 +211,7 @@ class Router
     {
         static::$initialized = true;
         static::scope('/', function ($routes) use ($route, $defaults, $options) {
+            /** @var \Cake\Routing\RouteBuilder $routes */
             $routes->connect($route, $defaults, $options);
         });
     }
@@ -215,7 +222,7 @@ class Router
      * Compatibility proxy to \Cake\Routing\RouteBuilder::redirect() in the `/` scope.
      *
      * @param string $route A string describing the template of the route
-     * @param array $url A URL to redirect to. Can be a string or a Cake array-based URL
+     * @param array|string $url A URL to redirect to. Can be a string or a Cake array-based URL
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
@@ -225,6 +232,10 @@ class Router
      */
     public static function redirect($route, $url, $options = [])
     {
+        deprecationWarning(
+            'Router::redirect() is deprecated. ' .
+            'Use Router::scope() and RouteBuilder::redirect() instead.'
+        );
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
@@ -291,6 +302,10 @@ class Router
      */
     public static function mapResources($controller, $options = [])
     {
+        deprecationWarning(
+            'Router::mapResources() is deprecated. ' .
+            'Use Router::scope() and RouteBuilder::resources() instead.'
+        );
         foreach ((array)$controller as $name) {
             list($plugin, $name) = pluginSplit($name);
 
@@ -304,6 +319,7 @@ class Router
             }
 
             $callback = function ($routes) use ($name, $options) {
+                /** @var \Cake\Routing\RouteBuilder $routes */
                 $routes->resources($name, $options);
             };
 
@@ -344,6 +360,10 @@ class Router
      */
     public static function parse($url, $method = '')
     {
+        deprecationWarning(
+            'Router::parse() is deprecated. ' .
+            'Use Router::parseRequest() instead. This will require adopting the Http\Server library.'
+        );
         if (!static::$initialized) {
             static::_loadRoutes();
         }
@@ -383,12 +403,18 @@ class Router
      *
      * @param \Cake\Http\ServerRequest|array $request Parameters and path information or a Cake\Http\ServerRequest object.
      * @return void
+     * @deprecatd 3.6.0 Support for arrays will be removed in 4.0.0
      */
     public static function setRequestInfo($request)
     {
         if ($request instanceof ServerRequest) {
             static::pushRequest($request);
         } else {
+            deprecationWarning(
+                'Passing an array into Router::setRequestInfo() is deprecated. ' .
+                'Pass an instance of ServerRequest instead.'
+            );
+
             $requestData = $request;
             $requestData += [[], []];
             $requestData[0] += [
@@ -396,8 +422,12 @@ class Router
                 'action' => false,
                 'plugin' => null
             ];
-            $request = new ServerRequest();
-            $request->addParams($requestData[0])->addPaths($requestData[1]);
+            $request = new ServerRequest([
+                'params' => $requestData[0],
+                'url' => isset($requestData[1]['here']) ? $requestData[1]['here'] : '/',
+                'base' => isset($requestData[1]['base']) ? $requestData[1]['base'] : '',
+                'webroot' => isset($requestData[1]['webroot']) ? $requestData[1]['webroot'] : '/',
+            ]);
             static::pushRequest($request);
         }
     }
@@ -420,7 +450,7 @@ class Router
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request The request instance.
      * @return void
-     * @throws InvalidArgumentException When parameter is an incorrect type.
+     * @throws \InvalidArgumentException When parameter is an incorrect type.
      */
     public static function setRequestContext(ServerRequestInterface $request)
     {
@@ -492,6 +522,30 @@ class Router
     }
 
     /**
+     * Reset routes and related state.
+     *
+     * Similar to reload() except that this doesn't reset all global state,
+     * as that leads to incorrect behavior in some plugin test case scenarios.
+     *
+     * This method will reset:
+     *
+     * - routes
+     * - URL Filters
+     * - the initialized property
+     *
+     * Extensions and default route classes will not be modified
+     *
+     * @internal
+     * @return void
+     */
+    public static function resetRoutes()
+    {
+        static::$_collection = new RouteCollection();
+        static::$_urlFilters = [];
+        static::$initialized = false;
+    }
+
+    /**
      * Add a URL filter to Router.
      *
      * URL filter functions are applied to every array $url provided to
@@ -536,8 +590,29 @@ class Router
     protected static function _applyUrlFilters($url)
     {
         $request = static::getRequest(true);
+        $e = null;
         foreach (static::$_urlFilters as $filter) {
-            $url = $filter($url, $request);
+            try {
+                $url = $filter($url, $request);
+            } catch (Exception $e) {
+                // fall through
+            } catch (Throwable $e) {
+                // fall through
+            }
+            if ($e !== null) {
+                if (is_array($filter)) {
+                    $ref = new ReflectionMethod($filter[0], $filter[1]);
+                } else {
+                    $ref = new ReflectionFunction($filter);
+                }
+                $message = sprintf(
+                    'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
+                    $ref->getFileName(),
+                    $ref->getStartLine(),
+                    $e->getMessage()
+                );
+                throw new RuntimeException($message, $e->getCode(), $e);
+            }
         }
 
         return $url;
@@ -593,23 +668,21 @@ class Router
             'action' => 'index',
             '_ext' => null,
         ];
-        $here = $base = $output = $frag = null;
+        $here = $output = $frag = null;
 
+        $context = static::$_requestContext;
         // In 4.x this should be replaced with state injected via setRequestContext
         $request = static::getRequest(true);
         if ($request) {
-            $params = $request->params;
-            $here = $request->here;
-            $base = $request->getAttribute('base');
-        } else {
-            $base = Configure::read('App.base');
-            if (isset(static::$_requestContext['_base'])) {
-                $base = static::$_requestContext['_base'];
-            }
+            $params = $request->getAttribute('params');
+            $here = $request->getRequestTarget();
+            $context['_base'] = $request->getAttribute('base');
+        } elseif (!isset($context['_base'])) {
+            $context['_base'] = Configure::read('App.base');
         }
 
         if (empty($url)) {
-            $output = isset($here) ? $here : $base . '/';
+            $output = $context['_base'] . (isset($here) ? $here : '/');
             if ($full) {
                 $output = static::fullBaseUrl() . $output;
             }
@@ -657,8 +730,9 @@ class Router
             if ($full && isset($url['_scheme']) && !isset($url['_host'])) {
                 $url['_host'] = parse_url(static::fullBaseUrl(), PHP_URL_HOST);
             }
+            $context['params'] = $params;
 
-            $output = static::$_collection->match($url, static::$_requestContext + ['params' => $params]);
+            $output = static::$_collection->match($url, $context);
         } else {
             $plainString = (
                 strpos($url, 'javascript:') === 0 ||
@@ -674,7 +748,7 @@ class Router
             if ($plainString) {
                 return $url;
             }
-            $output = $base . $url;
+            $output = $context['_base'] . $url;
         }
         $protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
         if ($protocol === 0) {
@@ -688,8 +762,36 @@ class Router
     }
 
     /**
+     * Finds URL for specified action.
+     *
+     * Returns a bool if the url exists
+     *
+     * ### Usage
+     *
+     * @see Router::url()
+     *
+     * @param string|array|null $url An array specifying any of the following:
+     *   'controller', 'action', 'plugin' additionally, you can provide routed
+     *   elements or query string parameters. If string it can be name any valid url
+     *   string.
+     * @param bool $full If true, the full base URL will be prepended to the result.
+     *   Default is false.
+     * @return bool
+     */
+    public static function routeExists($url = null, $full = false)
+    {
+        try {
+            $route = static::url($url, $full);
+
+            return true;
+        } catch (MissingRouteException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Sets the full base URL that will be used as a prefix for generating
-     * fully qualified URLs for this application. If not parameters are passed,
+     * fully qualified URLs for this application. If no parameters are passed,
      * the currently configured value is returned.
      *
      * ### Note:
@@ -733,8 +835,8 @@ class Router
     {
         $url = [];
         if ($params instanceof ServerRequest) {
-            $url = $params->query;
-            $params = $params->params;
+            $url = $params->getQueryParams();
+            $params = $params->getAttribute('params');
         } elseif (isset($params['url'])) {
             $url = $params['url'];
         }
@@ -773,7 +875,7 @@ class Router
      * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
-     *     Cake\Network\Request object that needs to be reversed.
+     *     Cake\Http\ServerRequest object that needs to be reversed.
      * @param bool $full Set to true to include the full URL including the
      *     protocol when reversing the URL.
      * @return string The string that is the reversed result of the array
@@ -804,8 +906,11 @@ class Router
         }
         $request = static::getRequest();
 
-        if (!empty($request->base) && stristr($url, $request->base)) {
-            $url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
+        if ($request) {
+            $base = $request->getAttribute('base');
+            if (strlen($base) && stristr($url, $base)) {
+                $url = preg_replace('/^' . preg_quote($base, '/') . '/', '', $url, 1);
+            }
         }
         $url = '/' . $url;
 
@@ -878,18 +983,21 @@ class Router
      */
     public static function parseNamedParams(ServerRequest $request, array $options = [])
     {
+        deprecationWarning(
+            'Router::parseNamedParams() is deprecated. ' .
+            '2.x backwards compatible named parameter support will be removed in 4.0'
+        );
         $options += ['separator' => ':'];
-        if (empty($request->params['pass'])) {
-            $request->params['named'] = [];
-
-            return $request;
+        if (!$request->getParam('pass')) {
+            return $request->withParam('named', []);
         }
         $named = [];
-        foreach ($request->getParam('pass') as $key => $value) {
+        $pass = $request->getParam('pass');
+        foreach ((array)$pass as $key => $value) {
             if (strpos($value, $options['separator']) === false) {
                 continue;
             }
-            unset($request->params['pass'][$key]);
+            unset($pass[$key]);
             list($key, $value) = explode($options['separator'], $value, 2);
 
             if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
@@ -910,9 +1018,10 @@ class Router
             }
             $named = array_merge_recursive($named, [$key => $value]);
         }
-        $request->params['named'] = $named;
 
-        return $request;
+        return $request
+            ->withParam('pass', $pass)
+            ->withParam('named', $named);
     }
 
     /**
@@ -1087,6 +1196,18 @@ class Router
     public static function getRouteCollection()
     {
         return static::$_collection;
+    }
+
+    /**
+     * Set the RouteCollection inside the Router
+     *
+     * @param RouteCollection $routeCollection route collection
+     * @return void
+     */
+    public static function setRouteCollection($routeCollection)
+    {
+        static::$_collection = $routeCollection;
+        static::$initialized = true;
     }
 
     /**

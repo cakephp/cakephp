@@ -44,12 +44,12 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -73,12 +73,12 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -102,12 +102,12 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
         $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -131,7 +131,7 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['ruleName' => 'invalid'], $entity->errors('name'));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
     }
 
     /**
@@ -154,7 +154,7 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['worst thing ever'], $entity->errors('name'));
+        $this->assertEquals(['worst thing ever'], $entity->getError('name'));
     }
 
     /**
@@ -177,7 +177,7 @@ class RulesCheckerTest extends TestCase
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEquals(['this is bad'], $entity->errors('name'));
+        $this->assertEquals(['this is bad'], $entity->getError('name'));
     }
 
     /**
@@ -197,6 +197,6 @@ class RulesCheckerTest extends TestCase
         });
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->errors());
+        $this->assertEmpty($entity->getErrors());
     }
 }

@@ -24,12 +24,9 @@ use InvalidArgumentException;
  * CakePHP network socket connection class.
  *
  * Core base class for network communication.
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 class Socket
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -473,7 +470,7 @@ class Socket
             $enableCryptoResult = stream_socket_enable_crypto($this->connection, $enable, $method);
         } catch (Exception $e) {
             $this->setLastError(null, $e->getMessage());
-            throw new SocketException($e->getMessage());
+            throw new SocketException($e->getMessage(), null, $e);
         }
         if ($enableCryptoResult === true) {
             $this->encrypted = $enable;

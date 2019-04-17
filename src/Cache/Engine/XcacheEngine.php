@@ -20,6 +20,7 @@ use Cake\Cache\CacheEngine;
  * Xcache storage engine for cache
  *
  * @link          http://trac.lighttpd.net/xcache/ Xcache
+ * @deprecated 3.6.0 Xcache engine has been deprecated and will be removed in 4.0.0.
  */
 class XcacheEngine extends CacheEngine
 {

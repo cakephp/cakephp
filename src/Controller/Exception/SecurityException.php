@@ -12,7 +12,7 @@
  */
 namespace Cake\Controller\Exception;
 
-use Cake\Network\Exception\BadRequestException;
+use Cake\Http\Exception\BadRequestException;
 
 /**
  * Security exception - used when SecurityComponent detects any issue with the current request

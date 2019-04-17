@@ -19,7 +19,7 @@ use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Http\ServerRequest;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use RuntimeException;
 use Traversable;
@@ -46,6 +46,7 @@ use Traversable;
  */
 class EntityContext implements ContextInterface
 {
+    use LocatorAwareTrait;
 
     /**
      * The request object.
@@ -112,7 +113,7 @@ class EntityContext implements ContextInterface
      * Prepare some additional data from the context.
      *
      * If the table option was provided to the constructor and it
-     * was a string, ORM\TableRegistry will be used to get the correct table instance.
+     * was a string, TableLocator will be used to get the correct table instance.
      *
      * If an object is provided as the table option, it will be used as is.
      *
@@ -137,7 +138,7 @@ class EntityContext implements ContextInterface
             $isEntity = $entity instanceof EntityInterface;
 
             if ($isEntity) {
-                $table = $entity->source();
+                $table = $entity->getSource();
             }
             if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
                 list(, $entityClass) = namespaceSplit(get_class($entity));
@@ -145,7 +146,7 @@ class EntityContext implements ContextInterface
             }
         }
         if (is_string($table)) {
-            $table = TableRegistry::get($table);
+            $table = $this->getTableLocator()->get($table);
         }
 
         if (!($table instanceof RepositoryInterface)) {
@@ -248,7 +249,7 @@ class EntityContext implements ContextInterface
         }
 
         if ($entity instanceof EntityInterface) {
-            $part = array_pop($parts);
+            $part = end($parts);
             $val = $entity->get($part);
             if ($val !== null) {
                 return $val;
@@ -260,7 +261,7 @@ class EntityContext implements ContextInterface
                 return $options['default'];
             }
 
-            return $this->_schemaDefault($part, $entity);
+            return $this->_schemaDefault($parts);
         }
         if (is_array($entity) || $entity instanceof ArrayAccess) {
             $key = array_pop($parts);
@@ -274,16 +275,16 @@ class EntityContext implements ContextInterface
     /**
      * Get default value from table schema for given entity field.
      *
-     * @param string $field Field name.
-     * @param \Cake\Datasource\EntityInterface $entity The entity.
+     * @param array $parts Each one of the parts in a path for a field name
      * @return mixed
      */
-    protected function _schemaDefault($field, $entity)
+    protected function _schemaDefault($parts)
     {
-        $table = $this->_getTable($entity);
+        $table = $this->_getTable($parts);
         if ($table === false) {
             return null;
         }
+        $field = end($parts);
         $defaults = $table->getSchema()->defaultValues();
         if (!array_key_exists($field, $defaults)) {
             return null;
@@ -426,6 +427,57 @@ class EntityContext implements ContextInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_getValidator($parts);
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get field length from validation
+     *
+     * @param string $field The dot separated path to the field you want to check.
+     * @return int|null
+     */
+    public function getMaxLength($field)
+    {
+        $parts = explode('.', $field);
+        $validator = $this->_getValidator($parts);
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+        foreach ($validator->field($fieldName)->rules() as $rule) {
+            if ($rule->get('rule') === 'maxLength') {
+                return $rule->get('pass')[0];
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get the field names from the top level entity.
      *
      * If the context is for an array of entities, the 0th index will be used.
@@ -523,7 +575,7 @@ class EntityContext implements ContextInterface
                 return false;
             }
 
-            $table = $assoc->target();
+            $table = $assoc->getTarget();
         }
 
         return $this->_tables[$path] = $table;
@@ -583,7 +635,7 @@ class EntityContext implements ContextInterface
         $entity = $this->entity($parts);
 
         if ($entity instanceof EntityInterface) {
-            return $entity->errors(array_pop($parts));
+            return $entity->getError(array_pop($parts));
         }
 
         return [];

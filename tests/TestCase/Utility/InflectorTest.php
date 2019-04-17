@@ -189,6 +189,7 @@ class InflectorTest extends TestCase
             ['blue_octopus', 'blue_octopuses'],
             ['chef', 'chefs'],
             ['', ''],
+            ['cache', 'caches'],
         ];
     }
 
@@ -359,117 +360,129 @@ class InflectorTest extends TestCase
     /**
      * testSlug method
      *
+     * @group deprecated
      * @return void
      */
     public function testSlug()
     {
-        $result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
-        $expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            $result = Inflector::slug('Foo Bar: Not just for breakfast any-more');
+            $expected = 'Foo-Bar-Not-just-for-breakfast-any-more';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('this/is/a/path');
-        $expected = 'this-is-a-path';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('this/is/a/path');
+            $expected = 'this-is-a-path';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '_');
-        $expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '_');
+            $expected = 'Foo_Bar_Not_just_for_breakfast_any_more';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '+');
-        $expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '+');
+            $expected = 'Foo+Bar+Not+just+for+breakfast+any+more';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('Äpfel Über Öl grün ärgert groß öko', '-');
-        $expected = 'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('Äpfel Über Öl grün ärgert groß öko', '-');
+            $expected = 'Aepfel-Ueber-Oel-gruen-aergert-gross-oeko';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('The truth - and- more- news', '-');
-        $expected = 'The-truth-and-more-news';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('The truth - and- more- news', '-');
+            $expected = 'The-truth-and-more-news';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('The truth: and more news', '-');
-        $expected = 'The-truth-and-more-news';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('The truth: and more news', '-');
+            $expected = 'The-truth-and-more-news';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('La langue française est un attribut de souveraineté en France', '-');
-        $expected = 'La-langue-francaise-est-un-attribut-de-souverainete-en-France';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('La langue française est un attribut de souveraineté en France', '-');
+            $expected = 'La-langue-francaise-est-un-attribut-de-souverainete-en-France';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('!@$#exciting stuff! - what !@-# was that?', '-');
-        $expected = 'exciting-stuff-what-was-that';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('!@$#exciting stuff! - what !@-# was that?', '-');
+            $expected = 'exciting-stuff-what-was-that';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('20% of profits went to me!', '-');
-        $expected = '20-of-profits-went-to-me';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('20% of profits went to me!', '-');
+            $expected = '20-of-profits-went-to-me';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('#this melts your face1#2#3', '-');
-        $expected = 'this-melts-your-face1-2-3';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('#this melts your face1#2#3', '-');
+            $expected = 'this-melts-your-face1-2-3';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('controller/action/りんご/1');
-        $expected = 'controller-action-りんご-1';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('controller/action/りんご/1');
+            $expected = 'controller-action-りんご-1';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('の話が出たので大丈夫かなあと');
-        $expected = 'の話が出たので大丈夫かなあと';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('の話が出たので大丈夫かなあと');
+            $expected = 'の話が出たので大丈夫かなあと';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('posts/view/한국어/page:1/sort:asc');
-        $expected = 'posts-view-한국어-page-1-sort-asc';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('posts/view/한국어/page:1/sort:asc');
+            $expected = 'posts-view-한국어-page-1-sort-asc';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug("non\xc2\xa0breaking\xc2\xa0space");
-        $this->assertEquals('non-breaking-space', $result);
+            $result = Inflector::slug("non\xc2\xa0breaking\xc2\xa0space");
+            $this->assertEquals('non-breaking-space', $result);
 
-        $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '');
-        $expected = 'FooBarNotjustforbreakfastanymore';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('Foo Bar: Not just for breakfast any-more', '');
+            $expected = 'FooBarNotjustforbreakfastanymore';
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
      * Test slug() with a complete list of special chars.
      *
+     * @group deprecated
      * @return void
      */
     public function testSlugCharList()
     {
-        foreach (self::$maps as $language => $list) {
-            foreach ($list as $from => $to) {
-                $result = Inflector::slug($from);
-                $this->assertEquals($to, $result, $from . ' (' . $language . ') should be ' . $to . ' - but is ' . $result);
+        $this->deprecated(function () {
+            foreach (self::$maps as $language => $list) {
+                foreach ($list as $from => $to) {
+                    $result = Inflector::slug($from);
+                    $this->assertEquals($to, $result, $from . ' (' . $language . ') should be ' . $to . ' - but is ' . $result);
+                }
             }
-        }
+        });
     }
 
     /**
      * testSlugWithMap method
      *
+     * @group deprecated
      * @return void
      */
     public function testSlugWithMap()
     {
-        Inflector::rules('transliteration', ['r' => '1']);
-        $result = Inflector::slug('replace every r');
-        $expected = '1eplace-eve1y-1';
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            Inflector::rules('transliteration', ['r' => '1']);
+            $result = Inflector::slug('replace every r');
+            $expected = '1eplace-eve1y-1';
+            $this->assertEquals($expected, $result);
 
-        $result = Inflector::slug('replace every r', '_');
-        $expected = '1eplace_eve1y_1';
-        $this->assertEquals($expected, $result);
+            $result = Inflector::slug('replace every r', '_');
+            $expected = '1eplace_eve1y_1';
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
      * testSlugWithMapOverridingDefault method
      *
+     * @group deprecated
      * @return void
      */
     public function testSlugWithMapOverridingDefault()
     {
-        Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
-        $result = Inflector::slug('Testing æ ø å', '-');
-        $expected = 'Testing-ae-oe-aa';
-        $this->assertEquals($expected, $result);
+        $this->deprecated(function () {
+            Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
+            $result = Inflector::slug('Testing æ ø å', '-');
+            $expected = 'Testing-ae-oe-aa';
+            $this->assertEquals($expected, $result);
+        });
     }
 
     /**
@@ -644,17 +657,20 @@ class InflectorTest extends TestCase
     /**
      * testCustomTransliterationRule method
      *
+     * @group deprecated
      * @return void
      */
     public function testCustomTransliterationRule()
     {
-        $this->assertEquals('Testing-ae-o-a', Inflector::slug('Testing æ ø å'));
+        $this->deprecated(function () {
+            $this->assertEquals('Testing-ae-o-a', Inflector::slug('Testing æ ø å'));
 
-        Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
-        $this->assertEquals('Testing-ae-oe-aa', Inflector::slug('Testing æ ø å'));
+            Inflector::rules('transliteration', ['å' => 'aa', 'ø' => 'oe']);
+            $this->assertEquals('Testing-ae-oe-aa', Inflector::slug('Testing æ ø å'));
 
-        Inflector::rules('transliteration', ['æ' => 'ae', 'å' => 'aa'], true);
-        $this->assertEquals('Testing-ae-ø-aa', Inflector::slug('Testing æ ø å'));
+            Inflector::rules('transliteration', ['æ' => 'ae', 'å' => 'aa'], true);
+            $this->assertEquals('Testing-ae-ø-aa', Inflector::slug('Testing æ ø å'));
+        });
     }
 
     /**

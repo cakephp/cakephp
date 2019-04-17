@@ -18,12 +18,9 @@ use Cake\Core\InstanceConfigTrait;
 
 /**
  * Abstract transport for sending email
- *
- * @mixin \Cake\Core\InstanceConfigTrait
  */
 abstract class AbstractTransport
 {
-
     use InstanceConfigTrait;
 
     /**
@@ -65,7 +62,10 @@ abstract class AbstractTransport
             if ($value === false || $value === null || $value === '') {
                 continue;
             }
-            $out .= $key . ': ' . $value . $eol;
+
+            foreach ((array)$value as $val) {
+                $out .= $key . ': ' . $val . $eol;
+            }
         }
         if (!empty($out)) {
             $out = substr($out, 0, -1 * strlen($eol));

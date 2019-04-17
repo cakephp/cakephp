@@ -26,7 +26,6 @@ use PDO;
 class Sqlserver extends Driver
 {
 
-    use PDODriverTrait;
     use SqlserverDialectTrait;
 
     /**
@@ -106,7 +105,7 @@ class Sqlserver extends Driver
         }
         $this->_connect($dsn, $config);
 
-        $connection = $this->connection();
+        $connection = $this->getConnection();
         if (!empty($config['init'])) {
             foreach ((array)$config['init'] as $command) {
                 $connection->exec($command);

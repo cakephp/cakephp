@@ -18,6 +18,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Security;
 use DateTime;
 
 /**
@@ -263,6 +264,23 @@ class CookieCollectionTest extends TestCase
     }
 
     /**
+     * Test adding cookies from a response ignores empty headers
+     *
+     * @return void
+     */
+    public function testAddFromResponseIgnoreEmpty()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', '');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertCount(0, $new, 'no cookies parsed');
+    }
+
+    /**
      * Test adding cookies from a response ignores expired cookies
      *
      * @return void
@@ -302,6 +320,27 @@ class CookieCollectionTest extends TestCase
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertFalse($new->has('expired'), 'Should drop expired cookies');
+    }
+
+    /**
+     * Test adding cookies from a response with bad expires values
+     *
+     * @return void
+     */
+    public function testAddFromResponseInvalidExpires()
+    {
+        $collection = new CookieCollection();
+        $request = new ServerRequest([
+            'url' => '/app'
+        ]);
+        $response = (new Response())
+            ->withAddedHeader('Set-Cookie', 'test=value')
+            ->withAddedHeader('Set-Cookie', 'expired=no; Expires=1w; Path=/; HttpOnly; Secure;');
+        $new = $collection->addFromResponse($response, $request);
+        $this->assertTrue($new->has('test'));
+        $this->assertTrue($new->has('expired'));
+        $expired = $new->get('expired');
+        $this->assertNull($expired->getExpiry());
     }
 
     /**
@@ -371,6 +410,23 @@ class CookieCollectionTest extends TestCase
         $request = new ClientRequest('http://example.com/api');
         $request = $collection->addToRequest($request);
         $this->assertFalse($request->hasHeader('Cookie'), 'No header should be set.');
+    }
+
+    /**
+     * Testing the cookie size limit warning
+     *
+     * @expectedException \PHPUnit\Framework\Error\Warning
+     * @expectedExceptionMessage The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.
+     * @return void
+     */
+    public function testCookieSizeWarning()
+    {
+        $string = Security::insecureRandomBytes(9000);
+        $collection = new CookieCollection();
+        $collection = $collection
+            ->add(new Cookie('default', $string, null, '/', 'example.com'));
+        $request = new ClientRequest('http://example.com/api');
+        $collection->addToRequest($request);
     }
 
     /**
@@ -465,7 +521,7 @@ class CookieCollectionTest extends TestCase
 
         $cookie = $cookies->get('name');
         $this->assertSame('val', $cookie->getValue());
-        $this->assertSame('', $cookie->getPath(), 'No path on request cookies');
+        $this->assertSame('/', $cookie->getPath());
         $this->assertSame('', $cookie->getDomain(), 'No domain on request cookies');
     }
 }

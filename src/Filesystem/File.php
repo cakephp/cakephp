@@ -109,10 +109,8 @@ class File
     {
         $dir = $this->Folder->pwd();
 
-        if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
-            if (touch($this->path)) {
-                return true;
-            }
+        if (is_dir($dir) && is_writable($dir) && !$this->exists() && touch($this->path)) {
+            return true;
         }
 
         return false;
@@ -576,7 +574,7 @@ class File
     /**
      * Copy the File to $dest
      *
-     * @param string $dest Destination for the copy
+     * @param string $dest Absolute path to copy the file to.
      * @param bool $overwrite Overwrite $dest if exists
      * @return bool Success
      */

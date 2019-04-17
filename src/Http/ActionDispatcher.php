@@ -69,6 +69,7 @@ class ActionDispatcher
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Cake\Http\Response A modified/replaced response.
+     * @throws \ReflectionException
      */
     public function dispatch(ServerRequest $request, Response $response)
     {
@@ -91,7 +92,7 @@ class ActionDispatcher
         }
 
         $response = $this->_invoke($controller);
-        if (isset($request->params['return'])) {
+        if ($request->getParam('return')) {
             return $response;
         }
 
@@ -121,7 +122,7 @@ class ActionDispatcher
             throw new LogicException('Controller actions can only return Cake\Http\Response or null.');
         }
 
-        if (!$response && $controller->autoRender) {
+        if (!$response && $controller->isAutoRenderEnabled()) {
             $controller->render();
         }
 
@@ -130,7 +131,7 @@ class ActionDispatcher
             return $result;
         }
         if (!$response) {
-            $response = $controller->response;
+            $response = $controller->getResponse();
         }
 
         return $response;
@@ -149,6 +150,11 @@ class ActionDispatcher
      */
     public function addFilter(EventListenerInterface $filter)
     {
+        deprecationWarning(
+            'ActionDispatcher::addFilter() is deprecated. ' .
+            'This is only available for backwards compatibility with DispatchFilters'
+        );
+
         $this->filters[] = $filter;
         $this->getEventManager()->on($filter);
     }

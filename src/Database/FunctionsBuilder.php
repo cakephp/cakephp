@@ -61,6 +61,16 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a FunctionExpression representing a call to SQL RAND function.
+     *
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function rand()
+    {
+        return $this->_build('RAND', [], [], 'float');
+    }
+
+    /**
      * Returns a FunctionExpression representing a call to SQL SUM function.
      *
      * @param mixed $expression the function argument
@@ -195,7 +205,7 @@ class FunctionsBuilder
      * Add the time unit to the date expression
      *
      * @param string $expression Expression to obtain the date part from.
-     * @param string $value Value to be added. Use negative to substract.
+     * @param string $value Value to be added. Use negative to subtract.
      * @param string $unit Unit of the value e.g. hour or day.
      * @param array $types list of types to bind to the arguments
      * @return \Cake\Database\Expression\FunctionExpression

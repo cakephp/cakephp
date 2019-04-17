@@ -1,1 +1,0 @@
-admin_edit template

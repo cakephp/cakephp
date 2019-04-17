@@ -28,7 +28,7 @@ class ProfilesFixture extends TestFixture
      * @var array
      */
     public $fields = [
-        'id' => ['type' => 'integer'],
+        'id' => ['type' => 'integer', 'null' => false, 'autoIncrement' => true],
         'user_id' => ['type' => 'integer', 'null' => false],
         'first_name' => ['type' => 'string', 'null' => true],
         'last_name' => ['type' => 'string', 'null' => true],

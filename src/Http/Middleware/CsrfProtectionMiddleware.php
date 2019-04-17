@@ -14,10 +14,11 @@
  */
 namespace Cake\Http\Middleware;
 
+use Cake\Http\Cookie\Cookie;
+use Cake\Http\Exception\InvalidCsrfTokenException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
-use Cake\Network\Exception\InvalidCsrfTokenException;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -40,11 +41,12 @@ class CsrfProtectionMiddleware
     /**
      * Default config for the CSRF handling.
      *
-     *  - `cookieName` = The name of the cookie to send.
-     *  - `expiry` = How long the CSRF token should last. Defaults to browser session.
-     *  - `secure` = Whether or not the cookie will be set with the Secure flag. Defaults to false.
-     *  - `httpOnly` = Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
-     *  - `field` = The form field to check. Changing this will also require configuring
+     *  - `cookieName` The name of the cookie to send.
+     *  - `expiry` A strotime compatible value of how long the CSRF token should last.
+     *    Defaults to browser session.
+     *  - `secure` Whether or not the cookie will be set with the Secure flag. Defaults to false.
+     *  - `httpOnly` Whether or not the cookie will be set with the HttpOnly flag. Defaults to false.
+     *  - `field` The form field to check. Changing this will also require configuring
      *    FormHelper.
      *
      * @var array
@@ -163,13 +165,17 @@ class CsrfProtectionMiddleware
     {
         $expiry = new Time($this->_config['expiry']);
 
-        return $response->withCookie($this->_config['cookieName'], [
-            'value' => $token,
-            'expire' => $expiry->format('U'),
-            'path' => $request->getAttribute('webroot'),
-            'secure' => $this->_config['secure'],
-            'httpOnly' => $this->_config['httpOnly'],
-        ]);
+        $cookie = new Cookie(
+            $this->_config['cookieName'],
+            $token,
+            $expiry,
+            $request->getAttribute('webroot'),
+            '',
+            (bool)$this->_config['secure'],
+            (bool)$this->_config['httpOnly']
+        );
+
+        return $response->withCookie($cookie);
     }
 
     /**
@@ -177,7 +183,7 @@ class CsrfProtectionMiddleware
      *
      * @param \Cake\Http\ServerRequest $request The request to validate against.
      * @return void
-     * @throws \Cake\Network\Exception\InvalidCsrfTokenException When the CSRF token is invalid or missing.
+     * @throws \Cake\Http\Exception\InvalidCsrfTokenException When the CSRF token is invalid or missing.
      */
     protected function _validateToken(ServerRequest $request)
     {
@@ -190,7 +196,7 @@ class CsrfProtectionMiddleware
             throw new InvalidCsrfTokenException(__d('cake', 'Missing CSRF token cookie'));
         }
 
-        if ($post !== $cookie && $header !== $cookie) {
+        if (!Security::constantEquals($post, $cookie) && !Security::constantEquals($header, $cookie)) {
             throw new InvalidCsrfTokenException(__d('cake', 'CSRF token mismatch.'));
         }
     }

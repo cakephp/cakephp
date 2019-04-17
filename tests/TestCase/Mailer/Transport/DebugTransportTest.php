@@ -46,20 +46,22 @@ class DebugTransportTest extends TestCase
         $email = $this->getMockBuilder('Cake\Mailer\Email')
             ->setMethods(['message'])
             ->getMock();
-        $email->from('noreply@cakephp.org', 'CakePHP Test');
-        $email->to('cake@cakephp.org', 'CakePHP');
-        $email->cc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
-        $email->bcc('phpnut@cakephp.org');
-        $email->messageID('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
-        $email->subject('Testing Message');
+        $email->setFrom('noreply@cakephp.org', 'CakePHP Test');
+        $email->setTo('cake@cakephp.org', 'CakePHP');
+        $email->setCc(['mark@cakephp.org' => 'Mark Story', 'juan@cakephp.org' => 'Juan Basso']);
+        $email->setBcc('phpnut@cakephp.org');
+        $email->setMessageId('<4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>');
+        $email->setSubject('Testing Message');
         $date = date(DATE_RFC2822);
-        $email->setHeaders(['Date' => $date]);
+        $email->setHeaders(['Date' => $date, 'o:tag' => ['foo', 'bar']]);
         $email->expects($this->once())->method('message')->will($this->returnValue(['First Line', 'Second Line', '.Third Line', '']));
 
         $headers = "From: CakePHP Test <noreply@cakephp.org>\r\n";
         $headers .= "To: CakePHP <cake@cakephp.org>\r\n";
         $headers .= "Cc: Mark Story <mark@cakephp.org>, Juan Basso <juan@cakephp.org>\r\n";
         $headers .= 'Date: ' . $date . "\r\n";
+        $headers .= 'o:tag: foo' . "\r\n";
+        $headers .= 'o:tag: bar' . "\r\n";
         $headers .= "Message-ID: <4d9946cf-0a44-4907-88fe-1d0ccbdd56cb@localhost>\r\n";
         $headers .= "Subject: Testing Message\r\n";
         $headers .= "MIME-Version: 1.0\r\n";

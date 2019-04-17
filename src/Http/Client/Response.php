@@ -44,14 +44,6 @@ use Zend\Diactoros\Stream;
  * $response->getHeaders();
  * ```
  *
- * You can also get at the headers using object access. When getting
- * headers with object access, you have to use case-sensitive header
- * names:
- *
- * ```
- * $val = $response->headers['Content-Type'];
- * ```
- *
  * ### Get the response body
  *
  * You can access the response body stream using:
@@ -60,11 +52,10 @@ use Zend\Diactoros\Stream;
  * $content = $response->getBody();
  * ```
  *
- * You can also use object access to get the string version
- * of the response body:
+ * You can get the body string using:
  *
  * ```
- * $content = $response->body;
+ * $content = $response->getStringBody();
  * ```
  *
  * If your response body is in XML or JSON you can use
@@ -74,9 +65,9 @@ use Zend\Diactoros\Stream;
  *
  * ```
  * // Get as xml
- * $content = $response->xml
+ * $content = $response->getXml()
  * // Get as json
- * $content = $response->json
+ * $content = $response->getJson()
  * ```
  *
  * If the response cannot be decoded, null will be returned.
@@ -87,12 +78,6 @@ use Zend\Diactoros\Stream;
  *
  * ```
  * $content = $response->getStatusCode();
- * ```
- *
- * You can also use object access:
- *
- * ```
- * $content = $response->code;
  * ```
  */
 class Response extends Message implements ResponseInterface
@@ -146,6 +131,20 @@ class Response extends Message implements ResponseInterface
         'json' => '_getJson',
         'xml' => '_getXml',
         'headers' => '_getHeaders',
+    ];
+
+    /**
+     * Map of deprecated magic properties.
+     *
+     * @var array
+     * @internal
+     */
+    protected $_deprecatedMagicProperties = [
+        'cookies' => 'getCookies()',
+        'body' => 'getStringBody()',
+        'json' => 'getJson()',
+        'xml' => 'getXml()',
+        'headers' => 'getHeaders()',
     ];
 
     /**
@@ -211,6 +210,9 @@ class Response extends Message implements ResponseInterface
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }
+            if (strpos($value, ':') === false) {
+                continue;
+            }
             list($name, $value) = explode(':', $value, 2);
             $value = trim($value);
             $name = trim($name);
@@ -272,6 +274,11 @@ class Response extends Message implements ResponseInterface
      */
     public function statusCode()
     {
+        deprecationWarning(
+            'Response::statusCode() is deprecated. ' .
+            'Use Response::getStatusCode() instead.'
+        );
+
         return $this->code;
     }
 
@@ -319,6 +326,11 @@ class Response extends Message implements ResponseInterface
      */
     public function encoding()
     {
+        deprecationWarning(
+            'Response::encoding() is deprecated. ' .
+            'Use Response::getEncoding() instead.'
+        );
+
         return $this->getEncoding();
     }
 
@@ -354,6 +366,11 @@ class Response extends Message implements ResponseInterface
      */
     public function header($name = null)
     {
+        deprecationWarning(
+            'Response::header() is deprecated. ' .
+            'Use Response::getHeader() and getHeaderLine() instead.'
+        );
+
         if ($name === null) {
             return $this->_getHeaders();
         }
@@ -381,6 +398,11 @@ class Response extends Message implements ResponseInterface
      */
     public function cookie($name = null, $all = false)
     {
+        deprecationWarning(
+            'Response::cookie() is deprecated. ' .
+            'Use Response::getCookie(), getCookieData() or getCookies() instead.'
+        );
+
         if ($name === null) {
             return $this->getCookies();
         }
@@ -420,7 +442,7 @@ class Response extends Message implements ResponseInterface
      * Get the value of a single cookie.
      *
      * @param string $name The name of the cookie value.
-     * @return string|null Either the cookie's value or null when the cookie is undefined.
+     * @return string|array|null Either the cookie's value or null when the cookie is undefined.
      */
     public function getCookie($name)
     {
@@ -511,6 +533,11 @@ class Response extends Message implements ResponseInterface
      */
     public function version()
     {
+        deprecationWarning(
+            'Response::version() is deprecated. ' .
+            'Use Response::getProtocolVersion() instead.'
+        );
+
         return $this->protocol;
     }
 
@@ -529,9 +556,14 @@ class Response extends Message implements ResponseInterface
      * @param callable|null $parser The callback to use to decode
      *   the response body.
      * @return mixed The response body.
+     * @deprecated 3.7.0 Use getStringBody()/getJson()/getXml() instead.
      */
     public function body($parser = null)
     {
+        deprecationWarning(
+            'Response::body() is deprecated. Use getStringBody()/getJson()/getXml() instead.'
+        );
+
         $stream = $this->stream;
         $stream->rewind();
         if ($parser) {
@@ -539,6 +571,26 @@ class Response extends Message implements ResponseInterface
         }
 
         return $stream->getContents();
+    }
+
+    /**
+     * Get the response body as string.
+     *
+     * @return string
+     */
+    public function getStringBody()
+    {
+        return $this->_getBody();
+    }
+
+    /**
+     * Get the response body as JSON decoded data.
+     *
+     * @return array|null
+     */
+    public function getJson()
+    {
+        return $this->_getJson();
     }
 
     /**
@@ -553,6 +605,16 @@ class Response extends Message implements ResponseInterface
         }
 
         return $this->_json = json_decode($this->_getBody(), true);
+    }
+
+    /**
+     * Get the response body as XML decoded data.
+     *
+     * @return null|\SimpleXMLElement
+     */
+    public function getXml()
+    {
+        return $this->_getXml();
     }
 
     /**
@@ -594,7 +656,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Provides magic __get() support.
      *
-     * @return array
+     * @return string
      */
     protected function _getBody()
     {
@@ -616,7 +678,20 @@ class Response extends Message implements ResponseInterface
         }
         $key = $this->_exposedProperties[$name];
         if (substr($key, 0, 4) === '_get') {
+            deprecationWarning(sprintf(
+                'Response::%s is deprecated. Use Response::%s instead.',
+                $name,
+                $this->_deprecatedMagicProperties[$name]
+            ));
+
             return $this->{$key}();
+        }
+
+        if ($key === 'code') {
+            deprecationWarning(
+                'Response::code() is deprecated. ' .
+                'Use Response::getStatusCode() instead.'
+            );
         }
 
         return $this->{$key};
@@ -635,14 +710,27 @@ class Response extends Message implements ResponseInterface
         }
         $key = $this->_exposedProperties[$name];
         if (substr($key, 0, 4) === '_get') {
+            deprecationWarning(sprintf(
+                'Response::%s is deprecated. Use Response::%s instead.',
+                $name,
+                $this->_deprecatedMagicProperties[$name]
+            ));
+
             $val = $this->{$key}();
 
             return $val !== null;
+        }
+
+        if ($key === 'code') {
+            deprecationWarning(
+                'Response::code() is deprecated. ' .
+                'Use Response::getStatusCode() instead.'
+            );
         }
 
         return isset($this->{$key});
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Response', 'Cake\Network\Http\Response');

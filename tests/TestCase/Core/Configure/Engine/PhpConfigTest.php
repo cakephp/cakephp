@@ -123,12 +123,12 @@ class PhpConfigTest extends TestCase
      */
     public function testReadPluginValue()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $engine = new PhpConfig($this->path);
         $result = $engine->read('TestPlugin.load');
-        $this->assertTrue(isset($result['plugin_load']));
+        $this->assertArrayHasKey('plugin_load', $result);
 
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

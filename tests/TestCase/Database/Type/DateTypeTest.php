@@ -64,6 +64,29 @@ class DateTypeTest extends TestCase
     }
 
     /**
+     * Test converting string dates to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2001-01-04',
+            'c' => '2001-01-04 12:13:14.12345',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Date('2001-01-04'),
+            'c' => new Date('2001-01-04'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
+    }
+
+    /**
      * Test converting to database format
      *
      * @return void

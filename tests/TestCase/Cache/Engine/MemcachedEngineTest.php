@@ -58,7 +58,7 @@ class MemcachedEngineTest extends TestCase
             'duration' => 3600
         ];
         Cache::drop('memcached');
-        Cache::config('memcached', array_merge($defaults, $config));
+        Cache::setConfig('memcached', array_merge($defaults, $config));
     }
 
     /**
@@ -85,7 +85,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::engine('memcached')->config();
+        $config = Cache::engine('memcached')->getConfig();
         unset($config['path']);
         $expecting = [
             'prefix' => 'cake_',
@@ -386,7 +386,7 @@ class MemcachedEngineTest extends TestCase
         $Memcached = new MemcachedEngine();
         $Memcached->init(['engine' => 'Memcached', 'servers' => $servers]);
 
-        $config = $Memcached->config();
+        $config = $Memcached->getConfig();
         $this->assertEquals($config['servers'], $servers);
         Cache::drop('dual_server');
     }
@@ -494,12 +494,12 @@ class MemcachedEngineTest extends TestCase
 
         $read = Cache::readMany(array_merge(array_keys($data), ['App.doesNotExist']), 'memcached');
 
-        $this->assertSame($read['App.falseTest'], false);
-        $this->assertSame($read['App.trueTest'], true);
-        $this->assertSame($read['App.nullTest'], null);
+        $this->assertFalse($read['App.falseTest']);
+        $this->assertTrue($read['App.trueTest']);
+        $this->assertNull($read['App.nullTest']);
         $this->assertSame($read['App.zeroTest'], 0);
         $this->assertSame($read['App.zeroTest2'], '0');
-        $this->assertSame($read['App.doesNotExist'], false);
+        $this->assertFalse($read['App.doesNotExist']);
     }
 
     /**
@@ -519,9 +519,9 @@ class MemcachedEngineTest extends TestCase
         ];
         Cache::writeMany($data, 'memcached');
 
-        $this->assertSame(Cache::read('App.falseTest', 'memcached'), false);
-        $this->assertSame(Cache::read('App.trueTest', 'memcached'), true);
-        $this->assertSame(Cache::read('App.nullTest', 'memcached'), null);
+        $this->assertFalse(Cache::read('App.falseTest', 'memcached'));
+        $this->assertTrue(Cache::read('App.trueTest', 'memcached'));
+        $this->assertNull(Cache::read('App.nullTest', 'memcached'));
         $this->assertSame(Cache::read('App.zeroTest', 'memcached'), 0);
         $this->assertSame(Cache::read('App.zeroTest2', 'memcached'), '0');
     }
@@ -608,11 +608,11 @@ class MemcachedEngineTest extends TestCase
 
         Cache::deleteMany(array_merge(array_keys($data), ['App.doesNotExist']), 'memcached');
 
-        $this->assertSame(Cache::read('App.falseTest', 'memcached'), false);
-        $this->assertSame(Cache::read('App.trueTest', 'memcached'), false);
-        $this->assertSame(Cache::read('App.nullTest', 'memcached'), false);
-        $this->assertSame(Cache::read('App.zeroTest', 'memcached'), false);
-        $this->assertSame(Cache::read('App.zeroTest2', 'memcached'), false);
+        $this->assertFalse(Cache::read('App.falseTest', 'memcached'));
+        $this->assertFalse(Cache::read('App.trueTest', 'memcached'));
+        $this->assertFalse(Cache::read('App.nullTest', 'memcached'));
+        $this->assertFalse(Cache::read('App.zeroTest', 'memcached'));
+        $this->assertFalse(Cache::read('App.zeroTest2', 'memcached'));
         $this->assertSame(Cache::read('App.keepTest', 'memcached'), 'keepMe');
     }
 
@@ -648,7 +648,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testDecrementCompressedKeys()
     {
-        Cache::config('compressed_memcached', [
+        Cache::setConfig('compressed_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
@@ -725,7 +725,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testIncrementCompressedKeys()
     {
-        Cache::config('compressed_memcached', [
+        Cache::setConfig('compressed_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
@@ -757,12 +757,12 @@ class MemcachedEngineTest extends TestCase
      */
     public function testConfigurationConflict()
     {
-        Cache::config('long_memcached', [
+        Cache::setConfig('long_memcached', [
             'engine' => 'Memcached',
             'duration' => '+3 seconds',
             'servers' => ['127.0.0.1:11211'],
         ]);
-        Cache::config('short_memcached', [
+        Cache::setConfig('short_memcached', [
             'engine' => 'Memcached',
             'duration' => '+2 seconds',
             'servers' => ['127.0.0.1:11211'],
@@ -792,7 +792,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testClear()
     {
-        Cache::config('memcached2', [
+        Cache::setConfig('memcached2', [
             'engine' => 'Memcached',
             'prefix' => 'cake2_',
             'duration' => 3600
@@ -836,13 +836,13 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupReadWrite()
     {
-        Cache::config('memcached_groups', [
+        Cache::setConfig('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
-        Cache::config('memcached_helper', [
+        Cache::setConfig('memcached_helper', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'prefix' => 'test_'
@@ -868,7 +868,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('memcached_groups', [
+        Cache::setConfig('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b']
@@ -887,7 +887,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('memcached_groups', [
+        Cache::setConfig('memcached_groups', [
             'engine' => 'Memcached',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b']

@@ -14,9 +14,9 @@
  */
 namespace Cake\Auth;
 
+use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\Network\Exception\UnauthorizedException;
 
 /**
  * Basic Authentication adapter for AuthComponent.
@@ -27,27 +27,27 @@ use Cake\Network\Exception\UnauthorizedException;
  *
  * ### Using Basic auth
  *
- * In your controller's components array, add auth + the required config
+ * Load `AuthComponent` in your controller's `initialize()` and add 'Basic' in 'authenticate' key
  * ```
- *  public $components = [
- *      'Auth' => [
- *          'authenticate' => ['Basic']
- *      ]
- *  ];
+ *  $this->loadComponent('Auth', [
+ *      'authenticate' => ['Basic']
+ *      'storage' => 'Memory',
+ *      'unauthorizedRedirect' => false,
+ *  ]);
  * ```
  *
- * You should also set `AuthComponent::$sessionKey = false;` in your AppController's
- * beforeFilter() to prevent CakePHP from sending a session cookie to the client.
+ * You should set `storage` to `Memory` to prevent CakePHP from sending a
+ * session cookie to the client.
  *
- * Since HTTP Basic Authentication is stateless you don't need a login() action
+ * You should set `unauthorizedRedirect` to `false`. This causes `AuthComponent` to
+ * throw a `ForbiddenException` exception instead of redirecting to another page.
+ *
+ * Since HTTP Basic Authentication is stateless you don't need call `setUser()`
  * in your controller. The user credentials will be checked on each request. If
  * valid credentials are not provided, required authentication headers will be sent
  * by this authentication provider which triggers the login dialog in the browser/client.
  *
- * You may also want to use `$this->Auth->unauthorizedRedirect = false;`.
- * By default, unauthorized users are redirected to the referrer URL,
- * `AuthComponent::$loginAction`, or '/'. If unauthorizedRedirect is set to
- * false, a ForbiddenException exception is thrown instead of redirecting.
+ * @see https://book.cakephp.org/3.0/en/controllers/components/authentication.html
  */
 class BasicAuthenticate extends BaseAuthenticate
 {
@@ -89,12 +89,12 @@ class BasicAuthenticate extends BaseAuthenticate
      * @param \Cake\Http\ServerRequest $request A request object.
      * @param \Cake\Http\Response $response A response object.
      * @return void
-     * @throws \Cake\Network\Exception\UnauthorizedException
+     * @throws \Cake\Http\Exception\UnauthorizedException
      */
     public function unauthenticated(ServerRequest $request, Response $response)
     {
         $Exception = new UnauthorizedException();
-        $Exception->responseHeader([$this->loginHeaders($request)]);
+        $Exception->responseHeader($this->loginHeaders($request));
         throw $Exception;
     }
 
@@ -102,12 +102,14 @@ class BasicAuthenticate extends BaseAuthenticate
      * Generate the login headers
      *
      * @param \Cake\Http\ServerRequest $request Request object.
-     * @return string Headers for logging in.
+     * @return array Headers for logging in.
      */
     public function loginHeaders(ServerRequest $request)
     {
         $realm = $this->getConfig('realm') ?: $request->getEnv('SERVER_NAME');
 
-        return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
+        return [
+            'WWW-Authenticate' => sprintf('Basic realm="%s"', $realm)
+        ];
     }
 }

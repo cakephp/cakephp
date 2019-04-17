@@ -70,6 +70,18 @@ class SecurityTest extends TestCase
     }
 
     /**
+     * testInvalidHashTypeException
+     *
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessageRegExp /The hash type `doesnotexist` was not found. Available algorithms are: \w+/
+     * @return void
+     */
+    public function testInvalidHashTypeException()
+    {
+        Security::hash('test', 'doesnotexist', false);
+    }
+
+    /**
      * testRijndael method
      *
      * @return void
@@ -255,30 +267,32 @@ class SecurityTest extends TestCase
     /**
      * Test that values encrypted with open ssl can be decrypted with mcrypt and the reverse.
      *
+     * @group deprecated
      * @return void
      */
     public function testEngineEquivalence()
     {
         $this->skipIf(!function_exists('mcrypt_encrypt') || version_compare(PHP_VERSION, '7.1', '>='), 'This needs mcrypt extension to be loaded.');
+        $this->deprecated(function () {
+            $restore = Security::engine();
+            $txt = "Obi-wan you're our only hope";
+            $key = 'This is my secret key phrase it is quite long.';
+            $salt = 'A tasty salt that is delicious';
 
-        $restore = Security::engine();
-        $txt = "Obi-wan you're our only hope";
-        $key = 'This is my secret key phrase it is quite long.';
-        $salt = 'A tasty salt that is delicious';
+            Security::engine(new Mcrypt());
+            $cipher = Security::encrypt($txt, $key, $salt);
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-        Security::engine(new Mcrypt());
-        $cipher = Security::encrypt($txt, $key, $salt);
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+            Security::engine(new OpenSsl());
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-        Security::engine(new OpenSsl());
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+            Security::engine(new OpenSsl());
+            $cipher = Security::encrypt($txt, $key, $salt);
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
 
-        Security::engine(new OpenSsl());
-        $cipher = Security::encrypt($txt, $key, $salt);
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
-
-        Security::engine(new Mcrypt());
-        $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+            Security::engine(new Mcrypt());
+            $this->assertEquals($txt, Security::decrypt($cipher, $key, $salt));
+        });
     }
 
     /**
@@ -288,8 +302,8 @@ class SecurityTest extends TestCase
      */
     public function testSalt()
     {
-        Security::salt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::salt());
+        Security::setSalt('foobarbaz');
+        $this->assertEquals('foobarbaz', Security::getSalt());
     }
 
     /**
@@ -320,6 +334,22 @@ class SecurityTest extends TestCase
     }
 
     /**
+     * Test the randomString method.
+     *
+     * @return void
+     */
+    public function testRandomString()
+    {
+        $value = Security::randomString(7);
+        $this->assertSame(7, strlen($value));
+
+        $value = Security::randomString();
+        $this->assertSame(64, strlen($value));
+
+        $this->assertRegExp('/^[0-9a-f]+$/', $value, 'should return a ASCII string');
+    }
+
+    /**
      * Test the insecureRandomBytes method
      *
      * @return void
@@ -333,5 +363,32 @@ class SecurityTest extends TestCase
         $this->assertSame(64, strlen($value));
 
         $this->assertRegExp('/[^0-9a-f]/', $value, 'should return a binary string');
+    }
+
+    /**
+     * test constantEquals
+     *
+     * @return void
+     */
+    public function testConstantEquals()
+    {
+        $this->assertFalse(Security::constantEquals('abcde', null));
+        $this->assertFalse(Security::constantEquals('abcde', false));
+        $this->assertFalse(Security::constantEquals('abcde', true));
+        $this->assertFalse(Security::constantEquals('abcde', 1));
+
+        $this->assertFalse(Security::constantEquals(null, 'abcde'));
+        $this->assertFalse(Security::constantEquals(false, 'abcde'));
+        $this->assertFalse(Security::constantEquals(1, 'abcde'));
+        $this->assertFalse(Security::constantEquals(true, 'abcde'));
+
+        $this->assertTrue(Security::constantEquals('abcde', 'abcde'));
+        $this->assertFalse(Security::constantEquals('abcdef', 'abcde'));
+        $this->assertFalse(Security::constantEquals('abcde', 'abcdef'));
+        $this->assertFalse(Security::constantEquals('a', 'abcdef'));
+
+        $snowman = "\xe2\x98\x83";
+        $this->assertTrue(Security::constantEquals($snowman, $snowman));
+        $this->assertFalse(Security::constantEquals(str_repeat($snowman, 3), $snowman));
     }
 }

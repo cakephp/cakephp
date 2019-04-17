@@ -349,7 +349,7 @@ class TreeBehavior extends Behavior
             function ($exp) use ($config) {
                 /* @var \Cake\Database\Expression\QueryExpression $exp */
                 $leftInverse = clone $exp;
-                $leftInverse->type('*')->add('-1');
+                $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;
 
                 return $exp
@@ -837,7 +837,7 @@ class TreeBehavior extends Behavior
             ->select([$aliasedPrimaryKey])
             ->where([$this->_table->aliasField($parent) . ' IS' => $parentId])
             ->order($order)
-            ->enableHydration(false);
+            ->disableHydration();
 
         $leftCounter = $counter;
         $nextLevel = $level + 1;
@@ -905,7 +905,7 @@ class TreeBehavior extends Behavior
             $exp = $query->newExpr();
 
             $movement = clone $exp;
-            $movement->add($field)->add("$shift")->setConjunction($dir);
+            $movement->add($field)->add((string)$shift)->setConjunction($dir);
 
             $inverse = clone $exp;
             $movement = $mark ?

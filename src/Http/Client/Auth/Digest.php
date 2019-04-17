@@ -116,7 +116,7 @@ class Digest
     {
         $path = $request->getUri()->getPath();
         $a1 = md5($credentials['username'] . ':' . $credentials['realm'] . ':' . $credentials['password']);
-        $a2 = md5($request->method() . ':' . $path);
+        $a2 = md5($request->getMethod() . ':' . $path);
         $nc = null;
 
         if (empty($credentials['qop'])) {
@@ -144,5 +144,5 @@ class Digest
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\Auth\Digest', 'Cake\Network\Http\Auth\Digest');

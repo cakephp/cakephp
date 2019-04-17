@@ -28,6 +28,16 @@ class CookieCollection extends BaseCollection
 {
 
     /**
+     * {@inheritDoc}
+     */
+    public function __construct(array $cookies = [])
+    {
+        parent::__construct($cookies);
+
+        deprecationWarning('Use Cake\Http\Cookie\CookieCollection instead.');
+    }
+
+    /**
      * Store the cookies from a response.
      *
      * Store the cookies that haven't expired. If a cookie has been expired
@@ -107,5 +117,5 @@ class CookieCollection extends BaseCollection
     }
 }
 
-// @deprecated Add backwards compat alias.
+// @deprecated 3.4.0 Add backwards compat alias.
 class_alias('Cake\Http\Client\CookieCollection', 'Cake\Network\Http\CookieCollection');

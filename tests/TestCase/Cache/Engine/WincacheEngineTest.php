@@ -62,7 +62,7 @@ class WincacheEngineTest extends TestCase
             'prefix' => 'cake_'
         ];
         Cache::drop('wincache');
-        Cache::config('wincache', array_merge($defaults, $config));
+        Cache::setConfig('wincache', array_merge($defaults, $config));
     }
 
     /**
@@ -214,7 +214,7 @@ class WincacheEngineTest extends TestCase
      */
     public function testGroupsReadWrite()
     {
-        Cache::config('wincache_groups', [
+        Cache::setConfig('wincache_groups', [
             'engine' => 'Wincache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
@@ -241,7 +241,7 @@ class WincacheEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('wincache_groups', [
+        Cache::setConfig('wincache_groups', [
             'engine' => 'Wincache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],
@@ -261,7 +261,7 @@ class WincacheEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('wincache_groups', [
+        Cache::setConfig('wincache_groups', [
             'engine' => 'Wincache',
             'duration' => 0,
             'groups' => ['group_a', 'group_b'],

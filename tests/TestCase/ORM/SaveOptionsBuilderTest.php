@@ -26,10 +26,10 @@ class SaveOptionsBuilderTest extends TestCase
 {
 
     public $fixtures = [
-        'core.articles',
-        'core.authors',
-        'core.comments',
-        'core.users',
+        'core.Articles',
+        'core.Authors',
+        'core.Comments',
+        'core.Users',
     ];
 
     /**

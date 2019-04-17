@@ -22,7 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\Datasource\TableSchemaInterface;
 use Cake\Log\Log;
-use Cake\ORM\TableRegistry;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -32,6 +32,8 @@ use Exception;
  */
 class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchemaAwareInterface
 {
+
+    use LocatorAwareTrait;
 
     /**
      * Fixture Datasource
@@ -221,7 +223,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
             if (!empty($import['table'])) {
                 throw new CakeException('You cannot define both table and model.');
             }
-            $import['table'] = TableRegistry::get($import['model'])->getTable();
+            $import['table'] = $this->getTableLocator()->get($import['model'])->getTable();
         }
 
         if (empty($import['table'])) {
@@ -231,7 +233,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
         $this->table = $import['table'];
 
         $db = ConnectionManager::get($import['connection'], false);
-        $schemaCollection = $db->schemaCollection();
+        $schemaCollection = $db->getSchemaCollection();
         $table = $schemaCollection->describe($import['table']);
         $this->_schema = $table;
     }
@@ -245,7 +247,7 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
     protected function _schemaFromReflection()
     {
         $db = ConnectionManager::get($this->connection());
-        $schemaCollection = $db->schemaCollection();
+        $schemaCollection = $db->getSchemaCollection();
         $tables = $schemaCollection->listTables();
 
         if (!in_array($this->table, $tables)) {
@@ -270,6 +272,10 @@ class TestFixture implements FixtureInterface, TableSchemaInterface, TableSchema
      */
     public function schema(TableSchema $schema = null)
     {
+        deprecationWarning(
+            'TestFixture::schema() is deprecated. ' .
+            'Use TestFixture::setTableSchema()/getTableSchema() instead.'
+        );
         if ($schema) {
             $this->setTableSchema($schema);
         }

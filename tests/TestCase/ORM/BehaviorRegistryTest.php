@@ -46,7 +46,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function tearDown()
     {
-        Plugin::unload();
+        $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
         parent::tearDown();
     }
@@ -58,7 +58,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testClassName()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $expected = 'Cake\ORM\Behavior\TranslateBehavior';
         $result = BehaviorRegistry::className('Translate');
@@ -78,11 +78,11 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testLoad()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $config = ['alias' => 'Sluggable', 'replacement' => '-'];
         $result = $this->Behaviors->load('Sluggable', $config);
         $this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
-        $this->assertEquals($config, $result->config());
+        $this->assertEquals($config, $result->getConfig());
 
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
         $this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);
@@ -127,7 +127,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
 
         $expected = 'TestPlugin\Model\Behavior\PersisterOneBehavior';
@@ -220,7 +220,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testHasMethod()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->Behaviors->load('TestPlugin.PersisterOne');
         $this->Behaviors->load('Sluggable');
 

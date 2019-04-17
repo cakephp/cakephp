@@ -80,8 +80,7 @@ class ExistsIn
     public function __invoke(EntityInterface $entity, array $options)
     {
         if (is_string($this->_repository)) {
-            $repository = $options['repository']->association($this->_repository);
-            if (!$repository) {
+            if (!$options['repository']->hasAssociation($this->_repository)) {
                 throw new RuntimeException(sprintf(
                     "ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
                     implode(', ', $this->_fields),
@@ -89,9 +88,11 @@ class ExistsIn
                     get_class($options['repository'])
                 ));
             }
+            $repository = $options['repository']->getAssociation($this->_repository);
             $this->_repository = $repository;
         }
 
+        $fields = $this->_fields;
         $source = $target = $this->_repository;
         $isAssociation = $target instanceof Association;
         $bindingKey = $isAssociation ? (array)$target->getBindingKey() : (array)$target->getPrimaryKey();
@@ -118,9 +119,9 @@ class ExistsIn
 
         if ($this->_options['allowNullableNulls']) {
             $schema = $source->getSchema();
-            foreach ($this->_fields as $i => $field) {
+            foreach ($fields as $i => $field) {
                 if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
-                    unset($bindingKey[$i], $this->_fields[$i]);
+                    unset($bindingKey[$i], $fields[$i]);
                 }
             }
         }
@@ -131,7 +132,7 @@ class ExistsIn
         );
         $conditions = array_combine(
             $primary,
-            $entity->extract($this->_fields)
+            $entity->extract($fields)
         );
 
         return $target->exists($conditions);

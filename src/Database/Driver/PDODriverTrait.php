@@ -21,6 +21,8 @@ use PDOException;
 
 /**
  * PDO driver trait
+ *
+ * @deprecated 3.6.0 The methods of this trait have been added to `Driver` class.
  */
 trait PDODriverTrait
 {
@@ -156,7 +158,7 @@ trait PDODriverTrait
             return false;
         }
 
-        return $this->_connection->rollback();
+        return $this->_connection->rollBack();
     }
 
     /**

@@ -62,6 +62,7 @@ use RuntimeException;
  *
  * Counter cache using lambda function returning the count
  * This is equivalent to example #2
+ *
  * ```
  * [
  *     'Users' => [
@@ -75,6 +76,9 @@ use RuntimeException;
  *     ]
  * ]
  * ```
+ *
+ * When using a lambda function you can return `false` to disable updating the counter value
+ * for the current operation.
  *
  * Ignore updating the field if it is dirty
  * ```
@@ -121,7 +125,7 @@ class CounterCacheBehavior extends Behavior
         }
 
         foreach ($this->_config as $assoc => $settings) {
-            $assoc = $this->_table->association($assoc);
+            $assoc = $this->_table->getAssociation($assoc);
             foreach ($settings as $field => $config) {
                 if (is_int($field)) {
                     continue;
@@ -190,7 +194,7 @@ class CounterCacheBehavior extends Behavior
     protected function _processAssociations(Event $event, EntityInterface $entity)
     {
         foreach ($this->_config as $assoc => $settings) {
-            $assoc = $this->_table->association($assoc);
+            $assoc = $this->_table->getAssociation($assoc);
             $this->_processAssociation($event, $entity, $assoc, $settings);
         }
     }
@@ -237,8 +241,9 @@ class CounterCacheBehavior extends Behavior
             } else {
                 $count = $this->_getCount($config, $countConditions);
             }
-
-            $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            if ($count !== false) {
+                $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            }
 
             if (isset($updateOriginalConditions)) {
                 if (is_callable($config)) {
@@ -249,7 +254,9 @@ class CounterCacheBehavior extends Behavior
                 } else {
                     $count = $this->_getCount($config, $countOriginalConditions);
                 }
-                $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
+                if ($count !== false) {
+                    $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
+                }
             }
         }
     }

@@ -35,6 +35,23 @@ class ArrayContextTest extends TestCase
         $this->request = new ServerRequest();
     }
 
+    public function testGetRequiredMessage()
+    {
+        $context = new ArrayContext($this->request, [
+            'required' => [
+                'Comments' => [
+                    'required' => 'My custom message',
+                    'nope' => false,
+                    'tags' => true
+                ]
+            ]
+        ]);
+
+        $this->assertSame('My custom message', $context->getRequiredMessage('Comments.required'));
+        $this->assertSame('This field is required', $context->getRequiredMessage('Comments.tags'));
+        $this->assertSame(null, $context->getRequiredMessage('Comments.nope'));
+    }
+
     /**
      * Test getting the primary key.
      *
@@ -135,12 +152,12 @@ class ArrayContextTest extends TestCase
      */
     public function testValPresent()
     {
-        $this->request->data = [
+        $this->request = $this->request->withParsedBody([
             'Articles' => [
                 'title' => 'New title',
                 'body' => 'My copy',
             ]
-        ];
+        ]);
         $context = new ArrayContext($this->request, [
             'defaults' => [
                 'Articles' => [
@@ -302,9 +319,9 @@ class ArrayContextTest extends TestCase
             ]
         ]);
         $this->assertEquals(['Comment is required'], $context->error('Comments.comment'));
-        $this->assertEquals('A valid userid is required', $context->error('Comments.user_id'));
+        $this->assertEquals(['A valid userid is required'], $context->error('Comments.user_id'));
         $this->assertEquals([], $context->error('Comments.empty'));
-        $this->assertNull($context->error('Comments.not_there'));
+        $this->assertEquals([], $context->error('Comments.not_there'));
     }
 
     /**

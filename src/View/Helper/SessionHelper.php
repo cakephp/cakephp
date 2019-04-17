@@ -36,7 +36,11 @@ class SessionHelper extends Helper
      */
     public function __construct(View $View, array $config = [])
     {
-        trigger_error('SessionHelper has been deprecated. Use request->session() instead.', E_USER_DEPRECATED);
+        deprecationWarning(
+            'SessionHelper is deprecated and will be removed in 4.0.0. ' .
+            'Use request->session() instead.'
+        );
+
         parent::__construct($View, $config);
     }
 
@@ -54,7 +58,7 @@ class SessionHelper extends Helper
      */
     public function read($name = null)
     {
-        return $this->request->getSession()->read($name);
+        return $this->_View->getRequest()->getSession()->read($name);
     }
 
     /**
@@ -70,7 +74,7 @@ class SessionHelper extends Helper
      */
     public function check($name)
     {
-        return $this->request->getSession()->check($name);
+        return $this->_View->getRequest()->getSession()->check($name);
     }
 
     /**

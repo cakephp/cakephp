@@ -197,7 +197,7 @@ class ViewBlock
     /**
      * Get the names of all the existing blocks.
      *
-     * @return array An array containing the blocks.
+     * @return string[] An array containing the blocks.
      */
     public function keys()
     {

@@ -80,7 +80,7 @@ class SortIteratorTest extends TestCase
         $callback = function ($a) {
             return $a['foo'];
         };
-        $sorted = new SortIterator($items, $callback, SORT_DESC, SORT_NUMERIC);
+        $sorted = new SortIterator($items, $callback, \SORT_DESC, \SORT_NUMERIC);
         $expected = [
             ['foo' => 13, 'bar' => 'a'],
             ['foo' => 10, 'bar' => 'a'],
@@ -89,7 +89,7 @@ class SortIteratorTest extends TestCase
         ];
         $this->assertEquals($expected, $sorted->toList());
 
-        $sorted = new SortIterator($items, $callback, SORT_ASC, SORT_NUMERIC);
+        $sorted = new SortIterator($items, $callback, \SORT_ASC, \SORT_NUMERIC);
         $expected = [
             ['foo' => 1, 'bar' => 'a'],
             ['foo' => 2, 'bar' => 'a'],

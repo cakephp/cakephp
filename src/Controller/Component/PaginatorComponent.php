@@ -18,7 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paginator;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 use InvalidArgumentException;
 
 /**
@@ -30,6 +30,7 @@ use InvalidArgumentException;
  * You configure pagination when calling paginate(). See that method for more details.
  *
  * @link https://book.cakephp.org/3.0/en/controllers/components/pagination.html
+ * @mixin \Cake\Datasource\Paginator
  */
 class PaginatorComponent extends Component
 {
@@ -187,11 +188,11 @@ class PaginatorComponent extends Component
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object The table or query to paginate.
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
-     * @throws \Cake\Network\Exception\NotFoundException
+     * @throws \Cake\Http\Exception\NotFoundException
      */
     public function paginate($object, array $settings = [])
     {
-        $request = $this->_registry->getController()->request;
+        $request = $this->_registry->getController()->getRequest();
 
         try {
             $results = $this->_paginator->paginate(
@@ -204,7 +205,7 @@ class PaginatorComponent extends Component
         } catch (PageOutOfBoundsException $e) {
             $this->_setPagingParams();
 
-            throw new NotFoundException();
+            throw new NotFoundException(null, null, $e);
         }
 
         return $results;
@@ -228,7 +229,7 @@ class PaginatorComponent extends Component
      */
     public function mergeOptions($alias, $settings)
     {
-        $request = $this->_registry->getController()->request;
+        $request = $this->_registry->getController()->getRequest();
 
         return $this->_paginator->mergeOptions(
             $request->getQueryParams(),
@@ -266,12 +267,11 @@ class PaginatorComponent extends Component
      */
     protected function _setPagingParams()
     {
-        $request = $this->_registry->getController()->request;
+        $controller = $this->getController();
+        $request = $controller->getRequest();
+        $paging = $this->_paginator->getPagingParams() + (array)$request->getParam('paging', []);
 
-        $request->addParams([
-            'paging' => $this->_paginator->getPagingParams()
-                + $request->getParam('paging', [])
-        ]);
+        $controller->setRequest($request->withParam('paging', $paging));
     }
 
     /**
@@ -285,6 +285,7 @@ class PaginatorComponent extends Component
      */
     public function config($key = null, $value = null, $merge = true)
     {
+        deprecationWarning('PaginatorComponent::config() is deprecated. Use getConfig()/setConfig() instead.');
         $return = $this->_paginator->config($key, $value, $merge);
         if ($return instanceof Paginator) {
             $return = $this;
@@ -329,7 +330,7 @@ class PaginatorComponent extends Component
      */
     public function configShallow($key, $value = null)
     {
-        $this->_paginator->configShallow($key, $value = null);
+        $this->_paginator->configShallow($key, null);
 
         return $this;
     }

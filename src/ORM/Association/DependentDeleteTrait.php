@@ -38,6 +38,10 @@ trait DependentDeleteTrait
      */
     public function cascadeDelete(EntityInterface $entity, array $options = [])
     {
+        deprecationWarning(
+            'The DependentDeleteTrait is deprecated. ' .
+            'You should use Cake\ORM\Association\DependentDeleteHelper instead.'
+        );
         $helper = new DependentDeleteHelper();
 
         return $helper->cascadeDelete($this, $entity, $options);

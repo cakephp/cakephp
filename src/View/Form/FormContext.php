@@ -94,6 +94,11 @@ class FormContext implements ContextInterface
             return $val;
         }
 
+        $val = $this->_form->getData($field);
+        if ($val !== null) {
+            return $val;
+        }
+
         if ($options['default'] !== null || !$options['schemaDefault']) {
             return $options['default'];
         }
@@ -105,7 +110,6 @@ class FormContext implements ContextInterface
      * Get default value from form schema for given field.
      *
      * @param string $field Field name.
-
      * @return mixed
      */
     protected function _schemaDefault($field)
@@ -123,7 +127,7 @@ class FormContext implements ContextInterface
      */
     public function isRequired($field)
     {
-        $validator = $this->_form->validator();
+        $validator = $this->_form->getValidator();
         if (!$validator->hasField($field)) {
             return false;
         }
@@ -132,6 +136,52 @@ class FormContext implements ContextInterface
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getRequiredMessage($field)
+    {
+        $parts = explode('.', $field);
+
+        $validator = $this->_form->getValidator();
+        $fieldName = array_pop($parts);
+        if (!$validator->hasField($fieldName)) {
+            return null;
+        }
+
+        $ruleset = $validator->field($fieldName);
+
+        $requiredMessage = $validator->getRequiredMessage($fieldName);
+        $emptyMessage = $validator->getNotEmptyMessage($fieldName);
+
+        if ($ruleset->isPresenceRequired() && $requiredMessage) {
+            return $requiredMessage;
+        }
+        if (!$ruleset->isEmptyAllowed() && $emptyMessage) {
+            return $emptyMessage;
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMaxLength($field)
+    {
+        $validator = $this->_form->getValidator();
+        if (!$validator->hasField($field)) {
+            return null;
+        }
+        foreach ($validator->field($field)->rules() as $rule) {
+            if ($rule->get('rule') === 'maxLength') {
+                return $rule->get('pass')[0];
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -176,6 +226,6 @@ class FormContext implements ContextInterface
      */
     public function error($field)
     {
-        return array_values((array)Hash::get($this->_form->errors(), $field, []));
+        return array_values((array)Hash::get($this->_form->getErrors(), $field, []));
     }
 }

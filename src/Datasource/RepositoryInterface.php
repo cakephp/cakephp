@@ -18,8 +18,10 @@ namespace Cake\Datasource;
  * Describes the methods that any class representing a data storage should
  * comply with.
  *
- * @method $this setAlias($alias)
+ * @method $this setAlias(string $alias)
  * @method string getAlias()
+ * @method $this setRegistryAlias(string $alias)
+ * @method string getRegistryAlias()
  */
 interface RepositoryInterface
 {
@@ -45,14 +47,9 @@ interface RepositoryInterface
      * Creates a new Query for this repository and applies some defaults based on the
      * type of search that was selected.
      *
-     * ### Model.beforeFind event
-     *
-     * Each find() will trigger a `Model.beforeFind` event for all attached
-     * listeners. Any listener can set a valid result set using $query
-     *
      * @param string $type the type of query to perform
      * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
-     * @return \Cake\ORM\Query
+     * @return \Cake\Datasource\QueryInterface
      */
     public function find($type = 'all', $options = []);
 
@@ -81,7 +78,7 @@ interface RepositoryInterface
     /**
      * Creates a new Query instance for this repository
      *
-     * @return \Cake\ORM\Query
+     * @return \Cake\Datasource\QueryInterface
      */
     public function query();
 

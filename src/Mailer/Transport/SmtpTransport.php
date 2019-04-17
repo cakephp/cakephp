@@ -228,12 +228,12 @@ class SmtpTransport extends AbstractTransport
             }
         } catch (SocketException $e) {
             if ($config['tls']) {
-                throw new SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.');
+                throw new SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', null, $e);
             }
             try {
                 $this->_smtpSend("HELO {$host}", '250');
             } catch (SocketException $e2) {
-                throw new SocketException('SMTP server did not accept the connection.');
+                throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }
         }
     }
@@ -252,12 +252,12 @@ class SmtpTransport extends AbstractTransport
                 try {
                     $this->_smtpSend(base64_encode($this->_config['username']), '334');
                 } catch (SocketException $e) {
-                    throw new SocketException('SMTP server did not accept the username.');
+                    throw new SocketException('SMTP server did not accept the username.', null, $e);
                 }
                 try {
                     $this->_smtpSend(base64_encode($this->_config['password']), '235');
                 } catch (SocketException $e) {
-                    throw new SocketException('SMTP server did not accept the password.');
+                    throw new SocketException('SMTP server did not accept the password.', null, $e);
                 }
             } elseif ($replyCode === '504') {
                 throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
@@ -342,7 +342,7 @@ class SmtpTransport extends AbstractTransport
         $lines = $email->message();
         $messages = [];
         foreach ($lines as $line) {
-            if ((!empty($line)) && ($line[0] === '.')) {
+            if (!empty($line) && ($line[0] === '.')) {
                 $messages[] = '.' . $line;
             } else {
                 $messages[] = $line;

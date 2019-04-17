@@ -17,7 +17,10 @@ namespace Cake\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Type;
 use Cake\Database\TypeInterface;
+use Cake\Database\Type\BatchCastingInterface;
+use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
 use Exception;
 use PDO;
 use RuntimeException;
@@ -27,7 +30,7 @@ use RuntimeException;
  *
  * Use to convert datetime instances to strings & back.
  */
-class DateTimeType extends Type implements TypeInterface
+class DateTimeType extends Type implements TypeInterface, BatchCastingInterface
 {
     /**
      * Identifier name for this type.
@@ -49,6 +52,16 @@ class DateTimeType extends Type implements TypeInterface
      * @deprecated 3.2.0 Use DateTimeType::useMutable() or DateTimeType::useImmutable() instead.
      */
     public static $dateTimeClass = 'Cake\I18n\Time';
+
+    /**
+     * Whether or not we want to override the time of the converted Time objects
+     * so it points to the start of the day.
+     *
+     * This is primarily to avoid subclasses needing to re-implement the same functionality.
+     *
+     * @var bool
+     */
+    protected $setToDateStart = false;
 
     /**
      * String format to use for DateTime parsing
@@ -91,6 +104,13 @@ class DateTimeType extends Type implements TypeInterface
     protected $_className;
 
     /**
+     * Timezone instance.
+     *
+     * @var \DateTimeZone|null
+     */
+    protected $dbTimezone;
+
+    /**
      * {@inheritDoc}
      */
     public function __construct($name = null)
@@ -103,7 +123,7 @@ class DateTimeType extends Type implements TypeInterface
     /**
      * Convert DateTime instance into strings.
      *
-     * @param string|int|\DateTime $value The value to convert.
+     * @param string|int|\DateTime|\DateTimeImmutable $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
@@ -119,7 +139,36 @@ class DateTimeType extends Type implements TypeInterface
 
         $format = (array)$this->_format;
 
+        if ($this->dbTimezone !== null
+            && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
+        ) {
+            if (!$value instanceof DateTimeImmutable) {
+                $value = clone $value;
+            }
+            $value = $value->setTimezone($this->dbTimezone);
+        }
+
         return $value->format(array_shift($format));
+    }
+
+    /**
+     * Set database timezone.
+     *
+     * Specified timezone will be set for DateTime objects before generating
+     * datetime string for saving to database. If `null` no timezone conversion
+     * will be done.
+     *
+     * @param string|\DateTimeZone|null $timezone Database timezone.
+     * @return $this
+     */
+    public function setTimezone($timezone)
+    {
+        if (is_string($timezone)) {
+            $timezone = new DateTimeZone($timezone);
+        }
+        $this->dbTimezone = $timezone;
+
+        return $this;
     }
 
     /**
@@ -135,20 +184,51 @@ class DateTimeType extends Type implements TypeInterface
             return null;
         }
 
-        if (strpos($value, '.') !== false) {
-            list($value) = explode('.', $value);
+        $instance = clone $this->_datetimeInstance;
+        $instance = $instance->modify($value);
+
+        if ($this->setToDateStart) {
+            $instance = $instance->setTime(0, 0, 0);
         }
 
-        $instance = clone $this->_datetimeInstance;
+        return $instance;
+    }
 
-        return $instance->modify($value);
+    /**
+     * {@inheritDoc}
+     *
+     * @return array
+     */
+    public function manyToPHP(array $values, array $fields, Driver $driver)
+    {
+        foreach ($fields as $field) {
+            if (!isset($values[$field])) {
+                continue;
+            }
+
+            if (strpos($values[$field], '0000-00-00') === 0) {
+                $values[$field] = null;
+                continue;
+            }
+
+            $instance = clone $this->_datetimeInstance;
+            $instance = $instance->modify($values[$field]);
+
+            if ($this->setToDateStart) {
+                $instance = $instance->setTime(0, 0, 0);
+            }
+
+            $values[$field] = $instance;
+        }
+
+        return $values;
     }
 
     /**
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
     public function marshal($value)
     {

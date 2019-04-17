@@ -21,10 +21,14 @@ namespace Cake\Datasource;
  * @method object getLogger() Get the current logger instance
  * @method $this setLogger($logger) Set the current logger.
  * @method bool supportsDynamicConstraints()
- * @method \Cake\Database\Schema\Collection schemaCollection()
+ * @method \Cake\Database\Schema\Collection getSchemaCollection()
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
+ * @method $this enableQueryLogging($value)
+ * @method $this disableQueryLogging()
+ * @method $this disableSavePoints()
+ * @method bool isQueryLoggingEnabled()
  * @method string quote($value, $type = null)
  */
 interface ConnectionInterface

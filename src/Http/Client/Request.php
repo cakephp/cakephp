@@ -64,6 +64,11 @@ class Request extends Message implements RequestInterface
      */
     public function method($method = null)
     {
+        deprecationWarning(
+            'Request::method() is deprecated. ' .
+            'Use getMethod() and withMethod() instead.'
+        );
+
         if ($method === null) {
             return $this->method;
         }
@@ -88,6 +93,11 @@ class Request extends Message implements RequestInterface
      */
     public function url($url = null)
     {
+        deprecationWarning(
+            'Request::url() is deprecated. ' .
+            'Use getUri() and withUri() instead.'
+        );
+
         if ($url === null) {
             return '' . $this->getUri();
         }
@@ -130,6 +140,11 @@ class Request extends Message implements RequestInterface
      */
     public function header($name = null, $value = null)
     {
+        deprecationWarning(
+            'Request::header() is deprecated. ' .
+            'Use withHeader() and getHeaderLine() instead.'
+        );
+
         if ($value === null && is_string($name)) {
             $val = $this->getHeaderLine($name);
             if ($val === '') {
@@ -192,6 +207,13 @@ class Request extends Message implements RequestInterface
      */
     public function cookie($name, $value = null)
     {
+        deprecationWarning(
+            'Request::cookie() is deprecated. ' .
+            'The Client internals now add the required `Cookie` header to the ' .
+            'request before sending. Use Cake\Http\Cookie\CookieCollection::addToRequest() ' .
+            'to make adding cookies to a request easier.'
+        );
+
         if ($value === null && is_string($name)) {
             return isset($this->_cookies[$name]) ? $this->_cookies[$name] : null;
         }
@@ -217,6 +239,11 @@ class Request extends Message implements RequestInterface
      */
     public function version($version = null)
     {
+        deprecationWarning(
+            'Request::version() is deprecated. ' .
+            'Use getProtocolVersion() and withProtocolVersion() instead.'
+        );
+
         if ($version === null) {
             return $this->protocol;
         }
@@ -245,7 +272,7 @@ class Request extends Message implements RequestInterface
         if (is_array($body)) {
             $formData = new FormData();
             $formData->addMany($body);
-            $this->header('Content-Type', $formData->contentType());
+            $this->addHeaders(['Content-Type' => $formData->contentType()]);
             $body = (string)$formData;
         }
         $stream = new Stream('php://memory', 'rw');
@@ -256,5 +283,5 @@ class Request extends Message implements RequestInterface
     }
 }
 
-// @deprecated Add backwards compact alias.
+// @deprecated 3.4.0 Add backwards compact alias.
 class_alias('Cake\Http\Client\Request', 'Cake\Network\Http\Request');

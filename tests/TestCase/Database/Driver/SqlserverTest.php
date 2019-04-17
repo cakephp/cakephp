@@ -126,7 +126,7 @@ class SqlserverTest extends TestCase
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
-            ->setMethods(['_connect', 'connection'])
+            ->setMethods(['_connect', 'setConnection', 'getConnection'])
             ->setConstructorArgs([$config])
             ->getMock();
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
@@ -143,7 +143,7 @@ class SqlserverTest extends TestCase
         $expected['failoverPartner'] = null;
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
-        $expected['port'] = '';
+        $expected['port'] = null;
 
         $connection = $this->getMockBuilder('stdClass')
             ->setMethods(['exec', 'quote'])
@@ -161,11 +161,11 @@ class SqlserverTest extends TestCase
         $connection->expects($this->at(2))->method('exec')->with('SET config1 value1');
         $connection->expects($this->at(3))->method('exec')->with('SET config2 value2');
 
-        $driver->connection($connection);
+        $driver->setConnection($connection);
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);
 
-        $driver->expects($this->any())->method('connection')
+        $driver->expects($this->any())->method('getConnection')
             ->will($this->returnValue($connection));
 
         $driver->connect();
@@ -207,7 +207,7 @@ class SqlserverTest extends TestCase
         $expected['failoverPartner'] = null;
         $expected['loginTimeout'] = null;
         $expected['multiSubnetFailover'] = null;
-        $expected['port'] = '';
+        $expected['port'] = null;
 
         $driver->expects($this->once())->method('_connect')
             ->with($dsn, $expected);

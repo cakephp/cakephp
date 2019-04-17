@@ -1189,7 +1189,7 @@ class HashTest extends TestCase
     }
 
     /**
-     * Test the attribute presense selector.
+     * Test the attribute presence selector.
      *
      * @dataProvider articleDataSets
      * @return void
@@ -1419,6 +1419,36 @@ class HashTest extends TestCase
         ]);
         $result = Hash::extract($data, 'Country.{n}[name=/Canada|^$/]');
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test extracting attributes with string
+     *
+     * @return void
+     */
+    public function testExtractAttributeString()
+    {
+        $data = [
+            ['value' => 0],
+            ['value' => 3],
+            ['value' => 'string-value'],
+            ['value' => new Time('2010-01-05 01:23:45')],
+        ];
+
+        // check _matches does not work as `0 == 'string-value'`
+        $expected = [$data[2]];
+        $result = Hash::extract($data, '{n}[value=string-value]');
+        $this->assertSame($expected, $result);
+
+        // check _matches work with object implements __toString()
+        $expected = [$data[3]];
+        $result = Hash::extract($data, sprintf('{n}[value=%s]', $data[3]['value']));
+        $this->assertSame($expected, $result);
+
+        // check _matches does not work as `3 == '3 people'`
+        $unexpected = $data[1];
+        $result = Hash::extract($data, '{n}[value=3people]');
+        $this->assertNotContains($unexpected, $result);
     }
 
     /**

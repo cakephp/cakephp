@@ -18,6 +18,9 @@ echo __('You have %d new message.');
 echo __('double "quoted"');
 echo __("single 'quoted'");
 
+// Contains no string like a variable or a function or ...
+echo __($count);
+
 // Multiline
 __('Hot features!'
     . "\n - No Configuration:"

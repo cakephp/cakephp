@@ -20,7 +20,9 @@ use Cake\Core\Plugin;
 use Cake\Shell\I18nShell;
 use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use stdClass;
+use TestApp\Command\DemoCommand;
 
 /**
  * Test case for the CommandCollection
@@ -78,6 +80,19 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
+     * test adding a command instance.
+     *
+     * @return void
+     */
+    public function testAddCommand()
+    {
+        $collection = new CommandCollection();
+        $this->assertSame($collection, $collection->add('ex', DemoCommand::class));
+        $this->assertTrue($collection->has('ex'));
+        $this->assertSame(DemoCommand::class, $collection->get('ex'));
+    }
+
+    /**
      * Test that add() replaces.
      *
      * @return void
@@ -120,6 +135,39 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $shell = new stdClass();
         $collection->add('routes', $shell);
+    }
+
+    /**
+     * Provider for invalid names.
+     *
+     * @return array
+     */
+    public function invalidNameProvider()
+    {
+        return [
+            // Empty
+            [''],
+            // Leading spaces
+            [' spaced'],
+            // Trailing spaces
+            ['spaced '],
+            // Too many words
+            ['one two three four'],
+        ];
+    }
+
+    /**
+     * test adding a command instance.
+     *
+     * @dataProvider invalidNameProvider
+     * @return void
+     */
+    public function testAddCommandInvalidName($name)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("The command name `$name` is invalid.");
+        $collection = new CommandCollection();
+        $collection->add($name, DemoCommand::class);
     }
 
     /**
@@ -188,10 +236,14 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
 
+        $this->assertTrue($collection->has('app'));
+        $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('i18m'));
         $this->assertTrue($collection->has('sample'));
         $this->assertTrue($collection->has('testing_dispatch'));
 
+        $this->assertSame('TestApp\Shell\AppShell', $collection->get('app'));
+        $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
         $this->assertSame('TestApp\Shell\I18mShell', $collection->get('i18m'));
         $this->assertSame('TestApp\Shell\SampleShell', $collection->get('sample'));
     }
@@ -206,6 +258,7 @@ class CommandCollectionTest extends TestCase
         $collection = new CommandCollection();
         $collection->addMany($collection->autoDiscover());
 
+        $this->assertTrue($collection->has('version'));
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
         $this->assertTrue($collection->has('orm_cache'));
@@ -216,6 +269,18 @@ class CommandCollectionTest extends TestCase
         // These have to be strings as ::class uses the local namespace.
         $this->assertSame('Cake\Shell\RoutesShell', $collection->get('routes'));
         $this->assertSame('Cake\Shell\I18nShell', $collection->get('i18n'));
+        $this->assertSame('Cake\Command\VersionCommand', $collection->get('version'));
+    }
+
+    /**
+     * test missing plugin discovery
+     *
+     * @return void
+     */
+    public function testDiscoverPluginUnknown()
+    {
+        $collection = new CommandCollection();
+        $this->assertSame([], $collection->discoverPlugin('Nope'));
     }
 
     /**
@@ -223,45 +288,48 @@ class CommandCollectionTest extends TestCase
      *
      * @return void
      */
-    public function testAutoDiscoverPlugin()
+    public function testDiscoverPlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
-        $collection = new CommandCollection();
-        $collection->addMany($collection->autoDiscover());
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
-        $this->assertTrue(
-            $collection->has('example'),
+        $collection = new CommandCollection();
+        // Add a dupe to test de-duping
+        $collection->add('sample', DemoCommand::class);
+
+        $result = $collection->discoverPlugin('TestPlugin');
+
+        $this->assertArrayHasKey(
+            'example',
+            $result,
             'Used short name for unique plugin shell'
         );
-        $this->assertTrue(
-            $collection->has('test_plugin.example'),
+        $this->assertArrayHasKey(
+            'test_plugin.example',
+            $result,
             'Long names are stored for unique shells'
         );
-        $this->assertTrue(
-            $collection->has('sample'),
-            'Has app shell'
-        );
-        $this->assertTrue(
-            $collection->has('test_plugin.sample'),
+        $this->assertArrayNotHasKey('sample', $result, 'Existing command not output');
+        $this->assertArrayHasKey(
+            'test_plugin.sample',
+            $result,
             'Duplicate shell was given a full alias'
         );
-        $this->assertTrue(
-            $collection->has('company'),
+        $this->assertEquals('TestPlugin\Shell\ExampleShell', $result['example']);
+        $this->assertEquals($result['example'], $result['test_plugin.example']);
+        $this->assertEquals('TestPlugin\Shell\SampleShell', $result['test_plugin.sample']);
+
+        $result = $collection->discoverPlugin('Company/TestPluginThree');
+        $this->assertArrayHasKey(
+            'company',
+            $result,
             'Used short name for unique plugin shell'
         );
-        $this->assertTrue(
-            $collection->has('company/test_plugin_three.company'),
+        $this->assertArrayHasKey(
+            'company/test_plugin_three.company',
+            $result,
             'Long names are stored as well'
         );
-
-        $this->assertEquals('TestPlugin\Shell\ExampleShell', $collection->get('example'));
-        $this->assertEquals($collection->get('example'), $collection->get('test_plugin.example'));
-        $this->assertEquals(
-            'TestApp\Shell\SampleShell',
-            $collection->get('sample'),
-            'Should prefer app shells over plugin ones'
-        );
-        $this->assertEquals('TestPlugin\Shell\SampleShell', $collection->get('test_plugin.sample'));
+        $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
+        $this->clearPlugins();
     }
 }

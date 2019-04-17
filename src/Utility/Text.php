@@ -23,9 +23,16 @@ class Text
 {
 
     /**
+     * Default transliterator.
+     *
+     * @var \Transliterator Transliterator instance.
+     */
+    protected static $_defaultTransliterator;
+
+    /**
      * Default transliterator id string.
      *
-     * @param string $_defaultTransliteratorId Transliterator identifier string.
+     * @var string $_defaultTransliteratorId Transliterator identifier string.
      */
     protected static $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
@@ -138,7 +145,8 @@ class Text
                         }
                     }
                 }
-                $offset = ++$tmpOffset;
+                $tmpOffset += 1;
+                $offset = $tmpOffset;
             } else {
                 $results[] = $buffer . mb_substr($data, $offset);
                 $offset = $length + 1;
@@ -491,7 +499,13 @@ class Text
             'limit' => -1,
         ];
         $options += $defaults;
-        $html = $format = $ellipsis = $exact = $limit = null;
+
+        $html = $format = $limit = null;
+        /**
+         * @var bool $html
+         * @var string|array $format
+         * @var int $limit
+         */
         extract($options);
 
         if (is_array($phrase)) {
@@ -531,6 +545,7 @@ class Text
      */
     public static function stripLinks($text)
     {
+        deprecationWarning('This method will be removed in 4.0.0.');
         do {
             $text = preg_replace('#</?a([/\s][^>]*)?(>|$)#i', '', $text, -1, $count);
         } while ($count);
@@ -546,7 +561,7 @@ class Text
      *
      * ### Options:
      *
-     * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+     * - `ellipsis` Will be used as beginning and prepended to the trimmed string
      * - `exact` If false, $text will not be cut mid-word
      *
      * @param string $text String to truncate.
@@ -561,6 +576,10 @@ class Text
         ];
         $options += $default;
         $exact = $ellipsis = null;
+        /**
+         * @var string $ellipsis
+         * @var bool $exact
+         */
         extract($options);
 
         if (mb_strlen($text) <= $length) {
@@ -877,7 +896,7 @@ class Text
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);
 
-        $pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
+        $pos = mb_stripos($text, $phrase);
         if ($pos === false) {
             return mb_substr($text, 0, $radius) . $ellipsis;
         }
@@ -1032,7 +1051,7 @@ class Text
             $i = array_search(substr($size, -1), ['K', 'M', 'G', 'T', 'P']);
         }
         if ($i !== false) {
-            $size = substr($size, 0, $l);
+            $size = (float)substr($size, 0, $l);
 
             return $size * pow(1024, $i + 1);
         }
@@ -1047,6 +1066,30 @@ class Text
             return $default;
         }
         throw new InvalidArgumentException('No unit type.');
+    }
+
+    /**
+     * Get the default transliterator.
+     *
+     * @return \Transliterator|null Either a Transliterator instance, or `null`
+     *   in case no transliterator has been set yet.
+     * @since 3.7.0
+     */
+    public static function getTransliterator()
+    {
+        return static::$_defaultTransliterator;
+    }
+
+    /**
+     * Set the default transliterator.
+     *
+     * @param \Transliterator $transliterator A `Transliterator` instance.
+     * @return void
+     * @since 3.7.0
+     */
+    public static function setTransliterator(\Transliterator $transliterator)
+    {
+        static::$_defaultTransliterator = $transliterator;
     }
 
     /**
@@ -1067,6 +1110,7 @@ class Text
      */
     public static function setTransliteratorId($transliteratorId)
     {
+        static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;
     }
 
@@ -1074,16 +1118,20 @@ class Text
      * Transliterate string.
      *
      * @param string $string String to transliterate.
-     * @param string|null $transliteratorId Transliterator identifier. If null
-     *   Text::$_defaultTransliteratorId will be used.
+     * @param \Transliterator|string|null $transliterator Either a Transliterator
+     *   instance, or a transliterator identifier string. If `null`, the default
+     *   transliterator (identifier) set via `setTransliteratorId()` or
+     *   `setTransliterator()` will be used.
      * @return string
      * @see https://secure.php.net/manual/en/transliterator.transliterate.php
      */
-    public static function transliterate($string, $transliteratorId = null)
+    public static function transliterate($string, $transliterator = null)
     {
-        $transliteratorId = $transliteratorId ?: static::$_defaultTransliteratorId;
+        if (!$transliterator) {
+            $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
+        }
 
-        return transliterator_transliterate($transliteratorId, $string);
+        return transliterator_transliterate($transliterator, $string);
     }
 
     /**
@@ -1093,8 +1141,9 @@ class Text
      * ### Options:
      *
      * - `replacement`: Replacement string. Default '-'.
-     * - `transliteratorId`: A valid tranliterator id string.
-     *   If default `null` Text::$_defaultTransliteratorId to be used.
+     * - `transliteratorId`: A valid transliterator id string.
+     *   If `null` (default) the transliterator (identifier) set via
+     *   `setTransliteratorId()` or `setTransliterator()` will be used.
      *   If `false` no transliteration will be done, only non words will be removed.
      * - `preserve`: Specific non-word character to preserve. Default `null`.
      *   For e.g. this option can be set to '.' to generate clean file names.
@@ -1103,6 +1152,8 @@ class Text
      * @param array $options If string it will be use as replacement character
      *   or an array of options.
      * @return string
+     * @see setTransliterator()
+     * @see setTransliteratorId()
      */
     public static function slug($string, $options = [])
     {

@@ -14,7 +14,7 @@
  */
 namespace Cake\Routing\Route;
 
-use Cake\Http\ServerRequest;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -95,6 +95,13 @@ class Route
     protected $middleware = [];
 
     /**
+     * Track whether or not brace keys `{var}` were used.
+     *
+     * @var bool
+     */
+    protected $braceKeys = false;
+
+    /**
      * Valid HTTP methods.
      *
      * @var array
@@ -120,8 +127,8 @@ class Route
     public function __construct($template, $defaults = [], array $options = [])
     {
         $this->template = $template;
-        // @deprecated The `[method]` format should be removed in 4.0.0
         if (isset($defaults['[method]'])) {
+            deprecationWarning('The `[method]` option is deprecated. Use `_method` instead.');
             $defaults['_method'] = $defaults['[method]'];
             unset($defaults['[method]']);
         }
@@ -141,6 +148,10 @@ class Route
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'Route::extensions() is deprecated. ' .
+            'Use Route::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->_extensions;
         }
@@ -243,7 +254,7 @@ class Route
     /**
      * Set the names of parameters that will persisted automatically
      *
-     * Persistent parametesr allow you to define which route parameters should be automatically
+     * Persistent parameters allow you to define which route parameters should be automatically
      * included when generating new URLs. You can override persistent parameters
      * by redefining them in a URL or remove them by setting the persistent parameter to `false`.
      *
@@ -310,15 +321,21 @@ class Route
         $names = $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
-        preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+        if (strpos($route, '{') !== false && strpos($route, '}') !== false) {
+            preg_match_all('/\{([a-z][a-z0-9-_]*)\}/i', $route, $namedElements);
+            $this->braceKeys = true;
+        } else {
+            preg_match_all('/:([a-z0-9-_]+(?<![-_]))/i', $route, $namedElements);
+            $this->braceKeys = false;
+        }
         foreach ($namedElements[1] as $i => $name) {
-            $search = '\\' . $namedElements[0][$i];
+            $search = preg_quote($namedElements[0][$i]);
             if (isset($this->options[$name])) {
                 $option = null;
                 if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
                     $option = '?';
                 }
-                $slashParam = '/\\' . $namedElements[0][$i];
+                $slashParam = '/' . $search;
                 if (strpos($parsed, $slashParam) !== false) {
                     $routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
                 } else {
@@ -342,7 +359,7 @@ class Route
             $mode = 'u';
         }
         krsort($routeParams);
-        $parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
+        $parsed = str_replace(array_keys($routeParams), $routeParams, $parsed);
         $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
@@ -436,8 +453,12 @@ class Route
 
         if (isset($this->defaults['_method'])) {
             if (empty($method)) {
+                deprecationWarning(
+                    'Extracting the request method from global state when parsing routes is deprecated. ' .
+                    'Instead adopt Route::parseRequest() which extracts the method from the passed request.'
+                );
                 // Deprecated reading the global state is deprecated and will be removed in 4.x
-                $request = Router::getRequest(true) ?: ServerRequest::createFromGlobals();
+                $request = Router::getRequest(true) ?: ServerRequestFactory::fromGlobals();
                 $method = $request->getMethod();
             }
             if (!in_array($method, (array)$this->defaults['_method'], true)) {
@@ -609,19 +630,6 @@ class Route
         unset($context['params']);
         $hostOptions = array_intersect_key($url, $context);
 
-        // Check for properties that will cause an
-        // absolute url. Copy the other properties over.
-        if (isset($hostOptions['_scheme']) ||
-            isset($hostOptions['_port']) ||
-            isset($hostOptions['_host'])
-        ) {
-            $hostOptions += $context;
-
-            if ($hostOptions['_port'] == $context['_port']) {
-                unset($hostOptions['_port']);
-            }
-        }
-
         // Apply the _host option if possible
         if (isset($this->options['_host'])) {
             if (!isset($hostOptions['_host']) && strpos($this->options['_host'], '*') === false) {
@@ -634,6 +642,19 @@ class Route
             // The host did not match the route preferences
             if (!$this->hostMatches($hostOptions['_host'])) {
                 return false;
+            }
+        }
+
+        // Check for properties that will cause an
+        // absolute url. Copy the other properties over.
+        if (isset($hostOptions['_scheme']) ||
+            isset($hostOptions['_port']) ||
+            isset($hostOptions['_host'])
+        ) {
+            $hostOptions += $context;
+
+            if (getservbyname($hostOptions['_scheme'], 'tcp') === $hostOptions['_port']) {
+                unset($hostOptions['_port']);
             }
         }
 
@@ -721,7 +742,7 @@ class Route
         // check patterns for routed params
         if (!empty($this->options)) {
             foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
+                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', $url[$key])) {
                     return false;
                 }
             }
@@ -744,10 +765,11 @@ class Route
         }
         // @deprecated The `[method]` support should be removed in 4.0.0
         if (isset($url['[method]'])) {
+            deprecationWarning('The `[method]` key is deprecated. Use `_method` instead.');
             $url['_method'] = $url['[method]'];
         }
         if (empty($url['_method'])) {
-            return false;
+            $url['_method'] = 'GET';
         }
         $methods = array_map('strtoupper', (array)$url['_method']);
         foreach ($methods as $value) {
@@ -783,7 +805,11 @@ class Route
             } elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
                 $key .= '/';
             }
-            $search[] = ':' . $key;
+            if ($this->braceKeys) {
+                $search[] = "{{$key}}";
+            } else {
+                $search[] = ':' . $key;
+            }
             $replace[] = $string;
         }
 
@@ -838,6 +864,10 @@ class Route
     {
         $routeKey = strpos($this->template, ':');
         if ($routeKey !== false) {
+            return substr($this->template, 0, $routeKey);
+        }
+        $routeKey = strpos($this->template, '{');
+        if ($routeKey !== false && strpos($this->template, '}') !== false) {
             return substr($this->template, 0, $routeKey);
         }
         $star = strpos($this->template, '*');

@@ -82,7 +82,7 @@ class ConsoleLogTest extends TestCase
         $log = new ConsoleLog([
             'stream' => $output,
         ]);
-        $config = $log->config();
+        $config = $log->getConfig();
         $this->assertEquals($expected, $config['outputAs']);
     }
 }

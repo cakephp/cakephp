@@ -16,7 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
-use Cake\Network\Exception\InternalErrorException;
+use Cake\Http\Exception\InternalErrorException;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -34,7 +34,8 @@ class FlashComponent extends Component
     /**
      * The Session object instance
      *
-     * @var \Cake\Network\Session
+     * @var \Cake\Http\Session
+     * @deprecated 3.7.5 This property will be removed in 4.0.0 in favor of `getSession()` method.
      */
     protected $_session;
 
@@ -60,7 +61,7 @@ class FlashComponent extends Component
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
         parent::__construct($registry, $config);
-        $this->_session = $registry->getController()->request->getSession();
+        $this->_session = $registry->getController()->getRequest()->getSession();
     }
 
     /**
@@ -86,7 +87,7 @@ class FlashComponent extends Component
      */
     public function set($message, array $options = [])
     {
-        $options += $this->getConfig();
+        $options += (array)$this->getConfig();
 
         if ($message instanceof Exception) {
             if (!isset($options['params']['code'])) {
@@ -109,7 +110,7 @@ class FlashComponent extends Component
 
         $messages = [];
         if (!$options['clear']) {
-            $messages = (array)$this->_session->read('Flash.' . $options['key']);
+            $messages = (array)$this->getSession()->read('Flash.' . $options['key']);
         }
 
         if (!$options['duplicate']) {
@@ -127,7 +128,7 @@ class FlashComponent extends Component
             'params' => $options['params']
         ];
 
-        $this->_session->write('Flash.' . $options['key'], $messages);
+        $this->getSession()->write('Flash.' . $options['key'], $messages);
     }
 
     /**
@@ -150,7 +151,7 @@ class FlashComponent extends Component
      * @param string $name Element name to use.
      * @param array $args Parameters to pass when calling `FlashComponent::set()`.
      * @return void
-     * @throws \Cake\Network\Exception\InternalErrorException If missing the flash message.
+     * @throws \Cake\Http\Exception\InternalErrorException If missing the flash message.
      */
     public function __call($name, $args)
     {
@@ -171,5 +172,15 @@ class FlashComponent extends Component
         }
 
         $this->set($args[0], $options);
+    }
+
+    /**
+     * Returns current session object from a controller request.
+     *
+     * @return \Cake\Http\Session
+     */
+    protected function getSession()
+    {
+        return $this->getController()->getRequest()->getSession();
     }
 }

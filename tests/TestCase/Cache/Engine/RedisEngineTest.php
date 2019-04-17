@@ -71,7 +71,7 @@ class RedisEngineTest extends TestCase
             'duration' => 3600
         ];
         Cache::drop('redis');
-        Cache::config('redis', array_merge($defaults, $config));
+        Cache::setConfig('redis', array_merge($defaults, $config));
     }
 
     /**
@@ -81,7 +81,7 @@ class RedisEngineTest extends TestCase
      */
     public function testConfig()
     {
-        $config = Cache::engine('redis')->config();
+        $config = Cache::engine('redis')->getConfig();
         $expecting = [
             'prefix' => 'cake_',
             'duration' => 3600,
@@ -106,11 +106,11 @@ class RedisEngineTest extends TestCase
      */
     public function testConfigDsn()
     {
-        Cache::config('redis_dsn', [
+        Cache::setConfig('redis_dsn', [
             'url' => 'redis://localhost:6379?database=1&prefix=redis_'
         ]);
 
-        $config = Cache::engine('redis_dsn')->config();
+        $config = Cache::engine('redis_dsn')->getConfig();
         $expecting = [
             'prefix' => 'redis_',
             'duration' => 3600,
@@ -139,7 +139,7 @@ class RedisEngineTest extends TestCase
     public function testConnect()
     {
         $Redis = new RedisEngine();
-        $this->assertTrue($Redis->init(Cache::engine('redis')->config()));
+        $this->assertTrue($Redis->init(Cache::engine('redis')->getConfig()));
     }
 
     /**
@@ -149,14 +149,14 @@ class RedisEngineTest extends TestCase
      */
     public function testMultiDatabaseOperations()
     {
-        Cache::config('redisdb0', [
+        Cache::setConfig('redisdb0', [
             'engine' => 'Redis',
             'prefix' => 'cake2_',
             'duration' => 3600,
             'persistent' => false,
         ]);
 
-        Cache::config('redisdb1', [
+        Cache::setConfig('redisdb1', [
             'engine' => 'Redis',
             'database' => 1,
             'prefix' => 'cake2_',
@@ -387,7 +387,7 @@ class RedisEngineTest extends TestCase
      */
     public function testClear()
     {
-        Cache::config('redis2', [
+        Cache::setConfig('redis2', [
             'engine' => 'Redis',
             'prefix' => 'cake2_',
             'duration' => 3600
@@ -431,13 +431,13 @@ class RedisEngineTest extends TestCase
      */
     public function testGroupReadWrite()
     {
-        Cache::config('redis_groups', [
+        Cache::setConfig('redis_groups', [
             'engine' => 'Redis',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b'],
             'prefix' => 'test_'
         ]);
-        Cache::config('redis_helper', [
+        Cache::setConfig('redis_helper', [
             'engine' => 'Redis',
             'duration' => 3600,
             'prefix' => 'test_'
@@ -463,7 +463,7 @@ class RedisEngineTest extends TestCase
      */
     public function testGroupDelete()
     {
-        Cache::config('redis_groups', [
+        Cache::setConfig('redis_groups', [
             'engine' => 'Redis',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b']
@@ -482,7 +482,7 @@ class RedisEngineTest extends TestCase
      */
     public function testGroupClear()
     {
-        Cache::config('redis_groups', [
+        Cache::setConfig('redis_groups', [
             'engine' => 'Redis',
             'duration' => 3600,
             'groups' => ['group_a', 'group_b']

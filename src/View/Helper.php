@@ -48,7 +48,7 @@ class Helper implements EventListenerInterface
      *
      * @var array
      */
-    public $helpers = [];
+    protected $helpers = [];
 
     /**
      * Default config for this helper.
@@ -65,38 +65,18 @@ class Helper implements EventListenerInterface
     protected $_helperMap = [];
 
     /**
-     * The current theme name if any.
-     *
-     * @var string
-     */
-    public $theme;
-
-    /**
-     * Request object
-     *
-     * @var \Cake\Http\ServerRequest
-     */
-    public $request;
-
-    /**
-     * Plugin path
-     *
-     * @var string
-     */
-    public $plugin;
-
-    /**
-     * Holds the fields ['field_name' => ['type' => 'string', 'length' => 100]],
-     * primaryKey and validates ['field_name']
+     * Unused.
      *
      * @var array
+     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
     public $fieldset = [];
 
     /**
-     * Holds tag templates.
+     * Unused.
      *
      * @var array
+     * @deprecated 3.7.0 This property is unused and will be removed in 4.0.0.
      */
     public $tags = [];
 
@@ -116,8 +96,6 @@ class Helper implements EventListenerInterface
     public function __construct(View $View, array $config = [])
     {
         $this->_View = $View;
-        $this->request = $View->request;
-
         $this->setConfig($config);
 
         if (!empty($this->helpers)) {
@@ -153,6 +131,81 @@ class Helper implements EventListenerInterface
 
             return $this->{$name};
         }
+
+        $removed = [
+            'theme' => 'getTheme',
+            'plugin' => 'getPlugin',
+        ];
+        if (isset($removed[$name])) {
+            $method = $removed[$name];
+            deprecationWarning(sprintf(
+                'Helper::$%s is deprecated. Use $view->%s() instead.',
+                $name,
+                $method
+            ));
+
+            return $this->_View->{$method}();
+        }
+
+        if ($name === 'request') {
+            deprecationWarning(
+                'Helper::$request is deprecated. Use $helper->getView()->getRequest() instead.'
+            );
+
+            return $this->_View->getRequest();
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
+            );
+
+            return $this->helpers;
+        }
+    }
+
+    /**
+     * Magic setter for removed properties.
+     *
+     * @param string $name Property name.
+     * @param mixed $value Value to set.
+     * @return void
+     */
+    public function __set($name, $value)
+    {
+        $removed = [
+            'theme' => 'setTheme',
+            'plugin' => 'setPlugin',
+        ];
+        if (isset($removed[$name])) {
+            $method = $removed[$name];
+            deprecationWarning(sprintf(
+                'Helper::$%s is deprecated. Use $view->%s() instead.',
+                $name,
+                $method
+            ));
+            $this->_View->{$method}($value);
+
+            return;
+        }
+
+        if ($name === 'request') {
+            deprecationWarning(
+                'Helper::$request is deprecated. Use $helper->getView()->setRequest() instead.'
+            );
+
+            $this->_View->setRequest($value);
+
+            return;
+        }
+
+        if ($name === 'helpers') {
+            deprecationWarning(
+                'Helper::$helpers is now protected and should not be accessed from outside a helper class.'
+            );
+        }
+
+        $this->{$name} = $value;
     }
 
     /**
@@ -176,15 +229,27 @@ class Helper implements EventListenerInterface
      */
     protected function _confirm($message, $okCode, $cancelCode = '', $options = [])
     {
-        $message = str_replace('\\\n', '\n', json_encode($message));
+        $message = $this->_cleanConfirmMessage($message);
         $confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
         // We cannot change the key here in 3.x, but the behavior is inverted in this case
         $escape = isset($options['escape']) && $options['escape'] === false;
         if ($escape) {
+            /** @var string $confirm */
             $confirm = h($confirm);
         }
 
         return $confirm;
+    }
+
+    /**
+     * Returns a string read to be used in confirm()
+     *
+     * @param string $message The message to clean
+     * @return mixed
+     */
+    protected function _cleanConfirmMessage($message)
+    {
+        return str_replace('\\\n', '\n', json_encode($message));
     }
 
     /**
@@ -261,10 +326,6 @@ class Helper implements EventListenerInterface
     {
         return [
             'helpers' => $this->helpers,
-            'theme' => $this->theme,
-            'plugin' => $this->plugin,
-            'fieldset' => $this->fieldset,
-            'tags' => $this->tags,
             'implementedEvents' => $this->implementedEvents(),
             '_config' => $this->getConfig(),
         ];

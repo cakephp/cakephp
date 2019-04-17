@@ -379,6 +379,10 @@ class RouteCollection
      */
     public function extensions($extensions = null, $merge = true)
     {
+        deprecationWarning(
+            'RouteCollection::extensions() is deprecated. ' .
+            'Use RouteCollection::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions !== null) {
             $this->setExtensions((array)$extensions, $merge);
         }

@@ -17,6 +17,7 @@ namespace Cake\I18n;
 use Cake\Chronos\Date as ChronosDate;
 use Cake\Chronos\MutableDate;
 use IntlDateFormatter;
+use RuntimeException;
 
 /**
  * Trait for date formatting methods shared by both Time & Date.
@@ -155,7 +156,7 @@ trait DateFormatTrait
      * in which the date will be displayed. The timezone stored for this object will not
      * be changed.
      * @param string|null $locale The locale name in which the date should be displayed (e.g. pt-BR)
-     * @return string Formatted and translated date string
+     * @return string|int Formatted and translated date string
      */
     public function i18nFormat($format = null, $timezone = null, $locale = null)
     {
@@ -214,7 +215,7 @@ trait DateFormatTrait
             } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
                 $timezone = 'GMT' . $timezone;
             }
-            static::$_formatters[$key] = datefmt_create(
+            $formatter = datefmt_create(
                 $locale,
                 $dateFormat,
                 $timeFormat,
@@ -222,6 +223,13 @@ trait DateFormatTrait
                 $calendar,
                 $pattern
             );
+            if (!$formatter) {
+                throw new RuntimeException(
+                    'Your version of icu does not support creating a date formatter for ' .
+                    "`$key`. You should try to upgrade libicu and the intl extension."
+                );
+            }
+            static::$_formatters[$key] = $formatter;
         }
 
         return static::$_formatters[$key]->format($date->format('U'));

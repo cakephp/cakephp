@@ -49,7 +49,7 @@ class CommandListShell extends Shell
         $this->hr();
         $this->out(sprintf('App : %s', APP_DIR));
         $this->out(sprintf('Path: %s', APP));
-        $this->out(sprintf('PHP : %s', phpversion()));
+        $this->out(sprintf('PHP : %s', PHP_VERSION));
         $this->hr();
     }
 
@@ -74,9 +74,9 @@ class CommandListShell extends Shell
     {
         if (!$this->param('xml') && !$this->param('version')) {
             $this->out('<info>Current Paths:</info>', 2);
-            $this->out('* app:  ' . APP_DIR);
-            $this->out('* root: ' . rtrim(ROOT, DIRECTORY_SEPARATOR));
-            $this->out('* core: ' . rtrim(CORE_PATH, DIRECTORY_SEPARATOR));
+            $this->out('* app:  ' . APP_DIR . DIRECTORY_SEPARATOR);
+            $this->out('* root: ' . ROOT . DIRECTORY_SEPARATOR);
+            $this->out('* core: ' . CORE_PATH);
             $this->out('');
 
             $this->out('<info>Available Shells:</info>', 2);

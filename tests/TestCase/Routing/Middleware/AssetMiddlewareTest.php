@@ -33,8 +33,18 @@ class AssetMiddlewareTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+    }
+
+    /**
+     * tearDown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        $this->clearPlugins();
+        parent::tearDown();
     }
 
     /**
@@ -130,7 +140,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware($request, $response, $next);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals(file_get_contents($expectedFile), $body);
+        $this->assertStringEqualsFile($expectedFile, $body);
     }
 
     /**

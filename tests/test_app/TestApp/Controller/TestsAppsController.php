@@ -22,22 +22,24 @@ namespace TestApp\Controller;
 
 class TestsAppsController extends AppController
 {
-    public $components = ['RequestHandler'];
+    public $components = [
+        'RequestHandler' => [
+           'enableBeforeRedirect' => false
+        ]
+    ];
 
     public function index()
     {
         $var = '';
-        if (isset($this->request->query['var'])) {
-            $var = $this->request->query['var'];
+        if ($this->request->getQuery('var')) {
+            $var = $this->request->getQuery('var');
         }
         $this->set('var', $var);
     }
 
     public function some_method()
     {
-        $this->response->body(5);
-
-        return $this->response;
+        return $this->response->withStringBody(5);
     }
 
     public function set_action()
@@ -58,9 +60,7 @@ class TestsAppsController extends AppController
 
     public function set_type()
     {
-        $this->response->type('json');
-
-        return $this->response;
+        return $this->response->withType('json');
     }
 
     public function throw_exception()

@@ -57,7 +57,7 @@ class AssetsTaskTest extends TestCase
     {
         parent::tearDown();
         unset($this->Task);
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -67,8 +67,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlink()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->symlink();
 
@@ -100,7 +99,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkWhenVendorDirectoryExits()
     {
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['Company/TestPluginThree']);
 
         mkdir(WWW_ROOT . 'company');
 
@@ -123,7 +122,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkWhenTargetAlreadyExits()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
 
         $shell = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
             ->setMethods(['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'])
@@ -144,7 +143,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testForPluginWithoutWebroot()
     {
-        Plugin::load('TestPluginTwo');
+        $this->loadPlugins(['TestPluginTwo']);
 
         $this->Task->symlink();
         $this->assertFileNotExists(WWW_ROOT . 'test_plugin_two');
@@ -157,8 +156,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkingSpecifiedPlugin()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->symlink('TestPlugin');
 
@@ -179,8 +177,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testCopy()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->copy();
 
@@ -200,6 +197,39 @@ class AssetsTaskTest extends TestCase
     }
 
     /**
+     * testCopyOverwrite
+     *
+     * @return void
+     */
+    public function testCopyOverwrite()
+    {
+        $this->loadPlugins(['TestPlugin']);
+
+        $this->Task->copy();
+
+        $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
+
+        $path = WWW_ROOT . 'test_plugin';
+        $dir = new \SplFileInfo($path);
+        $this->assertTrue($dir->isDir());
+        $this->assertFileExists($path . DS . 'root.js');
+
+        file_put_contents($path . DS . 'root.js', 'updated');
+
+        $this->Task->copy();
+
+        $this->assertFileNotEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
+
+        $this->Task->params['overwrite'] = true;
+        $this->Task->copy();
+
+        $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
+
+        $folder = new Folder($path);
+        $folder->delete();
+    }
+
+    /**
      * testRemoveSymlink method
      *
      * @return void
@@ -212,8 +242,7 @@ class AssetsTaskTest extends TestCase
             );
         }
 
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         mkdir(WWW_ROOT . 'company');
 
@@ -240,8 +269,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testRemoveFolder()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $this->Task->copy();
 
@@ -265,8 +293,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testOverwrite()
     {
-        Plugin::load('TestPlugin');
-        Plugin::load('Company/TestPluginThree');
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
 
         $path = WWW_ROOT . 'test_plugin';
 

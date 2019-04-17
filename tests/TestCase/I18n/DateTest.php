@@ -58,7 +58,7 @@ class DateTest extends TestCase
     /**
      * Provider for ensuring that Date and FrozenDate work the same way.
      *
-     * @return void
+     * @return array
      */
     public static function classNameProvider()
     {
@@ -108,16 +108,16 @@ class DateTest extends TestCase
         $class::setDefaultLocale('fr-FR');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL);
         $result = str_replace(' à', '', $result);
-        $expected = 'jeudi 14 janvier 2010 00:00:00 UTC';
-        $this->assertEquals($expected, $result);
+        $expected = 'jeudi 14 janvier 2010 00:00:00';
+        $this->assertStringStartsWith($expected, $result);
 
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'es-ES');
         $this->assertContains('14 de enero de 2010', $result, 'Default locale should not be used');
 
         $time = new $class('2014-01-01T00:00:00Z');
         $result = $time->i18nFormat(\IntlDateFormatter::FULL, null, 'en-US');
-        $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM GMT';
-        $this->assertEquals($expected, $result);
+        $expected = 'Wednesday, January 1, 2014 at 12:00:00 AM';
+        $this->assertStringStartsWith($expected, $result);
     }
 
     /**
@@ -268,7 +268,7 @@ class DateTest extends TestCase
     /**
      * provider for timeAgo with an end date.
      *
-     * @return void
+     * @return array
      */
     public function timeAgoEndProvider()
     {

@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\TestSuite\TestCase;
+use TestApp\Model\Table\PaginatorPostsTable;
 
 /**
  * Testing stub.
@@ -60,7 +61,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel();
         $this->assertInstanceOf('Cake\ORM\Table', $result);
@@ -69,6 +70,11 @@ class ModelAwareTraitTest extends TestCase
         $result = $stub->loadModel('Comments');
         $this->assertInstanceOf('Cake\ORM\Table', $result);
         $this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
+
+        $result = $stub->loadModel(PaginatorPostsTable::class);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
+        $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
+        $this->assertSame('PaginatorPosts', $result->getAlias());
     }
 
     /**
@@ -83,7 +89,7 @@ class ModelAwareTraitTest extends TestCase
     {
         $stub = new Stub();
         $stub->setProps('Articles');
-        $stub->modelType('Table');
+        $stub->setModelType('Table');
 
         $result = $stub->loadModel('TestPlugin.Comments');
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
@@ -120,25 +126,28 @@ class ModelAwareTraitTest extends TestCase
     /**
      * test alternate default model type.
      *
+     * @group deprecated
      * @return void
      */
     public function testModelType()
     {
-        $stub = new Stub();
-        $stub->setProps('Articles');
+        $this->deprecated(function () {
+            $stub = new Stub();
+            $stub->setProps('Articles');
 
-        FactoryLocator::add('Test', function ($name) {
-            $mock = new \StdClass();
-            $mock->name = $name;
+            FactoryLocator::add('Test', function ($name) {
+                $mock = new \StdClass();
+                $mock->name = $name;
 
-            return $mock;
+                return $mock;
+            });
+            $stub->modelType('Test');
+
+            $result = $stub->loadModel('Magic');
+            $this->assertInstanceOf('\StdClass', $result);
+            $this->assertInstanceOf('\StdClass', $stub->Magic);
+            $this->assertEquals('Magic', $stub->Magic->name);
         });
-        $stub->modelType('Test');
-
-        $result = $stub->loadModel('Magic');
-        $this->assertInstanceOf('\StdClass', $result);
-        $this->assertInstanceOf('\StdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
     }
 
     /**

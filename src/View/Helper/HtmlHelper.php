@@ -81,7 +81,8 @@ class HtmlHelper extends Helper
             'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
             'javascriptstart' => '<script>',
             'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
-            'javascriptend' => '</script>'
+            'javascriptend' => '</script>',
+            'confirmJs' => '{{confirm}}'
         ]
     ];
 
@@ -142,7 +143,7 @@ class HtmlHelper extends Helper
     public function __construct(View $View, array $config = [])
     {
         parent::__construct($View, $config);
-        $this->response = $this->_View->response ?: new Response();
+        $this->response = $this->_View->getResponse() ?: new Response();
     }
 
     /**
@@ -158,6 +159,11 @@ class HtmlHelper extends Helper
      */
     public function addCrumb($name, $link = null, array $options = [])
     {
+        deprecationWarning(
+            'HtmlHelper::addCrumb() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $this->_crumbs[] = [$name, $link, $options];
 
         return $this;
@@ -368,16 +374,19 @@ class HtmlHelper extends Helper
             $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
+        $templater = $this->templater();
         $confirmMessage = null;
         if (isset($options['confirm'])) {
             $confirmMessage = $options['confirm'];
             unset($options['confirm']);
         }
         if ($confirmMessage) {
-            $options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $confirm = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
+            $options['onclick'] = $templater->format('confirmJs', [
+                'confirmMessage' => $this->_cleanConfirmMessage($confirmMessage),
+                'confirm' => $confirm
+            ]);
         }
-
-        $templater = $this->templater();
 
         return $templater->format('link', [
             'url' => $url,
@@ -692,6 +701,11 @@ class HtmlHelper extends Helper
      */
     public function getCrumbs($separator = '&raquo;', $startText = false)
     {
+        deprecationWarning(
+            'HtmlHelper::getCrumbs() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $crumbs = $this->_prepareCrumbs($startText);
         if (!empty($crumbs)) {
             $out = [];
@@ -731,6 +745,11 @@ class HtmlHelper extends Helper
      */
     public function getCrumbList(array $options = [], $startText = false)
     {
+        deprecationWarning(
+            'HtmlHelper::getCrumbList() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $defaults = ['firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true];
         $options += $defaults;
         $firstClass = $options['firstClass'];
@@ -784,6 +803,11 @@ class HtmlHelper extends Helper
      */
     protected function _prepareCrumbs($startText, $escape = true)
     {
+        deprecationWarning(
+            'HtmlHelper::_prepareCrumbs() is deprecated. ' .
+            'Use the BreadcrumbsHelper instead.'
+        );
+
         $crumbs = $this->_crumbs;
         if ($startText) {
             if (!is_array($startText)) {
@@ -962,10 +986,11 @@ class HtmlHelper extends Helper
             }
 
             if ($useCount) {
+                $i += 1;
                 if (isset($cellOptions['class'])) {
-                    $cellOptions['class'] .= ' column-' . ++$i;
+                    $cellOptions['class'] .= ' column-' . $i;
                 } else {
-                    $cellOptions['class'] = 'column-' . ++$i;
+                    $cellOptions['class'] = 'column-' . $i;
                 }
             }
 
@@ -1076,7 +1101,7 @@ class HtmlHelper extends Helper
      */
     public function para($class, $text, array $options = [])
     {
-        if (isset($options['escape'])) {
+        if (!empty($options['escape'])) {
             $text = h($text);
         }
         if ($class && !empty($class)) {

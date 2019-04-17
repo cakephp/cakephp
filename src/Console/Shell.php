@@ -16,16 +16,18 @@ namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
-use Cake\Core\Plugin;
+use Cake\Core\App;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Filesystem\File;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Locator\LocatorInterface;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\Text;
 use ReflectionException;
 use ReflectionMethod;
+use RuntimeException;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -174,18 +176,19 @@ class Shell
      * Constructs this Shell instance.
      *
      * @param \Cake\Console\ConsoleIo|null $io An io instance.
+     * @param \Cake\ORM\Locator\LocatorInterface|null $locator Table locator instance.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell
      */
-    public function __construct(ConsoleIo $io = null)
+    public function __construct(ConsoleIo $io = null, LocatorInterface $locator = null)
     {
         if (!$this->name) {
             list(, $class) = namespaceSplit(get_class($this));
             $this->name = str_replace(['Shell', 'Task'], '', $class);
         }
         $this->_io = $io ?: new ConsoleIo();
+        $this->_tableLocator = $locator;
 
-        $locator = $this->getTableLocator() ? : 'Cake\ORM\TableRegistry';
-        $this->modelFactory('Table', [$locator, 'get']);
+        $this->modelFactory('Table', [$this->getTableLocator(), 'get']);
         $this->Tasks = new TaskRegistry($this);
 
         $this->_mergeVars(
@@ -241,6 +244,10 @@ class Shell
      */
     public function io(ConsoleIo $io = null)
     {
+        deprecationWarning(
+            'Shell::io() is deprecated. ' .
+            'Use Shell::setIo()/getIo() instead.'
+        );
         if ($io !== null) {
             $this->_io = $io;
         }
@@ -300,7 +307,28 @@ class Shell
         $this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
         $this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 
+        $this->_validateTasks();
+
         return true;
+    }
+
+    /**
+     * Checks that the tasks in the task map are actually available
+     *
+     * @throws \RuntimeException
+     * @return void
+     */
+    protected function _validateTasks()
+    {
+        foreach ($this->_taskMap as $taskName => $task) {
+            $class = App::className($task['class'], 'Shell/Task', 'Task');
+            if (!class_exists($class)) {
+                throw new RuntimeException(sprintf(
+                    'Task `%s` not found. Maybe you made a typo or a plugin is missing or not loaded?',
+                    $taskName
+                ));
+            }
+        }
     }
 
     /**
@@ -468,9 +496,6 @@ class Shell
             $this->params = array_merge($this->params, $extra);
         }
         $this->_setOutputLevel();
-        if (!empty($this->params['plugin']) && !Plugin::loaded($this->params['plugin'])) {
-            Plugin::load($this->params['plugin']);
-        }
         $this->command = $command;
         if (!empty($this->params['help'])) {
             return $this->_displayHelp($command);
@@ -706,10 +731,7 @@ class Shell
      */
     public function err($message = null, $newlines = 1)
     {
-        $messageType = 'error';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->_io->err($message, $newlines);
+        return $this->_io->error($message, $newlines);
     }
 
     /**
@@ -723,10 +745,7 @@ class Shell
      */
     public function info($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        $messageType = 'info';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->out($message, $newlines, $level);
+        return $this->_io->info($message, $newlines, $level);
     }
 
     /**
@@ -739,10 +758,7 @@ class Shell
      */
     public function warn($message = null, $newlines = 1)
     {
-        $messageType = 'warning';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->_io->err($message, $newlines);
+        return $this->_io->warning($message, $newlines);
     }
 
     /**
@@ -756,10 +772,7 @@ class Shell
      */
     public function success($message = null, $newlines = 1, $level = Shell::NORMAL)
     {
-        $messageType = 'success';
-        $message = $this->wrapMessageWithType($messageType, $message);
-
-        return $this->out($message, $newlines, $level);
+        return $this->_io->success($message, $newlines, $level);
     }
 
     /**
@@ -768,9 +781,14 @@ class Shell
      * @param string $messageType The message type, e.g. "warning".
      * @param string|array $message The message to wrap.
      * @return array|string The message wrapped with the given message type.
+     * @deprecated 3.6.0 Will be removed in 4.0.0 as it is no longer in use.
      */
     protected function wrapMessageWithType($messageType, $message)
     {
+        deprecationWarning(
+            'Shell::wrapMessageWithType() is deprecated. ' .
+            'Use output methods on ConsoleIo instead.'
+        );
         if (is_array($message)) {
             foreach ($message as $k => $v) {
                 $message[$k] = "<$messageType>" . $v . "</$messageType>";
@@ -837,6 +855,7 @@ class Shell
      */
     public function error($title, $message = null, $exitCode = self::CODE_ERROR)
     {
+        deprecationWarning('Shell::error() is deprecated. `Use Shell::abort() instead.');
         $this->_io->err(sprintf('<error>Error:</error> %s', $title));
 
         if (!empty($message)) {

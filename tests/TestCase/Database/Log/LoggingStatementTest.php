@@ -44,7 +44,7 @@ class LoggingStatementTest extends TestCase
             ));
         $st = new LoggingStatement($inner);
         $st->queryString = 'SELECT bar FROM foo';
-        $st->logger($logger);
+        $st->setLogger($logger);
         $st->execute();
     }
 
@@ -69,7 +69,7 @@ class LoggingStatementTest extends TestCase
             ));
         $st = new LoggingStatement($inner);
         $st->queryString = 'SELECT bar FROM foo';
-        $st->logger($logger);
+        $st->setLogger($logger);
         $st->execute(['a' => 1, 'b' => 2]);
     }
 
@@ -107,7 +107,7 @@ class LoggingStatementTest extends TestCase
         $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $st = new LoggingStatement($inner, $driver);
         $st->queryString = 'SELECT bar FROM foo';
-        $st->logger($logger);
+        $st->setLogger($logger);
         $st->bindValue('a', 1);
         $st->bindValue('b', $date, 'date');
         $st->execute();
@@ -140,8 +140,27 @@ class LoggingStatementTest extends TestCase
             ));
         $st = new LoggingStatement($inner);
         $st->queryString = 'SELECT bar FROM foo';
-        $st->logger($logger);
+        $st->setLogger($logger);
         $st->execute();
+    }
+
+    /**
+     * Tests setting and getting the logger
+     *
+     * @group deprecated
+     * @return void
+     */
+    public function testLoggerCompat()
+    {
+        $this->deprecated(function () {
+            $logger = $this->getMockBuilder('\Cake\Database\Log\QueryLogger')->getMock();
+            $st = new LoggingStatement();
+
+            $this->assertNull($st->logger());
+
+            $st->logger($logger);
+            $this->assertSame($logger, $st->logger());
+        });
     }
 
     /**

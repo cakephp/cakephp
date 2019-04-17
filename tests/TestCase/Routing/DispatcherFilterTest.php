@@ -34,7 +34,7 @@ class DispatcherFilterTest extends TestCase
     public function testConstructConfig()
     {
         $filter = new DispatcherFilter(['one' => 'value', 'on' => '/blog']);
-        $this->assertEquals('value', $filter->config('one'));
+        $this->assertEquals('value', $filter->getConfig('one'));
     }
 
     /**
@@ -45,10 +45,10 @@ class DispatcherFilterTest extends TestCase
     public function testConstructPriority()
     {
         $filter = new DispatcherFilter();
-        $this->assertEquals(10, $filter->config('priority'));
+        $this->assertEquals(10, $filter->getConfig('priority'));
 
         $filter = new DispatcherFilter(['priority' => 100]);
-        $this->assertEquals(100, $filter->config('priority'));
+        $this->assertEquals(100, $filter->getConfig('priority'));
     }
 
     /**

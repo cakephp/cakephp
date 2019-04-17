@@ -65,7 +65,7 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path);
         $config = $engine->read('acl');
 
-        $this->assertTrue(isset($config['admin']));
+        $this->assertArrayHasKey('admin', $config);
         $this->assertTrue(isset($config['paul']['groups']));
         $this->assertEquals('ads', $config['admin']['deny']);
     }
@@ -95,7 +95,7 @@ class IniConfigTest extends TestCase
         $engine = new IniConfig($this->path, 'admin');
         $config = $engine->read('acl');
 
-        $this->assertTrue(isset($config['groups']));
+        $this->assertArrayHasKey('groups', $config);
         $this->assertEquals('administrators', $config['groups']);
     }
 
@@ -210,7 +210,7 @@ class IniConfigTest extends TestCase
      */
     public function testReadPluginValue()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $engine = new IniConfig($this->path);
         $result = $engine->read('TestPlugin.nested');
 
@@ -221,7 +221,7 @@ class IniConfigTest extends TestCase
 
         $result = $engine->read('TestPlugin.nested');
         $this->assertEquals('foo', $result['database']['db']['password']);
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**

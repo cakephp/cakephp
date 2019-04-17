@@ -16,6 +16,9 @@ namespace Cake\View\Form;
 
 /**
  * Interface for FormHelper context implementations.
+ *
+ * @method string|null getRequiredMessage($field) Gets the default "required" error message for a field
+ * @method int|null getMaxLength($field) Get maximum length of a field from model validation
  */
 interface ContextInterface
 {
@@ -73,7 +76,7 @@ interface ContextInterface
     /**
      * Get the fieldnames of the top level object in this context.
      *
-     * @return array A list of the field names in the context.
+     * @return string[] A list of the field names in the context.
      */
     public function fieldNames();
 

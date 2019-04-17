@@ -38,6 +38,11 @@ abstract class BaseErrorHandler
     protected $_options = [];
 
     /**
+     * @var bool
+     */
+    protected $_handled = false;
+
+    /**
      * Display an error message in an environment specific way.
      *
      * Subclasses should implement this method to display the error as
@@ -75,7 +80,7 @@ abstract class BaseErrorHandler
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'wrapAndHandleException']);
         register_shutdown_function(function () {
-            if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+            if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
             $megabytes = Configure::read('Error.extraFatalErrorMemory');
@@ -128,6 +133,7 @@ abstract class BaseErrorHandler
         if (error_reporting() === 0) {
             return false;
         }
+        $this->_handled = true;
         list($error, $log) = static::mapErrorCode($code);
         if ($log === LOG_ERR) {
             return $this->handleFatalError($code, $description, $file, $line);
@@ -349,12 +355,33 @@ abstract class BaseErrorHandler
      */
     protected function _getMessage(Exception $exception)
     {
+        $message = $this->getMessageForException($exception);
+
+        $request = Router::getRequest();
+        if ($request) {
+            $message .= $this->_requestContext($request);
+        }
+
+        return $message;
+    }
+
+    /**
+     * Generate the message for the exception
+     *
+     * @param \Exception $exception The exception to log a message for.
+     * @param bool $isPrevious False for original exception, true for previous
+     * @return string Error message
+     */
+    protected function getMessageForException($exception, $isPrevious = false)
+    {
         $exception = $exception instanceof PHP7ErrorException ?
             $exception->getError() :
             $exception;
         $config = $this->_options;
+
         $message = sprintf(
-            '[%s] %s in %s on line %s',
+            '%s[%s] %s in %s on line %s',
+            $isPrevious ? "\nCaused by: " : '',
             get_class($exception),
             $exception->getMessage(),
             $exception->getFile(),
@@ -369,13 +396,13 @@ abstract class BaseErrorHandler
             }
         }
 
-        $request = Router::getRequest();
-        if ($request) {
-            $message .= $this->_requestContext($request);
-        }
-
         if (!empty($config['trace'])) {
             $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
+        }
+
+        $previous = $exception->getPrevious();
+        if ($previous) {
+            $message .= $this->getMessageForException($previous, true);
         }
 
         return $message;

@@ -64,6 +64,7 @@ class ConfigureTest extends TestCase
             unlink(TMP . 'cache/persistent/test.php');
         }
         Configure::drop('test');
+        Cache::enable();
     }
 
     /**
@@ -108,15 +109,15 @@ class ConfigureTest extends TestCase
         $this->assertEquals('something_else', $result);
 
         $result = Configure::read('debug');
-        $this->assertTrue($result >= 0);
+        $this->assertGreaterThanOrEqual(0, $result);
 
         $result = Configure::read();
         $this->assertInternalType('array', $result);
-        $this->assertTrue(isset($result['debug']));
-        $this->assertTrue(isset($result['level1']));
+        $this->assertArrayHasKey('debug', $result);
+        $this->assertArrayHasKey('level1', $result);
 
         $result = Configure::read('something_I_just_made_up_now');
-        $this->assertEquals(null, $result, 'Missing key should return null.');
+        $this->assertNull($result, 'Missing key should return null.');
 
         $default = 'default';
         $result = Configure::read('something_I_just_made_up_now', $default);
@@ -142,7 +143,7 @@ class ConfigureTest extends TestCase
         $writeResult = Configure::write('SomeName.someKey', null);
         $this->assertTrue($writeResult);
         $result = Configure::read('SomeName.someKey');
-        $this->assertEquals(null, $result);
+        $this->assertNull($result);
 
         $expected = ['One' => ['Two' => ['Three' => ['Four' => ['Five' => 'cool']]]]];
         $writeResult = Configure::write('Key', $expected);
@@ -198,7 +199,7 @@ class ConfigureTest extends TestCase
 
         Configure::delete('SomeName.someKey');
         $result = Configure::read('SomeName.someKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
 
         Configure::write('SomeName', ['someKey' => 'myvalue', 'otherKey' => 'otherValue']);
 
@@ -211,10 +212,10 @@ class ConfigureTest extends TestCase
         Configure::delete('SomeName');
 
         $result = Configure::read('SomeName.someKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
 
         $result = Configure::read('SomeName.otherKey');
-        $this->assertTrue($result === null);
+        $this->assertNull($result);
     }
 
     /**
@@ -298,8 +299,8 @@ class ConfigureTest extends TestCase
         try {
             Configure::load('non_existing_configuration_file');
         } catch (\Exception $e) {
-            $result = Configure::configured('default');
-            $this->assertTrue($result);
+            $this->assertTrue(Configure::isConfigured('default'));
+            $this->assertFalse(Configure::isConfigured('non_existing_configuration_file'));
         }
     }
 
@@ -393,7 +394,7 @@ class ConfigureTest extends TestCase
     public function testLoadPlugin()
     {
         Configure::config('test', new PhpConfig());
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $result = Configure::load('TestPlugin.load', 'test');
         $this->assertTrue($result);
         $expected = '/test_app/Plugin/TestPlugin/Config/load.php';
@@ -405,7 +406,7 @@ class ConfigureTest extends TestCase
         $expected = '/test_app/Plugin/TestPlugin/Config/more.load.php';
         $config = Configure::read('plugin_more_load');
         $this->assertEquals($expected, $config);
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -416,7 +417,7 @@ class ConfigureTest extends TestCase
     public function testStoreAndRestore()
     {
         Cache::enable();
-        Cache::config('configure', [
+        Cache::setConfig('configure', [
             'className' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -442,7 +443,7 @@ class ConfigureTest extends TestCase
     public function testStoreAndRestoreWithData()
     {
         Cache::enable();
-        Cache::config('configure', [
+        Cache::setConfig('configure', [
             'className' => 'File',
             'path' => TMP . 'tests'
         ]);
@@ -482,13 +483,32 @@ class ConfigureTest extends TestCase
         Configure::config('test', $engine);
         $configured = Configure::configured();
 
-        $this->assertTrue(in_array('test', $configured));
+        $this->assertContains('test', $configured);
 
-        $this->assertTrue(Configure::configured('test'));
-        $this->assertFalse(Configure::configured('fake_garbage'));
+        $this->assertTrue(Configure::isConfigured('test'));
+        $this->assertFalse(Configure::isConfigured('fake_garbage'));
 
         $this->assertTrue(Configure::drop('test'));
         $this->assertFalse(Configure::drop('test'), 'dropping things that do not exist should return false.');
+    }
+
+    /**
+     * test deprecated behavior of configured
+     *
+     * @deprecated
+     * @return void
+     */
+    public function testConfigured()
+    {
+        $this->deprecated(function () {
+            $engine = new PhpConfig();
+            Configure::config('test', $engine);
+
+            $configured = Configure::configured();
+            $this->assertContains('test', $configured);
+            $this->assertTrue(Configure::configured('test'));
+            $this->assertTrue(Configure::configured('default'));
+        });
     }
 
     /**
@@ -590,5 +610,30 @@ class ConfigureTest extends TestCase
 
         $result = Configure::consume(null);
         $this->assertNull($result);
+    }
+
+    /**
+     * testConsumeOrFail method
+     *
+     * @return void
+     */
+    public function testConsumeOrFail()
+    {
+        $expected = 'ok';
+        Configure::write('This.Key.Exists', $expected);
+        $result = Configure::consumeOrFail('This.Key.Exists');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * testConsumeOrFail method
+     *
+     * @return void
+     */
+    public function testConsumeOrFailThrowingException()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Expected configuration key "This.Key.Does.Not.exist" not found');
+        Configure::consumeOrFail('This.Key.Does.Not.exist');
     }
 }

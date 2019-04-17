@@ -17,6 +17,7 @@
 namespace Cake\Error;
 
 use Cake\Core\App;
+use Cake\Http\ResponseEmitter;
 use Exception;
 use Throwable;
 
@@ -105,8 +106,6 @@ class ErrorHandler extends BaseErrorHandler
      *
      * Template method of BaseErrorHandler.
      *
-     * Only when debug > 2 will a formatted error be displayed.
-     *
      * @param array $error An array of error data.
      * @param bool $debug Whether or not the app is in debug mode.
      * @return void
@@ -194,6 +193,8 @@ class ErrorHandler extends BaseErrorHandler
 
             return;
         }
-        $response->send();
+
+        $emitter = new ResponseEmitter();
+        $emitter->emit($response);
     }
 }

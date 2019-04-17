@@ -228,6 +228,10 @@ class EagerLoadable
     public function canBeJoined($possible = null)
     {
         if ($possible !== null) {
+            deprecationWarning(
+                'Using EagerLoadable::canBeJoined() as a setter is deprecated. ' .
+                'Use setCanBeJoined() instead.'
+            );
             $this->setCanBeJoined($possible);
         }
 
@@ -272,6 +276,10 @@ class EagerLoadable
      */
     public function config(array $config = null)
     {
+        deprecationWarning(
+            'EagerLoadable::config() is deprecated. ' .
+            'Use setConfig()/getConfig() instead.'
+        );
         if ($config !== null) {
             $this->setConfig($config);
         }

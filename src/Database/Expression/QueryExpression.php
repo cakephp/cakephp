@@ -25,6 +25,9 @@ use Countable;
  * Represents a SQL Query expression. Internally it stores a tree of
  * expressions that can be compiled by converting this object to string
  * and will contain a correctly parenthesized and nested expression.
+ *
+ * @method $this and(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
+ * @method $this or(callable|string|array|\Cake\Database\ExpressionInterface $conditions)
  */
 class QueryExpression implements ExpressionInterface, Countable
 {
@@ -105,6 +108,10 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function tieWith($conjunction = null)
     {
+        deprecationWarning(
+            'QueryExpression::tieWith() is deprecated. ' .
+            'Use QueryExpression::setConjunction()/getConjunction() instead.'
+        );
         if ($conjunction !== null) {
             return $this->setConjunction($conjunction);
         }
@@ -118,10 +125,15 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string|null $conjunction value to be used for joining conditions. If null it
      * will not set any value, but return the currently stored one
      * @return string|$this
-     * @deprecated 3.2.0 Use tieWith() instead
+     * @deprecated 3.2.0 Use setConjunction()/getConjunction() instead
      */
     public function type($conjunction = null)
     {
+        deprecationWarning(
+            'QueryExpression::type() is deprecated. ' .
+            'Use QueryExpression::setConjunction()/getConjunction() instead.'
+        );
+
         return $this->tieWith($conjunction);
     }
 
@@ -440,7 +452,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "AND"
      *
-     * @param string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
+     * @param callable|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with AND
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
@@ -458,7 +470,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Returns a new QueryExpression object containing all the conditions passed
      * and set up the conjunction to be "OR"
      *
-     * @param string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
+     * @param callable|string|array|\Cake\Database\ExpressionInterface $conditions to be joined with OR
      * @param array $types associative array of fields pointing to the type of the
      * values that are being passed. Used for correctly binding values to statements.
      * @return \Cake\Database\Expression\QueryExpression
@@ -678,13 +690,26 @@ class QueryExpression implements ExpressionInterface, Countable
         foreach ($conditions as $k => $c) {
             $numericKey = is_numeric($k);
 
+            if ($this->isCallable($c)) {
+                $expr = new static([], $typeMap);
+                $c = $c($expr, $this);
+            }
+
             if ($numericKey && empty($c)) {
                 continue;
             }
 
-            if ($this->isCallable($c)) {
-                $expr = new static([], $typeMap);
-                $c = $c($expr, $this);
+            $isArray = is_array($c);
+            $isOperator = in_array(strtolower($k), $operators);
+            $isNot = strtolower($k) === 'not';
+
+            if (($isOperator || $isNot) && ($isArray || $c instanceof Countable) && count($c) === 0) {
+                continue;
+            }
+
+            if ($numericKey && $c instanceof ExpressionInterface) {
+                $this->_conditions[] = $c;
+                continue;
             }
 
             if ($numericKey && is_string($c)) {
@@ -692,22 +717,13 @@ class QueryExpression implements ExpressionInterface, Countable
                 continue;
             }
 
-            if ($numericKey && is_array($c) || in_array(strtolower($k), $operators)) {
+            if ($numericKey && $isArray || $isOperator) {
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }
 
-            if (strtolower($k) === 'not') {
+            if ($isNot) {
                 $this->_conditions[] = new UnaryExpression('NOT', new static($c, $typeMap));
-                continue;
-            }
-
-            if ($c instanceof self && count($c) === 0) {
-                continue;
-            }
-
-            if ($numericKey && $c instanceof ExpressionInterface) {
-                $this->_conditions[] = $c;
                 continue;
             }
 

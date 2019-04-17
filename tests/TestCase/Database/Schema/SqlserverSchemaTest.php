@@ -34,7 +34,7 @@ class SqlserverSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') === false, 'Not using Sqlserver for test config');
     }
 
@@ -198,7 +198,7 @@ SQL;
                 50,
                 null,
                 null,
-                // Sqlserver returns double lenghts for unicode columns
+                // Sqlserver returns double lengths for unicode columns
                 ['type' => 'string', 'length' => 25]
             ],
             [
@@ -244,6 +244,27 @@ SQL;
                 null,
                 ['type' => 'text', 'length' => null]
             ],
+            [
+                'IMAGE',
+                10,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 10]
+            ],
+            [
+                'BINARY',
+                20,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 20]
+            ],
+            [
+                'VARBINARY',
+                30,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 30]
+            ],
         ];
     }
 
@@ -274,7 +295,7 @@ SQL;
         $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
         $dialect = new SqlserverSchema($driver);
 
-        $table = $this->getMockBuilder('Cake\Database\Schema\Table')
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
             ->setConstructorArgs(['table'])
             ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
@@ -410,7 +431,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $column = $result->column($field);
+            $column = $result->getColumn($field);
             $this->assertEquals($definition, $column, 'Failed to match field ' . $field);
             $this->assertSame($definition['length'], $column['length']);
             $this->assertSame($definition['precision'], $column['precision']);
@@ -440,8 +461,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
 
     /**
@@ -472,7 +493,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertCount(3, $result->constraints());
         $expected = [
             'primary' => [
@@ -494,9 +515,9 @@ SQL;
                 'delete' => 'cascade',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -504,7 +525,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -534,6 +555,11 @@ SQL;
             [
                 'id',
                 ['type' => 'uuid', 'null' => false],
+                '[id] UNIQUEIDENTIFIER NOT NULL'
+            ],
+            [
+                'id',
+                ['type' => 'binaryuuid', 'null' => false],
                 '[id] UNIQUEIDENTIFIER NOT NULL'
             ],
             [
@@ -645,6 +671,16 @@ SQL;
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
                 '[img] VARBINARY(MAX)'
+            ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 5],
+                '[bytes] VARBINARY(5)'
+            ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 1],
+                '[bytes] BINARY(1)'
             ],
             // Boolean
             [
@@ -1016,7 +1052,7 @@ SQL;
             ->will($this->returnCallback(function ($value) {
                 return "'$value'";
             }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
 
         return $driver;
     }

@@ -15,6 +15,7 @@
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 
@@ -37,6 +38,7 @@ class RoutesShell extends Shell
         ];
         foreach (Router::routes() as $route) {
             $name = isset($route->options['_name']) ? $route->options['_name'] : $route->getName();
+            ksort($route->defaults);
             $output[] = [$name, $route->template, json_encode($route->defaults)];
         }
         $this->helper('table')->output($output);
@@ -52,7 +54,8 @@ class RoutesShell extends Shell
     public function check($url)
     {
         try {
-            $route = Router::parse($url);
+            $request = new ServerRequest(['url' => $url]);
+            $route = Router::parseRequest($request);
             $name = null;
             foreach (Router::routes() as $r) {
                 if ($r->match($route)) {
@@ -62,6 +65,7 @@ class RoutesShell extends Shell
             }
 
             unset($route['_matchedRoute']);
+            ksort($route);
 
             $output = [
                 ['Route name', 'URI template', 'Defaults'],

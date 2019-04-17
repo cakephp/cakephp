@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Http\CallbackStream;
+use Cake\Http\Cookie\Cookie;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
@@ -28,11 +29,28 @@ class ResponseEmitterTest extends TestCase
 {
     protected $emitter;
 
+    /**
+     * setup
+     *
+     * @return void
+     */
     public function setUp()
     {
         parent::setUp();
+        $GLOBALS['mockedHeadersSent'] = false;
         $GLOBALS['mockedHeaders'] = $GLOBALS['mockedCookies'] = [];
         $this->emitter = new ResponseEmitter();
+    }
+
+    /**
+     * teardown
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        unset($GLOBALS['mockedHeadersSent']);
     }
 
     /**
@@ -93,7 +111,7 @@ class ResponseEmitterTest extends TestCase
     public function testEmitResponseArrayCookies()
     {
         $response = (new Response())
-            ->withCookie('simple', ['value' => 'val', 'secure' => true])
+            ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withHeader('Content-Type', 'text/plain');
         $response->getBody()->write('ok');

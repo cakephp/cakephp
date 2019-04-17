@@ -152,6 +152,10 @@ class RouteBuilder
      */
     public function routeClass($routeClass = null)
     {
+        deprecationWarning(
+            'RouteBuilder::routeClass() is deprecated. ' .
+            'Use RouteBuilder::setRouteClass()/getRouteClass() instead.'
+        );
         if ($routeClass === null) {
             return $this->getRouteClass();
         }
@@ -193,6 +197,10 @@ class RouteBuilder
      */
     public function extensions($extensions = null)
     {
+        deprecationWarning(
+            'RouteBuilder::extensions() is deprecated. ' .
+            'Use RouteBuilder::setExtensions()/getExtensions() instead.'
+        );
         if ($extensions === null) {
             return $this->getExtensions();
         }
@@ -380,7 +388,7 @@ class RouteBuilder
      */
     public function resources($name, $options = [], $callback = null)
     {
-        if (is_callable($options) && $callback === null) {
+        if (is_callable($options)) {
             $callback = $options;
             $options = [];
         }
@@ -578,6 +586,7 @@ class RouteBuilder
             'routeClass' => $this->_routeClass,
         ];
 
+        $target = $this->parseDefaults($target);
         $target['_method'] = $method;
 
         $route = $this->_makeRoute($template, $target, $options);
@@ -593,28 +602,45 @@ class RouteBuilder
      * the current RouteBuilder instance.
      *
      * @param string $name The plugin name
-     * @param string $file The routes file to load. Defaults to `routes.php`
+     * @param string $file The routes file to load. Defaults to `routes.php`. This parameter
+     *   is deprecated and will be removed in 4.0
      * @return void
      * @throws \Cake\Core\Exception\MissingPluginException When the plugin has not been loaded.
      * @throws \InvalidArgumentException When the plugin does not have a routes file.
      */
     public function loadPlugin($name, $file = 'routes.php')
     {
-        if (!Plugin::loaded($name)) {
+        $plugins = Plugin::getCollection();
+        if (!$plugins->has($name)) {
             throw new MissingPluginException(['plugin' => $name]);
         }
+        $plugin = $plugins->get($name);
 
-        $path = Plugin::configPath($name) . DIRECTORY_SEPARATOR . $file;
-        if (!file_exists($path)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot load routes for the plugin named %s. The %s file does not exist.',
-                $name,
-                $path
-            ));
+        // @deprecated This block should be removed in 4.0
+        if ($file !== 'routes.php') {
+            deprecationWarning(
+                'Loading plugin routes now uses the routes() hook method on the plugin class. ' .
+                'Loading non-standard files will be removed in 4.0'
+            );
+
+            $path = $plugin->getConfigPath() . DIRECTORY_SEPARATOR . $file;
+            if (!file_exists($path)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Cannot load routes for the plugin named %s. The %s file does not exist.',
+                    $name,
+                    $path
+                ));
+            }
+
+            $routes = $this;
+            include $path;
+
+            return;
         }
+        $plugin->routes($this);
 
-        $routes = $this;
-        include $path;
+        // Disable the routes hook to prevent duplicate route issues.
+        $plugin->disable('routes');
     }
 
     /**
@@ -685,7 +711,7 @@ class RouteBuilder
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
      * @param string $route A string describing the template of the route
-     * @param array $defaults An array describing the default route parameters. These parameters will be used by default
+     * @param array|string $defaults An array describing the default route parameters. These parameters will be used by default
      *   and can supply routing parameters that are not dynamic. See above.
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
@@ -695,16 +721,12 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect($route, array $defaults = [], array $options = [])
+    public function connect($route, $defaults = [], array $options = [])
     {
-        if (!isset($options['action']) && !isset($defaults['action'])) {
-            $defaults['action'] = 'index';
-        }
-
+        $defaults = $this->parseDefaults($defaults);
         if (empty($options['_ext'])) {
             $options['_ext'] = $this->_extensions;
         }
-
         if (empty($options['routeClass'])) {
             $options['routeClass'] = $this->_routeClass;
         }
@@ -719,6 +741,41 @@ class RouteBuilder
         $this->_collection->add($route, $options);
 
         return $route;
+    }
+
+    /**
+     * Parse the defaults if they're a string
+     *
+     * @param string|array $defaults Defaults array from the connect() method.
+     * @return string|array
+     */
+    protected static function parseDefaults($defaults)
+    {
+        if (!is_string($defaults)) {
+            return $defaults;
+        }
+
+        $regex = '/(?:(?<plugin>[a-zA-Z0-9\/]*)\.)?(?<prefix>[a-zA-Z0-9\/]*?)' .
+            '(?:\/)?(?<controller>[a-zA-Z0-9]*):{2}(?<action>[a-zA-Z0-9_]*)/i';
+
+        if (preg_match($regex, $defaults, $matches)) {
+            foreach ($matches as $key => $value) {
+                // Remove numeric keys and empty values.
+                if (is_int($key) || $value === '' || $value === '::') {
+                    unset($matches[$key]);
+                }
+            }
+            $length = count($matches);
+
+            if (isset($matches['prefix'])) {
+                $matches['prefix'] = strtolower($matches['prefix']);
+            }
+
+            if ($length >= 2 || $length <= 4) {
+                return $matches;
+            }
+        }
+        throw new RuntimeException("Could not parse `{$defaults}` route destination string.");
     }
 
     /**
@@ -761,6 +818,9 @@ class RouteBuilder
                 }
             }
             $defaults += $this->_params + ['plugin' => null];
+            if (!isset($defaults['action']) && !isset($options['action'])) {
+                $defaults['action'] = 'index';
+            }
 
             $route = new $routeClass($route, $defaults, $options);
         }
@@ -806,7 +866,7 @@ class RouteBuilder
      * @param array $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
-     * @return void
+     * @return \Cake\Routing\Route\Route|\Cake\Routing\Route\RedirectRoute
      */
     public function redirect($route, $url, array $options = [])
     {
@@ -816,7 +876,8 @@ class RouteBuilder
         if (is_string($url)) {
             $url = ['redirect' => $url];
         }
-        $this->connect($route, $url, $options);
+
+        return $this->connect($route, $url, $options);
     }
 
     /**
@@ -920,7 +981,7 @@ class RouteBuilder
      */
     public function scope($path, $params, $callback = null)
     {
-        if ($callback === null) {
+        if (is_callable($params)) {
             $callback = $params;
             $params = [];
         }
@@ -1000,7 +1061,7 @@ class RouteBuilder
                 throw new RuntimeException($message);
             }
         }
-        $this->middleware = array_merge($this->middleware, $names);
+        $this->middleware = array_unique(array_merge($this->middleware, $names));
 
         return $this;
     }

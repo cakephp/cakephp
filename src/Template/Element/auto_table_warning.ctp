@@ -13,7 +13,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\ORM\TableRegistry;
-$autoTables = TableRegistry::genericInstances();
+$autoTables = TableRegistry::getTableLocator()->genericInstances();
 if (!$autoTables) {
     return;
 }
@@ -26,7 +26,7 @@ instead of any other specific subclass.
 <p>This could be the cause for this exception. Auto-Tables are created for you under the following circumstances:</p>
 <ul>
     <li>The class for the specified table does not exist.</li>
-    <li>The Table was created with a typo: <strong><em>TableRegistry::get('Atricles');</em></strong></li>
+    <li>The Table was created with a typo: <strong><em>$this->getTableLocator()->get('Atricles');</em></strong></li>
     <li>The class file has a typo in the name or incorrect namespace: <strong><em>class Atricles extends Table</em></strong></li>
     <li>The file containing the class has a typo or incorrect casing: <strong><em>Atricles.php</em></strong></li>
     <li>The Table was used using associations but the association has a typo: <strong><em>$this->belongsTo('Atricles')</em></strong></li>

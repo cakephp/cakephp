@@ -67,7 +67,7 @@ class MapReduce implements IteratorAggregate
      * A callable that will be executed for each intermediate record emitted during
      * the Map phase
      *
-     * @var callable
+     * @var callable|null
      */
     protected $_reducer;
 

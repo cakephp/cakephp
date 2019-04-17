@@ -17,6 +17,9 @@ namespace Cake\Database;
 /*
  * Represents a class that holds a TypeMap object
  */
+/**
+ * Trait TypeMapTrait
+ */
 trait TypeMapTrait
 {
 
@@ -62,6 +65,10 @@ trait TypeMapTrait
      */
     public function typeMap($typeMap = null)
     {
+        deprecationWarning(
+            'TypeMapTrait::typeMap() is deprecated. ' .
+            'Use TypeMapTrait::setTypeMap()/getTypeMap() instead.'
+        );
         if ($typeMap !== null) {
             return $this->setTypeMap($typeMap);
         }
@@ -101,6 +108,10 @@ trait TypeMapTrait
      */
     public function defaultTypes(array $types = null)
     {
+        deprecationWarning(
+            'TypeMapTrait::defaultTypes() is deprecated. ' .
+            'Use TypeMapTrait::setDefaultTypes()/getDefaultTypes() instead.'
+        );
         if ($types !== null) {
             return $this->setDefaultTypes($types);
         }

@@ -117,20 +117,24 @@ Log::setConfig([
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['notice', 'info', 'debug'],
         'file' => 'debug',
+        'path' => LOGS,
     ],
     'error' => [
         'engine' => 'Cake\Log\Engine\FileLog',
         'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
         'file' => 'error',
+        'path' => LOGS,
     ]
 ]);
 
 Chronos::setTestNow(Chronos::now());
-MutableDateTime::setTestNow(MutableDateTime::now());
-Date::setTestNow(Date::now());
-MutableDate::setTestNow(MutableDate::now());
 
 ini_set('intl.default_locale', 'en_US');
 ini_set('session.gc_divisor', '1');
 
 loadPHPUnitAliases();
+
+// Fixate sessionid early on, as php7.2+
+// does not allow the sessionid to be set after stdout
+// has been written to.
+session_id('cli');
