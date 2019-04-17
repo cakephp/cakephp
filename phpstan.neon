@@ -27,6 +27,7 @@ parameters:
         - '#Call to an undefined method DOMNode::setAttribute\(\)#'
         - '#Binary operation "\+" between array|false and array results in an error#'
         - '#Result of method Cake\\Auth\\BaseAuthenticate::unauthenticated\(\) \(void\) is used#'
+        - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
