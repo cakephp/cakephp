@@ -14,7 +14,6 @@
  */
 namespace Cake\Validation;
 
-use Cake\Chronos\Date;
 use Cake\I18n\Time;
 use Cake\Utility\Text;
 use DateTimeInterface;

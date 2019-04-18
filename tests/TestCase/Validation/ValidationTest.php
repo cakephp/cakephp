@@ -1596,9 +1596,11 @@ class ValidationTest extends TestCase
      */
     public function testDateTimeISO()
     {
-        $this->assertFalse(Validation::dateTime('2007/10/04T1:50'));
         $this->assertTrue(Validation::dateTime('2007/10/04T01:50'));
         $this->assertTrue(Validation::dateTime('2017/12/04T15:38'));
+        $this->assertTrue(Validation::dateTime('04.12.2017T15:38', ['dmy']));
+        $this->assertTrue(Validation::dateTime('24-02-2019T2:38am', ['dmy']));
+        $this->assertFalse(Validation::dateTime('2007/10/04T1:50'));
         $this->assertFalse(Validation::dateTime('2007/10/04T58:38'));
     }
 
