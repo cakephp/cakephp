@@ -1071,6 +1071,7 @@ class Response implements ResponseInterface
             $result = new DateTime($time);
         }
 
+        /** @psalm-suppress PossiblyUndefinedMethod */
         return $result->setTimezone(new DateTimeZone('UTC'));
     }
 
