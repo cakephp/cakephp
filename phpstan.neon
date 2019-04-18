@@ -27,6 +27,7 @@ parameters:
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
         - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
+        - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'

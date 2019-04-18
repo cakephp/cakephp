@@ -314,14 +314,14 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\Command $command The command to run.
      * @param array $argv The CLI arguments to invoke.
      * @param \Cake\Console\ConsoleIo $io The console io
-     * @return int Exit code
+     * @return int|null Exit code
      */
-    protected function runCommand(Command $command, array $argv, ConsoleIo $io)
+    protected function runCommand(Command $command, array $argv, ConsoleIo $io): ?int
     {
         try {
             return $command->run($argv, $io);
         } catch (StopException $e) {
-            return $e->getCode();
+            return (int)$e->getCode();
         }
     }
 
