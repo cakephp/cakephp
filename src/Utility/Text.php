@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Exception\Exception;
 use InvalidArgumentException;
 use Transliterator;
 
@@ -1105,7 +1106,12 @@ class Text
             $transliterator = static::$_defaultTransliterator ?: static::$_defaultTransliteratorId;
         }
 
-        return transliterator_transliterate($transliterator, $string);
+        $return = transliterator_transliterate($transliterator, $string);
+        if ($return === false) {
+            throw new Exception(sprintf('Unable to transliterate string: %s', $string));
+        }
+
+        return $return;
     }
 
     /**
