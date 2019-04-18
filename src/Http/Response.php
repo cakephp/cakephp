@@ -20,6 +20,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -919,7 +920,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTime $time Valid time string or \DateTime instance.
+     * @param string|\DateTimeInterface $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time): self
@@ -942,7 +943,7 @@ class Response implements ResponseInterface
      * $response->withModified(new DateTime('+1 day'))
      * ```
      *
-     * @param int|string|\DateTime $time Valid time string or \DateTime instance.
+     * @param int|string|\DateTimeInterface $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withModified($time): self
@@ -1057,21 +1058,20 @@ class Response implements ResponseInterface
      * Returns a DateTime object initialized at the $time param and using UTC
      * as timezone
      *
-     * @param string|int|\DateTime|null $time Valid time string or \DateTime instance.
-     * @return \DateTime
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTimeInterface instance.
+     * @return \DateTimeInterface
      */
-    protected function _getUTCDate($time = null): DateTime
+    protected function _getUTCDate($time = null): DateTimeInterface
     {
-        if ($time instanceof DateTime) {
+        if ($time instanceof DateTimeInterface) {
             $result = clone $time;
         } elseif (is_int($time)) {
             $result = new DateTime(date('Y-m-d H:i:s', $time));
         } else {
             $result = new DateTime($time);
         }
-        $result->setTimezone(new DateTimeZone('UTC'));
 
-        return $result;
+        return $result->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**

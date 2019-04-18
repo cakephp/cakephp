@@ -158,7 +158,7 @@ class CommandRunner implements EventDispatcherInterface
             $result = $this->runShell($shell, $argv);
         }
         if ($shell instanceof Command) {
-            $result = $shell->run($argv, $io);
+            $result = $this->runCommand($shell, $argv, $io);
         }
 
         if ($result === null || $result === true) {
@@ -306,6 +306,23 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return $name;
+    }
+
+    /**
+     * Execute a Command class.
+     *
+     * @param \Cake\Console\Command $command The command to run.
+     * @param array $argv The CLI arguments to invoke.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return int Exit code
+     */
+    protected function runCommand(Command $command, array $argv, ConsoleIo $io)
+    {
+        try {
+            return $command->run($argv, $io);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
     }
 
     /**

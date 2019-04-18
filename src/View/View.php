@@ -1166,6 +1166,17 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Returns the View's controller name.
+     *
+     * @return string|null
+     * @since 3.7.7
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Returns the plugin name.
      *
      * @return string|null
