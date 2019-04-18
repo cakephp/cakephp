@@ -1303,24 +1303,24 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/posts/stacked_flash');
 
-        $this->assertFlashElement('Flash/error');
-        $this->assertFlashElement('Flash/success', 'custom');
+        $this->assertFlashElement('flash/error');
+        $this->assertFlashElement('flash/success', 'custom');
 
         $this->assertFlashMessage('Error 1');
         $this->assertFlashMessageAt(0, 'Error 1');
-        $this->assertFlashElementAt(0, 'Flash/error');
+        $this->assertFlashElementAt(0, 'flash/error');
 
         $this->assertFlashMessage('Error 2');
         $this->assertFlashMessageAt(1, 'Error 2');
-        $this->assertFlashElementAt(1, 'Flash/error');
+        $this->assertFlashElementAt(1, 'flash/error');
 
         $this->assertFlashMessage('Success 1', 'custom');
         $this->assertFlashMessageAt(0, 'Success 1', 'custom');
-        $this->assertFlashElementAt(0, 'Flash/success', 'custom');
+        $this->assertFlashElementAt(0, 'flash/success', 'custom');
 
         $this->assertFlashMessage('Success 2', 'custom');
         $this->assertFlashMessageAt(1, 'Success 2', 'custom');
-        $this->assertFlashElementAt(1, 'Flash/success', 'custom');
+        $this->assertFlashElementAt(1, 'flash/success', 'custom');
     }
 
     /**
