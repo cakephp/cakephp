@@ -28,6 +28,9 @@ class TestAuthenticate extends BaseAuthenticate
 
     public $authenticationProvider;
 
+    /**
+     * @return array
+     */
     public function implementedEvents()
     {
         return [

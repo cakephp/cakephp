@@ -41,6 +41,11 @@ class ConsoleInputTest extends TestCase
      */
     public function testDataAvailable()
     {
+        $this->skipIf(
+            DS === '\\',
+            'Skip ConsoleInput tests on Windows as they fail on AppVeyor.'
+        );
+
         $this->assertFalse($this->in->dataAvailable());
     }
 }

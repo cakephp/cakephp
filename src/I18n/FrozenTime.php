@@ -241,7 +241,7 @@ class FrozenTime extends Chronos implements JsonSerializable
     }
 
     /**
-     * Returns true this instance will happen within the specified interval
+     * Returns true this instance happened within the specified interval
      *
      * This overridden method provides backwards compatible behavior for integers,
      * or strings with trailing spaces. This behavior is *deprecated* and will be
@@ -266,7 +266,7 @@ class FrozenTime extends Chronos implements JsonSerializable
     }
 
     /**
-     * Returns true this instance happened within the specified interval
+     * Returns true this instance will happen within the specified interval
      *
      * This overridden method provides backwards compatible behavior for integers,
      * or strings with trailing spaces. This behavior is *deprecated* and will be

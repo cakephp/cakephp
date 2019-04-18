@@ -1223,7 +1223,7 @@ class View implements EventDispatcherInterface
             'templatePath' => 'getTemplatePath',
             'template' => 'getTemplate',
             'layout' => 'getLayout',
-            'layoutPath' => 'setLayoutPath',
+            'layoutPath' => 'getLayoutPath',
             'autoLayout' => 'isAutoLayoutEnabled',
             'theme' => 'getTheme',
             'request' => 'getRequest',
@@ -1305,7 +1305,6 @@ class View implements EventDispatcherInterface
             'response' => 'setResponse',
             'subDir' => 'setSubDir',
             'plugin' => 'setPlugin',
-            'name' => 'setName',
             'elementCache' => 'setElementCache',
         ];
         if (isset($protected[$name])) {
@@ -1328,6 +1327,13 @@ class View implements EventDispatcherInterface
             );
 
             return $this->helpers = $value;
+        }
+
+        if ($name === 'name') {
+            deprecationWarning(
+                'View::$name is protected now. ' .
+                'You can use viewBuilder()->setName() to change the name a view uses before building it.'
+            );
         }
 
         $this->{$name} = $value;
@@ -1470,6 +1476,17 @@ class View implements EventDispatcherInterface
     public function getSubDir()
     {
         return $this->subDir;
+    }
+
+    /**
+     * Returns the View's controller name.
+     *
+     * @return string|null
+     * @since 3.7.7
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
