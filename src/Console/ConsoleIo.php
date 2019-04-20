@@ -418,7 +418,7 @@ class ConsoleIo
             $options
         );
         $in = '';
-        while ($in === '' || !in_array($in, $options)) {
+        while ($in === '' || !in_array($in, $options, true)) {
             $in = $this->_getInput($prompt, $printOptions, $default);
         }
 

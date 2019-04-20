@@ -334,7 +334,7 @@ class ServerRequest implements ServerRequestInterface
         $method = $this->getEnv('REQUEST_METHOD');
         $override = false;
 
-        if (in_array($method, ['PUT', 'DELETE', 'PATCH']) &&
+        if (in_array($method, ['PUT', 'DELETE', 'PATCH'], true) &&
             strpos((string)$this->contentType(), 'application/x-www-form-urlencoded') === 0
         ) {
             $data = $this->input();
@@ -351,7 +351,7 @@ class ServerRequest implements ServerRequestInterface
             $override = true;
         }
 
-        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'])) {
+        if ($override && !in_array($this->_environment['REQUEST_METHOD'], ['PUT', 'POST', 'DELETE', 'PATCH'], true)) {
             $data = [];
         }
 
@@ -694,7 +694,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $acceptHeaders = explode(',', (string)$this->getEnv('HTTP_ACCEPT'));
         foreach ($detect['accept'] as $header) {
-            if (in_array($header, $acceptHeaders)) {
+            if (in_array($header, $acceptHeaders, true)) {
                 return true;
             }
         }
@@ -865,7 +865,7 @@ class ServerRequest implements ServerRequestInterface
     protected function normalizeHeaderName(string $name): string
     {
         $name = str_replace('-', '_', strtoupper($name));
-        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+        if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
             $name = 'HTTP_' . $name;
         }
 
@@ -1203,7 +1203,7 @@ class ServerRequest implements ServerRequestInterface
             return $accept;
         }
 
-        return in_array($type, $accept);
+        return in_array($type, $accept, true);
     }
 
     /**
@@ -1251,7 +1251,7 @@ class ServerRequest implements ServerRequestInterface
             return $accept;
         }
 
-        return in_array(strtolower($language), $accept);
+        return in_array(strtolower($language), $accept, true);
     }
 
     /**

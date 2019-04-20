@@ -347,7 +347,7 @@ class Folder
     public static function isRegisteredStreamWrapper(string $path): bool
     {
         return preg_match('/^[^:\/\/]+?(?=:\/\/)/', $path, $matches) &&
-            in_array($matches[0], stream_get_wrappers());
+            in_array($matches[0], stream_get_wrappers(), true);
     }
 
     /**
@@ -437,7 +437,7 @@ class Folder
      * @param string $path The path to chmod.
      * @param int|null $mode Octal value, e.g. 0755.
      * @param bool $recursive Chmod recursively, set to false to only change the current directory.
-     * @param array $exceptions Array of files, directories to skip.
+     * @param string[] $exceptions Array of files, directories to skip.
      * @return bool Success.
      */
     public function chmod(string $path, ?int $mode = null, bool $recursive = true, array $exceptions = []): bool
@@ -468,7 +468,7 @@ class Folder
                     $check = explode(DIRECTORY_SEPARATOR, $fullpath);
                     $count = count($check);
 
-                    if (in_array($check[$count - 1], $exceptions)) {
+                    if (in_array($check[$count - 1], $exceptions, true)) {
                         continue;
                     }
 
@@ -799,7 +799,7 @@ class Folder
             // phpcs:enable
             while (($item = readdir($handle)) !== false) {
                 $to = Folder::addPathElement($toDir, $item);
-                if (($options['scheme'] !== Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions)) {
+                if (($options['scheme'] !== Folder::SKIP || !is_dir($to)) && !in_array($item, $exceptions, true)) {
                     $from = Folder::addPathElement($fromDir, $item);
                     if (is_file($from) && (!is_file($to) || $options['scheme'] !== Folder::SKIP)) {
                         if (copy($from, $to)) {

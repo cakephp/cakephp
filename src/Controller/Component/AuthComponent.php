@@ -322,7 +322,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     {
         $action = strtolower($controller->getRequest()->getParam('action'));
 
-        return in_array($action, array_map('strtolower', $this->allowedActions));
+        return in_array($action, array_map('strtolower', $this->allowedActions), true);
     }
 
     /**
@@ -614,7 +614,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
             return;
         }
         foreach ((array)$actions as $action) {
-            $i = array_search($action, $this->allowedActions);
+            $i = array_search($action, $this->allowedActions, true);
             if (is_int($i)) {
                 unset($this->allowedActions[$i]);
             }

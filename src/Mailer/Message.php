@@ -609,7 +609,7 @@ class Message implements JsonSerializable, Serializable
     {
         if ($encoding !== null) {
             $encoding = strtolower($encoding);
-            if (!in_array($encoding, $this->transferEncodingAvailable)) {
+            if (!in_array($encoding, $this->transferEncodingAvailable, true)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'Transfer encoding not available. Can be : %s.',
@@ -970,7 +970,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function setEmailFormat(string $format)
     {
-        if (!in_array($format, $this->emailFormatAvailable)) {
+        if (!in_array($format, $this->emailFormatAvailable, true)) {
             throw new InvalidArgumentException('Format not available.');
         }
         $this->emailFormat = $format;
@@ -1447,7 +1447,7 @@ class Message implements JsonSerializable, Serializable
     public function setBody(array $content)
     {
         foreach ($content as $type => $text) {
-            if (!in_array($type, $this->emailFormatAvailable)) {
+            if (!in_array($type, $this->emailFormatAvailable, true)) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid message type: "$s". Valid types are: "text", "html".',
                     $type
@@ -1720,7 +1720,7 @@ class Message implements JsonSerializable, Serializable
         }
 
         $charset = strtoupper($this->charset);
-        if (in_array($charset, $this->charset8bit)) {
+        if (in_array($charset, $this->charset8bit, true)) {
             return '8bit';
         }
 

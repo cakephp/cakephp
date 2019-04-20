@@ -641,10 +641,10 @@ class FormHelper extends Helper
         if ($name === null) {
             return $this->_unlockedFields;
         }
-        if (!in_array($name, $this->_unlockedFields)) {
+        if (!in_array($name, $this->_unlockedFields, true)) {
             $this->_unlockedFields[] = $name;
         }
-        $index = array_search($name, $this->fields);
+        $index = array_search($name, $this->fields, true);
         if ($index !== false) {
             unset($this->fields[$index]);
         }
@@ -685,7 +685,7 @@ class FormHelper extends Helper
         $field = preg_replace('/(\.\d+)+$/', '', $field);
 
         if ($lock) {
-            if (!in_array($field, $this->fields)) {
+            if (!in_array($field, $this->fields, true)) {
                 if ($value !== null) {
                     $this->fields[$field] = $value;
 
@@ -1260,9 +1260,9 @@ class FormHelper extends Helper
                 return 'checkbox';
             case isset($options['options']):
                 return 'select';
-            case in_array($fieldName, ['passwd', 'password']):
+            case in_array($fieldName, ['passwd', 'password'], true):
                 return 'password';
-            case in_array($fieldName, ['tel', 'telephone', 'phone']):
+            case in_array($fieldName, ['tel', 'telephone', 'phone'], true):
                 return 'tel';
             case $fieldName === 'email':
                 return 'email';
@@ -1359,8 +1359,8 @@ class FormHelper extends Helper
         }
 
         $typesWithOptions = ['text', 'number', 'radio', 'select'];
-        $magicOptions = (in_array($options['type'], ['radio', 'select']) || $allowOverride);
-        if ($magicOptions && in_array($options['type'], $typesWithOptions)) {
+        $magicOptions = (in_array($options['type'], ['radio', 'select'], true) || $allowOverride);
+        if ($magicOptions && in_array($options['type'], $typesWithOptions, true)) {
             $options = $this->_optionsOptions($fieldName, $options);
         }
 
@@ -1377,7 +1377,7 @@ class FormHelper extends Helper
 
         $typesWithMaxLength = ['text', 'textarea', 'email', 'tel', 'url', 'search'];
         if (!array_key_exists('maxlength', $options)
-            && in_array($options['type'], $typesWithMaxLength)
+            && in_array($options['type'], $typesWithMaxLength, true)
         ) {
             $maxLength = null;
             if (method_exists($context, 'getMaxLength')) {
@@ -1393,7 +1393,7 @@ class FormHelper extends Helper
             }
         }
 
-        if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
+        if (in_array($options['type'], ['datetime', 'date', 'time', 'select'], true)) {
             $options += ['empty' => false];
         }
 
@@ -2341,7 +2341,7 @@ class FormHelper extends Helper
             // Complex option types
             if (is_array($first)) {
                 $disabled = array_filter($options['options'], function ($i) use ($options) {
-                    return in_array($i['value'], $options['disabled']);
+                    return in_array($i['value'], $options['disabled'], true);
                 });
 
                 return count($disabled) > 0;

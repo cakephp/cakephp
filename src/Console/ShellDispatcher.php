@@ -216,12 +216,12 @@ class ShellDispatcher
 
             return false;
         }
-        if (in_array($shellName, ['help', '--help', '-h'])) {
+        if (in_array($shellName, ['help', '--help', '-h'], true)) {
             $this->help();
 
             return true;
         }
-        if (in_array($shellName, ['version', '--version'])) {
+        if (in_array($shellName, ['version', '--version'], true)) {
             $this->version();
 
             return true;

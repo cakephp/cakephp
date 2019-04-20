@@ -79,7 +79,7 @@ trait CookieCryptTrait
      */
     protected function _checkCipher(string $encrypt): void
     {
-        if (!in_array($encrypt, $this->_validCiphers)) {
+        if (!in_array($encrypt, $this->_validCiphers, true)) {
             $msg = sprintf(
                 'Invalid encryption cipher. Must be one of %s or false.',
                 implode(', ', $this->_validCiphers)

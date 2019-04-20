@@ -111,7 +111,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
             $prefix = 'App';
             if ($namespace === 'Cake') {
                 $prefix = 'CakePHP';
-            } elseif (in_array($namespace, $plugins)) {
+            } elseif (in_array($namespace, $plugins, true)) {
                 $prefix = $namespace;
             }
             $shortestName = $this->getShortestName($names);

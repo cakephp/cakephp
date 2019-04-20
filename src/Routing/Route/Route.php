@@ -732,7 +732,7 @@ class Route
         }
         $methods = array_map('strtoupper', (array)$url['_method']);
         foreach ($methods as $value) {
-            if (in_array($value, (array)$this->defaults['_method'])) {
+            if (in_array($value, (array)$this->defaults['_method'], true)) {
                 return true;
             }
         }

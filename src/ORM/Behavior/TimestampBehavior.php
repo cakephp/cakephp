@@ -101,7 +101,7 @@ class TimestampBehavior extends Behavior
         $refresh = $this->_config['refreshTimestamp'];
 
         foreach ($events[$eventName] as $field => $when) {
-            if (!in_array($when, ['always', 'new', 'existing'])) {
+            if (!in_array($when, ['always', 'new', 'existing'], true)) {
                 throw new UnexpectedValueException(sprintf(
                     'When should be one of "always", "new" or "existing". The passed value "%s" is invalid',
                     $when
@@ -177,7 +177,7 @@ class TimestampBehavior extends Behavior
         $refresh = $this->_config['refreshTimestamp'];
 
         foreach ($events[$eventName] as $field => $when) {
-            if (in_array($when, ['always', 'existing'])) {
+            if (in_array($when, ['always', 'existing'], true)) {
                 $return = true;
                 $entity->setDirty($field, false);
                 $this->_updateField($entity, $field, $refresh);

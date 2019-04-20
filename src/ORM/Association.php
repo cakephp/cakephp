@@ -589,7 +589,7 @@ abstract class Association
     {
         if (!$this->_propertyName) {
             $this->_propertyName = $this->_propertyName();
-            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns())) {
+            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
                 $msg = 'Association property name "%s" clashes with field of same name of table "%s".' .
                     ' You should explicitly specify the "propertyName" option.';
                 trigger_error(
@@ -625,7 +625,7 @@ abstract class Association
      */
     public function setStrategy(string $name)
     {
-        if (!in_array($name, $this->_validStrategies)) {
+        if (!in_array($name, $this->_validStrategies, true)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid strategy "%s" was provided. Valid options are (%s).',
                 $name,

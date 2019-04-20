@@ -63,7 +63,7 @@ trait IdGeneratorTrait
         $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
         $count = 1;
         $check = $idSuffix;
-        while (in_array($check, $this->_idSuffixes)) {
+        while (in_array($check, $this->_idSuffixes, true)) {
             $check = $idSuffix . $count++;
         }
         $this->_idSuffixes[] = $check;

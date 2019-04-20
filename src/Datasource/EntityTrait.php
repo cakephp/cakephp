@@ -320,7 +320,7 @@ trait EntityTrait
         $originals = $this->_original;
         $originalKeys = array_keys($originals);
         foreach ($this->_fields as $key => $value) {
-            if (!in_array($key, $originalKeys)) {
+            if (!in_array($key, $originalKeys, true)) {
                 $originals[$key] = $value;
             }
         }

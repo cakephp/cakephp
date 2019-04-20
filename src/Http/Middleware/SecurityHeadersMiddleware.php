@@ -230,12 +230,12 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
      * @param string $value Value to check
-     * @param array $allowed List of allowed values
+     * @param string[] $allowed List of allowed values
      * @return void
      */
     protected function checkValues(string $value, array $allowed): void
     {
-        if (!in_array($value, $allowed)) {
+        if (!in_array($value, $allowed, true)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid arg `%s`, use one of these: %s',
                 $value,

@@ -57,7 +57,7 @@ class ConsoleInputOption
     /**
      * Default value for the option
      *
-     * @var mixed
+     * @var string|bool
      */
     protected $_default;
 
@@ -71,7 +71,7 @@ class ConsoleInputOption
     /**
      * An array of choices for the option.
      *
-     * @var array
+     * @var string[]
      */
     protected $_choices;
 
@@ -185,7 +185,7 @@ class ConsoleInputOption
     /**
      * Get the default value for this option
      *
-     * @return mixed
+     * @return string|bool
      */
     public function defaultValue()
     {
@@ -224,7 +224,7 @@ class ConsoleInputOption
         if (empty($this->_choices)) {
             return true;
         }
-        if (!in_array($value, $this->_choices)) {
+        if (!in_array($value, $this->_choices, true)) {
             throw new ConsoleException(
                 sprintf(
                     '"%s" is not a valid value for --%s. Please use one of "%s"',

@@ -236,7 +236,7 @@ class Response extends Message implements ResponseInterface
             static::STATUS_TEMPORARY_REDIRECT,
         ];
 
-        return in_array($this->code, $codes) &&
+        return in_array($this->code, $codes, true) &&
             $this->getHeaderLine('Location');
     }
 
