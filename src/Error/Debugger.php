@@ -617,9 +617,7 @@ class Debugger
             $outputMask = (array)static::outputMask();
             $objectVars = get_object_vars($var);
             foreach ($objectVars as $key => $value) {
-                $value = array_key_exists($key, $outputMask)
-                    ? $outputMask[$key]
-                    : static::_export($value, $depth - 1, $indent);
+                $value = $outputMask[$key] ?? static::_export($value, $depth - 1, $indent);
                 $props[] = "$key => " . $value;
             }
 
@@ -641,7 +639,7 @@ class Debugger
                         '[%s] %s => %s',
                         $visibility,
                         $key,
-                        array_key_exists($key, $outputMask) ? $outputMask[$key] : $value
+                        $outputMask[$key] ?? $value
                     );
                 }
             }

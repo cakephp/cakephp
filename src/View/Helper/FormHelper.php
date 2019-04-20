@@ -1438,11 +1438,7 @@ class FormHelper extends Helper
      */
     protected function _extractOption(string $name, array $options, $default = null)
     {
-        if (array_key_exists($name, $options)) {
-            return $options[$name];
-        }
-
-        return $default;
+        return $options[$name] ?? $default;
     }
 
     /**

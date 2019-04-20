@@ -457,11 +457,7 @@ class RequestHandlerComponent extends Component
         $options += $defaults;
 
         $builder = $controller->viewBuilder();
-        if (array_key_exists($type, $viewClassMap)) {
-            $view = $viewClassMap[$type];
-        } else {
-            $view = Inflector::classify($type);
-        }
+        $view = $viewClassMap[$type] ?? Inflector::classify($type);
 
         $viewClass = null;
         if ($builder->getClassName() === null) {
