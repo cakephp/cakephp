@@ -240,7 +240,7 @@ class RedisEngine extends CacheEngine
             $result[] = $this->_Redis->delete($key) > 0;
         }
 
-        return !in_array(false, $result);
+        return !in_array(false, $result, true);
     }
 
     /**

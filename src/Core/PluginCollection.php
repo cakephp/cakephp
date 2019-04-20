@@ -272,7 +272,7 @@ class PluginCollection implements Iterator, Countable
      */
     public function with(string $hook): Generator
     {
-        if (!in_array($hook, PluginInterface::VALID_HOOKS)) {
+        if (!in_array($hook, PluginInterface::VALID_HOOKS, true)) {
             throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");
         }
         foreach ($this as $plugin) {

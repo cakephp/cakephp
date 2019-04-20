@@ -491,7 +491,7 @@ trait QueryTrait
     public function __call($method, $arguments)
     {
         $resultSetClass = $this->_decoratorClass();
-        if (in_array($method, get_class_methods($resultSetClass))) {
+        if (in_array($method, get_class_methods($resultSetClass), true)) {
             $results = $this->all();
 
             return $results->$method(...$arguments);

@@ -622,7 +622,7 @@ trait IntegrationTestTrait
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
                 $name = strtoupper(str_replace('-', '_', $k));
-                if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'])) {
+                if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
                     $name = 'HTTP_' . $name;
                 }
                 $env[$name] = $v;

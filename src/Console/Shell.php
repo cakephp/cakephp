@@ -585,7 +585,7 @@ class Shell
      */
     public function __get(string $name)
     {
-        if (empty($this->{$name}) && in_array($name, $this->taskNames)) {
+        if (empty($this->{$name}) && in_array($name, $this->taskNames, true)) {
             $properties = $this->_taskMap[$name];
             $this->{$name} = $this->Tasks->load($properties['class'], $properties['config']);
             $this->{$name}->args =& $this->args;

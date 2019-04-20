@@ -109,7 +109,7 @@ class SecurityComponent extends Component
                 ));
             }
 
-            if (!in_array($this->_action, (array)$this->_config['unlockedActions']) &&
+            if (!in_array($this->_action, (array)$this->_config['unlockedActions'], true) &&
                 $hasData &&
                 $isNotRequestAction &&
                 $this->_config['validatePost']
@@ -218,7 +218,7 @@ class SecurityComponent extends Component
         ) {
             $requireSecure = $this->_config['requireSecure'];
 
-            if (in_array($this->_action, $requireSecure) || $requireSecure === ['*']) {
+            if (in_array($this->_action, $requireSecure, true) || $requireSecure === ['*']) {
                 if (!$controller->getRequest()->is('ssl')) {
                     throw new SecurityException(
                         'Request is not SSL and the action is required to be secure'
@@ -360,7 +360,7 @@ class SecurityComponent extends Component
         );
 
         foreach ($fieldList as $i => $key) {
-            $isLocked = in_array($key, $locked);
+            $isLocked = in_array($key, $locked, true);
 
             if (!empty($unlockedFields)) {
                 foreach ($unlockedFields as $off) {
@@ -557,7 +557,7 @@ class SecurityComponent extends Component
         $messages = [];
         foreach ($dataFields as $key => $value) {
             if (is_int($key)) {
-                $foundKey = array_search($value, (array)$expectedFields);
+                $foundKey = array_search($value, (array)$expectedFields, true);
                 if ($foundKey === false) {
                     $messages[] = sprintf($intKeyMessage, $value);
                 } else {

@@ -248,7 +248,7 @@ class FixtureManager
         }
 
         $table = $fixture->sourceName();
-        $exists = in_array($table, $sources);
+        $exists = in_array($table, $sources, true);
 
         $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
 
@@ -291,7 +291,7 @@ class FixtureManager
                 }
 
                 foreach ($fixtures as $fixture) {
-                    if (in_array($fixture->table, $tables)) {
+                    if (in_array($fixture->table, $tables, true)) {
                         try {
                             $fixture->dropConstraints($db);
                         } catch (PDOException $e) {
@@ -307,7 +307,7 @@ class FixtureManager
                 }
 
                 foreach ($fixtures as $fixture) {
-                    if (!in_array($fixture, $this->_insertionMap[$configName])) {
+                    if (!in_array($fixture, $this->_insertionMap[$configName], true)) {
                         $this->_setupTable($fixture, $db, $tables, $test->dropTables);
                     } else {
                         $fixture->truncate($db);
@@ -475,12 +475,13 @@ class FixtureManager
      */
     public function shutDown(): void
     {
-        $shutdown = function ($db, $fixtures): void {
+        $shutdown = function (ConnectionInterface $db, $fixtures): void {
             $connection = $db->configName();
+            /** @var \Cake\Datasource\FixtureInterface $fixture */
             foreach ($fixtures as $fixture) {
                 if ($this->isFixtureSetup($connection, $fixture)) {
                     $fixture->drop($db);
-                    $index = array_search($fixture, $this->_insertionMap[$connection]);
+                    $index = array_search($fixture, $this->_insertionMap[$connection], true);
                     unset($this->_insertionMap[$connection][$index]);
                 }
             }
@@ -497,6 +498,6 @@ class FixtureManager
      */
     public function isFixtureSetup(string $connection, FixtureInterface $fixture): bool
     {
-        return isset($this->_insertionMap[$connection]) && in_array($fixture, $this->_insertionMap[$connection]);
+        return isset($this->_insertionMap[$connection]) && in_array($fixture, $this->_insertionMap[$connection], true);
     }
 }

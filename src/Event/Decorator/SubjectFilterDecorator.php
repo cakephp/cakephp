@@ -58,6 +58,6 @@ class SubjectFilterDecorator extends AbstractDecorator
             $this->_options['allowedSubject'] = [$this->_options['allowedSubject']];
         }
 
-        return in_array($class, $this->_options['allowedSubject']);
+        return in_array($class, $this->_options['allowedSubject'], true);
     }
 }

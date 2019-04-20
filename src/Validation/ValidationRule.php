@@ -193,7 +193,7 @@ class ValidationRule
                 $this->_pass = array_slice($value, 1);
                 $value = array_shift($value);
             }
-            if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'])) {
+            if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'], true)) {
                 $this->{"_$key"} = $value;
             }
         }

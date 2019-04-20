@@ -83,7 +83,7 @@ class ResponseEmitter implements EmitterInterface
      */
     protected function emitBody(ResponseInterface $response, int $maxBufferLength): void
     {
-        if (in_array($response->getStatusCode(), [204, 304])) {
+        if (in_array($response->getStatusCode(), [204, 304], true)) {
             return;
         }
         $body = $response->getBody();

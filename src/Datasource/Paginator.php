@@ -362,7 +362,7 @@ class Paginator implements PaginatorInterface
             if (isset($options['direction'])) {
                 $direction = strtolower($options['direction']);
             }
-            if (!in_array($direction, ['asc', 'desc'])) {
+            if (!in_array($direction, ['asc', 'desc'], true)) {
                 $direction = 'asc';
             }
 

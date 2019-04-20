@@ -596,7 +596,7 @@ class BelongsToMany extends Association
      */
     public function setSaveStrategy(string $strategy): self
     {
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy "%s"', $strategy);
             throw new InvalidArgumentException($msg);
         }
@@ -1000,7 +1000,7 @@ class BelongsToMany extends Association
             }
             // Assume that operators contain junction conditions.
             // Trying to manage complex conditions could result in incorrect queries.
-            if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'])) {
+            if ($isString && in_array(strtoupper($field), ['OR', 'NOT', 'AND', 'XOR'], true)) {
                 $matching[$field] = $value;
             }
         }

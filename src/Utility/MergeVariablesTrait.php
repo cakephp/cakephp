@@ -69,7 +69,7 @@ trait MergeVariablesTrait
         $thisValue = $this->{$property};
         $isAssoc = false;
         if (isset($options['associative']) &&
-            in_array($property, (array)$options['associative'])
+            in_array($property, (array)$options['associative'], true)
         ) {
             $isAssoc = true;
         }

@@ -231,10 +231,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return $c;
                 }
 
-                if (in_array($field, $fields)) {
+                if (in_array($field, $fields, true)) {
                     $joinRequired = true;
                     $field = "$alias.$field";
-                } elseif (in_array($field, $mainTableFields)) {
+                } elseif (in_array($field, $mainTableFields, true)) {
                     $field = "$mainTableAlias.$field";
                 }
 
@@ -280,14 +280,14 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     return;
                 }
 
-                if (in_array($field, $fields)) {
+                if (in_array($field, $fields, true)) {
                     $joinRequired = true;
                     $expression->setField("$alias.$field");
 
                     return;
                 }
 
-                if (in_array($field, $mainTableFields)) {
+                if (in_array($field, $mainTableFields, true)) {
                     $expression->setField("$mainTableAlias.$field");
                 }
             }
@@ -413,7 +413,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $translatedFields = $this->translatedFields();
-        if (in_array($field, $translatedFields)) {
+        if (in_array($field, $translatedFields, true)) {
             return $this->getConfig('hasOneAlias') . '.' . $field;
         }
 

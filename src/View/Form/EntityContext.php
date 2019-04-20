@@ -187,7 +187,7 @@ class EntityContext implements ContextInterface
         $table = $this->_getTable($parts);
         $primaryKey = (array)$table->getPrimaryKey();
 
-        return in_array(array_pop($parts), $primaryKey);
+        return in_array(array_pop($parts), $primaryKey, true);
     }
 
     /**

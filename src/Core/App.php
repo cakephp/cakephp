@@ -131,7 +131,7 @@ class App
             'Cake',
             str_replace('\\', '/', Configure::read('App.namespace')),
         ];
-        if (in_array($pluginName, $nonPluginNamespaces)) {
+        if (in_array($pluginName, $nonPluginNamespaces, true)) {
             return $name;
         }
 

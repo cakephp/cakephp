@@ -485,7 +485,7 @@ class Response implements ResponseInterface
      */
     protected function _setContentType(): void
     {
-        if (in_array($this->_status, [304, 204])) {
+        if (in_array($this->_status, [304, 204], true)) {
             $this->_clearHeader('Content-Type');
 
             return;
@@ -496,7 +496,7 @@ class Response implements ResponseInterface
 
         $charset = false;
         if ($this->_charset &&
-            (strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist))
+            (strpos($this->_contentType, 'text/') === 0 || in_array($this->_contentType, $whitelist, true))
         ) {
             $charset = true;
         }
@@ -741,7 +741,7 @@ class Response implements ResponseInterface
         }
 
         foreach ($this->_mimeTypes as $alias => $types) {
-            if (in_array($ctype, (array)$types)) {
+            if (in_array($ctype, (array)$types, true)) {
                 return $alias;
             }
         }
@@ -1098,7 +1098,7 @@ class Response implements ResponseInterface
     public function outputCompressed(): bool
     {
         return strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false
-            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers()));
+            && (ini_get('zlib.output_compression') === '1' || in_array('ob_gzhandler', ob_list_handlers(), true));
     }
 
     /**
@@ -1181,7 +1181,7 @@ class Response implements ResponseInterface
         $responseTag = $this->getHeaderLine('Etag');
         $etagMatches = null;
         if ($responseTag) {
-            $etagMatches = in_array('*', $etags) || in_array($responseTag, $etags);
+            $etagMatches = in_array('*', $etags, true) || in_array($responseTag, $etags, true);
         }
 
         $modifiedSince = $request->getHeaderLine('If-Modified-Since');

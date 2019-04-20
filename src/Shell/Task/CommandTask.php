@@ -146,9 +146,9 @@ class CommandTask extends Shell
         foreach ($shellList as $type => $commands) {
             foreach ($commands as $shell) {
                 $prefix = '';
-                if (!in_array(strtolower($type), ['app', 'core']) &&
+                if (!in_array(strtolower($type), ['app', 'core'], true) &&
                     isset($duplicates[$type]) &&
-                    in_array($shell, $duplicates[$type])
+                    in_array($shell, $duplicates[$type], true)
                 ) {
                     $prefix = $type . '.';
                 }
@@ -188,7 +188,7 @@ class CommandTask extends Shell
         $methodNames = [];
         foreach ($methods as $method) {
             $declaringClass = $method->getDeclaringClass()->getShortName();
-            if (!in_array($declaringClass, $baseClasses)) {
+            if (!in_array($declaringClass, $baseClasses, true)) {
                 $methodNames[] = $method->getName();
             }
         }
@@ -209,22 +209,22 @@ class CommandTask extends Shell
     {
         [$pluginDot, $name] = pluginSplit($commandName, true);
 
-        if (in_array(strtolower((string)$pluginDot), ['app.', 'core.'])) {
+        if (in_array(strtolower((string)$pluginDot), ['app.', 'core.'], true)) {
             $commandName = $name;
             $pluginDot = '';
         }
 
-        if (!in_array($commandName, $this->commands()) && (empty($pluginDot) && !in_array($name, $this->commands()))) {
+        if (!in_array($commandName, $this->commands(), true) && (empty($pluginDot) && !in_array($name, $this->commands(), true))) {
             return false;
         }
 
         if (empty($pluginDot)) {
             $shellList = $this->getShellList();
 
-            if (!in_array($commandName, $shellList['app']) && !in_array($commandName, $shellList['CORE'])) {
+            if (!in_array($commandName, $shellList['app']) && !in_array($commandName, $shellList['CORE'], true)) {
                 unset($shellList['CORE'], $shellList['app']);
                 foreach ($shellList as $plugin => $commands) {
-                    if (in_array($commandName, $commands)) {
+                    if (in_array($commandName, $commands, true)) {
                         $pluginDot = $plugin . '.';
                         break;
                     }

@@ -371,7 +371,7 @@ class SelectLoader
             throw new RuntimeException($msg);
         }
 
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
             $this->foreignKey :
             $this->bindingKey;
 
@@ -460,8 +460,8 @@ class SelectLoader
     protected function _buildResultMap(Query $fetchQuery, array $options): array
     {
         $resultMap = [];
-        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE]);
-        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY]) ?
+        $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true);
+        $keys = in_array($this->associationType, [Association::ONE_TO_ONE, Association::ONE_TO_MANY], true) ?
             $this->foreignKey :
             $this->bindingKey;
         $key = (array)$keys;

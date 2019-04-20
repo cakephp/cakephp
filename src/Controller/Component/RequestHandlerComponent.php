@@ -171,7 +171,7 @@ class RequestHandlerComponent extends Component
         if ($request->getParam('_ext')) {
             $this->ext = $request->getParam('_ext');
         }
-        if (!$this->ext || in_array($this->ext, ['html', 'htm'])) {
+        if (!$this->ext || in_array($this->ext, ['html', 'htm'], true)) {
             $this->_setExtension($request, $response);
         }
 
@@ -253,7 +253,7 @@ class RequestHandlerComponent extends Component
         $response = $controller->getResponse();
         $request = $controller->getRequest();
 
-        if ($this->ext && !in_array($this->ext, ['html', 'htm'])) {
+        if ($this->ext && !in_array($this->ext, ['html', 'htm'], true)) {
             if (!$response->getMimeType($this->ext)) {
                 throw new NotFoundException('Invoked extension not recognized/configured: ' . $this->ext);
             }
@@ -314,7 +314,7 @@ class RequestHandlerComponent extends Component
         if (is_array($type)) {
             foreach ($type as $t) {
                 $t = $this->mapAlias($t);
-                if (in_array($t, $accepted)) {
+                if (in_array($t, $accepted, true)) {
                     return true;
                 }
             }
@@ -322,7 +322,7 @@ class RequestHandlerComponent extends Component
             return false;
         }
         if (is_string($type)) {
-            return in_array($this->mapAlias($type), $accepted);
+            return in_array($this->mapAlias($type), $accepted, true);
         }
 
         return false;
@@ -408,10 +408,10 @@ class RequestHandlerComponent extends Component
 
         if (count($types) === 1) {
             if ($this->ext) {
-                return in_array($this->ext, $types);
+                return in_array($this->ext, $types, true);
             }
 
-            return in_array($types[0], $accepts);
+            return in_array($types[0], $accepts, true);
         }
 
         $intersect = array_values(array_intersect($accepts, $types));

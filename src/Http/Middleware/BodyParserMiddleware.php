@@ -133,7 +133,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!in_array($request->getMethod(), $this->methods)) {
+        if (!in_array($request->getMethod(), $this->methods, true)) {
             return $handler->handle($request);
         }
         [$type] = explode(';', $request->getHeaderLine('Content-Type'));

@@ -350,8 +350,8 @@ class Log
     public static function write($level, $message, $context = []): bool
     {
         static::_init();
-        if (is_int($level) && in_array($level, static::$_levelMap)) {
-            $level = array_search($level, static::$_levelMap);
+        if (is_int($level) && in_array($level, static::$_levelMap, true)) {
+            $level = array_search($level, static::$_levelMap, true);
         }
 
         if (!in_array($level, static::$_levels)) {
@@ -377,7 +377,7 @@ class Log
                 $scopes = [];
             }
 
-            $correctLevel = empty($levels) || in_array($level, $levels);
+            $correctLevel = empty($levels) || in_array($level, $levels, true);
             $inScope = $scopes === false && empty($context['scope']) || $scopes === [] ||
                 is_array($scopes) && array_intersect((array)$context['scope'], $scopes);
 

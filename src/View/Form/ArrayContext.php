@@ -126,7 +126,7 @@ class ArrayContext implements ContextInterface
     {
         $primaryKey = $this->primaryKey();
 
-        return in_array($field, $primaryKey);
+        return in_array($field, $primaryKey, true);
     }
 
     /**
