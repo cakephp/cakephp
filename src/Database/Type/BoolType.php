@@ -127,7 +127,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      */
     public function marshal($value): ?bool
     {
-        if ($value === null) {
+        if ($value === null || $value === '') {
             return null;
         }
 
