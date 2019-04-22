@@ -315,7 +315,7 @@ class ValuesExpression implements ExpressionInterface
 
         foreach ($this->_values as $row => $values) {
             foreach ($types as $col => $type) {
-                /* @var \Cake\Database\Type\ExpressionTypeInterface $type */
+                /** @var \Cake\Database\Type\ExpressionTypeInterface $type */
                 $this->_values[$row][$col] = $type->toExpression($values[$col]);
             }
         }

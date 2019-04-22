@@ -395,7 +395,7 @@ class DateTimeType extends BaseType
      */
     protected function _parseValue(string $value)
     {
-        /* @var \Cake\I18n\Time $class */
+        /** @var \Cake\I18n\Time $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeFormat);

@@ -91,7 +91,7 @@ class EventFiredWith extends Constraint
             ));
         }
 
-        /* @var \Cake\Event\EventInterface $event */
+        /** @var \Cake\Event\EventInterface $event */
         $event = $events[0];
 
         if (array_key_exists($this->_dataKey, $event->getData()) === false) {

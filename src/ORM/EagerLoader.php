@@ -539,7 +539,7 @@ class EagerLoader
                 if (count($configs) < 2) {
                     continue;
                 }
-                /* @var \Cake\ORM\EagerLoadable $loadable */
+                /** @var \Cake\ORM\EagerLoadable $loadable */
                 foreach ($configs as $loadable) {
                     if (strpos($loadable->aliasPath(), '.')) {
                         $this->_correctStrategy($loadable);
@@ -692,7 +692,7 @@ class EagerLoader
      */
     protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
     {
-        /* @var \Cake\ORM\EagerLoadable $meta */
+        /** @var \Cake\ORM\EagerLoadable $meta */
         foreach ($level as $assoc => $meta) {
             $canBeJoined = $meta->canBeJoined();
             $instance = $meta->instance();

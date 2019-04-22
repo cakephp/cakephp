@@ -287,7 +287,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         return $query
             ->contain([$targetAlias => function ($query) use ($locales, $targetAlias) {
                 if ($locales) {
-                    /* @var \Cake\Datasource\QueryInterface $query */
+                    /** @var \Cake\Datasource\QueryInterface $query */
                     $query->where(["$targetAlias.locale IN" => $locales]);
                 }
 

@@ -155,7 +155,7 @@ class RouteCollection
                 [$url, $queryParameters] = explode('?', $url, 2);
                 parse_str($queryParameters, $queryParameters);
             }
-            /* @var \Cake\Routing\Route\Route $route */
+            /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parse($url, $method);
                 if ($r === null) {
@@ -200,7 +200,7 @@ class RouteCollection
                 continue;
             }
 
-            /* @var \Cake\Routing\Route\Route $route */
+            /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_paths[$path] as $route) {
                 $r = $route->parseRequest($request);
                 if ($r === null) {
@@ -336,7 +336,7 @@ class RouteCollection
             if (empty($this->_routeTable[$name])) {
                 continue;
             }
-            /* @var \Cake\Routing\Route\Route $route */
+            /** @var \Cake\Routing\Route\Route $route */
             foreach ($this->_routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {

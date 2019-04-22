@@ -242,7 +242,7 @@ class CommandTask extends Shell
             return false;
         }
 
-        /* @var \Cake\Console\Shell $shell */
+        /** @var \Cake\Console\Shell $shell */
         $shell = new $class();
         $shell->plugin = trim($pluginDot, '.');
         $shell->initialize();
@@ -279,7 +279,7 @@ class CommandTask extends Shell
 
         $options = [];
         $array = $parser->options();
-        /* @var \Cake\Console\ConsoleInputOption $obj */
+        /** @var \Cake\Console\ConsoleInputOption $obj */
         foreach ($array as $name => $obj) {
             $options[] = "--$name";
             $short = $obj->short();

@@ -450,7 +450,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
 
-            /** @var \Cake\ORM\Entity $translation|array */
+            /** @var \Cake\ORM\Entity|array $translation */
             $translation = $row['translation'];
 
             $keys = $hydrated ? $translation->getVisible() : array_keys($translation);
