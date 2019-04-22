@@ -60,3 +60,5 @@ tests/TestCase export-ignore
 phpcs.xml.dist export-ignore
 phpstan.neon export-ignore
 contrib export-ignore
+psalm.xml export-ignore
+psalm-baseline.xml export-ignore
