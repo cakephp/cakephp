@@ -828,9 +828,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * This method creates query clones that are useful when working with subqueries.
      *
-     * @return \Cake\ORM\Query
+     * @return static
      */
-    public function cleanCopy(): Query
+    public function cleanCopy(): self
     {
         $clone = clone $this;
         $clone->setEagerLoader(clone $this->getEagerLoader());
