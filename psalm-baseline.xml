@@ -1328,6 +1328,9 @@
     <DocblockTypeContradiction occurrences="1">
       <code>$value === null</code>
     </DocblockTypeContradiction>
+    <InvalidScalarArgument occurrences="1">
+      <code>$this-&gt;_localeFormat</code>
+    </InvalidScalarArgument>
     <LessSpecificReturnStatement occurrences="2">
       <code>$date</code>
       <code>new $class($format, $tz)</code>
@@ -1351,6 +1354,9 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Type/DateType.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this-&gt;_localeFormat</code>
+    </PossiblyInvalidArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>DateType</code>
     </PropertyNotSetInConstructor>
@@ -1366,6 +1372,9 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Database/Type/TimeType.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$this-&gt;_localeFormat</code>
+    </PossiblyInvalidArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>TimeType</code>
     </PropertyNotSetInConstructor>
@@ -2194,6 +2203,9 @@
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>select</code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="src/ORM/AssociationCollection.php">
     <MissingClosureParamType occurrences="1">
@@ -2258,8 +2270,12 @@
       <code>function ($row) use ($allowEmpty) {</code>
       <code>function ($row) {</code>
     </MissingClosureReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$translation</code>
+    </PossiblyInvalidArgument>
+    <PossiblyInvalidMethodCall occurrences="2">
       <code>set</code>
+      <code>getVisible</code>
     </PossiblyInvalidMethodCall>
   </file>
   <file src="src/ORM/Behavior/Translate/TranslateStrategyTrait.php">
@@ -2369,12 +2385,16 @@
     <MissingClosureReturnType occurrences="1">
       <code>function ($query) use ($first, $second) {</code>
     </MissingClosureReturnType>
+    <PossiblyNullArgument occurrences="1">
+      <code>$loadable-&gt;aliasPath()</code>
+    </PossiblyNullArgument>
     <PossiblyNullArrayOffset occurrences="1">
       <code>$collectKeys</code>
     </PossiblyNullArrayOffset>
-    <PossiblyNullReference occurrences="3">
+    <PossiblyNullReference occurrences="4">
       <code>getSource</code>
       <code>normalized</code>
+      <code>getTarget</code>
       <code>requiresKeys</code>
     </PossiblyNullReference>
   </file>
