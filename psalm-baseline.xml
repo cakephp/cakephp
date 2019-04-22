@@ -224,9 +224,6 @@
     <MissingClosureReturnType occurrences="1">
       <code>function ($items) {</code>
     </MissingClosureReturnType>
-    <PossiblyFalseArgument occurrences="1">
-      <code>parent::current()</code>
-    </PossiblyFalseArgument>
   </file>
   <file src="src/Command/HelpCommand.php">
     <MissingClosureParamType occurrences="2">
@@ -1823,9 +1820,6 @@
       <code>$time</code>
       <code>$tz</code>
     </MissingParamType>
-    <PossiblyFalseIterator occurrences="1">
-      <code>$identifiers</code>
-    </PossiblyFalseIterator>
   </file>
   <file src="src/I18n/I18n.php">
     <DocblockTypeContradiction occurrences="1">
@@ -1909,9 +1903,6 @@
       <code>$time</code>
       <code>$tz</code>
     </MissingParamType>
-    <PossiblyFalseIterator occurrences="1">
-      <code>$identifiers</code>
-    </PossiblyFalseIterator>
     <PossiblyInvalidArgument occurrences="1">
       <code>static::$niceFormat</code>
     </PossiblyInvalidArgument>
@@ -2765,12 +2756,6 @@
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
     </DeprecatedClass>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$shell</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\Console\Shell|false</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>CommandTask</code>
     </PropertyNotSetInConstructor>
@@ -3338,11 +3323,6 @@
       <code>$action</code>
       <code>Cell</code>
     </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/View/CellTrait.php">
-    <MoreSpecificReturnType occurrences="1">
-      <code>Cell</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/View/Form/ContextFactory.php">
     <MissingClosureParamType occurrences="6">
