@@ -584,10 +584,10 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @param string $method The method name.
      * @param array $args The arguments to pass to the method.
-     * @return \Cake\Database\Expression\QueryExpression
+     * @return $this
      * @throws \BadMethodCallException
      */
-    public function __call(string $method, array $args): self
+    public function __call(string $method, array $args)
     {
         if (in_array($method, ['and', 'or'])) {
             return call_user_func_array([$this, $method . '_'], $args);

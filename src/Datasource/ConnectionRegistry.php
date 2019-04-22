@@ -95,7 +95,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
-    public function unload(string $name): ObjectRegistry
+    public function unload(string $name)
     {
         unset($this->_loaded[$name]);
 

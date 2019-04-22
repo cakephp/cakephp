@@ -380,7 +380,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Http\ServerRequest $request Request instance.
      * @return $this
      */
-    public function setRequest(ServerRequest $request): self
+    public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
         $this->plugin = $request->getParam('plugin');
@@ -404,7 +404,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Http\Response $response Response instance.
      * @return $this
      */
-    public function setResponse(Response $response): self
+    public function setResponse(Response $response)
     {
         $this->response = $response;
 
@@ -427,7 +427,7 @@ class View implements EventDispatcherInterface
      * @param string $path Path for template files.
      * @return $this
      */
-    public function setTemplatePath(string $path): self
+    public function setTemplatePath(string $path)
     {
         $this->templatePath = $path;
 
@@ -450,7 +450,7 @@ class View implements EventDispatcherInterface
      * @param string $path Path for layout files.
      * @return $this
      */
-    public function setLayoutPath(string $path): self
+    public function setLayoutPath(string $path)
     {
         $this->layoutPath = $path;
 
@@ -476,7 +476,7 @@ class View implements EventDispatcherInterface
      * @param bool $enable Boolean to turn on/off.
      * @return $this
      */
-    public function enableAutoLayout(bool $enable = true): self
+    public function enableAutoLayout(bool $enable = true)
     {
         $this->autoLayout = $enable;
 
@@ -489,7 +489,7 @@ class View implements EventDispatcherInterface
      *
      * @return $this
      */
-    public function disableAutoLayout(): self
+    public function disableAutoLayout()
     {
         $this->autoLayout = false;
 
@@ -512,7 +512,7 @@ class View implements EventDispatcherInterface
      * @param string|null $theme Theme name.
      * @return $this
      */
-    public function setTheme(?string $theme): self
+    public function setTheme(?string $theme)
     {
         $this->theme = $theme;
 
@@ -537,7 +537,7 @@ class View implements EventDispatcherInterface
      * @param string $name Template file name to set.
      * @return $this
      */
-    public function setTemplate(string $name): self
+    public function setTemplate(string $name)
     {
         $this->template = $name;
 
@@ -564,7 +564,7 @@ class View implements EventDispatcherInterface
      * @param string|false $name Layout file name to set.
      * @return $this
      */
-    public function setLayout($name): self
+    public function setLayout($name)
     {
         $this->layout = $name;
 
@@ -789,7 +789,7 @@ class View implements EventDispatcherInterface
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
      */
-    public function set($name, $value = null): self
+    public function set($name, $value = null)
     {
         if (is_array($name)) {
             if (is_array($value)) {
@@ -840,7 +840,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::start()
      */
-    public function start(string $name): self
+    public function start(string $name)
     {
         $this->Blocks->start($name);
 
@@ -858,7 +858,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
-    public function append(string $name, $value = null): self
+    public function append(string $name, $value = null)
     {
         $this->Blocks->concat($name, $value);
 
@@ -876,7 +876,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::concat()
      */
-    public function prepend(string $name, $value): self
+    public function prepend(string $name, $value)
     {
         $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 
@@ -893,7 +893,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::set()
      */
-    public function assign(string $name, $value): self
+    public function assign(string $name, $value)
     {
         $this->Blocks->set($name, $value);
 
@@ -908,7 +908,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::set()
      */
-    public function reset(string $name): self
+    public function reset(string $name)
     {
         $this->assign($name, '');
 
@@ -935,7 +935,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @see \Cake\View\ViewBlock::end()
      */
-    public function end(): self
+    public function end()
     {
         $this->Blocks->end();
 
@@ -963,7 +963,7 @@ class View implements EventDispatcherInterface
      * @throws \LogicException when you extend a template with itself or make extend loops.
      * @throws \LogicException when you extend an element which doesn't exist
      */
-    public function extend(string $name): self
+    public function extend(string $name)
     {
         if ($name[0] === '/' || $this->_currentType === static::TYPE_TEMPLATE) {
             $parent = $this->_getViewFileName($name);
@@ -1146,7 +1146,7 @@ class View implements EventDispatcherInterface
      * @see \Cake\View\View::$subDir
      * @since 3.7.0
      */
-    public function setSubDir(string $subDir): self
+    public function setSubDir(string $subDir)
     {
         $this->subDir = $subDir;
 
@@ -1194,7 +1194,7 @@ class View implements EventDispatcherInterface
      * @return $this
      * @since 3.7.0
      */
-    public function setPlugin(string $name): self
+    public function setPlugin(string $name)
     {
         $this->plugin = $name;
 
@@ -1209,7 +1209,7 @@ class View implements EventDispatcherInterface
      * @see \Cake\View\View::$elementCache
      * @since 3.7.0
      */
-    public function setElementCache(string $elementCache): self
+    public function setElementCache(string $elementCache)
     {
         $this->elementCache = $elementCache;
 

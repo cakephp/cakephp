@@ -291,7 +291,7 @@ class ConsoleOptionParser
      * @param string $text The text to set.
      * @return $this
      */
-    public function setCommand(string $text): self
+    public function setCommand(string $text)
     {
         $this->_command = Inflector::underscore($text);
 
@@ -315,7 +315,7 @@ class ConsoleOptionParser
      *   text will be imploded with "\n".
      * @return $this
      */
-    public function setDescription($text): self
+    public function setDescription($text)
     {
         if (is_array($text)) {
             $text = implode("\n", $text);
@@ -343,7 +343,7 @@ class ConsoleOptionParser
      *   be imploded with "\n".
      * @return $this
      */
-    public function setEpilog($text): self
+    public function setEpilog($text)
     {
         if (is_array($text)) {
             $text = implode("\n", $text);
@@ -369,7 +369,7 @@ class ConsoleOptionParser
      * @param bool $value Whether or not to sort subcommands
      * @return $this
      */
-    public function enableSubcommandSort(bool $value = true): self
+    public function enableSubcommandSort(bool $value = true)
     {
         $this->_subcommandSort = (bool)$value;
 
@@ -410,7 +410,7 @@ class ConsoleOptionParser
      * @param array $options An array of parameters that define the behavior of the option
      * @return $this
      */
-    public function addOption($name, array $options = []): self
+    public function addOption($name, array $options = [])
     {
         if ($name instanceof ConsoleInputOption) {
             $option = $name;
@@ -443,7 +443,7 @@ class ConsoleOptionParser
      * @param string $name The option name to remove.
      * @return $this
      */
-    public function removeOption(string $name): self
+    public function removeOption(string $name)
     {
         unset($this->_options[$name]);
 
@@ -772,7 +772,7 @@ class ConsoleOptionParser
      * @param string $name The root command name
      * @return $this
      */
-    public function setRootName(string $name): self
+    public function setRootName(string $name)
     {
         $this->rootName = (string)$name;
 

@@ -209,7 +209,7 @@ class EagerLoadable
      * @param bool $possible The value to set.
      * @return $this
      */
-    public function setCanBeJoined(bool $possible): self
+    public function setCanBeJoined(bool $possible)
     {
         $this->_canBeJoined = (bool)$possible;
 
@@ -233,7 +233,7 @@ class EagerLoadable
      * @param array $config The value to set.
      * @return $this
      */
-    public function setConfig(array $config): self
+    public function setConfig(array $config)
     {
         $this->_config = $config;
 

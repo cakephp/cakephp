@@ -80,7 +80,7 @@ class Command
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setName(string $name): self
+    public function setName(string $name)
     {
         if (strpos($name, ' ') < 1) {
             throw new InvalidArgumentException(

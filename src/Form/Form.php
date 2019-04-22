@@ -204,7 +204,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $errors Errors list.
      * @return $this
      */
-    public function setErrors(array $errors): self
+    public function setErrors(array $errors)
     {
         $this->_errors = $errors;
 
@@ -267,7 +267,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $data Data array.
      * @return $this
      */
-    public function setData(array $data): self
+    public function setData(array $data)
     {
         $this->_data = $data;
 

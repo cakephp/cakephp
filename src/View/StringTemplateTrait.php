@@ -38,7 +38,7 @@ trait StringTemplateTrait
      * @param array $templates Templates to be added.
      * @return $this
      */
-    public function setTemplates(array $templates): self
+    public function setTemplates(array $templates)
     {
         $this->templater()->add($templates);
 

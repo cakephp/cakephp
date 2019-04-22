@@ -55,7 +55,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string|\Cake\Console\Shell|\Cake\Console\Command $command The command to map.
      * @return $this
      */
-    public function add(string $name, $command): self
+    public function add(string $name, $command)
     {
         // Once we have a new Command class this should check
         // against that interface.
@@ -85,7 +85,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Console\CommandCollection::add()
      */
-    public function addMany(array $commands): self
+    public function addMany(array $commands)
     {
         foreach ($commands as $name => $class) {
             $this->add($name, $class);
@@ -100,7 +100,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $name The named shell.
      * @return $this
      */
-    public function remove(string $name): self
+    public function remove(string $name)
     {
         unset($this->commands[$name]);
 

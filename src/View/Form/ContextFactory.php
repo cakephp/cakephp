@@ -51,7 +51,7 @@ class ContextFactory
      *
      * @param array $providers Array of provider callables. Each element should
      *   be of form `['type' => 'a-string', 'callable' => ..]`
-     * @return \Cake\View\Form\ContextFactory
+     * @return static
      */
     public static function createWithDefaults(array $providers = []): self
     {
@@ -109,7 +109,7 @@ class ContextFactory
      *   when the form context is the correct type.
      * @return $this
      */
-    public function addProvider(string $type, callable $check): self
+    public function addProvider(string $type, callable $check)
     {
         $this->providers = [$type => ['type' => $type, 'callable' => $check]]
             + $this->providers;

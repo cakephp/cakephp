@@ -137,7 +137,7 @@ class PluginCollection implements Iterator, Countable
      * @param \Cake\Core\PluginInterface $plugin The plugin to load.
      * @return $this
      */
-    public function add(PluginInterface $plugin): self
+    public function add(PluginInterface $plugin)
     {
         $name = $plugin->getName();
         $this->plugins[$name] = $plugin;
@@ -152,7 +152,7 @@ class PluginCollection implements Iterator, Countable
      * @param string $name The named plugin.
      * @return $this
      */
-    public function remove(string $name): self
+    public function remove(string $name)
     {
         unset($this->plugins[$name]);
         $this->names = array_keys($this->plugins);

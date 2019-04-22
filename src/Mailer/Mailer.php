@@ -221,7 +221,7 @@ abstract class Mailer implements EventListenerInterface
      * @param mixed $value View variable value.
      * @return $this
      */
-    public function set($key, $value = null): self
+    public function set($key, $value = null)
     {
         $this->_email->setViewVars(is_string($key) ? [$key => $value] : $key);
 
@@ -268,7 +268,7 @@ abstract class Mailer implements EventListenerInterface
      *
      * @return $this
      */
-    protected function reset(): self
+    protected function reset()
     {
         $this->_email = clone $this->_clonedEmail;
 

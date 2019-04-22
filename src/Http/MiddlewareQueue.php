@@ -99,7 +99,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param callable|string|array $middleware The middleware(s) to append.
      * @return $this
      */
-    public function add($middleware): self
+    public function add($middleware)
     {
         if (is_array($middleware)) {
             $this->queue = array_merge($this->queue, $middleware);
@@ -118,7 +118,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return $this
      * @see MiddlewareQueue::add()
      */
-    public function push($middleware): self
+    public function push($middleware)
     {
         return $this->add($middleware);
     }
@@ -129,7 +129,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param callable|string|array $middleware The middleware(s) to prepend.
      * @return $this
      */
-    public function prepend($middleware): self
+    public function prepend($middleware)
     {
         if (is_array($middleware)) {
             $this->queue = array_merge($middleware, $this->queue);
@@ -151,7 +151,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAt(int $index, $middleware): self
+    public function insertAt(int $index, $middleware)
     {
         array_splice($this->queue, $index, 0, [$middleware]);
 
@@ -169,7 +169,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return $this
      * @throws \LogicException If middleware to insert before is not found.
      */
-    public function insertBefore(string $class, $middleware): self
+    public function insertBefore(string $class, $middleware)
     {
         $found = false;
         $i = null;
@@ -198,7 +198,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @param callable|string $middleware The middleware to insert.
      * @return $this
      */
-    public function insertAfter(string $class, $middleware): self
+    public function insertAfter(string $class, $middleware)
     {
         $found = false;
         $i = null;

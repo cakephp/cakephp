@@ -136,7 +136,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setResult($value = null): self
+    public function setResult($value = null)
     {
         $this->result = $value;
 
@@ -166,7 +166,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
-    public function setData($key, $value = null): self
+    public function setData($key, $value = null)
     {
         if (is_array($key)) {
             $this->_data = $key;

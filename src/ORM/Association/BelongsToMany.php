@@ -594,7 +594,7 @@ class BelongsToMany extends Association
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return $this
      */
-    public function setSaveStrategy(string $strategy): self
+    public function setSaveStrategy(string $strategy)
     {
         if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE], true)) {
             $msg = sprintf('Invalid save strategy "%s"', $strategy);
@@ -927,7 +927,7 @@ class BelongsToMany extends Association
      * @param string|\Cake\ORM\Table $through Name of the Table instance or the instance itself
      * @return $this
      */
-    public function setThrough($through): self
+    public function setThrough($through)
     {
         $this->_through = $through;
 

@@ -150,7 +150,7 @@ class RouteBuilder
      * @param string $routeClass Class name.
      * @return $this
      */
-    public function setRouteClass(string $routeClass): self
+    public function setRouteClass(string $routeClass)
     {
         $this->_routeClass = $routeClass;
 
@@ -176,7 +176,7 @@ class RouteBuilder
      * @param string|array $extensions The extensions to set.
      * @return $this
      */
-    public function setExtensions($extensions): self
+    public function setExtensions($extensions)
     {
         $this->_extensions = (array)$extensions;
 
@@ -973,7 +973,7 @@ class RouteBuilder
      * @return $this
      * @see \Cake\Routing\RouteCollection
      */
-    public function registerMiddleware(string $name, $middleware): self
+    public function registerMiddleware(string $name, $middleware)
     {
         $this->_collection->registerMiddleware($name, $middleware);
 
@@ -989,7 +989,7 @@ class RouteBuilder
      * @return $this
      * @see \Cake\Routing\RouteCollection::addMiddlewareToScope()
      */
-    public function applyMiddleware(string ...$names): self
+    public function applyMiddleware(string ...$names)
     {
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {

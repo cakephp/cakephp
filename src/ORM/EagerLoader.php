@@ -192,7 +192,7 @@ class EagerLoader
      * @param bool $enable The value to set.
      * @return $this
      */
-    public function enableAutoFields(bool $enable = true): self
+    public function enableAutoFields(bool $enable = true)
     {
         $this->_autoFields = (bool)$enable;
 
@@ -238,7 +238,7 @@ class EagerLoader
      * @param array $options Extra options for the association matching.
      * @return $this
      */
-    public function setMatching(string $assoc, ?callable $builder = null, array $options = []): self
+    public function setMatching(string $assoc, ?callable $builder = null, array $options = [])
     {
         if ($this->_matching === null) {
             $this->_matching = new static();

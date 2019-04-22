@@ -95,7 +95,7 @@ class FormData implements Countable
      * @param mixed $value The value for the part.
      * @return $this
      */
-    public function add($name, $value = null): self
+    public function add($name, $value = null)
     {
         if (is_array($value)) {
             $this->addRecursive($name, $value);
@@ -119,7 +119,7 @@ class FormData implements Countable
      * @param array $data Array of data to add.
      * @return $this
      */
-    public function addMany(array $data): self
+    public function addMany(array $data)
     {
         foreach ($data as $name => $value) {
             $this->add((string)$name, $value);

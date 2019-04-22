@@ -85,7 +85,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      * @param array $methods The methods to parse data on.
      * @return $this
      */
-    public function setMethods(array $methods): self
+    public function setMethods(array $methods)
     {
         $this->methods = $methods;
 
@@ -112,7 +112,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      *   into the request.
      * @return $this
      */
-    public function addParser(array $types, callable $parser): self
+    public function addParser(array $types, callable $parser)
     {
         foreach ($types as $type) {
             $type = strtolower($type);

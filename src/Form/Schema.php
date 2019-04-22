@@ -45,7 +45,7 @@ class Schema
      * @param array $fields The fields to add.
      * @return $this
      */
-    public function addFields(array $fields): self
+    public function addFields(array $fields)
     {
         foreach ($fields as $name => $attrs) {
             $this->addField($name, $attrs);
@@ -62,7 +62,7 @@ class Schema
      *   as a string.
      * @return $this
      */
-    public function addField($name, $attrs): self
+    public function addField($name, $attrs)
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -79,7 +79,7 @@ class Schema
      * @param string $name The field to remove.
      * @return $this
      */
-    public function removeField($name): self
+    public function removeField($name)
     {
         unset($this->_fields[$name]);
 

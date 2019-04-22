@@ -135,7 +135,7 @@ class Server implements EventDispatcherInterface
      * @param \Cake\Http\Runner $runner The runner to use.
      * @return $this
      */
-    public function setRunner(Runner $runner): self
+    public function setRunner(Runner $runner)
     {
         $this->runner = $runner;
 
@@ -163,8 +163,9 @@ class Server implements EventDispatcherInterface
      *
      * @param \Cake\Event\EventManagerInterface $eventManager The event manager to set.
      * @return $this
+     * @throws \InvalidArgumentException
      */
-    public function setEventManager(EventManagerInterface $eventManager): EventDispatcherInterface
+    public function setEventManager(EventManagerInterface $eventManager)
     {
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->setEventManager($eventManager);
