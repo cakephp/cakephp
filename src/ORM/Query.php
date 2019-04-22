@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayObject;
+use BadMethodCallException;
 use Cake\Database\Connection;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query as DatabaseQuery;
@@ -25,6 +26,7 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\QueryTrait;
 use Cake\Datasource\ResultSetInterface;
+use InvalidArgumentException;
 use JsonSerializable;
 use RuntimeException;
 use Traversable;
@@ -247,7 +249,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         }
 
         if (!($table instanceof Table)) {
-            throw new \InvalidArgumentException('You must provide either an Association or a Table object');
+            throw new InvalidArgumentException('You must provide either an Association or a Table object');
         }
 
         $fields = array_diff($table->getSchema()->columns(), $excludedFields);
@@ -1267,7 +1269,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
             return $this->_call($method, $arguments);
         }
 
-        throw new \BadMethodCallException(
+        throw new BadMethodCallException(
             sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
         );
     }

@@ -30,6 +30,7 @@ use Cake\Collection\Iterator\TreeIterator;
 use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
+use InvalidArgumentException;
 use LimitIterator;
 use LogicException;
 use OuterIterator;
@@ -424,7 +425,7 @@ trait CollectionTrait
     public function takeLast(int $howMany): CollectionInterface
     {
         if ($howMany < 1) {
-            throw new \InvalidArgumentException("The takeLast method requires a number greater than 0.");
+            throw new InvalidArgumentException("The takeLast method requires a number greater than 0.");
         }
 
         $iterator = $this->optimizeUnwrap();

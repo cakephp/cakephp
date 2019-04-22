@@ -24,6 +24,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
 use Cake\TestSuite\TestCase;
 use PDOException;
+use RuntimeException;
 use UnexpectedValueException;
 
 /**
@@ -353,7 +354,7 @@ class FixtureManager
                 get_class($test),
                 $e->getMessage()
             );
-            throw new \RuntimeException($msg, 0, $e);
+            throw new RuntimeException($msg, 0, $e);
         }
     }
 

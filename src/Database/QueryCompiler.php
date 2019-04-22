@@ -17,6 +17,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\QueryExpression;
 use Closure;
+use Countable;
 
 /**
  * Responsible for compiling a Query object into its SQL representation
@@ -127,7 +128,7 @@ class QueryCompiler
     {
         return function ($parts, $name) use (&$sql, $query, $generator) {
             if (!isset($parts) ||
-                ((is_array($parts) || $parts instanceof \Countable) && !count($parts))
+                ((is_array($parts) || $parts instanceof Countable) && !count($parts))
             ) {
                 return;
             }

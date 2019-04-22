@@ -22,6 +22,7 @@ use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Association\BelongsToMany;
+use InvalidArgumentException;
 use RuntimeException;
 
 /**
@@ -92,7 +93,7 @@ class Marshaller
             // it is a missing association that we should error on.
             if (!$this->_table->hasAssociation($key)) {
                 if (substr($key, 0, 1) !== '_') {
-                    throw new \InvalidArgumentException(sprintf(
+                    throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for "%s" association. It is not associated with "%s".',
                         $key,
                         $this->_table->getAlias()

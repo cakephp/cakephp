@@ -19,6 +19,7 @@ use Cake\Cache\CacheEngine;
 use Cake\Cache\InvalidArgumentException;
 use CallbackFilterIterator;
 use Exception;
+use FilesystemIterator;
 use LogicException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -254,7 +255,7 @@ class FileEngine extends CacheEngine
 
         $directory = new RecursiveDirectoryIterator(
             $this->_config['path'],
-            \FilesystemIterator::SKIP_DOTS
+            FilesystemIterator::SKIP_DOTS
         );
         $contents = new RecursiveIteratorIterator(
             $directory,
