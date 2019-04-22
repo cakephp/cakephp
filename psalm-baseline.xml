@@ -15,9 +15,6 @@
       <code>$_passwordHasher</code>
       <code>BaseAuthenticate</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_passwordHasher !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Auth/BasicAuthenticate.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -59,9 +56,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_user</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_user !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Cache/Cache.php">
     <DocblockTypeContradiction occurrences="1">
@@ -73,10 +67,6 @@
       <code>is_string($key)</code>
       <code>is_iterable($iterable)</code>
     </DocblockTypeContradiction>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>!is_string($key) || strlen($key) === 0</code>
-      <code>$ttl instanceof DateInterval</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Cache/CacheRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -133,9 +123,6 @@
       <code>$value</code>
       <code>$value</code>
     </PossiblyInvalidArgument>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>empty($this-&gt;_config['persistent']) &amp;&amp; $this-&gt;_Redis instanceof Redis</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Cache/Engine/WincacheEngine.php">
     <NullArgument occurrences="1">
@@ -206,12 +193,6 @@
       <code>$dir</code>
       <code>$modes[$dir] ?? $dir</code>
     </PossiblyInvalidArgument>
-    <TypeCoercion occurrences="4">
-      <code>$iterator</code>
-      <code>$iterator</code>
-      <code>$this-&gt;unwrap()</code>
-      <code>$this-&gt;newCollection($items)-&gt;unwrap()</code>
-    </TypeCoercion>
   </file>
   <file src="src/Collection/ExtractTrait.php">
     <MissingClosureParamType occurrences="3">
@@ -246,9 +227,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>parent::current()</code>
     </PossiblyFalseArgument>
-    <TypeCoercion occurrences="1">
-      <code>$set</code>
-    </TypeCoercion>
   </file>
   <file src="src/Command/HelpCommand.php">
     <MissingClosureParamType occurrences="2">
@@ -338,11 +316,6 @@
       <code>$this-&gt;_short</code>
     </UninitializedProperty>
   </file>
-  <file src="src/Console/ConsoleInputSubcommand.php">
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_parser instanceof ConsoleOptionParser</code>
-    </RedundantConditionGivenDocblockType>
-  </file>
   <file src="src/Console/ConsoleIo.php">
     <NullArgument occurrences="1">
       <code>null</code>
@@ -379,19 +352,12 @@
     <PossiblyNullReference occurrences="1">
       <code>parse</code>
     </PossiblyNullReference>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$default !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Console/ConsoleOutput.php">
     <PossiblyNullArrayOffset occurrences="2">
       <code>static::$_styles</code>
       <code>static::$_styles</code>
     </PossiblyNullArrayOffset>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>is_string($style) &amp;&amp; $definition === null</code>
-      <code>is_resource($this-&gt;_output)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Console/HelperRegistry.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -504,12 +470,6 @@
       <code>getConfig</code>
       <code>setConfig</code>
     </PossiblyNullReference>
-    <TypeCoercion occurrences="4">
-      <code>$this-&gt;_authorizeObjects</code>
-      <code>$this-&gt;_authenticateObjects</code>
-      <code>$this-&gt;_authenticateObjects[$alias]</code>
-      <code>new $className($request, $response, $config)</code>
-    </TypeCoercion>
     <UndefinedInterfaceMethod occurrences="2">
       <code>getConfig</code>
       <code>setConfig</code>
@@ -542,10 +502,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$builder-&gt;getTemplatePath()</code>
     </PossiblyNullOperand>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>is_string($type)</code>
-      <code>is_string($type)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Controller/Component/SecurityComponent.php">
     <InvalidArgument occurrences="1">
@@ -591,9 +547,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>ComponentRegistry</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="1">
-      <code>$instance</code>
-    </TypeCoercion>
   </file>
   <file src="src/Controller/Controller.php">
     <DocblockTypeContradiction occurrences="4">
@@ -610,9 +563,6 @@
       <code>$_components</code>
       <code>Controller</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="1">
-      <code>'Cake\Controller\Controller'</code>
-    </TypeCoercion>
     <UninitializedProperty occurrences="3">
       <code>$this-&gt;name</code>
       <code>$this-&gt;name</code>
@@ -733,9 +683,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$type</code>
     </PossiblyNullArgument>
-    <TypeCoercion occurrences="1">
-      <code>$driver</code>
-    </TypeCoercion>
   </file>
   <file src="src/Database/Dialect/MysqlDialectTrait.php">
     <DocblockTypeContradiction occurrences="2">
@@ -866,9 +813,6 @@
       <code>$_supportsNativeJson</code>
       <code>Mysql</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_supportsNativeJson !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Database/Driver/Postgres.php">
     <PossiblyNullReference occurrences="4">
@@ -911,11 +855,6 @@
       <code>PDO::SQLSRV_ATTR_ENCODING</code>
     </UndefinedConstant>
   </file>
-  <file src="src/Database/Exception/NestedTransactionRollbackException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
   <file src="src/Database/Expression/BetweenExpression.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$field</code>
@@ -940,9 +879,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_type</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_string($type)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Database/Expression/FunctionExpression.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -991,22 +927,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$typeMultiple ? null : '[]'</code>
     </PossiblyNullOperand>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_string($field)</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="11">
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$field</code>
-    </TypeCoercion>
   </file>
   <file src="src/Database/Expression/TupleComparison.php">
     <InvalidArgument occurrences="1">
@@ -1042,9 +962,6 @@
     <MissingClosureReturnType occurrences="1">
       <code>function ($part, &amp;$field) {</code>
     </MissingClosureReturnType>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$field instanceof ExpressionInterface</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Database/Log/LoggingStatement.php">
     <InvalidScalarArgument occurrences="2">
@@ -1095,11 +1012,6 @@
       <code>$_selectTypeMap</code>
       <code>Query</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="3">
-      <code>$num !== null</code>
-      <code>$num !== null</code>
-      <code>$this-&gt;_selectTypeMap !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Database/QueryCompiler.php">
     <MissingClosureParamType occurrences="3">
@@ -1408,18 +1320,12 @@
       <code>$value</code>
       <code>$value</code>
     </MoreSpecificImplementedParamType>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_resource($value)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Database/Type/BinaryUuidType.php">
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$value</code>
       <code>$value</code>
     </MoreSpecificImplementedParamType>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_resource($value)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Database/Type/DateTimeType.php">
     <DocblockTypeContradiction occurrences="1">
@@ -1446,16 +1352,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_localeFormat</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$value === null || is_string($value)</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="5">
-      <code>new $this-&gt;_className(null, $this-&gt;dbTimezone)</code>
-      <code>new $this-&gt;_className(null, $this-&gt;dbTimezone)</code>
-      <code>$date</code>
-      <code>new $this-&gt;_className(null, $this-&gt;dbTimezone)</code>
-      <code>new $this-&gt;_className(null, $this-&gt;dbTimezone)</code>
-    </TypeCoercion>
   </file>
   <file src="src/Database/Type/DateType.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -1481,10 +1377,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;_driver</code>
     </PossiblyNullArgument>
-    <TypeCoercion occurrences="2">
-      <code>$this-&gt;_driver</code>
-      <code>$this-&gt;_driver</code>
-    </TypeCoercion>
   </file>
   <file src="src/Database/TypeFactory.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -1528,10 +1420,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$entity</code>
     </PossiblyInvalidArgument>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>is_array($object)</code>
-      <code>is_array($object)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Datasource/ModelAwareTrait.php">
     <PossiblyFalseOperand occurrences="1">
@@ -1556,15 +1444,6 @@
       <code>array</code>
     </LessSpecificImplementedReturnType>
   </file>
-  <file src="src/Datasource/RulesAwareTrait.php">
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>$this-&gt;_rulesChecker !== null</code>
-      <code>$this-&gt;_rulesChecker !== null</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="1">
-      <code>new $class(['repository' =&gt; $this])</code>
-    </TypeCoercion>
-  </file>
   <file src="src/Datasource/RulesChecker.php">
     <PossiblyNullArgument occurrences="4">
       <code>$name</code>
@@ -1585,10 +1464,6 @@
       <code>$line</code>
       <code>$file</code>
     </PossiblyNullArgument>
-    <TypeCoercion occurrences="2">
-      <code>$exception</code>
-      <code>$previous</code>
-    </TypeCoercion>
   </file>
   <file src="src/Error/Debugger.php">
     <PossiblyNullArgument occurrences="1">
@@ -1609,10 +1484,6 @@
     <LessSpecificReturnStatement occurrences="1">
       <code>new $class($exception, $request)</code>
     </LessSpecificReturnStatement>
-    <TypeCoercion occurrences="2">
-      <code>$exception</code>
-      <code>$previous</code>
-    </TypeCoercion>
   </file>
   <file src="src/Event/Decorator/SubjectFilterDecorator.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -1641,9 +1512,6 @@
     <MoreSpecificReturnType occurrences="1">
       <code>EventInterface</code>
     </MoreSpecificReturnType>
-    <TypeCoercion occurrences="1">
-      <code>$event</code>
-    </TypeCoercion>
   </file>
   <file src="src/Form/Form.php">
     <DocblockTypeContradiction occurrences="1">
@@ -1654,22 +1522,11 @@
       <code>$_validator</code>
       <code>Form</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="1">
-      <code>new $this-&gt;_schemaClass()</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/ActionDispatcher.php">
-    <TypeCoercion occurrences="1">
-      <code>$response</code>
-    </TypeCoercion>
   </file>
   <file src="src/Http/BaseApplication.php">
     <DocblockTypeContradiction occurrences="1">
       <code>$plugin instanceof PluginInterface</code>
     </DocblockTypeContradiction>
-    <TypeCoercion occurrences="1">
-      <code>$request</code>
-    </TypeCoercion>
     <UnresolvableInclude occurrences="2">
       <code>require_once $this-&gt;configDir . '/bootstrap.php'</code>
       <code>require $this-&gt;configDir . '/routes.php'</code>
@@ -1750,18 +1607,11 @@
       <code>$_xml</code>
       <code>$_json</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>$this-&gt;cookies !== null</code>
-      <code>$this-&gt;_xml !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Http/ControllerFactory.php">
     <PossiblyNullArgument occurrences="1">
       <code>$className</code>
     </PossiblyNullArgument>
-    <TypeCoercion occurrences="1">
-      <code>$className</code>
-    </TypeCoercion>
   </file>
   <file src="src/Http/Cookie/Cookie.php">
     <PossiblyInvalidArgument occurrences="11">
@@ -1796,75 +1646,10 @@
       <code>$cookie['httponly']</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/Http/Exception/BadRequestException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/ConflictException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/ForbiddenException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/GoneException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/InternalErrorException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/InvalidCsrfTokenException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/MethodNotAllowedException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/NotAcceptableException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/NotFoundException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/ServiceUnavailableException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/UnauthorizedException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Http/Exception/UnavailableForLegalReasonsException.php">
-    <TypeCoercion occurrences="1">
-      <code>$previous</code>
-    </TypeCoercion>
-  </file>
   <file src="src/Http/Middleware/CsrfProtectionMiddleware.php">
     <PossiblyNullArgument occurrences="1">
       <code>$request-&gt;getParsedBody()</code>
     </PossiblyNullArgument>
-    <TypeCoercion occurrences="3">
-      <code>$request</code>
-      <code>$response</code>
-      <code>$request</code>
-    </TypeCoercion>
   </file>
   <file src="src/Http/Middleware/DoublePassDecoratorMiddleware.php">
     <MissingClosureParamType occurrences="2">
@@ -1972,7 +1757,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_input</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1"/>
   </file>
   <file src="src/Http/ServerRequestFactory.php">
     <NoInterfaceProperties occurrences="5">
@@ -2168,18 +1952,6 @@
       <code>TranslatorRegistry</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/I18n/functions.php">
-    <RedundantConditionGivenDocblockType occurrences="8">
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-      <code>is_array($args[0])</code>
-    </RedundantConditionGivenDocblockType>
-  </file>
   <file src="src/Log/Engine/ConsoleLog.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>bool</code>
@@ -2237,14 +2009,6 @@
     <MissingClosureReturnType occurrences="1">
       <code>function (&amp;$item, $key) {</code>
     </MissingClosureReturnType>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>$this-&gt;message !== null</code>
-      <code>is_object($name)</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="2">
-      <code>new $this-&gt;messageClass()</code>
-      <code>new $this-&gt;messageClass()</code>
-    </TypeCoercion>
   </file>
   <file src="src/Mailer/Mailer.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -2292,9 +2056,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_socket</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_socket !== null &amp;&amp; $this-&gt;_socket-&gt;connected</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Mailer/TransportFactory.php">
     <DocblockTypeContradiction occurrences="1">
@@ -2340,11 +2101,6 @@
       <code>$_propertyName</code>
       <code>Association</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="3">
-      <code>$this-&gt;_targetTable !== null</code>
-      <code>$this-&gt;_targetTable !== null</code>
-      <code>get_class($this-&gt;_sourceTable)</code>
-    </RedundantConditionGivenDocblockType>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;_className</code>
     </UninitializedProperty>
@@ -2382,14 +2138,6 @@
       <code>$_through</code>
       <code>BelongsToMany</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="3">
-      <code>$this-&gt;_junctionTable !== null</code>
-      <code>$table === null &amp;&amp; $this-&gt;_junctionTable !== null</code>
-      <code>$saved === false</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="1">
-      <code>$joint</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/Association/DependentDeleteHelper.php">
     <InvalidArgument occurrences="1">
@@ -2475,9 +2223,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_ts</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_ts === null || $refreshTimestamp</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/ORM/Behavior/Translate/EavStrategy.php">
     <MissingClosureParamType occurrences="8">
@@ -2594,9 +2339,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_primaryKey</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="1">
-      <code>$results</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -2613,10 +2355,6 @@
       <code>$_table</code>
       <code>BehaviorRegistry</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="2">
-      <code>$instance</code>
-      <code>$instance</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/EagerLoadable.php">
     <PropertyNotSetInConstructor occurrences="5">
@@ -2626,9 +2364,6 @@
       <code>$_forMatching</code>
       <code>$_targetProperty</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$this-&gt;_forMatching !== null</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/ORM/EagerLoader.php">
     <DocblockTypeContradiction occurrences="1">
@@ -2651,10 +2386,6 @@
       <code>normalized</code>
       <code>requiresKeys</code>
     </PossiblyNullReference>
-    <TypeCoercion occurrences="2">
-      <code>$query-&gt;getRepository()</code>
-      <code>$statement</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/LazyEagerLoader.php">
     <MissingClosureParamType occurrences="4">
@@ -2737,10 +2468,6 @@
       <code>$original</code>
       <code>$original</code>
     </PossiblyInvalidArgument>
-    <TypeCoercion occurrences="2">
-      <code>$assoc</code>
-      <code>$assoc</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/Query.php">
     <DocblockTypeContradiction occurrences="2">
@@ -2777,22 +2504,6 @@
       <code>$_eagerLoader</code>
       <code>Query</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="6">
-      <code>$this-&gt;_repository !== null</code>
-      <code>$this-&gt;_eagerLoader !== null</code>
-      <code>$this-&gt;_type !== null</code>
-      <code>$this-&gt;_type !== 'select' &amp;&amp; $this-&gt;_type !== null</code>
-      <code>$this-&gt;_type !== null</code>
-      <code>$this-&gt;_type !== 'select' &amp;&amp; $this-&gt;_type !== null</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="6">
-      <code>$this-&gt;_repository</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-      <code>$this-&gt;getRepository()</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/ResultSet.php">
     <DocblockTypeContradiction occurrences="1">
@@ -2808,22 +2519,6 @@
       <code>$_current</code>
       <code>$_count</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="5">
-      <code>$this-&gt;_statement !== null</code>
-      <code>!$valid &amp;&amp; $this-&gt;_statement !== null</code>
-      <code>$this-&gt;_statement !== null</code>
-      <code>$this-&gt;_count !== null</code>
-      <code>$this-&gt;_statement !== null</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="2">
-      <code>$query-&gt;getRepository()</code>
-      <code>$this-&gt;_defaultTable</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/ORM/RulesChecker.php">
-    <TypeCoercion occurrences="1">
-      <code>$table</code>
-    </TypeCoercion>
   </file>
   <file src="src/ORM/SaveOptionsBuilder.php">
     <PossiblyInvalidMethodCall occurrences="1">
@@ -2890,10 +2585,6 @@
       <code>$_registryAlias</code>
       <code>Table</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>$search instanceof Query</code>
-    </RedundantConditionGivenDocblockType>
-    <TypeCoercion occurrences="1"/>
     <TypeDoesNotContainType occurrences="1">
       <code>$self === self::class || count($parts) &lt; 3</code>
     </TypeDoesNotContainType>
@@ -2902,9 +2593,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>static::$_locator === null</code>
     </DocblockTypeContradiction>
-    <TypeCoercion occurrences="1">
-      <code>new static::$_defaultLocatorClass()</code>
-    </TypeCoercion>
   </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
     <MissingParamType occurrences="3">
@@ -2985,9 +2673,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$frag</code>
     </PossiblyNullOperand>
-    <TypeCoercion occurrences="1">
-      <code>$request</code>
-    </TypeCoercion>
   </file>
   <file src="src/Shell/CacheShell.php">
     <DeprecatedClass occurrences="2">
@@ -3179,9 +2864,6 @@
       <code>messages</code>
       <code>messages</code>
     </PossiblyUndefinedMethod>
-    <TypeCoercion occurrences="1">
-      <code>new $applicationClassName(CONFIG)</code>
-    </TypeCoercion>
     <UndefinedConstant occurrences="1">
       <code>CONFIG</code>
     </UndefinedConstant>
@@ -3302,10 +2984,6 @@
     <RedundantCondition occurrences="1">
       <code>$exists &amp;&amp; !$isFixtureSetup &amp;&amp; $hasSchema</code>
     </RedundantCondition>
-    <TypeCoercion occurrences="2">
-      <code>$this-&gt;_loaded</code>
-      <code>$this-&gt;_fixtureMap</code>
-    </TypeCoercion>
     <UndefinedInterfaceMethod occurrences="1">
       <code>getSchemaCollection</code>
     </UndefinedInterfaceMethod>
@@ -3335,13 +3013,6 @@
       <code>$table</code>
       <code>TestFixture</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="5">
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-    </TypeCoercion>
     <UndefinedInterfaceMethod occurrences="9">
       <code>supportsDynamicConstraints</code>
       <code>getSchemaCollection</code>
@@ -3403,42 +3074,6 @@
     <PossiblyNullReference occurrences="1">
       <code>getBody</code>
     </PossiblyNullReference>
-    <TypeCoercion occurrences="34">
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-    </TypeCoercion>
   </file>
   <file src="src/TestSuite/LegacyCommandRunner.php">
     <MissingConstructor occurrences="1">
@@ -3464,11 +3099,6 @@
     <RedundantCondition occurrences="1">
       <code>$this-&gt;app instanceof HttpApplicationInterface</code>
     </RedundantCondition>
-    <TypeCoercion occurrences="3">
-      <code>$this-&gt;_class</code>
-      <code>$this-&gt;_class</code>
-      <code>$app</code>
-    </TypeCoercion>
     <UndefinedConstant occurrences="1">
       <code>CONFIG</code>
     </UndefinedConstant>
@@ -3567,9 +3197,6 @@
       <code>$path</code>
       <code>$path</code>
     </PossiblyNullOperand>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_string($key)</code>
-    </RedundantConditionGivenDocblockType>
     <TypeDoesNotContainType occurrences="1">
       <code>is_array($path)</code>
     </TypeDoesNotContainType>
@@ -3626,14 +3253,6 @@
     <InvalidArgument occurrences="1">
       <code>$dom</code>
     </InvalidArgument>
-    <TypeCoercion occurrences="1">
-      <code>$input</code>
-    </TypeCoercion>
-  </file>
-  <file src="src/Validation/RulesProvider.php">
-    <TypeCoercion occurrences="1">
-      <code>$class</code>
-    </TypeCoercion>
   </file>
   <file src="src/Validation/Validation.php">
     <InvalidArgument occurrences="1">
@@ -3668,10 +3287,6 @@
       <code>$_on</code>
       <code>$_message</code>
     </PropertyNotSetInConstructor>
-    <RedundantConditionGivenDocblockType occurrences="2">
-      <code>!is_string($this-&gt;_rule) &amp;&amp; is_callable($this-&gt;_rule)</code>
-      <code>!is_string($this-&gt;_on) &amp;&amp; is_callable($this-&gt;_on)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/Validation/Validator.php">
     <DocblockTypeContradiction occurrences="1">
@@ -3846,9 +3461,6 @@
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed</code>
     </LessSpecificImplementedReturnType>
-    <TypeCoercion occurrences="1">
-      <code>new $engineClass($config)</code>
-    </TypeCoercion>
   </file>
   <file src="src/View/Helper/PaginatorHelper.php">
     <PossiblyFalseOperand occurrences="2">
@@ -3874,9 +3486,6 @@
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed</code>
     </LessSpecificImplementedReturnType>
-    <TypeCoercion occurrences="1">
-      <code>new $engineClass($config)</code>
-    </TypeCoercion>
   </file>
   <file src="src/View/Helper/TimeHelper.php">
     <DocblockTypeContradiction occurrences="1">
@@ -3919,9 +3528,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$this-&gt;_View-&gt;getPlugin()</code>
     </PossiblyNullOperand>
-    <TypeCoercion occurrences="1">
-      <code>$instance</code>
-    </TypeCoercion>
   </file>
   <file src="src/View/JsonView.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -3955,14 +3561,6 @@
       <code>$this-&gt;_templater === null</code>
       <code>$this-&gt;_templater === null</code>
     </DocblockTypeContradiction>
-    <TypeCoercion occurrences="6">
-      <code>new $class()</code>
-      <code>new $class()</code>
-      <code>new $class()</code>
-      <code>new $class()</code>
-      <code>new $class()</code>
-      <code>new $class()</code>
-    </TypeCoercion>
   </file>
   <file src="src/View/View.php">
     <DocblockTypeContradiction occurrences="1">
@@ -3991,11 +3589,6 @@
       <code>$_current</code>
       <code>View</code>
     </PropertyNotSetInConstructor>
-    <TypeCoercion occurrences="3">
-      <code>new $this-&gt;_viewBlockClass()</code>
-      <code>new $this-&gt;_viewBlockClass()</code>
-      <code>new $this-&gt;_viewBlockClass()</code>
-    </TypeCoercion>
     <UnresolvableInclude occurrences="1">
       <code>include func_get_arg(0)</code>
     </UnresolvableInclude>
@@ -4021,9 +3614,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_int($value)</code>
     </DocblockTypeContradiction>
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_string($value)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/View/Widget/MultiCheckboxWidget.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -4034,11 +3624,6 @@
     <DocblockTypeContradiction occurrences="1">
       <code>is_array($disabled)</code>
     </DocblockTypeContradiction>
-  </file>
-  <file src="src/View/Widget/SelectBoxWidget.php">
-    <RedundantConditionGivenDocblockType occurrences="1">
-      <code>is_array($value)</code>
-    </RedundantConditionGivenDocblockType>
   </file>
   <file src="src/View/XmlView.php">
     <PossiblyUndefinedMethod occurrences="1">
