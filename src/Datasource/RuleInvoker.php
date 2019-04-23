@@ -78,7 +78,7 @@ class RuleInvoker
      * @param array $options The options to set.
      * @return $this
      */
-    public function setOptions(array $options): self
+    public function setOptions(array $options)
     {
         $this->options = $options + $this->options;
 
@@ -93,7 +93,7 @@ class RuleInvoker
      * @param string $name The name to set.
      * @return $this
      */
-    public function setName(string $name): self
+    public function setName(string $name)
     {
         if ($name) {
             $this->name = $name;

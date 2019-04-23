@@ -795,7 +795,7 @@ class Connection implements ConnectionInterface
      * @param bool $value Enable/disable query logging
      * @return $this
      */
-    public function enableQueryLogging(bool $value): ConnectionInterface
+    public function enableQueryLogging(bool $value)
     {
         $this->_logQueries = $value;
 

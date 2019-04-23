@@ -598,7 +598,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string|array $field Name to be used as display field.
      * @return $this
      */
-    public function setDisplayField($field): self
+    public function setDisplayField($field)
     {
         $this->_displayField = $field;
 
@@ -667,7 +667,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\MissingEntityException when the entity class cannot be found
      * @return $this
      */
-    public function setEntityClass(string $name): self
+    public function setEntityClass(string $name)
     {
         $class = App::className($name, 'Model/Entity');
         if (!$class) {
@@ -703,7 +703,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \RuntimeException If a behavior is being reloaded.
      * @see \Cake\ORM\Behavior
      */
-    public function addBehavior(string $name, array $options = []): self
+    public function addBehavior(string $name, array $options = [])
     {
         $this->_behaviors->load($name, $options);
 
@@ -726,7 +726,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return $this
      * @throws \RuntimeException If a behavior is being reloaded.
      */
-    public function addBehaviors(array $behaviors): self
+    public function addBehaviors(array $behaviors)
     {
         foreach ($behaviors as $name => $options) {
             if (is_int($name)) {
@@ -914,7 +914,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @see \Cake\ORM\Table::hasMany()
      * @see \Cake\ORM\Table::belongsToMany()
      */
-    public function addAssociations(array $params): self
+    public function addAssociations(array $params)
     {
         foreach ($params as $assocType => $tables) {
             foreach ($tables as $associated => $options) {

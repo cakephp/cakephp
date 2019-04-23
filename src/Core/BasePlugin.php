@@ -198,7 +198,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function enable(string $hook): PluginInterface
+    public function enable(string $hook)
     {
         $this->checkHook($hook);
         $this->{"{$hook}Enabled}"} = true;
@@ -209,7 +209,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
-    public function disable(string $hook): PluginInterface
+    public function disable(string $hook)
     {
         $this->checkHook($hook);
         $this->{"{$hook}Enabled"} = false;

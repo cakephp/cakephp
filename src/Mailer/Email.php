@@ -189,7 +189,7 @@ class Email implements JsonSerializable, Serializable
      * @param string $viewClass View class name.
      * @return $this
      */
-    public function setViewRenderer(string $viewClass): self
+    public function setViewRenderer(string $viewClass)
     {
         $this->getRenderer()->viewBuilder()->setClassName($viewClass);
 
@@ -214,7 +214,7 @@ class Email implements JsonSerializable, Serializable
      * @param array $viewVars Variables to set for view.
      * @return $this
      */
-    public function setViewVars(array $viewVars): self
+    public function setViewVars(array $viewVars)
     {
         $this->getRenderer()->viewBuilder()->setVars($viewVars);
 
@@ -243,7 +243,7 @@ class Email implements JsonSerializable, Serializable
      * @throws \LogicException When the chosen transport lacks a send method.
      * @throws \InvalidArgumentException When $name is neither a string nor an object.
      */
-    public function setTransport($name): self
+    public function setTransport($name)
     {
         if (is_string($name)) {
             $transport = TransportFactory::get($name);
@@ -296,7 +296,7 @@ class Email implements JsonSerializable, Serializable
      *    an array with config.
      * @return $this
      */
-    public function setProfile($config): self
+    public function setProfile($config)
     {
         if (is_string($config)) {
             $name = $config;
@@ -445,7 +445,7 @@ class Email implements JsonSerializable, Serializable
      * @param \Cake\Mailer\Renderer $renderer Render instance.
      * @return $this
      */
-    public function setRenderer(Renderer $renderer): self
+    public function setRenderer(Renderer $renderer)
     {
         $this->renderer = $renderer;
 
@@ -545,7 +545,7 @@ class Email implements JsonSerializable, Serializable
      *
      * @return $this
      */
-    public function reset(): self
+    public function reset()
     {
         $this->message->reset();
         $this->_transport = null;

@@ -109,7 +109,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
      * @return $this
      */
-    public function noSniff(): self
+    public function noSniff()
     {
         $this->headers['x-content-type-options'] = self::NOSNIFF;
 
@@ -124,7 +124,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @link https://msdn.microsoft.com/en-us/library/jj542450(v=vs.85).aspx
      * @return $this
      */
-    public function noOpen(): self
+    public function noOpen()
     {
         $this->headers['x-download-options'] = self::NOOPEN;
 
@@ -139,7 +139,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *     'origin-when-cross-origin', 'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
-    public function setReferrerPolicy($policy = self::SAME_ORIGIN): self
+    public function setReferrerPolicy($policy = self::SAME_ORIGIN)
     {
         $available = [
             self::NO_REFERRER,
@@ -166,7 +166,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
-    public function setXFrameOptions($option = self::SAMEORIGIN, ?string $url = null): self
+    public function setXFrameOptions($option = self::SAMEORIGIN, ?string $url = null)
     {
         $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
 
@@ -189,7 +189,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @param string $mode Mode value. Available Values: '1', '0', 'block'
      * @return $this
      */
-    public function setXssProtection(string $mode = self::XSS_BLOCK): self
+    public function setXssProtection(string $mode = self::XSS_BLOCK)
     {
         $mode = (string)$mode;
 
@@ -211,7 +211,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *     'by-ftp-filename'
      * @return $this
      */
-    public function setCrossDomainPolicy($policy = self::ALL): self
+    public function setCrossDomainPolicy($policy = self::ALL)
     {
         $this->checkValues($policy, [
             self::ALL,

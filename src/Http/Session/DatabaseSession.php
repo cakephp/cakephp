@@ -74,7 +74,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $timeout The timeout duration.
      * @return $this
      */
-    public function setTimeout(int $timeout): self
+    public function setTimeout(int $timeout)
     {
         $this->_timeout = $timeout;
 

@@ -209,7 +209,7 @@ class Shell
      * @param string $name The name of the root command.
      * @return $this
      */
-    public function setRootName(string $name): self
+    public function setRootName(string $name)
     {
         $this->rootName = $name;
 

@@ -138,7 +138,7 @@ class Route
      * @param array $extensions The extensions to set.
      * @return $this
      */
-    public function setExtensions(array $extensions): self
+    public function setExtensions(array $extensions)
     {
         $this->_extensions = [];
         foreach ($extensions as $ext) {
@@ -165,7 +165,7 @@ class Route
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setMethods(array $methods): self
+    public function setMethods(array $methods)
     {
         $methods = array_map('strtoupper', $methods);
         $diff = array_diff($methods, static::VALID_METHODS);
@@ -188,7 +188,7 @@ class Route
      * @param array $patterns The patterns to apply to routing elements
      * @return $this
      */
-    public function setPatterns(array $patterns): self
+    public function setPatterns(array $patterns)
     {
         $patternValues = implode("", $patterns);
         if (mb_strlen($patternValues) < strlen($patternValues)) {
@@ -205,7 +205,7 @@ class Route
      * @param string $host The host name this route is bound to
      * @return $this
      */
-    public function setHost(string $host): self
+    public function setHost(string $host)
     {
         $this->options['_host'] = $host;
 
@@ -218,7 +218,7 @@ class Route
      * @param array $names The names of the parameters that should be passed.
      * @return $this
      */
-    public function setPass(array $names): self
+    public function setPass(array $names)
     {
         $this->options['pass'] = $names;
 
@@ -240,7 +240,7 @@ class Route
      * @param array $names The names of the parameters that should be passed.
      * @return $this
      */
-    public function setPersist(array $names): self
+    public function setPersist(array $names)
     {
         $this->options['persist'] = $names;
 

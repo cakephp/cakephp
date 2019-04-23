@@ -385,7 +385,7 @@ class RouteCollection
      *   Defaults to `true`.
      * @return $this
      */
-    public function setExtensions(array $extensions, bool $merge = true): self
+    public function setExtensions(array $extensions, bool $merge = true)
     {
         if ($merge) {
             $extensions = array_unique(array_merge(
@@ -408,7 +408,7 @@ class RouteCollection
      * @param callable|string $middleware The middleware callable or class name to register.
      * @return $this
      */
-    public function registerMiddleware(string $name, $middleware): self
+    public function registerMiddleware(string $name, $middleware)
     {
         $this->_middleware[$name] = $middleware;
 
@@ -422,7 +422,7 @@ class RouteCollection
      * @param array $middlewareNames Names of the middleware
      * @return $this
      */
-    public function middlewareGroup(string $name, array $middlewareNames): self
+    public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
             $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
@@ -481,7 +481,7 @@ class RouteCollection
      * @param string[] $middleware The middleware names to add for the path.
      * @return $this
      */
-    public function applyMiddleware(string $path, array $middleware): self
+    public function applyMiddleware(string $path, array $middleware)
     {
         foreach ($middleware as $name) {
             if (!$this->hasMiddleware($name) && !$this->hasMiddlewareGroup($name)) {
