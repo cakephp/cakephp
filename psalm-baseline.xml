@@ -3327,6 +3327,9 @@
     </UninitializedProperty>
   </file>
   <file src="src/View/View.php">
+    <PossiblyFalseArgument occurrences="1">
+      <code>$name</code>
+    </PossiblyFalseArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>$request ?: Router::getRequest(true)</code>
       <code>$request ?: Router::getRequest(true)</code>

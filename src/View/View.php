@@ -1338,17 +1338,13 @@ class View implements EventDispatcherInterface
      * Returns layout filename for this template as a string.
      *
      * @param string|null $name The name of the layout to find.
-     * @return string|null Filename for layout file.
+     * @return string Filename for layout file.
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
      */
-    protected function _getLayoutFileName(?string $name = null): ?string
+    protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
             $name = $this->layout;
-        }
-
-        if (empty($name)) {
-            return null;
         }
 
         $subDir = '';
