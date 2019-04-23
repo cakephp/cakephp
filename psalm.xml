@@ -19,5 +19,6 @@
         <LessSpecificReturnType errorLevel="info" />
         <RedundantConditionGivenDocblockType errorLevel="info" />
         <TypeCoercion errorLevel="info" />
+        <DocblockTypeContradiction errorLevel="info" />
     </issueHandlers>
 </psalm>
