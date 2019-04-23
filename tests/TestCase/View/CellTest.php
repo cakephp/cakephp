@@ -372,7 +372,6 @@ class CellTest extends TestCase
         $view = new CustomJsonView($request, $response);
         $view->setTheme('Pretty');
         $cell = $view->cell('Articles');
-        $this->assertSame('TestApp\View\CustomJsonView', $cell->viewClass);
         $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());
         $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }
@@ -388,9 +387,8 @@ class CellTest extends TestCase
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
         $controller = new CellTraitTestController($request, $response);
         $controller->viewBuilder()->setTheme('Pretty');
-        $controller->viewClass = 'Json';
+        $controller->viewBuilder()->setClassName('Json');
         $cell = $controller->cell('Articles');
-        $this->assertSame('Json', $cell->viewClass);
         $this->assertSame('Json', $cell->viewBuilder()->getClassName());
         $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }

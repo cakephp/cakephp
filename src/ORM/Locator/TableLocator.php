@@ -201,7 +201,7 @@ class TableLocator implements LocatorInterface
             if (!empty($options['connectionName'])) {
                 $connectionName = $options['connectionName'];
             } else {
-                /* @var \Cake\ORM\Table $className */
+                /** @var \Cake\ORM\Table $className */
                 $className = $options['className'];
                 $connectionName = $className::defaultConnectionName();
             }

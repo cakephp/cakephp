@@ -92,7 +92,7 @@ trait CellTrait
      */
     protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
-        /* @var \Cake\View\Cell $instance */
+        /** @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
 
         $builder = $instance->viewBuilder();
@@ -112,18 +112,17 @@ trait CellTrait
 
             $class = static::class;
             $builder->setClassName($class);
-            $instance->viewClass = $class;
+            $instance->viewBuilder()->setClassName($class);
 
             return $instance;
         }
 
         if (method_exists($this, 'viewBuilder')) {
             $builder->setTheme($this->viewBuilder()->getTheme());
-        }
 
-        if (isset($this->viewClass)) {
-            $builder->setClassName($this->viewClass);
-            $instance->viewClass = $this->viewClass;
+            if ($this->viewBuilder()->getClassName() !== null) {
+                $builder->setClassName($this->viewBuilder()->getClassName());
+            }
         }
 
         return $instance;
