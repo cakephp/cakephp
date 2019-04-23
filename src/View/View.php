@@ -1340,10 +1340,14 @@ class View implements EventDispatcherInterface
      * @param string|null $name The name of the layout to find.
      * @return string Filename for layout file.
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
+     * @throws \RuntimeException
      */
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
+            if ($this->layout === false) {
+                throw new RuntimeException('Setting $this->layout to false is not valid input here.');
+            }
             $name = $this->layout;
         }
 
