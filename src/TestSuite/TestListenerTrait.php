@@ -19,6 +19,7 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
+use Throwable;
 
 trait TestListenerTrait
 {
@@ -53,14 +54,14 @@ trait TestListenerTrait
     /**
      * @inheritDoc
      */
-    public function addSkippedTest(Test $test, \Throwable $t, float $time): void
+    public function addSkippedTest(Test $test, Throwable $t, float $time): void
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function addError(Test $test, \Throwable $t, float $time): void
+    public function addError(Test $test, Throwable $t, float $time): void
     {
     }
 
@@ -81,14 +82,14 @@ trait TestListenerTrait
     /**
      * @inheritDoc
      */
-    public function addRiskyTest(Test $test, \Throwable $e, float $time): void
+    public function addRiskyTest(Test $test, Throwable $e, float $time): void
     {
     }
 
     /**
      * @inheritDoc
      */
-    public function addIncompleteTest(Test $test, \Throwable $e, float $time): void
+    public function addIncompleteTest(Test $test, Throwable $e, float $time): void
     {
     }
 }

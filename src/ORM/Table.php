@@ -42,6 +42,7 @@ use Cake\ORM\Rule\IsUnique;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
+use Exception;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -2069,7 +2070,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         }
                     }
                 });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $cleanup($entities);
 
             throw $e;

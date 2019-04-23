@@ -17,6 +17,7 @@ namespace Cake\Validation;
 
 use Cake\I18n\Time;
 use Cake\Utility\Text;
+use Countable;
 use DateTimeInterface;
 use InvalidArgumentException;
 use LogicException;
@@ -236,7 +237,7 @@ class Validation
      */
     public static function numElements($check, string $operator, int $expectedCount): bool
     {
-        if (!is_array($check) && !$check instanceof \Countable) {
+        if (!is_array($check) && !$check instanceof Countable) {
             return false;
         }
 

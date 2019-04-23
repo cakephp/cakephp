@@ -56,6 +56,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
+use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpUnitException;
 use Throwable;
@@ -1232,14 +1233,14 @@ trait IntegrationTestTrait
      */
     protected function extractVerboseMessage(string $message): string
     {
-        if ($this->_exception instanceof \Exception) {
+        if ($this->_exception instanceof Exception) {
             $message .= $this->extractExceptionMessage($this->_exception);
         }
         if ($this->_controller === null) {
             return $message;
         }
         $error = $this->_controller->viewBuilder()->getVar('error');
-        if ($error instanceof \Exception) {
+        if ($error instanceof Exception) {
             $message .= $this->extractExceptionMessage($this->viewVariable('error'));
         }
 
@@ -1252,7 +1253,7 @@ trait IntegrationTestTrait
      * @param \Exception $exception Exception to extract
      * @return string
      */
-    protected function extractExceptionMessage(\Exception $exception)
+    protected function extractExceptionMessage(Exception $exception)
     {
         return PHP_EOL .
             sprintf('Possibly related to %s: "%s" ', get_class($exception), $exception->getMessage()) .

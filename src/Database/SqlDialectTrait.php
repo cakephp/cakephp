@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
+use RuntimeException;
 
 /**
  * Sql dialect trait
@@ -214,7 +215,7 @@ trait SqlDialectTrait
     protected function _removeAliasesFromConditions(Query $query): Query
     {
         if ($query->clause('join')) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
                 'this can break references to joined tables.'
             );
