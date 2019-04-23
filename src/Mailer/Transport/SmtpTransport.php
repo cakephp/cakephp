@@ -79,6 +79,18 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Unserialize handler.
+     *
+     * Ensure that the socket property isn't reinitialized in a broken state.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        $this->_socket = null;
+    }
+
+    /**
      * Connect to the SMTP server.
      *
      * This method tries to connect only in case there is no open
