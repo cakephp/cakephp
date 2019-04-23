@@ -66,8 +66,9 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         try {
             $this->load($helper);
         } catch (MissingHelperException $exception) {
-            if ($this->_View->getPlugin()) {
-                $this->load($this->_View->getPlugin() . '.' . $helper);
+            $plugin = $this->_View->getPlugin();
+            if (!empty($plugin)) {
+                $this->load($plugin . '.' . $helper);
 
                 return true;
             }
@@ -143,6 +144,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      */
     protected function _create($class, string $alias, array $settings): Helper
     {
+        /** @var \Cake\View\Helper $instance */
         $instance = new $class($this->_View, $settings);
 
         $enable = $settings['enabled'] ?? true;

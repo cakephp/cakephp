@@ -68,7 +68,12 @@ class TimeHelper extends Helper
      */
     public function fromString($dateString, $timezone = null): Time
     {
-        return (new Time($dateString))->timezone($timezone);
+        $time = new Time($dateString);
+        if ($timezone !== null) {
+            $time = $time->timezone($timezone);
+        }
+
+        return $time;
     }
 
     /**

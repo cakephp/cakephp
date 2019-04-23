@@ -3285,18 +3285,13 @@
     <InvalidScalarArgument occurrences="1">
       <code>$format</code>
     </InvalidScalarArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$timezone</code>
-    </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>TimeHelper</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/UrlHelper.php">
-    <PossiblyNullArgument occurrences="3">
+    <PossiblyNullArgument occurrences="1">
       <code>$file</code>
-      <code>$this-&gt;_View-&gt;getTheme()</code>
-      <code>$this-&gt;_View-&gt;getTheme()</code>
     </PossiblyNullArgument>
     <PossiblyNullOperand occurrences="4">
       <code>$asset[0]</code>
@@ -3306,19 +3301,10 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/View/HelperRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Helper</code>
-    </MoreSpecificReturnType>
-    <PossiblyNullOperand occurrences="1">
-      <code>$this-&gt;_View-&gt;getPlugin()</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/View/JsonView.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -3329,9 +3315,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/SerializedView.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$layout</code>
-    </MoreSpecificImplementedParamType>
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;_responseType</code>
     </PossiblyNullArgument>
@@ -3344,15 +3327,6 @@
     </UninitializedProperty>
   </file>
   <file src="src/View/View.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$name</code>
-    </PossiblyFalseArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;Blocks-&gt;active()</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$subDir</code>
-    </PossiblyNullOperand>
     <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>$request ?: Router::getRequest(true)</code>
       <code>$request ?: Router::getRequest(true)</code>

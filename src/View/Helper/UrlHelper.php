@@ -280,9 +280,10 @@ class UrlHelper extends Helper
         $webPath = $request->getAttribute('webroot') . $asset[0];
         $file = $asset[0];
 
-        if (!empty($this->_View->getTheme())) {
+        $themeName = $this->_View->getTheme();
+        if (!empty($themeName)) {
             $file = trim($file, '/');
-            $theme = $this->_inflectThemeName($this->_View->getTheme()) . '/';
+            $theme = $this->_inflectThemeName($themeName) . '/';
 
             if (DIRECTORY_SEPARATOR === '\\') {
                 $file = str_replace('/', '\\', $file);
@@ -291,7 +292,7 @@ class UrlHelper extends Helper
             if (file_exists(Configure::read('App.wwwRoot') . $theme . $file)) {
                 $webPath = $request->getAttribute('webroot') . $theme . $asset[0];
             } else {
-                $themePath = Plugin::path($this->_View->getTheme());
+                $themePath = Plugin::path($themeName);
                 $path = $themePath . 'webroot/' . $file;
                 if (file_exists($path)) {
                     $webPath = $request->getAttribute('webroot') . $theme . $asset[0];

@@ -1084,7 +1084,7 @@ class View implements EventDispatcherInterface
         if ($initialBlocks !== $remainingBlocks) {
             throw new LogicException(sprintf(
                 'The "%s" block was left open. Blocks are not allowed to cross files.',
-                $this->Blocks->active()
+                (string)$this->Blocks->active()
             ));
         }
 
@@ -1344,9 +1344,10 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
+            /** @var string $name */
             $name = $this->layout;
         }
-        $subDir = null;
+        $subDir = '';
 
         if ($this->layoutPath) {
             $subDir = $this->layoutPath . DIRECTORY_SEPARATOR;
