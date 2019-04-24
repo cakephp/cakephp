@@ -85,7 +85,7 @@ abstract class SerializedView extends View
      *   view template will be rendered.
      *
      * @param string|false|null $view The view being rendered.
-     * @param string|null $layout The layout being rendered.
+     * @param string|null|false $layout The layout being rendered.
      * @return string The rendered view.
      */
     public function render($view = null, $layout = null): string

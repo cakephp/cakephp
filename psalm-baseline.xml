@@ -57,17 +57,6 @@
       <code>$_user</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Cache/Cache.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>static::$_registry === null</code>
-    </DocblockTypeContradiction>
-  </file>
-  <file src="src/Cache/CacheEngine.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>is_string($key)</code>
-      <code>is_iterable($iterable)</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/Cache/CacheRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
@@ -546,12 +535,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/Controller.php">
-    <DocblockTypeContradiction occurrences="4">
-      <code>$this-&gt;name === null</code>
-      <code>$this-&gt;name === null</code>
-      <code>$this-&gt;_components === null</code>
-      <code>$components === null &amp;&amp; $this-&gt;_components === null</code>
-    </DocblockTypeContradiction>
     <PossiblyNullOperand occurrences="1">
       <code>$this-&gt;name</code>
     </PossiblyNullOperand>
@@ -681,17 +664,7 @@
       <code>$type</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Database/Dialect/MysqlDialectTrait.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>$this-&gt;_schemaDialect === null</code>
-      <code>$this-&gt;_schemaDialect === null</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/Database/Dialect/PostgresDialectTrait.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>$this-&gt;_schemaDialect === null</code>
-      <code>$this-&gt;_schemaDialect === null</code>
-    </DocblockTypeContradiction>
     <MissingClosureParamType occurrences="3">
       <code>$p</code>
       <code>$p</code>
@@ -703,10 +676,6 @@
     </MissingClosureReturnType>
   </file>
   <file src="src/Database/Dialect/SqliteDialectTrait.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>$this-&gt;_schemaDialect === null</code>
-      <code>$this-&gt;_schemaDialect === null</code>
-    </DocblockTypeContradiction>
     <MissingClosureParamType occurrences="5">
       <code>$p</code>
       <code>$p</code>
@@ -785,9 +754,6 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Database/Driver/Mysql.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_version === null</code>
-    </DocblockTypeContradiction>
     <PossiblyInvalidArgument occurrences="1">
       <code>$isObject ? $query-&gt;sql() : $query</code>
     </PossiblyInvalidArgument>
@@ -858,9 +824,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="src/Database/Expression/CaseExpression.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>is_array($types)</code>
-    </DocblockTypeContradiction>
     <PossiblyNullArgument occurrences="1">
       <code>$type</code>
     </PossiblyNullArgument>
@@ -981,10 +944,6 @@
     </MissingClosureReturnType>
   </file>
   <file src="src/Database/Query.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>!is_string($table) &amp;&amp; !($table instanceof ExpressionInterface)</code>
-      <code>$this-&gt;_selectTypeMap === null</code>
-    </DocblockTypeContradiction>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Cake\Database\StatementInterface|null</code>
     </ImplementedReturnTypeMismatch>
@@ -1215,9 +1174,6 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Database/Statement/PDOStatement.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$type === null</code>
-    </DocblockTypeContradiction>
     <InvalidScalarArgument occurrences="1">
       <code>$type</code>
     </InvalidScalarArgument>
@@ -1259,9 +1215,6 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Database/Statement/SqlserverStatement.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$type === null</code>
-    </DocblockTypeContradiction>
     <InvalidScalarArgument occurrences="1">
       <code>$type</code>
     </InvalidScalarArgument>
@@ -1325,9 +1278,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Database/Type/DateTimeType.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$value === null</code>
-    </DocblockTypeContradiction>
     <InvalidScalarArgument occurrences="1">
       <code>$this-&gt;_localeFormat</code>
     </InvalidScalarArgument>
@@ -1392,14 +1342,6 @@
       <code>TypeInterface</code>
     </MoreSpecificReturnType>
   </file>
-  <file src="src/Database/TypeMapTrait.php">
-    <DocblockTypeContradiction occurrences="4">
-      <code>$this-&gt;_typeMap === null</code>
-      <code>$this-&gt;_typeMap === null</code>
-      <code>$this-&gt;_typeMap === null</code>
-      <code>$this-&gt;_typeMap === null</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/Database/TypedResultTrait.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
@@ -1436,11 +1378,6 @@
     <PossiblyNullReference occurrences="1">
       <code>getAlias</code>
     </PossiblyNullReference>
-  </file>
-  <file src="src/Datasource/QueryCacher.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>!is_string($config) &amp;&amp; !($config instanceof CacheEngine)</code>
-    </DocblockTypeContradiction>
   </file>
   <file src="src/Datasource/QueryTrait.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -1502,27 +1439,11 @@
     </ImplementedReturnTypeMismatch>
   </file>
   <file src="src/Event/EventDispatcherTrait.php">
-    <DocblockTypeContradiction occurrences="11">
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-      <code>$this-&gt;_eventManager === null</code>
-    </DocblockTypeContradiction>
     <MoreSpecificReturnType occurrences="1">
       <code>EventInterface</code>
     </MoreSpecificReturnType>
   </file>
   <file src="src/Form/Form.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$schema === null &amp;&amp; empty($this-&gt;_schema)</code>
-    </DocblockTypeContradiction>
     <PropertyNotSetInConstructor occurrences="3">
       <code>$_schema</code>
       <code>$_validator</code>
@@ -1530,9 +1451,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/BaseApplication.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$plugin instanceof PluginInterface</code>
-    </DocblockTypeContradiction>
     <UnresolvableInclude occurrences="2">
       <code>require_once $this-&gt;configDir . '/bootstrap.php'</code>
       <code>require $this-&gt;configDir . '/routes.php'</code>
@@ -1549,9 +1467,6 @@
     </InvalidScalarArgument>
   </file>
   <file src="src/Http/Client/Adapter/Stream.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>empty($body)</code>
-    </DocblockTypeContradiction>
     <InvalidOperand occurrences="1">
       <code>$indexes[$i + 1]</code>
     </InvalidOperand>
@@ -1736,9 +1651,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/ServerRequest.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>is_string($method)</code>
-    </DocblockTypeContradiction>
     <LessSpecificImplementedReturnType occurrences="2">
       <code>array</code>
       <code>array</code>
@@ -1798,10 +1710,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>static::$_isDateInstance === null</code>
-      <code>static::$diffFormatter === null</code>
-    </DocblockTypeContradiction>
     <InvalidScalarArgument occurrences="1">
       <code>$format</code>
     </InvalidScalarArgument>
@@ -1831,9 +1739,6 @@
     </MissingParamType>
   </file>
   <file src="src/I18n/I18n.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>static::$_defaultLocale === null</code>
-    </DocblockTypeContradiction>
     <MissingClosureReturnType occurrences="2">
       <code>function () {</code>
       <code>function () {</code>
@@ -1925,9 +1830,6 @@
     </MoreSpecificReturnType>
   </file>
   <file src="src/I18n/TranslatorRegistry.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_cacher === null</code>
-    </DocblockTypeContradiction>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Aura\Intl\TranslatorInterface|null</code>
     </ImplementedReturnTypeMismatch>
@@ -1996,9 +1898,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Mailer/Email.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;message === null</code>
-    </DocblockTypeContradiction>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>self</code>
     </ImplementedReturnTypeMismatch>
@@ -2057,11 +1956,6 @@
       <code>$_socket</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Mailer/TransportFactory.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>static::$_registry === null</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/Mailer/TransportRegistry.php">
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
@@ -2079,11 +1973,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/ORM/Association.php">
-    <DocblockTypeContradiction occurrences="3">
-      <code>$this-&gt;_targetTable === null</code>
-      <code>$this-&gt;_sourceTable === null</code>
-      <code>$this-&gt;_bindingKey === null</code>
-    </DocblockTypeContradiction>
     <MissingClosureParamType occurrences="2">
       <code>$exp</code>
       <code>$results</code>
@@ -2106,18 +1995,11 @@
     </UninitializedProperty>
   </file>
   <file src="src/ORM/Association/BelongsTo.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_foreignKey === null</code>
-    </DocblockTypeContradiction>
     <PropertyNotSetInConstructor occurrences="1">
       <code>BelongsTo</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/BelongsToMany.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>$this-&gt;_targetForeignKey === null</code>
-      <code>$this-&gt;_foreignKey === null</code>
-    </DocblockTypeContradiction>
     <MissingClosureParamType occurrences="1">
       <code>$exp</code>
     </MissingClosureParamType>
@@ -2145,9 +2027,6 @@
     </InvalidArgument>
   </file>
   <file src="src/ORM/Association/HasMany.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_foreignKey === null</code>
-    </DocblockTypeContradiction>
     <InvalidArgument occurrences="2">
       <code>$targetEntities</code>
       <code>$targetEntities</code>
@@ -2176,9 +2055,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/HasOne.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_foreignKey === null</code>
-    </DocblockTypeContradiction>
     <PropertyNotSetInConstructor occurrences="1">
       <code>HasOne</code>
     </PropertyNotSetInConstructor>
@@ -2219,10 +2095,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Behavior/TimestampBehavior.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>$this-&gt;_ts === null</code>
-      <code>$type instanceof DateTimeType</code>
-    </DocblockTypeContradiction>
     <PropertyNotSetInConstructor occurrences="1">
       <code>$_ts</code>
     </PropertyNotSetInConstructor>
@@ -2373,9 +2245,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/EagerLoader.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$statement instanceof BufferedStatement</code>
-    </DocblockTypeContradiction>
     <InvalidArgument occurrences="1">
       <code>$collectKeys</code>
     </InvalidArgument>
@@ -2420,24 +2289,6 @@
       <code>indexBy</code>
     </PossiblyUndefinedMethod>
   </file>
-  <file src="src/ORM/Locator/LocatorAwareTrait.php">
-    <DocblockTypeContradiction occurrences="14">
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-      <code>$this-&gt;_tableLocator === null</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/ORM/Locator/TableLocator.php">
     <LessSpecificReturnStatement occurrences="1">
       <code>new $options['className']($options)</code>
@@ -2481,10 +2332,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="src/ORM/Query.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>$table instanceof Table</code>
-      <code>$this-&gt;_eagerLoader === null</code>
-    </DocblockTypeContradiction>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
@@ -2517,9 +2364,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/ResultSet.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_statement === null</code>
-    </DocblockTypeContradiction>
     <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;_results</code>
     </PossiblyInvalidArgument>
@@ -2537,15 +2381,6 @@
     </PossiblyInvalidMethodCall>
   </file>
   <file src="src/ORM/Table.php">
-    <DocblockTypeContradiction occurrences="7">
-      <code>$this-&gt;_table === null</code>
-      <code>$this-&gt;_alias === null</code>
-      <code>$this-&gt;_registryAlias === null</code>
-      <code>$this-&gt;_schema === null</code>
-      <code>$this-&gt;_primaryKey === null</code>
-      <code>$this-&gt;_displayField === null</code>
-      <code>$options instanceof SaveOptionsBuilder</code>
-    </DocblockTypeContradiction>
     <LessSpecificReturnStatement occurrences="1">
       <code>new $class([], ['source' =&gt; $this-&gt;getRegistryAlias()])</code>
     </LessSpecificReturnStatement>
@@ -2600,11 +2435,6 @@
       <code>$self === self::class || count($parts) &lt; 3</code>
     </TypeDoesNotContainType>
   </file>
-  <file src="src/ORM/TableRegistry.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>static::$_locator === null</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
     <MissingParamType occurrences="3">
       <code>$message</code>
@@ -2633,12 +2463,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$e-&gt;getCode()</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Routing/Route/EntityRoute.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>is_array($entity)</code>
-      <code>!$entity instanceof ArrayAccess &amp;&amp; !is_array($entity)</code>
-    </DocblockTypeContradiction>
   </file>
   <file src="src/Routing/Route/Route.php">
     <PossiblyNullArgument occurrences="1">
@@ -2961,9 +2785,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>empty($this-&gt;_first)</code>
-    </DocblockTypeContradiction>
     <NoInterfaceProperties occurrences="1">
       <code>$test-&gt;fixtureManager</code>
     </NoInterfaceProperties>
@@ -2997,11 +2818,6 @@
     </UndefinedPropertyAssignment>
   </file>
   <file src="src/TestSuite/Fixture/TestFixture.php">
-    <DocblockTypeContradiction occurrences="3">
-      <code>$this-&gt;table === null</code>
-      <code>empty($this-&gt;_schema)</code>
-      <code>empty($this-&gt;_schema)</code>
-    </DocblockTypeContradiction>
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$schema</code>
     </InvalidPropertyAssignmentValue>
@@ -3161,12 +2977,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Utility/Hash.php">
-    <DocblockTypeContradiction occurrences="4">
-      <code>is_array($data) || $data instanceof ArrayAccess</code>
-      <code>is_numeric($path)</code>
-      <code>is_string($path) || is_numeric($path)</code>
-      <code>is_array($data) || $data instanceof ArrayAccess</code>
-    </DocblockTypeContradiction>
     <PossiblyInvalidArgument occurrences="22">
       <code>$data</code>
       <code>$tokens</code>
@@ -3218,9 +3028,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/Utility/Security.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>static::$_instance === null</code>
-    </DocblockTypeContradiction>
     <LessSpecificReturnStatement occurrences="1">
       <code>static::$_instance</code>
     </LessSpecificReturnStatement>
@@ -3251,10 +3058,6 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Utility/Xml.php">
-    <DocblockTypeContradiction occurrences="2">
-      <code>is_string($input)</code>
-      <code>is_array($data)</code>
-    </DocblockTypeContradiction>
     <InvalidArgument occurrences="1">
       <code>$dom</code>
     </InvalidArgument>
@@ -3294,9 +3097,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Validation/Validator.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>is_array($settings)</code>
-    </DocblockTypeContradiction>
     <MissingClosureParamType occurrences="7">
       <code>$value</code>
       <code>$context</code>
@@ -3360,9 +3160,6 @@
     </MissingClosureReturnType>
   </file>
   <file src="src/View/Form/EntityContext.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>is_iterable($values)</code>
-    </DocblockTypeContradiction>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array</code>
     </LessSpecificImplementedReturnType>
@@ -3412,9 +3209,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/FormHelper.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_contextFactory === null</code>
-    </DocblockTypeContradiction>
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>
     </ImplementedReturnTypeMismatch>
@@ -3488,24 +3282,16 @@
     </LessSpecificImplementedReturnType>
   </file>
   <file src="src/View/Helper/TimeHelper.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$date === null</code>
-    </DocblockTypeContradiction>
     <InvalidScalarArgument occurrences="1">
       <code>$format</code>
     </InvalidScalarArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$timezone</code>
-    </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>TimeHelper</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/UrlHelper.php">
-    <PossiblyNullArgument occurrences="3">
+    <PossiblyNullArgument occurrences="1">
       <code>$file</code>
-      <code>$this-&gt;_View-&gt;getTheme()</code>
-      <code>$this-&gt;_View-&gt;getTheme()</code>
     </PossiblyNullArgument>
     <PossiblyNullOperand occurrences="4">
       <code>$asset[0]</code>
@@ -3515,19 +3301,10 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/View/HelperRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Helper</code>
-    </MoreSpecificReturnType>
-    <PossiblyNullOperand occurrences="1">
-      <code>$this-&gt;_View-&gt;getPlugin()</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/View/JsonView.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -3538,9 +3315,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/SerializedView.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$layout</code>
-    </MoreSpecificImplementedParamType>
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;_responseType</code>
     </PossiblyNullArgument>
@@ -3552,29 +3326,7 @@
       <code>$this-&gt;_responseType</code>
     </UninitializedProperty>
   </file>
-  <file src="src/View/StringTemplateTrait.php">
-    <DocblockTypeContradiction occurrences="6">
-      <code>$this-&gt;_templater === null</code>
-      <code>$this-&gt;_templater === null</code>
-      <code>$this-&gt;_templater === null</code>
-      <code>$this-&gt;_templater === null</code>
-      <code>$this-&gt;_templater === null</code>
-      <code>$this-&gt;_templater === null</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/View/View.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>$this-&gt;_helpers === null</code>
-    </DocblockTypeContradiction>
-    <PossiblyFalseArgument occurrences="1">
-      <code>$name</code>
-    </PossiblyFalseArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;Blocks-&gt;active()</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$subDir</code>
-    </PossiblyNullOperand>
     <PossiblyNullPropertyAssignmentValue occurrences="4">
       <code>$request ?: Router::getRequest(true)</code>
       <code>$request ?: Router::getRequest(true)</code>
@@ -3610,20 +3362,10 @@
       <code>View</code>
     </MoreSpecificReturnType>
   </file>
-  <file src="src/View/Widget/DateTimeWidget.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>is_int($value)</code>
-    </DocblockTypeContradiction>
-  </file>
   <file src="src/View/Widget/MultiCheckboxWidget.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$labelAttrs</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/View/Widget/RadioWidget.php">
-    <DocblockTypeContradiction occurrences="1">
-      <code>is_array($disabled)</code>
-    </DocblockTypeContradiction>
   </file>
   <file src="src/View/XmlView.php">
     <PossiblyUndefinedMethod occurrences="1">
