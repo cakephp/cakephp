@@ -1351,8 +1351,8 @@ class View implements EventDispatcherInterface
         if ($name === null) {
             if ($this->layout === false) {
                 throw new RuntimeException(
-                    'Setting View::$layout to false is no longer supported.'
-                    . ' Set View::$autoLayout to false instead.'
+                    'Setting View::$layout to false is no longer supported.' .
+                    ' Set View::$autoLayout to false instead.'
                 );
             }
             $name = $this->layout;
