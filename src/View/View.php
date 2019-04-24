@@ -133,7 +133,7 @@ class View implements EventDispatcherInterface
      * is the filename of the layout in /templates/Layout without the .php
      * extension.
      *
-     * @var string|false
+     * @var string
      */
     protected $layout = 'default';
 
@@ -549,9 +549,9 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /templates/Layout
      * without the .php extension.
      *
-     * @return string|false
+     * @return string
      */
-    public function getLayout()
+    public function getLayout(): string
     {
         return $this->layout;
     }
@@ -561,10 +561,10 @@ class View implements EventDispatcherInterface
      * The name specified is the filename of the layout in /templates/Layout
      * without the .php extension.
      *
-     * @param string|false $name Layout file name to set.
+     * @param string $name Layout file name to set.
      * @return $this
      */
-    public function setLayout($name)
+    public function setLayout(string $name)
     {
         $this->layout = $name;
 
@@ -685,7 +685,7 @@ class View implements EventDispatcherInterface
      * the template will be located along the regular view path cascade.
      *
      * @param string|false|null $view Name of view file to use
-     * @param string|null|false $layout Layout to use. False to disable.
+     * @param string|false|null $layout Layout to use. False to disable.
      * @return string Rendered content.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$viewFileName]
@@ -694,7 +694,11 @@ class View implements EventDispatcherInterface
     public function render($view = null, $layout = null): string
     {
         $defaultLayout = null;
-        if ($layout !== null) {
+        $defaultAutoLayout = null;
+        if ($layout === false) {
+            $defaultAutoLayout = $this->autoLayout;
+            $this->autoLayout = false;
+        } elseif ($layout !== null) {
             $defaultLayout = $this->layout;
             $this->layout = $layout;
         }
@@ -707,11 +711,14 @@ class View implements EventDispatcherInterface
             $this->dispatchEvent('View.afterRender', [$viewFileName]);
         }
 
-        if ($this->layout && $this->autoLayout) {
+        if ($this->autoLayout) {
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
             $this->layout = $defaultLayout;
+        }
+        if ($defaultAutoLayout !== null) {
+            $this->autoLayout = $defaultAutoLayout;
         }
 
         return $this->Blocks->get('content');
@@ -731,9 +738,6 @@ class View implements EventDispatcherInterface
     public function renderLayout(string $content, ?string $layout = null)
     {
         $layoutFileName = $this->_getLayoutFileName($layout);
-        if (empty($layoutFileName)) {
-            return $this->Blocks->get('content');
-        }
 
         if (!empty($content)) {
             $this->Blocks->set('content', $content);
@@ -1346,7 +1350,10 @@ class View implements EventDispatcherInterface
     {
         if ($name === null) {
             if ($this->layout === false) {
-                throw new RuntimeException('Setting $this->layout to false is not valid input here.');
+                throw new RuntimeException(
+                    'Setting View::$layout to false is no longer supported.'
+                    . ' Set View::$autoLayout to false instead.'
+                );
             }
             $name = $this->layout;
         }

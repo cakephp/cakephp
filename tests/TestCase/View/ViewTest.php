@@ -1596,8 +1596,7 @@ class ViewTest extends TestCase
      */
     public function testExtendNested()
     {
-        $this->View->setLayout(false);
-        $content = $this->View->render('nested_extends');
+        $content = $this->View->render('nested_extends', false);
         $expected = <<<TEXT
 This is the second parent.
 This is the first parent.
@@ -1615,8 +1614,7 @@ TEXT;
     public function testExtendSelf()
     {
         try {
-            $this->View->setLayout(false);
-            $this->View->render('extend_self');
+            $this->View->render('extend_self', false);
             $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
@@ -1632,8 +1630,7 @@ TEXT;
     public function testExtendLoop()
     {
         try {
-            $this->View->setLayout(false);
-            $this->View->render('extend_loop');
+            $this->View->render('extend_loop', false);
             $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
@@ -1648,8 +1645,7 @@ TEXT;
      */
     public function testExtendElement()
     {
-        $this->View->setLayout(false);
-        $content = $this->View->render('extend_element');
+        $content = $this->View->render('extend_element', false);
         $expected = <<<TEXT
 Parent View.
 View content.
@@ -1668,8 +1664,7 @@ TEXT;
     public function testExtendPrefixElement()
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
-        $this->View->setLayout(false);
-        $content = $this->View->render('extend_element');
+        $content = $this->View->render('extend_element', false);
         $expected = <<<TEXT
 Parent View.
 View content.
@@ -1688,8 +1683,7 @@ TEXT;
     public function testExtendMissingElement()
     {
         try {
-            $this->View->setLayout(false);
-            $this->View->render('extend_missing_element');
+            $this->View->render('extend_missing_element', false);
             $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
@@ -1705,8 +1699,7 @@ TEXT;
      */
     public function testExtendWithElementBeforeExtend()
     {
-        $this->View->setLayout(false);
-        $result = $this->View->render('extend_with_element');
+        $result = $this->View->render('extend_with_element', false);
         $expected = <<<TEXT
 Parent View.
 this is the test elementThe view
@@ -1723,7 +1716,7 @@ TEXT;
     public function testExtendWithPrefixElementBeforeExtend()
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
-        $this->View->setLayout(false);
+        $this->View->disableAutoLayout();
         $result = $this->View->render('extend_with_element');
         $expected = <<<TEXT
 Parent View.
