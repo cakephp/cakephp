@@ -623,11 +623,8 @@ class Router
      * Reverses a parsed parameter array into an array.
      *
      * Works similarly to Router::url(), but since parsed URL's contain additional
-     * 'pass' as well as 'url.url' keys. Those keys need to be specially
+     * keys like 'pass', '_matchedRoute' etc. those keys need to be specially
      * handled in order to reverse a params array into a string URL.
-     *
-     * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
-     * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
      *     Cake\Http\ServerRequest object that needs to be reversed.
@@ -635,33 +632,21 @@ class Router
      */
     public static function reverseToArray($params): array
     {
-        $url = [];
         if ($params instanceof ServerRequest) {
-            $url = $params->getQueryParams();
+            $queryString = $params->getQueryParams();
             $params = $params->getAttribute('params');
-        } elseif (isset($params['url'])) {
-            $url = $params['url'];
+            $params['?'] = $queryString;
         }
         $pass = $params['pass'] ?? [];
 
         unset(
             $params['pass'],
             $params['paging'],
-            $params['models'],
-            $params['url'],
-            $url['url'],
-            $params['autoRender'],
-            $params['bare'],
-            $params['requested'],
-            $params['return'],
             $params['_Token'],
             $params['_matchedRoute'],
             $params['_name']
         );
         $params = array_merge($params, $pass);
-        if (!empty($url)) {
-            $params['?'] = $url;
-        }
 
         return $params;
     }
@@ -670,11 +655,8 @@ class Router
      * Reverses a parsed parameter array into a string.
      *
      * Works similarly to Router::url(), but since parsed URL's contain additional
-     * 'pass' as well as 'url.url' keys. Those keys need to be specially
+     * keys like 'pass', '_matchedRoute' etc. those keys need to be specially
      * handled in order to reverse a params array into a string URL.
-     *
-     * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
-     * are used for CakePHP internals and should not normally be part of an output URL.
      *
      * @param \Cake\Http\ServerRequest|array $params The params array or
      *     Cake\Http\ServerRequest object that needs to be reversed.
