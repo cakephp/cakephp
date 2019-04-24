@@ -709,4 +709,25 @@ class SmtpTransportTest extends TestCase
 
         $this->SmtpTransport->send($email);
     }
+
+    /**
+     * Ensure that unserialized transports have no connection.
+     *
+     * @return void
+     */
+    public function testSerializeCleanupSocket()
+    {
+        $this->socket->expects($this->at(0))->method('connect')->will($this->returnValue(true));
+        $this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+        $this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+        $this->socket->expects($this->at(3))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+        $smtpTransport = new SmtpTestTransport();
+        $smtpTransport->setSocket($this->socket);
+        $smtpTransport->connect();
+
+        $result = unserialize(serialize($smtpTransport));
+        $this->assertAttributeEquals(null, '_socket', $result);
+        $this->assertFalse($result->connected());
+    }
 }
