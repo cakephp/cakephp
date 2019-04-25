@@ -317,12 +317,6 @@ class View implements EventDispatcherInterface
         ?EventManager $eventManager = null,
         array $viewOptions = []
     ) {
-        if (isset($viewOptions['view'])) {
-            $this->setTemplate($viewOptions['view']);
-        }
-        if (isset($viewOptions['viewPath'])) {
-            $this->setTemplatePath($viewOptions['viewPath']);
-        }
         foreach ($this->_passedVars as $var) {
             if (isset($viewOptions[$var])) {
                 $this->{$var} = $viewOptions[$var];

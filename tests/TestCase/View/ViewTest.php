@@ -113,7 +113,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages',
+            'templatePath' => 'Pages',
         ];
 
         $ThemeView = new TestView(null, null, null, $viewOptions);
@@ -157,8 +157,8 @@ class ViewTest extends TestCase
     {
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
-            'viewPath' => 'Tests',
-            'view' => 'index',
+            'templatePath' => 'Tests',
+            'template' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -204,8 +204,8 @@ class ViewTest extends TestCase
     {
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
-            'viewPath' => 'Tests',
-            'view' => 'index',
+            'templatePath' => 'Tests',
+            'template' => 'index',
             'theme' => 'TestTheme',
         ];
 
@@ -327,8 +327,8 @@ class ViewTest extends TestCase
     {
         $viewOptions = ['plugin' => 'TestPlugin',
             'name' => 'TestPlugin',
-            'viewPath' => 'Tests',
-            'view' => 'index',
+            'templatePath' => 'Tests',
+            'template' => 'index',
         ];
 
         $View = new TestView(null, null, null, $viewOptions);
@@ -354,7 +354,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages',
+            'templatePath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -399,7 +399,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Pages',
-            'viewPath' => 'Pages',
+            'templatePath' => 'Pages',
         ];
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')->getMock();
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -419,7 +419,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Posts',
-            'viewPath' => 'Posts/json',
+            'templatePath' => 'Posts/json',
             'layoutPath' => 'json',
         ];
         $view = new TestView(null, null, null, $viewOptions);
@@ -444,7 +444,7 @@ class ViewTest extends TestCase
         $viewOptions = [
             'plugin' => null,
             'name' => 'Jobs',
-            'viewPath' => 'Jobs',
+            'templatePath' => 'Jobs',
             'layoutPath' => 'json',
         ];
         $view = new TestView(null, null, null, $viewOptions);
