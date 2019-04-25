@@ -90,7 +90,7 @@ class JsonView extends SerializedView
      * ### Special parameters
      * `_serialize` To convert a set of view variables into a JSON response.
      *   Its value can be a string for single variable name or array for multiple
-     *   names. If true all view variables will be serialized. It unset normal
+     *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      * `_jsonp` Enables JSONP support and wraps response in callback function
      *   provided in query string.
@@ -98,13 +98,13 @@ class JsonView extends SerializedView
      *   - Setting it to a string value, uses the provided query string parameter
      *     for finding the JSONP callback name.
      *
-     * @param string|null $view The view being rendered.
-     * @param string|null $layout The layout being rendered.
+     * @param string|false|null $template The template being rendered.
+     * @param string|null|false $layout The layout being rendered.
      * @return string The rendered view.
      */
-    public function render($view = null, $layout = null): string
+    public function render($template = null, $layout = null): string
     {
-        $return = parent::render($view, $layout);
+        $return = parent::render($template, $layout);
 
         if (!empty($this->viewVars['_jsonp'])) {
             $jsonpParam = $this->viewVars['_jsonp'];

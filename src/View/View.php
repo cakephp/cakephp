@@ -66,8 +66,6 @@ use RuntimeException;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
- * @property string $view
- * @property string $viewPath
  */
 class View implements EventDispatcherInterface
 {
@@ -678,14 +676,14 @@ class View implements EventDispatcherInterface
      * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
      * the template will be located along the regular view path cascade.
      *
-     * @param string|false|null $view Name of view file to use
+     * @param string|false|null $template Name of template file to use
      * @param string|false|null $layout Layout to use. False to disable.
      * @return string Rendered content.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
-     * @triggers View.beforeRender $this, [$viewFileName]
-     * @triggers View.afterRender $this, [$viewFileName]
+     * @triggers View.beforeRender $this, [$templateFileName]
+     * @triggers View.afterRender $this, [$templateFileName]
      */
-    public function render($view = null, $layout = null): string
+    public function render($template = null, $layout = null): string
     {
         $defaultLayout = null;
         $defaultAutoLayout = null;
@@ -697,12 +695,12 @@ class View implements EventDispatcherInterface
             $this->layout = $layout;
         }
 
-        $viewFileName = $view !== false ? $this->_getViewFileName($view) : null;
-        if ($viewFileName) {
+        $templateFileName = $template !== false ? $this->_getTemplateFileName($template) : null;
+        if ($templateFileName) {
             $this->_currentType = static::TYPE_TEMPLATE;
-            $this->dispatchEvent('View.beforeRender', [$viewFileName]);
-            $this->Blocks->set('content', $this->_render($viewFileName));
-            $this->dispatchEvent('View.afterRender', [$viewFileName]);
+            $this->dispatchEvent('View.beforeRender', [$templateFileName]);
+            $this->Blocks->set('content', $this->_render($templateFileName));
+            $this->dispatchEvent('View.afterRender', [$templateFileName]);
         }
 
         if ($this->autoLayout) {
@@ -954,8 +952,8 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Provides template or element extension/inheritance. Views can extends a
-     * parent view and populate blocks in the parent template.
+     * Provides template or element extension/inheritance. Templates can extends a
+     * parent template and populate blocks in the parent template.
      *
      * @param string $name The template or element to 'extend' the current one with.
      * @return $this
@@ -965,7 +963,7 @@ class View implements EventDispatcherInterface
     public function extend(string $name)
     {
         if ($name[0] === '/' || $this->_currentType === static::TYPE_TEMPLATE) {
-            $parent = $this->_getViewFileName($name);
+            $parent = $this->_getTemplateFileName($name);
         } else {
             switch ($this->_currentType) {
                 case static::TYPE_ELEMENT:
@@ -984,15 +982,15 @@ class View implements EventDispatcherInterface
                     $parent = $this->_getLayoutFileName($name);
                     break;
                 default:
-                    $parent = $this->_getViewFileName($name);
+                    $parent = $this->_getTemplateFileName($name);
             }
         }
 
         if ($parent === $this->_current) {
-            throw new LogicException('You cannot have views extend themselves.');
+            throw new LogicException('You cannot have templates extend themselves.');
         }
         if (isset($this->_parents[$parent]) && $this->_parents[$parent] === $this->_current) {
-            throw new LogicException('You cannot have views extend in a loop.');
+            throw new LogicException('You cannot have templates extend in a loop.');
         }
         $this->_parents[$this->_current] = $parent;
 
@@ -1000,7 +998,7 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Retrieve the current view type
+     * Retrieve the current template type
      *
      * @return string
      */
@@ -1045,36 +1043,36 @@ class View implements EventDispatcherInterface
      * Renders and returns output for given template filename with its
      * array of data. Handles parent/extended templates.
      *
-     * @param string $viewFile Filename of the view
+     * @param string $templateFile Filename of the template
      * @param array $data Data to include in rendered view. If empty the current
      *   View::$viewVars will be used.
      * @return string Rendered output
      * @throws \LogicException When a block is left open.
-     * @triggers View.beforeRenderFile $this, [$viewFile]
-     * @triggers View.afterRenderFile $this, [$viewFile, $content]
+     * @triggers View.beforeRenderFile $this, [$templateFile]
+     * @triggers View.afterRenderFile $this, [$templateFile, $content]
      */
-    protected function _render(string $viewFile, array $data = []): string
+    protected function _render(string $templateFile, array $data = []): string
     {
         if (empty($data)) {
             $data = $this->viewVars;
         }
-        $this->_current = $viewFile;
+        $this->_current = $templateFile;
         $initialBlocks = count($this->Blocks->unclosed());
 
-        $this->dispatchEvent('View.beforeRenderFile', [$viewFile]);
+        $this->dispatchEvent('View.beforeRenderFile', [$templateFile]);
 
-        $content = $this->_evaluate($viewFile, $data);
+        $content = $this->_evaluate($templateFile, $data);
 
-        $afterEvent = $this->dispatchEvent('View.afterRenderFile', [$viewFile, $content]);
+        $afterEvent = $this->dispatchEvent('View.afterRenderFile', [$templateFile, $content]);
         if ($afterEvent->getResult() !== null) {
             $content = $afterEvent->getResult();
         }
 
-        if (isset($this->_parents[$viewFile])) {
+        if (isset($this->_parents[$templateFile])) {
             $this->_stack[] = $this->fetch('content');
             $this->assign('content', $content);
 
-            $content = $this->_render($this->_parents[$viewFile]);
+            $content = $this->_render($this->_parents[$templateFile]);
             $this->assign('content', array_pop($this->_stack));
         }
 
@@ -1093,11 +1091,11 @@ class View implements EventDispatcherInterface
     /**
      * Sandbox method to evaluate a template / view script in.
      *
-     * @param string $viewFile Filename of the view
+     * @param string $templateFile Filename of the template.
      * @param array $dataForView Data to include in rendered view.
      * @return string Rendered output
      */
-    protected function _evaluate(string $viewFile, array $dataForView): string
+    protected function _evaluate(string $templateFile, array $dataForView): string
     {
         extract($dataForView);
         ob_start();
@@ -1220,13 +1218,13 @@ class View implements EventDispatcherInterface
      * CamelCased action names will be under_scored by default.
      * This means that you can have LongActionNames that refer to
      * long_action_names.php templates. You can change the inflection rule by
-     * overriding _inflectViewFileName.
+     * overriding _inflectTemplateFileName.
      *
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
-     * @throws \Cake\View\Exception\MissingTemplateException when a view file could not be found.
+     * @throws \Cake\View\Exception\MissingTemplateException when a template file could not be found.
      */
-    protected function _getViewFileName(?string $name = null): string
+    protected function _getTemplateFileName(?string $name = null): string
     {
         $templatePath = $subDir = '';
 
@@ -1249,7 +1247,7 @@ class View implements EventDispatcherInterface
         $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
         if (strpos($name, DIRECTORY_SEPARATOR) === false && $name !== '' && $name[0] !== '.') {
-            $name = $templatePath . $subDir . $this->_inflectViewFileName($name);
+            $name = $templatePath . $subDir . $this->_inflectTemplateFileName($name);
         } elseif (strpos($name, DIRECTORY_SEPARATOR) !== false) {
             if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
@@ -1277,7 +1275,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of file which should be inflected.
      * @return string File name after conversion
      */
-    protected function _inflectViewFileName(string $name): string
+    protected function _inflectTemplateFileName(string $name): string
     {
         return Inflector::underscore($name);
     }

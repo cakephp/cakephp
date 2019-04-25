@@ -84,11 +84,11 @@ abstract class SerializedView extends View
      *   names. If true all view variables will be serialized. If unset normal
      *   view template will be rendered.
      *
-     * @param string|false|null $view The view being rendered.
+     * @param string|false|null $template The template being rendered.
      * @param string|null|false $layout The layout being rendered.
      * @return string The rendered view.
      */
-    public function render($view = null, $layout = null): string
+    public function render($template = null, $layout = null): string
     {
         $serialize = false;
         if (isset($this->viewVars['_serialize'])) {
@@ -104,6 +104,6 @@ abstract class SerializedView extends View
             return $result;
         }
 
-        return parent::render($view, false);
+        return parent::render($template, false);
     }
 }
