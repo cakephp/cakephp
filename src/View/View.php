@@ -672,7 +672,7 @@ class View implements EventDispatcherInterface
      * - `beforeLayout`
      * - `afterLayout`
      *
-     * If View::$autoLayout is false or $layout is set to `false`, the template will be returned bare.
+     * If View::$autoLayout is set to `false`, the template will be returned bare.
      *
      * Template and layout names can point to plugin templates/layouts. Using the `Plugin.template` syntax
      * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
@@ -719,12 +719,13 @@ class View implements EventDispatcherInterface
     }
 
     /**
-     * Renders a layout. Returns output from _render(). Returns false on error.
+     * Renders a layout. Returns output from _render().
+     *
      * Several variables are created for use in layout.
      *
      * @param string $content Content to render in a template, wrapped by the surrounding layout.
      * @param string|null $layout Layout name
-     * @return mixed Rendered output, or false on error
+     * @return string Rendered output.
      * @throws \Cake\Core\Exception\Exception if there is an error in the view.
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
