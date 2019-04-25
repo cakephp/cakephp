@@ -177,7 +177,7 @@ abstract class Cell implements EventDispatcherInterface
                 ));
             }
 
-            $builder = $this->viewBuilder()->setLayout(false);
+            $builder = $this->viewBuilder();
 
             if ($template !== null &&
                 strpos($template, '/') === false &&
@@ -202,7 +202,7 @@ abstract class Cell implements EventDispatcherInterface
 
             $view = $this->createView();
             try {
-                return $view->render($template);
+                return $view->render($template, false);
             } catch (MissingTemplateException $e) {
                 throw new MissingCellTemplateException($name, $template, $e->getAttributes()['paths'], null, $e);
             }

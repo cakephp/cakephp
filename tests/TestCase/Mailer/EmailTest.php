@@ -1492,7 +1492,7 @@ class EmailTest extends TestCase
         $this->Email->setConfig(['empty']);
         $this->Email->viewBuilder()
             ->setTemplate('default')
-            ->setLayout(false);
+            ->disableAutoLayout();
         $result = $this->Email->send('message body.');
 
         $this->assertContains('message body.', $result['message']);

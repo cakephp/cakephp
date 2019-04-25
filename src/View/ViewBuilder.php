@@ -66,7 +66,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * The layout name to render.
      *
-     * @var string|null|false
+     * @var string|null
      */
     protected $_layout;
 
@@ -380,10 +380,10 @@ class ViewBuilder implements JsonSerializable, Serializable
      * The name specified is the filename of the layout in /templates/Layout
      * without the .php extension.
      *
-     * @param string|null|false $name Layout file name to set.
+     * @param string|null $name Layout file name to set.
      * @return $this
      */
-    public function setLayout($name)
+    public function setLayout(?string $name)
     {
         $this->_layout = $name;
 
@@ -393,9 +393,9 @@ class ViewBuilder implements JsonSerializable, Serializable
     /**
      * Gets the name of the layout file to render the view inside of.
      *
-     * @return string|null|false
+     * @return string|null
      */
-    public function getLayout()
+    public function getLayout(): ?string
     {
         return $this->_layout;
     }
