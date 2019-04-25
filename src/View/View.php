@@ -1170,7 +1170,7 @@ class View implements EventDispatcherInterface
      * @return string|null
      * @since 3.7.7
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
