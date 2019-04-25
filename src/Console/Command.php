@@ -249,4 +249,34 @@ class Command
     {
         throw new StopException('Command aborted', $code);
     }
+
+    /**
+     * Execute another command with the provided set of arguments.
+     *
+     * @param string|\Cake\Console\Command $command The command class name or command instance.
+     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
+     * @param array $args The arguments to invoke the command with.
+     * @return int|null The exit code or null for success of the command.
+     */
+    public function executeCommand($command, ConsoleIo $io, array $args = [])
+    {
+        if (is_string($command)) {
+            if (!class_exists($command)) {
+                throw new InvalidArgumentException("Command class '{$command}' does not exist.");
+            }
+            $command = new $command();
+        }
+        if (!$command instanceof Command) {
+            $commandType = getTypeName($command);
+            throw new InvalidArgumentException(
+                "Command '{$commandType}' is not a subclass of Cake\Console\Command."
+            );
+        }
+
+        try {
+            return $command->run($args, $io);
+        } catch (StopException $e) {
+            return $e->getCode();
+        }
+    }
 }
