@@ -22,6 +22,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use TestApp\Command\AbortCommand;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 
@@ -340,6 +341,20 @@ class CommandTest extends TestCase
         $result = $command->executeCommand(new DemoCommand(), [], $this->getMockIo($output));
         $this->assertNull($result);
         $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+    }
+
+    /**
+     * test executeCommand with an abort
+     *
+     * @return void
+     */
+    public function testExecuteCommandAbort()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $result = $command->executeCommand(AbortCommand::class, [], $this->getMockIo($output));
+        $this->assertSame(127, $result);
+        $this->assertEquals(['<error>Command aborted</error>'], $output->messages());
     }
 
     /**
