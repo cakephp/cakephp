@@ -283,7 +283,7 @@ class CommandTest extends TestCase
     {
         $output = new ConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(DemoCommand::class, $this->getMockIo($output));
+        $result = $command->executeCommand(DemoCommand::class, [], $this->getMockIo($output));
         $this->assertNull($result);
         $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
     }
@@ -299,7 +299,7 @@ class CommandTest extends TestCase
         $this->expectExceptionMessage("Command class 'Nope' does not exist");
 
         $command = new Command();
-        $command->executeCommand('Nope', $this->getMockIo(new ConsoleOutput()));
+        $command->executeCommand('Nope', [], $this->getMockIo(new ConsoleOutput()));
     }
 
     /**
@@ -311,7 +311,7 @@ class CommandTest extends TestCase
     {
         $output = new ConsoleOutput();
         $command = new Command();
-        $command->executeCommand(DemoCommand::class, $this->getMockIo($output), ['Jane']);
+        $command->executeCommand(DemoCommand::class, ['Jane'], $this->getMockIo($output));
         $this->assertEquals(['Quiet!', 'Demo Command!', 'Jane'], $output->messages());
     }
 
@@ -324,7 +324,7 @@ class CommandTest extends TestCase
     {
         $output = new ConsoleOutput();
         $command = new Command();
-        $command->executeCommand(DemoCommand::class, $this->getMockIo($output), ['--quiet', 'Jane']);
+        $command->executeCommand(DemoCommand::class, ['--quiet', 'Jane'], $this->getMockIo($output));
         $this->assertEquals(['Quiet!'], $output->messages());
     }
 
@@ -337,7 +337,7 @@ class CommandTest extends TestCase
     {
         $output = new ConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(new DemoCommand(), $this->getMockIo($output));
+        $result = $command->executeCommand(new DemoCommand(), [], $this->getMockIo($output));
         $this->assertNull($result);
         $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
     }
@@ -353,7 +353,7 @@ class CommandTest extends TestCase
         $this->expectExceptionMessage("Command 'stdClass' is not a subclass");
 
         $command = new Command();
-        $command->executeCommand(new \stdClass, $this->getMockIo(new ConsoleOutput()));
+        $command->executeCommand(new \stdClass, [], $this->getMockIo(new ConsoleOutput()));
     }
 
     protected function getMockIo($output)

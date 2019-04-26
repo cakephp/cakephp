@@ -254,11 +254,11 @@ class Command
      * Execute another command with the provided set of arguments.
      *
      * @param string|\Cake\Console\Command $command The command class name or command instance.
-     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
      * @param array $args The arguments to invoke the command with.
+     * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
-    public function executeCommand($command, ConsoleIo $io, array $args = [])
+    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null)
     {
         if (is_string($command)) {
             if (!class_exists($command)) {
@@ -272,6 +272,7 @@ class Command
                 "Command '{$commandType}' is not a subclass of Cake\Console\Command."
             );
         }
+        $io = $io ?: new ConsoleIo();
 
         try {
             return $command->run($args, $io);
