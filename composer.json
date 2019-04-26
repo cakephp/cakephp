@@ -50,7 +50,7 @@
     "require-dev": {
         "cakephp/cakephp-codesniffer": "dev-next",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^8.0"
     },
     "autoload": {
         "psr-4": {
