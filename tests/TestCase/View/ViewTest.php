@@ -24,6 +24,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\View;
+use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
 use TestApp\View\Helper\TestBeforeAfterHelper;
@@ -1110,11 +1111,6 @@ class ViewTest extends TestCase
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
         $this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 
-        $View = $this->PostsController->createView(TestView::class);
-        $result = $View->render(false, 'ajax2');
-
-        $this->assertRegExp('/Ajax\!/', $result);
-
         $this->PostsController->viewBuilder()->setHelpers(['Html']);
         $this->PostsController->setRequest(
             $this->PostsController->getRequest()->withParam('action', 'index')
@@ -1167,12 +1163,25 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test renderLayout()
+     *
+     * @return void
+     */
+    public function testRenderLayout()
+    {
+        $View = $this->PostsController->createView(TestView::class);
+        $result = $View->renderLayout('', 'ajax2');
+
+        $this->assertRegExp('/Ajax\!/', $result);
+    }
+
+    /**
      * Test render()ing a file in a subdir from a custom viewPath
      * in a plugin.
      *
      * @return void
      */
-    public function testGetViewFileNameSubdirWithPluginAndViewPath()
+    public function testGetTemplateFileNameSubdirWithPluginAndViewPath()
     {
         $this->PostsController->setPlugin('TestPlugin');
         $this->PostsController->setName('Posts');
@@ -1184,6 +1193,14 @@ class ViewTest extends TestCase
         $result = $View->getTemplateFileName('sub_dir/sub_element');
         $expected = $pluginPath . 'templates' . DS . 'element' . DS . 'sub_dir' . DS . 'sub_element.php';
         $this->assertPathEquals($expected, $result);
+    }
+
+    public function testGetTemplateException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Template name not provided');
+        $view = new View();
+        $view->render();
     }
 
     /**

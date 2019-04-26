@@ -98,11 +98,11 @@ class JsonView extends SerializedView
      *   - Setting it to a string value, uses the provided query string parameter
      *     for finding the JSONP callback name.
      *
-     * @param string|false|null $template The template being rendered.
+     * @param string|null $template The template being rendered.
      * @param string|null|false $layout The layout being rendered.
      * @return string The rendered view.
      */
-    public function render($template = null, $layout = null): string
+    public function render(?string $template = null, $layout = null): string
     {
         $return = parent::render($template, $layout);
 

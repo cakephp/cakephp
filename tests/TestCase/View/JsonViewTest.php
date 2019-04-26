@@ -92,22 +92,6 @@ class JsonViewTest extends TestCase
                 json_encode(null),
             ],
 
-            // Test render with Null in _serialize (unset).
-            [
-                ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
-                null,
-                null,
-                '',
-            ],
-
-            // Test render with False in _serialize.
-            [
-                ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
-                false,
-                null,
-                '',
-            ],
-
             // Test render with True in _serialize.
             [
                 ['no' => 'nope', 'user' => 'fake', 'list' => ['item1', 'item2']],
@@ -243,7 +227,7 @@ class JsonViewTest extends TestCase
         $Controller->set('_jsonOptions', $jsonOptions);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
-        $output = $View->render(false);
+        $output = $View->render();
 
         $this->assertSame($expected, $output);
     }
@@ -289,20 +273,20 @@ class JsonViewTest extends TestCase
         ]);
         $Controller->viewBuilder()->setClassName('Json');
         $View = $Controller->createView();
-        $output = $View->render(false);
+        $output = $View->render();
 
         $this->assertSame(json_encode($data), $output);
         $this->assertSame('application/json', $View->getResponse()->getType());
 
         $View->setRequest($View->getRequest()->withQueryParams(['callback' => 'jfunc']));
-        $output = $View->render(false);
+        $output = $View->render();
         $expected = 'jfunc(' . json_encode($data) . ')';
         $this->assertSame($expected, $output);
         $this->assertSame('application/javascript', $View->getResponse()->getType());
 
         $View->setRequest($View->getRequest()->withQueryParams(['jsonCallback' => 'jfunc']));
         $View->set('_jsonp', 'jsonCallback');
-        $output = $View->render(false);
+        $output = $View->render();
         $expected = 'jfunc(' . json_encode($data) . ')';
         $this->assertSame($expected, $output);
     }

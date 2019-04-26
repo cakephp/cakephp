@@ -676,14 +676,14 @@ class View implements EventDispatcherInterface
      * a plugin template/layout can be used instead of the app ones. If the chosen plugin is not found
      * the template will be located along the regular view path cascade.
      *
-     * @param string|false|null $template Name of template file to use
+     * @param string|null $template Name of template file to use
      * @param string|false|null $layout Layout to use. False to disable.
      * @return string Rendered content.
      * @throws \Cake\Core\Exception\Exception If there is an error in the view.
      * @triggers View.beforeRender $this, [$templateFileName]
      * @triggers View.afterRender $this, [$templateFileName]
      */
-    public function render($template = null, $layout = null): string
+    public function render(?string $template = null, $layout = null): string
     {
         $defaultLayout = null;
         $defaultAutoLayout = null;
@@ -695,13 +695,11 @@ class View implements EventDispatcherInterface
             $this->layout = $layout;
         }
 
-        $templateFileName = $template !== false ? $this->_getTemplateFileName($template) : null;
-        if ($templateFileName) {
-            $this->_currentType = static::TYPE_TEMPLATE;
-            $this->dispatchEvent('View.beforeRender', [$templateFileName]);
-            $this->Blocks->set('content', $this->_render($templateFileName));
-            $this->dispatchEvent('View.afterRender', [$templateFileName]);
-        }
+        $templateFileName = $this->_getTemplateFileName($template);
+        $this->_currentType = static::TYPE_TEMPLATE;
+        $this->dispatchEvent('View.beforeRender', [$templateFileName]);
+        $this->Blocks->set('content', $this->_render($templateFileName));
+        $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
@@ -1241,6 +1239,10 @@ class View implements EventDispatcherInterface
 
         if ($name === null) {
             $name = $this->template;
+        }
+
+        if (empty($name)) {
+            throw new RuntimeException('Template name not provided');
         }
 
         [$plugin, $name] = $this->pluginSplit($name);
