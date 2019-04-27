@@ -2479,11 +2479,11 @@ class PaginatorHelperTest extends TestCase
         ]));
         $result = $this->Paginator->numbers(['model' => 'Server']);
         $this->assertStringContainsString('<li class="active"><a href="">5</a></li>', $result);
-        $this->assertNotContains('<li class="active"><a href="">1</a></li>', $result);
+        $this->assertStringNotContainsString('<li class="active"><a href="">1</a></li>', $result);
 
         $result = $this->Paginator->numbers(['model' => 'Client']);
         $this->assertStringContainsString('<li class="active"><a href="">1</a></li>', $result);
-        $this->assertNotContains('<li class="active"><a href="">5</a></li>', $result);
+        $this->assertStringNotContainsString('<li class="active"><a href="">5</a></li>', $result);
     }
 
     /**

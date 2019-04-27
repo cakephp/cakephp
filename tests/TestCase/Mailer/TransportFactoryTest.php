@@ -149,9 +149,9 @@ class TransportFactoryTest extends TestCase
     public function testConfigured()
     {
         $result = TransportFactory::configured();
-        $this->assertInternalType('array', $result, 'Should have config keys');
+        $this->assertIsArray($result, 'Should have config keys');
         foreach (array_keys($this->transports) as $key) {
-            $this->assertStringContainsString($key, $result, 'Loaded transports should be present.');
+            $this->assertContains($key, $result, 'Loaded transports should be present.');
         }
     }
 
@@ -163,7 +163,7 @@ class TransportFactoryTest extends TestCase
     public function testDrop()
     {
         $result = TransportFactory::getConfig('debug');
-        $this->assertInternalType('array', $result, 'Should have config data');
+        $this->assertIsArray($result, 'Should have config data');
         TransportFactory::drop('debug');
         $this->assertNull(TransportFactory::getConfig('debug'), 'Should not exist.');
     }

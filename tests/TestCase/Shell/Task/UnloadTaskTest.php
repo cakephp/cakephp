@@ -94,7 +94,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
 
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
 
-        $this->assertNotContains($expected, $contents);
+        $this->assertStringNotContainsString($expected, $contents);
         $expected = "Plugin::load('TestPluginSecond', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
         $this->assertStringContainsString($expected, $contents);
     }
@@ -192,7 +192,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
 
         $result = file_get_contents($this->app);
 
-        $this->assertNotContains("addPlugin('TestPlugin'", $result);
+        $this->assertStringNotContainsString("addPlugin('TestPlugin'", $result);
         $this->assertNotRegexp("/this\-\>addPlugin\([\'\"]TestPlugin'[\'\"][^\)]*\)\;/mi", $result);
     }
 

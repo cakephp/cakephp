@@ -54,12 +54,12 @@ class LogTest extends TestCase
 
         $result = Log::engine('libtest');
         $this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
-        $this->assertStringContainsString('libtest', Log::configured());
+        $this->assertContains('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
         $this->assertInstanceOf('TestPlugin\Log\Engine\TestPluginLog', $result);
-        $this->assertStringContainsString('libtest', Log::configured());
-        $this->assertStringContainsString('plugintest', Log::configured());
+        $this->assertContains('libtest', Log::configured());
+        $this->assertContains('plugintest', Log::configured());
 
         Log::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
 
@@ -114,7 +114,7 @@ class LogTest extends TestCase
             'path' => LOGS,
         ]);
         $result = Log::configured();
-        $this->assertStringContainsString('file', $result);
+        $this->assertContains('file', $result);
 
         $this->assertTrue(Log::drop('file'), 'Should be dropped');
         $this->assertFalse(Log::drop('file'), 'Already gone');
@@ -164,7 +164,7 @@ class LogTest extends TestCase
     public function testConfigVariants($settings)
     {
         Log::setConfig('test', $settings);
-        $this->assertStringContainsString('test', Log::configured());
+        $this->assertContains('test', Log::configured());
         $this->assertInstanceOf(FileLog::class, Log::engine('test'));
         Log::drop('test');
     }
@@ -178,7 +178,7 @@ class LogTest extends TestCase
     public function testSetConfigVariants($settings)
     {
         Log::setConfig('test', $settings);
-        $this->assertStringContainsString('test', Log::configured());
+        $this->assertContains('test', Log::configured());
         $this->assertInstanceOf(FileLog::class, Log::engine('test'));
         Log::drop('test');
     }

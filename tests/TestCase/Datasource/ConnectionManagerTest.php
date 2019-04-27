@@ -64,7 +64,7 @@ class ConnectionManagerTest extends TestCase
 
         $ds = ConnectionManager::get('test_variant');
         $this->assertInstanceOf(FakeConnection::class, $ds);
-        $this->assertStringContainsString('test_variant', ConnectionManager::configured());
+        $this->assertContains('test_variant', ConnectionManager::configured());
     }
 
     /**
@@ -153,7 +153,7 @@ class ConnectionManagerTest extends TestCase
             'database' => ':memory:',
         ]);
         $results = ConnectionManager::configured();
-        $this->assertStringContainsString('test_variant', $results);
+        $this->assertContains('test_variant', $results);
     }
 
     /**
@@ -186,7 +186,7 @@ class ConnectionManagerTest extends TestCase
             'database' => ':memory:',
         ]);
         $result = ConnectionManager::configured();
-        $this->assertStringContainsString('test_variant', $result);
+        $this->assertContains('test_variant', $result);
 
         $this->assertTrue(ConnectionManager::drop('test_variant'));
         $result = ConnectionManager::configured();

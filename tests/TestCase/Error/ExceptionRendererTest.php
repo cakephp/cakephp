@@ -243,7 +243,7 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertEquals('error400', $ExceptionRenderer->__debugInfo()['template']);
         $this->assertStringContainsString('Not Found', $result);
-        $this->assertNotContains('Secret info not to be leaked', $result);
+        $this->assertStringNotContainsString('Secret info not to be leaked', $result);
     }
 
     /**
@@ -308,7 +308,7 @@ class ExceptionRendererTest extends TestCase
         $result = (string)$response->getBody();
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertNotContains('foul ball.', $result, 'Text should no show up.');
+        $this->assertStringNotContainsString('foul ball.', $result, 'Text should no show up.');
         $this->assertStringContainsString('Internal Error', $result, 'Generic message only.');
     }
 
@@ -421,8 +421,8 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$ExceptionRenderer->render()->getBody();
 
-        $this->assertNotContains('<script>document', $result);
-        $this->assertNotContains('alert(t);</script>', $result);
+        $this->assertStringNotContainsString('<script>document', $result);
+        $this->assertStringNotContainsString('alert(t);</script>', $result);
     }
 
     /**
@@ -821,7 +821,7 @@ class ExceptionRendererTest extends TestCase
 
         $response = $ExceptionRenderer->render();
         $body = (string)$response->getBody();
-        $this->assertNotContains('test plugin error500', $body);
+        $this->assertStringNotContainsString('test plugin error500', $body);
         $this->assertStringContainsString('Not Found', $body);
     }
 

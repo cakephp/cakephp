@@ -299,9 +299,9 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
 
-        $this->assertInternalType('array', $result);
-        $this->assertStringContainsString('schema_articles', $result);
-        $this->assertStringContainsString('schema_authors', $result);
+        $this->assertIsArray($result);
+        $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_authors', $result);
     }
 
     /**

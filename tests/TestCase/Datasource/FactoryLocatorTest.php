@@ -30,7 +30,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testGet()
     {
-        $this->assertInternalType('callable', FactoryLocator::get('Table'));
+        $this->assertIsCallable(FactoryLocator::get('Table'));
     }
 
     /**
@@ -59,7 +59,7 @@ class FactoryLocatorTest extends TestCase
             return $mock;
         });
 
-        $this->assertInternalType('callable', FactoryLocator::get('Test'));
+        $this->assertIsCallable(FactoryLocator::get('Test'));
     }
 
     /**

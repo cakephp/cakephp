@@ -472,7 +472,7 @@ class ShellTest extends TestCase
 
         $path = APP;
         $result = $this->Shell->shortPath($path);
-        $this->assertNotContains(ROOT, $result, 'Short paths should not contain ROOT');
+        $this->assertStringNotContainsString(ROOT, $result, 'Short paths should not contain ROOT');
     }
 
     /**

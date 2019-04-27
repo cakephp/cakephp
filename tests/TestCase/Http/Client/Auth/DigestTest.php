@@ -84,8 +84,8 @@ class DigestTest extends TestCase
         $this->assertStringContainsString('nonce="4cded326c6c51"', $result);
         $this->assertStringContainsString('response="a21a874c0b29165929f5d24d1aad2c47"', $result);
         $this->assertStringContainsString('uri="/some/path"', $result);
-        $this->assertNotContains('qop=', $result);
-        $this->assertNotContains('nc=', $result);
+        $this->assertStringNotContainsString('qop=', $result);
+        $this->assertStringNotContainsString('nc=', $result);
     }
 
     /**

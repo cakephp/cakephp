@@ -102,7 +102,7 @@ class ResponseTest extends TestCase
         $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
 
         $new = $response->withCharset('iso-8859-1');
-        $this->assertNotContains('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
+        $this->assertStringNotContainsString('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
         $this->assertSame('iso-8859-1', $new->getCharset());
 
         $this->assertEquals('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
@@ -315,7 +315,7 @@ class ResponseTest extends TestCase
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
         $result = $response->compress();
         $this->assertTrue($result);
-        $this->assertStringContainsString('ob_gzhandler', ob_list_handlers());
+        $this->assertContains('ob_gzhandler', ob_list_handlers());
 
         ob_get_clean();
     }

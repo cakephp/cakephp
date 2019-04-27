@@ -1068,10 +1068,10 @@ class FormHelperTest extends TestCase
             'type' => 'get',
             'url' => '/contacts/add',
         ]);
-        $this->assertNotContains('testKey', $result);
+        $this->assertStringNotContainsString('testKey', $result);
 
         $result = $this->Form->end();
-        $this->assertNotContains('testKey', $result);
+        $this->assertStringNotContainsString('testKey', $result);
     }
 
     /**
@@ -2403,7 +2403,7 @@ class FormHelperTest extends TestCase
         $this->Form->text('Article.title');
 
         $this->assertEquals(1, $this->Form->fields['Article.id'], 'Hidden input should be secured.');
-        $this->assertStringContainsString('Article.title', $this->Form->fields, 'Field should be secured.');
+        $this->assertContains('Article.title', $this->Form->fields, 'Field should be secured.');
 
         $this->Form->unlockField('Article.title');
         $this->Form->unlockField('Article.id');
@@ -2463,7 +2463,7 @@ class FormHelperTest extends TestCase
 
         $this->Form->create($this->article, ['url' => '/articles/view/1']);
         $result = $this->Form->secure();
-        $this->assertNotContains($expected, $result, 'URL is different');
+        $this->assertStringNotContainsString($expected, $result, 'URL is different');
     }
 
     /**
@@ -3976,12 +3976,12 @@ class FormHelperTest extends TestCase
         $this->assertStringContainsString('<fieldset>', $result);
 
         $result = $this->Form->allControls([], ['fieldset' => false, 'legend' => false]);
-        $this->assertNotContains('<legend>', $result);
-        $this->assertNotContains('<fieldset>', $result);
+        $this->assertStringNotContainsString('<legend>', $result);
+        $this->assertStringNotContainsString('<fieldset>', $result);
 
         $result = $this->Form->allControls([], ['fieldset' => false, 'legend' => 'Hello']);
-        $this->assertNotContains('<legend>', $result);
-        $this->assertNotContains('<fieldset>', $result);
+        $this->assertStringNotContainsString('<legend>', $result);
+        $this->assertStringNotContainsString('<fieldset>', $result);
 
         $this->Form->create($this->article);
         $this->View->setRequest($this->View->getRequest()
@@ -5188,7 +5188,7 @@ class FormHelperTest extends TestCase
             $options,
             ['form' => 'my-form', 'multiple' => false]
         );
-        $this->assertNotContains('multiple', $result);
+        $this->assertStringNotContainsString('multiple', $result);
     }
 
     /**
@@ -5711,7 +5711,7 @@ class FormHelperTest extends TestCase
             ['first', 'second'],
             ['multiple' => 'checkbox', 'hiddenField' => false, 'value' => null]
         );
-        $this->assertNotContains('type="hidden"', $result);
+        $this->assertStringNotContainsString('type="hidden"', $result);
     }
 
     /**
@@ -6249,7 +6249,7 @@ class FormHelperTest extends TestCase
         ]);
         $this->assertStringContainsString('value="' . $start . '">' . $start, $result);
         $this->assertStringContainsString('value="' . $end . '">' . $end, $result);
-        $this->assertNotContains('value="00">00', $result);
+        $this->assertStringNotContainsString('value="00">00', $result);
     }
 
     /**
@@ -7826,7 +7826,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->control('title', ['required' => false]);
-        $this->assertNotContains('required', $result);
+        $this->assertStringNotContainsString('required', $result);
 
         $result = $this->Form->control('body');
         $expected = [

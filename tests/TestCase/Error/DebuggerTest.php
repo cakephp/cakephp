@@ -85,12 +85,12 @@ class DebuggerTest extends TestCase
     public function testExcerpt()
     {
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(5, $result);
         $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
@@ -174,7 +174,7 @@ class DebuggerTest extends TestCase
         ]);
         $result = ob_get_clean();
         $this->assertStringContainsString('&lt;script&gt;', $result);
-        $this->assertNotContains('<script>', $result);
+        $this->assertStringNotContainsString('<script>', $result);
     }
 
     /**

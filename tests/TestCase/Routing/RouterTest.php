@@ -1650,7 +1650,7 @@ class RouterTest extends TestCase
     public function testSetExtensions()
     {
         Router::extensions('rss', false);
-        $this->assertStringContainsString('rss', Router::extensions());
+        $this->assertContains('rss', Router::extensions());
 
         $this->_connectDefaultRoutes();
 

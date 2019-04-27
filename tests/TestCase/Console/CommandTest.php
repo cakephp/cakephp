@@ -147,7 +147,7 @@ class CommandTest extends TestCase
             $command->run(['-h'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
-        $this->assertNotContains('Demo', $messages);
+        $this->assertStringNotContainsString('Demo', $messages);
         $this->assertStringContainsString('cake demo [-h]', $messages);
     }
 
@@ -167,7 +167,7 @@ class CommandTest extends TestCase
             $command->run(['--help'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
-        $this->assertNotContains('Demo', $messages);
+        $this->assertStringNotContainsString('Demo', $messages);
         $this->assertStringContainsString('cake demo [-h]', $messages);
     }
 
@@ -187,7 +187,7 @@ class CommandTest extends TestCase
         $this->assertStringContainsString('Verbose!', $messages);
         $this->assertStringContainsString('Demo Command!', $messages);
         $this->assertStringContainsString('Quiet!', $messages);
-        $this->assertNotContains('cake demo [-h]', $messages);
+        $this->assertStringNotContainsString('cake demo [-h]', $messages);
     }
 
     /**
@@ -204,8 +204,8 @@ class CommandTest extends TestCase
         $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Quiet!', $messages);
-        $this->assertNotContains('Verbose!', $messages);
-        $this->assertNotContains('Demo Command!', $messages);
+        $this->assertStringNotContainsString('Verbose!', $messages);
+        $this->assertStringNotContainsString('Demo Command!', $messages);
     }
 
     /**

@@ -3500,7 +3500,7 @@ class TableTest extends TestCase
 
         $table->save($entity);
         $this->assertFalse($entity->isNew());
-        $this->assertInternalType('array', $entity->article);
+        $this->assertIsArray($entity->article);
     }
 
     /**
@@ -5968,7 +5968,7 @@ class TableTest extends TestCase
         $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
             function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
-                $this->assertInternalType('bool', $primary);
+                $this->assertIsBool($primary);
                 $associationBeforeFindCount++;
             }
         );
@@ -5977,7 +5977,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeFind',
             function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
-                $this->assertInternalType('bool', $primary);
+                $this->assertIsBool($primary);
                 $beforeFindCount++;
             }
         );
@@ -5989,7 +5989,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildValidator',
             $callback = function (EventInterface $event, Validator $validator, $name) use (&$buildValidatorCount) {
-                $this->assertInternalType('string', $name);
+                $this->assertIsString($name);
                 $buildValidatorCount++;
             }
         );
@@ -6010,15 +6010,15 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeRules',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
-                $this->assertInternalType('string', $operation);
+                $this->assertIsString($operation);
                 $beforeRulesCount++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
-                $this->assertInternalType('bool', $result);
-                $this->assertInternalType('string', $operation);
+                $this->assertIsBool($result);
+                $this->assertIsString($operation);
                 $afterRulesCount++;
             }
         );

@@ -412,8 +412,8 @@ class ErrorHandlerTest extends TestCase
         Configure::write('debug', false);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
         $result = (string)$errorHandler->response->getBody();
-        $this->assertNotContains('Something wrong', $result, 'message must not appear.');
-        $this->assertNotContains(__FILE__, $result, 'filename must not appear.');
+        $this->assertStringNotContainsString('Something wrong', $result, 'message must not appear.');
+        $this->assertStringNotContainsString(__FILE__, $result, 'filename must not appear.');
         $this->assertStringContainsString('An Internal Error Has Occurred.', $result);
     }
 

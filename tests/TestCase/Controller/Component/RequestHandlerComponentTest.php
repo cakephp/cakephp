@@ -562,8 +562,7 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $this->Controller->setRequest(new ServerRequest());
         $this->RequestHandler->beforeRender($event);
-        $this->assertInternalType('array', $this->Controller->getRequest()->getData());
-        $this->assertNotInternalType('object', $this->Controller->getRequest()->getData());
+        $this->assertIsArray($this->Controller->getRequest()->getData());
     }
 
     /**
@@ -579,8 +578,7 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
         $this->Controller->setRequest(new ServerRequest());
         $this->RequestHandler->startup($event);
-        $this->assertInternalType('array', $this->Controller->getRequest()->getData());
-        $this->assertNotInternalType('object', $this->Controller->getRequest()->getData());
+        $this->assertIsArray($this->Controller->getRequest()->getData());
     }
 
     /**

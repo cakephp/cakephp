@@ -111,7 +111,7 @@ class ConfigureTest extends TestCase
         $this->assertGreaterThanOrEqual(0, $result);
 
         $result = Configure::read();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('debug', $result);
         $this->assertArrayHasKey('level1', $result);
 
@@ -478,7 +478,7 @@ class ConfigureTest extends TestCase
         Configure::config('test', $engine);
         $configured = Configure::configured();
 
-        $this->assertStringContainsString('test', $configured);
+        $this->assertContains('test', $configured);
 
         $this->assertTrue(Configure::isConfigured('test'));
         $this->assertFalse(Configure::isConfigured('fake_garbage'));
@@ -544,7 +544,7 @@ class ConfigureTest extends TestCase
         $this->assertStringContainsString('<?php', $result);
         $this->assertStringContainsString('return ', $result);
         $this->assertStringContainsString('Error', $result);
-        $this->assertNotContains('debug', $result);
+        $this->assertStringNotContainsString('debug', $result);
 
         if (file_exists(TMP . 'config_test.php')) {
             unlink(TMP . 'config_test.php');

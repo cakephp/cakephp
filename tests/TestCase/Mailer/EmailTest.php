@@ -919,7 +919,7 @@ class EmailTest extends TestCase
         $this->assertEquals($settings, Email::getConfig('test'), 'Should be the same.');
 
         $email = new Email('test');
-        $this->assertStringContainsString($settings['to'], $email->getTo());
+        $this->assertContains($settings['to'], $email->getTo());
     }
 
     /**
@@ -1496,7 +1496,7 @@ class EmailTest extends TestCase
         $result = $this->Email->send('message body.');
 
         $this->assertStringContainsString('message body.', $result['message']);
-        $this->assertNotContains('This email was sent using the CakePHP Framework', $result['message']);
+        $this->assertStringNotContainsString('This email was sent using the CakePHP Framework', $result['message']);
     }
 
     /**
@@ -1822,8 +1822,8 @@ class EmailTest extends TestCase
         $message = $this->Email->message();
         $boundary = $this->Email->getBoundary();
         $this->assertNotEmpty($boundary);
-        $this->assertStringContainsString('--' . $boundary, $message);
-        $this->assertStringContainsString('--' . $boundary . '--', $message);
+        $this->assertContains('--' . $boundary, $message);
+        $this->assertContains('--' . $boundary . '--', $message);
 
         $this->Email->setAttachments(['fake.php' => __FILE__]);
         $this->Email->send();
@@ -1831,10 +1831,10 @@ class EmailTest extends TestCase
         $message = $this->Email->message();
         $boundary = $this->Email->getBoundary();
         $this->assertNotEmpty($boundary);
-        $this->assertStringContainsString('--' . $boundary, $message);
-        $this->assertStringContainsString('--' . $boundary . '--', $message);
-        $this->assertStringContainsString('--alt-' . $boundary, $message);
-        $this->assertStringContainsString('--alt-' . $boundary . '--', $message);
+        $this->assertContains('--' . $boundary, $message);
+        $this->assertContains('--' . $boundary . '--', $message);
+        $this->assertContains('--alt-' . $boundary, $message);
+        $this->assertContains('--alt-' . $boundary . '--', $message);
     }
 
     /**
@@ -1945,8 +1945,8 @@ class EmailTest extends TestCase
         $this->assertStringContainsString($expected, $this->Email->message(Email::MESSAGE_TEXT));
 
         $message = $this->Email->message();
-        $this->assertStringContainsString('Content-Type: text/plain; charset=UTF-8', $message);
-        $this->assertStringContainsString('Content-Type: text/html; charset=UTF-8', $message);
+        $this->assertContains('Content-Type: text/plain; charset=UTF-8', $message);
+        $this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
 
         // UTF-8 is 8bit
         $this->assertTrue($this->_checkContentTransferEncoding($message, '8bit'));
@@ -1954,8 +1954,8 @@ class EmailTest extends TestCase
         $this->Email->setCharset('ISO-2022-JP');
         $this->Email->send();
         $message = $this->Email->message();
-        $this->assertStringContainsString('Content-Type: text/plain; charset=ISO-2022-JP', $message);
-        $this->assertStringContainsString('Content-Type: text/html; charset=ISO-2022-JP', $message);
+        $this->assertContains('Content-Type: text/plain; charset=ISO-2022-JP', $message);
+        $this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
 
         // ISO-2022-JP is 7bit
         $this->assertTrue($this->_checkContentTransferEncoding($message, '7bit'));

@@ -262,7 +262,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate');
 
         $query = $table->find();
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'The default locale doesn\'t need a join'
@@ -271,14 +271,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id']);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'No translated fields, nothing to do'
         );
 
         $query = $table->find()->select(['Other.title']);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'Other isn\'t the table class with the translate behavior, nothing to do'

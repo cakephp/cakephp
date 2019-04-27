@@ -957,7 +957,7 @@ class CollectionTest extends TestCase
         ];
         $this->assertCount(3, $result);
         foreach ($result as $date) {
-            $this->assertStringContainsString($date->format('Y-m-d'), $list);
+            $this->assertContains($date->format('Y-m-d'), $list);
         }
     }
 

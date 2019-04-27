@@ -4309,7 +4309,7 @@ class QueryTest extends TestCase
             ->limit(1)
             ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertInternalType('integer', $result[0]['id']);
+        $this->assertIsInt($result[0]['id']);
         $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
     }
 
