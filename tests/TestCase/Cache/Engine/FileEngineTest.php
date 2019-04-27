@@ -32,7 +32,7 @@ class FileEngineTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Cache::enable();
@@ -45,7 +45,7 @@ class FileEngineTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         Cache::drop('file_test');
         Cache::drop('file_groups');

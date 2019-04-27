@@ -29,7 +29,7 @@ class MysqlTest extends TestCase
      *
      * @return void
      */
-    public function setup()
+    public function setup(): void
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');

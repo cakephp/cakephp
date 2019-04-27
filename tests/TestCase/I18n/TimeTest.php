@@ -30,7 +30,7 @@ class TimeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->now = Time::getTestNow();
@@ -44,7 +44,7 @@ class TimeTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Time::setTestNow($this->now);

@@ -31,7 +31,7 @@ class FolderTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         clearstatcache();
@@ -42,7 +42,7 @@ class FolderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $cleaner = function ($dir) use (&$cleaner) {

@@ -49,7 +49,7 @@ class CommandRunnerTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');

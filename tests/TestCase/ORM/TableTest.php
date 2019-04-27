@@ -72,7 +72,7 @@ class TableTest extends TestCase
      */
     public static $nextUserId = 5;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -119,7 +119,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();

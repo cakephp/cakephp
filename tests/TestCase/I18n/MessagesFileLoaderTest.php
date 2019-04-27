@@ -29,7 +29,7 @@ class MessagesFileLoaderTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->localePaths = Configure::read('App.paths.locales');
@@ -40,7 +40,7 @@ class MessagesFileLoaderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Configure::write('App.paths.locales', $this->localePaths);

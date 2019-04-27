@@ -51,14 +51,14 @@ class ConnectionTest extends TestCase
      */
     protected $nestedTransactionStates = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         static::setAppNamespace();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         Log::reset();
         $this->connection->disableSavePoints();

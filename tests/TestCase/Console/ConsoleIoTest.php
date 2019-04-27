@@ -30,7 +30,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -52,7 +52,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if (is_dir(TMP . 'shell_test')) {

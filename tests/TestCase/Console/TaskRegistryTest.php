@@ -28,7 +28,7 @@ class TaskRegistryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $shell = $this->getMockBuilder('Cake\Console\Shell')
@@ -42,7 +42,7 @@ class TaskRegistryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->Tasks);
         parent::tearDown();

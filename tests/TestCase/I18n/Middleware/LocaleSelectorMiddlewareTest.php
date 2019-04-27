@@ -32,7 +32,7 @@ class LocaleSelectorMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->locale = Locale::getDefault();
@@ -43,7 +43,7 @@ class LocaleSelectorMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Locale::setDefault($this->locale);

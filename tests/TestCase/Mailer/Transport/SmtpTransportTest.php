@@ -40,7 +40,7 @@ class SmtpTransportTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->socket = $this->getMockBuilder('Cake\Network\Socket')

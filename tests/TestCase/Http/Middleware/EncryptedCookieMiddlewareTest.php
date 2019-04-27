@@ -41,7 +41,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     /**
      * Setup
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],

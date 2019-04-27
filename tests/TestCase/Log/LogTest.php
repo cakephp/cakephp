@@ -23,13 +23,13 @@ use Cake\TestSuite\TestCase;
  */
 class LogTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Log::reset();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Log::reset();

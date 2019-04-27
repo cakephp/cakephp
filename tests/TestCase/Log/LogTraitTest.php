@@ -22,7 +22,7 @@ use Cake\TestSuite\TestCase;
  */
 class LogTraitTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Log::drop('trait_test');

@@ -36,7 +36,7 @@ class TableRegistryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->_originalLocator = TableRegistry::getTableLocator();
@@ -47,7 +47,7 @@ class TableRegistryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         TableRegistry::setTableLocator($this->_originalLocator);

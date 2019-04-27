@@ -39,7 +39,7 @@ class BelongsToTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->company = $this->getTableLocator()->get('Companies', [
@@ -76,7 +76,7 @@ class BelongsToTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();

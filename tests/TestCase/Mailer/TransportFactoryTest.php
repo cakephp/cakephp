@@ -24,7 +24,7 @@ use Cake\TestSuite\TestCase;
  */
 class TransportFactoryTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->transports = [
@@ -43,7 +43,7 @@ class TransportFactoryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         TransportFactory::drop('debug');

@@ -24,7 +24,7 @@ use Cake\View\Widget\ButtonWidget;
  */
 class ButtonWidgetTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $templates = [

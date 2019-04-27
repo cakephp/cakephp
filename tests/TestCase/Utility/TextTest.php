@@ -23,14 +23,14 @@ use Cake\Utility\Text;
  */
 class TextTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->encoding = mb_internal_encoding();
         $this->Text = new Text();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         mb_internal_encoding($this->encoding);

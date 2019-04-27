@@ -33,7 +33,7 @@ class StreamTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->stream = $this->getMockBuilder(Stream::class)
@@ -46,7 +46,7 @@ class StreamTest extends TestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         stream_wrapper_restore('http');

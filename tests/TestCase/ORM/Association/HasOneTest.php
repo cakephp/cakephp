@@ -44,7 +44,7 @@ class HasOneTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->user = $this->getTableLocator()->get('Users');
@@ -57,7 +57,7 @@ class HasOneTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();

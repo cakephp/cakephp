@@ -37,7 +37,7 @@ class ExpressionTypeCastingTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TypeFactory::set('test', new TestType());

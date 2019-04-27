@@ -40,7 +40,7 @@ class WidgetLocatorTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->templates = new StringTemplate();

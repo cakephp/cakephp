@@ -53,7 +53,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
 
@@ -65,7 +65,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * @return void
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         TranslateBehavior::setDefaultStrategyClass(EavStrategy::class);
 

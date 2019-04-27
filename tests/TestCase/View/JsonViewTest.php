@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
  */
 class JsonViewTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', false);
