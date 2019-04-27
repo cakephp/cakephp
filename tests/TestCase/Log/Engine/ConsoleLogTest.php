@@ -60,7 +60,7 @@ class ConsoleLogTest extends TestCase
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertContains('Error: oh noes', $line);
+        $this->assertStringContainsString('Error: oh noes', $line);
     }
 
     /**

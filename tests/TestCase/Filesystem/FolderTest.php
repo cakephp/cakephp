@@ -395,10 +395,10 @@ class FolderTest extends TestCase
         $this->assertTrue($Folder->create($new));
 
         $result = $Folder->read(true, true);
-        $this->assertContains('0', $result[0]);
+        $this->assertStringContainsString('0', $result[0]);
 
         $result = $Folder->read(true, ['logs']);
-        $this->assertContains('0', $result[0]);
+        $this->assertStringContainsString('0', $result[0]);
 
         $result = $Folder->delete($new);
         $this->assertTrue($result);
@@ -441,8 +441,8 @@ class FolderTest extends TestCase
         $Folder = new Folder(CAKE);
 
         $result = $Folder->read(true, true);
-        $this->assertContains('Core', $result[0]);
-        $this->assertContains('Cache', $result[0]);
+        $this->assertStringContainsString('Core', $result[0]);
+        $this->assertStringContainsString('Cache', $result[0]);
 
         $Folder = new Folder(TMP . 'non-existent');
         $expected = [[], []];

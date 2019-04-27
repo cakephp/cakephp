@@ -131,7 +131,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         });
         $response = $this->middleware->process($request, $handler);
         $this->assertNotContains('ninja=shuriken', $response->getHeaderLine('Set-Cookie'));
-        $this->assertContains('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
+        $this->assertStringContainsString('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
 
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
         $this->assertTrue($cookies->has('ninja'));

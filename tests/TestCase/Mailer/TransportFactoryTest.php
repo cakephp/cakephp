@@ -151,7 +151,7 @@ class TransportFactoryTest extends TestCase
         $result = TransportFactory::configured();
         $this->assertInternalType('array', $result, 'Should have config keys');
         foreach (array_keys($this->transports) as $key) {
-            $this->assertContains($key, $result, 'Loaded transports should be present.');
+            $this->assertStringContainsString($key, $result, 'Loaded transports should be present.');
         }
     }
 

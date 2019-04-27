@@ -72,7 +72,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->bootstrap);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Plugin::load('TestPlugin', ['autoload' => true]);",
             $contents
         );
@@ -89,7 +89,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->bootstrap);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => true]);",
             $contents
         );
@@ -106,7 +106,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->bootstrapCli);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Plugin::load('TestPlugin');",
             $contents
         );
@@ -123,7 +123,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->bootstrap);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Plugin::load('TestPlugin', ['autoload' => true, 'routes' => true]);",
             $contents
         );
@@ -140,7 +140,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->bootstrap);
-        $this->assertContains("Plugin::load('TestPlugin', ['routes' => true]);", $contents);
+        $this->assertStringContainsString("Plugin::load('TestPlugin', ['routes' => true]);", $contents);
     }
 
     /**
@@ -154,7 +154,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->bootstrap);
-        $this->assertContains("Plugin::load('TestPlugin');", $contents);
+        $this->assertStringContainsString("Plugin::load('TestPlugin');", $contents);
     }
 
     /**
@@ -168,7 +168,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->app);
-        $this->assertContains("\$this->addPlugin('TestPlugin');", $contents);
+        $this->assertStringContainsString("\$this->addPlugin('TestPlugin');", $contents);
     }
 
     /**
@@ -182,7 +182,7 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->app);
-        $this->assertContains("\$this->addPlugin('TestPlugin', ['bootstrap' => true]);", $contents);
+        $this->assertStringContainsString("\$this->addPlugin('TestPlugin', ['bootstrap' => true]);", $contents);
     }
 
     /**
@@ -196,6 +196,6 @@ class LoadTaskTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $contents = file_get_contents($this->app);
-        $this->assertContains("\$this->addPlugin('TestPlugin', ['routes' => true]);", $contents);
+        $this->assertStringContainsString("\$this->addPlugin('TestPlugin', ['routes' => true]);", $contents);
     }
 }

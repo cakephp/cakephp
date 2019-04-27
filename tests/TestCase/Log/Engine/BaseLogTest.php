@@ -39,7 +39,7 @@ class BaseLogTest extends TestCase
     private function assertUnescapedUnicode(array $needles, $haystack)
     {
         foreach ($needles as $needle) {
-            $this->assertContains(
+            $this->assertStringContainsString(
                 $needle,
                 $haystack,
                 'Formatted log message does not contain unescaped unicode character.'

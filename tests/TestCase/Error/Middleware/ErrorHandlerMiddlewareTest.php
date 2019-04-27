@@ -138,7 +138,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**
@@ -158,7 +158,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('"message": "whoops"', '' . $result->getBody());
+        $this->assertStringContainsString('"message": "whoops"', '' . $result->getBody());
         $this->assertEquals('application/json; charset=UTF-8', $result->getHeaderLine('Content-type'));
     }
 
@@ -206,7 +206,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**
@@ -237,7 +237,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**
@@ -259,7 +259,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**

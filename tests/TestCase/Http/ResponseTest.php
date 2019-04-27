@@ -315,7 +315,7 @@ class ResponseTest extends TestCase
         $_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
         $result = $response->compress();
         $this->assertTrue($result);
-        $this->assertContains('ob_gzhandler', ob_list_handlers());
+        $this->assertStringContainsString('ob_gzhandler', ob_list_handlers());
 
         ob_get_clean();
     }

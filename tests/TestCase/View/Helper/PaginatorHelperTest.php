@@ -2074,7 +2074,7 @@ class PaginatorHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<li',
             $this->Paginator->templater()->get('current'),
             'Templates were not restored.'
@@ -2478,11 +2478,11 @@ class PaginatorHelperTest extends TestCase
             ],
         ]));
         $result = $this->Paginator->numbers(['model' => 'Server']);
-        $this->assertContains('<li class="active"><a href="">5</a></li>', $result);
+        $this->assertStringContainsString('<li class="active"><a href="">5</a></li>', $result);
         $this->assertNotContains('<li class="active"><a href="">1</a></li>', $result);
 
         $result = $this->Paginator->numbers(['model' => 'Client']);
-        $this->assertContains('<li class="active"><a href="">1</a></li>', $result);
+        $this->assertStringContainsString('<li class="active"><a href="">1</a></li>', $result);
         $this->assertNotContains('<li class="active"><a href="">5</a></li>', $result);
     }
 

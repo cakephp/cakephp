@@ -90,7 +90,7 @@ class CurlTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
         $this->assertTrue($response->hasHeader('Date'));
         $this->assertTrue($response->hasHeader('Content-type'));
-        $this->assertContains('<html', $response->getBody()->getContents());
+        $this->assertStringContainsString('<html', $response->getBody()->getContents());
     }
 
     /**

@@ -478,7 +478,7 @@ class ConfigureTest extends TestCase
         Configure::config('test', $engine);
         $configured = Configure::configured();
 
-        $this->assertContains('test', $configured);
+        $this->assertStringContainsString('test', $configured);
 
         $this->assertTrue(Configure::isConfigured('test'));
         $this->assertFalse(Configure::isConfigured('fake_garbage'));
@@ -521,8 +521,8 @@ class ConfigureTest extends TestCase
         $result = Configure::dump('config_test', 'test_Engine');
         $this->assertGreaterThan(0, $result);
         $result = file_get_contents(TMP . 'config_test.php');
-        $this->assertContains('<?php', $result);
-        $this->assertContains('return ', $result);
+        $this->assertStringContainsString('<?php', $result);
+        $this->assertStringContainsString('return ', $result);
         if (file_exists(TMP . 'config_test.php')) {
             unlink(TMP . 'config_test.php');
         }
@@ -541,9 +541,9 @@ class ConfigureTest extends TestCase
         $result = Configure::dump('config_test', 'test_Engine', ['Error']);
         $this->assertGreaterThan(0, $result);
         $result = file_get_contents(TMP . 'config_test.php');
-        $this->assertContains('<?php', $result);
-        $this->assertContains('return ', $result);
-        $this->assertContains('Error', $result);
+        $this->assertStringContainsString('<?php', $result);
+        $this->assertStringContainsString('return ', $result);
+        $this->assertStringContainsString('Error', $result);
         $this->assertNotContains('debug', $result);
 
         if (file_exists(TMP . 'config_test.php')) {

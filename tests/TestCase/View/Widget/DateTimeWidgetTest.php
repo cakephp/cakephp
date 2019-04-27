@@ -142,7 +142,7 @@ class DateTimeWidgetTest extends TestCase
             'templateVars' => ['help' => 'some help'],
         ], $this->context);
 
-        $this->assertContains('<span>some help</span>', $result);
+        $this->assertStringContainsString('<span>some help</span>', $result);
     }
 
     /**

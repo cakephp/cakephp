@@ -523,8 +523,8 @@ class TimeHelperTest extends TestCase
         Time::setDefaultLocale('fr_FR');
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $this->assertContains('jeudi 14 janvier 2010', $result);
-        $this->assertContains('13:59:28', $result);
+        $this->assertStringContainsString('jeudi 14 janvier 2010', $result);
+        $this->assertStringContainsString('13:59:28', $result);
     }
 
     /**

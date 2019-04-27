@@ -1390,7 +1390,7 @@ TEXT;
     public function testSetRootNamePropagatesToHelpText()
     {
         $this->assertSame($this->Shell, $this->Shell->setRootName('tool'), 'is chainable');
-        $this->assertContains('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
+        $this->assertStringContainsString('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
     }
 
     /**

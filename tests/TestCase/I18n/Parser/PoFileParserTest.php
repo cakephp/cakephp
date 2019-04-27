@@ -189,7 +189,7 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
         $key = '{0,plural,=0{Je suis}=1{Je suis}=2{Nous sommes} other{Nous sommes}}';
-        $this->assertContains("I've", $messages[$key]['_context']['origin']);
+        $this->assertStringContainsString("I've", $messages[$key]['_context']['origin']);
 
         // Confirm actual behavior
         I18n::setLocale('en_CA');

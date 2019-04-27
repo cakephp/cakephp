@@ -54,12 +54,12 @@ class LogTest extends TestCase
 
         $result = Log::engine('libtest');
         $this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
-        $this->assertContains('libtest', Log::configured());
+        $this->assertStringContainsString('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
         $this->assertInstanceOf('TestPlugin\Log\Engine\TestPluginLog', $result);
-        $this->assertContains('libtest', Log::configured());
-        $this->assertContains('plugintest', Log::configured());
+        $this->assertStringContainsString('libtest', Log::configured());
+        $this->assertStringContainsString('plugintest', Log::configured());
 
         Log::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
 
@@ -114,7 +114,7 @@ class LogTest extends TestCase
             'path' => LOGS,
         ]);
         $result = Log::configured();
-        $this->assertContains('file', $result);
+        $this->assertStringContainsString('file', $result);
 
         $this->assertTrue(Log::drop('file'), 'Should be dropped');
         $this->assertFalse(Log::drop('file'), 'Already gone');
@@ -164,7 +164,7 @@ class LogTest extends TestCase
     public function testConfigVariants($settings)
     {
         Log::setConfig('test', $settings);
-        $this->assertContains('test', Log::configured());
+        $this->assertStringContainsString('test', Log::configured());
         $this->assertInstanceOf(FileLog::class, Log::engine('test'));
         Log::drop('test');
     }
@@ -178,7 +178,7 @@ class LogTest extends TestCase
     public function testSetConfigVariants($settings)
     {
         Log::setConfig('test', $settings);
-        $this->assertContains('test', Log::configured());
+        $this->assertStringContainsString('test', Log::configured());
         $this->assertInstanceOf(FileLog::class, Log::engine('test'));
         Log::drop('test');
     }
@@ -300,9 +300,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -348,9 +348,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -627,21 +627,21 @@ class LogTest extends TestCase
         $testMessage = 'critical message';
         Log::critical($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertContains('Critical: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Critical: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'error message';
         Log::error($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertContains('Error: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Error: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'warning message';
         Log::warning($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertContains('Warning: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Warning: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->_deleteLogs();
 
@@ -662,7 +662,7 @@ class LogTest extends TestCase
         $testMessage = 'debug message';
         Log::debug($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'error.log');
         $this->_deleteLogs();
     }

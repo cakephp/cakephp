@@ -85,7 +85,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
 
         $contents = file_get_contents($this->bootstrap);
         $expected = "Plugin::load('TestPlugin', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $this->assertContains($expected, $contents);
+        $this->assertStringContainsString($expected, $contents);
 
         $this->exec('plugin unload --no_app TestPlugin');
 
@@ -96,7 +96,7 @@ class UnloadTaskTest extends ConsoleIntegrationTestCase
 
         $this->assertNotContains($expected, $contents);
         $expected = "Plugin::load('TestPluginSecond', ['autoload' => true, 'bootstrap' => false, 'routes' => false]);";
-        $this->assertContains($expected, $contents);
+        $this->assertStringContainsString($expected, $contents);
     }
 
     /**

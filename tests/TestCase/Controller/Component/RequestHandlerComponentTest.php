@@ -801,7 +801,7 @@ XML;
         $this->assertEquals(XmlView::class, $this->Controller->viewBuilder()->getClassName());
         $this->assertEquals('application/xml', $this->Controller->getResponse()->getType());
         $this->assertEquals('UTF-8', $this->Controller->getResponse()->getCharset());
-        $this->assertContains('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));
+        $this->assertStringContainsString('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));
     }
 
     /**
@@ -830,8 +830,8 @@ XML;
         $result = $this->RequestHandler->respondAs('xml', ['attachment' => 'myfile.xml']);
         $this->assertTrue($result);
         $response = $this->Controller->getResponse();
-        $this->assertContains('myfile.xml', $response->getHeaderLine('Content-Disposition'));
-        $this->assertContains('application/xml', $response->getType());
+        $this->assertStringContainsString('myfile.xml', $response->getHeaderLine('Content-Disposition'));
+        $this->assertStringContainsString('application/xml', $response->getType());
     }
 
     /**

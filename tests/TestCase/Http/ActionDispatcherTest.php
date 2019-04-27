@@ -115,7 +115,7 @@ class ActionDispatcherTest extends TestCase
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertContains('posts index', (string)$result->getBody());
+        $this->assertStringContainsString('posts index', (string)$result->getBody());
     }
 
     /**
@@ -136,7 +136,7 @@ class ActionDispatcherTest extends TestCase
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertContains('autoRender false body', (string)$result->getBody());
+        $this->assertStringContainsString('autoRender false body', (string)$result->getBody());
     }
 
     /**

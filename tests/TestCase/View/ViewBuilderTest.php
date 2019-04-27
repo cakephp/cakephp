@@ -336,7 +336,7 @@ class ViewBuilderTest extends TestCase
     {
         $builder = new ViewBuilder();
         $this->assertSame($builder, $builder->setOptions(['newOption']));
-        $this->assertContains('newOption', $builder->getOptions());
+        $this->assertStringContainsString('newOption', $builder->getOptions());
     }
 
     /**

@@ -162,7 +162,7 @@ class BasicsTest extends TestCase
 
         $string = "An invalid\x80string";
         $result = h($string);
-        $this->assertContains('string', $result);
+        $this->assertStringContainsString('string', $result);
 
         $arr = ['<foo>', '&nbsp;'];
         $result = h($arr);
@@ -190,7 +190,7 @@ class BasicsTest extends TestCase
 
         $arr = ['invalid' => "\x99An invalid\x80string", 'good' => 'Good string'];
         $result = h($arr);
-        $this->assertContains('An invalid', $result['invalid']);
+        $this->assertStringContainsString('An invalid', $result['invalid']);
         $this->assertEquals('Good string', $result['good']);
 
         // Test that boolean values are not converted to strings

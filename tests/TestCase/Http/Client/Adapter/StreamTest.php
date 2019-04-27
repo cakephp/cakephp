@@ -202,8 +202,8 @@ class StreamTest extends TestCase
             'User-Agent: CakePHP',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
-        $this->assertContains('a=my+value', $result['content']);
-        $this->assertContains('my+value', $result['content']);
+        $this->assertStringContainsString('a=my+value', $result['content']);
+        $this->assertStringContainsString('my+value', $result['content']);
     }
 
     /**
@@ -222,11 +222,11 @@ class StreamTest extends TestCase
 
         $this->stream->send($request, []);
         $result = $this->stream->contextOptions();
-        $this->assertContains("Content-Type: multipart/form-data", $result['header']);
-        $this->assertContains("Connection: close\r\n", $result['header']);
-        $this->assertContains("User-Agent: CakePHP", $result['header']);
-        $this->assertContains('name="upload"', $result['content']);
-        $this->assertContains('filename="VERSION.txt"', $result['content']);
+        $this->assertStringContainsString("Content-Type: multipart/form-data", $result['header']);
+        $this->assertStringContainsString("Connection: close\r\n", $result['header']);
+        $this->assertStringContainsString("User-Agent: CakePHP", $result['header']);
+        $this->assertStringContainsString('name="upload"', $result['content']);
+        $this->assertStringContainsString('filename="VERSION.txt"', $result['content']);
     }
 
     /**

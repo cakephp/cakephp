@@ -175,7 +175,7 @@ class XmlTest extends TestCase
             ],
         ]);
         $obj = Xml::build($xml);
-        $this->assertContains('<users>leonardo</users>', $obj->saveXML());
+        $this->assertStringContainsString('<users>leonardo</users>', $obj->saveXML());
     }
 
     /**
@@ -193,8 +193,8 @@ class XmlTest extends TestCase
         ]);
         $obj = Xml::build($xml);
         $output = $obj->saveXML();
-        $this->assertContains('<username>mark</username>', $output);
-        $this->assertContains('<email>mark@example.com</email>', $output);
+        $this->assertStringContainsString('<username>mark</username>', $output);
+        $this->assertStringContainsString('<email>mark@example.com</email>', $output);
     }
 
     /**
@@ -1256,7 +1256,7 @@ XML;
         ];
         $obj = Xml::build($data);
         $result = $obj->asXml();
-        $this->assertContains('mark &amp; mark', $result);
+        $this->assertStringContainsString('mark &amp; mark', $result);
     }
 
     /**
@@ -1294,7 +1294,7 @@ XML;
         ];
         $obj = Xml::build($data);
         $result = $obj->asXml();
-        $this->assertContains('<inner>' . $classname . '</inner>', $result);
+        $this->assertStringContainsString('<inner>' . $classname . '</inner>', $result);
     }
 
     /**

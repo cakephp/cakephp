@@ -92,7 +92,7 @@ class MailTransportTest extends TestCase
 
         $result = $this->MailTransport->send($message);
 
-        $this->assertContains('Subject: ', $result['headers']);
-        $this->assertContains('To: ', $result['headers']);
+        $this->assertStringContainsString('Subject: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
     }
 }

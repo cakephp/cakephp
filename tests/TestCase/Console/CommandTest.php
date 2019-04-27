@@ -148,7 +148,7 @@ class CommandTest extends TestCase
         );
         $messages = implode("\n", $output->messages());
         $this->assertNotContains('Demo', $messages);
-        $this->assertContains('cake demo [-h]', $messages);
+        $this->assertStringContainsString('cake demo [-h]', $messages);
     }
 
     /**
@@ -168,7 +168,7 @@ class CommandTest extends TestCase
         );
         $messages = implode("\n", $output->messages());
         $this->assertNotContains('Demo', $messages);
-        $this->assertContains('cake demo [-h]', $messages);
+        $this->assertStringContainsString('cake demo [-h]', $messages);
     }
 
     /**
@@ -184,9 +184,9 @@ class CommandTest extends TestCase
 
         $this->assertNull($command->run(['--verbose'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Verbose!', $messages);
-        $this->assertContains('Demo Command!', $messages);
-        $this->assertContains('Quiet!', $messages);
+        $this->assertStringContainsString('Verbose!', $messages);
+        $this->assertStringContainsString('Demo Command!', $messages);
+        $this->assertStringContainsString('Quiet!', $messages);
         $this->assertNotContains('cake demo [-h]', $messages);
     }
 
@@ -203,7 +203,7 @@ class CommandTest extends TestCase
 
         $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Quiet!', $messages);
+        $this->assertStringContainsString('Quiet!', $messages);
         $this->assertNotContains('Verbose!', $messages);
         $this->assertNotContains('Demo Command!', $messages);
     }
@@ -228,7 +228,7 @@ class CommandTest extends TestCase
         $this->assertSame(Command::CODE_ERROR, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Error: Missing required arguments. name is required', $messages);
+        $this->assertStringContainsString('Error: Missing required arguments. name is required', $messages);
     }
 
     /**

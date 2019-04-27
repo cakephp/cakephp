@@ -2870,7 +2870,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
-        $this->assertContains(' WHERE 1 = 1', $result);
+        $this->assertStringContainsString(' WHERE 1 = 1', $result);
     }
 
     /**
@@ -3680,9 +3680,9 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('FOR UPDATE')
             ->sql();
-        $this->assertContains('SELECT', $sql);
-        $this->assertContains('FROM', $sql);
-        $this->assertContains('WHERE', $sql);
+        $this->assertStringContainsString('SELECT', $sql);
+        $this->assertStringContainsString('FROM', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
         $this->assertEquals(' FOR UPDATE', substr($sql, -11));
     }
 
@@ -3700,9 +3700,9 @@ class QueryTest extends TestCase
             ->values([1, 'a title'])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('INSERT', $sql);
-        $this->assertContains('INTO', $sql);
-        $this->assertContains('VALUES', $sql);
+        $this->assertStringContainsString('INSERT', $sql);
+        $this->assertStringContainsString('INTO', $sql);
+        $this->assertStringContainsString('VALUES', $sql);
         $this->assertEquals(' RETURNING id', substr($sql, -13));
     }
 
@@ -3720,9 +3720,9 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('UPDATE', $sql);
-        $this->assertContains('SET', $sql);
-        $this->assertContains('WHERE', $sql);
+        $this->assertStringContainsString('UPDATE', $sql);
+        $this->assertStringContainsString('SET', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
         $this->assertEquals(' RETURNING id', substr($sql, -13));
     }
 
@@ -3739,8 +3739,8 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('DELETE FROM', $sql);
-        $this->assertContains('WHERE', $sql);
+        $this->assertStringContainsString('DELETE FROM', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
         $this->assertEquals(' RETURNING id', substr($sql, -13));
     }
 
@@ -3966,7 +3966,7 @@ class QueryTest extends TestCase
         $query = (new Query($this->connection))
             ->insert(['title']);
         $result = $query->__debugInfo();
-        $this->assertContains('incomplete', $result['sql']);
+        $this->assertStringContainsString('incomplete', $result['sql']);
         $this->assertSame([], $result['params']);
     }
 

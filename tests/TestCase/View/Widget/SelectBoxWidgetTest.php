@@ -102,11 +102,11 @@ class SelectBoxWidgetTest extends TestCase
             'val' => false,
         ];
         $result = $select->render($data, $this->context);
-        $this->assertContains('<option value="0" selected="selected">No</option>', $result);
+        $this->assertStringContainsString('<option value="0" selected="selected">No</option>', $result);
 
         $data['value'] = [false, 2];
         $result = $select->render($data, $this->context);
-        $this->assertContains('<option value="0" selected="selected">No</option>', $result);
+        $this->assertStringContainsString('<option value="0" selected="selected">No</option>', $result);
     }
 
     /**
