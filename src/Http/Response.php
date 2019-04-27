@@ -2388,6 +2388,20 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Get a new instance with provided cookie collection.
+     *
+     * @param \Cake\Http\Cookie\CookieCollection $cookieCollection Cookie collection to set.
+     * @return static
+     */
+    public function withCookieCollection(CookieCollection $cookieCollection)
+    {
+        $new = clone $this;
+        $new->_cookies = $cookieCollection;
+
+        return $new;
+    }
+
+    /**
      * Setup access for origin and methods on cross origin requests
      *
      * This method allow multiple ways to setup the domains, see the examples
