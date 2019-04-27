@@ -50,7 +50,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -121,16 +121,16 @@ class IntegrationTestTraitTest extends TestCase
             'upload' => new UploadedFile(__FILE__, 42, 0),
         ];
         $request = $this->_buildRequest('/posts/add', 'POST', $data);
-        $this->assertInternalType('string', $request['post']['status']);
-        $this->assertInternalType('string', $request['post']['published']);
+        $this->assertIsString($request['post']['status']);
+        $this->assertIsString($request['post']['published']);
         $this->assertSame('0', $request['post']['not_published']);
-        $this->assertInternalType('string', $request['post']['comments'][0]['status']);
-        $this->assertInternalType('integer', $request['post']['file']['error']);
-        $this->assertInternalType('integer', $request['post']['file']['size']);
-        $this->assertInternalType('integer', $request['post']['pictures']['error'][0]['file']);
-        $this->assertInternalType('integer', $request['post']['pictures']['error'][1]['file']);
-        $this->assertInternalType('integer', $request['post']['pictures']['size'][0]['file']);
-        $this->assertInternalType('integer', $request['post']['pictures']['size'][1]['file']);
+        $this->assertIsString($request['post']['comments'][0]['status']);
+        $this->assertIsInt($request['post']['file']['error']);
+        $this->assertIsInt($request['post']['file']['size']);
+        $this->assertIsInt($request['post']['pictures']['error'][0]['file']);
+        $this->assertIsInt($request['post']['pictures']['error'][1]['file']);
+        $this->assertIsInt($request['post']['pictures']['size'][0]['file']);
+        $this->assertIsInt($request['post']['pictures']['size'][1]['file']);
         $this->assertInstanceOf(UploadedFile::class, $request['post']['upload']);
     }
 
@@ -402,7 +402,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertHeader('X-Middleware', 'true');
 
         $request = $this->_controller->getRequest();
-        $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
+        $this->assertStringContainsString('/request_action/params_pass?q=query', $request->getRequestTarget());
     }
 
     /**
@@ -420,8 +420,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertHeader('X-Middleware', 'true');
 
         $request = $this->_controller->getRequest();
-        $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
-        $this->assertContains('/request_action/params_pass', $request->getAttribute('here'));
+        $this->assertStringContainsString('/request_action/params_pass?q=query', $request->getRequestTarget());
+        $this->assertStringContainsString('/request_action/params_pass', $request->getAttribute('here'));
     }
 
     /**
@@ -557,9 +557,9 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -576,9 +576,9 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -605,7 +605,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertTemplateAfterCellRender()
     {
         $this->get('/posts/get');
-        $this->assertContains('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
         $this->assertTemplate('get');
         $this->assertResponseContains('cellcontent');
     }

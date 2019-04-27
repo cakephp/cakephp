@@ -44,7 +44,6 @@ class EventFiredWith extends Constraint
      */
     public function __construct(EventManager $eventManager, string $dataKey, ?string $dataValue)
     {
-        parent::__construct();
         $this->_eventManager = $eventManager;
         $this->_dataKey = $dataKey;
         $this->_dataValue = $dataValue;

@@ -134,7 +134,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -153,7 +153,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if ($this->_configure) {
@@ -405,7 +405,7 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
-        $this->assertContains($needle, $haystack, $message, $ignoreCase);
+        $this->assertStringContainsString($needle, $haystack, $message, $ignoreCase);
     }
 
     /**
@@ -426,7 +426,7 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
-        $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
+        $this->assertStringNotContainsString($needle, $haystack, $message, $ignoreCase);
     }
 
     /**

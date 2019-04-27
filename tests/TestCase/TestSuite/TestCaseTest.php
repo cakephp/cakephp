@@ -24,6 +24,7 @@ use Cake\ORM\Table;
 use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\Fixture\FixtureManager;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\AssertionFailedError;
 use TestApp\Model\Table\SecondaryPostsTable;
 
 /**
@@ -176,11 +177,12 @@ class TestCaseTest extends TestCase
     /**
      * test withErrorReporting with exceptions
      *
-     * @expectedException \PHPUnit\Framework\AssertionFailedError
      * @return void
      */
     public function testWithErrorReportingWithException()
     {
+        $this->expectException(AssertionFailedError::class);
+
         $errorLevel = error_reporting();
         try {
             $this->withErrorReporting(E_USER_WARNING, function () {
@@ -294,8 +296,8 @@ class TestCaseTest extends TestCase
         $stringDirty = "some\nstring\r\nwith\rdifferent\nline endings!";
         $stringClean = "some\nstring\nwith\ndifferent\nline endings!";
 
-        $this->assertContains('different', $stringDirty);
-        $this->assertNotContains("different\rline", $stringDirty);
+        $this->assertStringContainsString('different', $stringDirty);
+        $this->assertStringNotContainsString("different\rline", $stringDirty);
 
         $this->assertTextContains("different\rline", $stringDirty);
     }

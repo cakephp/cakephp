@@ -39,7 +39,6 @@ class EventFired extends Constraint
      */
     public function __construct(EventManager $eventManager)
     {
-        parent::__construct();
         $this->_eventManager = $eventManager;
 
         if ($this->_eventManager->getEventList() === null) {

@@ -35,8 +35,6 @@ class ExitCode extends Constraint
      */
     public function __construct(int $exitCode)
     {
-        parent::__construct();
-
         $this->exitCode = $exitCode;
     }
 
