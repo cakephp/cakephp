@@ -25,6 +25,7 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
+use InvalidArgumentException;
 
 /**
  * Tests Query class
@@ -2327,12 +2328,13 @@ class QueryTest extends TestCase
     /**
      * Test Pages number.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Pages must start at 1.
      * @return void
      */
     public function testPageShouldStartAtOne()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Pages must start at 1.');
+
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query->from('comments')->page(0);

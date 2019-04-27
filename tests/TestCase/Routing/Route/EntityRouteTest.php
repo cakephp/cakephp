@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Routing\Route;
 
 use Cake\Routing\Route\EntityRoute;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TestApp\Model\Entity\Article;
 
 /**
@@ -136,12 +137,12 @@ class EntityRouteTest extends TestCase
 
     /**
      * Test invalid entity option value
-     *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Route `/` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `string` passed.
      */
     public function testInvalidEntityValueException()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Route `/` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, but `string` passed.');
+
         $route = new EntityRoute('/', [
             '_entity' => 'Something else',
         ]);

@@ -21,6 +21,7 @@ use Cake\Mailer\Email;
 use Cake\Mailer\Message;
 use Cake\Mailer\TransportFactory;
 use Cake\TestSuite\TestCase;
+use Cake\View\Exception\MissingTemplateException;
 use Exception;
 use SimpleXmlElement;
 use TestApp\Mailer\TestEmail;
@@ -1787,10 +1788,11 @@ class EmailTest extends TestCase
      * Test that a MissingTemplateException is thrown
      *
      * @return void
-     * @expectedException \Cake\View\Exception\MissingTemplateException
      */
     public function testMissingTemplateException()
     {
+        $this->expectException(MissingTemplateException::class);
+
         $this->Email->reset();
         $this->Email->setTransport('debug');
         $this->Email->setFrom('cake@cakephp.org');

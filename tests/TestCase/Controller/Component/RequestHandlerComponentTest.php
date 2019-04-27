@@ -19,6 +19,7 @@ use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\RouteBuilder;
@@ -533,11 +534,12 @@ class RequestHandlerComponentTest extends TestCase
      * Tests that configured extensions that have no configured mimetype do not silently fallback to HTML.
      *
      * @return void
-     * @expectedException \Cake\Http\Exception\NotFoundException
-     * @expectedExceptionMessage Invoked extension not recognized/configured: foo
      */
     public function testUnrecognizedExtensionFailure()
     {
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Invoked extension not recognized/configured: foo');
+
         Router::extensions(['json', 'foo'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));
         $event = new Event('Controller.startup', $this->Controller);

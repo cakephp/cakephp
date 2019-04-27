@@ -18,10 +18,12 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\StopException;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 
@@ -80,12 +82,13 @@ class CommandTest extends TestCase
     /**
      * Test invalid name
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage The name 'routes_show' is missing a space. Names should look like `cake routes`
      * @return void
      */
     public function testSetNameInvalid()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
+
         $command = new Command();
         $command->setName('routes_show');
     }
@@ -93,11 +96,12 @@ class CommandTest extends TestCase
     /**
      * Test invalid name
      *
-     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testSetNameInvalidLeadingSpace()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $command = new Command();
         $command->setName(' routes_show');
     }
@@ -234,12 +238,13 @@ class CommandTest extends TestCase
     /**
      * Test abort()
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionCode 1
      * @return void
      */
     public function testAbort()
     {
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(1);
+
         $command = new Command();
         $command->abort();
     }
@@ -247,12 +252,13 @@ class CommandTest extends TestCase
     /**
      * Test abort()
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionCode 99
      * @return void
      */
     public function testAbortCustomCode()
     {
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(99);
+
         $command = new Command();
         $command->abort(99);
     }

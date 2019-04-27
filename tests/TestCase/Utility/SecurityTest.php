@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
+use RuntimeException;
 
 /**
  * SecurityTest class
@@ -71,12 +72,13 @@ class SecurityTest extends TestCase
     /**
      * testInvalidHashTypeException
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /The hash type `doesnotexist` was not found. Available algorithms are: \w+/
      * @return void
      */
     public function testInvalidHashTypeException()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageRegExp('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
+
         Security::hash('test', 'doesnotexist', false);
     }
 

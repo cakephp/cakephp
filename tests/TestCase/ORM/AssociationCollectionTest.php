@@ -21,6 +21,7 @@ use Cake\ORM\AssociationCollection;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * AssociationCollection test case.
@@ -119,11 +120,12 @@ class AssociationCollectionTest extends TestCase
      * Test load invalid class.
      *
      * @return void
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage The association must extend `Cake\ORM\Association` class, `stdClass` given.
      */
     public function testLoadInvalid()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The association must extend `Cake\ORM\Association` class, `stdClass` given.');
+
         $this->associations->load('stdClass', 'Users');
     }
 
