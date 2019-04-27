@@ -10,14 +10,14 @@ class TestView extends AppView
     }
 
     /**
-     * getViewFileName method
+     * getTemplateFileName method
      *
      * @param string $name Controller action to find template filename for
      * @return string Template filename
      */
-    public function getViewFileName($name = null)
+    public function getTemplateFileName($name = null)
     {
-        return $this->_getViewFileName($name);
+        return $this->_getTemplateFileName($name);
     }
 
     /**
