@@ -71,7 +71,7 @@ class BinaryUuidTypeTest extends TestCase
         $fh = fopen(__FILE__, 'r');
         $result = $this->type->toPHP($fh, $this->driver);
         $this->assertSame($fh, $result);
-        $this->assertInternalType('resource', $result);
+        $this->assertIsResource($result);
         fclose($fh);
     }
 
