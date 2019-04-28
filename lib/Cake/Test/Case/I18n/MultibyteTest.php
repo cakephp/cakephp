@@ -7640,6 +7640,10 @@ class MultibyteTest extends CakeTestCase {
  * @return void
  */
 	public function testUsingMbStrtoupperArmenian() {
+		if (extension_loaded('mbstring') && version_compare(PHP_VERSION, '7.3', '>=')) {
+			$this->markTestSkipped('PHP7.3+ built-in function mb_strtoupper() behaves slightly different from Multibyte::strtoupper()');
+		}
+
 		$string = 'աբգդեզէըթժիլխծկհձղճմյնշոչպջռսվտրցւփքօֆև';
 		$result = mb_strtoupper($string);
 		$expected = 'ԱԲԳԴԵԶԷԸԹԺԻԼԽԾԿՀՁՂՃՄՅՆՇՈՉՊՋՌՍՎՏՐՑՒՓՔՕՖև';
@@ -7652,6 +7656,10 @@ class MultibyteTest extends CakeTestCase {
  * @return void
  */
 	public function testUsingMbStrtoupperDiacritic() {
+		if (extension_loaded('mbstring') && version_compare(PHP_VERSION, '7.3', '>=')) {
+			$this->markTestSkipped('PHP7.3+ built-in function mb_strtoupper() behaves slightly different from Multibyte::strtoupper()');
+		}
+
 		$string = 'ḁḃḅḇḉḋḍḏḑḓḕḗḙḛḝḟḡḣḥḧḩḫḭḯḱḳḵḷḹḻḽḿṁṃṅṇṉṋṍṏṑṓṕṗṙṛṝṟṡṣṥṧṩṫṭṯṱṳṵṷṹṻṽṿẁẃẅẇẉẋẍẏẑẓẕẖẗẘẙẚạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ';
 		$result = mb_strtoupper($string);
 		$expected = 'ḀḂḄḆḈḊḌḎḐḒḔḖḘḚḜḞḠḢḤḦḨḪḬḮḰḲḴḶḸḺḼḾṀṂṄṆṈṊṌṎṐṒṔṖṘṚṜṞṠṢṤṦṨṪṬṮṰṲṴṶṸṺṼṾẀẂẄẆẈẊẌẎẐẒẔẖẗẘẙẚẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ';
@@ -7664,6 +7672,10 @@ class MultibyteTest extends CakeTestCase {
  * @return void
  */
 	public function testUsingMbStrtoupperLigatures() {
+		if (extension_loaded('mbstring') && version_compare(PHP_VERSION, '7.3', '>=')) {
+			$this->markTestSkipped('PHP7.3+ built-in function mb_strtoupper() behaves slightly different from Multibyte::strtoupper()');
+		}
+
 		$string = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
 		$result = mb_strtoupper($string);
 		$expected = 'ﬀﬁﬂﬃﬄﬅﬆﬓﬔﬕﬖﬗ';
