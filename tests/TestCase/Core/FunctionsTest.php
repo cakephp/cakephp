@@ -79,7 +79,7 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabled()
     {
         $this->expectException(Deprecated::class);
-        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/');
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away', 2);
@@ -93,7 +93,7 @@ class FunctionsTest extends TestCase
     public function testDeprecationWarningEnabledDefaultFrame()
     {
         $this->expectException(Deprecated::class);
-        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/');
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away');
@@ -119,7 +119,7 @@ class FunctionsTest extends TestCase
     public function testTriggerWarningEnabled()
     {
         $this->expectException(Warning::class);
-        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/');
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
 
         $this->withErrorReporting(E_ALL, function () {
             triggerWarning('This is going away');
