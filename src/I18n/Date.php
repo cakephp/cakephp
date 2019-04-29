@@ -46,7 +46,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, -1];
 
     /**
-     * The format to use when when converting this object to json
+     * The format to use when converting this object to JSON.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
