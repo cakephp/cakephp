@@ -432,7 +432,7 @@ class CakeSession {
  * Writes value to given session variable name.
  *
  * @param string|array $name Name of variable
- * @param string|array $value Value to write
+ * @param mixed $value Value to write
  * @return bool True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
