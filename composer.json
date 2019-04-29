@@ -28,7 +28,7 @@
         "source": "https://github.com/cakephp/cakephp"
     },
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.2.0",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "aura/intl": "^3.0.0",
