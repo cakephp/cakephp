@@ -1214,7 +1214,7 @@ trait IntegrationTestTrait
     /**
      * Asserts that a file with the given name was sent in the response
      *
-     * @param string $expected The file name that should be sent in the response
+     * @param string $expected The absolute file path that should be sent in the response.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */

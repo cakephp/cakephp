@@ -491,7 +491,7 @@ class Response implements ResponseInterface
             return;
         }
         $whitelist = [
-            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml',
+            'application/javascript', 'application/xml', 'application/rss+xml',
         ];
 
         $charset = false;
@@ -1328,7 +1328,51 @@ class Response implements ResponseInterface
     }
 
     /**
+     * Get a new instance with provided cookie collection.
+     *
+     * @param \Cake\Http\Cookie\CookieCollection $cookieCollection Cookie collection to set.
+     * @return static
+     */
+    public function withCookieCollection(CookieCollection $cookieCollection)
+    {
+        $new = clone $this;
+        $new->_cookies = $cookieCollection;
+
+        return $new;
+    }
+
+    /**
      * Get a CorsBuilder instance for defining CORS headers.
+     *
+     * This method allow multiple ways to setup the domains, see the examples
+     *
+     * ### Full URI
+     * ```
+     * cors($request, 'https://www.cakephp.org');
+     * ```
+     *
+     * ### URI with wildcard
+     * ```
+     * cors($request, 'https://*.cakephp.org');
+     * ```
+     *
+     * ### Ignoring the requested protocol
+     * ```
+     * cors($request, 'www.cakephp.org');
+     * ```
+     *
+     * ### Any URI
+     * ```
+     * cors($request, '*');
+     * ```
+     *
+     * ### Whitelist of URIs
+     * ```
+     * cors($request, ['http://www.cakephp.org', '*.google.com', 'https://myproject.github.io']);
+     * ```
+     *
+     * *Note* The `$allowedDomains`, `$allowedMethods`, `$allowedHeaders` parameters are deprecated.
+     * Instead the builder object should be used.
      *
      * @param \Cake\Http\ServerRequest $request Request object
      * @return \Cake\Http\CorsBuilder A builder object the provides a fluent interface for defining

@@ -180,7 +180,7 @@ class ResponseTest extends TestCase
         );
         $this->assertSame('application/pdf', $new->getHeaderLine('Content-Type'));
         $this->assertSame(
-            'application/json; charset=UTF-8',
+            'application/json',
             $new->withType('json')->getHeaderLine('Content-Type')
         );
     }
@@ -228,7 +228,6 @@ class ResponseTest extends TestCase
         return [
             ['mp3', 'audio/mpeg'],
             ['js', 'application/javascript; charset=UTF-8'],
-            ['json', 'application/json; charset=UTF-8'],
             ['xml', 'application/xml; charset=UTF-8'],
             ['txt', 'text/plain; charset=UTF-8'],
         ];
@@ -1012,6 +1011,22 @@ class ResponseTest extends TestCase
 
         $this->assertTrue($cookies->has('testing'));
         $this->assertTrue($cookies->has('test2'));
+    }
+
+    /**
+     * Test withCookieCollection()
+     *
+     * @return void
+     */
+    public function testWithCookieCollection()
+    {
+        $response = new Response();
+        $collection = new CookieCollection([new Cookie('foo', 'bar')]);
+        $newResponse = $response->withCookieCollection($collection);
+
+        $this->assertNotSame($response, $newResponse);
+        $this->assertNotSame($response->getCookieCollection(), $newResponse->getCookieCollection());
+        $this->assertSame($newResponse->getCookie('foo')['value'], 'bar');
     }
 
     /**

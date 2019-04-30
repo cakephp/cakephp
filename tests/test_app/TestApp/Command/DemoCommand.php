@@ -13,5 +13,8 @@ class DemoCommand extends Command
         $io->quiet('Quiet!');
         $io->out('Demo Command!');
         $io->verbose('Verbose!');
+        if ($args->hasArgumentAt(0)) {
+            $io->out($args->getArgumentAt(0));
+        }
     }
 }
