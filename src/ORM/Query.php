@@ -1175,12 +1175,15 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @see \Cake\ORM\Table::find()
      */
-    public function find($finder, array $options = [])
+    public function find($finder, ...$args)
     {
         /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
+        if (!$args) {
+            $args[0] = [];
+        }
 
-        return $table->callFinder($finder, $this, $options);
+        return $table->callFinder($finder, $this, ...$args);
     }
 
     /**
