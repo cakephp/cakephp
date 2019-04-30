@@ -1177,7 +1177,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Would invoke the `findPublished` method.
      *
      * @param string $type the type of query to perform
-     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
+     * @param \ArrayAccess $args An array that will be passed to Query::applyOptions()
      * @return \Cake\ORM\Query The query builder
      */
     public function find(string $type = 'all', ...$args): Query
@@ -2239,7 +2239,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type name of the finder to be called
      * @param \Cake\ORM\Query $query The query object to apply the finder options to
-     * @param array $options List of options to pass to the finder
+     * @param array $args List of options to pass to the finder
      * @return \Cake\ORM\Query
      * @throws \BadMethodCallException
      */

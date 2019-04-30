@@ -63,8 +63,8 @@ interface RepositoryInterface
      * Creates a new Query for this repository and applies some defaults based on the
      * type of search that was selected.
      *
-     * @param string $type the type of query to perform
-     * @param array|\ArrayAccess $options An array that will be passed to Query::applyOptions()
+     * @param string $type the type of query to perform.
+     * @param ...mixed $args Finder arguments. If none are passed an empty array will be passed to finder method.
      * @return \Cake\Datasource\QueryInterface
      */
     public function find(string $type = 'all', ...$args);

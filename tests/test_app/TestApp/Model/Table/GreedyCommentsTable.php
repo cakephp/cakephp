@@ -31,7 +31,10 @@ class GreedyCommentsTable extends Table
      */
     public function find(string $type = 'all', ...$args): Query
     {
-        $options = isset($args[0]) ? $args[0] : [];
+        $options = [];
+        if (isset($args[0])) {
+            $options = $args[0];
+        }
         if (empty($options['conditions'])) {
             $options['conditions'] = [];
         }
