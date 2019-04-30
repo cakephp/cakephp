@@ -1177,7 +1177,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Would invoke the `findPublished` method.
      *
      * @param string $type the type of query to perform
-     * @param \ArrayAccess $args An array that will be passed to Query::applyOptions()
+     * @param mixed ...$args Finder arguments. If none are passed an empty array will be passed to finder method.
      * @return \Cake\ORM\Query The query builder
      */
     public function find(string $type = 'all', ...$args): Query

@@ -64,7 +64,7 @@ interface RepositoryInterface
      * type of search that was selected.
      *
      * @param string $type the type of query to perform.
-     * @param ...mixed $args Finder arguments. If none are passed an empty array will be passed to finder method.
+     * @param mixed ...$args Finder arguments. If none are passed an empty array will be passed to finder method.
      * @return \Cake\Datasource\QueryInterface
      */
     public function find(string $type = 'all', ...$args);

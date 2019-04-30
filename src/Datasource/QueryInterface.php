@@ -119,7 +119,7 @@ interface QueryInterface
      * a single query.
      *
      * @param string $finder The finder method to use.
-     * @param ...mixed $args Finder arguments. If none are passed an empty array will be passed to finder method.
+     * @param mixed ...$args Finder arguments. If none are passed an empty array will be passed to finder method.
      * @return \Cake\Datasource\QueryInterface Returns a modified query.
      */
     public function find($finder, ...$args);
