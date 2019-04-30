@@ -614,7 +614,7 @@ class Validation
      *
      * @return bool True if the value is valid, false otherwise
      *
-     * @copyright Regex credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+     * @see Regex credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
     public static function iso8601($check)
     {

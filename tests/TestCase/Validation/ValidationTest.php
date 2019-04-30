@@ -1609,7 +1609,7 @@ class ValidationTest extends TestCase
      *
      * @return void
      *
-     * @copyright Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+     * @see Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
      */
     public function testDateTimeISO8601()
     {
