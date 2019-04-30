@@ -36,12 +36,14 @@ class CustomCommentsTable extends Table
      *
      * @param Query $query Query
      * @param bool $published Whether or not a comment is published.
+     * @param EntityInterface $article Article.
      * @return Query
      */
-    public function findPublished(Query $query, bool $published): Query
+    public function findPublishedArticle(Query $query, bool $published, EntityInterface $article): Query
     {
         $query->where([
             'published' => $published ? 'Y' : 'N',
+            'article_id' => $article->id,
         ]);
 
         return $query;

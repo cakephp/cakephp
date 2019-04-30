@@ -522,17 +522,16 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function testFinderCustom()
+    public function testFinderCustomTable()
     {
         $table = $this->getTableLocator()->get('CustomComments');
-        $user = new Entity(['id' => 1]);
+        $article = new Entity(['id' => 1]);
 
         $comments = $table
-            ->find('published', true)
-            ->find('user', $user)
+            ->find('publishedArticle', true, $article)
             ->find('all', [
                 'conditions' => [
-                    'article_id' => 1,
+                    'user_id' => 1,
                 ],
             ])
             ->all();
@@ -552,17 +551,12 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $table->addBehavior('CustomFinder');
-
+        $article = new Entity(['id' => 1]);
         $user = new Entity(['id' => 1]);
 
         $comments = $table
-            ->find('published', true)
+            ->find('publishedArticle', true, $article)
             ->find('user', $user)
-            ->find('all', [
-                'conditions' => [
-                    'article_id' => 1,
-                ],
-            ])
             ->all();
 
         $this->assertCount(1, $comments);
