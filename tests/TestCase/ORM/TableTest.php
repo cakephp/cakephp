@@ -530,9 +530,14 @@ class TableTest extends TestCase
         $comments = $table
             ->find('published', true)
             ->find('user', $user)
+            ->find('all', [
+                'conditions' => [
+                    'article_id' => 1,
+                ],
+            ])
             ->all();
 
-        $this->assertCount(2, $comments);
+        $this->assertCount(1, $comments);
     }
 
     /**
