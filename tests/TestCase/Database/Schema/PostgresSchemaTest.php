@@ -177,6 +177,10 @@ SQL;
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
             ],
             [
+                ['type' => 'CHAR(36)'],
+                ['type' => 'string', 'fixed' => true, 'length' => 36]
+            ],
+            [
                 ['type' => 'CHARACTER(10)'],
                 ['type' => 'string', 'fixed' => true, 'length' => 10]
             ],
@@ -696,6 +700,11 @@ SQL;
                 '"id" CHAR(32) NOT NULL'
             ],
             [
+                'title',
+                ['type' => 'string', 'length' => 36, 'fixed' => true, 'null' => false],
+                '"title" CHAR(36) NOT NULL'
+            ],
+            [
                 'id',
                 ['type' => 'uuid', 'length' => 36, 'null' => false],
                 '"id" UUID NOT NULL'
@@ -714,6 +723,11 @@ SQL;
                 'title',
                 ['type' => 'string'],
                 '"title" VARCHAR'
+            ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 36],
+                '"title" VARCHAR(36)'
             ],
             [
                 'title',

@@ -581,7 +581,7 @@ class Response implements ResponseInterface
             return;
         }
         $whitelist = [
-            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+            'application/javascript', 'application/xml', 'application/rss+xml'
         ];
 
         $charset = false;

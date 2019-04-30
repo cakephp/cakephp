@@ -33,7 +33,7 @@ class HeaderSet extends ResponseBase
      * @param Response $response Response
      * @param string $headerName Header name
      */
-    public function __construct(Response $response, $headerName)
+    public function __construct($response, $headerName)
     {
         parent::__construct($response);
 

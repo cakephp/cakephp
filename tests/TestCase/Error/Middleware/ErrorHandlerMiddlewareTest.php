@@ -167,7 +167,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertNotSame($result, $response);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertContains('"message": "whoops"', '' . $result->getBody());
-        $this->assertEquals('application/json; charset=UTF-8', $result->getHeaderLine('Content-type'));
+        $this->assertEquals('application/json', $result->getHeaderLine('Content-type'));
     }
 
     /**
