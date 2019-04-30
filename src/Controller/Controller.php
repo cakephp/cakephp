@@ -290,9 +290,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function __get(string $name)
     {
-        [$plugin, $class] = pluginSplit($this->modelClass, true);
-        if ($class === $name) {
-            return $this->loadModel($plugin . $class);
+        if ($this->modelClass !== '') {
+            [$plugin, $class] = pluginSplit($this->modelClass, true);
+            if ($class === $name) {
+                return $this->loadModel($plugin . $class);
+            }
         }
 
         $trace = debug_backtrace();

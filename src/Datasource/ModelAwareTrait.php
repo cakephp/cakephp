@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
+use InvalidArgumentException;
 
 /**
  * Provides functionality for loading table classes
@@ -37,7 +38,7 @@ trait ModelAwareTrait
      * Use empty string to not use auto-loading on this object. Null auto-detects based on
      * controller name.
      *
-     * @var string
+     * @var string|null
      */
     public $modelClass;
 
@@ -91,6 +92,9 @@ trait ModelAwareTrait
     {
         if ($modelClass === null) {
             $modelClass = $this->modelClass;
+        }
+        if ($modelClass === '') {
+            throw new InvalidArgumentException('You cannot use an empty string as model class name.');
         }
         if ($modelType === null) {
             $modelType = $this->getModelType();

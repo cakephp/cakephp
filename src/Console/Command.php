@@ -64,7 +64,7 @@ class Command
             return $this->getTableLocator()->get($alias);
         });
 
-        if (isset($this->modelClass)) {
+        if ($this->modelClass !== '') {
             $this->loadModel();
         }
     }

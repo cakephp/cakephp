@@ -198,7 +198,7 @@ class Shell
             ['associative' => ['tasks']]
         );
 
-        if (isset($this->modelClass)) {
+        if ($this->modelClass !== '') {
             $this->loadModel();
         }
     }
