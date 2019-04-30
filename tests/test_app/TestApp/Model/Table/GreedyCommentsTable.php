@@ -29,8 +29,9 @@ class GreedyCommentsTable extends Table
      * @param array $options find options
      * @return \Cake\ORM\Query
      */
-    public function find(string $type = 'all', $options = []): Query
+    public function find(string $type = 'all', ...$args): Query
     {
+        $options = isset($args[0]) ? $args[0] : [];
         if (empty($options['conditions'])) {
             $options['conditions'] = [];
         }
