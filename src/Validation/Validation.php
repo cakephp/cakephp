@@ -582,7 +582,7 @@ class Validation
         if (is_object($check)) {
             return false;
         }
-        if ($dateFormat === self::DATETIME_ISO8601 && !static::iso8601($check)) {
+        if ($dateFormat === static::DATETIME_ISO8601 && !static::iso8601($check)) {
             return false;
         }
 
@@ -595,7 +595,7 @@ class Validation
         if (!empty($parts) && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
-            if ($dateFormat === self::DATETIME_ISO8601) {
+            if ($dateFormat === static::DATETIME_ISO8601) {
                 $dateFormat = 'ymd';
                 $time = preg_split("/[TZ\-\+\.]/", $time);
                 $time = array_shift($time);
