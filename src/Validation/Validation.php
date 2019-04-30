@@ -77,6 +77,11 @@ class Validation
     const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
+     * Datetime ISO8601 format
+     */
+    const DATETIME_ISO8601 = 'iso8601';
+
+    /**
      * Some complex patterns needed in multiple places
      *
      * @var array
@@ -563,7 +568,7 @@ class Validation
      *
      * @param string|\DateTimeInterface $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
-     *      Or `iso8601` to valid an ISO8601 datetime value
+     *      Or `Validation::DATETIME_ISO8601` to valid an ISO8601 datetime value
      * @param string|null $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
      * @see \Cake\Validation\Validation::date()
@@ -577,7 +582,7 @@ class Validation
         if (is_object($check)) {
             return false;
         }
-        if ($dateFormat === 'iso8601' && !static::iso8601($check)) {
+        if ($dateFormat === self::DATETIME_ISO8601 && !static::iso8601($check)) {
             return false;
         }
 
@@ -590,7 +595,7 @@ class Validation
         if (!empty($parts) && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
-            if ($dateFormat === 'iso8601') {
+            if ($dateFormat === self::DATETIME_ISO8601) {
                 $dateFormat = 'ymd';
                 $time = preg_split("/[TZ\-\+\.]/", $time);
                 $time = array_shift($time);
