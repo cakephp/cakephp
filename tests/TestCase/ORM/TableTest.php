@@ -541,6 +541,34 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that custom arguments are passed to behavior finders correctly.
+     *
+     * @return void
+     */
+    public function testFinderCustomBehavior()
+    {
+        $table = new Table([
+            'table' => 'comments',
+            'connection' => $this->connection,
+        ]);
+        $table->addBehavior('CustomFinder');
+
+        $user = new Entity(['id' => 1]);
+
+        $comments = $table
+            ->find('published', true)
+            ->find('user', $user)
+            ->find('all', [
+                'conditions' => [
+                    'article_id' => 1,
+                ],
+            ])
+            ->all();
+
+        $this->assertCount(1, $comments);
+    }
+
+    /**
      * Test that the getAssociation() method supports the dot syntax.
      *
      * @return void
