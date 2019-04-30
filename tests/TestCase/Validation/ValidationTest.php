@@ -1605,6 +1605,41 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to pass an ISO8601 value
+     *
+     * @return void
+     *
+     * @copyright Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+     */
+    public function testDateTimeISO8601()
+    {
+        // Valid ISO8601
+        $this->assertTrue(Validation::iso8601('2007'));
+        $this->assertTrue(Validation::iso8601('2007-12'));
+        $this->assertTrue(Validation::iso8601('2009W511'));
+        $this->assertTrue(Validation::iso8601('2007-12-26'));
+        $this->assertTrue(Validation::iso8601('2007-12-26T15:20+02:00'));
+        $this->assertTrue(Validation::iso8601('2007-12-26T15:20:39+02:00'));
+        $this->assertTrue(Validation::iso8601('2007-12-26T15:20:39.59+02:00'));
+        // Invalid ISO8601
+        $this->assertFalse(Validation::iso8601('2009-'));
+        $this->assertFalse(Validation::iso8601('2009M511'));
+        $this->assertFalse(Validation::iso8601('2009-05-19T14a39r'));
+        $this->assertFalse(Validation::iso8601('2010-02-18T16:23.33.600'));
+        // Valid ISO8601 but incomplete date
+        $this->assertFalse(Validation::datetime('2007', 'iso8601'));
+        $this->assertFalse(Validation::datetime('2007-12', 'iso8601'));
+        $this->assertFalse(Validation::datetime('2009W511', 'iso8601'));
+        $this->assertFalse(Validation::datetime('2007-12-26', 'iso8601'));
+        // Valid ISO8601 and complete date and time
+        $this->assertTrue(Validation::datetime('2007-12-26T15:20+02:00', 'iso8601'));
+        $this->assertTrue(Validation::datetime('2007-12-26T15:20:39+02:00', 'iso8601'));
+        $this->assertTrue(Validation::datetime('2007-12-26T15:20:39.59+02:00', 'iso8601'));
+        // Valid ISO8601 and complete date and time BUT Weekdays are not validated by Validation::date()
+        $this->assertFalse(Validation::datetime('2009-W21-2T01:22', 'iso8601'));
+    }
+
+    /**
      * Test localizedTime
      *
      * @return void
