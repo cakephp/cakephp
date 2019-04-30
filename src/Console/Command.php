@@ -249,7 +249,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
-    public function executeCommand($command, array $args = [], ConsoleIo $io = null)
+    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null)
     {
         if (is_string($command)) {
             if (!class_exists($command)) {
@@ -268,7 +268,7 @@ class Command
         try {
             return $command->run($args, $io);
         } catch (StopException $e) {
-            return $e->getCode();
+            return (int)$e->getCode();
         }
     }
 }
