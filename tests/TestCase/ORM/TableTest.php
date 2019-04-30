@@ -518,6 +518,24 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that custom arguments are passed to finders correctly.
+     *
+     * @return void
+     */
+    public function testFinderCustom()
+    {
+        $table = $this->getTableLocator()->get('CustomComments');
+        $user = new Entity(['id' => 1]);
+
+        $comments = $table
+            ->find('published', true)
+            ->find('user', $user)
+            ->all();
+
+        $this->assertCount(2, $comments);
+    }
+
+    /**
      * Test that the getAssociation() method supports the dot syntax.
      *
      * @return void
