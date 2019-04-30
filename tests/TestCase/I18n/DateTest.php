@@ -161,7 +161,7 @@ class DateTest extends TestCase
         }
 
         $date = new $class('2015-11-06 11:32:45');
-        $this->assertEquals('"2015-11-06T00:00:00+00:00"', json_encode($date));
+        $this->assertEquals('"2015-11-06"', json_encode($date));
     }
 
     /**

@@ -48,6 +48,22 @@ class FrozenDate extends ChronosDate implements I18nDateTimeInterface
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, -1];
 
     /**
+     * The format to use when converting this object to JSON.
+     *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * @var string|array|int
+     * @see \Cake\I18n\Time::i18nFormat()
+     */
+    protected static $_jsonEncodeFormat = "yyyy-MM-dd";
+
+    /**
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
      * and the difference is more than `Cake\I18n\Date::$wordEnd`
      *
