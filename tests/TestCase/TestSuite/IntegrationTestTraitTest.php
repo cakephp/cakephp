@@ -303,7 +303,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->_request['headers'] = [ "Accept" => "application/json" ];
         $this->get('/json_response/api_get_data');
         $this->assertResponseCode(403);
-        $this->assertHeader('Content-Type', 'application/json; charset=UTF-8');
+        $this->assertHeader('Content-Type', 'application/json');
         $this->assertResponseContains('"message": "Sample Message"');
         $this->assertResponseContains('"code": 403');
     }
@@ -1071,7 +1071,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testContentTypeInAction()
     {
         $this->get('/tests_apps/set_type');
-        $this->assertHeader('Content-Type', 'application/json; charset=UTF-8');
+        $this->assertHeader('Content-Type', 'application/json');
         $this->assertContentType('json');
         $this->assertContentType('application/json');
     }

@@ -158,8 +158,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertStringContainsString('"message": "whoops"', '' . $result->getBody());
-        $this->assertEquals('application/json; charset=UTF-8', $result->getHeaderLine('Content-type'));
+        $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
+        $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
     }
 
     /**
