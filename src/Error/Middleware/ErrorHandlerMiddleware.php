@@ -96,8 +96,6 @@ class ErrorHandlerMiddleware
             return $next($request, $response);
         } catch (Throwable $exception) {
             return $this->handleException($exception, $request, $response);
-        } catch (Exception $exception) {
-            return $this->handleException($exception, $request, $response);
         }
     }
 
@@ -118,9 +116,6 @@ class ErrorHandlerMiddleware
 
             return $res;
         } catch (Throwable $exception) {
-            $this->logException($request, $exception);
-            $response = $this->handleInternalError($response);
-        } catch (Exception $exception) {
             $this->logException($request, $exception);
             $response = $this->handleInternalError($response);
         }
