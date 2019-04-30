@@ -29,7 +29,7 @@ Cache::config('default', [
 
 // Using a fully namespaced name.
 Cache::config('long', [
-    'className' => 'Cake\Cache\Engine\ApcuEngine',
+    'className' => \Cake\Cache\Engine\ApcuEngine::class,
     'duration' => '+1 week',
     'prefix' => 'my_app_'
 ]);

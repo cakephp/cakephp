@@ -18,6 +18,7 @@ namespace Cake\View\Helper;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Security;
+use Cake\Utility\Text;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -45,7 +46,7 @@ class TextHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'engine' => 'Cake\Utility\Text',
+        'engine' => Text::class,
     ];
 
     /**

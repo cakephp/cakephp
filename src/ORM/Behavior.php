@@ -390,7 +390,7 @@ class Behavior implements EventListenerInterface
             $eventMethods[$binding] = true;
         }
 
-        $baseClass = 'Cake\ORM\Behavior';
+        $baseClass = self::class;
         if (isset(self::$_reflectionCache[$baseClass])) {
             $baseMethods = self::$_reflectionCache[$baseClass];
         } else {

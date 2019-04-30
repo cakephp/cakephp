@@ -17,6 +17,7 @@ namespace Cake\TestSuite;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
+use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
 use Cake\Http\ServerRequest;
 use Cake\Http\Session;
@@ -570,7 +571,7 @@ trait IntegrationTestTrait
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
-            $class = 'Cake\Error\ExceptionRenderer';
+            $class = ExceptionRenderer::class;
         }
         /** @var \Cake\Error\ExceptionRenderer $instance */
         $instance = new $class($exception);

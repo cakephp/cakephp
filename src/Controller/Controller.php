@@ -121,7 +121,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @var string
      */
-    protected $_responseClass = 'Cake\Http\Response';
+    protected $_responseClass = Response::class;
 
     /**
      * Settings for pagination.
@@ -767,7 +767,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function isAction(string $action): bool
     {
-        $baseClass = new ReflectionClass('Cake\Controller\Controller');
+        $baseClass = new ReflectionClass(self::class);
         if ($baseClass->hasMethod($action)) {
             return false;
         }

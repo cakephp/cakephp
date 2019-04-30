@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
+use Cake\I18n\Number;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -36,7 +37,7 @@ class NumberHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'engine' => 'Cake\I18n\Number',
+        'engine' => Number::class,
     ];
 
     /**

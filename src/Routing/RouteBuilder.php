@@ -65,7 +65,7 @@ class RouteBuilder
      *
      * @var string
      */
-    protected $_routeClass = 'Cake\Routing\Route\Route';
+    protected $_routeClass = Route::class;
 
     /**
      * The extensions that should be set into the routes connected.

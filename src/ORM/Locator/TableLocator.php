@@ -194,7 +194,7 @@ class TableLocator implements LocatorInterface
                 [, $table] = pluginSplit($options['className']);
                 $options['table'] = Inflector::underscore($table);
             }
-            $options['className'] = 'Cake\ORM\Table';
+            $options['className'] = Table::class;
         }
 
         if (empty($options['connection'])) {
@@ -215,7 +215,7 @@ class TableLocator implements LocatorInterface
         $options['registryAlias'] = $alias;
         $this->_instances[$alias] = $this->_create($options);
 
-        if ($options['className'] === 'Cake\ORM\Table') {
+        if ($options['className'] === Table::class) {
             $this->_fallbacked[$alias] = $this->_instances[$alias];
         }
 

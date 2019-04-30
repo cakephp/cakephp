@@ -340,7 +340,7 @@ class Shell
                 return false;
             }
 
-            return $method->getDeclaringClass()->name !== 'Cake\Console\Shell';
+            return $method->getDeclaringClass()->name !== self::class;
         } catch (ReflectionException $e) {
             return false;
         }

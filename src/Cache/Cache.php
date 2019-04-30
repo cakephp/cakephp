@@ -32,7 +32,7 @@ use RuntimeException;
  *
  * ```
  * Cache::config('shared', [
- *    'className' => 'Cake\Cache\Engine\ApcuEngine',
+ *    'className' => Cake\Cache\Engine\ApcuEngine::class,
  *    'prefix' => 'my_app_'
  * ]);
  * ```
@@ -73,14 +73,13 @@ class Cache
      * @var array
      */
     protected static $_dsnClassMap = [
-        'array' => 'Cake\Cache\Engine\ArrayEngine',
-        'apcu' => 'Cake\Cache\Engine\ApcuEngine',
-        'file' => 'Cake\Cache\Engine\FileEngine',
-        'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
-        'null' => 'Cake\Cache\Engine\NullEngine',
-        'redis' => 'Cake\Cache\Engine\RedisEngine',
-        'wincache' => 'Cake\Cache\Engine\WincacheEngine',
-        'xcache' => 'Cake\Cache\Engine\XcacheEngine',
+        'array' => Engine\ArrayEngine::class,
+        'apcu' => Engine\ApcuEngine::class,
+        'file' => Engine\FileEngine::class,
+        'memcached' => Engine\MemcachedEngine::class,
+        'null' => Engine\NullEngine::class,
+        'redis' => Engine\RedisEngine::class,
+        'wincache' => Engine\WincacheEngine::class,
     ];
 
     /**
