@@ -14,8 +14,6 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use Cake\Http\Response;
-
 /**
  * HeaderSet
  *

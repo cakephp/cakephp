@@ -87,6 +87,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function __wakeup()
     {
+        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_socket = null;
     }
 

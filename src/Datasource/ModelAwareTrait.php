@@ -34,10 +34,10 @@ trait ModelAwareTrait
      * Plugin classes should use `Plugin.Comments` style names to correctly load
      * models from the correct plugin.
      *
-     * Use false to not use auto-loading on this object. Null auto-detects based on
+     * Use empty string to not use auto-loading on this object. Null auto-detects based on
      * controller name.
      *
-     * @var string|false|null
+     * @var string
      */
     public $modelClass;
 

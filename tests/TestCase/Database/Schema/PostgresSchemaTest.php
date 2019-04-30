@@ -178,7 +178,7 @@ SQL;
             ],
             [
                 ['type' => 'CHAR(36)'],
-                ['type' => 'string', 'fixed' => true, 'length' => 36]
+                ['type' => 'string', 'fixed' => true, 'length' => 36],
             ],
             [
                 ['type' => 'CHARACTER(10)'],
@@ -702,7 +702,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 36, 'fixed' => true, 'null' => false],
-                '"title" CHAR(36) NOT NULL'
+                '"title" CHAR(36) NOT NULL',
             ],
             [
                 'id',
@@ -727,7 +727,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 36],
-                '"title" VARCHAR(36)'
+                '"title" VARCHAR(36)',
             ],
             [
                 'title',
