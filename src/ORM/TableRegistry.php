@@ -62,7 +62,7 @@ class TableRegistry
      *
      * @var string
      */
-    protected static $_defaultLocatorClass = 'Cake\ORM\Locator\TableLocator';
+    protected static $_defaultLocatorClass = Locator\TableLocator::class;
 
     /**
      * Returns a singleton instance of LocatorInterface implementation.

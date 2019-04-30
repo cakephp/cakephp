@@ -18,6 +18,7 @@ namespace Cake\Mailer;
 use BadMethodCallException;
 use Cake\Core\StaticConfigTrait;
 use Cake\Log\Log;
+use Cake\View\View;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
 use JsonSerializable;
@@ -124,7 +125,7 @@ class Email implements JsonSerializable, Serializable
         }
 
         $this->getRenderer()->viewBuilder()
-            ->setClassName('Cake\View\View')
+            ->setClassName(View::class)
             ->setTemplate('')
             ->setLayout('default')
             ->setHelpers(['Html']);
@@ -554,7 +555,7 @@ class Email implements JsonSerializable, Serializable
         $this->getRenderer()->viewBuilder()
             ->setLayout('default')
             ->setTemplate('')
-            ->setClassName('Cake\View\View')
+            ->setClassName(View::class)
             ->setTheme(null)
             ->setHelpers(['Html'], false)
             ->setVars([], false);

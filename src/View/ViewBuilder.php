@@ -500,7 +500,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     ): View {
         $className = $this->_className;
         if ($className === null) {
-            $className = App::className('App', 'View', 'View') ?: 'Cake\View\View';
+            $className = App::className('App', 'View', 'View') ?: View::class;
         }
         if ($className === 'View') {
             $className = App::className($className, 'View');

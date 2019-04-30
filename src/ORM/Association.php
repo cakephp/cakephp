@@ -1138,7 +1138,7 @@ abstract class Association
             $options['className'] = Inflector::camelize($alias);
         }
 
-        $className = App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
+        $className = App::className($options['className'], 'Model/Table', 'Table') ?: Table::class;
 
         return ltrim($className, '\\');
     }

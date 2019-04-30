@@ -38,9 +38,9 @@ class TransportFactory
      * @var array
      */
     protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
+        'debug' => Transport\DebugTransport::class,
+        'mail' => Transport\MailTransport::class,
+        'smtp' => Transport\SmtpTransport::class,
     ];
 
     /**
