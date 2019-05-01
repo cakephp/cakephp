@@ -64,6 +64,24 @@ class ModelAwareTraitTest extends TestCase
     }
 
     /**
+     * Test that calling loadModel() without $modelClass argument when default
+     * $modelClass property is empty generates exception.
+     *
+     * @return void
+     */
+    public function testLoadModelException()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Default modelClass is empty');
+
+        $stub = new Stub();
+        $stub->setProps('');
+        $stub->setModelType('Table');
+
+        $stub->loadModel();
+    }
+
+    /**
      * test loadModel() with plugin prefixed models
      *
      * Load model should not be called with Foo.Model Bar.Model Model
