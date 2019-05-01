@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Datasource\Exception\MissingModelException;
+use UnexpectedValueException;
 
 /**
  * Provides functionality for loading table classes
@@ -37,9 +38,9 @@ trait ModelAwareTrait
      * Use empty string to not use auto-loading on this object. Null auto-detects based on
      * controller name.
      *
-     * @var string
+     * @var string|null
      */
-    public $modelClass;
+    protected $modelClass;
 
     /**
      * A list of overridden model factory functions.
@@ -65,7 +66,7 @@ trait ModelAwareTrait
      */
     protected function _setModelClass(string $name): void
     {
-        if (empty($this->modelClass)) {
+        if ($this->modelClass === null) {
             $this->modelClass = $name;
         }
     }
@@ -84,13 +85,16 @@ trait ModelAwareTrait
      * @param string|null $modelType The type of repository to load. Defaults to the modelType() value.
      * @return \Cake\Datasource\RepositoryInterface The model instance created.
      * @throws \Cake\Datasource\Exception\MissingModelException If the model class cannot be found.
-     * @throws \InvalidArgumentException When using a type that has not been registered.
-     * @throws \UnexpectedValueException If no model type has been defined
+     * @throws \UnexpectedValueException If $modelClass argument is not provided
+     *   and ModelAwareTrait::$modelClass property value is empty.
      */
     public function loadModel($modelClass = null, $modelType = null)
     {
         if ($modelClass === null) {
             $modelClass = $this->modelClass;
+        }
+        if (empty($modelClass)) {
+            throw new UnexpectedValueException('Default modelClass is empty');
         }
         if ($modelType === null) {
             $modelType = $this->getModelType();

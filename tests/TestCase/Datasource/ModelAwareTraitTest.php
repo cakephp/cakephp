@@ -32,10 +32,10 @@ class ModelAwareTraitTest extends TestCase
     public function testSetModelClass()
     {
         $stub = new Stub();
-        $this->assertNull($stub->modelClass);
+        $this->assertNull($stub->getProp('modelClass'));
 
         $stub->setProps('StubArticles');
-        $this->assertEquals('StubArticles', $stub->modelClass);
+        $this->assertEquals('StubArticles', $stub->getProp('modelClass'));
     }
 
     /**

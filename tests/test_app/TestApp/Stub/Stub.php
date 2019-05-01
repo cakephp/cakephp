@@ -15,4 +15,9 @@ class Stub
     {
         $this->_setModelClass($name);
     }
+
+    public function getProp($name)
+    {
+        return $this->{$name};
+    }
 }
