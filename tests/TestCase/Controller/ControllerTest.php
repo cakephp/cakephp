@@ -927,7 +927,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
 
         $controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
-            /* @var Controller $controller */
+            /** @var Controller $controller */
             $controller = $event->getSubject();
 
             $controller->set('testVariable', 'test');
