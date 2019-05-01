@@ -780,6 +780,29 @@ class TranslateBehaviorTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to translate belongsTo associations using loadInto
+     *
+     * @return void
+     */
+    public function testFindSingleLocaleBelongstoLoadInto()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $authors = $table->belongsTo('Authors')->getTarget();
+        $authors->addBehavior('Translate', ['fields' => ['name']]);
+
+        $table->setLocale('eng');
+        $authors->setLocale('eng');
+
+        $entity = $table->get(1);
+        $result = $table->loadInto($entity, ['Authors']);
+        $this->assertSame($entity, $result);
+
+        $expected = $table->get(1, ['contain' => ['Authors']]);
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Tests that it is possible to translate belongsToMany associations
      *
      * @return void
