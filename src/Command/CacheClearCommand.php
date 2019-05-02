@@ -61,17 +61,17 @@ class CacheClearCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $name = $args->getArgument('engine');
+        $name = (string)$args->getArgument('engine');
         try {
             $io->out("Clearing {$name}");
 
             $engine = Cache::pool($name);
             Cache::clear($name);
             if ($engine instanceof ApcuEngine) {
-                $io->warn("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
+                $io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
                     "but {$name} web cache must be cleared separately.");
             } elseif ($engine instanceof WincacheEngine) {
-                $io->warn("WincacheEngine detected: Cleared {$name} CLI cache successfully " .
+                $io->warning("WincacheEngine detected: Cleared {$name} CLI cache successfully " .
                     "but {$name} web cache must be cleared separately.");
             } else {
                 $io->out("<success>Cleared {$name} cache</success>");
