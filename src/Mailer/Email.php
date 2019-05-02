@@ -620,10 +620,10 @@ class Email implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return $this Configured email instance.
+     * @return void
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
-        return $this->createFromArray(unserialize($data));
+        $this->createFromArray(unserialize($data));
     }
 }
