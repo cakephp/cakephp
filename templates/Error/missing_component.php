@@ -34,7 +34,7 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 $this->assign('title', 'Missing Component');
-$this->assign('templateName', 'missing_component.ctp');
+$this->assign('templateName', 'missing_component.php');
 
 $this->start('subheading');
 printf('<em>%s</em> could not be found.', h($pluginDot . $class));

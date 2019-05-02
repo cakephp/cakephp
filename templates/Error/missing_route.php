@@ -19,7 +19,7 @@ use Cake\Error\Debugger;
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Route');
-$this->assign('templateName', 'missing_route.ctp');
+$this->assign('templateName', 'missing_route.php');
 
 $attributes = $error->getAttributes();
 

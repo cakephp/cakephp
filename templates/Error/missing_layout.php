@@ -16,7 +16,7 @@
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Layout');
-$this->assign('templateName', 'missing_layout.ctp');
+$this->assign('templateName', 'missing_layout.php');
 
 $this->start('subheading');
 ?>
