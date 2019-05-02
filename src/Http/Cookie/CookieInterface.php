@@ -32,7 +32,7 @@ interface CookieInterface
      * @param string $name Name of the cookie
      * @return static
      */
-    public function withName(string $name): CookieInterface;
+    public function withName(string $name);
 
     /**
      * Gets the cookie name
@@ -63,7 +63,7 @@ interface CookieInterface
      * @param string|array $value Value of the cookie to set
      * @return static
      */
-    public function withValue($value): CookieInterface;
+    public function withValue($value);
 
     /**
      * Get the id for a cookie
@@ -87,7 +87,7 @@ interface CookieInterface
      * @param string $path Sets the path
      * @return static
      */
-    public function withPath(string $path): CookieInterface;
+    public function withPath(string $path);
 
     /**
      * Get the domain attribute.
@@ -102,7 +102,7 @@ interface CookieInterface
      * @param string $domain Domain to set
      * @return static
      */
-    public function withDomain(string $domain): CookieInterface;
+    public function withDomain(string $domain);
 
     /**
      * Get the current expiry time
@@ -131,14 +131,14 @@ interface CookieInterface
      * @param \DateTime|\DateTimeImmutable $dateTime Date time object
      * @return static
      */
-    public function withExpiry($dateTime): CookieInterface;
+    public function withExpiry($dateTime);
 
     /**
      * Create a new cookie that will virtually never expire.
      *
      * @return static
      */
-    public function withNeverExpire(): CookieInterface;
+    public function withNeverExpire();
 
     /**
      * Create a new cookie that will expire/delete the cookie from the browser.
@@ -147,7 +147,7 @@ interface CookieInterface
      *
      * @return static
      */
-    public function withExpired(): CookieInterface;
+    public function withExpired();
 
     /**
      * Check if a cookie is expired when compared to $time
@@ -172,7 +172,7 @@ interface CookieInterface
      * @param bool $httpOnly HTTP Only
      * @return static
      */
-    public function withHttpOnly(bool $httpOnly): CookieInterface;
+    public function withHttpOnly(bool $httpOnly);
 
     /**
      * Check if the cookie is secure
@@ -187,7 +187,7 @@ interface CookieInterface
      * @param bool $secure Secure attribute value
      * @return static
      */
-    public function withSecure(bool $secure): CookieInterface;
+    public function withSecure(bool $secure);
 
     /**
      * Returns the cookie as header value
