@@ -24,11 +24,9 @@ use Cake\Routing\Router;
 class AuthTestController extends Controller
 {
     /**
-     * testUrl property
-     *
-     * @var string|array
+     * @var string|null
      */
-    public $testUrl = null;
+    public $testUrl;
 
     /**
      * construct method
@@ -43,6 +41,9 @@ class AuthTestController extends Controller
         parent::__construct($request, $response);
     }
 
+    /**
+     * @return void
+     */
     public function initialize(): void
     {
         $this->loadComponent('Auth');

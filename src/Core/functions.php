@@ -74,7 +74,7 @@ if (!function_exists('pluginSplit')) {
      * @param string $name The name you want to plugin split.
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
-     * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
+     * @return string[] Array with 2 indexes. 0 => plugin name, 1 => class name.
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#pluginSplit
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
@@ -100,7 +100,7 @@ if (!function_exists('namespaceSplit')) {
      * Commonly used like `list($namespace, $className) = namespaceSplit($class);`.
      *
      * @param string $class The full class name, ie `Cake\Core\App`.
-     * @return array Array with 2 indexes. 0 => namespace, 1 => classname.
+     * @return string[] Array with 2 indexes. 0 => namespace, 1 => classname.
      */
     function namespaceSplit(string $class): array
     {

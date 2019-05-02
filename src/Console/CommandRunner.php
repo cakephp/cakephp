@@ -61,7 +61,7 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * Alias mappings.
      *
-     * @var array
+     * @var string[]
      */
     protected $aliases = [];
 

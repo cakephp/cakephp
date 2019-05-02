@@ -82,19 +82,19 @@ class ConsoleInputOption
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
-     * @param string $default The default value for this option.
+     * @param string|bool $default The default value for this option.
      * @param array $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
         $name,
-        $short = '',
-        $help = '',
-        $boolean = false,
+        string $short = '',
+        string $help = '',
+        bool $boolean = false,
         $default = '',
-        $choices = [],
-        $multiple = false
+        array $choices = [],
+        bool $multiple = false
     ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {

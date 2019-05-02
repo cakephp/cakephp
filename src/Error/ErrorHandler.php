@@ -92,7 +92,7 @@ class ErrorHandler extends BaseErrorHandler
      *
      * @param array $options The options for error handling.
      */
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         $defaults = [
             'log' => true,

@@ -402,7 +402,7 @@ class Response implements ResponseInterface
      *
      * @var \Cake\Http\Cookie\CookieCollection
      */
-    protected $_cookies = null;
+    protected $_cookies;
 
     /**
      * Reason Phrase

@@ -46,7 +46,7 @@ trait EntityTrait
      * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
-     * @var array
+     * @var string[]
      */
     protected $_hidden = [];
 
@@ -55,7 +55,7 @@ trait EntityTrait
      * representations of this Entity. If a field is present in both _hidden and _virtual
      * the field will **not** be in the array/json versions of the entity.
      *
-     * @var array
+     * @var string[]
      */
     protected $_virtual = [];
 
@@ -63,7 +63,7 @@ trait EntityTrait
      * Holds a list of the fields that were modified or added after this object
      * was originally created.
      *
-     * @var array
+     * @var bool[]
      */
     protected $_dirty = [];
 
@@ -123,7 +123,7 @@ trait EntityTrait
      * @param string $field Name of the field to access
      * @return mixed
      */
-    public function &__get($field)
+    public function &__get(string $field)
     {
         return $this->get($field);
     }
@@ -135,7 +135,7 @@ trait EntityTrait
      * @param mixed $value The value to set to the field
      * @return void
      */
-    public function __set($field, $value)
+    public function __set(string $field, $value)
     {
         $this->set($field, $value);
     }
@@ -148,7 +148,7 @@ trait EntityTrait
      * @return bool
      * @see \Cake\ORM\Entity::has()
      */
-    public function __isset($field)
+    public function __isset(string $field)
     {
         return $this->has($field);
     }
@@ -159,7 +159,7 @@ trait EntityTrait
      * @param string $field The field to unset
      * @return void
      */
-    public function __unset($field)
+    public function __unset(string $field)
     {
         $this->unset($field);
     }
@@ -265,11 +265,11 @@ trait EntityTrait
     /**
      * Returns the value of a field by name
      *
-     * @param string $field the name of the field to retrieve
+     * @param string|null $field the name of the field to retrieve
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed
      */
-    public function &get($field)
+    public function &get(?string $field)
     {
         if (!strlen((string)$field)) {
             throw new InvalidArgumentException('Cannot get an empty field');
@@ -298,7 +298,7 @@ trait EntityTrait
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed.
      */
-    public function getOriginal($field)
+    public function getOriginal(string $field)
     {
         if (!strlen((string)$field)) {
             throw new InvalidArgumentException('Cannot get an empty field');
@@ -381,7 +381,7 @@ trait EntityTrait
      * @param string $field The field to check.
      * @return bool
      */
-    public function isEmpty($field): bool
+    public function isEmpty(string $field): bool
     {
         $value = $this->get($field);
         if ($value === null
@@ -410,7 +410,7 @@ trait EntityTrait
      * @param string $field The field to check.
      * @return bool
      */
-    public function hasValue($field): bool
+    public function hasValue(string $field): bool
     {
         return !$this->isEmpty($field);
     }
@@ -453,7 +453,7 @@ trait EntityTrait
     /**
      * Sets hidden fields.
      *
-     * @param array $fields An array of fields to hide from array exports.
+     * @param string[] $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -474,7 +474,7 @@ trait EntityTrait
     /**
      * Gets the hidden fields.
      *
-     * @return array
+     * @return string[]
      */
     public function getHidden(): array
     {
@@ -484,7 +484,7 @@ trait EntityTrait
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param array $fields An array of fields to treat as virtual.
+     * @param string[] $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -505,7 +505,7 @@ trait EntityTrait
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array
+     * @return string[]
      */
     public function getVirtual(): array
     {
@@ -518,7 +518,7 @@ trait EntityTrait
      * The list of visible fields is all standard fields
      * plus virtual fields minus hidden fields.
      *
-     * @return array A list of fields that are 'visible' in all
+     * @return string[] A list of fields that are 'visible' in all
      *     representations.
      */
     public function getVisible(): array
@@ -533,7 +533,7 @@ trait EntityTrait
      * Gets the list of visible fields.
      *
      * @deprecated 4.0.0 Use getVisible() instead. Will be removed in 5.0.
-     * @return array
+     * @return string[]
      */
     public function visibleProperties(): array
     {
@@ -612,7 +612,7 @@ trait EntityTrait
      * @param mixed $value The value to set.
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
@@ -623,7 +623,7 @@ trait EntityTrait
      * @param string $offset The offset to remove.
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         $this->unset($offset);
     }
@@ -636,7 +636,7 @@ trait EntityTrait
      * @param string $type the accessor type ('get' or 'set')
      * @return string method name or empty string (no method available)
      */
-    protected static function _accessor($property, $type)
+    protected static function _accessor(string $property, string $type): string
     {
         $class = static::class;
 
@@ -676,11 +676,11 @@ trait EntityTrait
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param array $fields list of fields to be returned
+     * @param string[] $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
-    public function extract(array $fields, $onlyDirty = false): array
+    public function extract(array $fields, bool $onlyDirty = false): array
     {
         $result = [];
         foreach ($fields as $field) {
@@ -944,7 +944,7 @@ trait EntityTrait
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError($field, $errors, bool $overwrite = false)
+    public function setError(string $field, $errors, bool $overwrite = false)
     {
         if (is_string($errors)) {
             $errors = [$errors];
@@ -959,7 +959,7 @@ trait EntityTrait
      * @param string $field the field in this entity to check for errors
      * @return array errors in nested entity if any
      */
-    protected function _nestedErrors($field): array
+    protected function _nestedErrors(string $field): array
     {
         $path = explode('.', $field);
 
@@ -1000,10 +1000,10 @@ trait EntityTrait
     /**
      * Reads if there are errors for one or many objects.
      *
-     * @param mixed $object The object to read errors from.
+     * @param array|\Cake\Datasource\EntityInterface $object The object to read errors from.
      * @return bool
      */
-    protected function _readHasErrors($object)
+    protected function _readHasErrors($object): bool
     {
         if ($object instanceof EntityInterface && $object->hasErrors()) {
             return true;

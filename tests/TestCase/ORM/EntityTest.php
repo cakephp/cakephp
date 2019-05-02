@@ -1593,7 +1593,7 @@ class EntityTest extends TestCase
      */
     public function emptyNamesProvider()
     {
-        return [[''], [null], [false]];
+        return [[''], [null]];
     }
     /**
      * Tests that trying to get an empty property name throws exception

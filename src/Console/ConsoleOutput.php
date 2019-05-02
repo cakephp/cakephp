@@ -286,12 +286,12 @@ class ConsoleOutput
      * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      */
-    public function styles($style = null, $definition = null)
+    public function styles(?string $style = null, $definition = null)
     {
         if ($style === null && $definition === null) {
             return static::$_styles;
         }
-        if (is_string($style) && $definition === null) {
+        if ($definition === null) {
             return static::$_styles[$style] ?? null;
         }
         if ($definition === false) {

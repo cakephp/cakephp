@@ -218,21 +218,21 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var array
+     * @var string[]
      */
     protected $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var array
+     * @var string[][]
      */
     protected $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
-     * @var array
+     * @var string[]
      */
     protected $_parents = [];
 
@@ -1221,6 +1221,7 @@ class View implements EventDispatcherInterface
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
      * @throws \Cake\View\Exception\MissingTemplateException when a template file could not be found.
+     * @throws \RuntimeException When template name not provided.
      */
     protected function _getTemplateFileName(?string $name = null): string
     {
@@ -1260,7 +1261,7 @@ class View implements EventDispatcherInterface
             }
         }
 
-        $name = $name . $this->_ext;
+        $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
             if (file_exists($path . $name)) {
@@ -1316,7 +1317,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
-     * @return array Array with 2 indexes. 0 => plugin name, 1 => filename
+     * @return string[] Array with 2 indexes. 0 => plugin name, 1 => filename
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {
@@ -1360,7 +1361,7 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name);
 
         $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
-        $name = $name . $this->_ext;
+        $name .= $this->_ext;
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
@@ -1441,7 +1442,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return array paths
+     * @return string[] paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {

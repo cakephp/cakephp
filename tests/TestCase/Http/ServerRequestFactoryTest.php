@@ -28,27 +28,27 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * @var array|null
      */
-    protected $server = null;
+    protected $server;
 
     /**
      * @var array|null
      */
-    protected $post = null;
+    protected $post;
 
     /**
      * @var array|null
      */
-    protected $files = null;
+    protected $files;
 
     /**
      * @var array|null
      */
-    protected $cookies = null;
+    protected $cookies;
 
     /**
      * @var array|null
      */
-    protected $get = null;
+    protected $get;
 
     /**
      * setup

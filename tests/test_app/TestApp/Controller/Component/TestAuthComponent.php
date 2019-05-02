@@ -26,7 +26,7 @@ class TestAuthComponent extends AuthComponent
     /**
      * @var string|null
      */
-    public $authCheckCalledFrom = null;
+    public $authCheckCalledFrom;
 
     /**
      * @param \Cake\Event\EventInterface $event

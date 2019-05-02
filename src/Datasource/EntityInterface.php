@@ -29,7 +29,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets hidden fields.
      *
-     * @param array $fields An array of fields to hide from array exports.
+     * @param string[] $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -38,14 +38,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the hidden fields.
      *
-     * @return array
+     * @return string[]
      */
     public function getHidden(): array;
 
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param array $fields An array of fields to treat as virtual.
+     * @param string[] $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -54,7 +54,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array
+     * @return string[]
      */
     public function getVirtual(): array;
 
@@ -79,7 +79,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the dirty fields.
      *
-     * @return array
+     * @return string[]
      */
     public function getDirty(): array;
 
@@ -123,7 +123,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError($field, $errors, bool $overwrite = false);
+    public function setError(string $field, $errors, bool $overwrite = false);
 
     /**
      * Stores whether or not a field value can be changed or set in this entity.
@@ -195,7 +195,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field the name of the field to retrieve
      * @return mixed
      */
-    public function &get($field);
+    public function &get(string $field);
 
     /**
      * Returns whether this entity contains a field named $field
@@ -217,7 +217,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Get the list of visible fields.
      *
-     * @return array A list of fields that are 'visible' in all representations.
+     * @return string[] A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 
@@ -235,11 +235,11 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param array $fields list of fields to be returned
+     * @param string[] $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
-    public function extract(array $fields, $onlyDirty = false);
+    public function extract(array $fields, bool $onlyDirty = false): array;
 
     /**
      * Sets the entire entity as clean, which means that it will appear as
@@ -248,7 +248,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @return void
      */
-    public function clean();
+    public function clean(): void;
 
     /**
      * Returns whether or not this entity has already been persisted.

@@ -196,7 +196,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Controller actions for which user validation is not required.
      *
-     * @var array
+     * @var string[]
      * @see \Cake\Controller\Component\AuthComponent::allow()
      */
     public $allowedActions = [];
@@ -571,7 +571,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * $this->Auth->allow();
      * ```
      *
-     * @param string|array|null $actions Controller action name or array of actions
+     * @param string|string[]|null $actions Controller action name or array of actions
      * @return void
      * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-public
      */
@@ -601,7 +601,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * ```
      * to remove all items from the allowed list
      *
-     * @param string|array|null $actions Controller action name or array of actions
+     * @param string|string[]|null $actions Controller action name or array of actions
      * @return void
      * @see \Cake\Controller\Component\AuthComponent::allow()
      * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
@@ -843,7 +843,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *   object as storage or if null returns configured storage object.
      * @return \Cake\Auth\Storage\StorageInterface|null
      */
-    public function storage(?StorageInterface $storage = null)
+    public function storage(?StorageInterface $storage = null): ?StorageInterface
     {
         if ($storage !== null) {
             $this->_storage = $storage;

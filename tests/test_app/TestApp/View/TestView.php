@@ -12,10 +12,10 @@ class TestView extends AppView
     /**
      * getTemplateFileName method
      *
-     * @param string $name Controller action to find template filename for
+     * @param string|null $name Controller action to find template filename for
      * @return string Template filename
      */
-    public function getTemplateFileName($name = null)
+    public function getTemplateFileName(?string $name = null): string
     {
         return $this->_getTemplateFileName($name);
     }
@@ -23,10 +23,10 @@ class TestView extends AppView
     /**
      * getLayoutFileName method
      *
-     * @param string $name The name of the layout to find.
+     * @param string|null $name The name of the layout to find.
      * @return string Filename for layout file (.php).
      */
-    public function getLayoutFileName($name = null)
+    public function getLayoutFileName(?string $name = null): string
     {
         return $this->_getLayoutFileName($name);
     }
@@ -34,11 +34,11 @@ class TestView extends AppView
     /**
      * paths method
      *
-     * @param string $plugin Optional plugin name to scan for view files.
+     * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to true to force a refresh of view paths.
-     * @return array paths
+     * @return string[] paths
      */
-    public function paths($plugin = null, $cached = true)
+    public function paths(?string $plugin = null, bool $cached = true): array
     {
         return $this->_paths($plugin, $cached);
     }
