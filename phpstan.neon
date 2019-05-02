@@ -29,7 +29,6 @@ parameters:
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
         - '#Call to an undefined method Cake\\Datasource\\QueryInterface::eagerLoaded\(\)#'
-        - '#Property Cake\\Mailer\\Transport\\SmtpTransport::\$_socket \(Cake\\Network\\Socket\) does not accept null#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'
