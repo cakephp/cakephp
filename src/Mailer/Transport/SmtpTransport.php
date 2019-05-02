@@ -87,7 +87,6 @@ class SmtpTransport extends AbstractTransport
      */
     public function __wakeup()
     {
-        /** @psalm-suppress PossiblyNullPropertyAssignmentValue */
         $this->_socket = null;
     }
 
@@ -127,9 +126,11 @@ class SmtpTransport extends AbstractTransport
      */
     public function disconnect(): void
     {
-        if ($this->connected()) {
-            $this->_disconnect();
+        if (!$this->connected()) {
+            return;
         }
+
+        $this->_disconnect();
     }
 
     /**
@@ -217,7 +218,7 @@ class SmtpTransport extends AbstractTransport
     protected function _connect(): void
     {
         $this->_generateSocket();
-        if (!$this->_socket->connect()) {
+        if (!$this->_socket()->connect()) {
             throw new SocketException('Unable to connect to SMTP server.');
         }
         $this->_smtpSend(null, '220');
@@ -238,7 +239,7 @@ class SmtpTransport extends AbstractTransport
             $this->_smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
                 $this->_smtpSend('STARTTLS', '220');
-                $this->_socket->enableCrypto('tls');
+                $this->_socket()->enableCrypto('tls');
                 $this->_smtpSend("EHLO {$host}", '250');
             }
         } catch (SocketException $e) {
@@ -418,7 +419,7 @@ class SmtpTransport extends AbstractTransport
     protected function _disconnect(): void
     {
         $this->_smtpSend('QUIT', false);
-        $this->_socket->disconnect();
+        $this->_socket()->disconnect();
     }
 
     /**
@@ -445,7 +446,7 @@ class SmtpTransport extends AbstractTransport
         $this->_lastResponse = [];
 
         if ($data !== null) {
-            $this->_socket->write($data . "\r\n");
+            $this->_socket()->write($data . "\r\n");
         }
 
         $timeout = $this->_config['timeout'];
@@ -454,7 +455,7 @@ class SmtpTransport extends AbstractTransport
             $response = '';
             $startTime = time();
             while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
-                $bytes = $this->_socket->read();
+                $bytes = $this->_socket()->read();
                 if ($bytes === null) {
                     break;
                 }
@@ -479,5 +480,18 @@ class SmtpTransport extends AbstractTransport
         }
 
         return null;
+    }
+
+    /**
+     * @return \Cake\Network\Socket
+     * @throws \RuntimeException If socket is not set.
+     */
+    protected function _socket(): Socket
+    {
+        if ($this->_socket === null) {
+            throw new \RuntimeException('Socket is null, but must be set.');
+        }
+
+        return $this->_socket;
     }
 }
