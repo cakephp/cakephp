@@ -32,7 +32,7 @@ class ExtractTaskTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
@@ -57,7 +57,7 @@ class ExtractTaskTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->Task);
@@ -111,8 +111,8 @@ class ExtractTaskTest extends TestCase
         $pattern .= '"\nmsgstr ""/';
         $this->assertRegExp($pattern, $result);
 
-        $this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
-        $this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
+        $this->assertStringContainsString('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
+        $this->assertStringContainsString("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
         $pattern = '/\#: [\/\\\\]extract\.php:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
@@ -287,7 +287,7 @@ class ExtractTaskTest extends TestCase
         $result = file_get_contents($this->path . DS . 'default.pot');
         $this->assertNotRegExp('#Pages#', $result);
         $this->assertRegExp('/translate\.php:\d+/', $result);
-        $this->assertContains('This is a translatable string', $result);
+        $this->assertStringContainsString('This is a translatable string', $result);
     }
 
     /**
@@ -312,7 +312,7 @@ class ExtractTaskTest extends TestCase
         $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
         $this->assertNotRegExp('#Pages#', $result);
         $this->assertRegExp('/default\.php:\d+/', $result);
-        $this->assertContains('A vendor message', $result);
+        $this->assertStringContainsString('A vendor message', $result);
     }
 
     /**
@@ -416,6 +416,6 @@ class ExtractTaskTest extends TestCase
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $expected = '#: ./tests/test_app/templates/Pages/extract.php:';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 }

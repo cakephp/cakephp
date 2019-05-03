@@ -39,7 +39,7 @@ class BinaryTypeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('binary');
@@ -56,7 +56,7 @@ class BinaryTypeTest extends TestCase
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
         $result = $this->type->toPHP('some data', $this->driver);
-        $this->assertInternalType('resource', $result);
+        $this->assertIsResource($result);
 
         $fh = fopen(__FILE__, 'r');
         $result = $this->type->toPHP($fh, $this->driver);

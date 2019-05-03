@@ -265,7 +265,7 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = 'cake mycommand [options] <model> [<other_longer>]';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**
@@ -290,7 +290,7 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = 'cake mycommand [-h] [arguments]';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**
@@ -305,7 +305,7 @@ xml;
         $formatter->setAlias('foo');
         $result = $formatter->text();
         $expected = 'foo mycommand [-h]';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**

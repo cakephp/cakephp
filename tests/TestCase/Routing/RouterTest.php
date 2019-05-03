@@ -35,7 +35,7 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
@@ -48,7 +48,7 @@ class RouterTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();

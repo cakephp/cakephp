@@ -299,7 +299,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
     }
@@ -485,8 +485,8 @@ SQL;
         $this->assertFalse($column['unsigned'], 'should not be unsigned');
 
         $output = $table->createSql($connection);
-        $this->assertContains('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
-        $this->assertContains('`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,', $output[0]);
+        $this->assertStringContainsString('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
+        $this->assertStringContainsString('`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,', $output[0]);
     }
 
     /**
@@ -1175,7 +1175,7 @@ SQL;
         ]);
         $table->setTemporary(true);
         $sql = $table->createSql($connection);
-        $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
+        $this->assertStringContainsString('CREATE TEMPORARY TABLE', $sql[0]);
     }
 
     /**

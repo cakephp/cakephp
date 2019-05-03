@@ -72,7 +72,7 @@ class TableTest extends TestCase
      */
     public static $nextUserId = 5;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -119,7 +119,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -1637,7 +1637,7 @@ class TableTest extends TestCase
             $table->addBehavior('Sluggable', ['thing' => 'thing']);
             $this->fail('No exception raised');
         } catch (\RuntimeException $e) {
-            $this->assertContains('The "Sluggable" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The "Sluggable" alias has already been loaded', $e->getMessage());
         }
     }
 
@@ -3500,7 +3500,7 @@ class TableTest extends TestCase
 
         $table->save($entity);
         $this->assertFalse($entity->isNew());
-        $this->assertInternalType('array', $entity->article);
+        $this->assertIsArray($entity->article);
     }
 
     /**
@@ -5968,7 +5968,7 @@ class TableTest extends TestCase
         $table->getAssociation('authors')->getTarget()->getEventManager()->on(
             'Model.beforeFind',
             function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$associationBeforeFindCount) {
-                $this->assertInternalType('bool', $primary);
+                $this->assertIsBool($primary);
                 $associationBeforeFindCount++;
             }
         );
@@ -5977,7 +5977,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeFind',
             function (EventInterface $event, Query $query, ArrayObject $options, $primary) use (&$beforeFindCount) {
-                $this->assertInternalType('bool', $primary);
+                $this->assertIsBool($primary);
                 $beforeFindCount++;
             }
         );
@@ -5989,7 +5989,7 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.buildValidator',
             $callback = function (EventInterface $event, Validator $validator, $name) use (&$buildValidatorCount) {
-                $this->assertInternalType('string', $name);
+                $this->assertIsString($name);
                 $buildValidatorCount++;
             }
         );
@@ -6010,15 +6010,15 @@ class TableTest extends TestCase
         $eventManager->on(
             'Model.beforeRules',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount) {
-                $this->assertInternalType('string', $operation);
+                $this->assertIsString($operation);
                 $beforeRulesCount++;
             }
         );
         $eventManager->on(
             'Model.afterRules',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) use (&$afterRulesCount) {
-                $this->assertInternalType('bool', $result);
-                $this->assertInternalType('string', $operation);
+                $this->assertIsBool($result);
+                $this->assertIsString($operation);
                 $afterRulesCount++;
             }
         );

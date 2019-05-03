@@ -65,7 +65,7 @@ class ViewTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -92,7 +92,7 @@ class ViewTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -884,7 +884,7 @@ class ViewTest extends TestCase
             $View->loadHelper('Html', ['test' => 'value']);
             $this->fail('No exception');
         } catch (\RuntimeException $e) {
-            $this->assertContains('The "Html" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The "Html" alias has already been loaded', $e->getMessage());
         }
     }
 
@@ -1602,7 +1602,7 @@ class ViewTest extends TestCase
             $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
-            $this->assertContains('The "no_close" block was left open', $e->getMessage());
+            $this->assertStringContainsString('The "no_close" block was left open', $e->getMessage());
         }
     }
 
@@ -1635,7 +1635,7 @@ TEXT;
             $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
-            $this->assertContains('cannot have templates extend themselves', $e->getMessage());
+            $this->assertStringContainsString('cannot have templates extend themselves', $e->getMessage());
         }
     }
 
@@ -1651,7 +1651,7 @@ TEXT;
             $this->fail('No exception');
         } catch (\LogicException $e) {
             ob_end_clean();
-            $this->assertContains('cannot have templates extend in a loop', $e->getMessage());
+            $this->assertStringContainsString('cannot have templates extend in a loop', $e->getMessage());
         }
     }
 
@@ -1705,7 +1705,7 @@ TEXT;
         } catch (\LogicException $e) {
             ob_end_clean();
             ob_end_clean();
-            $this->assertContains('element', $e->getMessage());
+            $this->assertStringContainsString('element', $e->getMessage());
         }
     }
 

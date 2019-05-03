@@ -181,7 +181,7 @@ class DigestAuthenticateTest extends TestCase
         $this->assertNotEmpty($e);
 
         $header = $e->responseHeader()['WWW-Authenticate'];
-        $this->assertContains('stale=true', $header);
+        $this->assertStringContainsString('stale=true', $header);
     }
 
     /**

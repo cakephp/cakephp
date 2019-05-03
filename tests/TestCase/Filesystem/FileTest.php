@@ -37,7 +37,7 @@ class FileTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $file = __FILE__;
@@ -49,7 +49,7 @@ class FileTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->File->close();
@@ -264,7 +264,7 @@ class FileTest extends TestCase
         $result = $this->File->read();
         $expecting = file_get_contents(__FILE__);
         $this->assertEquals($expecting, $result);
-        $this->assertNotInternalType('resource', $this->File->handle);
+        $this->assertIsNotResource($this->File->handle);
 
         $this->File->lock = true;
         $result = $this->File->read();
@@ -276,7 +276,7 @@ class FileTest extends TestCase
         $expecting = substr($data, 0, 3);
         $result = $this->File->read(3);
         $this->assertEquals($expecting, $result);
-        $this->assertInternalType('resource', $this->File->handle);
+        $this->assertIsResource($this->File->handle);
 
         $expecting = substr($data, 3, 3);
         $result = $this->File->read(3);
@@ -298,7 +298,7 @@ class FileTest extends TestCase
         $this->assertNull($this->File->handle);
         $success = $this->File->offset(0);
         $this->assertTrue($success);
-        $this->assertInternalType('resource', $this->File->handle);
+        $this->assertIsResource($this->File->handle);
 
         $result = $this->File->offset();
         $expected = 0;
@@ -326,19 +326,19 @@ class FileTest extends TestCase
         $this->File->handle = null;
 
         $r = $this->File->open();
-        $this->assertInternalType('resource', $this->File->handle);
+        $this->assertIsResource($this->File->handle);
         $this->assertTrue($r);
 
         $handle = $this->File->handle;
         $r = $this->File->open();
         $this->assertTrue($r);
         $this->assertSame($handle, $this->File->handle);
-        $this->assertInternalType('resource', $this->File->handle);
+        $this->assertIsResource($this->File->handle);
 
         $r = $this->File->open('r', true);
         $this->assertTrue($r);
         $this->assertNotSame($handle, $this->File->handle);
-        $this->assertInternalType('resource', $this->File->handle);
+        $this->assertIsResource($this->File->handle);
     }
 
     /**
@@ -354,7 +354,7 @@ class FileTest extends TestCase
         $this->assertNull($this->File->handle);
 
         $this->File->handle = fopen(__FILE__, 'r');
-        $this->assertInternalType('resource', $this->File->handle);
+        $this->assertIsResource($this->File->handle);
         $this->assertTrue($this->File->close());
         $this->assertFalse(is_resource($this->File->handle));
     }
@@ -522,7 +522,7 @@ class FileTest extends TestCase
             $this->assertTrue($r);
             $this->assertFileExists($tmpFile);
             $this->assertStringEqualsFile($tmpFile, $data);
-            $this->assertInternalType('resource', $TmpFile->handle);
+            $this->assertIsResource($TmpFile->handle);
             $TmpFile->close();
         }
         unlink($tmpFile);
@@ -689,7 +689,7 @@ class FileTest extends TestCase
         // Double check
         $expected = 'This is the welcome.tmp file in vendors directory';
         $contents = $TmpFile->read();
-        $this->assertContains($expected, $contents);
+        $this->assertStringContainsString($expected, $contents);
 
         $search = ['This is the', 'welcome.php file', 'in tmp directory'];
         $replace = ['This should be a', 'welcome.tmp file', 'in the Lib directory'];
@@ -701,7 +701,7 @@ class FileTest extends TestCase
         // Double check
         $expected = 'This should be a welcome.tmp file in vendors directory';
         $contents = $TmpFile->read();
-        $this->assertContains($expected, $contents);
+        $this->assertStringContainsString($expected, $contents);
 
         $TmpFile->delete();
     }

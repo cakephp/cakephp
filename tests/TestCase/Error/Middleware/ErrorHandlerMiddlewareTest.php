@@ -38,7 +38,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -56,7 +56,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Log::drop('error_test');
@@ -138,7 +138,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**
@@ -158,8 +158,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
         $this->assertInstanceOf('Cake\Http\Response', $result);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('"message": "whoops"', '' . $result->getBody());
-        $this->assertEquals('application/json', $result->getHeaderLine('Content-type'));
+        $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
+        $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
     }
 
     /**
@@ -206,7 +206,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**
@@ -237,7 +237,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**
@@ -259,7 +259,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $result = $middleware->process($request, $handler);
         $this->assertEquals(404, $result->getStatusCode());
-        $this->assertContains('was not found', '' . $result->getBody());
+        $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
 
     /**

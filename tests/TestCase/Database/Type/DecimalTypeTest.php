@@ -51,7 +51,7 @@ class DecimalTypeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('decimal');
@@ -67,7 +67,7 @@ class DecimalTypeTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale($this->localeString);

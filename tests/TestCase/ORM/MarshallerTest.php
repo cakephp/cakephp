@@ -72,7 +72,7 @@ class MarshallerTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->articles = $this->getTableLocator()->get('Articles');
@@ -102,7 +102,7 @@ class MarshallerTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -430,7 +430,7 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['body'], $result->body);
         $this->assertEquals($data['author_id'], $result->author_id);
 
-        $this->assertInternalType('array', $result->comments);
+        $this->assertIsArray($result->comments);
         $this->assertEquals($data['comments'], $result->comments);
         $this->assertTrue($result->isDirty('comments'));
 
@@ -467,13 +467,13 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['body'], $result->body);
         $this->assertEquals($data['author_id'], $result->author_id);
 
-        $this->assertInternalType('array', $result->comments);
+        $this->assertIsArray($result->comments);
         $this->assertCount(2, $result->comments);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->comments[0]);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->comments[1]);
         $this->assertEquals($data['comments'][0]['comment'], $result->comments[0]->comment);
 
-        $this->assertInternalType('array', $result->user);
+        $this->assertIsArray($result->user);
         $this->assertEquals($data['user'], $result->user);
     }
 
@@ -501,7 +501,7 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['title'], $result->title);
         $this->assertEquals($data['body'], $result->body);
 
-        $this->assertInternalType('array', $result->tags);
+        $this->assertIsArray($result->tags);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
         $this->assertEquals($data['tags'][0]['tag'], $result->tags[0]->tag);
 

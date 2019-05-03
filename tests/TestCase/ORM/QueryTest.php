@@ -56,7 +56,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -106,7 +106,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -735,7 +735,7 @@ class QueryTest extends TestCase
             ->first();
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
-        $this->assertInternalType('integer', $result->_matchingData['Comments']->id);
+        $this->assertIsInt($result->_matchingData['Comments']->id);
         $this->assertInstanceOf(FrozenTime::class, $result->_matchingData['Comments']->created);
     }
 
@@ -1861,14 +1861,14 @@ class QueryTest extends TestCase
         ]);
 
         $result = $query->getContain();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertNotEmpty($result);
 
         $result = $query->clearContain();
         $this->assertInstanceOf(Query::class, $result);
 
         $result = $query->getContain();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
 

@@ -29,7 +29,7 @@ class CacheCommandsTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
@@ -42,7 +42,7 @@ class CacheCommandsTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('test');

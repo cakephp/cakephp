@@ -144,8 +144,8 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withDomain('example.com');
         $this->assertNotSame($new, $cookie, 'Should make a clone');
-        $this->assertNotContains('example.com', $cookie->toHeaderValue(), 'old instance not modified');
-        $this->assertContains('domain=example.com', $new->toHeaderValue());
+        $this->assertStringNotContainsString('example.com', $cookie->toHeaderValue(), 'old instance not modified');
+        $this->assertStringContainsString('domain=example.com', $new->toHeaderValue());
     }
 
     /**
@@ -158,8 +158,8 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withPath('/api');
         $this->assertNotSame($new, $cookie, 'Should make a clone');
-        $this->assertNotContains('path=/api', $cookie->toHeaderValue(), 'old instance not modified');
-        $this->assertContains('path=/api', $new->toHeaderValue());
+        $this->assertStringNotContainsString('path=/api', $cookie->toHeaderValue(), 'old instance not modified');
+        $this->assertStringContainsString('path=/api', $new->toHeaderValue());
     }
 
     /**
@@ -170,7 +170,7 @@ class CookieTest extends TestCase
     public function testDefaultPath()
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $this->assertContains('path=/', $cookie->toHeaderValue());
+        $this->assertStringContainsString('path=/', $cookie->toHeaderValue());
     }
 
     /**
@@ -211,7 +211,7 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withNeverExpire();
         $this->assertNotSame($new, $cookie, 'Should clone');
-        $this->assertContains('01-Jan-2038', $new->toHeaderValue());
+        $this->assertStringContainsString('01-Jan-2038', $new->toHeaderValue());
     }
 
     /**
@@ -224,9 +224,9 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withExpired();
         $this->assertNotSame($new, $cookie, 'Should clone');
-        $this->assertNotContains('expiry', $cookie->toHeaderValue());
+        $this->assertStringNotContainsString('expiry', $cookie->toHeaderValue());
 
-        $this->assertContains('01-Jan-1970', $new->toHeaderValue());
+        $this->assertStringContainsString('01-Jan-1970', $new->toHeaderValue());
     }
 
     /**
@@ -239,9 +239,9 @@ class CookieTest extends TestCase
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $new = $cookie->withExpiry(Chronos::createFromDate(2022, 6, 15));
         $this->assertNotSame($new, $cookie, 'Should clone');
-        $this->assertNotContains('expires', $cookie->toHeaderValue());
+        $this->assertStringNotContainsString('expires', $cookie->toHeaderValue());
 
-        $this->assertContains('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
+        $this->assertStringContainsString('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
     }
 
     /**
@@ -257,10 +257,10 @@ class CookieTest extends TestCase
 
         $new = $cookie->withExpiry($date);
         $this->assertNotSame($new, $cookie, 'Should clone');
-        $this->assertNotContains('expires', $cookie->toHeaderValue());
+        $this->assertStringNotContainsString('expires', $cookie->toHeaderValue());
 
-        $this->assertContains('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
-        $this->assertContains('GMT', $new->toHeaderValue());
+        $this->assertStringContainsString('expires=Wed, 15-Jun-2022', $new->toHeaderValue());
+        $this->assertStringContainsString('GMT', $new->toHeaderValue());
         $this->assertSame((int)$date->format('U'), $new->getExpiresTimestamp());
     }
 
@@ -450,7 +450,7 @@ class CookieTest extends TestCase
         $this->assertEquals('developer', $cookie->read('profile.profession'));
 
         $expected = '{"username":"florian","profile":{"profession":"developer"}}';
-        $this->assertContains(urlencode($expected), $cookie->toHeaderValue());
+        $this->assertStringContainsString(urlencode($expected), $cookie->toHeaderValue());
     }
 
     /**

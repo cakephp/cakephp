@@ -2664,6 +2664,10 @@
     </UndefinedConstant>
   </file>
   <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
+    <InternalMethod occurrences="2">
+      <code>method</code>
+      <code>will</code>
+    </InternalMethod>
     <InvalidArgument occurrences="1">
       <code>$this-&gt;_in</code>
     </InvalidArgument>
@@ -2744,11 +2748,13 @@
     </MissingPropertyType>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
+    <InternalClass occurrences="1"/>
     <PossiblyNullReference occurrences="1">
       <code>hasEvent</code>
     </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
+    <InternalClass occurrences="2"/>
     <MissingClosureReturnType occurrences="1">
       <code>function (EventInterface $event) {</code>
     </MissingClosureReturnType>
@@ -2774,6 +2780,11 @@
       <code>getPathName</code>
     </PossiblyNullReference>
   </file>
+  <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
+    <InternalClass occurrences="1">
+      <code>new AssertionFailedError('No response set, cannot assert content.')</code>
+    </InternalClass>
+  </file>
   <file src="src/TestSuite/Constraint/Response/StatusCode.php">
     <PropertyNotSetInConstructor occurrences="1">
       <code>StatusCode</code>
@@ -2784,7 +2795,20 @@
       <code>$other</code>
     </MoreSpecificImplementedParamType>
   </file>
+  <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
+    <InternalClass occurrences="1">
+      <code>new AssertionFailedError($message)</code>
+    </InternalClass>
+  </file>
+  <file src="src/TestSuite/Constraint/Session/SessionEquals.php">
+    <InternalClass occurrences="1">
+      <code>new AssertionFailedError('There is no stored session data. Perhaps you need to run a request?')</code>
+    </InternalClass>
+  </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
+    <DeprecatedInterface occurrences="1">
+      <code>FixtureInjector</code>
+    </DeprecatedInterface>
     <NoInterfaceProperties occurrences="1">
       <code>$test-&gt;fixtureManager</code>
     </NoInterfaceProperties>
@@ -2957,6 +2981,14 @@
     </UndefinedVariable>
   </file>
   <file src="src/TestSuite/TestSuite.php">
+    <InternalClass occurrences="1">
+      <code>BaseTestSuite</code>
+    </InternalClass>
+    <InternalMethod occurrences="3">
+      <code>addTestFile</code>
+      <code>addTestFile</code>
+      <code>BaseTestSuite</code>
+    </InternalMethod>
     <MissingClosureReturnType occurrences="1">
       <code>function (SplFileInfo $current) {</code>
     </MissingClosureReturnType>

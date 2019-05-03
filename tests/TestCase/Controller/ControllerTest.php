@@ -253,7 +253,7 @@ class ControllerTest extends TestCase
         $controller->viewBuilder()->setTemplatePath('Posts');
 
         $result = $controller->render('header');
-        $this->assertContains('header template', (string)$result);
+        $this->assertStringContainsString('header template', (string)$result);
         $this->assertTrue($controller->getResponse()->hasHeader('X-view-template'));
         $this->assertSame('yes', $controller->getResponse()->getHeaderLine('X-view-template'));
     }
@@ -897,7 +897,7 @@ class ControllerTest extends TestCase
             $controller->loadComponent('Paginator', ['bad' => 'settings']);
             $this->fail('No exception');
         } catch (\RuntimeException $e) {
-            $this->assertContains('The "Paginator" alias has already been loaded', $e->getMessage());
+            $this->assertStringContainsString('The "Paginator" alias has already been loaded', $e->getMessage());
         }
     }
 

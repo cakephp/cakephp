@@ -35,7 +35,7 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->collection = new RouteCollection();
@@ -46,7 +46,7 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();

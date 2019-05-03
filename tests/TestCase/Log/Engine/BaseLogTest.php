@@ -29,7 +29,7 @@ class BaseLogTest extends TestCase
      * Setting up the test case.
      * Creates a stub logger implementing the log() function missing from abstract class BaseLog.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -39,7 +39,7 @@ class BaseLogTest extends TestCase
     private function assertUnescapedUnicode(array $needles, $haystack)
     {
         foreach ($needles as $needle) {
-            $this->assertContains(
+            $this->assertStringContainsString(
                 $needle,
                 $haystack,
                 'Formatted log message does not contain unescaped unicode character.'

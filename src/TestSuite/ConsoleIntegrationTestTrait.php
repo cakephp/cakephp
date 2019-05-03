@@ -50,21 +50,21 @@ trait ConsoleIntegrationTestTrait
     /**
      * Console output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $_out;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $_err;
 
     /**
      * Console input mock
      *
-     * @var \Cake\Console\ConsoleInput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\Console\ConsoleInput|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $_in;
 

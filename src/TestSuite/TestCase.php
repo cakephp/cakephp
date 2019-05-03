@@ -134,7 +134,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -153,7 +153,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if ($this->_configure) {
@@ -405,7 +405,12 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
-        $this->assertContains($needle, $haystack, $message, $ignoreCase);
+
+        if ($ignoreCase) {
+            $this->assertStringContainsStringIgnoringCase($needle, $haystack, $message);
+        } else {
+            $this->assertStringContainsString($needle, $haystack, $message);
+        }
     }
 
     /**
@@ -426,7 +431,12 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
-        $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
+
+        if ($ignoreCase) {
+            $this->assertStringNotContainsStringIgnoringCase($needle, $haystack, $message);
+        } else {
+            $this->assertStringNotContainsString($needle, $haystack, $message);
+        }
     }
 
     /**
@@ -740,7 +750,7 @@ abstract class TestCase extends BaseTestCase
      * @param array|null $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
     {
@@ -755,7 +765,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
 
-        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $mock */
         $mock = $this->getMockBuilder($className)
             ->setMethods($methods)
             ->setConstructorArgs([$options])

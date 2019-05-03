@@ -358,13 +358,15 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test parsing options that do not exist.
      *
-     * @expectedExceptionMessageRegexp /Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n
-     * - help\n - no-commit/
      * @return void
      */
     public function testOptionThatDoesNotExist()
     {
         $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessageRegExp(
+            '/Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n - help\n - no-commit/'
+        );
+
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true]);
 
@@ -374,13 +376,15 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test parsing short options that do not exist.
      *
-     * @expectedExceptionMessageRegexp /Unknown short option `f`.\n\nAvailable short options are :\n\n
-     * - `n` (short for `--no-commit`)\n - `c` (short for `--clear`)/
      * @return void
      */
     public function testShortOptionThatDoesNotExist()
     {
         $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessageRegExp(
+            '/Unknown short option `f`\n\nAvailable short options are :\n\n - `c` \(short for `--clear`\)\n - `h` \(short for `--help`\)\n - `n` \(short for `--no-commit`\)/'
+        );
+
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true, 'short' => 'n']);
         $parser->addOption('construct', ['boolean' => true]);

@@ -282,7 +282,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
     }
@@ -922,7 +922,7 @@ SQL;
         ]);
         $table->setTemporary(true);
         $sql = $table->createSql($connection);
-        $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
+        $this->assertStringContainsString('CREATE TEMPORARY TABLE', $sql[0]);
     }
 
     /**

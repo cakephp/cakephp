@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\Command;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\StopException;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\Stub\ConsoleOutput;
@@ -82,12 +83,13 @@ class CommandTest extends TestCase
     /**
      * Test invalid name
      *
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage The name 'routes_show' is missing a space. Names should look like `cake routes`
      * @return void
      */
     public function testSetNameInvalid()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
+
         $command = new Command();
         $command->setName('routes_show');
     }
@@ -95,11 +97,12 @@ class CommandTest extends TestCase
     /**
      * Test invalid name
      *
-     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testSetNameInvalidLeadingSpace()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $command = new Command();
         $command->setName(' routes_show');
     }
@@ -149,8 +152,8 @@ class CommandTest extends TestCase
             $command->run(['-h'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
-        $this->assertNotContains('Demo', $messages);
-        $this->assertContains('cake demo [-h]', $messages);
+        $this->assertStringNotContainsString('Demo', $messages);
+        $this->assertStringContainsString('cake demo [-h]', $messages);
     }
 
     /**
@@ -169,8 +172,8 @@ class CommandTest extends TestCase
             $command->run(['--help'], $this->getMockIo($output))
         );
         $messages = implode("\n", $output->messages());
-        $this->assertNotContains('Demo', $messages);
-        $this->assertContains('cake demo [-h]', $messages);
+        $this->assertStringNotContainsString('Demo', $messages);
+        $this->assertStringContainsString('cake demo [-h]', $messages);
     }
 
     /**
@@ -186,10 +189,10 @@ class CommandTest extends TestCase
 
         $this->assertNull($command->run(['--verbose'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Verbose!', $messages);
-        $this->assertContains('Demo Command!', $messages);
-        $this->assertContains('Quiet!', $messages);
-        $this->assertNotContains('cake demo [-h]', $messages);
+        $this->assertStringContainsString('Verbose!', $messages);
+        $this->assertStringContainsString('Demo Command!', $messages);
+        $this->assertStringContainsString('Quiet!', $messages);
+        $this->assertStringNotContainsString('cake demo [-h]', $messages);
     }
 
     /**
@@ -205,9 +208,9 @@ class CommandTest extends TestCase
 
         $this->assertNull($command->run(['--quiet'], $this->getMockIo($output)));
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Quiet!', $messages);
-        $this->assertNotContains('Verbose!', $messages);
-        $this->assertNotContains('Demo Command!', $messages);
+        $this->assertStringContainsString('Quiet!', $messages);
+        $this->assertStringNotContainsString('Verbose!', $messages);
+        $this->assertStringNotContainsString('Demo Command!', $messages);
     }
 
     /**
@@ -230,18 +233,19 @@ class CommandTest extends TestCase
         $this->assertSame(Command::CODE_ERROR, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Error: Missing required arguments. name is required', $messages);
+        $this->assertStringContainsString('Error: Missing required arguments. name is required', $messages);
     }
 
     /**
      * Test abort()
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionCode 1
      * @return void
      */
     public function testAbort()
     {
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(1);
+
         $command = new Command();
         $command->abort();
     }
@@ -249,12 +253,13 @@ class CommandTest extends TestCase
     /**
      * Test abort()
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionCode 99
      * @return void
      */
     public function testAbortCustomCode()
     {
+        $this->expectException(StopException::class);
+        $this->expectExceptionCode(99);
+
         $command = new Command();
         $command->abort(99);
     }

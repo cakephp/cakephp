@@ -55,8 +55,6 @@ class FlashParamEquals extends Constraint
      */
     public function __construct(?Session $session, string $key, string $param, ?int $at = null)
     {
-        parent::__construct();
-
         if (!$session) {
             $message = 'There is no stored session data. Perhaps you need to run a request?';
             $message .= ' Additionally, ensure `$this->enableRetainFlashMessages()` has been enabled for the test.';

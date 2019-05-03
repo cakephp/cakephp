@@ -37,7 +37,7 @@ class RequestTest extends TestCase
         $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
 
         $this->assertEquals('http://example.com', (string)$request->getUri());
-        $this->assertContains($request->getMethod(), 'POST');
+        $this->assertStringContainsString($request->getMethod(), 'POST');
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals(json_encode($data), $request->getBody()->__toString());
     }

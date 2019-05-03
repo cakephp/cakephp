@@ -35,8 +35,6 @@ class TemplateFileEquals extends Constraint
      */
     public function __construct(string $filename)
     {
-        parent::__construct();
-
         $this->filename = $filename;
     }
 

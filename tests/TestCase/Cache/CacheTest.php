@@ -34,7 +34,7 @@ class CacheTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Cache::enable();
@@ -45,7 +45,7 @@ class CacheTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('tests');

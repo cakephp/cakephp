@@ -29,7 +29,7 @@ use Cake\Utility\Xml;
  */
 class XmlViewTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', false);

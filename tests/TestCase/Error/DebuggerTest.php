@@ -39,7 +39,7 @@ class DebuggerTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', true);
@@ -52,7 +52,7 @@ class DebuggerTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if ($this->_restoreError) {
@@ -85,12 +85,12 @@ class DebuggerTest extends TestCase
     public function testExcerpt()
     {
         $result = Debugger::excerpt(__FILE__, __LINE__ - 1, 2);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(5, $result);
         $this->assertRegExp('/function(.+)testExcerpt/', $result[1]);
 
         $result = Debugger::excerpt(__FILE__, 2, 2);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertCount(4, $result);
 
         $this->skipIf(defined('HHVM_VERSION'), 'HHVM does not highlight php code');
@@ -108,9 +108,9 @@ class DebuggerTest extends TestCase
 
         $result = Debugger::excerpt(__FILE__, __LINE__, 5);
         $this->assertCount(11, $result);
-        $this->assertContains('Debugger', $result[5]);
-        $this->assertContains('excerpt', $result[5]);
-        $this->assertContains('__FILE__', $result[5]);
+        $this->assertStringContainsString('Debugger', $result[5]);
+        $this->assertStringContainsString('excerpt', $result[5]);
+        $this->assertStringContainsString('__FILE__', $result[5]);
 
         $result = Debugger::excerpt(__FILE__, 1, 2);
         $this->assertCount(3, $result);
@@ -173,8 +173,8 @@ class DebuggerTest extends TestCase
             'line' => __LINE__,
         ]);
         $result = ob_get_clean();
-        $this->assertContains('&lt;script&gt;', $result);
-        $this->assertNotContains('<script>', $result);
+        $this->assertStringContainsString('&lt;script&gt;', $result);
+        $this->assertStringNotContainsString('<script>', $result);
     }
 
     /**
@@ -267,8 +267,8 @@ class DebuggerTest extends TestCase
             'line' => __LINE__,
         ]);
         $result = ob_get_clean();
-        $this->assertContains('Notice: I eated an error', $result);
-        $this->assertContains('DebuggerTest.php', $result);
+        $this->assertStringContainsString('Notice: I eated an error', $result);
+        $this->assertStringContainsString('DebuggerTest.php', $result);
     }
 
     /**
@@ -575,7 +575,7 @@ TEXT;
     public function testExportVarRecursion()
     {
         $output = Debugger::exportVar($GLOBALS);
-        $this->assertContains("'GLOBALS' => [recursion]", $output);
+        $this->assertStringContainsString("'GLOBALS' => [recursion]", $output);
     }
 
     /**

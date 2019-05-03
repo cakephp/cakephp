@@ -41,8 +41,6 @@ abstract class ContentsBase extends Constraint
      */
     public function __construct(array $contents, string $output)
     {
-        parent::__construct();
-
         $this->contents = implode(PHP_EOL, $contents);
         $this->output = $output;
     }

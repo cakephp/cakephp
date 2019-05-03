@@ -36,13 +36,13 @@ class TableSchemaTest extends TestCase
 
     protected $_map;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->_map = TypeFactory::getMap();
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->getTableLocator()->clear();
         TypeFactory::clear();

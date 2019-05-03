@@ -25,6 +25,7 @@ use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
+use InvalidArgumentException;
 
 /**
  * Tests Query class
@@ -55,14 +56,14 @@ class QueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -2327,12 +2328,13 @@ class QueryTest extends TestCase
     /**
      * Test Pages number.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Pages must start at 1.
      * @return void
      */
     public function testPageShouldStartAtOne()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Pages must start at 1.');
+
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query->from('comments')->page(0);
@@ -2870,7 +2872,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
-        $this->assertContains(' WHERE 1 = 1', $result);
+        $this->assertStringContainsString(' WHERE 1 = 1', $result);
     }
 
     /**
@@ -3680,9 +3682,9 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('FOR UPDATE')
             ->sql();
-        $this->assertContains('SELECT', $sql);
-        $this->assertContains('FROM', $sql);
-        $this->assertContains('WHERE', $sql);
+        $this->assertStringContainsString('SELECT', $sql);
+        $this->assertStringContainsString('FROM', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
         $this->assertEquals(' FOR UPDATE', substr($sql, -11));
     }
 
@@ -3700,9 +3702,9 @@ class QueryTest extends TestCase
             ->values([1, 'a title'])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('INSERT', $sql);
-        $this->assertContains('INTO', $sql);
-        $this->assertContains('VALUES', $sql);
+        $this->assertStringContainsString('INSERT', $sql);
+        $this->assertStringContainsString('INTO', $sql);
+        $this->assertStringContainsString('VALUES', $sql);
         $this->assertEquals(' RETURNING id', substr($sql, -13));
     }
 
@@ -3720,9 +3722,9 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('UPDATE', $sql);
-        $this->assertContains('SET', $sql);
-        $this->assertContains('WHERE', $sql);
+        $this->assertStringContainsString('UPDATE', $sql);
+        $this->assertStringContainsString('SET', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
         $this->assertEquals(' RETURNING id', substr($sql, -13));
     }
 
@@ -3739,8 +3741,8 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('DELETE FROM', $sql);
-        $this->assertContains('WHERE', $sql);
+        $this->assertStringContainsString('DELETE FROM', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
         $this->assertEquals(' RETURNING id', substr($sql, -13));
     }
 
@@ -3966,7 +3968,7 @@ class QueryTest extends TestCase
         $query = (new Query($this->connection))
             ->insert(['title']);
         $result = $query->__debugInfo();
-        $this->assertContains('incomplete', $result['sql']);
+        $this->assertStringContainsString('incomplete', $result['sql']);
         $this->assertSame([], $result['params']);
     }
 
@@ -4309,7 +4311,7 @@ class QueryTest extends TestCase
             ->limit(1)
             ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertInternalType('integer', $result[0]['id']);
+        $this->assertIsInt($result[0]['id']);
         $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
     }
 

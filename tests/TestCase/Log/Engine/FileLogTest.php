@@ -59,18 +59,18 @@ class FileLogTest extends TestCase
         $log->log('debug', $object);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertContains('Debug: Hey!', $result);
+        $this->assertStringContainsString('Debug: Hey!', $result);
 
         $object = new JsonObject();
         $log->log('debug', $object);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertContains('Debug: ' . json_encode(['hello' => 'world']), $result);
+        $this->assertStringContainsString('Debug: ' . json_encode(['hello' => 'world']), $result);
 
         $log->log('debug', [1, 2]);
         $this->assertFileExists(LOGS . 'debug.log');
         $result = file_get_contents(LOGS . 'debug.log');
-        $this->assertContains('Debug: ' . print_r([1, 2], true), $result);
+        $this->assertStringContainsString('Debug: ' . print_r([1, 2], true), $result);
     }
 
     /**

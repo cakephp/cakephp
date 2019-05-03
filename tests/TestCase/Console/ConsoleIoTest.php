@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\StopException;
 use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -30,7 +31,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -52,7 +53,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if (is_dir(TMP . 'shell_test')) {
@@ -631,7 +632,6 @@ class ConsoleIoTest extends TestCase
     /**
      * Test that `q` raises an error.
      *
-     * @expectedException \Cake\Console\Exception\StopException
      * @return void
      */
     public function testCreateFileOverwriteQuit()
@@ -641,6 +641,8 @@ class ConsoleIoTest extends TestCase
 
         $file = $path . DS . 'file1.php';
         touch($file);
+
+        $this->expectException(StopException::class);
 
         $this->in->expects($this->once())
             ->method('read')

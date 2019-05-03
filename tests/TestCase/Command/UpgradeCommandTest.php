@@ -134,7 +134,7 @@ class UpgradeCommandTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -157,7 +157,7 @@ class UpgradeCommandTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         Configure::write('App.paths.plugins', $this->pluginPaths);
         Configure::write('App.paths.locales', $this->localePaths);

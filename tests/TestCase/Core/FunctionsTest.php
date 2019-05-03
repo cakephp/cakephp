@@ -17,6 +17,8 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Error\Deprecated;
+use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test cases for functions in Core\functions.php
@@ -73,12 +75,12 @@ class FunctionsTest extends TestCase
 
     /**
      * Test error messages coming out when deprecated level is on, manually setting the stack frame
-     *
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/
      */
     public function testDeprecationWarningEnabled()
     {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
+
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away', 2);
         });
@@ -87,11 +89,12 @@ class FunctionsTest extends TestCase
     /**
      * Test error messages coming out when deprecated level is on, not setting the stack frame manually
      *
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away');
         });
@@ -112,11 +115,12 @@ class FunctionsTest extends TestCase
     /**
      * Test error messages coming out when warning level is on.
      *
-     * @expectedException PHPUnit\Framework\Error\Warning
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testTriggerWarningEnabled()
     {
+        $this->expectException(Warning::class);
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+
         $this->withErrorReporting(E_ALL, function () {
             triggerWarning('This is going away');
         });

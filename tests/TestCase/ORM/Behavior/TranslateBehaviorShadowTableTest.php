@@ -53,7 +53,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
 
@@ -65,7 +65,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * @return void
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         TranslateBehavior::setDefaultStrategyClass(EavStrategy::class);
 
@@ -262,7 +262,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate');
 
         $query = $table->find();
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'The default locale doesn\'t need a join'
@@ -271,14 +271,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id']);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'No translated fields, nothing to do'
         );
 
         $query = $table->find()->select(['Other.title']);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'Other isn\'t the table class with the translate behavior, nothing to do'
@@ -297,21 +297,21 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find();
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'No fields specified, means select all fields - translated included'
         );
 
         $query = $table->find()->select(['title']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'Selecting a translated field should join the translations table'
         );
 
         $query = $table->find()->select(['Articles.title']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'Selecting an aliased translated field should join the translations table'
@@ -330,7 +330,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id'])->where(['title' => 'First Article']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'If the where clause includes a translated field - a join is required'
@@ -352,7 +352,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             return $exp->lt(new QueryExpression('1'), 50);
         });
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'Do not try to use non string fields when traversing "where" clause'
@@ -371,14 +371,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id'])->order(['title' => 'desc']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'If the order clause includes a translated field - a join is required'
         );
 
         $query = $table->find();
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'No fields means auto-fields - a join is required'
@@ -582,7 +582,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             ->find('translations')
             ->where(['Articles.id' => 1])
             ->contain(['Authors']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'There should be a join to the translations table'

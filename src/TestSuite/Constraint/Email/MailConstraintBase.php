@@ -36,7 +36,6 @@ abstract class MailConstraintBase extends Constraint
     public function __construct(?int $at = null)
     {
         $this->at = $at;
-        parent::__construct();
     }
 
     /**

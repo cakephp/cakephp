@@ -31,7 +31,7 @@ class RadioWidgetTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $templates = [
@@ -731,11 +731,11 @@ class RadioWidgetTest extends TestCase
             ],
         ];
         $result = $radio->render($data, $this->context);
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<div class="radio"><input type="radio"',
             $result
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '</label></div>',
             $result
         );
@@ -766,10 +766,10 @@ class RadioWidgetTest extends TestCase
             ],
         ];
         $result = $radio->render($data, $this->context);
-        $this->assertContains('data-var="wrap-var"><label', $result);
-        $this->assertContains('type="radio" data-i="i-var"', $result);
-        $this->assertContains('one x l-var wrap-var</label>', $result);
-        $this->assertContains('two  wrap-var</label>', $result);
+        $this->assertStringContainsString('data-var="wrap-var"><label', $result);
+        $this->assertStringContainsString('type="radio" data-i="i-var"', $result);
+        $this->assertStringContainsString('one x l-var wrap-var</label>', $result);
+        $this->assertStringContainsString('two  wrap-var</label>', $result);
     }
 
     /**

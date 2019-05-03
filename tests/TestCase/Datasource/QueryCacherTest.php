@@ -29,7 +29,7 @@ class QueryCacherTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->engine = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
@@ -46,7 +46,7 @@ class QueryCacherTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('queryCache');

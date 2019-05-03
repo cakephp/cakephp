@@ -49,7 +49,7 @@ class CommandRunnerTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
@@ -153,9 +153,9 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '--help'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Current Paths', $messages);
-        $this->assertContains('- i18n', $messages);
-        $this->assertContains('Available Commands', $messages);
+        $this->assertStringContainsString('Current Paths', $messages);
+        $this->assertStringContainsString('- i18n', $messages);
+        $this->assertStringContainsString('Available Commands', $messages);
     }
 
     /**
@@ -175,8 +175,8 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '-h'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertContains('- i18n', $messages);
-        $this->assertContains('Available Commands', $messages);
+        $this->assertStringContainsString('- i18n', $messages);
+        $this->assertStringContainsString('Available Commands', $messages);
     }
 
     /**
@@ -197,9 +197,9 @@ class CommandRunnerTest extends TestCase
 
         $this->assertSame(0, $result, 'help output is success.');
         $messages = implode("\n", $output->messages());
-        $this->assertContains('No command provided. Choose one of the available commands', $messages);
-        $this->assertContains('- i18n', $messages);
-        $this->assertContains('Available Commands', $messages);
+        $this->assertStringContainsString('No command provided. Choose one of the available commands', $messages);
+        $this->assertStringContainsString('- i18n', $messages);
+        $this->assertStringContainsString('Available Commands', $messages);
     }
 
     /**
@@ -217,7 +217,7 @@ class CommandRunnerTest extends TestCase
         $output = new ConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
-        $this->assertContains(Configure::version(), $output->messages()[0]);
+        $this->assertStringContainsString(Configure::version(), $output->messages()[0]);
     }
 
     /**
@@ -239,7 +239,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());
-        $this->assertContains('URI template', $contents);
+        $this->assertStringContainsString('URI template', $contents);
     }
 
     /**
@@ -262,7 +262,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $contents = implode("\n", $output->messages());
-        $this->assertContains('Cache', $contents);
+        $this->assertStringContainsString('Cache', $contents);
     }
 
     /**
@@ -308,8 +308,8 @@ class CommandRunnerTest extends TestCase
         $runner = new CommandRunner($app, 'widget');
         $runner->run(['widget', 'sample', '-h'], $this->getMockIo($output));
         $result = implode("\n", $output->messages());
-        $this->assertContains('widget sample [-h]', $result);
-        $this->assertNotContains('cake sample [-h]', $result);
+        $this->assertStringContainsString('widget sample [-h]', $result);
+        $this->assertStringNotContainsString('cake sample [-h]', $result);
     }
 
     /**
@@ -327,7 +327,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Demo Command!', $messages);
+        $this->assertStringContainsString('Demo Command!', $messages);
     }
 
     /**
@@ -348,7 +348,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Demo Command!', $messages);
+        $this->assertStringContainsString('Demo Command!', $messages);
     }
 
     /**
@@ -369,7 +369,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Demo Command!', $messages);
+        $this->assertStringContainsString('Demo Command!', $messages);
     }
 
     /**
@@ -394,7 +394,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains('Demo Command!', $messages);
+        $this->assertStringContainsString('Demo Command!', $messages);
     }
 
     /**
@@ -412,8 +412,8 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(Shell::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
-        $this->assertContains("\ncake ex [-h]", $messages);
-        $this->assertNotContains('Demo Command!', $messages);
+        $this->assertStringContainsString("\ncake ex [-h]", $messages);
+        $this->assertStringNotContainsString('Demo Command!', $messages);
     }
 
     /**
@@ -469,7 +469,7 @@ class CommandRunnerTest extends TestCase
         $output = new ConsoleOutput();
         $runner = new CommandRunner($app, 'cake');
         $result = $runner->run(['cake', '--version'], $this->getMockIo($output));
-        $this->assertContains(Configure::version(), $output->messages()[0]);
+        $this->assertStringContainsString(Configure::version(), $output->messages()[0]);
     }
 
     /**

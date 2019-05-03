@@ -29,7 +29,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Router::connect('/articles/:action/*', ['controller' => 'Articles']);
@@ -42,7 +42,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Router::reload();

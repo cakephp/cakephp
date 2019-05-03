@@ -17,9 +17,11 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TestApp\Shell\MergeShell;
 use TestApp\Shell\ShellTestShell;
 use TestApp\Shell\Task\TestAppleTask;
@@ -65,7 +67,7 @@ class ShellTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -371,13 +373,14 @@ class ShellTest extends TestCase
     /**
      * testAbort
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionMessage Foo Not Found
-     * @expectedExceptionCode 1
      * @return void
      */
     public function testAbort()
     {
+        $this->expectException(StopException::class);
+        $this->expectExceptionMessage('Foo Not Found');
+        $this->expectExceptionCode(1);
+
         $this->io->expects($this->at(0))
             ->method('err')
             ->with('<error>Foo Not Found</error>');
@@ -472,7 +475,7 @@ class ShellTest extends TestCase
 
         $path = APP;
         $result = $this->Shell->shortPath($path);
-        $this->assertNotContains(ROOT, $result, 'Short paths should not contain ROOT');
+        $this->assertStringNotContainsString(ROOT, $result, 'Short paths should not contain ROOT');
     }
 
     /**
@@ -674,12 +677,13 @@ class ShellTest extends TestCase
     /**
      * test task loading exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Task `DoesNotExist` not found. Maybe you made a typo or a plugin is missing or not loaded?
      * @return void
      */
     public function testMissingTaskException()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Task `DoesNotExist` not found. Maybe you made a typo or a plugin is missing or not loaded?');
+
         $this->Shell->tasks = ['DoesNotExist'];
         $this->Shell->loadTasks();
     }
@@ -1390,7 +1394,7 @@ TEXT;
     public function testSetRootNamePropagatesToHelpText()
     {
         $this->assertSame($this->Shell, $this->Shell->setRootName('tool'), 'is chainable');
-        $this->assertContains('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
+        $this->assertStringContainsString('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
     }
 
     /**

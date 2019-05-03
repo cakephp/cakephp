@@ -30,7 +30,7 @@ class TimeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->now = Time::getTestNow();
@@ -44,7 +44,7 @@ class TimeTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Time::setTestNow($this->now);
@@ -595,7 +595,7 @@ class TimeTest extends TestCase
     public function testToStringInvalid($value)
     {
         $time = new Time($value);
-        $this->assertInternalType('string', (string)$time);
+        $this->assertIsString((string)$time);
         $this->assertNotEmpty((string)$time);
     }
 
@@ -608,7 +608,7 @@ class TimeTest extends TestCase
     public function testToStringInvalidFrozen($value)
     {
         $time = new FrozenTime($value);
-        $this->assertInternalType('string', (string)$time);
+        $this->assertIsString((string)$time);
         $this->assertNotEmpty((string)$time);
     }
 
@@ -623,11 +623,11 @@ class TimeTest extends TestCase
         $this->skipIf(DS === '\\', 'All zeros are valid on windows.');
         $this->skipIf(PHP_INT_SIZE === 4, 'IntlDateFormatter throws exceptions on 32-bit systems');
         $time = new $class('0000-00-00');
-        $this->assertInternalType('string', (string)$time);
+        $this->assertIsString((string)$time);
         $this->assertNotEmpty((string)$time);
 
         $time = new $class('0000-00-00 00:00:00');
-        $this->assertInternalType('string', (string)$time);
+        $this->assertIsString((string)$time);
         $this->assertNotEmpty((string)$time);
     }
 

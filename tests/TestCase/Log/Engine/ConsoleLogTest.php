@@ -33,7 +33,7 @@ class ConsoleLogTest extends TestCase
         if (DIRECTORY_SEPARATOR !== '\\') { //skip if test is on windows
             $output->expects($this->at(0))
                 ->method('setOutputAs')
-                ->with($this->stringContains((string)ConsoleOutput::COLOR));
+                ->with(ConsoleOutput::COLOR);
         }
         $message = ' Error: oh noes</error>';
         $output->expects($this->at(1))
@@ -60,7 +60,7 @@ class ConsoleLogTest extends TestCase
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertContains('Error: oh noes', $line);
+        $this->assertStringContainsString('Error: oh noes', $line);
     }
 
     /**

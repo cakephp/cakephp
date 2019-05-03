@@ -34,7 +34,7 @@ class CurlTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
@@ -90,7 +90,7 @@ class CurlTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
         $this->assertTrue($response->hasHeader('Date'));
         $this->assertTrue($response->hasHeader('Content-type'));
-        $this->assertContains('<html', $response->getBody()->getContents());
+        $this->assertStringContainsString('<html', $response->getBody()->getContents());
     }
 
     /**

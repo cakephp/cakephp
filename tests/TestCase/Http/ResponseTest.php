@@ -45,7 +45,7 @@ class ResponseTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -56,7 +56,7 @@ class ResponseTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -102,7 +102,7 @@ class ResponseTest extends TestCase
         $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
 
         $new = $response->withCharset('iso-8859-1');
-        $this->assertNotContains('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
+        $this->assertStringNotContainsString('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
         $this->assertSame('iso-8859-1', $new->getCharset());
 
         $this->assertEquals('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));

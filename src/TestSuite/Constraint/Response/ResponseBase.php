@@ -37,8 +37,6 @@ abstract class ResponseBase extends Constraint
      */
     public function __construct(?Response $response)
     {
-        parent::__construct();
-
         if (!$response) {
             throw new AssertionFailedError('No response set, cannot assert content.');
         }

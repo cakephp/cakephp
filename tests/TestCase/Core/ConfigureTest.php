@@ -30,7 +30,7 @@ class ConfigureTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Cache::disable();
@@ -41,7 +41,7 @@ class ConfigureTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if (file_exists(TMP . 'cache/persistent/cake_core_core_paths')) {
@@ -111,7 +111,7 @@ class ConfigureTest extends TestCase
         $this->assertGreaterThanOrEqual(0, $result);
 
         $result = Configure::read();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertArrayHasKey('debug', $result);
         $this->assertArrayHasKey('level1', $result);
 
@@ -521,8 +521,8 @@ class ConfigureTest extends TestCase
         $result = Configure::dump('config_test', 'test_Engine');
         $this->assertGreaterThan(0, $result);
         $result = file_get_contents(TMP . 'config_test.php');
-        $this->assertContains('<?php', $result);
-        $this->assertContains('return ', $result);
+        $this->assertStringContainsString('<?php', $result);
+        $this->assertStringContainsString('return ', $result);
         if (file_exists(TMP . 'config_test.php')) {
             unlink(TMP . 'config_test.php');
         }
@@ -541,10 +541,10 @@ class ConfigureTest extends TestCase
         $result = Configure::dump('config_test', 'test_Engine', ['Error']);
         $this->assertGreaterThan(0, $result);
         $result = file_get_contents(TMP . 'config_test.php');
-        $this->assertContains('<?php', $result);
-        $this->assertContains('return ', $result);
-        $this->assertContains('Error', $result);
-        $this->assertNotContains('debug', $result);
+        $this->assertStringContainsString('<?php', $result);
+        $this->assertStringContainsString('return ', $result);
+        $this->assertStringContainsString('Error', $result);
+        $this->assertStringNotContainsString('debug', $result);
 
         if (file_exists(TMP . 'config_test.php')) {
             unlink(TMP . 'config_test.php');

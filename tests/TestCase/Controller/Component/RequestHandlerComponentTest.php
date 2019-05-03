@@ -19,6 +19,7 @@ use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\RouteBuilder;
@@ -533,11 +534,12 @@ class RequestHandlerComponentTest extends TestCase
      * Tests that configured extensions that have no configured mimetype do not silently fallback to HTML.
      *
      * @return void
-     * @expectedException \Cake\Http\Exception\NotFoundException
-     * @expectedExceptionMessage Invoked extension not recognized/configured: foo
      */
     public function testUnrecognizedExtensionFailure()
     {
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Invoked extension not recognized/configured: foo');
+
         Router::extensions(['json', 'foo'], false);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'foo'));
         $event = new Event('Controller.startup', $this->Controller);
@@ -562,8 +564,7 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $this->Controller->setRequest(new ServerRequest());
         $this->RequestHandler->beforeRender($event);
-        $this->assertInternalType('array', $this->Controller->getRequest()->getData());
-        $this->assertNotInternalType('object', $this->Controller->getRequest()->getData());
+        $this->assertIsArray($this->Controller->getRequest()->getData());
     }
 
     /**
@@ -579,8 +580,7 @@ class RequestHandlerComponentTest extends TestCase
         $_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
         $this->Controller->setRequest(new ServerRequest());
         $this->RequestHandler->startup($event);
-        $this->assertInternalType('array', $this->Controller->getRequest()->getData());
-        $this->assertNotInternalType('object', $this->Controller->getRequest()->getData());
+        $this->assertIsArray($this->Controller->getRequest()->getData());
     }
 
     /**
@@ -801,7 +801,7 @@ XML;
         $this->assertEquals(XmlView::class, $this->Controller->viewBuilder()->getClassName());
         $this->assertEquals('application/xml', $this->Controller->getResponse()->getType());
         $this->assertEquals('UTF-8', $this->Controller->getResponse()->getCharset());
-        $this->assertContains('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));
+        $this->assertStringContainsString('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));
     }
 
     /**
@@ -830,8 +830,8 @@ XML;
         $result = $this->RequestHandler->respondAs('xml', ['attachment' => 'myfile.xml']);
         $this->assertTrue($result);
         $response = $this->Controller->getResponse();
-        $this->assertContains('myfile.xml', $response->getHeaderLine('Content-Disposition'));
-        $this->assertContains('application/xml', $response->getType());
+        $this->assertStringContainsString('myfile.xml', $response->getHeaderLine('Content-Disposition'));
+        $this->assertStringContainsString('application/xml', $response->getType());
     }
 
     /**

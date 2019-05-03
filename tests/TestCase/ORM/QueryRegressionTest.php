@@ -54,7 +54,7 @@ class QueryRegressionTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -1079,8 +1079,8 @@ class QueryRegressionTest extends TestCase
         $result = $table->find()
             ->contain(['Articles' => function ($q) {
                 $result = $q->sql();
-                $this->assertNotContains(':c2', $result, 'Only 2 bindings as there are only 2 rows.');
-                $this->assertNotContains(':c3', $result, 'Only 2 bindings as there are only 2 rows.');
+                $this->assertStringNotContainsString(':c2', $result, 'Only 2 bindings as there are only 2 rows.');
+                $this->assertStringNotContainsString(':c3', $result, 'Only 2 bindings as there are only 2 rows.');
 
                 return $q;
             }])
