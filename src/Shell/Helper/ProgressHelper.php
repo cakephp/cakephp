@@ -112,10 +112,10 @@ class ProgressHelper extends Helper
     /**
      * Increment the progress bar.
      *
-     * @param int $num The amount of progress to advance by.
+     * @param int|float $num The amount of progress to advance by.
      * @return $this
      */
-    public function increment(int $num = 1)
+    public function increment($num = 1)
     {
         $this->_progress = min(max(0, $this->_progress + $num), $this->_total);
 
