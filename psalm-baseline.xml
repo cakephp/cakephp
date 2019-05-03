@@ -1278,9 +1278,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Database/Type/DateTimeType.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$this-&gt;_localeFormat</code>
-    </InvalidScalarArgument>
     <LessSpecificReturnStatement occurrences="2">
       <code>$date</code>
       <code>new $class($format, $tz)</code>
@@ -1304,9 +1301,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Type/DateType.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_localeFormat</code>
-    </PossiblyInvalidArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>DateType</code>
     </PropertyNotSetInConstructor>
@@ -1710,9 +1704,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$format</code>
-    </InvalidScalarArgument>
     <PossiblyInvalidArgument occurrences="2">
       <code>static::$niceFormat</code>
       <code>static::$_jsonEncodeFormat</code>
@@ -1898,9 +1889,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Mailer/Email.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>self</code>
-    </ImplementedReturnTypeMismatch>
     <MissingClosureParamType occurrences="2">
       <code>$item</code>
       <code>$key</code>
@@ -1952,9 +1940,6 @@
     <PossiblyInvalidIterator occurrences="1">
       <code>$lines</code>
     </PossiblyInvalidIterator>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_socket</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Mailer/TransportRegistry.php">
     <MoreSpecificImplementedParamType occurrences="2">
@@ -3307,9 +3292,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/View/JsonView.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$view</code>
-    </MoreSpecificImplementedParamType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>JsonView</code>
     </PropertyNotSetInConstructor>
@@ -3346,9 +3328,6 @@
     </UnresolvableInclude>
   </file>
   <file src="src/View/ViewBuilder.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
     <LessSpecificReturnStatement occurrences="1">
       <code>new $className($request, $response, $events, $data)</code>
     </LessSpecificReturnStatement>
