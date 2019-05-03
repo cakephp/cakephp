@@ -14,7 +14,7 @@
  */
 $this->layout = 'dev_error';
 
-$this->assign('templateName', 'missing_connection.ctp');
+$this->assign('templateName', 'missing_connection.php');
 $this->assign('title', 'Missing Database Connection');
 
 

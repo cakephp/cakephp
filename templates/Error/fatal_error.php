@@ -15,7 +15,7 @@
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Fatal Error');
-$this->assign('templateName', 'fatal_error.ctp');
+$this->assign('templateName', 'fatal_error.php');
 
 $this->start('subheading');
 ?>

@@ -19,7 +19,7 @@ $this->layout = 'dev_error';
 $pluginPath = Configure::read('App.paths.plugins.0');
 
 $this->assign('title', 'Missing Plugin');
-$this->assign('templateName', 'missing_plugin.ctp');
+$this->assign('templateName', 'missing_plugin.php');
 
 $this->start('subheading');
 ?>

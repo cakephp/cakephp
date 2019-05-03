@@ -55,7 +55,7 @@ $this->assign(
     'subheading',
     sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($class))
 );
-$this->assign('templateName', 'missing_action.ctp');
+$this->assign('templateName', 'missing_action.php');
 
 $this->start('file');
 ?>

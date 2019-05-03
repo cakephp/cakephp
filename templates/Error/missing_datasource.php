@@ -17,7 +17,7 @@ $pluginDot = empty($plugin) ? null : $plugin . '.';
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Datasource');
-$this->assign('templateName', 'missing_datasource.ctp');
+$this->assign('templateName', 'missing_datasource.php');
 
 $this->start('subheading');
 ?>

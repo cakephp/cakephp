@@ -32,7 +32,7 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 $this->assign('title', 'Missing View');
-$this->assign('templateName', 'missing_view.ctp');
+$this->assign('templateName', 'missing_view.php');
 
 $this->start('subheading');
 ?>
