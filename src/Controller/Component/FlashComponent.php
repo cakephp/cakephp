@@ -17,6 +17,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Http\Exception\InternalErrorException;
+use Cake\Http\Session;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -158,7 +159,7 @@ class FlashComponent extends Component
      *
      * @return \Cake\Http\Session
      */
-    protected function getSession()
+    protected function getSession(): Session
     {
         return $this->getController()->getRequest()->getSession();
     }

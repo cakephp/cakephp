@@ -832,7 +832,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return static
      */
-    public function cleanCopy(): self
+    public function cleanCopy()
     {
         $clone = clone $this;
         $clone->setEagerLoader(clone $this->getEagerLoader());

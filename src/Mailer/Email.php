@@ -510,7 +510,7 @@ class Email implements JsonSerializable, Serializable
         $message = null,
         $config = 'default',
         bool $send = true
-    ): Email {
+    ) {
         $class = self::class;
 
         if (is_array($config) && !isset($config['transport'])) {
@@ -584,7 +584,7 @@ class Email implements JsonSerializable, Serializable
      * @param array $config Email configuration array.
      * @return $this Configured email instance.
      */
-    public function createFromArray(array $config): self
+    public function createFromArray(array $config)
     {
         if (isset($config['viewConfig'])) {
             $this->getRenderer()->viewBuilder()->createFromArray($config['viewConfig']);
@@ -620,10 +620,10 @@ class Email implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return static Configured email instance.
+     * @return void
      */
-    public function unserialize($data): self
+    public function unserialize($data): void
     {
-        return $this->createFromArray(unserialize($data));
+        $this->createFromArray(unserialize($data));
     }
 }

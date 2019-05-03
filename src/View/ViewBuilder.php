@@ -569,7 +569,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @return void
      * @throws \RuntimeException
      */
-    protected function _checkViewVars(&$item, $key)
+    protected function _checkViewVars(&$item, string $key): void
     {
         if ($item instanceof Exception) {
             $item = (string)$item;
@@ -619,10 +619,10 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Unserializes the view builder object.
      *
      * @param string $data Serialized string.
-     * @return $this Configured view builder instance.
+     * @return void
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
-        return $this->createFromArray(unserialize($data));
+        $this->createFromArray(unserialize($data));
     }
 }

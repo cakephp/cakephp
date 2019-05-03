@@ -155,7 +155,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $name The name of the cookie to remove.
      * @return static
      */
-    public function remove(string $name): self
+    public function remove(string $name)
     {
         $new = clone $this;
         $key = mb_strtolower($name);
@@ -289,7 +289,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param \Psr\Http\Message\RequestInterface $request Request to get cookie context from.
      * @return static
      */
-    public function addFromResponse(ResponseInterface $response, RequestInterface $request): self
+    public function addFromResponse(ResponseInterface $response, RequestInterface $request)
     {
         $uri = $request->getUri();
         $host = $uri->getHost();

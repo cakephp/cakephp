@@ -316,7 +316,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param object $object instance to store in the registry
      * @return $this
      */
-    public function set(string $objectName, $object)
+    public function set(string $objectName, object $object)
     {
         [, $name] = pluginSplit($objectName);
 

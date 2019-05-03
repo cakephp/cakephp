@@ -43,8 +43,8 @@ use InvalidArgumentException;
  *
  * @link https://tools.ietf.org/html/rfc6265
  * @link https://en.wikipedia.org/wiki/HTTP_cookie
- * @see Cake\Http\Cookie\CookieCollection for working with collections of cookies.
- * @see Cake\Http\Response::getCookieCollection() for working with response cookies.
+ * @see \Cake\Http\Cookie\CookieCollection for working with collections of cookies.
+ * @see \Cake\Http\Response::getCookieCollection() for working with response cookies.
  */
 class Cookie implements CookieInterface
 {
@@ -181,7 +181,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withName(string $name): CookieInterface
+    public function withName(string $name)
     {
         $this->validateName($name);
         $new = clone $this;
@@ -251,7 +251,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withValue($value): CookieInterface
+    public function withValue($value)
     {
         $new = clone $this;
         $new->_setValue($value);
@@ -274,7 +274,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withPath(string $path): CookieInterface
+    public function withPath(string $path)
     {
         $new = clone $this;
         $new->path = $path;
@@ -293,7 +293,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withDomain(string $domain): CookieInterface
+    public function withDomain(string $domain)
     {
         $new = clone $this;
         $new->domain = $domain;
@@ -320,7 +320,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withSecure(bool $secure): CookieInterface
+    public function withSecure(bool $secure)
     {
         $new = clone $this;
         $new->secure = $secure;
@@ -331,7 +331,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withHttpOnly(bool $httpOnly): CookieInterface
+    public function withHttpOnly(bool $httpOnly)
     {
         $new = clone $this;
         $new->httpOnly = $httpOnly;
@@ -350,7 +350,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withExpiry($dateTime): CookieInterface
+    public function withExpiry($dateTime)
     {
         $new = clone $this;
         $new->expiresAt = $dateTime->setTimezone(new DateTimeZone('GMT'));
@@ -406,7 +406,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withNeverExpire(): CookieInterface
+    public function withNeverExpire()
     {
         $new = clone $this;
         $new->expiresAt = Chronos::createFromDate(2038, 1, 1);
@@ -417,7 +417,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
-    public function withExpired(): CookieInterface
+    public function withExpired()
     {
         $new = clone $this;
         $new->expiresAt = Chronos::createFromTimestamp(1);
@@ -450,7 +450,7 @@ class Cookie implements CookieInterface
      * @param mixed $value Value to write
      * @return static
      */
-    public function withAddedValue(string $path, $value): CookieInterface
+    public function withAddedValue(string $path, $value)
     {
         $new = clone $this;
         if ($new->isExpanded === false) {
@@ -467,7 +467,7 @@ class Cookie implements CookieInterface
      * @param string $path Path to remove
      * @return static
      */
-    public function withoutAddedValue(string $path): CookieInterface
+    public function withoutAddedValue(string $path)
     {
         $new = clone $this;
         if ($new->isExpanded === false) {

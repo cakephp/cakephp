@@ -153,7 +153,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|array|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDateTime(string $time, $format = null);
@@ -177,7 +177,7 @@ interface I18nDateTimeInterface extends ChronosInterface, JsonSerializable
      * ```
      *
      * @param string $date The date string to parse.
-     * @param string|int|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDate(string $date, $format = null);

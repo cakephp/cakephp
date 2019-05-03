@@ -191,7 +191,7 @@ class PaginatorComponent extends Component
      * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\Http\Exception\NotFoundException
      */
-    public function paginate($object, array $settings = []): ResultSetInterface
+    public function paginate(object $object, array $settings = []): ResultSetInterface
     {
         $request = $this->_registry->getController()->getRequest();
 
@@ -242,9 +242,9 @@ class PaginatorComponent extends Component
      * Set paginator instance.
      *
      * @param \Cake\Datasource\Paginator $paginator Paginator instance.
-     * @return self
+     * @return $this
      */
-    public function setPaginator(Paginator $paginator): self
+    public function setPaginator(Paginator $paginator)
     {
         $this->_paginator = $paginator;
 

@@ -29,7 +29,7 @@ interface PaginatorInterface
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
      */
-    public function paginate($object, array $params = [], array $settings = []);
+    public function paginate(object $object, array $params = [], array $settings = []);
 
     /**
      * Get paging params after pagination operation.
