@@ -27,8 +27,8 @@ specify a driver to use:
 use Cake\Datasource\ConnectionManager;
 
 ConnectionManager::setConfig('default', [
-	'className' => 'Cake\Database\Connection',
-	'driver' => 'Cake\Database\Driver\Mysql',
+	'className' => \Cake\Database\Connection::class,
+	'driver' => \Cake\Database\Driver\Mysql::class,
 	'database' => 'test',
 	'username' => 'root',
 	'password' => 'secret',

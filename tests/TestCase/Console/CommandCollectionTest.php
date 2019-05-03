@@ -263,7 +263,7 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('i18n'));
         $this->assertTrue($collection->has('schema_cache'));
         $this->assertTrue($collection->has('server'));
-        $this->assertTrue($collection->has('cache'));
+        $this->assertTrue($collection->has('cache clear'));
         $this->assertFalse($collection->has('command_list'), 'Hidden commands should stay hidden');
 
         // These have to be strings as ::class uses the local namespace.

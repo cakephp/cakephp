@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Template');
-$this->assign('templateName', 'missing_template.ctp');
+$this->assign('templateName', 'missing_template.php');
 
 $isEmail = strpos($file, 'Email/') === 0;
 

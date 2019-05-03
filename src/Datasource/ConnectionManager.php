@@ -16,6 +16,10 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 
 /**
@@ -47,10 +51,10 @@ class ConnectionManager
      * @return array
      */
     protected static $_dsnClassMap = [
-        'mysql' => 'Cake\Database\Driver\Mysql',
-        'postgres' => 'Cake\Database\Driver\Postgres',
-        'sqlite' => 'Cake\Database\Driver\Sqlite',
-        'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+        'mysql' => Mysql::class,
+        'postgres' => Postgres::class,
+        'sqlite' => Sqlite::class,
+        'sqlserver' => Sqlserver::class,
     ];
 
     /**

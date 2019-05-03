@@ -35,7 +35,7 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 
-$this->assign('templateName', 'missing_behavior.ctp');
+$this->assign('templateName', 'missing_behavior.php');
 
 $this->assign('title', 'Missing Behavior');
 

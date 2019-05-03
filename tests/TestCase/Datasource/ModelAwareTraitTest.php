@@ -32,10 +32,10 @@ class ModelAwareTraitTest extends TestCase
     public function testSetModelClass()
     {
         $stub = new Stub();
-        $this->assertNull($stub->modelClass);
+        $this->assertAttributeEquals(null, 'modelClass', $stub);
 
         $stub->setProps('StubArticles');
-        $this->assertEquals('StubArticles', $stub->modelClass);
+        $this->assertAttributeEquals('StubArticles', 'modelClass', $stub);
     }
 
     /**
@@ -61,6 +61,24 @@ class ModelAwareTraitTest extends TestCase
         $this->assertInstanceOf(PaginatorPostsTable::class, $result);
         $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
         $this->assertSame('PaginatorPosts', $result->getAlias());
+    }
+
+    /**
+     * Test that calling loadModel() without $modelClass argument when default
+     * $modelClass property is empty generates exception.
+     *
+     * @return void
+     */
+    public function testLoadModelException()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Default modelClass is empty');
+
+        $stub = new Stub();
+        $stub->setProps('');
+        $stub->setModelType('Table');
+
+        $stub->loadModel();
     }
 
     /**

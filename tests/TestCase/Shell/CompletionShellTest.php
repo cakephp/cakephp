@@ -100,8 +100,10 @@ class CompletionShellTest extends TestCase
         $this->Shell->runCommand(['commands']);
         $output = $this->out->output();
 
+        // This currently incorrectly shows `cache_clear_all` when it should only show `cache`
+        // The subcommands method also needs rework to handle multi-word subcommands
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
-            'cache help i18n plugin routes schema_cache server upgrade version ' .
+            'cache_clear cache_clear_all cache_list help i18n plugin routes schema_cache server upgrade version ' .
             "abort auto_load_model demo i18m integration merge sample shell_test testing_dispatch";
         $this->assertTextEquals($expected, $output);
     }

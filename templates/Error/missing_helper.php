@@ -34,7 +34,7 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 $this->assign('title', 'Missing Helper');
-$this->assign('templateName', 'missing_helper.ctp');
+$this->assign('templateName', 'missing_helper.php');
 
 $this->start('subheading');
 ?>

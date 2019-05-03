@@ -16,7 +16,7 @@
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Datasource Configuration');
-$this->assign('templateName', 'missing_datasource_config.ctp');
+$this->assign('templateName', 'missing_datasource_config.php');
 
 $this->start('subheading');
 ?>

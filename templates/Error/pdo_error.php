@@ -17,7 +17,7 @@ use Cake\Error\Debugger;
 $this->setLayout('dev_error');
 
 $this->assign('title', 'Database Error');
-$this->assign('templateName', 'pdo_error.ctp');
+$this->assign('templateName', 'pdo_error.php');
 
 $this->start('subheading');
 ?>

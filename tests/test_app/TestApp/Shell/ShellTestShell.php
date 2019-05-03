@@ -33,6 +33,13 @@ class ShellTestShell extends Shell
     public $name = 'ShellTestShell';
 
     /**
+     * modelClass
+     *
+     * @var string
+     */
+    protected $modelClass = 'TestPlugin.TestPluginComments';
+
+    /**
      * stopped property
      *
      * @var int

@@ -177,16 +177,16 @@ class ControllerTest extends TestCase
         $request = new ServerRequest();
         $response = new Response();
         $controller = new \TestApp\Controller\PostsController($request, $response);
-        $this->assertEquals('Posts', $controller->modelClass);
+        $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
         $controller = new \TestApp\Controller\Admin\PostsController($request, $response);
-        $this->assertEquals('Posts', $controller->modelClass);
+        $this->assertInstanceOf('Cake\ORM\Table', $controller->loadModel());
         $this->assertInstanceOf('Cake\ORM\Table', $controller->Posts);
 
         $request = $request->withParam('plugin', 'TestPlugin');
         $controller = new \TestPlugin\Controller\Admin\CommentsController($request, $response);
-        $this->assertEquals('TestPlugin.Comments', $controller->modelClass);
+        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->loadModel());
         $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $controller->Comments);
     }
 
@@ -927,7 +927,7 @@ class ControllerTest extends TestCase
         $controller = new PostsController();
 
         $controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
-            /* @var Controller $controller */
+            /** @var Controller $controller */
             $controller = $event->getSubject();
 
             $controller->set('testVariable', 'test');

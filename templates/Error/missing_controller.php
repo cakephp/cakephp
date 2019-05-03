@@ -43,7 +43,7 @@ if (empty($plugin)) {
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Controller');
-$this->assign('templateName', 'missing_controller.ctp');
+$this->assign('templateName', 'missing_controller.php');
 
 ?>
 <?php $this->start('subheading');?>

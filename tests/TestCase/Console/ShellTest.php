@@ -105,8 +105,8 @@ class ShellTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $this->Shell->tasks = ['Extract' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
-        $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
         $this->Shell->initialize();
+        // TestApp\Shell\ShellTestShell has $modelClass property set to 'TestPlugin.TestPluginComments'
         $this->Shell->loadModel();
 
         $this->assertTrue(isset($this->Shell->TestPluginComments));

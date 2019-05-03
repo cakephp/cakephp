@@ -3970,7 +3970,7 @@ class TableTest extends TestCase
      */
     public function testBelongsToFluentInterface()
     {
-        /* @var \TestApp\Model\Table\ArticlesTable $articles */
+        /** @var \TestApp\Model\Table\ArticlesTable $articles */
         $articles = $this->getMockBuilder(Table::class)
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
@@ -4001,7 +4001,7 @@ class TableTest extends TestCase
      */
     public function testHasOneFluentInterface()
     {
-        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
@@ -4030,7 +4030,7 @@ class TableTest extends TestCase
      */
     public function testHasManyFluentInterface()
     {
-        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
@@ -4061,7 +4061,7 @@ class TableTest extends TestCase
      */
     public function testBelongsToManyFluentInterface()
     {
-        /* @var \TestApp\Model\Table\AuthorsTable $authors */
+        /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
             ->setMethods(['_insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])

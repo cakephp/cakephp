@@ -13,16 +13,16 @@ declare(strict_types=1);
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * CacheShell tests.
+ * Cache Commands tests.
  */
-class CacheShellTest extends ConsoleIntegrationTestCase
+class CacheCommandsTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
@@ -33,6 +33,8 @@ class CacheShellTest extends ConsoleIntegrationTestCase
     {
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
+        $this->setAppNamespace();
+        $this->useCommandRunner();
     }
 
     /**
@@ -47,17 +49,42 @@ class CacheShellTest extends ConsoleIntegrationTestCase
     }
 
     /**
-     * Test that getOptionParser() returns an instance of \Cake\Console\ConsoleOptionParser
+     * Test help output
      *
      * @return void
      */
-    public function testGetOptionParser()
+    public function testClearHelp()
     {
-        $this->exec('cache -h');
+        $this->exec('cache clear -h');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertOutputContains('list_prefixes');
-        $this->assertOutputContains('clear_all');
+        $this->assertOutputContains('engine to clear');
+    }
+
+    /**
+     * Test help output
+     *
+     * @return void
+     */
+    public function testClearAllHelp()
+    {
+        $this->exec('cache clear_all -h');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('Clear all');
+    }
+
+    /**
+     * Test help output
+     *
+     * @return void
+     */
+    public function testListHelp()
+    {
+        $this->exec('cache list -h');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('Show a list');
     }
 
     /**
