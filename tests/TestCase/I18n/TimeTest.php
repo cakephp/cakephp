@@ -482,6 +482,27 @@ class TimeTest extends TestCase
     }
 
     /**
+     * testI18nFormatUsingSystemLocale
+     *
+     * @return void
+     */
+    public function testI18nFormatUsingSystemLocale()
+    {
+        // Unset default locale for the Time class to ensure system's locale is used.
+        Time::setDefaultLocale();
+        $locale = I18n::getLocale();
+
+        $time = new Time(1556864870);
+        I18n::setLocale('ar');
+        $this->assertEquals('٢٠١٩-٠٥-٠٣', $time->i18nFormat('yyyy-MM-dd'));
+
+        I18n::setLocale('en');
+        $this->assertEquals('2019-05-03', $time->i18nFormat('yyyy-MM-dd'));
+
+        I18n::setLocale($locale);
+    }
+
+    /**
      * test formatting dates with offset style timezone
      *
      * @dataProvider classNameProvider
