@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use ArrayIterator;
 use Cake\Console\Arguments;
 use Cake\Console\Command;
 use Cake\Console\CommandCollection;
@@ -86,7 +87,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \ArrayIterator $commands The command collection to output.
      * @return void
      */
-    protected function asText($io, $commands): void
+    protected function asText(ConsoleIo $io, ArrayIterator $commands): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
@@ -141,7 +142,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param string[] $names Names
      * @return string
      */
-    protected function getShortestName(array $names)
+    protected function getShortestName(array $names): string
     {
         if (count($names) <= 1) {
             return array_shift($names);
@@ -161,7 +162,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \ArrayIterator $commands The command collection to output
      * @return void
      */
-    protected function asXml($io, $commands): void
+    protected function asXml(ConsoleIo $io, ArrayIterator $commands): void
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {

@@ -114,7 +114,7 @@ class UpgradeCommand extends Command
      *
      * @return void
      */
-    protected function processTemplates()
+    protected function processTemplates(): void
     {
         if (is_dir($this->path . 'src/Template')) {
             $this->rename(
@@ -136,7 +136,7 @@ class UpgradeCommand extends Command
      *
      * @return void
      */
-    protected function processLocales()
+    protected function processLocales(): void
     {
         if (is_dir($this->path . 'src/Locale')) {
             $this->rename(
@@ -157,7 +157,7 @@ class UpgradeCommand extends Command
      * @param string $type Type
      * @return void
      */
-    protected function moveDir($path, $type)
+    protected function moveDir(string $path, string $type): void
     {
         $info = $this->types[$type];
 
@@ -191,7 +191,7 @@ class UpgradeCommand extends Command
      * @param string $path Path.
      * @return void
      */
-    protected function renameSubFolders($path)
+    protected function renameSubFolders(string $path): void
     {
         $dirIter = new RecursiveDirectoryIterator(
             $path,
@@ -223,7 +223,7 @@ class UpgradeCommand extends Command
      * @param string $path Path
      * @return void
      */
-    protected function changeExt($path)
+    protected function changeExt(string $path): void
     {
         $dirIter = new RecursiveDirectoryIterator(
             $path,
@@ -248,7 +248,7 @@ class UpgradeCommand extends Command
      * @param string $dest Destination path.
      * @return void
      */
-    protected function rename($source, $dest)
+    protected function rename(string $source, string $dest): void
     {
         $this->io->out("Move $source to $dest");
 
