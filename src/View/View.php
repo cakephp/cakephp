@@ -1317,7 +1317,7 @@ class View implements EventDispatcherInterface
      *
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
-     * @return string[] Array with 2 indexes. 0 => plugin name, 1 => filename
+     * @return array Array with 2 indexes. 0 => plugin name, 1 => filename
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {

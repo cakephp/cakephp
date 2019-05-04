@@ -37,7 +37,7 @@ class ProgressHelper extends Helper
     /**
      * The current progress.
      *
-     * @var int
+     * @var int|float
      */
     protected $_progress = 0;
 

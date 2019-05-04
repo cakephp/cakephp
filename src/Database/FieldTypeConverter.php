@@ -129,6 +129,7 @@ class FieldTypeConverter
 
         if (!empty($this->batchingTypeMap)) {
             foreach ($this->batchingTypeMap as $t => $fields) {
+                /** @psalm-suppress PossiblyUndefinedMethod */
                 $row = $this->types[$t]->manyToPHP($row, $fields, $this->_driver);
             }
         }

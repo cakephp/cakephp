@@ -864,14 +864,15 @@ class AuthComponent extends Component implements EventDispatcherInterface
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if ($className === null || !class_exists($className)) {
+        if ($className === null) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();
         $response = $this->getController()->getResponse();
-        $this->_storage = new $className($request, $response, $config);
+        /** @var \Cake\Auth\Storage\StorageInterface $storage */
+        $storage = new $className($request, $response, $config);
 
-        return $this->_storage;
+        return $this->_storage = $storage;
     }
 
     /**

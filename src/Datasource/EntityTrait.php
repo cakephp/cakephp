@@ -265,13 +265,13 @@ trait EntityTrait
     /**
      * Returns the value of a field by name
      *
-     * @param string|null $field the name of the field to retrieve
+     * @param string $field the name of the field to retrieve
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed
      */
-    public function &get(?string $field)
+    public function &get(string $field)
     {
-        if (!strlen((string)$field)) {
+        if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
 
