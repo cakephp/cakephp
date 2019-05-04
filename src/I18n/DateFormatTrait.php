@@ -184,7 +184,7 @@ trait DateFormatTrait
      *
      * @param \DateTime $date Date.
      * @param string|int|array $format Format.
-     * @param string $locale The locale name in which the date should be displayed.
+     * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
     protected function _formatObject($date, $format, $locale)
@@ -204,6 +204,10 @@ trait DateFormatTrait
             $calendar = IntlDateFormatter::TRADITIONAL;
         } else {
             $calendar = IntlDateFormatter::GREGORIAN;
+        }
+
+        if ($locale === null) {
+            $locale = I18n::getLocale();
         }
 
         $timezone = $date->getTimezone()->getName();
