@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Cake\View\Exception;
 
 use Cake\Core\Exception\Exception;
+use Throwable;
 
 /**
  * Used when a template file cannot be found.
