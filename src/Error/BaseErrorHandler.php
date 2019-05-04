@@ -365,7 +365,7 @@ abstract class BaseErrorHandler
     /**
      * Generate the message for the exception
      *
-     * @param \Exception $exception The exception to log a message for.
+     * @param \Throwable $exception The exception to log a message for.
      * @param bool $isPrevious False for original exception, true for previous
      * @return string Error message
      */

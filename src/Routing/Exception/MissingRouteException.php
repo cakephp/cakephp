@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Cake\Routing\Exception;
 
 use Cake\Core\Exception\Exception;
+use Throwable;
 
 /**
  * Exception raised when a URL cannot be reverse routed
@@ -36,7 +37,7 @@ class MissingRouteException extends Exception
     /**
      * @inheritDoc
      */
-    public function __construct($message, $code = 404, $previous = null)
+    public function __construct($message, int $code = 404, ?Throwable $previous = null)
     {
         if (is_array($message)) {
             if (isset($message['message'])) {

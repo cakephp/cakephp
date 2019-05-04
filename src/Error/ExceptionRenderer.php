@@ -29,7 +29,6 @@ use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
-use Exception;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -374,7 +373,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
             }
 
             return $this->_outputMessageSafe('error500');
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return $this->_outputMessageSafe('error500');
         }
     }
