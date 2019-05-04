@@ -26,7 +26,7 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * @inheritDoc
      */
-    public function create($className)
+    public function create(string $className)
     {
         $command = new $className();
         if (!($command instanceof Command) && !($command instanceof Shell)) {

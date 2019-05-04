@@ -306,7 +306,7 @@ class MemcachedEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool Whether the write was successful or not.
      */
-    public function setMultiple(array $data, $ttl = null): bool
+    public function setMultiple($data, $ttl = null): bool
     {
         $cacheData = [];
         foreach ($data as $key => $value) {

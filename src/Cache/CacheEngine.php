@@ -90,7 +90,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return void
      * @throws \Cake\Cache\InvalidArgumentException When the key is not valid.
      */
-    protected function ensureValidKey(string $key): void
+    protected function ensureValidKey($key): void
     {
         if (!is_string($key) || strlen($key) === 0) {
             throw new InvalidArgumentException('A cache key must be a non-empty string.');

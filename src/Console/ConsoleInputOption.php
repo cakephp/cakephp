@@ -228,7 +228,7 @@ class ConsoleInputOption
             throw new ConsoleException(
                 sprintf(
                     '"%s" is not a valid value for --%s. Please use one of "%s"',
-                    $value,
+                    (string)$value,
                     $this->_name,
                     implode(', ', $this->_choices)
                 )

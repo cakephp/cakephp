@@ -54,7 +54,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         if (!$args->getOption('xml')) {
             $io->out('<info>Current Paths:</info>', 2);

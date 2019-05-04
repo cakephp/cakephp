@@ -57,7 +57,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @throws \Cake\View\Exception\MissingHelperException When a helper could not be found.
      *    App helpers are searched, and then plugin helpers.
      */
-    public function __isset($helper)
+    public function __isset($helper): bool
     {
         if (isset($this->_loaded[$helper])) {
             return true;
