@@ -65,7 +65,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return true;
     }

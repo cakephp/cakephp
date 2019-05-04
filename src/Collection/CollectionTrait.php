@@ -298,12 +298,12 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($callback);
 
-        $mapper = function ($value, $key, $mr) use ($callback) {
+        $mapper = function ($value, $key, $mr) use ($callback): void {
             /** @var \Cake\Collection\Iterator\MapReduce $mr */
             $mr->emitIntermediate($value, $callback($value));
         };
 
-        $reducer = function ($values, $key, $mr) {
+        $reducer = function ($values, $key, $mr): void {
             /** @var \Cake\Collection\Iterator\MapReduce $mr */
             $mr->emit(count($values), $key);
         };
@@ -521,7 +521,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function append($items): CollectionInterface
+    public function append(iterable $items): CollectionInterface
     {
         $list = new AppendIterator();
         $list->append($this->unwrap());
@@ -595,7 +595,7 @@ trait CollectionTrait
             );
         };
 
-        $reducer = function ($values, $key, $mapReduce) {
+        $reducer = function ($values, $key, $mapReduce): void {
             $result = [];
             foreach ($values as $value) {
                 $result += $value;
@@ -617,7 +617,7 @@ trait CollectionTrait
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
 
-        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey) {
+        $mapper = function ($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
             $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);

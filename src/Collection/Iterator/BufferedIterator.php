@@ -106,7 +106,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->_index === 0 && !$this->_started) {
             $this->_started = true;
@@ -123,7 +123,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if ($this->_buffer->offsetExists($this->_index)) {
             $current = $this->_buffer->offsetGet($this->_index);
@@ -154,7 +154,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         $this->_index++;
 
@@ -187,7 +187,7 @@ class BufferedIterator extends Collection implements Countable, Serializable
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         if (!$this->_finished) {
             $this->count();
