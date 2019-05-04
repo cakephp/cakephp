@@ -29,7 +29,7 @@ class DuplicateNamedRouteException extends Exception
     /**
      * @inheritDoc
      */
-    public function __construct($message, int $code = 404, ?Throwable $previous = null)
+    public function __construct($message, ?int $code = 404, ?Throwable $previous = null)
     {
         if (is_array($message) && isset($message['message'])) {
             $this->_messageTemplate = $message['message'];
