@@ -288,7 +288,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param string $name Property name
      * @return \Cake\Datasource\RepositoryInterface|null The model instance or null
      */
-    public function __get(string $name)
+    public function __get(string $name): ?\Cake\Datasource\RepositoryInterface
     {
         if (!empty($this->modelClass)) {
             [$plugin, $class] = pluginSplit($this->modelClass, true);

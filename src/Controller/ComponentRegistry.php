@@ -86,7 +86,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName($class): ?string
     {
         return App::className($class, 'Controller/Component', 'Component');
     }

@@ -22,6 +22,7 @@ use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -90,7 +91,7 @@ class SecurityComponent extends Component
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null
      */
-    public function startup(EventInterface $event)
+    public function startup(EventInterface $event): ?Response
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -125,6 +126,8 @@ class SecurityComponent extends Component
             $request = $request->withoutData('_Token');
         }
         $controller->setRequest($request);
+
+        return null;
     }
 
     /**
