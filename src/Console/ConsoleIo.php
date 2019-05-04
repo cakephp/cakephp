@@ -359,7 +359,7 @@ class ConsoleIo
      * @param string|null $default Default input value.
      * @return mixed Either the default value, or the user-provided input.
      */
-    public function ask($prompt, $default = null)
+    public function ask(string $prompt, ?string $default = null)
     {
         return $this->_getInput($prompt, null, $default);
     }
@@ -386,7 +386,7 @@ class ConsoleIo
      *   styles true will be returned.
      * @see \Cake\Console\ConsoleOutput::styles()
      */
-    public function styles($style = null, $definition = null)
+    public function styles(?string $style = null, $definition = null)
     {
         return $this->_out->styles($style, $definition);
     }
@@ -503,7 +503,7 @@ class ConsoleIo
      * @param array $settings Configuration data for the helper.
      * @return \Cake\Console\Helper The created helper instance.
      */
-    public function helper(string $name, array $settings = [])
+    public function helper(string $name, array $settings = []): Helper
     {
         $name = ucfirst($name);
 

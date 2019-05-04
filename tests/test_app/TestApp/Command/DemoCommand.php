@@ -8,7 +8,7 @@ use Cake\Console\ConsoleIo;
 
 class DemoCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->quiet('Quiet!');
         $io->out('Demo Command!');
@@ -16,5 +16,7 @@ class DemoCommand extends Command
         if ($args->hasArgumentAt(0)) {
             $io->out($args->getArgumentAt(0));
         }
+
+        return null;
     }
 }

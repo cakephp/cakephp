@@ -215,7 +215,7 @@ class ConsoleInputOption
     /**
      * Check that a value is a valid choice for this option.
      *
-     * @param string $value The choice to validate.
+     * @param string|bool $value The choice to validate.
      * @return bool
      * @throws \Cake\Console\Exception\ConsoleException
      */

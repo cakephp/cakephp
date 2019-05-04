@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
  */
 class TestingDispatchShell extends Shell
 {
-    protected function _welcome()
+    protected function _welcome(): void
     {
         $this->out('<info>Welcome to CakePHP Console</info>');
     }

@@ -224,7 +224,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return null|int The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         return null;
     }
@@ -236,7 +236,7 @@ class Command
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    public function abort($code = self::CODE_ERROR): void
+    public function abort(int $code = self::CODE_ERROR): void
     {
         throw new StopException('Command aborted', $code);
     }
@@ -249,7 +249,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
-    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null)
+    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null): ?int
     {
         if (is_string($command)) {
             if (!class_exists($command)) {

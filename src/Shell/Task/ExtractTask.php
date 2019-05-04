@@ -130,7 +130,7 @@ class ExtractTask extends Shell
      *
      * @return void
      */
-    protected function _welcome()
+    protected function _welcome(): void
     {
     }
 

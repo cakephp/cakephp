@@ -186,7 +186,7 @@ class ConsoleOptionParser
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
      */
-    public static function create($command, $defaultOptions = true)
+    public static function create(?string $command, bool $defaultOptions = true)
     {
         return new static($command, $defaultOptions);
     }
