@@ -702,6 +702,13 @@ class View implements EventDispatcherInterface
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
+            if (empty($this->layout)) {
+                throw new RuntimeException(
+                    'View::$layout must be a non-empty string.' .
+                    'To disable layout rendering set View::$autoLayout to false instead.'
+                );
+            }
+
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
@@ -1345,10 +1352,10 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
-            if ($this->layout === false) {
+            if (empty($this->layout)) {
                 throw new RuntimeException(
-                    'Setting View::$layout to false is no longer supported.' .
-                    ' Set View::$autoLayout to false instead.'
+                    'View::$layout must be a non-empty string.' .
+                    'To disable layout rendering set View::$autoLayout to false instead.'
                 );
             }
             $name = $this->layout;
