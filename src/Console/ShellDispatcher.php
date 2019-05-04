@@ -319,7 +319,7 @@ class ShellDispatcher
      * @return \Cake\Console\Shell A shell instance.
      * @throws \Cake\Console\Exception\MissingShellException when errors are encountered.
      */
-    public function findShell(string $shell): \Cake\Console\Shell
+    public function findShell(string $shell): Shell
     {
         $className = $this->_shellExists($shell);
         if (!$className) {

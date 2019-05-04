@@ -199,7 +199,7 @@ class Cache
      * @return \Cake\Cache\CacheEngine
      * @deprecated 3.7.0 Use Cache::pool() instead. This method will be removed in 5.0.
      */
-    public static function engine(string $config): \Cake\Cache\CacheEngine
+    public static function engine(string $config): CacheEngine
     {
         return static::pool($config);
     }
@@ -210,7 +210,7 @@ class Cache
      * @param string $config The name of the configured cache backend.
      * @return \Cake\Cache\CacheEngine
      */
-    public static function pool(string $config): \Cake\Cache\CacheEngine
+    public static function pool(string $config): CacheEngine
     {
         if (!static::$_enabled) {
             return new NullEngine();
