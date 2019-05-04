@@ -209,7 +209,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object.
      * @return object|null Object instance if loaded else null.
      */
-    public function get(string $name)
+    public function get(string $name): ?object
     {
         if (isset($this->_loaded[$name])) {
             return $this->_loaded[$name];
@@ -224,7 +224,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of property to read
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->get($name);
     }
@@ -235,7 +235,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object being checked.
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->_loaded[$name]);
     }
@@ -247,7 +247,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param mixed $object Object to set.
      * @return void
      */
-    public function __set($name, $object)
+    public function __set(string $name, $object): void
     {
         $this->set($name, $object);
     }
@@ -258,7 +258,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of a property to unset.
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         $this->unload($name);
     }
@@ -381,7 +381,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $properties = get_object_vars($this);
         if (isset($properties['_loaded'])) {
