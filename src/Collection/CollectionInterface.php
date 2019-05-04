@@ -647,7 +647,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      * @param iterable $items Items list.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function append(iterable $items): CollectionInterface;
+    public function append($items): CollectionInterface;
 
     /**
      * Append a single item creating a new collection.

@@ -521,7 +521,7 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function append(iterable $items): CollectionInterface
+    public function append($items): CollectionInterface
     {
         $list = new AppendIterator();
         $list->append($this->unwrap());
