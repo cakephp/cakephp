@@ -79,7 +79,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
@@ -89,21 +89,21 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_updateParts = ['update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_insertParts = ['insert', 'values', 'epilog'];
 
@@ -121,7 +121,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var array
+     * @var callable[]
      */
     protected $_resultDecorators = [];
 

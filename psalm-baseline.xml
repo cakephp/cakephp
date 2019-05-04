@@ -274,9 +274,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>Command</code>
     </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;modelClass</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Console/CommandRunner.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -386,7 +383,7 @@
       <code>$command</code>
       <code>$message</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="14">
+    <PossiblyNullPropertyAssignmentValue occurrences="13">
       <code>$locator</code>
       <code>$command</code>
       <code>$locator</code>
@@ -402,12 +399,11 @@
       <code>$locator</code>
       <code>$locator</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="5">
+    <PropertyNotSetInConstructor occurrences="4">
       <code>$OptionParser</code>
       <code>$command</code>
       <code>$name</code>
       <code>$plugin</code>
-      <code>Shell</code>
     </PropertyNotSetInConstructor>
     <UndefinedConstant occurrences="1">
       <code>ROOT</code>
@@ -415,9 +411,8 @@
     <UndefinedMethod occurrences="1">
       <code>main</code>
     </UndefinedMethod>
-    <UninitializedProperty occurrences="2">
+    <UninitializedProperty occurrences="1">
       <code>$this-&gt;name</code>
-      <code>$this-&gt;modelClass</code>
     </UninitializedProperty>
   </file>
   <file src="src/Console/ShellDispatcher.php">
@@ -453,12 +448,6 @@
     <InvalidScalarArgument occurrences="1">
       <code>$message</code>
     </InvalidScalarArgument>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$this-&gt;_storage</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\Auth\Storage\StorageInterface|null</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$redirectUrl</code>
       <code>$redirectUrl</code>
@@ -1621,9 +1610,6 @@
       <code>$weak ? 'W/' : null</code>
       <code>$cookie</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="src/Http/ResponseEmitter.php">
     <MissingParamType occurrences="1">
@@ -1855,8 +1841,7 @@
     <PossiblyNullArgument occurrences="1">
       <code>$locale</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_cacher</code>
+    <PropertyNotSetInConstructor occurrences="1">
       <code>TranslatorRegistry</code>
     </PropertyNotSetInConstructor>
   </file>
@@ -1911,11 +1896,6 @@
     <MissingClosureReturnType occurrences="1">
       <code>function (&amp;$item, $key) {</code>
     </MissingClosureReturnType>
-  </file>
-  <file src="src/Mailer/Mailer.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Mailer</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Mailer/Message.php">
     <ImplementedReturnTypeMismatch occurrences="1">
@@ -2508,18 +2488,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$frag</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Shell/CacheShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PossiblyNullArgument occurrences="1">
-      <code>$prefix</code>
-    </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheShell</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/CompletionShell.php">
     <DeprecatedClass occurrences="2">

@@ -28,9 +28,9 @@ class ApcuEngineTest extends TestCase
     /**
      * useRequestTime original value
      *
-     * @var bool
+     * @var string
      */
-    protected static $useRequestTime = null;
+    protected static $useRequestTime;
 
     /**
      * Ensure use_request_time is turned off
@@ -51,7 +51,7 @@ class ApcuEngineTest extends TestCase
      */
     public static function teardownAfterClass(): void
     {
-        ini_set('apc.use_request_time', (string)static::$useRequestTime);
+        ini_set('apc.use_request_time', static::$useRequestTime);
     }
 
     /**
@@ -64,7 +64,7 @@ class ApcuEngineTest extends TestCase
         parent::setUp();
         $this->skipIf(!function_exists('apcu_store'), 'APCu is not installed or configured properly.');
 
-        if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')) {
+        if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
             $this->skipIf(!ini_get('apc.enable_cli'), 'APCu is not enabled for the CLI.');
         }
 
@@ -91,7 +91,7 @@ class ApcuEngineTest extends TestCase
      * @param array $config
      * @return void
      */
-    protected function _configCache($config = [])
+    protected function _configCache(array $config = [])
     {
         $defaults = [
             'className' => 'Apcu',

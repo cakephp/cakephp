@@ -288,7 +288,7 @@ class ConsoleIo
      *    length of the last message output.
      * @return void
      */
-    public function overwrite($message, int $newlines = 1, ?int $size = null)
+    public function overwrite($message, int $newlines = 1, ?int $size = null): void
     {
         $size = $size ?: $this->_lastWritten;
 
@@ -399,7 +399,7 @@ class ConsoleIo
      * @param string|null $default Default input value.
      * @return mixed Either the default value, or the user-provided input.
      */
-    public function askChoice(string $prompt, $options, $default = null)
+    public function askChoice(string $prompt, $options, ?string $default = null)
     {
         if ($options && is_string($options)) {
             if (strpos($options, ',')) {

@@ -28,9 +28,9 @@ class FileTest extends TestCase
     /**
      * File property
      *
-     * @var mixed
+     * @var File
      */
-    public $File = null;
+    public $File;
 
     /**
      * setup the test case

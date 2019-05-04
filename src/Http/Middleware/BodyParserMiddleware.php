@@ -36,7 +36,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Registered Parsers
      *
-     * @var array
+     * @var callable[]
      */
     protected $parsers = [];
 

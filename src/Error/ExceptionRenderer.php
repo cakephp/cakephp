@@ -87,7 +87,7 @@ class ExceptionRenderer implements ExceptionRendererInterface
      *
      * @var \Cake\Http\ServerRequest|null
      */
-    protected $request = null;
+    protected $request;
 
     /**
      * Creates the controller to perform rendering on the error response.

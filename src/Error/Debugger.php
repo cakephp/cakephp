@@ -164,7 +164,7 @@ class Debugger
      * Returns a reference to the Debugger singleton object instance.
      *
      * @param string|null $class Class name.
-     * @return \Cake\Error\Debugger
+     * @return static
      */
     public static function getInstance(?string $class = null)
     {
@@ -190,7 +190,7 @@ class Debugger
      * @return mixed Config value being read, or the object itself on write operations.
      * @throws \Cake\Core\Exception\Exception When trying to set a key that is invalid.
      */
-    public static function configInstance($key = null, $value = null, $merge = true)
+    public static function configInstance($key = null, $value = null, bool $merge = true)
     {
         if (is_array($key) || func_num_args() >= 2) {
             return static::getInstance()->setConfig($key, $value, $merge);
@@ -933,7 +933,7 @@ TEXT;
      *
      * @return void
      */
-    public static function checkSecurityKeys()
+    public static function checkSecurityKeys(): void
     {
         if (Security::getSalt() === '__SALT__') {
             trigger_error(sprintf(

@@ -11,7 +11,11 @@ class Stub
 {
     use ModelAwareTrait;
 
-    public function setProps($name)
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function setProps(string $name): void
     {
         $this->_setModelClass($name);
     }

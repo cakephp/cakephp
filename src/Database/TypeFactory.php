@@ -78,7 +78,7 @@ class TypeFactory
     /**
      * Returns an arrays with all the mapped type objects, indexed by name.
      *
-     * @return array
+     * @return \Cake\Database\TypeInterface[]
      */
     public static function buildAll(): array
     {

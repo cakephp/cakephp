@@ -148,7 +148,7 @@ class ProgressHelperTest extends TestCase
         $this->helper->increment(20);
         $this->helper->draw();
 
-        $this->helper->increment(40);
+        $this->helper->increment(40.0);
         $this->helper->draw();
 
         $this->helper->increment(40);

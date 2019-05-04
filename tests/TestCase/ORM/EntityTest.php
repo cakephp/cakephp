@@ -1593,19 +1593,19 @@ class EntityTest extends TestCase
      */
     public function emptyNamesProvider()
     {
-        return [[''], [null], [false]];
+        return [[''], [null]];
     }
+
     /**
      * Tests that trying to get an empty property name throws exception
      *
-     * @dataProvider emptyNamesProvider
      * @return void
      */
-    public function testEmptyProperties($property)
+    public function testEmptyProperties()
     {
         $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();
-        $entity->get($property);
+        $entity->get('');
     }
 
     /**

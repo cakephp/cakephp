@@ -64,7 +64,7 @@ class TranslatorRegistry extends TranslatorLocator
      * A CacheEngine object that is used to remember translator across
      * requests.
      *
-     * @var \Cake\Cache\CacheEngine
+     * @var \Cake\Cache\CacheEngine|null
      */
     protected $_cacher;
 

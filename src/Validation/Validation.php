@@ -723,7 +723,7 @@ class Validation
      * Checks that value has a valid file extension.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check
-     * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param string[] $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension($check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
