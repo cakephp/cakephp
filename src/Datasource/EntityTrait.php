@@ -135,7 +135,7 @@ trait EntityTrait
      * @param mixed $value The value to set to the field
      * @return void
      */
-    public function __set(string $field, $value)
+    public function __set(string $field, $value): void
     {
         $this->set($field, $value);
     }
@@ -148,7 +148,7 @@ trait EntityTrait
      * @return bool
      * @see \Cake\ORM\Entity::has()
      */
-    public function __isset(string $field)
+    public function __isset(string $field): bool
     {
         return $this->has($field);
     }
@@ -159,7 +159,7 @@ trait EntityTrait
      * @param string $field The field to unset
      * @return void
      */
-    public function __unset(string $field)
+    public function __unset(string $field): void
     {
         $this->unset($field);
     }

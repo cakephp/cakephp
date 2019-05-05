@@ -29,7 +29,7 @@ class RuleInvoker
     /**
      * The rule name
      *
-     * @var string
+     * @var string|null
      */
     protected $name;
 
@@ -60,10 +60,10 @@ class RuleInvoker
      * rule $scope.
      *
      * @param callable $rule The rule to be invoked.
-     * @param string $name The name of the rule. Used in error messsages.
+     * @param ?string $name The name of the rule. Used in error messsages.
      * @param array $options The options for the rule. See above.
      */
-    public function __construct(callable $rule, $name, array $options = [])
+    public function __construct(callable $rule, ?string $name, array $options = [])
     {
         $this->rule = $rule;
         $this->name = $name;

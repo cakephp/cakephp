@@ -1277,7 +1277,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * @inheritDoc
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $eagerLoader = $this->getEagerLoader();
 

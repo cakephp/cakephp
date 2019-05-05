@@ -165,7 +165,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginal(array $fields);
+    public function extractOriginal(array $fields): array;
 
     /**
      * Returns an array with only the original fields
@@ -174,7 +174,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginalChanged(array $fields);
+    public function extractOriginalChanged(array $fields): array;
 
     /**
      * Sets one or multiple fields to the specified value
@@ -185,7 +185,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * first argument is also an array, in which case will be treated as $options
      * @param array $options options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
-     * @return \Cake\Datasource\EntityInterface
+     * @return $this
      */
     public function set($field, $value = null, array $options = []);
 
@@ -204,13 +204,13 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string|array $field The field to check.
      * @return bool
      */
-    public function has($field);
+    public function has($field): bool;
 
     /**
      * Removes a field or list of fields from this entity
      *
      * @param string|array $field The field to unset.
-     * @return \Cake\Datasource\EntityInterface
+     * @return $this
      */
     public function unset($field);
 
@@ -229,7 +229,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 
     /**
      * Returns an array with the requested fields

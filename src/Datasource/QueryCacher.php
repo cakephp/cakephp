@@ -68,9 +68,9 @@ class QueryCacher
      * Load the cached results from the cache or run the query.
      *
      * @param object $query The query the cache read is for.
-     * @return \Cake\Datasource\ResultSetInterface|null Either the cached results or null.
+     * @return mixed Either the cached results or null.
      */
-    public function fetch($query)
+    public function fetch(object $query)
     {
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
@@ -89,7 +89,7 @@ class QueryCacher
      * @param \Traversable $results The result set to store.
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function store($query, Traversable $results): bool
+    public function store(object $query, Traversable $results): bool
     {
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
@@ -104,7 +104,7 @@ class QueryCacher
      * @return string
      * @throws \RuntimeException
      */
-    protected function _resolveKey($query): string
+    protected function _resolveKey(object $query): string
     {
         if (is_string($this->_key)) {
             return $this->_key;
@@ -124,7 +124,7 @@ class QueryCacher
      *
      * @return \Cake\Cache\CacheEngine
      */
-    protected function _resolveCacher()
+    protected function _resolveCacher(): CacheEngine
     {
         if (is_string($this->_config)) {
             return Cache::pool($this->_config);

@@ -74,7 +74,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param array $settings An array of settings to use for the datasource.
      * @return object A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $settings)
+    protected function _create($class, string $alias, array $settings): object
     {
         if (is_callable($class)) {
             return $class($alias);

@@ -19,6 +19,7 @@ use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use InvalidArgumentException;
+use Traversable;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -101,7 +102,7 @@ trait QueryTrait
      *
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): RepositoryInterface
     {
         return $this->_repository;
     }
@@ -115,7 +116,7 @@ trait QueryTrait
      *
      * This method is most useful when combined with results stored in a persistent cache.
      *
-     * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
+     * @param \Cake\Datasource\ResultSetInterface|array $results The results this query should return.
      * @return $this
      */
     public function setResult($results)
@@ -203,7 +204,7 @@ trait QueryTrait
      * @param bool $value Whether or not to eager load.
      * @return $this
      */
-    public function eagerLoaded($value)
+    public function eagerLoaded(bool $value)
     {
         $this->_eagerLoaded = $value;
 
@@ -251,7 +252,7 @@ trait QueryTrait
      * @param string|null $defaultAlias The default alias
      * @return array
      */
-    public function aliasFields(array $fields, $defaultAlias = null): array
+    public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {
         $aliased = [];
         foreach ($fields as $alias => $field) {
@@ -274,7 +275,7 @@ trait QueryTrait
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface
+     * @return \Cake\Datasource\ResultSetInterface|array
      */
     public function all()
     {
@@ -413,7 +414,7 @@ trait QueryTrait
      *
      * @return array
      */
-    public function getResultFormatters()
+    public function getResultFormatters(): array
     {
         return $this->_formatters;
     }
@@ -488,7 +489,7 @@ trait QueryTrait
      * @return mixed
      * @throws \BadMethodCallException if no such method exists in result set
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         $resultSetClass = $this->_decoratorClass();
         if (in_array($method, get_class_methods($resultSetClass), true)) {
@@ -515,7 +516,7 @@ trait QueryTrait
      *
      * @return \Traversable
      */
-    abstract protected function _execute();
+    abstract protected function _execute(): Traversable;
 
     /**
      * Decorates the results iterator with MapReduce routines and formatters
@@ -523,7 +524,7 @@ trait QueryTrait
      * @param \Traversable $result Original results
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _decorateResults($result)
+    protected function _decorateResults(Traversable $result): ResultSetInterface
     {
         $decorator = $this->_decoratorClass();
         foreach ($this->_mapReduce as $functions) {
@@ -550,7 +551,7 @@ trait QueryTrait
      *
      * @return string
      */
-    protected function _decoratorClass()
+    protected function _decoratorClass(): string
     {
         return ResultSetDecorator::class;
     }

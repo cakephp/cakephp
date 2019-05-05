@@ -157,7 +157,7 @@ class Paginator implements PaginatorInterface
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Datasource\ResultSetInterface Query results
+     * @return \Cake\Datasource\ResultSetInterface|array Query results
      * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
     public function paginate(object $object, array $params = [], array $settings = [])
@@ -415,7 +415,7 @@ class Paginator implements PaginatorInterface
      * @param string $model Current model alias
      * @return array $fields Unaliased fields where applicable
      */
-    protected function _removeAliases($fields, $model)
+    protected function _removeAliases(array $fields, string $model): array
     {
         $result = [];
         foreach ($fields as $field => $sort) {
