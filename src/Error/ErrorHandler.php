@@ -122,7 +122,7 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Displays an exception response body.
      *
-     * @param \Exception $exception The exception to display.
+     * @param \Throwable $exception The exception to display.
      * @return void
      * @throws \Exception When the chosen exception renderer is invalid.
      */

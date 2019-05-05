@@ -13,6 +13,8 @@ declare(strict_types=1);
  */
 namespace Cake\View\Exception;
 
+use Throwable;
+
 /**
  * Used when a template file for a cell cannot be found.
  */
@@ -35,10 +37,15 @@ class MissingCellTemplateException extends MissingTemplateException
      * @param string $file The view filename.
      * @param array $paths The path list that template could not be found in.
      * @param int|null $code The code of the error.
-     * @param \Exception|null $previous the previous exception.
+     * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct(string $name, string $file, array $paths = [], $code = null, $previous = null)
-    {
+    public function __construct(
+        string $name,
+        string $file,
+        array $paths = [],
+        ?int $code = null,
+        ?Throwable $previous = null
+    ) {
         $this->name = $name;
 
         parent::__construct($file, $paths, $code, $previous);

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Cake\Routing\Exception;
 
 use Cake\Core\Exception\Exception;
+use Throwable;
 
 /**
  * Exception raised when a route names used twice.
@@ -28,7 +29,7 @@ class DuplicateNamedRouteException extends Exception
     /**
      * @inheritDoc
      */
-    public function __construct($message, $code = 404, $previous = null)
+    public function __construct($message, ?int $code = 404, ?Throwable $previous = null)
     {
         if (is_array($message) && isset($message['message'])) {
             $this->_messageTemplate = $message['message'];

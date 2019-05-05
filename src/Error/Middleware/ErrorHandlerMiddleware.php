@@ -213,11 +213,11 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Generate the message for the exception
      *
-     * @param \Exception $exception The exception to log a message for.
+     * @param \Throwable $exception The exception to log a message for.
      * @param bool $isPrevious False for original exception, true for previous
      * @return string Error message
      */
-    protected function getMessageForException($exception, $isPrevious = false)
+    protected function getMessageForException(Throwable $exception, $isPrevious = false)
     {
         $message = sprintf(
             '%s[%s] %s',

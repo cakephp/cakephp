@@ -16,6 +16,7 @@ namespace Cake\ORM\Exception;
 use Cake\Core\Exception\Exception;
 use Cake\Datasource\EntityInterface;
 use Cake\Utility\Hash;
+use Throwable;
 
 /**
  * Used when a strict save or delete fails
@@ -41,9 +42,9 @@ class PersistenceFailedException extends Exception
      * @param string|array $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
      * @param int $code The code of the error, is also the HTTP status code for the error.
-     * @param \Exception|null $previous the previous exception.
+     * @param \Throwable|null $previous the previous exception.
      */
-    public function __construct(EntityInterface $entity, $message, $code = null, $previous = null)
+    public function __construct(EntityInterface $entity, $message, ?int $code = null, ?Throwable $previous = null)
     {
         $this->_entity = $entity;
         if (is_array($message)) {

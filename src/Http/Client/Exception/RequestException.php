@@ -14,10 +14,10 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Client\Exception;
 
-use Exception;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use RuntimeException;
+use Throwable;
 
 /**
  * Exception for when a request failed.
@@ -38,9 +38,9 @@ class RequestException extends RuntimeException implements RequestExceptionInter
      *
      * @param string $message Exeception message.
      * @param \Psr\Http\Message\RequestInterface $request Request instance.
-     * @param \Exception|null $previous Previous Exception
+     * @param \Throwable|null $previous Previous Exception
      */
-    public function __construct($message, RequestInterface $request, ?Exception $previous = null)
+    public function __construct($message, RequestInterface $request, ?Throwable $previous = null)
     {
         $this->request = $request;
         parent::__construct($message, 0, $previous);
