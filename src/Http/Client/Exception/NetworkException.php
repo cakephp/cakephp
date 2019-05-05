@@ -40,7 +40,7 @@ class NetworkException extends RuntimeException implements NetworkExceptionInter
      * @param \Psr\Http\Message\RequestInterface $request Request instance.
      * @param \Throwable|null $previous Previous Exception
      */
-    public function __construct($message, RequestInterface $request, ?Throwable $previous = null)
+    public function __construct(string $message, RequestInterface $request, ?Throwable $previous = null)
     {
         $this->request = $request;
         parent::__construct($message, 0, $previous);

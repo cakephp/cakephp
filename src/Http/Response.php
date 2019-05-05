@@ -565,7 +565,7 @@ class Response implements ResponseInterface
      *
      * @return int Status code.
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->_status;
     }
@@ -639,7 +639,7 @@ class Response implements ResponseInterface
      * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return $this->_reasonPhrase;
     }
@@ -655,7 +655,7 @@ class Response implements ResponseInterface
      * @param string|array $mimeType Definition of the mime type.
      * @return void
      */
-    public function setTypeMap(string $type, $mimeType)
+    public function setTypeMap(string $type, $mimeType): void
     {
         $this->_mimeTypes[$type] = $mimeType;
     }
@@ -1207,7 +1207,7 @@ class Response implements ResponseInterface
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         $this->stream->rewind();
 
@@ -1308,7 +1308,7 @@ class Response implements ResponseInterface
     {
         return [
             'name' => $cookie->getName(),
-            'value' => $cookie->getStringValue(),
+            'value' => $cookie->getScalarValue(),
             'path' => $cookie->getPath(),
             'domain' => $cookie->getDomain(),
             'secure' => $cookie->isSecure(),
@@ -1554,7 +1554,7 @@ class Response implements ResponseInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'status' => $this->_status,

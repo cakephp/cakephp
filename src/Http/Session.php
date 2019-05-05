@@ -368,7 +368,7 @@ class Session
      *
      * @return bool True if session was started
      */
-    public function close()
+    public function close(): bool
     {
         if (!$this->_started) {
             return true;

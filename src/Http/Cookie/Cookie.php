@@ -236,10 +236,22 @@ class Cookie implements CookieInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @psalm-suppress InvalidReturnType
+     * Gets the cookie value as a string.
+     *
+     * This will collapse any complex data in the cookie with json_encode()
+     *
+     * @return mixed
+     * @deprecated 4.0.0 Use getScalarValue() instead.
      */
     public function getStringValue()
+    {
+        return $this->getScalarValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getScalarValue()
     {
         if ($this->isExpanded) {
             return $this->_flatten($this->value);

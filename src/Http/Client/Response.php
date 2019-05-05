@@ -420,7 +420,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return array|null
+     * @return mixed
      */
     public function getJson()
     {

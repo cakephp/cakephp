@@ -139,7 +139,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *     'origin-when-cross-origin', 'same-origin', 'strict-origin', 'strict-origin-when-cross-origin', 'unsafe-url'
      * @return $this
      */
-    public function setReferrerPolicy($policy = self::SAME_ORIGIN)
+    public function setReferrerPolicy(string $policy = self::SAME_ORIGIN)
     {
         $available = [
             self::NO_REFERRER,
@@ -166,7 +166,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      * @param string $url URL if mode is `allow-from`
      * @return $this
      */
-    public function setXFrameOptions($option = self::SAMEORIGIN, ?string $url = null)
+    public function setXFrameOptions(string $option = self::SAMEORIGIN, ?string $url = null)
     {
         $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
 
@@ -211,7 +211,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
      *     'by-ftp-filename'
      * @return $this
      */
-    public function setCrossDomainPolicy($policy = self::ALL)
+    public function setCrossDomainPolicy(string $policy = self::ALL)
     {
         $this->checkValues($policy, [
             self::ALL,

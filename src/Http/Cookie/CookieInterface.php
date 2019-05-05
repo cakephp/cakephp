@@ -49,13 +49,13 @@ interface CookieInterface
     public function getValue();
 
     /**
-     * Gets the cookie value as a string.
+     * Gets the cookie value as scalar.
      *
      * This will collapse any complex data in the cookie with json_encode()
      *
-     * @return string
+     * @return mixed
      */
-    public function getStringValue();
+    public function getScalarValue();
 
     /**
      * Create a cookie with an updated value.
