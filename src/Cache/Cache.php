@@ -170,6 +170,7 @@ class Cache
                 ), 0, $e);
             }
 
+            /** @var \Cake\Cache\CacheEngine $fallbackEngine */
             $fallbackEngine = clone static::pool($config['fallback']);
             $newConfig = $config + ['groups' => [], 'prefix' => null];
             $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
@@ -196,10 +197,10 @@ class Cache
      * Get a cache engine object for the named cache config.
      *
      * @param string $config The name of the configured cache backend.
-     * @return \Cake\Cache\CacheEngine
+     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      * @deprecated 3.7.0 Use Cache::pool() instead. This method will be removed in 5.0.
      */
-    public static function engine(string $config): CacheEngine
+    public static function engine(string $config)
     {
         return static::pool($config);
     }
@@ -208,9 +209,9 @@ class Cache
      * Get a SimpleCacheEngine object for the named cache pool.
      *
      * @param string $config The name of the configured cache backend.
-     * @return \Cake\Cache\CacheEngine
+     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      */
-    public static function pool(string $config): CacheEngine
+    public static function pool(string $config)
     {
         if (!static::$_enabled) {
             return new NullEngine();

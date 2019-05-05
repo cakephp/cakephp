@@ -122,7 +122,7 @@ class QueryCacher
     /**
      * Get the cache engine.
      *
-     * @return \Cake\Cache\CacheEngine
+     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      */
     protected function _resolveCacher()
     {
