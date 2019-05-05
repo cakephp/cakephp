@@ -62,9 +62,6 @@ parameters:
         -
             message: '#Method Cake\\Utility\\Security::engine\(\) should return Cake\\Utility\\Crypto\\OpenSsl but returns object#'
             path: 'src/Utility/Security.php'
-        -
-            message: '#Strict comparison using === between string and false will always evaluate to false#'
-            path: 'src/View/View.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
