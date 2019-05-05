@@ -346,11 +346,11 @@ class Cache
      *
      * @param iterable $keys An array or Traversable of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return array An array containing, for each of the given $keys,
+     * @return iterable An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
      * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function readMany(iterable $keys, string $config = 'default'): array
+    public static function readMany(iterable $keys, string $config = 'default'): iterable
     {
         return static::pool($config)->getMultiple($keys);
     }
