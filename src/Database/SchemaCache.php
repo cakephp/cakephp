@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Cache\Cache;
+use Cake\Database\Schema\CachedCollection;
 
 /**
  * Schema Cache.
@@ -94,7 +95,7 @@ class SchemaCache
      * @return \Cake\Database\Schema\CachedCollection
      * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
-    public function getSchema(Connection $connection)
+    public function getSchema(Connection $connection): CachedCollection
     {
         $config = $connection->config();
         if (empty($config['cacheMetadata'])) {

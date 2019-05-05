@@ -59,7 +59,7 @@ trait SqlserverDialectTrait
      * @param \Cake\Database\Query $query The query to translate
      * @return \Cake\Database\Query The modified query
      */
-    protected function _selectQueryTranslator($query)
+    protected function _selectQueryTranslator(Query $query): Query
     {
         $limit = $query->clause('limit');
         $offset = $query->clause('offset');
@@ -84,7 +84,7 @@ trait SqlserverDialectTrait
      *
      * @return int
      */
-    protected function version()
+    protected function version(): int
     {
         $this->connect();
 
@@ -98,11 +98,11 @@ trait SqlserverDialectTrait
      * be used.
      *
      * @param \Cake\Database\Query $original The query to wrap in a subquery.
-     * @param int $limit The number of rows to fetch.
-     * @param int $offset The number of rows to offset.
+     * @param int|null $limit The number of rows to fetch.
+     * @param int|null $offset The number of rows to offset.
      * @return \Cake\Database\Query Modified query object.
      */
-    protected function _pagingSubquery($original, $limit, $offset)
+    protected function _pagingSubquery(Query $original, ?int $limit, ?int $offset): Query
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
@@ -170,7 +170,7 @@ trait SqlserverDialectTrait
      * @param \Cake\Database\Query $original The query to be transformed
      * @return \Cake\Database\Query
      */
-    protected function _transformDistinct($original)
+    protected function _transformDistinct(Query $original): Query
     {
         if (!is_array($original->clause('distinct'))) {
             return $original;
@@ -222,7 +222,7 @@ trait SqlserverDialectTrait
      *
      * @return array
      */
-    protected function _expressionTranslators()
+    protected function _expressionTranslators(): array
     {
         $namespace = 'Cake\Database\Expression';
 
@@ -239,7 +239,7 @@ trait SqlserverDialectTrait
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression)
+    protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
             case 'CONCAT':

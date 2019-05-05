@@ -2188,7 +2188,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->sql();
     }
@@ -2199,7 +2199,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         try {
             set_error_handler(function ($errno, $errstr): void {

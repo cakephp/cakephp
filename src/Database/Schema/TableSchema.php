@@ -592,7 +592,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function dropConstraint(string $name)
+    public function dropConstraint(string $name): TableSchemaInterface
     {
         if (isset($this->_constraints[$name])) {
             unset($this->_constraints[$name]);

@@ -31,7 +31,7 @@ interface TypedResultInterface
      * Set the return type of the expression
      *
      * @param string $type The type name to use.
-     * @return void
+     * @return $this
      */
     public function setReturnType(string $type);
 }
