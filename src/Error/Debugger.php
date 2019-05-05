@@ -591,7 +591,7 @@ class Debugger
      * @return string
      * @see \Cake\Error\Debugger::exportVar()
      */
-    protected static function _object($var, int $depth, int $indent): string
+    protected static function _object(object $var, int $depth, int $indent): string
     {
         $out = '';
         $props = [];
