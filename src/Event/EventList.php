@@ -35,7 +35,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         $this->_events = [];
     }
@@ -121,7 +121,7 @@ class EventList implements ArrayAccess, Countable
      * @param string $name Event name.
      * @return bool
      */
-    public function hasEvent($name): bool
+    public function hasEvent(string $name): bool
     {
         foreach ($this->_events as $event) {
             if ($event->getName() === $name) {
