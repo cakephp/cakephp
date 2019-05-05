@@ -705,7 +705,7 @@ class View implements EventDispatcherInterface
             if (empty($this->layout)) {
                 throw new RuntimeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering set View::$autoLayout to false instead.'
+                    'To disable layout rendering use method View::disableAutoLayout() instead.'
                 );
             }
 
@@ -1355,7 +1355,7 @@ class View implements EventDispatcherInterface
             if (empty($this->layout)) {
                 throw new RuntimeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering set View::$autoLayout to false instead.'
+                    'To disable layout rendering use method View::disableAutoLayout() instead.'
                 );
             }
             $name = $this->layout;
