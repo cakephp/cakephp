@@ -86,11 +86,6 @@
     <MissingConstructor occurrences="1">
       <code>$_Memcached</code>
     </MissingConstructor>
-    <MoreSpecificImplementedParamType occurrences="3">
-      <code>$keys</code>
-      <code>$data</code>
-      <code>$keys</code>
-    </MoreSpecificImplementedParamType>
     <PossiblyInvalidArgument occurrences="1">
       <code>$name</code>
     </PossiblyInvalidArgument>
@@ -159,17 +154,13 @@
       <code>$keys</code>
       <code>$index</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="17">
+    <MissingClosureReturnType occurrences="13">
       <code>function ($v) {</code>
       <code>function ($key, $value, $items) use ($c) {</code>
       <code>function ($data) {</code>
       <code>function ($acc, $current) {</code>
-      <code>function ($value, $key, $mr) use ($callback) {</code>
-      <code>function ($values, $key, $mr) {</code>
       <code>function ($iterator, $howMany) {</code>
       <code>function ($value, $key, $mapReduce) use ($options) {</code>
-      <code>function ($values, $key, $mapReduce) {</code>
-      <code>function ($row, $key, $mapReduce) use (&amp;$parents, $idPath, $parentPath, $nestingKey) {</code>
       <code>function ($values, $key, $mapReduce) use (&amp;$parents, &amp;$isObject, $nestingKey) {</code>
       <code>function ($value) use (&amp;$isObject) {</code>
       <code>function () {</code>
@@ -336,9 +327,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Console/ConsoleOptionParser.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$value</code>
-    </InvalidScalarArgument>
     <PossiblyNullArgument occurrences="3">
       <code>$command</code>
       <code>$subcommand</code>
@@ -2534,9 +2522,6 @@
       <code>Shell</code>
       <code>parent::getOptionParser()</code>
     </DeprecatedClass>
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool</code>
-    </ImplementedReturnTypeMismatch>
     <PropertyNotSetInConstructor occurrences="1">
       <code>SchemaCacheShell</code>
     </PropertyNotSetInConstructor>

@@ -69,7 +69,7 @@ class StoppableIterator extends Collection
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if (!parent::valid()) {
             return false;

@@ -32,7 +32,7 @@ class VersionCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->out(Configure::version());
 

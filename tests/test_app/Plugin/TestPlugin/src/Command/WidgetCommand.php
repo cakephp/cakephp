@@ -8,7 +8,7 @@ use Cake\Console\ConsoleIo;
 
 class WidgetCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->out('Widgets!');
     }

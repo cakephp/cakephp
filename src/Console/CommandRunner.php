@@ -74,7 +74,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function __construct(
         ConsoleApplicationInterface $app,
-        $root = 'cake',
+        string $root = 'cake',
         ?CommandFactoryInterface $factory = null
     ) {
         $this->app = $app;
@@ -231,7 +231,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param string $name The command name to find
      * @return \Cake\Console\Shell|\Cake\Console\Command
      */
-    protected function getShell(ConsoleIo $io, CommandCollection $commands, $name)
+    protected function getShell(ConsoleIo $io, CommandCollection $commands, string $name)
     {
         $instance = $commands->get($name);
         if (is_string($instance)) {
@@ -260,7 +260,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param array $argv The CLI arguments.
      * @return array An array of the resolved name and modified argv.
      */
-    protected function longestCommandName($commands, $argv)
+    protected function longestCommandName(CommandCollection $commands, array $argv): array
     {
         for ($i = 3; $i > 1; $i--) {
             $parts = array_slice($argv, 0, $i);
@@ -353,7 +353,7 @@ class CommandRunner implements EventDispatcherInterface
      * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
      * @return \Cake\Console\Shell|\Cake\Console\Command
      */
-    protected function createShell($className, ConsoleIo $io)
+    protected function createShell(string $className, ConsoleIo $io)
     {
         $shell = $this->factory->create($className);
         if ($shell instanceof Shell) {

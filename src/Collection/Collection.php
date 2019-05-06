@@ -48,7 +48,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize($this->buffered());
     }
@@ -96,7 +96,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'count' => $this->count(),

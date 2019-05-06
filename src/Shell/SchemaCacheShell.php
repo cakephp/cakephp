@@ -56,9 +56,9 @@ class SchemaCacheShell extends Shell
      * Clear metadata.
      *
      * @param string|null $name The name of the table to clear cache data for.
-     * @return bool
+     * @return void
      */
-    public function clear(?string $name = null): bool
+    public function clear(?string $name = null): void
     {
         $cache = $this->_getSchemaCache();
         $tables = $cache->clear($name);
@@ -68,8 +68,6 @@ class SchemaCacheShell extends Shell
         }
 
         $this->out('<success>Cache clear complete</success>');
-
-        return true;
     }
 
     /**

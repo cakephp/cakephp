@@ -287,7 +287,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure
      * @see https://secure.php.net/manual/en/memcache.set.php
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $duration = $this->duration($ttl);
         if ($duration > 30 * DAY) {
@@ -300,7 +300,7 @@ class MemcachedEngine extends CacheEngine
     /**
      * Write many cache entries to the cache at once
      *
-     * @param array $data An array of data to be stored in the cache
+     * @param iterable $data An array of data to be stored in the cache
      * @param null|int|\DateInterval $ttl Optional. The TTL value of this item. If no value is sent and
      *   the driver supports TTL then the library may set a default value
      *   for it or let the driver take care of that.
@@ -342,7 +342,7 @@ class MemcachedEngine extends CacheEngine
     /**
      * Read many keys from the cache at once
      *
-     * @param array $keys An array of identifiers for the data
+     * @param iterable $keys An array of identifiers for the data
      * @param mixed $default Default value to return for keys that do not exist.
      * @return array An array containing, for each of the given $keys, the cached data or
      *   false if cached data could not be retrieved.
@@ -394,7 +394,7 @@ class MemcachedEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed.
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         return $this->_Memcached->delete($this->_key($key));
     }
@@ -402,7 +402,7 @@ class MemcachedEngine extends CacheEngine
     /**
      * Delete many keys from the cache at once
      *
-     * @param array $keys An array of identifiers for the data
+     * @param iterable $keys An array of identifiers for the data
      * @return bool of boolean values that are true if the key was successfully
      *   deleted, false if it didn't exist or couldn't be removed.
      */
@@ -421,7 +421,7 @@ class MemcachedEngine extends CacheEngine
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear()
+    public function clear(): bool
     {
         $keys = $this->_Memcached->getAllKeys();
         if ($keys === false) {

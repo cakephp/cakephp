@@ -272,7 +272,7 @@ class Shell
      *
      * @return void
      */
-    protected function _welcome()
+    protected function _welcome(): void
     {
     }
 
@@ -649,7 +649,7 @@ class Shell
      * @see \Cake\Utility\Text::wrap()
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
      */
-    public function wrapText(string $text, $options = [])
+    public function wrapText(string $text, $options = []): string
     {
         return Text::wrap($text, $options);
     }
@@ -802,7 +802,7 @@ class Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#console-output
      */
-    public function clear()
+    public function clear(): void
     {
         if (empty($this->params['noclear'])) {
             if (DIRECTORY_SEPARATOR === '/') {
@@ -921,7 +921,7 @@ class Shell
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'name' => $this->name,

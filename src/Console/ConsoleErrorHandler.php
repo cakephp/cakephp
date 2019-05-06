@@ -44,7 +44,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      *
      * @param array $options Options for the error handler.
      */
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         if (empty($options['stderr'])) {
             $options['stderr'] = new ConsoleOutput('php://stderr');
@@ -125,7 +125,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * @param int $code The exit code.
      * @return void
      */
-    protected function _stop($code): void
+    protected function _stop($code)
     {
         exit($code);
     }

@@ -59,7 +59,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True on success and false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
@@ -123,7 +123,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         $key = $this->_key($key);
 
@@ -138,7 +138,7 @@ class ApcuEngine extends CacheEngine
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function clear()
+    public function clear(): bool
     {
         if (class_exists('APCuIterator', false)) {
             $iterator = new APCuIterator(

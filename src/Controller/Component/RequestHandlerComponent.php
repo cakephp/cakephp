@@ -246,7 +246,7 @@ class RequestHandlerComponent extends Component
      * @return void
      * @throws \Cake\Http\Exception\NotFoundException If invoked extension is not configured.
      */
-    public function beforeRender(EventInterface $event)
+    public function beforeRender(EventInterface $event): void
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();

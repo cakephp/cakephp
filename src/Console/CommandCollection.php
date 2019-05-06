@@ -139,7 +139,7 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->commands);
     }
@@ -167,7 +167,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $plugin The plugin to scan.
      * @return string[] Discovered plugin commands.
      */
-    public function discoverPlugin($plugin): array
+    public function discoverPlugin(string $plugin): array
     {
         $scanner = new CommandScanner();
         $shells = $scanner->scanPlugin($plugin);

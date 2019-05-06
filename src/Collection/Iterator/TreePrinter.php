@@ -98,7 +98,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return string
      */
-    public function current()
+    public function current(): string
     {
         $extractor = $this->_value;
         $current = $this->_fetchCurrent();
@@ -112,7 +112,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         parent::next();
         $this->_current = null;
