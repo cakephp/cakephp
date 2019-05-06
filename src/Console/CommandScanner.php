@@ -16,12 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use Cake\Command\CacheClearAllCommand;
-use Cake\Command\CacheClearCommand;
-use Cake\Command\CacheListCommand;
-use Cake\Command\HelpCommand;
-use Cake\Command\UpgradeCommand;
-use Cake\Command\VersionCommand;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -49,41 +43,32 @@ class CommandScanner
             '',
             ['command_list']
         );
-
-        $coreCommands = [
-            [
-                'name' => 'cache clear',
-                'fullName' => 'cache clear',
-                'class' => CacheClearCommand::class,
-            ],
-            [
-                'name' => 'cache clear_all',
-                'fullName' => 'cache clear_all',
-                'class' => CacheClearAllCommand::class,
-            ],
-            [
-                'name' => 'cache list',
-                'fullName' => 'cache list',
-                'class' => CacheListCommand::class,
-            ],
-            [
-                'name' => 'help',
-                'fullName' => 'help',
-                'class' => HelpCommand::class,
-            ],
-            [
-                'name' => 'upgrade',
-                'fullName' => 'upgrade',
-                'class' => UpgradeCommand::class,
-            ],
-            [
-                'name' => 'version',
-                'fullName' => 'version',
-                'class' => VersionCommand::class,
-            ],
-        ];
+        $coreCommands = $this->scanDir(
+            dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
+            'Cake\Command\\',
+            '',
+            ['command_list']
+        );
+        $coreCommands = $this->inflectCommandNames($coreCommands);
 
         return array_merge($coreShells, $coreCommands);
+    }
+
+    /**
+     * Inflect multi-word command names based on conventions
+     *
+     * @param array $commands The array of command metadata to mutate
+     * @return array The updated command metadata
+     * @see \Cake\Console\CommandScanner::scanDir()
+     */
+    protected function inflectCommandNames(array $commands): array
+    {
+        foreach ($commands as $i => $command) {
+            $command['name'] = str_replace('_', ' ', $command['name']);
+            $commands[$i] = $command;
+        }
+
+        return $commands;
     }
 
     /**
