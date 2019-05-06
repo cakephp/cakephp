@@ -120,7 +120,7 @@ class Command
         $parser = $this->buildOptionParser($parser);
         if ($parser->subcommands()) {
             throw new RuntimeException(
-                'The use of the ConsoleOptionParser::addSubcommand() is not supported by Console'
+                'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
             );
         }
 
