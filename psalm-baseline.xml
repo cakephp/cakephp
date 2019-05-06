@@ -1404,11 +1404,6 @@
       <code>$end</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Error/ErrorHandler.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$exception</code>
-    </MoreSpecificImplementedParamType>
-  </file>
   <file src="src/Error/Middleware/ErrorHandlerMiddleware.php">
     <LessSpecificReturnStatement occurrences="1">
       <code>new $class($exception, $request)</code>
@@ -2404,24 +2399,18 @@
     </TypeDoesNotContainType>
   </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Exception/MissingControllerException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Exception/MissingRouteException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
