@@ -3149,7 +3149,7 @@
       <code>function ($part) {</code>
       <code>function ($part) {</code>
     </MissingClosureReturnType>
-    <PossiblyInvalidArgument occurrences="3">
+    <PossiblyInvalidArgument occurrences="2">
       <code>$entity</code>
       <code>$entity</code>
       <code>$entity</code>
