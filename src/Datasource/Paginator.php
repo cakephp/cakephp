@@ -157,7 +157,7 @@ class Paginator implements PaginatorInterface
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Datasource\ResultSetInterface|array Query results
+     * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
     public function paginate(object $object, array $params = [], array $settings = [])

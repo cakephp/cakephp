@@ -61,9 +61,9 @@ interface QueryInterface
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface|array
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    public function all();
+    public function all(): ResultSetInterface;
 
     /**
      * Populates or adds parts to current query clauses using an array.

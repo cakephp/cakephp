@@ -116,10 +116,10 @@ trait QueryTrait
      *
      * This method is most useful when combined with results stored in a persistent cache.
      *
-     * @param \Cake\Datasource\ResultSetInterface|array $results The results this query should return.
+     * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
      * @return $this
      */
-    public function setResult($results)
+    public function setResult(ResultSetInterface $results)
     {
         $this->_results = $results;
 
@@ -275,9 +275,9 @@ trait QueryTrait
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface|array
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    public function all()
+    public function all(): ResultSetInterface
     {
         if ($this->_results !== null) {
             return $this->_results;
@@ -514,9 +514,9 @@ trait QueryTrait
     /**
      * Executes this query and returns a traversable object containing the results
      *
-     * @return \Traversable
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    abstract protected function _execute(): Traversable;
+    abstract protected function _execute(): ResultSetInterface;
 
     /**
      * Decorates the results iterator with MapReduce routines and formatters
