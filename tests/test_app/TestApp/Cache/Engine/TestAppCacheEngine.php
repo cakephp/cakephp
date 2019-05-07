@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Test Suite Test App Cache Engine class.
  *

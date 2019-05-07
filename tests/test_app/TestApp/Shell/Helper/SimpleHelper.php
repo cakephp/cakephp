@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Shell\Helper;
 
 use Cake\Console\Helper;

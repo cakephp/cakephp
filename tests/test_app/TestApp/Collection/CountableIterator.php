@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Collection;
 
 class CountableIterator extends \IteratorIterator implements \Countable
