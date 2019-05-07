@@ -453,8 +453,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \Cake\Database\Exception
+     * @inheritDoc
      */
     public function addIndex(string $name, $attrs)
     {
@@ -533,8 +532,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \Cake\Database\Exception
+     * @inheritDoc
      */
     public function addConstraint(string $name, $attrs)
     {
