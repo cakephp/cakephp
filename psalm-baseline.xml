@@ -1876,14 +1876,8 @@
       <code>$item</code>
       <code>$key</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function (&amp;$item, $key) {</code>
-    </MissingClosureReturnType>
   </file>
   <file src="src/Mailer/Message.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>static</code>
-    </ImplementedReturnTypeMismatch>
     <MissingClosureParamType occurrences="5">
       <code>$item</code>
       <code>$key</code>
@@ -1891,10 +1885,8 @@
       <code>$item</code>
       <code>$key</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function (&amp;$item, $key) {</code>
+    <MissingClosureReturnType occurrences="1">
       <code>function ($i) {</code>
-      <code>function (&amp;$item, $key) {</code>
     </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>env('HTTP_HOST')</code>
