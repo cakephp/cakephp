@@ -14,9 +14,9 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use Cake\Http\Response;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Constraint\Constraint;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Base constraint for response constraints
@@ -26,16 +26,16 @@ use PHPUnit\Framework\Constraint\Constraint;
 abstract class ResponseBase extends Constraint
 {
     /**
-     * @var \Cake\Http\Response
+     * @var \Psr\Http\Message\ResponseInterface
      */
     protected $response;
 
     /**
      * Constructor
      *
-     * @param \Cake\Http\Response|null $response Response
+     * @param \Psr\Http\Message\ResponseInterface|null $response Response
      */
-    public function __construct(?Response $response)
+    public function __construct(?ResponseInterface $response)
     {
         if (!$response) {
             throw new AssertionFailedError('No response set, cannot assert content.');

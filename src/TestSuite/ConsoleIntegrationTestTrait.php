@@ -110,7 +110,7 @@ trait ConsoleIntegrationTestTrait
      * @after
      * @return void
      */
-    public function cleanupConsoleTrait()
+    public function cleanupConsoleTrait(): void
     {
         $this->_exitCode = null;
         $this->_out = null;

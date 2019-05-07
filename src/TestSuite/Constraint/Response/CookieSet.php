@@ -22,6 +22,11 @@ namespace Cake\TestSuite\Constraint\Response;
 class CookieSet extends ResponseBase
 {
     /**
+     * @var \Cake\Http\Response
+     */
+    protected $response;
+
+    /**
      * Checks assertion
      *
      * @param mixed $other Expected content
