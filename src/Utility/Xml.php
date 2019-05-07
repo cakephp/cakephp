@@ -300,7 +300,7 @@ class Xml
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray($dom, $node, &$data, $format)
+    protected static function _fromArray($dom, $node, &$data, $format): void
     {
         if (empty($data) || !is_array($data)) {
             return;
@@ -369,7 +369,7 @@ class Xml
      * @param array $data Array with information to create childs
      * @return void
      */
-    protected static function _createChild(array $data)
+    protected static function _createChild(array $data): void
     {
         $data += [
             'dom' => null,
@@ -445,7 +445,7 @@ class Xml
      * @param array $namespaces List of namespaces in XML
      * @return void
      */
-    protected static function _toArray($xml, &$parentData, $ns, $namespaces)
+    protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
     {
         $data = [];
 

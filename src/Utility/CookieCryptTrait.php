@@ -157,7 +157,7 @@ trait CookieCryptTrait
      * @param array $array Map of key and values
      * @return string A json encoded string.
      */
-    protected function _implode(array $array)
+    protected function _implode(array $array): string
     {
         return json_encode($array);
     }
@@ -169,7 +169,7 @@ trait CookieCryptTrait
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return string|array Map of key and values
      */
-    protected function _explode($string)
+    protected function _explode(string $string)
     {
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {

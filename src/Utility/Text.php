@@ -1083,7 +1083,7 @@ class Text
      * @param string $transliteratorId Transliterator identifier.
      * @return void
      */
-    public static function setTransliteratorId(string $transliteratorId)
+    public static function setTransliteratorId(string $transliteratorId): void
     {
         static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;

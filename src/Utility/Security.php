@@ -268,7 +268,7 @@ class Security
      * @return bool
      * @since 3.6.2
      */
-    public static function constantEquals($original, $compare)
+    public static function constantEquals($original, $compare): bool
     {
         if (!is_string($original) || !is_string($compare)) {
             return false;
@@ -283,7 +283,7 @@ class Security
      *
      * @return string The currently configured salt
      */
-    public static function getSalt()
+    public static function getSalt(): string
     {
         return static::$_salt;
     }
@@ -295,7 +295,7 @@ class Security
      * @param string $salt The salt to use for encryption routines.
      * @return void
      */
-    public static function setSalt($salt)
+    public static function setSalt(string $salt): void
     {
         static::$_salt = (string)$salt;
     }
