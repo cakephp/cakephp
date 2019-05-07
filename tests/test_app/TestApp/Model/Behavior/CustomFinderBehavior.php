@@ -21,7 +21,6 @@ use Cake\ORM\Query;
 
 class CustomFinderBehavior extends Behavior
 {
-
     /**
      * Finder using variadic args.
      *
