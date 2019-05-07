@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Database\Type;
 
 use Cake\Database\Expression\FunctionExpression;

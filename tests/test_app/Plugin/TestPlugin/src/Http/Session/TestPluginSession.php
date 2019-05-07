@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestPlugin\Http\Session;
 
 use SessionHandlerInterface;

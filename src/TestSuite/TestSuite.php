@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * A class to contain test cases and run them with shared fixtures
  *
