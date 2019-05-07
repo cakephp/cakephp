@@ -39,7 +39,7 @@ trait QueryTrait
      *
      * When set, query execution will be bypassed.
      *
-     * @var \Cake\Datasource\ResultSetInterface|null
+     * @var iterable|null
      * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected $_results;
@@ -116,10 +116,10 @@ trait QueryTrait
      *
      * This method is most useful when combined with results stored in a persistent cache.
      *
-     * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
+     * @param iterable $results The results this query should return.
      * @return $this
      */
-    public function setResult(ResultSetInterface $results)
+    public function setResult(iterable $results)
     {
         $this->_results = $results;
 

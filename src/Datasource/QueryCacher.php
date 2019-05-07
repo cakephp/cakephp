@@ -122,9 +122,9 @@ class QueryCacher
     /**
      * Get the cache engine.
      *
-     * @return \Cake\Cache\CacheEngine
+     * @return \Cake\Cache\CacheEngineInterface&\Psr\SimpleCache\CacheInterface
      */
-    protected function _resolveCacher(): CacheEngine
+    protected function _resolveCacher()
     {
         if (is_string($this->_config)) {
             return Cache::pool($this->_config);

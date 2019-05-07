@@ -160,7 +160,7 @@ class Paginator implements PaginatorInterface
      * @return \Cake\Datasource\ResultSetInterface Query results
      * @throws \Cake\Datasource\Exception\PageOutOfBoundsException
      */
-    public function paginate(object $object, array $params = [], array $settings = [])
+    public function paginate(object $object, array $params = [], array $settings = []): ResultSetInterface
     {
         $query = null;
         if ($object instanceof QueryInterface) {

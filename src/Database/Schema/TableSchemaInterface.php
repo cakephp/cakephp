@@ -187,9 +187,9 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name The name of the index.
      * @param array|string $attrs The attributes for the index.
      *   If string it will be used as `type`.
-     * @return self
+     * @return $this
      */
-    public function addIndex(string $name, $attrs): self;
+    public function addIndex(string $name, $attrs);
 
     /**
      * Read information about an index based on name.
@@ -225,9 +225,9 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name The name of the constraint.
      * @param array|string $attrs The attributes for the constraint.
      *   If string it will be used as `type`.
-     * @return self
+     * @return $this
      */
-    public function addConstraint(string $name, $attrs): self;
+    public function addConstraint(string $name, $attrs);
 
     /**
      * Read information about a constraint based on name.
@@ -241,9 +241,9 @@ interface TableSchemaInterface extends SchemaInterface
      * Remove a constraint.
      *
      * @param string $name Name of the constraint to remove
-     * @return self
+     * @return $this
      */
-    public function dropConstraint(string $name): self;
+    public function dropConstraint(string $name);
 
     /**
      * Get the names of all the constraints in the table.
