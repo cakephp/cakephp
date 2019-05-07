@@ -118,7 +118,7 @@ class FileLog extends BaseLog
      * @param array $context Additional information about the logged message
      * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $message = $this->_format($message, $context);
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
@@ -180,7 +180,7 @@ class FileLog extends BaseLog
      * @return bool|null True if rotated successfully or false in case of error.
      *   Null if file doesn't need to be rotated.
      */
-    protected function _rotateFile($filename): ?bool
+    protected function _rotateFile(string $filename): ?bool
     {
         $filePath = $this->_path . $filename;
         clearstatcache(true, $filePath);

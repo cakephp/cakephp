@@ -91,7 +91,7 @@ class SyslogLog extends BaseLog
      * @param array $context Additional information about the logged message
      * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         if (!$this->_open) {
             $config = $this->_config;
@@ -120,7 +120,7 @@ class SyslogLog extends BaseLog
      * @param int $facility the stream or facility to log to
      * @return void
      */
-    protected function _open($ident, $options, $facility): void
+    protected function _open(string $ident, int $options, int $facility): void
     {
         openlog($ident, $options, $facility);
     }
@@ -133,7 +133,7 @@ class SyslogLog extends BaseLog
      * @param string $message Message to log.
      * @return bool
      */
-    protected function _write($priority, $message): bool
+    protected function _write(int $priority, string $message): bool
     {
         return syslog($priority, $message);
     }
