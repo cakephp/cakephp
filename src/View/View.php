@@ -733,7 +733,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
      */
-    public function renderLayout(string $content, ?string $layout = null)
+    public function renderLayout(string $content, ?string $layout = null): string
     {
         $layoutFileName = $this->_getLayoutFileName($layout);
 
@@ -1018,7 +1018,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the attribute to get.
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $registry = $this->helpers();
         if (isset($registry->{$name})) {

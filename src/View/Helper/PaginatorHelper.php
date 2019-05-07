@@ -602,7 +602,7 @@ class PaginatorHelper extends Helper
      * @param string|null $model Current model alias
      * @return string Unaliased field if applicable
      */
-    protected function _removeAlias($field, $model = null)
+    protected function _removeAlias(string $field, ?string $model = null): string
     {
         $currentModel = $model ?: $this->defaultModel();
 
