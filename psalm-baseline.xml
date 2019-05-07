@@ -2837,7 +2837,7 @@
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
       <code>$controller-&gt;getRequest()-&gt;getSession()-&gt;read('Flash')</code>
     </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="19">
+    <PossiblyNullArgument occurrences="10">
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
