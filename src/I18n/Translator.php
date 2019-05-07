@@ -34,7 +34,7 @@ class Translator extends BaseTranslator
      *   message.
      * @return string The translated message with tokens replaced.
      */
-    public function translate($key, array $tokensValues = [])
+    public function translate($key, array $tokensValues = []): string
     {
         if (isset($tokensValues['_count'])) {
             $message = $this->getMessage(static::PLURAL_PREFIX . $key);

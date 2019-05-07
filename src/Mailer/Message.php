@@ -1766,7 +1766,7 @@ class Message implements JsonSerializable, Serializable
             $array[$property] = $this->{$property};
         }
 
-        array_walk($array['attachments'], function (&$item, $key) {
+        array_walk($array['attachments'], function (&$item, $key): void {
             if (!empty($item['file'])) {
                 $item['data'] = $this->readFile($item['file']);
                 unset($item['file']);
@@ -1801,7 +1801,7 @@ class Message implements JsonSerializable, Serializable
     public function serialize(): string
     {
         $array = $this->jsonSerialize();
-        array_walk_recursive($array, function (&$item, $key) {
+        array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
                 $item = json_decode(json_encode((array)$item), true);
             }
@@ -1814,7 +1814,7 @@ class Message implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return static Configured message instance.
+     * @return void
      */
     public function unserialize($data)
     {
@@ -1823,6 +1823,6 @@ class Message implements JsonSerializable, Serializable
             throw new Exception('Unable to unserialize message.');
         }
 
-        return $this->createFromArray($array);
+        $this->createFromArray($array);
     }
 }
