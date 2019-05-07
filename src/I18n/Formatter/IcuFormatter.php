@@ -35,7 +35,7 @@ class IcuFormatter implements FormatterInterface
      * @throws \Aura\Intl\Exception\CannotFormat
      * @throws \Aura\Intl\Exception\CannotInstantiateFormatter
      */
-    public function format($locale, $message, $vars): string
+    public function format($locale, $message, array $vars): string
     {
         unset($vars['_singular'], $vars['_count']);
 
