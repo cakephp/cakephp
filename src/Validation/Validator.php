@@ -342,7 +342,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return bool
      */
-    public function offsetExists($field)
+    public function offsetExists($field): bool
     {
         return isset($this->_fields[$field]);
     }
@@ -353,7 +353,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return \Cake\Validation\ValidationSet
      */
-    public function offsetGet($field)
+    public function offsetGet($field): ValidationSet
     {
         return $this->field($field);
     }
@@ -365,7 +365,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array|\Cake\Validation\ValidationSet $rules set of rules to apply to field
      * @return void
      */
-    public function offsetSet($field, $rules)
+    public function offsetSet($field, $rules): void
     {
         if (!$rules instanceof ValidationSet) {
             $set = new ValidationSet();
@@ -382,7 +382,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to unset
      * @return void
      */
-    public function offsetUnset($field)
+    public function offsetUnset($field): void
     {
         unset($this->_fields[$field]);
     }
@@ -792,7 +792,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
      */
-    public function allowEmptyString($field, ?string $message = null, $when = true)
+    public function allowEmptyString(string $field, ?string $message = null, $when = true)
     {
         return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
     }
@@ -812,7 +812,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @see \Cake\Validation\Validator::allowEmptyString()
      * @since 3.8.0
      */
-    public function notEmptyString($field, $message = null, $when = false)
+    public function notEmptyString(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
@@ -853,7 +853,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Validation\Validator::allowEmptyArray()
      */
-    public function notEmptyArray($field, $message = null, $when = false)
+    public function notEmptyArray(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
@@ -896,7 +896,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyFile()
      */
-    public function notEmptyFile($field, $message = null, $when = false)
+    public function notEmptyFile(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
