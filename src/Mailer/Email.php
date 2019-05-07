@@ -158,7 +158,7 @@ class Email implements JsonSerializable, Serializable
      * @param array $args Method arguments
      * @return $this|mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $result = $this->message->$method(...$args);
 
@@ -281,7 +281,7 @@ class Email implements JsonSerializable, Serializable
      * @param string|null $type Use MESSAGE_* constants or null to return the full message as array
      * @return string|array String if type is given, array if type is null
      */
-    public function message($type = null)
+    public function message(?string $type = null)
     {
         if ($type) {
             return $this->message->getBody($type);
@@ -459,7 +459,7 @@ class Email implements JsonSerializable, Serializable
      * @param array $contents The content with 'headers' and 'message' keys.
      * @return void
      */
-    protected function _logDelivery($contents): void
+    protected function _logDelivery(array $contents): void
     {
         if (empty($this->_profile['log'])) {
             return;
@@ -607,7 +607,7 @@ class Email implements JsonSerializable, Serializable
     public function serialize(): string
     {
         $array = $this->jsonSerialize();
-        array_walk_recursive($array, function (&$item, $key) {
+        array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
                 $item = json_decode(json_encode((array)$item), true);
             }

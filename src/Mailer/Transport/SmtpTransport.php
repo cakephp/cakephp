@@ -85,7 +85,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return void
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->_socket = null;
     }
@@ -483,6 +483,8 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Get socket instance.
+     *
      * @return \Cake\Network\Socket
      * @throws \RuntimeException If socket is not set.
      */
