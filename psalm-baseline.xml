@@ -979,8 +979,7 @@
       <code>$name</code>
       <code>$p</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($parts, $name) use (&amp;$sql, $query, $generator) {</code>
+    <MissingClosureReturnType occurrences="1">
       <code>function ($p) use ($generator) {</code>
     </MissingClosureReturnType>
   </file>
@@ -1140,8 +1139,7 @@
       <code>$query</code>
       <code>$condition</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($expression) use ($translators, $query) {</code>
+    <MissingClosureReturnType occurrences="2">
       <code>function ($query) use ($type) {</code>
       <code>function ($condition) {</code>
     </MissingClosureReturnType>
@@ -1340,11 +1338,6 @@
       <code>TypeInterface</code>
     </MoreSpecificReturnType>
   </file>
-  <file src="src/Database/TypedResultTrait.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/Datasource/ConnectionManager.php">
     <PossiblyNullArgument occurrences="1">
       <code>$config</code>
@@ -1415,11 +1408,6 @@
       <code>$break</code>
       <code>$end</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Error/ErrorHandler.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$exception</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Error/Middleware/ErrorHandlerMiddleware.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -2059,9 +2047,6 @@
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>select</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="src/ORM/AssociationCollection.php">
     <MissingClosureParamType occurrences="1">
@@ -2315,9 +2300,8 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
-    <LessSpecificReturnStatement occurrences="2">
+    <LessSpecificReturnStatement occurrences="1">
       <code>new $decorator($this-&gt;_results)</code>
-      <code>$result</code>
     </LessSpecificReturnStatement>
     <MissingParamType occurrences="3">
       <code>$config</code>
@@ -2327,8 +2311,7 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$table</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="2">
-      <code>\Cake\Datasource\ResultSetInterface</code>
+    <MoreSpecificReturnType occurrences="1">
       <code>ResultSetInterface</code>
     </MoreSpecificReturnType>
     <NullArgument occurrences="1">
@@ -2416,24 +2399,18 @@
     </TypeDoesNotContainType>
   </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Exception/MissingControllerException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Exception/MissingRouteException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
