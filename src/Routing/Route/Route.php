@@ -870,9 +870,9 @@ class Route
      * router caching.
      *
      * @param array $fields Key/Value of object attributes
-     * @return \Cake\Routing\Route\Route A new instance of the route
+     * @return static A new instance of the route
      */
-    public static function __set_state($fields)
+    public static function __set_state(array $fields)
     {
         $class = static::class;
         $obj = new $class('');

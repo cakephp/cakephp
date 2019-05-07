@@ -345,7 +345,7 @@ class Router
      * @internal
      * @return void
      */
-    public static function resetRoutes()
+    public static function resetRoutes(): void
     {
         static::$_collection = new RouteCollection();
         static::$_urlFilters = [];
