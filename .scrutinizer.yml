@@ -9,12 +9,7 @@ build:
       version: 7.2
 
   nodes:
-    phpcs:
-      tests:
-        override:
-          - phpcs-run src/ tests/
-
-    phpstan:
+    analysis:
       environment:
         php:
           ini:
@@ -25,28 +20,14 @@ build:
             - apcu
       dependencies:
         override:
-          - composer require --dev phpstan/phpstan-shim:^0.11
+          - composer require --dev phpstan/phpstan-shim:^0.11 psalm/phar:^3.0
       tests:
         override:
+          - phpcs-run src/ tests/
           - command: vendor/bin/phpstan.phar analyse --error-format checkstyle src/ > checkstyle.xml
             analysis:
               file: checkstyle.xml
               format: 'general-checkstyle'
-
-    psalm:
-      environment:
-        php:
-          ini:
-            'memory_limit': -1
-          pecl_extensions:
-            - redis
-            - memcached
-            - apcu
-      dependencies:
-        override:
-          - composer require --dev psalm/phar:^3.0
-      tests:
-        override:
           - command: vendor/bin/psalm.phar --show-info=false --report=checkstyle.xml
             analysis:
               file: checkstyle.xml
