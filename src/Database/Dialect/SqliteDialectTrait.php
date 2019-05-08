@@ -75,7 +75,7 @@ trait SqliteDialectTrait
      *
      * @return array
      */
-    protected function _expressionTranslators()
+    protected function _expressionTranslators(): array
     {
         $namespace = 'Cake\Database\Expression';
 
@@ -93,7 +93,7 @@ trait SqliteDialectTrait
      *   to translate for SQLite.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression)
+    protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
             case 'CONCAT':

@@ -51,7 +51,7 @@ interface QueryInterface
      * @param string|null $defaultAlias The default alias
      * @return string[]
      */
-    public function aliasFields(array $fields, $defaultAlias = null): array;
+    public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 
     /**
      * Fetch the results for this query.
@@ -64,7 +64,7 @@ interface QueryInterface
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function all();
+    public function all(): ResultSetInterface;
 
     /**
      * Populates or adds parts to current query clauses using an array.
@@ -103,7 +103,7 @@ interface QueryInterface
      * ```
      *
      * @param array $options list of query clauses to apply new parts to.
-     * @return \Cake\Datasource\QueryInterface
+     * @return $this
      */
     public function applyOptions(array $options);
 
@@ -121,9 +121,9 @@ interface QueryInterface
      *
      * @param string $finder The finder method to use.
      * @param array $options The options for the finder.
-     * @return \Cake\Datasource\QueryInterface Returns a modified query.
+     * @return static Returns a modified query.
      */
-    public function find($finder, array $options = []);
+    public function find(string $finder, array $options = []);
 
     /**
      * Returns the first result out of executing this query, if the query has not been
@@ -272,7 +272,7 @@ interface QueryInterface
      *
      * @return \Cake\Datasource\RepositoryInterface|null $repository The default repository object to use
      */
-    public function getRepository();
+    public function getRepository(): ?RepositoryInterface;
 
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this

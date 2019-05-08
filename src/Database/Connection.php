@@ -831,7 +831,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
      * @return $this
      */
-    public function setLogger($logger)
+    public function setLogger(?QueryLogger $logger)
     {
         $this->_logger = $logger;
 
@@ -843,7 +843,7 @@ class Connection implements ConnectionInterface
      *
      * @return \Cake\Database\Log\QueryLogger logger instance
      */
-    public function getLogger()
+    public function getLogger(): QueryLogger
     {
         if ($this->_logger === null) {
             $this->_logger = new QueryLogger();

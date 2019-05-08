@@ -454,10 +454,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \Cake\Database\Exception
+     * @inheritDoc
      */
-    public function addIndex(string $name, $attrs): TableSchemaInterface
+    public function addIndex(string $name, $attrs)
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -534,10 +533,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \Cake\Database\Exception
+     * @inheritDoc
      */
-    public function addConstraint(string $name, $attrs): TableSchemaInterface
+    public function addConstraint(string $name, $attrs)
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -669,7 +667,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function setOptions(array $options): TableSchemaInterface
+    public function setOptions(array $options)
     {
         $this->_options = array_merge($this->_options, $options);
 

@@ -110,7 +110,7 @@ class ConnectionManager
      * @param string|null $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
      */
-    public static function parseDsn($config = null): array
+    public static function parseDsn(?string $config = null): array
     {
         $config = static::_parseDsn($config);
 

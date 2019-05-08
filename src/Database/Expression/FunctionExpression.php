@@ -106,7 +106,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @see \Cake\Database\Expression\FunctionExpression::__construct() for more details.
      * @return $this
      */
-    public function add($params, $types = [], bool $prepend = false)
+    public function add($params, array $types = [], bool $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
         $typeMap = $this->getTypeMap()->setTypes($types);

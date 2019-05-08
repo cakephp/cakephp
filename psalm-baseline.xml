@@ -967,8 +967,7 @@
       <code>$name</code>
       <code>$p</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($parts, $name) use (&amp;$sql, $query, $generator) {</code>
+    <MissingClosureReturnType occurrences="1">
       <code>function ($p) use ($generator) {</code>
     </MissingClosureReturnType>
   </file>
@@ -1128,8 +1127,7 @@
       <code>$query</code>
       <code>$condition</code>
     </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($expression) use ($translators, $query) {</code>
+    <MissingClosureReturnType occurrences="2">
       <code>function ($query) use ($type) {</code>
       <code>function ($condition) {</code>
     </MissingClosureReturnType>
@@ -1327,11 +1325,6 @@
     <MoreSpecificReturnType occurrences="1">
       <code>TypeInterface</code>
     </MoreSpecificReturnType>
-  </file>
-  <file src="src/Database/TypedResultTrait.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
   </file>
   <file src="src/Datasource/ConnectionManager.php">
     <PossiblyNullArgument occurrences="1">
@@ -2034,9 +2027,6 @@
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>select</code>
-    </UndefinedInterfaceMethod>
   </file>
   <file src="src/ORM/AssociationCollection.php">
     <MissingClosureParamType occurrences="1">
@@ -2290,9 +2280,8 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
-    <LessSpecificReturnStatement occurrences="2">
+    <LessSpecificReturnStatement occurrences="1">
       <code>new $decorator($this-&gt;_results)</code>
-      <code>$result</code>
     </LessSpecificReturnStatement>
     <MissingParamType occurrences="3">
       <code>$config</code>
@@ -2302,8 +2291,7 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$table</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="2">
-      <code>\Cake\Datasource\ResultSetInterface</code>
+    <MoreSpecificReturnType occurrences="1">
       <code>ResultSetInterface</code>
     </MoreSpecificReturnType>
     <NullArgument occurrences="1">

@@ -118,7 +118,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @see \Cake\Database\Query::where() for examples on conditions
      * @return $this
      */
-    public function add($conditions, $types = [])
+    public function add($conditions, array $types = [])
     {
         if (is_string($conditions)) {
             $this->_conditions[] = $conditions;

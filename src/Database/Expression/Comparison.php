@@ -265,7 +265,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue(iterable $value, $generator, $type = 'string'): string
+    protected function _flattenValue(iterable $value, ValueBinder $generator, $type = 'string'): string
     {
         $parts = [];
         if (is_array($value)) {
