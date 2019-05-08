@@ -14,7 +14,7 @@ build:
         override:
           - phpcs-run src/ tests/
 
-    static-analysis:
+    phpstan:
       environment:
         php:
           ini:
@@ -25,11 +25,32 @@ build:
             - apcu
       dependencies:
         override:
-          - composer stan-setup
+          - composer require --dev phpstan/phpstan-shim:^0.11
       tests:
         override:
-          - vendor/bin/phpstan analyse src/
-          - vendor/bin/psalm --show-info=false
+          - command: vendor/bin/phpstan.phar analyse --error-format checkstyle src/ > checkstyle.xml
+            analysis:
+              file: checkstyle.xml
+              format: 'general-checkstyle'
+
+    psalm:
+      environment:
+        php:
+          ini:
+            'memory_limit': -1
+          pecl_extensions:
+            - redis
+            - memcached
+            - apcu
+      dependencies:
+        override:
+          - composer require --dev psalm/phar:^3.0
+      tests:
+        override:
+          - command: vendor/bin/psalm.phar --show-info=false --report=checkstyle.xml
+            analysis:
+              file: checkstyle.xml
+              format: 'general-checkstyle'
 
 build_failure_conditions:
   - 'issues.count > 0'
