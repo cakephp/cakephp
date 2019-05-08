@@ -69,7 +69,7 @@ class CacheCommandsTest extends ConsoleIntegrationTestCase
      */
     public function testClearAllHelp()
     {
-        $this->exec('cache clear_all -h');
+        $this->exec('cache clearall -h');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContains('Clear all');
@@ -137,7 +137,7 @@ class CacheCommandsTest extends ConsoleIntegrationTestCase
     {
         Cache::add('key', 'value1', 'test');
         Cache::add('key', 'value3', '_cake_core_');
-        $this->exec('cache clear_all');
+        $this->exec('cache clearall');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));

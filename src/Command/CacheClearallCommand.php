@@ -23,9 +23,9 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 
 /**
- * CacheClearAll command.
+ * CacheClearall command.
  */
-class CacheClearAllCommand extends Command
+class CacheClearallCommand extends Command
 {
     /**
      * Hook method for defining this command's option parser.

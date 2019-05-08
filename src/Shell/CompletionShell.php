@@ -34,6 +34,13 @@ class CompletionShell extends Shell
     public $tasks = ['Command'];
 
     /**
+     * The command collection for the application
+     *
+     * @var \Cake\Console\CommandCollection
+     */
+    protected $commandCollection;
+
+    /**
      * Echo no header by overriding the startup method
      *
      * @return void

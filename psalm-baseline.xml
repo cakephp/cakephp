@@ -205,9 +205,9 @@
       <code>function ($items) {</code>
     </MissingClosureReturnType>
   </file>
-  <file src="src/Command/CacheClearAllCommand.php">
+  <file src="src/Command/CacheClearallCommand.php">
     <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheClearAllCommand</code>
+      <code>CacheClearallCommand</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Command/CacheClearCommand.php">
@@ -2451,8 +2451,9 @@
       <code>Shell</code>
       <code>parent::getOptionParser()</code>
     </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
+    <PropertyNotSetInConstructor occurrences="2">
       <code>CompletionShell</code>
+      <code>$commandCollection</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/I18nShell.php">
