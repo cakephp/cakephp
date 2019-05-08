@@ -17,7 +17,7 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\RulesProvider;
-use Cake\Validation\ValidationSet;
+use TestApp\Validation\CustomProvider;
 
 /**
  * Tests RulesProvider class
@@ -46,15 +46,9 @@ class RulesProviderTest extends TestCase
      */
     public function testCustomObject()
     {
-        $mock = $this->getMockBuilder('Cake\Validation\Validator')
-            ->setMethods(['field'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('field')
-            ->with('first', null)
-            ->will($this->returnValue(new ValidationSet()));
+        $object = new CustomProvider();
 
-        $provider = new RulesProvider($mock);
-        $provider->field('first', compact('provider'));
+        $provider = new RulesProvider($object);
+        $this->assertFalse($provider->validate('string', 'context'));
     }
 }
