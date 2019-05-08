@@ -104,7 +104,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         $appNamespace = Configure::read('App.namespace');
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
-            preg_match('/^(.+)\\\\(Command|Shell)/', $class, $matches);
+            preg_match('/^(.+)\\\\(Command|Shell)\\\\/', $class, $matches);
             // Probably not a useful class
             if (empty($matches)) {
                 continue;
