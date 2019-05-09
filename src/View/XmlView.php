@@ -95,9 +95,9 @@ class XmlView extends SerializedView
      *   'format' as 'attributes' instead of 'tags'.
      *
      * @param array|string|true $serialize The name(s) of the view variable(s) that need(s) to be serialized
-     * @return string The serialized data
+     * @return string|false The serialized data
      */
-    protected function _serialize($serialize): string
+    protected function _serialize($serialize)
     {
         $rootNode = $this->viewVars['_rootNode'] ?? 'response';
 

@@ -49,9 +49,9 @@ class TaskRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|null Either the correct class name or null.
+     * @return string|object|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class): ?string
+    protected function _resolveClassName($class)
     {
         return App::className($class, 'Shell/Task', 'Task');
     }
