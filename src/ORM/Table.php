@@ -2121,6 +2121,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         $isNew[$key] = $entity->isNew();
                         if ($this->save($entity, $options) === false) {
                             $failed = $entity;
+
                             return false;
                         }
                     }
