@@ -23,6 +23,11 @@ namespace Cake\TestSuite\Constraint\Response;
 class FileSentAs extends ResponseBase
 {
     /**
+     * @var \Cake\Http\Response
+     */
+    protected $response;
+
+    /**
      * Checks assertion
      *
      * @param mixed $other Expected type

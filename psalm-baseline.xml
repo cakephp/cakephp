@@ -2818,7 +2818,7 @@
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
       <code>$controller-&gt;getRequest()-&gt;getSession()-&gt;read('Flash')</code>
     </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="19">
+    <PossiblyNullArgument occurrences="10">
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
@@ -3130,7 +3130,7 @@
       <code>function ($part) {</code>
       <code>function ($part) {</code>
     </MissingClosureReturnType>
-    <PossiblyInvalidArgument occurrences="3">
+    <PossiblyInvalidArgument occurrences="2">
       <code>$entity</code>
       <code>$entity</code>
       <code>$entity</code>

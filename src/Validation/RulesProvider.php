@@ -60,9 +60,9 @@ class RulesProvider
      *
      * @param string $method the validation method to call
      * @param array $arguments the list of arguments to pass to the method
-     * @return bool whether or not the validation rule passed
+     * @return bool Whether or not the validation rule passed
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         $method = $this->_reflection->getMethod($method);
         $argumentList = $method->getParameters();

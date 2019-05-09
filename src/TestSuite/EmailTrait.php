@@ -40,7 +40,7 @@ trait EmailTrait
      * @before
      * @return void
      */
-    public function setupTransports()
+    public function setupTransports(): void
     {
         TestEmailTransport::replaceAllTransports();
     }
@@ -51,7 +51,7 @@ trait EmailTrait
      * @after
      * @return void
      */
-    public function cleanupEmailTrait()
+    public function cleanupEmailTrait(): void
     {
         TestEmailTransport::clearMessages();
     }

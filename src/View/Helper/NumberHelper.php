@@ -81,7 +81,7 @@ class NumberHelper extends Helper
      * @param array $params Array of params for the method.
      * @return mixed Whatever is returned by called method, or false on failure
      */
-    public function __call($method, $params)
+    public function __call(string $method, array $params)
     {
         return call_user_func_array([$this->_engine, $method], $params);
     }
@@ -103,7 +103,7 @@ class NumberHelper extends Helper
     /**
      * Returns a formatted-for-humans file size.
      *
-     * @param int $size Size in bytes
+     * @param int|string $size Size in bytes
      * @return string Human readable size
      * @see \Cake\I18n\Number::toReadableSize()
      * @link https://book.cakephp.org/3.0/en/views/helpers/number.html#interacting-with-human-readable-values

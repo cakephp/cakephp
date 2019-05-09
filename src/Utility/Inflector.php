@@ -421,7 +421,7 @@ class Inflector
      * @param string|false $value Inflected value
      * @return string|false Inflected value on cache hit or false on cache miss.
      */
-    protected static function _cache($type, $key, $value = false)
+    protected static function _cache(string $type, string $key, $value = false)
     {
         $key = '_' . $key;
         $type = '_' . $type;
@@ -443,7 +443,7 @@ class Inflector
      *
      * @return void
      */
-    public static function reset()
+    public static function reset(): void
     {
         if (empty(static::$_initialState)) {
             static::$_initialState = get_class_vars(self::class);
@@ -477,7 +477,7 @@ class Inflector
      *        new rules that are being defined in $rules.
      * @return void
      */
-    public static function rules(string $type, array $rules, bool $reset = false)
+    public static function rules(string $type, array $rules, bool $reset = false): void
     {
         $var = '_' . $type;
 

@@ -255,7 +255,7 @@ abstract class Cell implements EventDispatcherInterface
      * @return string Rendered cell
      * @throws \Error Include error details for PHP 7 fatal errors.
      */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return $this->render();
@@ -283,7 +283,7 @@ abstract class Cell implements EventDispatcherInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'action' => $this->action,

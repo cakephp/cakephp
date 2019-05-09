@@ -204,7 +204,7 @@ trait IntegrationTestTrait
      * @before
      * @return void
      */
-    public function setupServer()
+    public function setupServer(): void
     {
         $namespace = Configure::read('App.namespace');
     }
@@ -215,7 +215,7 @@ trait IntegrationTestTrait
      * @after
      * @return void
      */
-    public function cleanup()
+    public function cleanup(): void
     {
         $this->_request = [];
         $this->_session = [];
@@ -849,7 +849,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertRedirectNotContains($url, $message = '')
+    public function assertRedirectNotContains(string $url, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
@@ -906,7 +906,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertHeaderNotContains($header, $content, $message = '')
+    public function assertHeaderNotContains(string $header, string $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
@@ -1255,7 +1255,7 @@ trait IntegrationTestTrait
      * @param \Exception $exception Exception to extract
      * @return string
      */
-    protected function extractExceptionMessage(Exception $exception)
+    protected function extractExceptionMessage(Exception $exception): string
     {
         return PHP_EOL .
             sprintf('Possibly related to %s: "%s" ', get_class($exception), $exception->getMessage()) .

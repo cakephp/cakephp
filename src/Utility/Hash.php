@@ -210,11 +210,11 @@ class Hash
     /**
      * Check a key against a token.
      *
-     * @param string $key The key in the array being searched.
+     * @param mixed $key The key in the array being searched.
      * @param string $token The token being matched.
      * @return bool
      */
-    protected static function _matchToken($key, $token): bool
+    protected static function _matchToken($key, string $token): bool
     {
         switch ($token) {
             case '{n}':
@@ -297,7 +297,7 @@ class Hash
      *
      * @param array $data The data to insert into.
      * @param string $path The path to insert at.
-     * @param array|null $values The values to insert.
+     * @param mixed $values The values to insert.
      * @return array The data with $values inserted.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
@@ -347,7 +347,7 @@ class Hash
      * @param mixed $values The values to insert when doing inserts.
      * @return array data.
      */
-    protected static function _simpleOp($op, $data, $path, $values = null)
+    protected static function _simpleOp(string $op, array $data, array $path, $values = null): array
     {
         $_list =& $data;
 
@@ -381,6 +381,8 @@ class Hash
                 $_list =& $_list[$key];
             }
         }
+
+        return $data;
     }
 
     /**
@@ -650,7 +652,7 @@ class Hash
      * @param mixed $var Array to filter.
      * @return bool
      */
-    protected static function _filter($var)
+    protected static function _filter($var): bool
     {
         return $var === 0 || $var === 0.0 || $var === '0' || !empty($var);
     }
@@ -768,7 +770,7 @@ class Hash
      * @param array $return The return value to operate on.
      * @return void
      */
-    protected static function _merge($stack, &$return)
+    protected static function _merge(array $stack, array &$return): void
     {
         while (!empty($stack)) {
             foreach ($stack as $curKey => &$curMerge) {
@@ -873,7 +875,7 @@ class Hash
      * @return array An array of the modified values.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::map
      */
-    public static function map(array $data, $path, $function): array
+    public static function map(array $data, string $path, callable $function): array
     {
         $values = (array)static::extract($data, $path);
 
@@ -889,7 +891,7 @@ class Hash
      * @return mixed The reduced value.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::reduce
      */
-    public static function reduce(array $data, string $path, $function)
+    public static function reduce(array $data, string $path, callable $function)
     {
         $values = (array)static::extract($data, $path);
 
@@ -921,7 +923,7 @@ class Hash
      * @return mixed The results of the applied method.
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::apply
      */
-    public static function apply(array $data, string $path, $function)
+    public static function apply(array $data, string $path, callable $function)
     {
         $values = (array)static::extract($data, $path);
 
@@ -961,7 +963,7 @@ class Hash
      * @return array Sorted array of data
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */
-    public static function sort(array $data, string $path, string $dir = 'asc', $type = 'regular')
+    public static function sort(array $data, string $path, string $dir = 'asc', $type = 'regular'): array
     {
         if (empty($data)) {
             return [];
@@ -1044,7 +1046,7 @@ class Hash
      * Squashes an array to a single hash so it can be sorted.
      *
      * @param array $data The data to squash.
-     * @param string|null $key The key for the data.
+     * @param mixed $key The key for the data.
      * @return array
      */
     protected static function _squash(array $data, $key = null): array
