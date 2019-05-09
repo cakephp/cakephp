@@ -116,7 +116,7 @@ class PluralRules
         'th' => 0,
         'ti' => 2,
         'tk' => 1,
-        'tr' => 0,
+        'tr' => 1,
         'uk' => 3,
         'ur' => 1,
         'vi' => 0,
