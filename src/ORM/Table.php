@@ -2087,6 +2087,60 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Persists multiple entities of a table.
+     *
+     * The records will be saved in a transaction which will be rolled back if
+     * any one of the records fails to save due to failed validation or database
+     * error.
+     *
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @throws \Exception
+     * @throws \Cake\ORM\Exception\PersistenceFailedException
+     */
+    public function saveManyOrFail(iterable $entities, $options = [])
+    {
+        /** @var bool[] $isNew */
+        $isNew = [];
+        $failed = null;
+        $cleanup = function ($entities) use (&$isNew): void {
+            /** @var \Cake\Datasource\EntityInterface[] $entities */
+            foreach ($entities as $key => $entity) {
+                if (isset($isNew[$key]) && $isNew[$key]) {
+                    $entity->unset($this->getPrimaryKey());
+                    $entity->isNew(true);
+                }
+            }
+        };
+
+        try {
+            $return = $this->getConnection()
+                ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
+                    foreach ($entities as $key => $entity) {
+                        $isNew[$key] = $entity->isNew();
+                        if ($this->save($entity, $options) === false) {
+                            $failed = $entity;
+                            return false;
+                        }
+                    }
+                });
+        } catch (Exception $e) {
+            $cleanup($entities);
+
+            throw $e;
+        }
+
+        if ($return === false) {
+            $cleanup($entities);
+
+            throw new PersistenceFailedException($failed, ['saveMany']);
+        }
+
+        return $entities;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * For HasMany and HasOne associations records will be removed based on
