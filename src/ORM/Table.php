@@ -2136,6 +2136,94 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
+     * Deletes multiple entities of a table.
+     *
+     * The records will be deleted in a transaction which will be rolled back if
+     * any one of the records fails to delete due to failed validation or database
+     * error.
+     *
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface False on failure, entities list on success.
+     * @throws \Exception
+     */
+    public function deleteMany(iterable $entities, $options = [])
+    {
+        $options = new ArrayObject((array)$options + [
+                'atomic' => true,
+                'checkRules' => true,
+                '_primary' => true,
+            ]);
+
+        $success = $this->_executeTransaction(function () use ($entities, $options) {
+            foreach ($entities as $entity) {
+                if (!$this->_processDelete($entity, $options)) {
+                    return false;
+                }
+            }
+            return true;
+        }, $options['atomic']);
+
+        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+            foreach ($entities as $entity) {
+                $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ]);
+            }
+        }
+
+        return $success;
+    }
+
+    /**
+     * Deletes multiple entities of a table.
+     *
+     * The records will be deleted in a transaction which will be rolled back if
+     * any one of the records fails to delete due to failed validation or database
+     * error.
+     *
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @throws \Exception
+     */
+    public function deleteManyOrFail(iterable $entities, $options = [])
+    {
+        $options = new ArrayObject((array)$options + [
+                'atomic' => true,
+                'checkRules' => true,
+                '_primary' => true,
+            ]);
+
+        $failed = null;
+        $success = $this->_executeTransaction(function () use ($entities, $options, &$failed) {
+            foreach ($entities as $entity) {
+                if (!$this->_processDelete($entity, $options)) {
+                    $failed = $entity;
+                    return false;
+                }
+            }
+            return true;
+        }, $options['atomic']);
+
+        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+            foreach ($entities as $entity) {
+                $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ]);
+            }
+        }
+
+        if ($success === false) {
+            throw new PersistenceFailedException($failed, ['delete']);
+        }
+
+        return $success;
+    }
+
+    /**
      * Try to delete an entity or throw a PersistenceFailedException if the entity is new,
      * has no primary key value, application rules checks failed or the delete was aborted by a callback.
      *

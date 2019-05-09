@@ -39,6 +39,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\SaveOptionsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 use TestApp\Model\Entity\ProtectedEntity;
@@ -2064,7 +2065,7 @@ class TableTest extends TestCase
         $data->username = 'newusername';
 
         $called = false;
-        $listener = function ($e, $entity, $options) use ($data, &$called) {
+        $listener = function ($e, EntityInterface $entity, $options) use ($data, &$called) {
             $this->assertSame($data, $entity);
             $this->assertTrue($entity->isDirty());
             $called = true;
@@ -2072,7 +2073,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use ($data, &$calledAfterCommit) {
+        $listenerAfterCommit = function ($e, EntityInterface $entity, $options) use ($data, &$calledAfterCommit) {
             $this->assertSame($data, $entity);
             $this->assertTrue($entity->isDirty());
             $this->assertNotSame($data->get('username'), $data->getOriginal('username'));
@@ -2178,6 +2179,7 @@ class TableTest extends TestCase
      */
     public function testAfterSaveNotCalled()
     {
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -2293,6 +2295,7 @@ class TableTest extends TestCase
             ->getMock();
         $connection->setDriver($this->connection->getDriver());
 
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['getConnection'])
             ->setConstructorArgs([['table' => 'users']])
@@ -2325,6 +2328,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
         $connection->setDriver(ConnectionManager::get('test')->getDriver());
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query', 'getConnection'])
             ->setConstructorArgs([['table' => 'users']])
@@ -2365,6 +2369,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([ConnectionManager::getConfig('test')])
             ->getMock();
         $connection->setDriver(ConnectionManager::get('test')->getDriver());
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query', 'getConnection', 'exists'])
             ->setConstructorArgs([['table' => 'users']])
@@ -2526,6 +2531,7 @@ class TableTest extends TestCase
      */
     public function testSaveUpdateWithHint()
     {
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['exists'])
             ->setConstructorArgs([['table' => 'users', 'connection' => ConnectionManager::get('test')]])
@@ -2548,6 +2554,7 @@ class TableTest extends TestCase
      */
     public function testSaveUpdatePrimaryKeyNotModified()
     {
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -2590,6 +2597,7 @@ class TableTest extends TestCase
      */
     public function testUpdateNoChange()
     {
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -2628,6 +2636,7 @@ class TableTest extends TestCase
     public function testUpdateNoPrimaryButOtherKeys()
     {
         $this->expectException(\InvalidArgumentException::class);
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query'])
             ->setConstructorArgs([['table' => 'users', 'connection' => $this->connection]])
@@ -3079,6 +3088,7 @@ class TableTest extends TestCase
     {
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
 
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
         $table = $this->getMockBuilder(Table::class)
             ->setMethods(['query'])
             ->setConstructorArgs([['connection' => $this->connection]])
@@ -3089,6 +3099,42 @@ class TableTest extends TestCase
         $entity->isNew(true);
         $result = $table->delete($entity);
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test simple delete.
+     *
+     * @return void
+     */
+    public function testDeleteMany()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $entities = $table->find()->limit(2)->all()->toArray();
+        $this->assertCount(2, $entities);
+
+        $result = $table->deleteMany($entities);
+        $this->assertTrue($result);
+
+        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $this->assertSame(0, $count, 'Find should not return > 0.');
+    }
+
+    /**
+     * Test simple delete.
+     *
+     * @return void
+     */
+    public function testDeleteManyOrFail()
+    {
+        $table = $this->getTableLocator()->get('users');
+        $entities = $table->find()->limit(2)->all()->toArray();
+        $this->assertCount(2, $entities);
+
+        $result = $table->deleteManyOrFail($entities);
+        $this->assertTrue($result);
+
+        $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
+        $this->assertSame(0, $count, 'Find should not return > 0.');
     }
 
     /**
