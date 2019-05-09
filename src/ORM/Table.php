@@ -2187,6 +2187,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Exception
+     * @throws \Cake\ORM\Exception\PersistenceFailedException
      */
     public function deleteManyOrFail(iterable $entities, $options = [])
     {
@@ -2217,7 +2218,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($success === false) {
-            throw new PersistenceFailedException($failed, ['delete']);
+            throw new PersistenceFailedException($failed, ['deleteMany']);
         }
 
         return $success;
