@@ -34,10 +34,6 @@ build:
         php:
           ini:
             'memory_limit': -1
-          pecl_extensions:
-            - redis
-            - memcached
-            - apcu
       dependencies:
         override:
           - composer require --dev psalm/phar:^3.0
