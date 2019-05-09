@@ -1885,7 +1885,7 @@ class ServerRequest implements ServerRequestInterface
      * @param bool $preserveHost Whether or not the host should be retained.
      * @return static
      */
-    public function withUri($uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false)
     {
         $new = clone $this;
         $new->uri = $uri;
