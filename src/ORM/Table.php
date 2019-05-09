@@ -2161,6 +2161,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     return false;
                 }
             }
+
             return true;
         }, $options['atomic']);
 
@@ -2202,9 +2203,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             foreach ($entities as $entity) {
                 if (!$this->_processDelete($entity, $options)) {
                     $failed = $entity;
+
                     return false;
                 }
             }
+
             return true;
         }, $options['atomic']);
 
