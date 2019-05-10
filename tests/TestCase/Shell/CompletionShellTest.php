@@ -16,14 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Console\ConsoleIo;
-use Cake\TestSuite\Stub\ConsoleOutput as StubOutput;
-use Cake\TestSuite\TestCase;
+use Cake\Console\Shell;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * CompletionShellTest
  */
-class CompletionShellTest extends TestCase
+class CompletionShellTest extends ConsoleIntegrationTestCase
 {
     /**
      * setUp method
@@ -35,19 +34,6 @@ class CompletionShellTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
-
-        $this->out = new StubOutput();
-        $io = new ConsoleIo($this->out);
-
-        $this->Shell = $this->getMockBuilder('Cake\Shell\CompletionShell')
-            ->setMethods(['in', '_stop', 'clear'])
-            ->setConstructorArgs([$io])
-            ->getMock();
-
-        $this->Shell->Command = $this->getMockBuilder('Cake\Shell\Task\CommandTask')
-            ->setMethods(['in', '_stop', 'clear'])
-            ->setConstructorArgs([$io])
-            ->getMock();
     }
 
     /**
@@ -58,7 +44,6 @@ class CompletionShellTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        unset($this->Shell);
         static::setAppNamespace('App');
         $this->clearPlugins();
     }
@@ -70,11 +55,10 @@ class CompletionShellTest extends TestCase
      */
     public function testStartup()
     {
-        $this->Shell->runCommand(['main']);
-        $output = $this->out->output();
+        $this->exec('completion');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $needle = 'Welcome to CakePHP';
-        $this->assertTextNotContains($needle, $output);
+        $this->assertOutputNotContains('Welcome to CakePHP');
     }
 
     /**
@@ -84,11 +68,11 @@ class CompletionShellTest extends TestCase
      */
     public function testMain()
     {
-        $this->Shell->runCommand(['main']);
-        $output = $this->out->output();
+        $this->exec('completion');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = '/This command is not intended to be called manually/';
-        $this->assertRegExp($expected, $output);
+        $expected = 'This command is not intended to be called manually';
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -98,16 +82,16 @@ class CompletionShellTest extends TestCase
      */
     public function testCommands()
     {
-        $this->markTestIncomplete('pending completion shell rebuild');
-        $this->Shell->runCommand(['commands']);
-        $output = $this->out->output();
+        $this->markTestIncomplete('pending rebuild');
+        $this->exec('completion commands');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         // This currently incorrectly shows `cache clearall` when it should only show `cache`
         // The subcommands method also needs rework to handle multi-word subcommands
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
             'cache help i18n plugin routes schema_cache server upgrade version ' .
             "abort auto_load_model demo i18m integration merge sample shell_test testing_dispatch";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -117,11 +101,9 @@ class CompletionShellTest extends TestCase
      */
     public function testOptionsNoArguments()
     {
-        $this->Shell->runCommand(['options']);
-        $output = $this->out->output();
-
-        $expected = '';
-        $this->assertTextEquals($expected, $output);
+        $this->exec('completion options');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputEmpty();
     }
 
     /**
@@ -131,10 +113,9 @@ class CompletionShellTest extends TestCase
      */
     public function testOptionsNonExistingCommand()
     {
-        $this->Shell->runCommand(['options', 'foo']);
-        $output = $this->out->output();
-        $expected = '';
-        $this->assertTextEquals($expected, $output);
+        $this->exec('completion options foo');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputEmpty();
     }
 
     /**
@@ -144,11 +125,11 @@ class CompletionShellTest extends TestCase
      */
     public function testOptions()
     {
-        $this->Shell->runCommand(['options', 'schema_cache']);
-        $output = $this->out->output();
+        $this->exec('completion options schema_cache');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "--connection -c --help -h --quiet -q --verbose -v";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -158,11 +139,11 @@ class CompletionShellTest extends TestCase
      */
     public function testOptionsTask()
     {
-        $this->Shell->runCommand(['options', 'sample', 'sample']);
-        $output = $this->out->output();
+        $this->exec('completion options sample sample');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "--help -h --quiet -q --sample -s --verbose -v";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -172,11 +153,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsCorePlugin()
     {
-        $this->Shell->runCommand(['subcommands', 'CORE.schema_cache']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands CORE.schema_cache');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "build clear";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -186,11 +167,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsAppPlugin()
     {
-        $this->Shell->runCommand(['subcommands', 'app.sample']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands app.sample');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "derp load returnValue sample withAbort";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -200,13 +181,12 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsCoreMultiwordCommand()
     {
-        $this->markTestIncomplete('pending completion shell rebuild');
-
-        $this->Shell->runCommand(['subcommands', 'CORE.cache']);
-        $output = $this->out->output();
+        $this->markTestIncomplete();
+        $this->exec('completion subcommands CORE.cache');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "list clear clearall";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -217,11 +197,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsPlugin()
     {
-        $this->Shell->runCommand(['subcommands', 'welcome']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands welcome');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "say_hello";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -231,11 +211,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsPluginDotNotationBackwardCompatibility()
     {
-        $this->Shell->runCommand(['subcommands', 'TestPluginTwo.welcome']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands TestPluginTwo.welcome');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "say_hello";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -245,11 +225,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsPluginDotNotation()
     {
-        $this->Shell->runCommand(['subcommands', 'TestPluginTwo.example']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands TestPluginTwo.example');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "say_hello";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -260,11 +240,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsAppDuplicatePluginNoDot()
     {
-        $this->Shell->runCommand(['subcommands', 'sample']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands sample');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "derp load returnValue sample withAbort";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -274,11 +254,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsPluginDuplicateApp()
     {
-        $this->Shell->runCommand(['subcommands', 'TestPlugin.sample']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands TestPlugin.sample');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "example";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -288,11 +268,10 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsNoArguments()
     {
-        $this->Shell->runCommand(['subcommands']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = '';
-        $this->assertEquals($expected, $output);
+        $this->assertOutputEmpty();
     }
 
     /**
@@ -302,11 +281,10 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommandsNonExistingCommand()
     {
-        $this->Shell->runCommand(['subcommands', 'foo']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands foo');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = '';
-        $this->assertEquals($expected, $output);
+        $this->assertOutputEmpty();
     }
 
     /**
@@ -316,11 +294,11 @@ class CompletionShellTest extends TestCase
      */
     public function testSubCommands()
     {
-        $this->Shell->runCommand(['subcommands', 'schema_cache']);
-        $output = $this->out->output();
+        $this->exec('completion subcommands schema_cache');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "build clear";
-        $this->assertTextEquals($expected, $output);
+        $this->assertOutputContains($expected);
     }
 
     /**
@@ -330,10 +308,7 @@ class CompletionShellTest extends TestCase
      */
     public function testFuzzy()
     {
-        $this->Shell->runCommand(['fuzzy']);
-        $output = $this->out->output();
-
-        $expected = '';
-        $this->assertEquals($expected, $output);
+        $this->exec('completion fuzzy');
+        $this->assertOutputEmpty();
     }
 }
