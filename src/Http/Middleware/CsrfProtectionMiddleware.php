@@ -67,6 +67,13 @@ class CsrfProtectionMiddleware
     protected $_config = [];
 
     /**
+     * Callback for allowing to skip token check for particular request.
+     *
+     * @var callable|null
+     */
+    protected $whitelistCallback;
+
+    /**
      * Constructor
      *
      * @param array $config Config options. See $_defaultConfig for valid keys.
@@ -86,6 +93,12 @@ class CsrfProtectionMiddleware
      */
     public function __invoke(ServerRequest $request, Response $response, $next)
     {
+        if ($this->whitelistCallback !== null
+            && call_user_func($this->whitelistCallback, $request) === true
+        ) {
+            return $next($request, $response);
+        }
+
         $cookies = $request->getCookieParams();
         $cookieData = Hash::get($cookies, $this->_config['cookieName']);
 
@@ -106,6 +119,22 @@ class CsrfProtectionMiddleware
         $request = $this->_validateAndUnsetTokenField($request);
 
         return $next($request, $response);
+    }
+
+    /**
+     * Set callback for allowing to skip token check for particular request.
+     *
+     * The callback will receive request instance as argument and must return
+     * `true` if you want to skip token check for the particular request.
+     *
+     * @param callable $callback A callable.
+     * @return $this
+     */
+    public function whitelistCallback(callable $callback)
+    {
+        $this->whitelistCallback = $callback;
+
+        return $this;
     }
 
     /**

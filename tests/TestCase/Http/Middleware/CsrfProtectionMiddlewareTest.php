@@ -19,6 +19,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test for CsrfProtection
@@ -308,5 +309,25 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
         $response = $middleware($request, $response, $this->_getNextClosure());
         $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * @return void
+     * @doesNotPerformAssertions
+     */
+    public function testFoo()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+                'ALLOW_ME' => 'let-me-pass'
+            ],
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->whitelistCallback(function (ServerRequestInterface $request): ?bool {
+            return !empty($request->getServerParams()['ALLOW_ME']);
+        });
     }
 }
