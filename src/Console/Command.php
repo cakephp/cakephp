@@ -22,6 +22,7 @@ use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Base class for console commands.
@@ -117,7 +118,14 @@ class Command
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
 
-        return $this->buildOptionParser($parser);
+        $parser = $this->buildOptionParser($parser);
+        if ($parser->subcommands()) {
+            throw new RuntimeException(
+                'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
+            );
+        }
+
+        return $parser;
     }
 
     /**
