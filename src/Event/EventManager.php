@@ -346,7 +346,7 @@ class EventManager implements EventManagerInterface
      * @param string $eventKey Event key.
      * @return array
      */
-    public function prioritisedListeners($eventKey)
+    public function prioritisedListeners(string $eventKey): array
     {
         if (empty($this->_listeners[$eventKey])) {
             return [];
@@ -361,7 +361,7 @@ class EventManager implements EventManagerInterface
      * @param string $eventKeyPattern Pattern to match.
      * @return array
      */
-    public function matchingListeners($eventKeyPattern)
+    public function matchingListeners(string $eventKeyPattern): array
     {
         $matchPattern = '/' . preg_quote($eventKeyPattern, '/') . '/';
         $matches = array_intersect_key(
@@ -405,7 +405,7 @@ class EventManager implements EventManagerInterface
      * @param bool $enabled True or false to enable / disable it.
      * @return $this
      */
-    public function trackEvents($enabled)
+    public function trackEvents(bool $enabled)
     {
         $this->_trackEvents = (bool)$enabled;
 
@@ -417,7 +417,7 @@ class EventManager implements EventManagerInterface
      *
      * @return bool
      */
-    public function isTrackingEvents()
+    public function isTrackingEvents(): bool
     {
         return $this->_trackEvents && $this->_eventList;
     }
@@ -454,7 +454,7 @@ class EventManager implements EventManagerInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $properties = get_object_vars($this);
         $properties['_generalManager'] = '(object) EventManager';

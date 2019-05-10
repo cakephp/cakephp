@@ -1327,9 +1327,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Error/BaseErrorHandler.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$exception-&gt;getCode() ?: 1</code>
-    </InvalidScalarArgument>
     <PossiblyNullArgument occurrences="3">
       <code>$file</code>
       <code>$line</code>

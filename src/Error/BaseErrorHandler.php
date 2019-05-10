@@ -18,6 +18,7 @@ namespace Cake\Error;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception as CoreException;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Throwable;
@@ -80,7 +81,7 @@ abstract class BaseErrorHandler
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'handleException']);
-        register_shutdown_function(function () {
+        register_shutdown_function(function (): void {
             if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
@@ -194,7 +195,8 @@ abstract class BaseErrorHandler
     {
         $this->_displayException($exception);
         $this->_logException($exception);
-        $this->_stop($exception->getCode() ?: 1);
+        $code = $exception->getCode() ?: 1;
+        $this->_stop((int)$code);
     }
 
     /**
@@ -205,7 +207,7 @@ abstract class BaseErrorHandler
      * @param int $code Exit code.
      * @return void
      */
-    protected function _stop($code)
+    protected function _stop(int $code): void
     {
         // Do nothing.
     }
@@ -329,7 +331,7 @@ abstract class BaseErrorHandler
      * @param \Cake\Http\ServerRequest $request The request to read from.
      * @return string
      */
-    protected function _requestContext($request): string
+    protected function _requestContext(ServerRequest $request): string
     {
         $message = "\nRequest URL: " . $request->getRequestTarget();
 

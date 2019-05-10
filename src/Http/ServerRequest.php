@@ -327,8 +327,8 @@ class ServerRequest implements ServerRequestInterface
      * HTTP override value. The 'ORIGINAL_REQUEST_METHOD' is also preserved, if you
      * want the read the non-simulated HTTP method the client used.
      *
-     * @param array $data Array of post data.
-     * @return array
+     * @param mixed $data Array of post data.
+     * @return mixed
      */
     protected function _processPost($data)
     {
@@ -381,12 +381,16 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Process uploaded files and move things onto the post data.
      *
-     * @param array $post Post data to merge files onto.
+     * @param mixed $post Post data to merge files onto.
      * @param array $files Uploaded files to merge in.
      * @return array merged post + file data.
      */
     protected function _processFiles($post, array $files)
     {
+        if (!is_array($post)) {
+            return $post;
+        }
+
         $fileData = [];
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
@@ -598,7 +602,7 @@ class ServerRequest implements ServerRequestInterface
      * @return mixed
      * @throws \BadMethodCallException when an invalid method is called.
      */
-    public function __call($name, $params)
+    public function __call(string $name, array $params)
     {
         if (strpos($name, 'is') === 0) {
             $type = strtolower(substr($name, 2));
@@ -885,7 +889,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array An associative array of headers and their values.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $headers = [];
         foreach ($this->_environment as $key => $value) {
@@ -913,7 +917,7 @@ class ServerRequest implements ServerRequestInterface
      * @return bool Whether or not the header is defined.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         $name = $this->normalizeHeaderName($name);
 
@@ -931,7 +935,7 @@ class ServerRequest implements ServerRequestInterface
      *   If the header doesn't exist, an empty array will be returned.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         $name = $this->normalizeHeaderName($name);
         if (isset($this->_environment[$name])) {
@@ -948,7 +952,7 @@ class ServerRequest implements ServerRequestInterface
      * @return string Header values collapsed into a comma separated string.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         $value = $this->getHeader($name);
 
@@ -1027,7 +1031,7 @@ class ServerRequest implements ServerRequestInterface
      * @return string The name of the HTTP method used.
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return (string)$this->getEnv('REQUEST_METHOD');
     }
@@ -1065,7 +1069,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return $this->_environment;
     }
@@ -1077,7 +1081,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array
      * @link http://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return $this->query;
     }
@@ -1480,7 +1484,7 @@ class ServerRequest implements ServerRequestInterface
      * @return null|array The deserialized body parameters, if any.
      *     These will typically be an array.
      */
-    public function getParsedBody()
+    public function getParsedBody(): ?array
     {
         return $this->data;
     }
@@ -1492,7 +1496,7 @@ class ServerRequest implements ServerRequestInterface
      *     typically be in an array or object.
      * @return static
      */
-    public function withParsedBody($data): self
+    public function withParsedBody($data)
     {
         $new = clone $this;
         $new->data = $data;
@@ -1505,7 +1509,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return string HTTP protocol version.
      */
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         if ($this->protocol) {
             return $this->protocol;
@@ -1761,7 +1765,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         $emulated = [
             'params' => $this->params,
@@ -1794,7 +1798,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return array
      */
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
@@ -1867,7 +1871,7 @@ class ServerRequest implements ServerRequestInterface
      * @return \Psr\Http\Message\UriInterface Returns a UriInterface instance
      *   representing the URI of the request.
      */
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
@@ -1933,7 +1937,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return string
      */
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;

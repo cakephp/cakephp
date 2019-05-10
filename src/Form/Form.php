@@ -186,7 +186,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array Last set validation errors.
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->_errors;
     }

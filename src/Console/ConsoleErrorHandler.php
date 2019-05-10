@@ -126,7 +126,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
      * @param int $code The exit code.
      * @return void
      */
-    protected function _stop($code)
+    protected function _stop(int $code): void
     {
         exit($code);
     }

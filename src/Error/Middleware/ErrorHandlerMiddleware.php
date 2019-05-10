@@ -114,7 +114,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    public function handleException($exception, $request)
+    public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
         $renderer = $this->getRenderer($exception, $request);
         try {
@@ -133,7 +133,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *
      * @return \Psr\Http\Message\ResponseInterface A response
      */
-    protected function handleInternalError()
+    protected function handleInternalError(): ResponseInterface
     {
         $response = new Response(['body' => 'An Internal Server Error Occurred']);
 
@@ -218,7 +218,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      * @param bool $isPrevious False for original exception, true for previous
      * @return string Error message
      */
-    protected function getMessageForException(Throwable $exception, $isPrevious = false)
+    protected function getMessageForException(Throwable $exception, bool $isPrevious = false): string
     {
         $message = sprintf(
             '%s[%s] %s',
