@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -14,7 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
-use Cake\Http\Response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * BodyContains
@@ -31,10 +32,10 @@ class BodyContains extends ResponseBase
     /**
      * Constructor.
      *
-     * @param \Cake\Http\Response $response A response instance.
+     * @param \Psr\Http\Message\ResponseInterface $response A response instance.
      * @param bool $ignoreCase Ignore case
      */
-    public function __construct(Response $response, bool $ignoreCase = false)
+    public function __construct(ResponseInterface $response, bool $ignoreCase = false)
     {
         parent::__construct($response);
 

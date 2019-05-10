@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,6 +32,13 @@ class CompletionShell extends Shell
      * @var array
      */
     public $tasks = ['Command'];
+
+    /**
+     * The command collection for the application
+     *
+     * @var \Cake\Console\CommandCollection
+     */
+    protected $commandCollection;
 
     /**
      * Echo no header by overriding the startup method

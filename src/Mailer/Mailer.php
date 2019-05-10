@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -204,7 +205,7 @@ abstract class Mailer implements EventListenerInterface
      * @param array $args Method arguments
      * @return $this|mixed
      */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
         $result = $this->_email->$method(...$args);
         if (strpos($method, 'get') === 0) {

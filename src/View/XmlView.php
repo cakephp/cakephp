@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -94,9 +95,9 @@ class XmlView extends SerializedView
      *   'format' as 'attributes' instead of 'tags'.
      *
      * @param array|string|true $serialize The name(s) of the view variable(s) that need(s) to be serialized
-     * @return string The serialized data
+     * @return string|false The serialized data
      */
-    protected function _serialize($serialize): string
+    protected function _serialize($serialize)
     {
         $rootNode = $this->viewVars['_rootNode'] ?? 'response';
 

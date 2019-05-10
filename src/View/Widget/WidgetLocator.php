@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -135,7 +136,7 @@ class WidgetLocator
      * the `_default` widget is undefined.
      *
      * @param string $name The widget name to get.
-     * @return \Cake\View\Widget\WidgetInterface|\Cake\View\View WidgetInterface instance.
+     * @return object WidgetInterface instance.
      *  or \Cake\View\View instance in case of special name "_view".
      * @throws \RuntimeException when widget is undefined.
      * @throws \ReflectionException
@@ -167,11 +168,11 @@ class WidgetLocator
      * Resolves a widget spec into an instance.
      *
      * @param mixed $widget The widget to get
-     * @return \Cake\View\Widget\WidgetInterface
+     * @return object Either WidgetInterface or View instance.
      * @throws \RuntimeException when class cannot be loaded or does not implement WidgetInterface.
      * @throws \ReflectionException
      */
-    protected function _resolveWidget($widget)
+    protected function _resolveWidget($widget): object
     {
         $type = gettype($widget);
         if ($type === 'object') {

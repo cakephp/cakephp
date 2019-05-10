@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,8 @@ declare(strict_types=1);
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
+
+use Cake\Database\Log\QueryLogger;
 
 /**
  * This interface defines the methods you can depend on in
@@ -34,14 +37,14 @@ interface ConnectionInterface
      * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
      * @return $this
      */
-    public function setLogger($logger);
+    public function setLogger(?QueryLogger $logger);
 
     /**
      * Gets the current logger object.
      *
      * @return \Cake\Database\Log\QueryLogger logger instance
      */
-    public function getLogger();
+    public function getLogger(): QueryLogger;
 
     /**
      * Get the configuration name for this connection.

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -57,7 +58,7 @@ class ShellDispatcher
      * @param array $args the argv from PHP
      * @param bool $bootstrap Should the environment be bootstrapped.
      */
-    public function __construct($args = [], $bootstrap = true)
+    public function __construct(array $args = [], bool $bootstrap = true)
     {
         set_time_limit(0);
         $this->args = (array)$args;
@@ -319,7 +320,7 @@ class ShellDispatcher
      * @return \Cake\Console\Shell A shell instance.
      * @throws \Cake\Console\Exception\MissingShellException when errors are encountered.
      */
-    public function findShell(string $shell)
+    public function findShell(string $shell): Shell
     {
         $className = $this->_shellExists($shell);
         if (!$className) {

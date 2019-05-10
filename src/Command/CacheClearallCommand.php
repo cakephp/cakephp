@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,9 +23,9 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 
 /**
- * CacheClearAll command.
+ * CacheClearall command.
  */
-class CacheClearAllCommand extends Command
+class CacheClearallCommand extends Command
 {
     /**
      * Hook method for defining this command's option parser.

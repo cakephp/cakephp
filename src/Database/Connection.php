@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -830,7 +831,7 @@ class Connection implements ConnectionInterface
      * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
      * @return $this
      */
-    public function setLogger($logger)
+    public function setLogger(?QueryLogger $logger)
     {
         $this->_logger = $logger;
 
@@ -842,7 +843,7 @@ class Connection implements ConnectionInterface
      *
      * @return \Cake\Database\Log\QueryLogger logger instance
      */
-    public function getLogger()
+    public function getLogger(): QueryLogger
     {
         if ($this->_logger === null) {
             $this->_logger = new QueryLogger();

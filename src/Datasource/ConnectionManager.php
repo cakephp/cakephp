@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -109,7 +110,7 @@ class ConnectionManager
      * @param string|null $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
      */
-    public static function parseDsn($config = null): array
+    public static function parseDsn(?string $config = null): array
     {
         $config = static::_parseDsn($config);
 

@@ -28,7 +28,6 @@ parameters:
         - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
-        - '#Call to an undefined method Cake\\Datasource\\QueryInterface::eagerLoaded\(\)#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'
@@ -45,9 +44,6 @@ parameters:
             message: '#Result of && is always false#'
             path: 'src/Datasource/QueryCacher.php'
         -
-            message: '#Strict comparison using === between IntlDateFormatter and false will always evaluate to false#'
-            path: 'src/I18n/DateFormatTrait.php'
-        -
             message: '#Result of && is always false#'
             path: 'src/Routing/Route/EntityRoute.php'
         -
@@ -62,9 +58,6 @@ parameters:
         -
             message: '#Method Cake\\Utility\\Security::engine\(\) should return Cake\\Utility\\Crypto\\OpenSsl but returns object#'
             path: 'src/Utility/Security.php'
-        -
-            message: '#Strict comparison using === between string and false will always evaluate to false#'
-            path: 'src/View/View.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

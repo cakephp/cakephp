@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1025,7 +1026,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @throws \RuntimeException if this method is called on a non-select Query.
      */
-    public function all()
+    public function all(): ResultSetInterface
     {
         if ($this->_type !== 'select' && $this->_type !== null) {
             throw new RuntimeException(
@@ -1077,7 +1078,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _execute()
+    protected function _execute(): ResultSetInterface
     {
         $this->triggerBeforeFind();
         if ($this->_results) {
@@ -1175,7 +1176,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @see \Cake\ORM\Table::find()
      */
-    public function find($finder, array $options = [])
+    public function find(string $finder, array $options = [])
     {
         /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
@@ -1277,7 +1278,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * @inheritDoc
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $eagerLoader = $this->getEagerLoader();
 
@@ -1358,6 +1359,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
             $class = $this->_decoratorClass();
+            /** @var \Cake\Datasource\ResultSetInterface $result */
             $result = new $class($result->buffered());
         }
 

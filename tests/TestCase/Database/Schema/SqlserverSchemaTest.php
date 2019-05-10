@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -317,8 +318,8 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
         $this->assertIsArray($result);
-        $this->assertStringContainsString('schema_articles', $result);
-        $this->assertStringContainsString('schema_authors', $result);
+        $this->assertContains('schema_articles', $result);
+        $this->assertContains('schema_authors', $result);
     }
 
     /**

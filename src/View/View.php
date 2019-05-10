@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -702,6 +703,13 @@ class View implements EventDispatcherInterface
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
+            if (empty($this->layout)) {
+                throw new RuntimeException(
+                    'View::$layout must be a non-empty string.' .
+                    'To disable layout rendering use method View::disableAutoLayout() instead.'
+                );
+            }
+
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
@@ -726,7 +734,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
      */
-    public function renderLayout(string $content, ?string $layout = null)
+    public function renderLayout(string $content, ?string $layout = null): string
     {
         $layoutFileName = $this->_getLayoutFileName($layout);
 
@@ -1011,7 +1019,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the attribute to get.
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $registry = $this->helpers();
         if (isset($registry->{$name})) {
@@ -1345,10 +1353,10 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
-            if ($this->layout === false) {
+            if (empty($this->layout)) {
                 throw new RuntimeException(
-                    'Setting View::$layout to false is no longer supported.' .
-                    ' Set View::$autoLayout to false instead.'
+                    'View::$layout must be a non-empty string.' .
+                    'To disable layout rendering use method View::disableAutoLayout() instead.'
                 );
             }
             $name = $this->layout;

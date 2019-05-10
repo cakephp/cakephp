@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -19,8 +20,6 @@ use Cake\Datasource\SchemaInterface;
 
 /**
  * An interface used by database TableSchema objects.
- *
- * Deprecated 3.5.0: Use Cake\Database\TableSchemaAwareInterface instead.
  */
 interface TableSchemaInterface extends SchemaInterface
 {
@@ -187,7 +186,8 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name The name of the index.
      * @param array|string $attrs The attributes for the index.
      *   If string it will be used as `type`.
-     * @return \Cake\Database\Schema\TableSchemaInterface
+     * @return $this
+     * @throws \Cake\Database\Exception
      */
     public function addIndex(string $name, $attrs);
 
@@ -225,7 +225,8 @@ interface TableSchemaInterface extends SchemaInterface
      * @param string $name The name of the constraint.
      * @param array|string $attrs The attributes for the constraint.
      *   If string it will be used as `type`.
-     * @return \Cake\Database\Schema\TableSchemaInterface
+     * @return $this
+     * @throws \Cake\Database\Exception
      */
     public function addConstraint(string $name, $attrs);
 
@@ -241,7 +242,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Remove a constraint.
      *
      * @param string $name Name of the constraint to remove
-     * @return \Cake\Database\Schema\TableSchemaInterface
+     * @return $this
      */
     public function dropConstraint(string $name);
 

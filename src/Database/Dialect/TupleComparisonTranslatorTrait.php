@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -46,7 +47,7 @@ trait TupleComparisonTranslatorTrait
      * @param \Cake\Database\Query $query The query to update.
      * @return void
      */
-    protected function _transformTupleComparison(TupleComparison $expression, $query)
+    protected function _transformTupleComparison(TupleComparison $expression, Query $query): void
     {
         $fields = $expression->getField();
 

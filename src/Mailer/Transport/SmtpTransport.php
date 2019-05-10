@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -85,7 +86,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return void
      */
-    public function __wakeup()
+    public function __wakeup(): void
     {
         $this->_socket = null;
     }
@@ -483,6 +484,8 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Get socket instance.
+     *
      * @return \Cake\Network\Socket
      * @throws \RuntimeException If socket is not set.
      */

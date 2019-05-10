@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -215,7 +216,7 @@ class ConsoleInputOption
     /**
      * Check that a value is a valid choice for this option.
      *
-     * @param string $value The choice to validate.
+     * @param string|bool $value The choice to validate.
      * @return bool
      * @throws \Cake\Console\Exception\ConsoleException
      */
@@ -228,7 +229,7 @@ class ConsoleInputOption
             throw new ConsoleException(
                 sprintf(
                     '"%s" is not a valid value for --%s. Please use one of "%s"',
-                    $value,
+                    (string)$value,
                     $this->_name,
                     implode(', ', $this->_choices)
                 )

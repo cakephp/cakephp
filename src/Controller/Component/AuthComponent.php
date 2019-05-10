@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,6 +40,9 @@ use Cake\Utility\Hash;
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html
+ * @deprecated 4.0.0 Use the cakephp/authentication and cakephp/authorization plugins instead.
+ * @see https://github.com/cakephp/authentication
+ * @see https://github.com/cakephp/authorization
  */
 class AuthComponent extends Component implements EventDispatcherInterface
 {

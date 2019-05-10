@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -264,7 +265,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue(iterable $value, $generator, $type = 'string'): string
+    protected function _flattenValue(iterable $value, ValueBinder $generator, $type = 'string'): string
     {
         $parts = [];
         if (is_array($value)) {

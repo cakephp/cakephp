@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -345,7 +346,7 @@ class Router
      * @internal
      * @return void
      */
-    public static function resetRoutes()
+    public static function resetRoutes(): void
     {
         static::$_collection = new RouteCollection();
         static::$_urlFilters = [];

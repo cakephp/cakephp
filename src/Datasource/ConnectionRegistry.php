@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -74,7 +75,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param array $settings An array of settings to use for the datasource.
      * @return object A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $settings)
+    protected function _create($class, string $alias, array $settings): object
     {
         if (is_callable($class)) {
             return $class($alias);

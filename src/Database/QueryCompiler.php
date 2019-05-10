@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -126,11 +127,11 @@ class QueryCompiler
      */
     protected function _sqlCompiler(string &$sql, Query $query, ValueBinder $generator): Closure
     {
-        return function ($parts, $name) use (&$sql, $query, $generator) {
+        return function ($parts, $name) use (&$sql, $query, $generator): ?string {
             if (!isset($parts) ||
                 ((is_array($parts) || $parts instanceof Countable) && !count($parts))
             ) {
-                return;
+                return null;
             }
             if ($parts instanceof ExpressionInterface) {
                 $parts = [$parts->sql($generator)];

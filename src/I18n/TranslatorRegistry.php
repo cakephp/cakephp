@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -120,7 +121,7 @@ class TranslatorRegistry extends TranslatorLocator
     /**
      * Gets a translator from the registry by package for a locale.
      *
-     * @param string $name The translator package to retrieve.
+     * @param string|null $name The translator package to retrieve.
      * @param string|null $locale The locale to use; if empty, uses the default
      * locale.
      * @return \Aura\Intl\TranslatorInterface|null A translator object.

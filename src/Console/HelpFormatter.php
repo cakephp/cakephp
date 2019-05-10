@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -84,7 +85,7 @@ class HelpFormatter
      * @param int $width The width of the help output.
      * @return string
      */
-    public function text($width = 72)
+    public function text(int $width = 72): string
     {
         $parser = $this->_parser;
         $out = [];

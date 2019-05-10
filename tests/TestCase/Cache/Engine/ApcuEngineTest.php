@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * ApcuEngineTest file
  *
@@ -51,7 +52,7 @@ class ApcuEngineTest extends TestCase
      */
     public static function teardownAfterClass(): void
     {
-        ini_set('apc.use_request_time', static::$useRequestTime);
+        ini_set('apc.use_request_time', static::$useRequestTime ? '1' : '0');
     }
 
     /**

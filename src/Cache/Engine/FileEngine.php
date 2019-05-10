@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -115,7 +116,7 @@ class FileEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
-    public function set($key, $data, $ttl = null)
+    public function set($key, $data, $ttl = null): bool
     {
         if ($data === '' || !$this->_init) {
             return false;
@@ -223,7 +224,7 @@ class FileEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         $key = $this->_key($key);
 
@@ -244,7 +245,7 @@ class FileEngine extends CacheEngine
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    public function clear()
+    public function clear(): bool
     {
         if (!$this->_init) {
             return false;
@@ -323,7 +324,7 @@ class FileEngine extends CacheEngine
      * @return void
      * @throws \LogicException
      */
-    public function decrement(string $key, int $offset = 1)
+    public function decrement(string $key, int $offset = 1): void
     {
         throw new LogicException('Files cannot be atomically decremented.');
     }
@@ -336,7 +337,7 @@ class FileEngine extends CacheEngine
      * @return void
      * @throws \LogicException
      */
-    public function increment(string $key, int $offset = 1)
+    public function increment(string $key, int $offset = 1): void
     {
         throw new LogicException('Files cannot be atomically incremented.');
     }
@@ -423,7 +424,7 @@ class FileEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    protected function _key($key)
+    protected function _key($key): string
     {
         $key = parent::_key($key);
 

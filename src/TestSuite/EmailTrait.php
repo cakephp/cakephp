@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ trait EmailTrait
      * @before
      * @return void
      */
-    public function setupTransports()
+    public function setupTransports(): void
     {
         TestEmailTransport::replaceAllTransports();
     }
@@ -50,7 +51,7 @@ trait EmailTrait
      * @after
      * @return void
      */
-    public function cleanupEmailTrait()
+    public function cleanupEmailTrait(): void
     {
         TestEmailTransport::clearMessages();
     }

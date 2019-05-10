@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1043,6 +1044,8 @@ class FormHelper extends Helper
      * @param array $options Each type of input takes different options.
      * @return string Completed form widget.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
      */
     public function control(string $fieldName, array $options = []): string
     {
@@ -1179,7 +1182,8 @@ class FormHelper extends Helper
      *
      * @param string $fieldName the field name
      * @param array $options The options for the input element
-     * @return string The generated input element
+     * @return string|array The generated input element string
+     *  or array if checkbox() is called with option 'hiddenField' set to '_split'.
      */
     protected function _getInput(string $fieldName, array $options)
     {
@@ -1608,7 +1612,7 @@ class FormHelper extends Helper
      * @return string Formatted input method.
      * @throws \Cake\Core\Exception\Exception When there are no params for the method call.
      */
-    public function __call($method, $params)
+    public function __call(string $method, array $params)
     {
         $options = [];
         if (empty($params)) {

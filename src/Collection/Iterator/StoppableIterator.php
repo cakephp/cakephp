@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -69,7 +70,7 @@ class StoppableIterator extends Collection
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if (!parent::valid()) {
             return false;

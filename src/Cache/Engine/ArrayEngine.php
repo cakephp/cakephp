@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -48,7 +49,7 @@ class ArrayEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
-    public function set($key, $data, $ttl = null)
+    public function set($key, $data, $ttl = null): bool
     {
         $key = $this->_key($key);
         $expires = time() + $this->duration($ttl);
@@ -126,7 +127,7 @@ class ArrayEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         $key = $this->_key($key);
         unset($this->data[$key]);
@@ -139,7 +140,7 @@ class ArrayEngine extends CacheEngine
      *
      * @return bool True Returns true.
      */
-    public function clear()
+    public function clear(): bool
     {
         $this->data = [];
 

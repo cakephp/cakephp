@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -56,9 +57,9 @@ class SchemaCacheShell extends Shell
      * Clear metadata.
      *
      * @param string|null $name The name of the table to clear cache data for.
-     * @return bool
+     * @return void
      */
-    public function clear(?string $name = null): bool
+    public function clear(?string $name = null): void
     {
         $cache = $this->_getSchemaCache();
         $tables = $cache->clear($name);
@@ -68,8 +69,6 @@ class SchemaCacheShell extends Shell
         }
 
         $this->out('<success>Cache clear complete</success>');
-
-        return true;
     }
 
     /**

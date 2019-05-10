@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -24,6 +25,11 @@ use Cake\Http\Response;
 class CookieEquals extends ResponseBase
 {
     /**
+     * @var \Cake\Http\Response
+     */
+    protected $response;
+
+    /**
      * @var string
      */
     protected $cookieName;
@@ -31,10 +37,10 @@ class CookieEquals extends ResponseBase
     /**
      * Constructor.
      *
-     * @param \Cake\Http\Response $response A response instance.
+     * @param \Cake\Http\Response|null $response A response instance.
      * @param string $cookieName Cookie name
      */
-    public function __construct(Response $response, string $cookieName)
+    public function __construct(?Response $response, string $cookieName)
     {
         parent::__construct($response);
 

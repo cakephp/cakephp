@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -300,11 +301,11 @@ class EntityContext implements ContextInterface
      * Helper method used to extract all the primary key values out of an array, The
      * primary key column is guessed out of the provided $path array
      *
-     * @param iterable $values The list from which to extract primary keys from
+     * @param mixed $values The list from which to extract primary keys from
      * @param array $path Each one of the parts in a path for a field name
      * @return array|null
      */
-    protected function _extractMultiple($values, $path): ?array
+    protected function _extractMultiple($values, array $path): ?array
     {
         if (!is_iterable($values)) {
             return null;

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -870,9 +871,9 @@ class Route
      * router caching.
      *
      * @param array $fields Key/Value of object attributes
-     * @return \Cake\Routing\Route\Route A new instance of the route
+     * @return static A new instance of the route
      */
-    public static function __set_state($fields)
+    public static function __set_state(array $fields)
     {
         $class = static::class;
         $obj = new $class('');

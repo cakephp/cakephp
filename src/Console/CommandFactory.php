@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -26,7 +27,7 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * @inheritDoc
      */
-    public function create($className)
+    public function create(string $className)
     {
         $command = new $className();
         if (!($command instanceof Command) && !($command instanceof Shell)) {
