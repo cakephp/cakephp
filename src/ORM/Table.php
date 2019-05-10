@@ -355,7 +355,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the database table name.
      *
-     * This can include the database schema name if set using setTable.
+     * This can include the database schema name if set using `setTable()`.
      *
      * @return string
      */
