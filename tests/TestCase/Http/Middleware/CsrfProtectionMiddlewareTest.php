@@ -326,7 +326,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->whitelistCallback(function (ServerRequestInterface $request): ?bool {
+        $middleware->whitelistCallback(function (ServerRequestInterface $request) {
             return !empty($request->getServerParams()['ALLOW_ME']);
         });
     }
