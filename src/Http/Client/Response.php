@@ -95,7 +95,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Cookie Collection instance
      *
-     * @var \Cake\Http\Cookie\CookieCollection
+     * @var \Cake\Http\Cookie\CookieCollection|\Cake\Http\Cookie\Cookie[]
      */
     protected $cookies;
 
@@ -256,9 +256,9 @@ class Response extends Message implements ResponseInterface
      *
      * @param int $code The status code to set.
      * @param string $reasonPhrase The status reason phrase.
-     * @return $this A copy of the current object with an updated status code.
+     * @return static A copy of the current object with an updated status code.
      */
-    public function withStatus($code, $reasonPhrase = ''): self
+    public function withStatus($code, $reasonPhrase = '')
     {
         $new = clone $this;
         $new->code = $code;

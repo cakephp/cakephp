@@ -113,7 +113,7 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
         'console' => Engine\ConsoleLog::class,
@@ -138,7 +138,7 @@ class Log
     /**
      * Handled log levels
      *
-     * @var array
+     * @var string[]
      */
     protected static $_levels = [
         'emergency',
@@ -225,7 +225,7 @@ class Log
      * Call this method to obtain current
      * level configuration.
      *
-     * @return array active log levels
+     * @return string[] Active log levels
      */
     public static function levels(): array
     {
@@ -355,7 +355,7 @@ class Log
             $level = array_search($level, static::$_levelMap, true);
         }
 
-        if (!in_array($level, static::$_levels)) {
+        if (!in_array($level, static::$_levels, true)) {
             throw new InvalidArgumentException(sprintf('Invalid log level "%s"', $level));
         }
 

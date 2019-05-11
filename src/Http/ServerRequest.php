@@ -1434,10 +1434,10 @@ class ServerRequest implements ServerRequestInterface
      * Replace the cookies in the request with those contained in
      * the provided CookieCollection.
      *
-     * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
+     * @param \Cake\Http\Cookie\CookieCollection|\Cake\Http\Cookie\CookieInterface[] $cookies The cookie collection
      * @return static
      */
-    public function withCookieCollection(CookieCollection $cookies): self
+    public function withCookieCollection(CookieCollection $cookies)
     {
         $new = clone $this;
         $values = [];
@@ -1465,7 +1465,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies The new cookie data to use.
      * @return static
      */
-    public function withCookieParams(array $cookies): self
+    public function withCookieParams(array $cookies)
     {
         $new = clone $this;
         $new->cookies = $cookies;
@@ -1575,7 +1575,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $value Value to set
      * @return static
      */
-    public function withEnv(string $key, string $value): self
+    public function withEnv(string $key, string $value)
     {
         $new = clone $this;
         $new->_environment[$key] = $value;
@@ -1644,7 +1644,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the request data.
      * @return static
      */
-    public function withData(string $name, $value): self
+    public function withData(string $name, $value)
     {
         $copy = clone $this;
         $copy->data = Hash::insert($copy->data, $name, $value);
@@ -1661,7 +1661,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The dot separated path to remove.
      * @return static
      */
-    public function withoutData(string $name): self
+    public function withoutData(string $name)
     {
         $copy = clone $this;
         $copy->data = Hash::remove($copy->data, $name);
@@ -1679,7 +1679,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value to insert into the the request parameters.
      * @return static
      */
-    public function withParam(string $name, $value): self
+    public function withParam(string $name, $value)
     {
         $copy = clone $this;
         $copy->params = Hash::insert($copy->params, $name, $value);

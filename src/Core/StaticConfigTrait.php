@@ -277,7 +277,7 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array $map Additions/edits to the class map to apply.
+     * @param string[] $map Additions/edits to the class map to apply.
      * @return void
      */
     public static function setDsnClassMap(array $map): void
@@ -288,7 +288,7 @@ REGEXP;
     /**
      * Returns the DSN class map for this class.
      *
-     * @return array
+     * @return string[]
      */
     public static function getDsnClassMap(): array
     {
