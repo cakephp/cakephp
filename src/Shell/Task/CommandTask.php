@@ -20,13 +20,12 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use ReflectionClass;
-use ReflectionMethod;
 
 /**
  * Base class for Shell Command reflection.
+ *
+ * @internal
  */
 class CommandTask extends Shell
 {
@@ -129,166 +128,5 @@ class CommandTask extends Shell
         sort($shells);
 
         return $shells;
-    }
-
-    /**
-     * Return a list of all commands
-     *
-     * @return array
-     */
-    public function commands(): array
-    {
-        $shellList = $this->getShellList();
-        $flatten = Hash::flatten($shellList);
-        $duplicates = array_intersect($flatten, array_unique(array_diff_key($flatten, array_unique($flatten))));
-        $duplicates = Hash::expand($duplicates);
-
-        $options = [];
-        foreach ($shellList as $type => $commands) {
-            foreach ($commands as $shell) {
-                $prefix = '';
-                if (!in_array(strtolower($type), ['app', 'core'], true) &&
-                    isset($duplicates[$type]) &&
-                    in_array($shell, $duplicates[$type], true)
-                ) {
-                    $prefix = $type . '.';
-                }
-
-                $options[] = $prefix . $shell;
-            }
-        }
-
-        return $options;
-    }
-
-    /**
-     * Return a list of subcommands for a given command
-     *
-     * @param string $commandName The command you want subcommands from.
-     * @return string[]
-     * @throws \ReflectionException
-     */
-    public function subCommands(string $commandName): array
-    {
-        $shell = $this->getShell($commandName);
-
-        if (!$shell) {
-            return [];
-        }
-
-        $taskMap = $this->Tasks->normalizeArray((array)$shell->tasks);
-        $return = array_keys($taskMap);
-        $return = array_map('Cake\Utility\Inflector::underscore', $return);
-
-        $shellMethodNames = ['main', 'help', 'getOptionParser', 'initialize', 'runCommand'];
-
-        $baseClasses = ['Object', 'Shell', 'AppShell'];
-
-        $Reflection = new ReflectionClass($shell);
-        $methods = $Reflection->getMethods(ReflectionMethod::IS_PUBLIC);
-        $methodNames = [];
-        foreach ($methods as $method) {
-            $declaringClass = $method->getDeclaringClass()->getShortName();
-            if (!in_array($declaringClass, $baseClasses, true)) {
-                $methodNames[] = $method->getName();
-            }
-        }
-
-        $return = array_merge($return, array_diff($methodNames, $shellMethodNames));
-        sort($return);
-
-        return $return;
-    }
-
-    /**
-     * Get Shell instance for the given command
-     *
-     * @param string $commandName The command you want.
-     * @return \Cake\Console\Shell|false Shell instance if the command can be found, false otherwise.
-     */
-    public function getShell(string $commandName)
-    {
-        [$pluginDot, $name] = pluginSplit($commandName, true);
-
-        if (in_array(strtolower((string)$pluginDot), ['app.', 'core.'], true)) {
-            $commandName = $name;
-            $pluginDot = '';
-        }
-
-        if (!in_array($commandName, $this->commands(), true)
-            && empty($pluginDot)
-            && !in_array($name, $this->commands(), true)
-        ) {
-            return false;
-        }
-
-        if (empty($pluginDot)) {
-            $shellList = $this->getShellList();
-
-            if (!in_array($commandName, $shellList['app']) && !in_array($commandName, $shellList['CORE'], true)) {
-                unset($shellList['CORE'], $shellList['app']);
-                foreach ($shellList as $plugin => $commands) {
-                    if (in_array($commandName, $commands, true)) {
-                        $pluginDot = $plugin . '.';
-                        break;
-                    }
-                }
-            }
-        }
-
-        $name = Inflector::camelize($name);
-        $pluginDot = Inflector::camelize((string)$pluginDot);
-        $class = App::className($pluginDot . $name, 'Shell', 'Shell');
-        if (!$class) {
-            return false;
-        }
-
-        /** @var \Cake\Console\Shell $shell */
-        $shell = new $class();
-        $shell->plugin = trim($pluginDot, '.');
-        $shell->initialize();
-
-        return $shell;
-    }
-
-    /**
-     * Get options list for the given command or subcommand
-     *
-     * @param string $commandName The command to get options for.
-     * @param string $subCommandName The subcommand to get options for. Can be empty to get options for the command.
-     * If this parameter is used, the subcommand must be a valid subcommand of the command passed
-     * @return array Options list for the given command or subcommand
-     */
-    public function options(string $commandName, string $subCommandName = ''): array
-    {
-        $shell = $this->getShell($commandName);
-
-        if (!$shell) {
-            return [];
-        }
-
-        $parser = $shell->getOptionParser();
-
-        if (!empty($subCommandName)) {
-            $subCommandName = Inflector::camelize($subCommandName);
-            if ($shell->hasTask($subCommandName)) {
-                $parser = $shell->{$subCommandName}->getOptionParser();
-            } else {
-                return [];
-            }
-        }
-
-        $options = [];
-        $array = $parser->options();
-        /** @var \Cake\Console\ConsoleInputOption $obj */
-        foreach ($array as $name => $obj) {
-            $options[] = "--$name";
-            $short = $obj->short();
-            if ($short) {
-                $options[] = "-$short";
-            }
-        }
-
-        return $options;
     }
 }

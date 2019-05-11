@@ -65,6 +65,7 @@ class CommandScanner
     {
         foreach ($commands as $i => $command) {
             $command['name'] = str_replace('_', ' ', $command['name']);
+            $command['fullName'] = str_replace('_', ' ', $command['fullName']);
             $commands[$i] = $command;
         }
 

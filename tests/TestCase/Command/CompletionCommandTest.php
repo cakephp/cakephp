@@ -14,15 +14,17 @@ declare(strict_types=1);
  * @since         2.5.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\Shell;
+use Cake\Core\Configure;
+use Cake\Routing\Router;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * CompletionShellTest
+ * CompletionCommandTest
  */
-class CompletionShellTest extends ConsoleIntegrationTestCase
+class CompletionCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setUp method
@@ -33,7 +35,9 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
+        Configure::write('Plugins.autoload', ['TestPlugin', 'TestPluginTwo']);
+
+        $this->useCommandRunner();
     }
 
     /**
@@ -44,7 +48,7 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        static::setAppNamespace('App');
+        Router::reload();
         $this->clearPlugins();
     }
 
@@ -56,23 +60,9 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
     public function testStartup()
     {
         $this->exec('completion');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Shell::CODE_ERROR);
 
         $this->assertOutputNotContains('Welcome to CakePHP');
-    }
-
-    /**
-     * test that main displays a warning
-     *
-     * @return void
-     */
-    public function testMain()
-    {
-        $this->exec('completion');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
-
-        $expected = 'This command is not intended to be called manually';
-        $this->assertOutputContains($expected);
     }
 
     /**
@@ -82,16 +72,37 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testCommands()
     {
-        $this->markTestIncomplete('pending rebuild');
         $this->exec('completion commands');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        // This currently incorrectly shows `cache clearall` when it should only show `cache`
-        // The subcommands method also needs rework to handle multi-word subcommands
-        $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
-            'cache help i18n plugin routes schema_cache server upgrade version ' .
-            "abort auto_load_model demo i18m integration merge sample shell_test testing_dispatch";
-        $this->assertOutputContains($expected);
+        $expected = [
+            'test_plugin.example',
+            'test_plugin.sample',
+            'test_plugin_two.example',
+            'unique',
+            'welcome',
+            'cache',
+            'help',
+            'i18n',
+            'plugin',
+            'routes',
+            'schema_cache',
+            'server',
+            'upgrade',
+            'version',
+            'abort',
+            'auto_load_model',
+            'demo',
+            'i18m',
+            'integration',
+            'merge',
+            'sample',
+            'shell_test',
+            'testing_dispatch',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 
     /**
@@ -123,13 +134,20 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testOptions()
+    public function testOptionsShell()
     {
         $this->exec('completion options schema_cache');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = "--connection -c --help -h --quiet -q --verbose -v";
-        $this->assertOutputContains($expected);
+        $expected = [
+            '--connection -c',
+            '--help -h',
+            '--quiet -q',
+            '--verbose -v',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 
     /**
@@ -137,13 +155,40 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function testOptionsTask()
+    public function testOptionsShellTask()
     {
         $this->exec('completion options sample sample');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = "--help -h --quiet -q --sample -s --verbose -v";
-        $this->assertOutputContains($expected);
+        $expected = [
+            '--help -h',
+            '--quiet -q',
+            '--sample -s',
+            '--verbose -v',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
+    }
+
+    /**
+     * test that options with an existing command / subcommand pair returns the proper options
+     *
+     * @return void
+     */
+    public function testOptionsShellCommand()
+    {
+        $this->exec('completion options cache list');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $expected = [
+            '--help -h',
+            '--quiet -q',
+            '--verbose -v',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 
     /**
@@ -153,7 +198,7 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testSubCommandsCorePlugin()
     {
-        $this->exec('completion subcommands CORE.schema_cache');
+        $this->exec('completion subcommands schema_cache');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "build clear";
@@ -167,11 +212,19 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testSubCommandsAppPlugin()
     {
-        $this->exec('completion subcommands app.sample');
+        $this->exec('completion subcommands sample');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = "derp load returnValue sample withAbort";
-        $this->assertOutputContains($expected);
+        $expected = [
+            'derp',
+            'load',
+            'returnValue',
+            'sample',
+            'withAbort',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 
     /**
@@ -181,12 +234,15 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testSubCommandsCoreMultiwordCommand()
     {
-        $this->markTestIncomplete();
-        $this->exec('completion subcommands CORE.cache');
+        $this->exec('completion subcommands cache');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = "list clear clearall";
-        $this->assertOutputContains($expected);
+        $expected = [
+            'list', 'clear', 'clearall',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 
     /**
@@ -211,7 +267,7 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testSubCommandsPluginDotNotationBackwardCompatibility()
     {
-        $this->exec('completion subcommands TestPluginTwo.welcome');
+        $this->exec('completion subcommands test_plugin_two.welcome');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "say_hello";
@@ -225,7 +281,7 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testSubCommandsPluginDotNotation()
     {
-        $this->exec('completion subcommands TestPluginTwo.example');
+        $this->exec('completion subcommands test_plugin_two.example');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "say_hello";
@@ -243,8 +299,16 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
         $this->exec('completion subcommands sample');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
-        $expected = "derp load returnValue sample withAbort";
-        $this->assertOutputContains($expected);
+        $expected = [
+            'derp',
+            'load',
+            'returnValue',
+            'sample',
+            'withAbort',
+        ];
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 
     /**
@@ -254,7 +318,7 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
      */
     public function testSubCommandsPluginDuplicateApp()
     {
-        $this->exec('completion subcommands TestPlugin.sample');
+        $this->exec('completion subcommands test_plugin.sample');
         $this->assertExitCode(Shell::CODE_SUCCESS);
 
         $expected = "example";
@@ -310,5 +374,19 @@ class CompletionShellTest extends ConsoleIntegrationTestCase
     {
         $this->exec('completion fuzzy');
         $this->assertOutputEmpty();
+    }
+
+    /**
+     * test that help returns content
+     *
+     * @return void
+     */
+    public function testHelp()
+    {
+        $this->exec('completion --help');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+
+        $this->assertOutputContains('Output a list of available commands');
+        $this->assertOutputContains('Output a list of available sub-commands');
     }
 }
