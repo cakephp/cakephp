@@ -1432,12 +1432,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/Client/Response.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$cookie</code>
-    </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>getValue</code>
-    </PossiblyNullReference>
     <PropertyNotSetInConstructor occurrences="5">
       <code>$code</code>
       <code>$cookies</code>

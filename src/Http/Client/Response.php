@@ -330,11 +330,13 @@ class Response extends Message implements ResponseInterface
     public function getCookie(string $name)
     {
         $this->buildCookieCollection();
-        if (!$this->cookies->has($name)) {
+
+        $cookie = $this->cookies->get($name);
+        if ($cookie === null) {
             return null;
         }
 
-        return $this->cookies->get($name)->getValue();
+        return $cookie->getValue();
     }
 
     /**
@@ -347,11 +349,10 @@ class Response extends Message implements ResponseInterface
     {
         $this->buildCookieCollection();
 
-        if (!$this->cookies->has($name)) {
+        $cookie = $this->cookies->get($name);
+        if ($cookie === null) {
             return null;
         }
-
-        $cookie = $this->cookies->get($name);
 
         return $this->convertCookieToArray($cookie);
     }
