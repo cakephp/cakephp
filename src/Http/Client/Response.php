@@ -95,7 +95,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Cookie Collection instance
      *
-     * @var \Cake\Http\Cookie\CookieCollection|\Cake\Http\Cookie\Cookie[]
+     * @var \Cake\Http\Cookie\CookieCollection
      */
     protected $cookies;
 

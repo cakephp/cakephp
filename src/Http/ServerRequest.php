@@ -1434,7 +1434,7 @@ class ServerRequest implements ServerRequestInterface
      * Replace the cookies in the request with those contained in
      * the provided CookieCollection.
      *
-     * @param \Cake\Http\Cookie\CookieCollection|\Cake\Http\Cookie\CookieInterface[] $cookies The cookie collection
+     * @param \Cake\Http\Cookie\CookieCollection $cookies The cookie collection
      * @return static
      */
     public function withCookieCollection(CookieCollection $cookies)
