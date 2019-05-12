@@ -2185,9 +2185,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used.
-     * @return EntityInterface|null
+     * @return \Cake\Datasource\EntityInterface|null
      */
-    protected function _deleteMany(iterable $entities, $options = [])
+    protected function _deleteMany(iterable $entities, $options = []): ?EntityInterface
     {
         $options = new ArrayObject((array)$options + [
                 'atomic' => true,
