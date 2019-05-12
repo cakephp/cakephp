@@ -100,8 +100,8 @@
         "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml",
-        "stan": "phpstan analyse src/ && psalm --show-info=false",
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.11 vimeo/psalm:^3.0 && mv composer.backup composer.json"
+        "stan": "phpstan.phar analyse src/ && psalm.phar --show-info=false",
+        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan-shim:^0.11 psalm/phar:^3.0 && mv composer.backup composer.json"
     },
     "config": {
         "sort-packages": true,
