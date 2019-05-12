@@ -2187,7 +2187,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|\ArrayAccess $options Options used.
      * @return EntityInterface|null
      */
-    protected function _deleteMany(iterable $entities, $options = []) {
+    protected function _deleteMany(iterable $entities, $options = [])
+    {
         $options = new ArrayObject((array)$options + [
                 'atomic' => true,
                 'checkRules' => true,
