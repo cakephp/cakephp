@@ -19,12 +19,11 @@ build:
         php:
           ini:
             'memory_limit': -1
-          pecl_extensions:
-            - redis
-            - memcached
-            - apcu
       dependencies:
         override:
+          - pecl install apcu
+          - pecl install redis
+          - pecl install memcached
           - composer stan-setup
       tests:
         override:

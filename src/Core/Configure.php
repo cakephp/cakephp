@@ -272,12 +272,13 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
-     * @return array
+     * @return string[]
      */
     public static function configured(): array
     {
         return array_keys(static::$_engines);
     }
+
     /**
      * Remove a configured engine. This will unset the engine
      * and make any future attempts to use it cause an Exception.

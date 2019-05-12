@@ -335,7 +335,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * Parse Set-Cookie headers into array
      *
      * @param array $values List of Set-Cookie Header values.
-     * @return \Cake\Http\Cookie\Cookie[] An array of cookie objects
+     * @return \Cake\Http\Cookie\CookieInterface[] An array of cookie objects
      */
     protected static function parseSetCookieHeader(array $values): array
     {

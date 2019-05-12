@@ -57,7 +57,7 @@ class ViewBlock
     /**
      * The active blocks being captured.
      *
-     * @var array
+     * @var string[]
      */
     protected $_active = [];
 
@@ -218,9 +218,9 @@ class ViewBlock
     }
 
     /**
-     * Get the names of the unclosed/active blocks.
+     * Get the unclosed/active blocks. Key is name, value is mode.
      *
-     * @return array An array of unclosed blocks.
+     * @return string[] An array of unclosed blocks.
      */
     public function unclosed(): array
     {
