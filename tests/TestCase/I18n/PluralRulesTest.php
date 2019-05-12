@@ -116,6 +116,9 @@ class PluralRulesTest extends TestCase
             ['cy', 10, 2],
             ['cy', 11, 3],
             ['cy', 8, 3],
+            ['tr', 0, 1],
+            ['tr', 1, 0],
+            ['tr', 2, 1],
         ];
     }
 
