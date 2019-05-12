@@ -184,11 +184,13 @@ class MiddlewareDispatcher
      *
      * @param array $requestSpec The request spec to execute.
      * @return \Psr\Http\Message\ResponseInterface The generated response.
+     * @throws \LogicException
      */
     public function execute(array $requestSpec): ResponseInterface
     {
         try {
             $reflect = new ReflectionClass($this->_class);
+            /** @var \Cake\Core\HttpApplicationInterface $app */
             $app = $reflect->newInstanceArgs($this->_constructorArgs);
         } catch (ReflectionException $e) {
             throw new LogicException(sprintf(

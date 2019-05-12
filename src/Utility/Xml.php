@@ -277,6 +277,7 @@ class Xml
         ];
         $options += $defaults;
 
+        /** @var DOMDocument|\DOMElement $dom */
         $dom = new DOMDocument($options['version'], $options['encoding']);
         if ($options['pretty']) {
             $dom->formatOutput = true;

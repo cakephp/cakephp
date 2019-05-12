@@ -881,7 +881,7 @@ class Shell
      */
     public function shortPath(string $file): string
     {
-        $shortPath = str_replace(ROOT, null, $file);
+        $shortPath = str_replace(ROOT, '', $file);
         $shortPath = str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
         $shortPath = str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
 

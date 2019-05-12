@@ -348,9 +348,9 @@ class ConsoleIo
      */
     public function hr(int $newlines = 0, int $width = 79): void
     {
-        $this->out(null, $newlines);
+        $this->out('', $newlines);
         $this->out(str_repeat('-', $width));
-        $this->out(null, $newlines);
+        $this->out('', $newlines);
     }
 
     /**
