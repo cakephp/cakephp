@@ -295,13 +295,13 @@ class Xml
      * Recursive method to create childs from array
      *
      * @param \DOMDocument $dom Handler to DOMDocument
-     * @param \DOMElement $node Handler to DOMElement (child)
+     * @param \DOMDocument|\DOMElement $node Handler to DOMElement (child)
      * @param array $data Array of data to append to the $node.
      * @param string $format Either 'attributes' or 'tags'. This determines where nested keys go.
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray($dom, $node, &$data, $format): void
+    protected static function _fromArray(DOMDocument $dom, $node, &$data, $format): void
     {
         if (empty($data) || !is_array($data)) {
             return;

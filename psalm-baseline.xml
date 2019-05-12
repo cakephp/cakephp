@@ -188,14 +188,14 @@
       <code>function () use (&amp;$counter) {</code>
     </MissingClosureReturnType>
   </file>
-  <file src="src/Command/CacheClearallCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheClearallCommand</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Command/CacheClearCommand.php">
     <PropertyNotSetInConstructor occurrences="1">
       <code>CacheClearCommand</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/Command/CacheClearallCommand.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>CacheClearallCommand</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Command/CacheListCommand.php">
@@ -283,9 +283,6 @@
     </UninitializedProperty>
   </file>
   <file src="src/Console/ConsoleIo.php">
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyInvalidArgument occurrences="4">
       <code>$options</code>
       <code>$options</code>
@@ -341,9 +338,6 @@
     <DeprecatedClass occurrences="1">
       <code>new ShellDispatcher($args, false)</code>
     </DeprecatedClass>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$command</code>
       <code>$message</code>
@@ -351,7 +345,6 @@
     <PossiblyNullPropertyAssignmentValue occurrences="13">
       <code>$locator</code>
       <code>$command</code>
-      <code>$locator</code>
       <code>$locator</code>
       <code>$locator</code>
       <code>$locator</code>
@@ -848,9 +841,6 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Database/Expression/TupleComparison.php">
-    <InvalidArgument occurrences="1">
-      <code>$types</code>
-    </InvalidArgument>
     <PossiblyInvalidArgument occurrences="1">
       <code>$fields</code>
     </PossiblyInvalidArgument>
@@ -1741,7 +1731,6 @@
     <MissingClosureReturnType occurrences="4">
       <code>function () use ($formatter, $chain) {</code>
       <code>function ($name, $locale) {</code>
-      <code>function ($name, $locale) {</code>
       <code>function () use ($package) {</code>
       <code>function () use ($loader, $fallbackDomain) {</code>
     </MissingClosureReturnType>
@@ -2328,8 +2317,8 @@
       <code>parent::getOptionParser()</code>
     </DeprecatedClass>
     <PropertyNotSetInConstructor occurrences="2">
-      <code>CompletionShell</code>
       <code>$commandCollection</code>
+      <code>CompletionShell</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/I18nShell.php">
@@ -2661,9 +2650,6 @@
     </UninitializedProperty>
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
-    <InvalidArgument occurrences="1">
-      <code>['_full' =&gt; true]</code>
-    </InvalidArgument>
     <InvalidCatch occurrences="1"/>
     <MissingClosureParamType occurrences="4">
       <code>$event</code>
@@ -2687,17 +2673,8 @@
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
       <code>$this-&gt;_viewName</code>
       <code>$this-&gt;_layoutName</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
     </PossiblyNullArgument>
     <PossiblyNullReference occurrences="1">
       <code>getBody</code>
@@ -2732,10 +2709,6 @@
     </UndefinedConstant>
   </file>
   <file src="src/TestSuite/TestCase.php">
-    <InvalidArgument occurrences="2">
-      <code>$className</code>
-      <code>$className</code>
-    </InvalidArgument>
     <PossiblyFalseArgument occurrences="3">
       <code>$tag</code>
       <code>$tag</code>
@@ -2867,9 +2840,9 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Utility/Xml.php">
-    <InvalidArgument occurrences="1">
-      <code>$dom</code>
-    </InvalidArgument>
+    <PossiblyUndefinedMethod occurrences="1">
+      <code>setAttributeNS</code>
+    </PossiblyUndefinedMethod>
   </file>
   <file src="src/Validation/Validation.php">
     <InvalidArgument occurrences="1">
@@ -2930,9 +2903,6 @@
       <code>strpos($className, $namePrefix)</code>
       <code>$this-&gt;_cache</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$template</code>
-    </PossiblyNullArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$request</code>
       <code>$response</code>
@@ -2967,7 +2937,6 @@
       <code>$entity</code>
     </LoopInvalidation>
     <PossiblyInvalidArgument occurrences="2">
-      <code>$entity</code>
       <code>$entity</code>
       <code>$entity</code>
     </PossiblyInvalidArgument>

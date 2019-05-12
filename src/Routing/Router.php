@@ -463,7 +463,7 @@ class Router
      * @return string Full translated URL with base path.
      * @throws \Cake\Core\Exception\Exception When the route name is not found
      */
-    public static function url($url = null, $full = false): string
+    public static function url($url = null, bool $full = false): string
     {
         $params = [
             'plugin' => null,

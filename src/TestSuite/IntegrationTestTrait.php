@@ -821,7 +821,7 @@ trait IntegrationTestTrait
 
         if ($url) {
             $this->assertThat(
-                Router::url($url, ['_full' => true]),
+                Router::url($url, true),
                 new HeaderEquals($this->_response, 'Location'),
                 $verboseMessage
             );
