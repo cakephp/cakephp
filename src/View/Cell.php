@@ -180,12 +180,6 @@ abstract class Cell implements EventDispatcherInterface
 
             $builder = $this->viewBuilder();
 
-            if ($template !== null &&
-                strpos($template, '/') === false &&
-                strpos($template, '.') === false
-            ) {
-                $template = Inflector::underscore($template);
-            }
             if ($template !== null) {
                 $builder->setTemplate($template);
             }
@@ -205,7 +199,14 @@ abstract class Cell implements EventDispatcherInterface
             try {
                 return $view->render($template, false);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellTemplateException($name, $template, $e->getAttributes()['paths'], null, $e);
+                $attributes = $e->getAttributes();
+                throw new MissingCellTemplateException(
+                    $name,
+                    basename($attributes['file']),
+                    $attributes['paths'],
+                    null,
+                    $e
+                );
             }
         };
 

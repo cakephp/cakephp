@@ -74,6 +74,8 @@ class Collection implements CollectionInterface
     /**
      * Get the column metadata for a table.
      *
+     * The name can include a database schema name in the form 'schema.table'.
+     *
      * Caching will be applied if `cacheMetadata` key is present in the Connection
      * configuration options. Defaults to _cake_model_ when true.
      *
