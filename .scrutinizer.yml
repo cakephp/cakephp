@@ -27,8 +27,8 @@ build:
           - composer stan-setup
       tests:
         override:
-          - vendor/bin/phpstan analyse src/
-          - vendor/bin/psalm --show-info=false
+          - vendor/bin/phpstan.phar analyse src/
+          - vendor/bin/psalm.phar --show-info=false
 
 build_failure_conditions:
   - 'issues.count > 0'
