@@ -755,7 +755,6 @@ abstract class TestCase extends BaseTestCase
      */
     public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
     {
-        /** @var string|\Cake\ORM\Table $className */
         $className = $this->_getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();
         $connection = ConnectionManager::get($connectionName);
