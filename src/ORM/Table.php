@@ -2142,39 +2142,20 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface False on failure, entities list on success.
      * @throws \Exception
      */
     public function deleteMany(iterable $entities, $options = [])
     {
-        $options = new ArrayObject((array)$options + [
-                'atomic' => true,
-                'checkRules' => true,
-                '_primary' => true,
-            ]);
+        $failed = $this->_deleteMany($entities, $options);
 
-        $success = $this->_executeTransaction(function () use ($entities, $options) {
-            foreach ($entities as $entity) {
-                if (!$this->_processDelete($entity, $options)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }, $options['atomic']);
-
-        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
-            foreach ($entities as $entity) {
-                $this->dispatchEvent('Model.afterDeleteCommit', [
-                    'entity' => $entity,
-                    'options' => $options,
-                ]);
-            }
+        if ($failed !== null) {
+            return false;
         }
 
-        return $success;
+        return $entities;
     }
 
     /**
@@ -2184,34 +2165,46 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * any one of the records fails to delete due to failed validation or database
      * error.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      */
-    public function deleteManyOrFail(iterable $entities, $options = [])
+    public function deleteManyOrFail(iterable $entities, $options = []): iterable
     {
+        $failed = $this->_deleteMany($entities, $options);
+
+        if ($failed !== null) {
+            throw new PersistenceFailedException($failed, ['deleteMany']);
+        }
+
+        return $entities;
+    }
+
+    /**
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array|\ArrayAccess $options Options used.
+     * @return EntityInterface|null
+     */
+    protected function _deleteMany(iterable $entities, $options = []) {
         $options = new ArrayObject((array)$options + [
                 'atomic' => true,
                 'checkRules' => true,
                 '_primary' => true,
             ]);
 
-        $failed = null;
-        $success = $this->_executeTransaction(function () use ($entities, $options, &$failed) {
+        $failed = $this->_executeTransaction(function () use ($entities, $options) {
             foreach ($entities as $entity) {
                 if (!$this->_processDelete($entity, $options)) {
-                    $failed = $entity;
-
-                    return false;
+                    return $entity;
                 }
             }
 
-            return true;
+            return null;
         }, $options['atomic']);
 
-        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+        if ($failed === null && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 $this->dispatchEvent('Model.afterDeleteCommit', [
                     'entity' => $entity,
@@ -2220,11 +2213,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        if ($success === false) {
-            throw new PersistenceFailedException($failed, ['deleteMany']);
-        }
-
-        return $success;
+        return $failed;
     }
 
     /**

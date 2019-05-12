@@ -3113,7 +3113,7 @@ class TableTest extends TestCase
         $this->assertCount(2, $entities);
 
         $result = $table->deleteMany($entities);
-        $this->assertTrue($result);
+        $this->assertSame($entities, $result);
 
         $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
         $this->assertSame(0, $count, 'Find should not return > 0.');
@@ -3131,7 +3131,7 @@ class TableTest extends TestCase
         $this->assertCount(2, $entities);
 
         $result = $table->deleteManyOrFail($entities);
-        $this->assertTrue($result);
+        $this->assertSame($entities, $result);
 
         $count = $table->find()->where(['id IN' => Hash::extract($entities, '{n}.id')])->count();
         $this->assertSame(0, $count, 'Find should not return > 0.');
