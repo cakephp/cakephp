@@ -79,7 +79,7 @@ class ConsoleInputOption
     /**
      * Make a new Input Option
      *
-     * @param string|array $name The long name of the option, or an array with all the properties.
+     * @param string $name The long name of the option, or an array with all the properties.
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
@@ -89,7 +89,7 @@ class ConsoleInputOption
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
-        $name,
+        string $name,
         string $short = '',
         string $help = '',
         bool $boolean = false,
@@ -97,20 +97,14 @@ class ConsoleInputOption
         array $choices = [],
         bool $multiple = false
     ) {
-        if (is_array($name) && isset($name['name'])) {
-            foreach ($name as $key => $value) {
-                $this->{'_' . $key} = $value;
-            }
-        } else {
-            /** @psalm-suppress PossiblyInvalidPropertyAssignmentValue */
-            $this->_name = $name;
-            $this->_short = $short;
-            $this->_help = $help;
-            $this->_boolean = $boolean;
-            $this->_default = $default;
-            $this->_choices = $choices;
-            $this->_multiple = $multiple;
-        }
+        $this->_name = $name;
+        $this->_short = $short;
+        $this->_help = $help;
+        $this->_boolean = $boolean;
+        $this->_default = is_bool($default) ? $default : (string)$default;
+        $this->_choices = $choices;
+        $this->_multiple = $multiple;
+
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
                 sprintf('Short option "%s" is invalid, short options must be one letter.', $this->_short)
