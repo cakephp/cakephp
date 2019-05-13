@@ -418,15 +418,23 @@ class ConsoleOptionParser
             $name = $option->name();
         } else {
             $defaults = [
-                'name' => $name,
                 'short' => '',
                 'help' => '',
                 'default' => '',
                 'boolean' => false,
+                'multiple' => false,
                 'choices' => [],
             ];
             $options += $defaults;
-            $option = new ConsoleInputOption($options);
+            $option = new ConsoleInputOption(
+                $name,
+                $options['short'],
+                $options['help'],
+                $options['boolean'],
+                $options['default'],
+                $options['choices'],
+                $options['multiple']
+            );
         }
         $this->_options[$name] = $option;
         asort($this->_options);
