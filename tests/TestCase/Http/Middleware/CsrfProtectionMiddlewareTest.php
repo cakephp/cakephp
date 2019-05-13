@@ -313,21 +313,23 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * @return void
-     * @doesNotPerformAssertions
      */
-    public function testFoo()
+    public function testSkippingTokenCheckUsingWhitelistCallback()
     {
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'POST',
-                'ALLOW_ME' => 'let-me-pass'
             ],
         ]);
         $response = new Response();
 
         $middleware = new CsrfProtectionMiddleware();
         $middleware->whitelistCallback(function (ServerRequestInterface $request) {
-            return !empty($request->getServerParams()['ALLOW_ME']);
+            $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
+
+            return true;
         });
+        $response = $middleware($request, $response, $this->_getNextClosure());
+        $this->assertInstanceOf(Response::class, $response);
     }
 }
