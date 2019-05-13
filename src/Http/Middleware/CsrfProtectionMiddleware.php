@@ -67,7 +67,9 @@ class CsrfProtectionMiddleware
     protected $_config = [];
 
     /**
-     * Callback for allowing to skip token check for particular request.
+     * Callback for deciding whether or not to skip the token check for particular request.
+     *
+     * CSRF protection token check will be skipped if the callback returns `true`.
      *
      * @var callable|null
      */
@@ -125,7 +127,7 @@ class CsrfProtectionMiddleware
      * Set callback for allowing to skip token check for particular request.
      *
      * The callback will receive request instance as argument and must return
-     * `true` if you want to skip token check for the particular request.
+     * `true` if you want to skip token check for the current request.
      *
      * @param callable $callback A callable.
      * @return $this
