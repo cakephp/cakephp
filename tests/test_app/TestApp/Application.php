@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
+use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -31,6 +32,13 @@ class Application extends BaseApplication
     public function bootstrap(): void
     {
         parent::bootstrap();
+
+        // Load plugins defined in Configure.
+        if (Configure::check('Plugins.autoload')) {
+            foreach (Configure::read('Plugins.autoload') as $value) {
+                $this->addPlugin($value);
+            }
+        }
     }
 
     /**
