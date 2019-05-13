@@ -53,10 +53,10 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\Utility\Text;
 use Cake\View\Helper\SecureFieldTokenTrait;
-use Zend\Diactoros\Uri;
 use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpunitException;
+use Zend\Diactoros\Uri;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
