@@ -123,8 +123,6 @@ class PostsController extends AppController
             'isSsl' => $this->request->is('ssl'),
         ];
 
-        debug($data);
-
         return $this->getResponse()->withStringBody(json_encode($data));
     }
 
