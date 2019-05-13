@@ -2501,6 +2501,11 @@
       <code>$type</code>
     </PropertyNotSetInConstructor>
   </file>
+  <file src="src/TestSuite/Constraint/Email/MailContainsAttachment.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>MailContainsAttachment</code>
+    </PropertyNotSetInConstructor>
+  </file>
   <file src="src/TestSuite/Constraint/Email/MailContainsHtml.php">
     <DeprecatedConstant occurrences="1">
       <code>Email::MESSAGE_HTML</code>
