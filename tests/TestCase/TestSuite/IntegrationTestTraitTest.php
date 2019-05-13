@@ -308,7 +308,7 @@ class IntegrationTestTraitTest extends IntegrationTestCase
      */
     public function testGetUsingApplicationWithDefaultRoutes()
     {
-        // first clean routes to have Router::$initailized === false
+        // first clean routes to have Router::$initialized === false
         Router::reload();
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', null);
@@ -682,6 +682,25 @@ class IntegrationTestTraitTest extends IntegrationTestCase
         $this->post(['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
         $this->assertResponseOk();
         $this->assertEquals('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Test array URL with host
+     *
+     * @return void
+     */
+    public function testArrayUrlWithHost()
+    {
+        $this->useHttpServer(true);
+        $this->get([
+            'controller' => 'Posts',
+            'action' => 'hostData',
+            '_host' => 'app.example.org',
+            '_ssl' => true,
+        ]);
+        $this->assertResponseOk();
+        $this->assertResponseContains('"isSsl":true');
+        $this->assertResponseContains('"host":"app.example.org"');
     }
 
     /**
