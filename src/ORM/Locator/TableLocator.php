@@ -258,6 +258,7 @@ class TableLocator implements LocatorInterface
      */
     protected function _create(array $options): Table
     {
+        /** @var \Cake\ORM\Table */
         return new $options['className']($options);
     }
 

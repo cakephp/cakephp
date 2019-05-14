@@ -278,6 +278,7 @@ class DateTimeType extends BaseType
         );
         $tz = $value['timezone'] ?? null;
 
+        /** @var \DateTimeInterface */
         return new $class($format, $tz);
     }
 

@@ -159,6 +159,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
                 ));
             }
 
+            /** @var \Cake\Error\ExceptionRendererInterface */
             return new $class($exception, $request);
         }
 

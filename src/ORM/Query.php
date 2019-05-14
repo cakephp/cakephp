@@ -1084,6 +1084,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
         if ($this->_results) {
             $decorator = $this->_decoratorClass();
 
+            /** @var \Cake\Datasource\ResultSetInterface */
             return new $decorator($this->_results);
         }
 
