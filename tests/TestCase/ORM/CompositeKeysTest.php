@@ -717,11 +717,11 @@ class CompositeKeysTest extends TestCase
     public function testLoadIntoMany()
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
-        $tags = $this->getTableLocator()->get('SiteTags');
         $table->hasMany('SiteArticles', [
             'foreignKey' => ['author_id', 'site_id'],
         ]);
 
+        /** @var \Cake\Datasource\EntityInterface[] $authors */
         $authors = $table->find()->toList();
         $result = $table->loadInto($authors, ['SiteArticles']);
 
@@ -729,6 +729,7 @@ class CompositeKeysTest extends TestCase
             $this->assertSame($result[$k], $v);
         }
 
+        /** @var \Cake\Datasource\EntityInterface[] $expected */
         $expected = $table->find('all', ['contain' => ['SiteArticles']])->toList();
         $this->assertEquals($expected, $result);
     }
