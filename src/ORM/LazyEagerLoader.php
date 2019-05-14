@@ -36,11 +36,11 @@ class LazyEagerLoader
      *
      * The properties for the associations to be loaded will be overwritten on each entity.
      *
-     * @param \Cake\Datasource\EntityInterface|array $entities a single entity or list of entities
+     * @param \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[] $entities a single entity or list of entities
      * @param array $contain A `contain()` compatible array.
      * @see \Cake\ORM\Query::contain()
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
-     * @return \Cake\Datasource\EntityInterface|array
+     * @return \Cake\Datasource\EntityInterface|\Cake\Datasource\EntityInterface[]
      */
     public function loadInto($entities, array $contain, Table $source)
     {
