@@ -46,7 +46,7 @@ class NullEngine extends CacheEngine
      */
     public function setMultiple($data, $ttl = null): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -70,7 +70,7 @@ class NullEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1)
     {
-        return false;
+        return 1;
     }
 
     /**
@@ -78,7 +78,7 @@ class NullEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1)
     {
-        return false;
+        return 0;
     }
 
     /**
@@ -94,7 +94,7 @@ class NullEngine extends CacheEngine
      */
     public function deleteMultiple($keys): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -102,7 +102,7 @@ class NullEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -110,6 +110,6 @@ class NullEngine extends CacheEngine
      */
     public function clearGroup(string $group): bool
     {
-        return false;
+        return true;
     }
 }

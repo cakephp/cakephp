@@ -11,9 +11,8 @@
       <code>setHidden</code>
       <code>toArray</code>
     </PossiblyInvalidMethodCall>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$_passwordHasher</code>
-      <code>BaseAuthenticate</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/BasicAuthenticate.php">
@@ -27,9 +26,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/DigestAuthenticate.php">
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$user[$field]</code>
-    </PossiblyInvalidArrayAccess>
     <PossiblyNullArgument occurrences="1">
       <code>$request-&gt;getEnv('ORIGINAL_REQUEST_METHOD')</code>
     </PossiblyNullArgument>
@@ -188,19 +184,9 @@
       <code>function () use (&amp;$counter) {</code>
     </MissingClosureReturnType>
   </file>
-  <file src="src/Command/CacheClearCommand.php">
+  <file src="src/Command/CompletionCommand.php">
     <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheClearCommand</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Command/CacheClearallCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheClearallCommand</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Command/CacheListCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheListCommand</code>
+      <code>$commands</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Command/HelpCommand.php">
@@ -208,9 +194,8 @@
       <code>$a</code>
       <code>$b</code>
     </MissingClosureParamType>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$commands</code>
-      <code>HelpCommand</code>
     </PropertyNotSetInConstructor>
     <UndefinedConstant occurrences="2">
       <code>ROOT</code>
@@ -221,27 +206,18 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$path</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="3">
+    <PropertyNotSetInConstructor occurrences="2">
       <code>$args</code>
       <code>$io</code>
-      <code>UpgradeCommand</code>
     </PropertyNotSetInConstructor>
     <UndefinedConstant occurrences="1">
       <code>APP</code>
     </UndefinedConstant>
   </file>
-  <file src="src/Command/VersionCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>VersionCommand</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Console/Command.php">
     <MissingClosureParamType occurrences="1">
       <code>$alias</code>
     </MissingClosureParamType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Command</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Console/CommandRunner.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -264,23 +240,6 @@
       <code>$this-&gt;_default</code>
       <code>$this-&gt;_default</code>
     </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;_short</code>
-      <code>$this-&gt;_short</code>
-    </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="7">
-      <code>$_name</code>
-      <code>$_short</code>
-      <code>$_help</code>
-      <code>$_boolean</code>
-      <code>$_default</code>
-      <code>$_multiple</code>
-      <code>$_choices</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="2">
-      <code>$this-&gt;_short</code>
-      <code>$this-&gt;_short</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Console/ConsoleIo.php">
     <PossiblyInvalidArgument occurrences="4">
@@ -342,20 +301,8 @@
       <code>$command</code>
       <code>$message</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="13">
-      <code>$locator</code>
+    <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$command</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
     </PossiblyNullPropertyAssignmentValue>
     <PropertyNotSetInConstructor occurrences="4">
       <code>$OptionParser</code>
@@ -1584,9 +1531,6 @@
     </NoInterfaceProperties>
   </file>
   <file src="src/Http/Session.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$defaults</code>
-    </PossiblyInvalidArgument>
     <PossiblyInvalidIterator occurrences="1">
       <code>$write</code>
     </PossiblyInvalidIterator>
@@ -1603,9 +1547,6 @@
       <code>$record</code>
       <code>[$this-&gt;_table-&gt;getPrimaryKey() =&gt; $id]</code>
     </InvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>DatabaseSession</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
     <PossiblyInvalidArgument occurrences="2">
@@ -1844,14 +1785,13 @@
     <MissingClosureReturnType occurrences="1">
       <code>function ($exp) use ($primaryKey) {</code>
     </MissingClosureReturnType>
-    <PropertyNotSetInConstructor occurrences="7">
+    <PropertyNotSetInConstructor occurrences="6">
       <code>$_className</code>
       <code>$_bindingKey</code>
       <code>$_foreignKey</code>
       <code>$_sourceTable</code>
       <code>$_targetTable</code>
       <code>$_propertyName</code>
-      <code>Association</code>
     </PropertyNotSetInConstructor>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;_className</code>
@@ -1935,11 +1875,6 @@
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
-  </file>
-  <file src="src/ORM/AssociationCollection.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AssociationCollection</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Behavior/TimestampBehavior.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -2032,10 +1967,6 @@
     <MissingClosureReturnType occurrences="1">
       <code>function ($results) use ($options) {</code>
     </MissingClosureReturnType>
-    <PossiblyFalseOperand occurrences="2">
-      <code>$number</code>
-      <code>$number</code>
-    </PossiblyFalseOperand>
     <PossiblyInvalidMethodCall occurrences="2">
       <code>extract</code>
       <code>extract</code>
@@ -2310,16 +2241,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$frag</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Shell/CompletionShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$commandCollection</code>
-      <code>CompletionShell</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/I18nShell.php">
     <DeprecatedClass occurrences="2">
@@ -2635,9 +2556,8 @@
     <PossiblyNullArrayAccess occurrences="1">
       <code>$this-&gt;_schema-&gt;getColumn($field)['type']</code>
     </PossiblyNullArrayAccess>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$table</code>
-      <code>TestFixture</code>
     </PropertyNotSetInConstructor>
     <UndefinedInterfaceMethod occurrences="9">
       <code>supportsDynamicConstraints</code>
@@ -2959,9 +2879,6 @@
     <PossiblyNullReference occurrences="1">
       <code>getTarget</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>EntityContext</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper.php">
     <PossiblyNullOperand occurrences="1">
