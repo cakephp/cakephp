@@ -321,12 +321,6 @@
       <code>static::alias($shell, "$plugin.$shell")</code>
       <code>static::alias($shell)</code>
     </DeprecatedClass>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
     <UndefinedConstant occurrences="1">
       <code>CAKE_CORE_INCLUDE_PATH</code>
     </UndefinedConstant>
@@ -417,16 +411,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/ComponentRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Component</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>ComponentRegistry</code>
     </PropertyNotSetInConstructor>
@@ -1153,9 +1141,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Database/Type/DateTimeType.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$date</code>
-    </LessSpecificReturnStatement>
     <MissingParamType occurrences="1">
       <code>$name</code>
     </MissingParamType>
@@ -1163,9 +1148,6 @@
       <code>$value</code>
       <code>$value</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>?DateTimeInterface</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$value</code>
       <code>$value</code>
@@ -1201,14 +1183,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;_driver</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Database/TypeFactory.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>static::$_builtTypes[$name] = new static::$_types[$name]($name)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>TypeInterface</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Datasource/ConnectionManager.php">
     <PossiblyNullArgument occurrences="1">
@@ -1947,16 +1921,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Behavior</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="2">
       <code>$_table</code>
       <code>BehaviorRegistry</code>

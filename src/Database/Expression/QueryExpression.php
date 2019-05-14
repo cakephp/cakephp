@@ -425,6 +425,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
         }
 
+        /** @var \Cake\Database\Expression\QueryExpression */
         return new static($conditions, $this->getTypeMap()->setTypes($types));
     }
 
@@ -443,6 +444,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
+        /** @var \Cake\Database\Expression\QueryExpression */
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // phpcs:enable
@@ -656,6 +658,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $numericKey = is_numeric($k);
 
             if ($this->isCallable($c)) {
+                /** @var \Cake\Database\Expression\QueryExpression $expr */
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
             }
@@ -687,6 +690,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
 
             if ($numericKey && $isArray || $isOperator) {
+                /** @var \Cake\Database\Expression\QueryExpression $this->_conditions[] */
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }

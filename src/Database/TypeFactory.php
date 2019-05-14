@@ -73,6 +73,7 @@ class TypeFactory
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
 
+        /** @var \Cake\Database\TypeInterface */
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
     }
 
