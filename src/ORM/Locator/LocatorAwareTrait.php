@@ -26,7 +26,7 @@ trait LocatorAwareTrait
     /**
      * Table locator instance
      *
-     * @var \Cake\ORM\Locator\LocatorInterface
+     * @var \Cake\ORM\Locator\LocatorInterface|null
      */
     protected $_tableLocator;
 
