@@ -181,7 +181,7 @@ class File
     /**
      * Sets or gets the offset for the currently opened file.
      *
-     * @param int|bool $offset The $offset in bytes to seek. If set to false then the current offset is returned.
+     * @param int|false $offset The $offset in bytes to seek. If set to false then the current offset is returned.
      * @param int $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
      * @return int|bool True on success, false on failure (set mode), false on failure
      *   or integer offset on success (get mode).
@@ -405,7 +405,7 @@ class File
     /**
      * Get md5 Checksum of file with previous check of Filesize
      *
-     * @param int|bool $maxsize in MB or true to force
+     * @param int|true $maxsize in MB or true to force
      * @return string|false md5 Checksum {@link https://secure.php.net/md5_file See md5_file()},
      *  or false in case of an error.
      */

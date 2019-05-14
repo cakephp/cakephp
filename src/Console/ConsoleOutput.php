@@ -178,7 +178,7 @@ class ConsoleOutput
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to output.
+     * @return int|false The number of bytes returned from writing to output.
      */
     public function write($message, int $newlines = 1)
     {
@@ -247,7 +247,7 @@ class ConsoleOutput
      * Writes a message to the output stream.
      *
      * @param string $message Message to write.
-     * @return int|bool The number of bytes returned from writing to output.
+     * @return int|false The number of bytes returned from writing to output.
      */
     protected function _write(string $message)
     {

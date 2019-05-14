@@ -807,7 +807,7 @@ trait EntityTrait
      * true means that the instance is not yet persisted in the database, false
      * that it already is.
      *
-     * @param bool|null $new true if it is known this instance was not yet persisted
+     * @param bool|null $new True if it is known this instance was not yet persisted
      * @return bool Whether or not the entity has been persisted.
      */
     public function isNew(?bool $new = null): bool

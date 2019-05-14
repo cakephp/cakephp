@@ -139,7 +139,7 @@ class Session
      * Get one of the prebaked default session configurations.
      *
      * @param string $name Config name.
-     * @return bool|array
+     * @return array|false
      */
     protected static function _defaultConfig(string $name)
     {

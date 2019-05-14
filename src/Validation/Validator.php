@@ -1164,7 +1164,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         if ($when === 'create' || $when === 'update') {
             return $when === 'create' ? 'update' : 'create';
-        } elseif (is_callable($when)) {
+        }
+        if (is_callable($when)) {
             return function ($context) use ($when) {
                 return !$when($context);
             };

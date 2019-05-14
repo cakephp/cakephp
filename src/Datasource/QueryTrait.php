@@ -383,8 +383,9 @@ trait QueryTrait
      * ```
      *
      * @param callable|null $formatter The formatting callable.
-     * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
+     * @param int|true $mode Whether or not to overwrite, append or prepend the formatter.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function formatResults(?callable $formatter = null, $mode = 0)
     {

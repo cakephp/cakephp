@@ -212,7 +212,7 @@ class JsonViewTest extends TestCase
      *
      * @param array $data
      * @param string|null $serialize
-     * @param int|bool|null $jsonOptions
+     * @param int|false|null $jsonOptions
      * @param string $expected
      * @dataProvider renderWithoutViewProvider
      * @return void
