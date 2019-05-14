@@ -2071,7 +2071,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function saveManyOrFail(iterable $entities, $options = [])
     {
-       return $this->_saveMany($entities, $options);
+        return $this->_saveMany($entities, $options);
     }
 
     /**
