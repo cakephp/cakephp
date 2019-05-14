@@ -248,10 +248,6 @@
       <code>$options</code>
       <code>$options</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidOperand occurrences="2">
-      <code>$newBytes</code>
-      <code>$newBytes</code>
-    </PossiblyInvalidOperand>
     <PossiblyNullArgument occurrences="4">
       <code>$message</code>
       <code>$message</code>
