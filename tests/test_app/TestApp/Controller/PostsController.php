@@ -116,6 +116,16 @@ class PostsController extends AppController
         return $this->getResponse()->withHeader('X-Cake', 'custom header');
     }
 
+    public function hostData()
+    {
+        $data = [
+            'host' => $this->request->host(),
+            'isSsl' => $this->request->is('ssl'),
+        ];
+
+        return $this->getResponse()->withStringBody(json_encode($data));
+    }
+
     public function empty_response()
     {
         return $this->getResponse()->withStringBody('');
