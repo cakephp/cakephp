@@ -143,7 +143,7 @@ class ConsoleIo
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|true The number of bytes returned from writing to stdout.
      */
     public function verbose($message, int $newlines = 1)
     {
@@ -155,7 +155,7 @@ class ConsoleIo
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|true The number of bytes returned from writing to stdout.
      */
     public function quiet($message, int $newlines = 1)
     {
@@ -176,7 +176,7 @@ class ConsoleIo
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|true The number of bytes returned from writing to stdout.
      */
     public function out($message = '', int $newlines = 1, int $level = self::NORMAL)
     {
@@ -195,7 +195,7 @@ class ConsoleIo
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|true The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
     public function info($message = null, int $newlines = 1, int $level = self::NORMAL)
@@ -211,7 +211,7 @@ class ConsoleIo
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stderr.
+     * @return int|false The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
     public function warning($message = null, int $newlines = 1)
@@ -227,7 +227,7 @@ class ConsoleIo
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stderr.
+     * @return int|false The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
     public function error($message = null, int $newlines = 1)
@@ -244,7 +244,7 @@ class ConsoleIo
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|true The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
     public function success($message = null, int $newlines = 1, int $level = self::NORMAL)
@@ -321,7 +321,7 @@ class ConsoleIo
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stderr.
+     * @return int|false The number of bytes returned from writing to stderr.
      */
     public function err($message = '', int $newlines = 1)
     {

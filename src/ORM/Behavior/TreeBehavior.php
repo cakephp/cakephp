@@ -603,7 +603,7 @@ class TreeBehavior extends Behavior
      * this method will return false
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
-     * @param int|bool $number How many places to move the node, or true to move to first position
+     * @param int|true $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
      */
@@ -624,7 +624,7 @@ class TreeBehavior extends Behavior
      * Helper function used with the actual code for moveUp
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
-     * @param int|bool $number How many places to move the node, or true to move to first position
+     * @param int|true $number How many places to move the node, or true to move to first position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
      */
@@ -693,7 +693,7 @@ class TreeBehavior extends Behavior
      * this method will return false
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
-     * @param int|bool $number How many places to move the node or true to move to last position
+     * @param int|true $number How many places to move the node or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool the entity after being moved or false on failure
      */
@@ -714,7 +714,7 @@ class TreeBehavior extends Behavior
      * Helper function used with the actual code for moveDown
      *
      * @param \Cake\Datasource\EntityInterface $node The node to move
-     * @param int|bool $number How many places to move the node, or true to move to last position
+     * @param int|true $number How many places to move the node, or true to move to last position
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|bool $node The node after being moved or false on failure
      */
@@ -990,7 +990,7 @@ class TreeBehavior extends Behavior
      * Returns the depth level of a node in the tree.
      *
      * @param int|string|\Cake\Datasource\EntityInterface $entity The entity or primary key get the level of.
-     * @return int|bool Integer of the level or false if the node does not exist.
+     * @return int|false Integer of the level or false if the node does not exist.
      */
     public function getLevel($entity)
     {

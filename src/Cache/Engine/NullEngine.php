@@ -70,7 +70,7 @@ class NullEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1)
     {
-        return true;
+        return false;
     }
 
     /**
@@ -78,7 +78,7 @@ class NullEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1)
     {
-        return true;
+        return false;
     }
 
     /**

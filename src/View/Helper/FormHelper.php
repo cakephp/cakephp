@@ -1409,7 +1409,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to generate label for.
      * @param array $options Options list.
-     * @return bool|string false or Generated label element
+     * @return string|false Generated label element or false.
      */
     protected function _getLabel(string $fieldName, array $options)
     {

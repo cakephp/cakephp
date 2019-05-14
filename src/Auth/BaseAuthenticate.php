@@ -99,7 +99,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string $username The username/identifier.
      * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
-     * @return bool|array Either false on failure, or an array of user data.
+     * @return array|false Either false on failure, or an array of user data.
      */
     protected function _findUser(string $username, ?string $password = null)
     {

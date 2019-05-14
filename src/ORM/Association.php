@@ -1249,7 +1249,7 @@ abstract class Association
      *
      * @param \Cake\Datasource\EntityInterface $entity the data to be saved
      * @param array $options The options for saving associated data.
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */

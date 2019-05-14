@@ -33,14 +33,14 @@ use ReflectionMethod;
 class CompletionCommand extends Command implements CommandCollectionAwareInterface
 {
     /**
-     * @var \Cake\Command\Cake\Console\CommandCollection
+     * @var \Cake\Console\CommandCollection
      */
     protected $commands;
 
     /**
      * Set the command collection used to get completion data on.
      *
-     * @param \Cake\Command\Cake\Console\CommandCollection $commands The command collection
+     * @param \Cake\Console\CommandCollection $commands The command collection
      * @return void
      */
     public function setCommandCollection(CommandCollection $commands): void
@@ -121,7 +121,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Get the list of defined commands.
      *
-     * @param \Cake\Command\Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
@@ -141,7 +141,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Get the list of defined sub-commands.
      *
-     * @param \Cake\Command\Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
@@ -217,7 +217,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Get the options for a command or subcommand
      *
-     * @param \Cake\Command\Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
