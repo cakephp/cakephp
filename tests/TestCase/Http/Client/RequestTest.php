@@ -42,6 +42,7 @@ class RequestTest extends TestCase
         $this->assertSame('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
+
     /**
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
@@ -58,6 +59,7 @@ class RequestTest extends TestCase
         $this->assertSame('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
+
     /**
      * @dataProvider additionProvider
      */
