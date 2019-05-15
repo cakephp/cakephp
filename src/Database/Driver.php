@@ -90,8 +90,8 @@ abstract class Driver implements DriverInterface
     {
         $connection = new PDO(
             $dsn,
-            $config['username'],
-            $config['password'],
+            $config['username'] ?: null,
+            $config['password'] ?: null,
             $config['flags']
         );
         $this->setConnection($connection);
