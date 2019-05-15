@@ -52,7 +52,7 @@ class Router
      * Contains the base string that will be applied to all generated URLs
      * For example `https://example.com`
      *
-     * @var string
+     * @var string|null
      */
     protected static $_fullBaseUrl;
 
@@ -613,11 +613,11 @@ class Router
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
         }
-        if (empty(static::$_fullBaseUrl)) {
+        if (!static::$_fullBaseUrl) {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
 
-        return static::$_fullBaseUrl;
+        return (string)static::$_fullBaseUrl;
     }
 
     /**
