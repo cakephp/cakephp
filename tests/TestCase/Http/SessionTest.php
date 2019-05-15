@@ -26,8 +26,6 @@ use TestApp\Http\Session\TestWebSession;
  */
 class SessionTest extends TestCase
 {
-    protected static $_gcDivisor;
-
     /**
      * Fixtures used in the SessionTest
      *
