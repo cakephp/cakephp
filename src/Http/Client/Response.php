@@ -350,10 +350,11 @@ class Response extends Message implements ResponseInterface
     {
         $this->buildCookieCollection();
 
-        $cookie = $this->getCookie($name);
-        if ($cookie === null) {
+        if (!$this->cookies->has($name)) {
             return null;
         }
+
+        $cookie = $this->cookies->get($name);
 
         return $this->convertCookieToArray($cookie);
     }
