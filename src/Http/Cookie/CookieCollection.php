@@ -116,9 +116,10 @@ class CookieCollection implements IteratorAggregate, Countable
      * Get the first cookie by name.
      *
      * @param string $name The name of the cookie.
-     * @return \Cake\Http\Cookie\CookieInterface|null
+     * @return \Cake\Http\Cookie\CookieInterface
+     * @throws \InvalidArgumentException If cookie not found.
      */
-    public function get(string $name): ?CookieInterface
+    public function get(string $name): CookieInterface
     {
         $key = mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
@@ -127,7 +128,11 @@ class CookieCollection implements IteratorAggregate, Countable
             }
         }
 
-        return null;
+        throw new InvalidArgumentException(
+            sprintf(
+                'Cookie %s not found. Use has() to check first.',
+                $name
+        ));
     }
 
     /**

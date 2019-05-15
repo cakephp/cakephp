@@ -22,6 +22,7 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use DateTime;
+use InvalidArgumentException;
 use PHPUnit\Framework\Error\Warning;
 
 /**
@@ -156,7 +157,9 @@ class CookieCollectionTest extends TestCase
 
         $this->assertNotSame($new, $collection);
         $this->assertFalse($new->has('remember_me'), 'should be removed');
-        $this->assertNull($new->get('remember_me'), 'should be removed');
+
+        $this->expectException(InvalidArgumentException::class);
+        $new->get('remember_me');
     }
 
     /**
@@ -172,7 +175,7 @@ class CookieCollectionTest extends TestCase
         ];
 
         $collection = new CookieCollection($cookies);
-        $this->assertNull($collection->get('nope'));
+        $this->assertFalse($collection->has('nope'));
         $this->assertInstanceOf(Cookie::class, $collection->get('REMEMBER_me'), 'case insensitive cookie names');
         $this->assertInstanceOf(Cookie::class, $collection->get('remember_me'));
         $this->assertSame($cookies[0], $collection->get('remember_me'));
