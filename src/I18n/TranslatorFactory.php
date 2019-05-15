@@ -60,6 +60,7 @@ class TranslatorFactory extends BaseTranslatorFactory
             ));
         }
 
+        /** @var \Cake\I18n\Translator */
         return new $class($locale, $package, $formatter, $fallback);
     }
 }

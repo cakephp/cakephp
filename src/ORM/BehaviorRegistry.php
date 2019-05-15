@@ -141,6 +141,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      */
     protected function _create($class, string $alias, array $config): Behavior
     {
+        /** @var \Cake\ORM\Behavior $instance */
         $instance = new $class($this->_table, $config);
         $enable = $config['enabled'] ?? true;
         if ($enable) {

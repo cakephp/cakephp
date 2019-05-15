@@ -124,6 +124,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     protected function _create($class, string $alias, array $config): Component
     {
+        /** @var \Cake\Controller\Component $instance */
         $instance = new $class($this, $config);
         $enable = $config['enabled'] ?? true;
         if ($enable) {

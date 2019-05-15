@@ -2411,6 +2411,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         $class = $this->getEntityClass();
 
+        /** @var \Cake\Datasource\EntityInterface */
         return new $class([], ['source' => $this->getRegistryAlias()]);
     }
 

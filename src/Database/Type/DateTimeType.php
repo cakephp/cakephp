@@ -234,10 +234,12 @@ class DateTimeType extends BaseType
             }
             $isString = is_string($value);
             if (ctype_digit($value)) {
+                /** @var \DateTimeInterface $date */
                 $date = new $class('@' . $value);
             } elseif ($isString && $this->_useLocaleParser) {
                 return $this->_parseValue($value);
             } elseif ($isString) {
+                /** @var \DateTimeInterface $date */
                 $date = new $class($value);
                 $compare = true;
             }
@@ -278,6 +280,7 @@ class DateTimeType extends BaseType
         );
         $tz = $value['timezone'] ?? null;
 
+        /** @var \DateTimeInterface */
         return new $class($format, $tz);
     }
 

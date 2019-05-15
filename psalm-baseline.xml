@@ -275,9 +275,6 @@
     </PossiblyNullArrayOffset>
   </file>
   <file src="src/Console/HelperRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($this-&gt;_io, $settings)</code>
-    </LessSpecificReturnStatement>
     <MissingConstructor occurrences="1">
       <code>$_io</code>
     </MissingConstructor>
@@ -285,9 +282,6 @@
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Helper</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Console/Shell.php">
     <DeprecatedClass occurrences="1">
@@ -323,27 +317,15 @@
       <code>static::alias($shell, "$plugin.$shell")</code>
       <code>static::alias($shell)</code>
     </DeprecatedClass>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
     <UndefinedConstant occurrences="1">
       <code>CAKE_CORE_INCLUDE_PATH</code>
     </UndefinedConstant>
   </file>
   <file src="src/Console/TaskRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($this-&gt;_Shell-&gt;getIo())</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Controller/Component/AuthComponent.php">
     <InvalidScalarArgument occurrences="1">
@@ -425,16 +407,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/ComponentRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Component</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>ComponentRegistry</code>
     </PropertyNotSetInConstructor>
@@ -1161,10 +1137,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Database/Type/DateTimeType.php">
-    <LessSpecificReturnStatement occurrences="2">
-      <code>$date</code>
-      <code>new $class($format, $tz)</code>
-    </LessSpecificReturnStatement>
     <MissingParamType occurrences="1">
       <code>$name</code>
     </MissingParamType>
@@ -1172,9 +1144,6 @@
       <code>$value</code>
       <code>$value</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>?DateTimeInterface</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$value</code>
       <code>$value</code>
@@ -1210,14 +1179,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;_driver</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Database/TypeFactory.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>static::$_builtTypes[$name] = new static::$_types[$name]($name)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>TypeInterface</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Datasource/ConnectionManager.php">
     <PossiblyNullArgument occurrences="1">
@@ -1275,11 +1236,6 @@
       <code>$break</code>
       <code>$end</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Error/Middleware/ErrorHandlerMiddleware.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($exception, $request)</code>
-    </LessSpecificReturnStatement>
   </file>
   <file src="src/Event/Decorator/SubjectFilterDecorator.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -1647,14 +1603,6 @@
       <code>static::$niceFormat</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/I18n/TranslatorFactory.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($locale, $package, $formatter, $fallback)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\I18n\Translator</code>
-    </MoreSpecificReturnType>
-  </file>
   <file src="src/I18n/TranslatorRegistry.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Aura\Intl\TranslatorInterface|null</code>
@@ -1933,18 +1881,12 @@
     </MissingClosureReturnType>
   </file>
   <file src="src/ORM/Behavior/TranslateBehavior.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $className($this-&gt;_table, $config)</code>
-    </LessSpecificReturnStatement>
     <MissingClosureParamType occurrences="1">
       <code>$query</code>
     </MissingClosureParamType>
     <MissingClosureReturnType occurrences="1">
       <code>function ($query) use ($locales, $targetAlias) {</code>
     </MissingClosureReturnType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\ORM\Behavior\Translate\TranslateStrategyInterface</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidMethodCall occurrences="1">
       <code>getTableLocator</code>
     </PossiblyInvalidMethodCall>
@@ -1975,16 +1917,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Behavior</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="2">
       <code>$_table</code>
       <code>BehaviorRegistry</code>
@@ -2043,14 +1979,6 @@
       <code>indexBy</code>
     </PossiblyUndefinedMethod>
   </file>
-  <file src="src/ORM/Locator/TableLocator.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $options['className']($options)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Table</code>
-    </MoreSpecificReturnType>
-  </file>
   <file src="src/ORM/Marshaller.php">
     <InvalidArgument occurrences="1">
       <code>$key</code>
@@ -2085,9 +2013,6 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $decorator($this-&gt;_results)</code>
-    </LessSpecificReturnStatement>
     <MissingParamType occurrences="3">
       <code>$config</code>
       <code>$method</code>
@@ -2096,9 +2021,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$table</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>ResultSetInterface</code>
-    </MoreSpecificReturnType>
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
@@ -2129,9 +2051,6 @@
     </PossiblyInvalidMethodCall>
   </file>
   <file src="src/ORM/Table.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class([], ['source' =&gt; $this-&gt;getRegistryAlias()])</code>
-    </LessSpecificReturnStatement>
     <MissingClosureParamType occurrences="5">
       <code>$results</code>
       <code>$results</code>
@@ -2147,9 +2066,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$options</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>EntityInterface</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="3">
       <code>$options</code>
       <code>$options</code>
@@ -2611,12 +2527,6 @@
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$io</code>
     </PossiblyNullPropertyAssignmentValue>
@@ -3011,14 +2921,6 @@
     <UnresolvableInclude occurrences="1">
       <code>include func_get_arg(0)</code>
     </UnresolvableInclude>
-  </file>
-  <file src="src/View/ViewBuilder.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $className($request, $response, $events, $data)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>View</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/View/Widget/MultiCheckboxWidget.php">
     <PossiblyInvalidArgument occurrences="1">

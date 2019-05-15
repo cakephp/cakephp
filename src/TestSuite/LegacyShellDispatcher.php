@@ -52,6 +52,7 @@ class LegacyShellDispatcher extends ShellDispatcher
     protected function _createShell(string $className, string $shortName): Shell
     {
         [$plugin] = pluginSplit($shortName);
+        /** @var \Cake\Console\Shell $instance */
         $instance = new $className($this->_io);
         if ($plugin) {
             $instance->plugin = trim($plugin, '.');

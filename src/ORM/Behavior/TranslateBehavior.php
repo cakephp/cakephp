@@ -158,6 +158,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         );
         $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
 
+        /** @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface */
         return new $className($this->_table, $config);
     }
 
