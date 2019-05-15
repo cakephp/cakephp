@@ -132,7 +132,8 @@ class CookieCollection implements IteratorAggregate, Countable
             sprintf(
                 'Cookie %s not found. Use has() to check first.',
                 $name
-        ));
+            )
+        );
     }
 
     /**
