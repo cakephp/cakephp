@@ -178,9 +178,9 @@ class ConsoleOutput
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|false The number of bytes returned from writing to output.
+     * @return int The number of bytes returned from writing to output.
      */
-    public function write($message, int $newlines = 1)
+    public function write($message, int $newlines = 1): int
     {
         if (is_array($message)) {
             $message = implode(static::LF, $message);
@@ -247,11 +247,11 @@ class ConsoleOutput
      * Writes a message to the output stream.
      *
      * @param string $message Message to write.
-     * @return int|false The number of bytes returned from writing to output.
+     * @return int The number of bytes returned from writing to output.
      */
-    protected function _write(string $message)
+    protected function _write(string $message): int
     {
-        return fwrite($this->_output, $message);
+        return (int)fwrite($this->_output, $message);
     }
 
     /**

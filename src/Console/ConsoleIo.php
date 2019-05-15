@@ -143,9 +143,10 @@ class ConsoleIo
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|true The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if current level is less than ConsoleIo::VERBOSE
      */
-    public function verbose($message, int $newlines = 1)
+    public function verbose($message, int $newlines = 1): ?int
     {
         return $this->out($message, $newlines, self::VERBOSE);
     }
@@ -155,9 +156,10 @@ class ConsoleIo
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|true The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if current level is less than ConsoleIo::QUIET
      */
-    public function quiet($message, int $newlines = 1)
+    public function quiet($message, int $newlines = 1): ?int
     {
         return $this->out($message, $newlines, self::QUIET);
     }
@@ -176,9 +178,10 @@ class ConsoleIo
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|true The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if provided $level is greater than current level.
      */
-    public function out($message = '', int $newlines = 1, int $level = self::NORMAL)
+    public function out($message = '', int $newlines = 1, int $level = self::NORMAL): ?int
     {
         if ($level <= $this->_level) {
             $this->_lastWritten = (int)$this->_out->write($message, $newlines);
@@ -186,7 +189,7 @@ class ConsoleIo
             return $this->_lastWritten;
         }
 
-        return true;
+        return null;
     }
 
     /**
@@ -195,10 +198,11 @@ class ConsoleIo
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|true The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function info($message = null, int $newlines = 1, int $level = self::NORMAL)
+    public function info($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'info';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -211,10 +215,10 @@ class ConsoleIo
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|false The number of bytes returned from writing to stderr.
+     * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function warning($message = null, int $newlines = 1)
+    public function warning($message = null, int $newlines = 1): int
     {
         $messageType = 'warning';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -227,10 +231,10 @@ class ConsoleIo
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|false The number of bytes returned from writing to stderr.
+     * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::err
      */
-    public function error($message = null, int $newlines = 1)
+    public function error($message = null, int $newlines = 1): int
     {
         $messageType = 'error';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -244,10 +248,11 @@ class ConsoleIo
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|true The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout
+     *   or null if provided $level is greater than current level.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#ConsoleIo::out
      */
-    public function success($message = null, int $newlines = 1, int $level = self::NORMAL)
+    public function success($message = null, int $newlines = 1, int $level = self::NORMAL): ?int
     {
         $messageType = 'success';
         $message = $this->wrapMessageWithType($messageType, $message);
@@ -296,7 +301,7 @@ class ConsoleIo
         // Output backspaces.
         $this->out(str_repeat("\x08", $size), 0);
 
-        $newBytes = $this->out($message, 0);
+        $newBytes = (int)$this->out($message, 0);
 
         // Fill any remaining bytes with spaces.
         $fill = $size - $newBytes;
@@ -321,9 +326,9 @@ class ConsoleIo
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|false The number of bytes returned from writing to stderr.
+     * @return int The number of bytes returned from writing to stderr.
      */
-    public function err($message = '', int $newlines = 1)
+    public function err($message = '', int $newlines = 1): int
     {
         return $this->_err->write($message, $newlines);
     }
