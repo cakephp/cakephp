@@ -788,15 +788,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function getBehavior(string $name): Behavior
     {
-        /** @var \Cake\ORM\Behavior|null $behavior */
-        $behavior = $this->_behaviors->get($name);
-        if ($behavior === null) {
+        if (!$this->_behaviors->has($name)) {
             throw new InvalidArgumentException(sprintf(
                 'The %s behavior is not defined on %s.',
                 $name,
                 static::class
             ));
         }
+
+        /** @var \Cake\ORM\Behavior|null $behavior */
+        $behavior = $this->_behaviors->get($name);
 
         return $behavior;
     }

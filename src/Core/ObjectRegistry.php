@@ -208,26 +208,27 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Get loaded object instance.
      *
      * @param string $name Name of object.
-     * @return object|null Object instance if loaded else null.
+     * @return object Object instance.
+     * @throws \RuntimeException If not loaded or found.
      */
-    public function get(string $name): ?object
+    public function get(string $name): object
     {
-        if (isset($this->_loaded[$name])) {
-            return $this->_loaded[$name];
+        if (!isset($this->_loaded[$name])) {
+            throw new RuntimeException(sprintf('Unknown object "%s"', $name));
         }
 
-        return null;
+        return $this->_loaded[$name];
     }
 
     /**
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return mixed
+     * @return object|null
      */
     public function __get(string $name)
     {
-        return $this->get($name);
+        return $this->has($name) ? $this->get($name) : null;
     }
 
     /**
@@ -238,7 +239,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function __isset(string $name): bool
     {
-        return isset($this->_loaded[$name]);
+        return $this->has($name);
     }
 
     /**
