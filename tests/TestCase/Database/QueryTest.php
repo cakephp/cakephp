@@ -95,18 +95,18 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $result = $query->select('1 + 1')->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertSame(['2'], $result->fetch());
+        $this->assertEquals([2], $result->fetch());
         $result->closeCursor();
 
         //This new field should be appended
         $result = $query->select(['1 + 3'])->execute();
         $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
-        $this->assertSame(['2', '4'], $result->fetch());
+        $this->assertEquals([2, 4], $result->fetch());
         $result->closeCursor();
 
         //This should now overwrite all previous fields
         $result = $query->select(['1 + 2', '1 + 5'], true)->execute();
-        $this->assertSame(['3', '6'], $result->fetch());
+        $this->assertEquals([3, 6], $result->fetch());
         $result->closeCursor();
     }
 
@@ -124,7 +124,7 @@ class QueryTest extends TestCase
 
             return ['1 + 2', '1 + 5'];
         })->execute();
-        $this->assertSame(['3', '6'], $result->fetch());
+        $this->assertEquals([3, 6], $result->fetch());
         $result->closeCursor();
     }
 
@@ -2375,7 +2375,7 @@ class QueryTest extends TestCase
         $query = new Query($this->connection);
         $query->select('id')->from('comments')->page(1);
         $this->assertEquals(25, $query->clause('limit'));
-        $this->assertSame(0, $query->clause('offset'));
+        $this->assertEquals(0, $query->clause('offset'));
 
         $query->select('id')->from('comments')->page(2);
         $this->assertEquals(25, $query->clause('limit'));
