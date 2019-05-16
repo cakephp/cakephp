@@ -992,7 +992,7 @@ class ControllerTest extends TestCase
     public function testPlugin(): void
     {
         $controller = new PostsController();
-        $this->assertSame('', $controller->getPlugin());
+        $this->assertNull($controller->getPlugin());
 
         $this->assertSame($controller, $controller->setPlugin('Articles'));
         $this->assertSame('Articles', $controller->getPlugin());

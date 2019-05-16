@@ -680,7 +680,7 @@ class HtmlHelperTest extends TestCase
 
         // Default is once=true
         $result = $this->Html->css('screen');
-        $this->assertSame('', $result);
+        $this->assertNull($result);
 
         $result = $this->Html->css('screen', ['once' => false]);
         $expected = [

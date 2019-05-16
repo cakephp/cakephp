@@ -176,11 +176,11 @@ class ConfigureTest extends TestCase
         );
         Configure::write('debug', false);
         $result = ini_get('display_errors');
-        $this->assertSame(0, $result);
+        $this->assertSame('0', $result);
 
         Configure::write('debug', true);
         $result = ini_get('display_errors');
-        $this->assertEquals(1, $result);
+        $this->assertEquals('1', $result);
     }
 
     /**

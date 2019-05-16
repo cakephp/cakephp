@@ -919,6 +919,9 @@ class ResponseTest extends TestCase
         $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expire']);
     }
 
+    /**
+     * @return void
+     */
     public function testWithExpiredCookieObject()
     {
         $response = new Response();
@@ -929,7 +932,7 @@ class ResponseTest extends TestCase
         $new = $response->withExpiredCookie($cookie);
 
         $this->assertNull($response->getCookie('yay')['expire']);
-        $this->assertSame('1', $new->getCookie('yay')['expire']);
+        $this->assertSame(1, $new->getCookie('yay')['expire']);
     }
 
     /**

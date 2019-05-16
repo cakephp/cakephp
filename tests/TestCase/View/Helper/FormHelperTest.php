@@ -8248,7 +8248,7 @@ class FormHelperTest extends TestCase
         $articles->patchEntity($article, ['id' => '3']);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('id', 4)->withQueryParams(['id' => 5])
+            $this->View->getRequest()->withData('id', '4')->withQueryParams(['id' => '5'])
         );
 
         $this->Form->create($article, ['valueSources' => 'query']);
@@ -8305,7 +8305,7 @@ class FormHelperTest extends TestCase
         $articles->patchEntity($article, ['id' => '3']);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('id', 10)->withQueryParams(['id' => 11])
+            $this->View->getRequest()->withData('id', '10')->withQueryParams(['id' => '11'])
         );
 
         $this->Form->setValueSources(['context'])

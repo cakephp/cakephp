@@ -93,7 +93,7 @@ class FileTest extends TestCase
         $this->assertEquals($expecting, $result);
 
         $result = $this->File->ext();
-        $this->assertSame('', $result);
+        $this->assertFalse($result);
 
         $result = $this->File->name();
         $expecting = 'LICENSE';

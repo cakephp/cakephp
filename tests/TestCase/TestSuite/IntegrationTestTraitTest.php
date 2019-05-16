@@ -156,7 +156,7 @@ class IntegrationTestTraitTest extends TestCase
             ],
         ]);
         $this->cookie('split_token', 'def345');
-        $this->session(['User' => ['id' => 1, 'username' => 'mark']]);
+        $this->session(['User' => ['id' => '1', 'username' => 'mark']]);
         $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
         $this->assertSame('abc123', $request['environment']['HTTP_X_CSRF_TOKEN']);
@@ -370,7 +370,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/get/request_action/test_request_action');
         $this->assertResponseOk();
-        $this->assertSame('This is a test', $this->_response->getBody());
+        $this->assertSame('This is a test', (string)$this->_response->getBody());
     }
 
     /**
@@ -398,7 +398,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
-        $this->assertSame('This is a test', $this->_response->getBody());
+        $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
 
