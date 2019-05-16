@@ -50,28 +50,28 @@ class InflectedRouteTest extends TestCase
             'action' => 'my_view',
             'id' => 1,
         ]);
-        $this->assertEquals('/my_posts/my_view/1', $result);
+        $this->assertSame('/my_posts/my_view/1', $result);
 
         $route = new InflectedRoute('/', ['controller' => 'Pages', 'action' => 'my_view', 'home']);
         $result = $route->match(['controller' => 'Pages', 'action' => 'my_view', 'home']);
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
 
         $result = $route->match(['controller' => 'Pages', 'action' => 'display', 'about']);
         $this->assertNull($result);
 
         $route = new InflectedRoute('/blog/:action', ['controller' => 'Posts']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view']);
-        $this->assertEquals('/blog/my_view', $result);
+        $this->assertSame('/blog/my_view', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', '?' => ['id' => 2]]);
-        $this->assertEquals('/blog/my_view?id=2', $result);
+        $this->assertSame('/blog/my_view?id=2', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view', 1]);
         $this->assertNull($result);
 
         $route = new InflectedRoute('/foo/:controller/:action', ['action' => 'index']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'my_view']);
-        $this->assertEquals('/foo/posts/my_view', $result);
+        $this->assertSame('/foo/posts/my_view', $result);
 
         $route = new InflectedRoute('/:plugin/:id/*', ['controller' => 'Posts', 'action' => 'my_view']);
         $result = $route->match([
@@ -80,7 +80,7 @@ class InflectedRouteTest extends TestCase
             'action' => 'my_view',
             'id' => '1',
         ]);
-        $this->assertEquals('/test_plugin/1/', $result);
+        $this->assertSame('/test_plugin/1/', $result);
 
         $result = $route->match([
             'plugin' => 'TestPlugin',
@@ -89,7 +89,7 @@ class InflectedRouteTest extends TestCase
             'id' => '1',
             '0',
         ]);
-        $this->assertEquals('/test_plugin/1/0', $result);
+        $this->assertSame('/test_plugin/1/0', $result);
 
         $result = $route->match([
             'plugin' => 'TestPlugin',
@@ -125,7 +125,7 @@ class InflectedRouteTest extends TestCase
             'action' => 'my_view',
             'id' => 1,
         ]);
-        $this->assertEquals('/my_posts/my_view-1', $result);
+        $this->assertSame('/my_posts/my_view-1', $result);
 
         $route = new InflectedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
         $result = $route->match([
@@ -134,7 +134,7 @@ class InflectedRouteTest extends TestCase
             'id' => '1',
             'slug' => 'the-slug',
         ]);
-        $this->assertEquals('/my_posts/my_view/the-slug-1', $result);
+        $this->assertSame('/my_posts/my_view/the-slug-1', $result);
     }
 
     /**
@@ -147,24 +147,24 @@ class InflectedRouteTest extends TestCase
         $route = new InflectedRoute('/:controller/:action/:id', [], ['id' => Router::ID]);
         $route->compile();
         $result = $route->parse('/my_posts/my_view/1', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('my_view', $result['action']);
-        $this->assertEquals('1', $result['id']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('my_view', $result['action']);
+        $this->assertSame('1', $result['id']);
 
         $route = new InflectedRoute('/:controller/:action-:id');
         $route->compile();
         $result = $route->parse('/my_posts/my_view-1', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('my_view', $result['action']);
-        $this->assertEquals('1', $result['id']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('my_view', $result['action']);
+        $this->assertSame('1', $result['id']);
 
         $route = new InflectedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
         $route->compile();
         $result = $route->parse('/my_posts/my_view/the-slug-1', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('my_view', $result['action']);
-        $this->assertEquals('1', $result['id']);
-        $this->assertEquals('the-slug', $result['slug']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('my_view', $result['action']);
+        $this->assertSame('1', $result['id']);
+        $this->assertSame('the-slug', $result['slug']);
 
         $route = new InflectedRoute(
             '/admin/:controller',
@@ -175,21 +175,21 @@ class InflectedRouteTest extends TestCase
         $this->assertNull($result);
 
         $result = $route->parse('/admin/my_posts', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('index', $result['action']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('index', $result['action']);
 
         $route = new InflectedRoute(
             '/media/search/*',
             ['controller' => 'Media', 'action' => 'search_it']
         );
         $result = $route->parse('/media/search', 'GET');
-        $this->assertEquals('Media', $result['controller']);
-        $this->assertEquals('search_it', $result['action']);
+        $this->assertSame('Media', $result['controller']);
+        $this->assertSame('search_it', $result['action']);
         $this->assertEquals([], $result['pass']);
 
         $result = $route->parse('/media/search/tv_shows', 'GET');
-        $this->assertEquals('Media', $result['controller']);
-        $this->assertEquals('search_it', $result['action']);
+        $this->assertSame('Media', $result['controller']);
+        $this->assertSame('search_it', $result['action']);
         $this->assertEquals(['tv_shows'], $result['pass']);
     }
 
@@ -204,8 +204,8 @@ class InflectedRouteTest extends TestCase
         $this->assertNull($route->parse('/blog_posts/add_new', 'GET'));
 
         $result = $route->parse('/blog_posts/add_new', 'POST');
-        $this->assertEquals('BlogPosts', $result['controller']);
-        $this->assertEquals('add_new', $result['action']);
+        $this->assertSame('BlogPosts', $result['controller']);
+        $this->assertSame('add_new', $result['action']);
     }
 
     /**
@@ -224,8 +224,8 @@ class InflectedRouteTest extends TestCase
         $expectedUrl = '/plugin/controller_name/action_name';
         $this->assertEquals($expectedUrl, $url);
         $result = $route->parse($expectedUrl, 'GET');
-        $this->assertEquals('ControllerName', $result['controller']);
-        $this->assertEquals('action_name', $result['action']);
-        $this->assertEquals('Vendor/PluginName', $result['plugin']);
+        $this->assertSame('ControllerName', $result['controller']);
+        $this->assertSame('action_name', $result['action']);
+        $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
 }

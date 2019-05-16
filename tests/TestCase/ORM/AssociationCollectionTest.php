@@ -162,7 +162,7 @@ class AssociationCollectionTest extends TestCase
         $belongsTo = new BelongsTo('Users', [
             'sourceTable' => $table,
         ]);
-        $this->assertEquals('user', $belongsTo->getProperty());
+        $this->assertSame('user', $belongsTo->getProperty());
         $this->associations->add('Users', $belongsTo);
         $this->assertNull($this->associations->get('user'));
 

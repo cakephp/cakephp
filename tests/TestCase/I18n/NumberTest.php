@@ -316,14 +316,14 @@ class NumberTest extends TestCase
     public function testDefaultCurrency()
     {
         $result = $this->Number->defaultCurrency();
-        $this->assertEquals('USD', $result);
+        $this->assertSame('USD', $result);
 
         $this->Number->defaultCurrency(false);
         I18n::setLocale('es_ES');
-        $this->assertEquals('EUR', $this->Number->defaultCurrency());
+        $this->assertSame('EUR', $this->Number->defaultCurrency());
 
         $this->Number->defaultCurrency('JPY');
-        $this->assertEquals('JPY', $this->Number->defaultCurrency());
+        $this->assertSame('JPY', $this->Number->defaultCurrency());
     }
 
     /**
@@ -411,7 +411,7 @@ class NumberTest extends TestCase
     {
         I18n::setLocale('fr_FR');
         $result = $this->Number->precision(1.234);
-        $this->assertEquals('1,234', $result);
+        $this->assertSame('1,234', $result);
     }
 
     /**
@@ -543,10 +543,10 @@ class NumberTest extends TestCase
     {
         I18n::setLocale('fr_FR');
         $result = $this->Number->toReadableSize(1321205);
-        $this->assertEquals('1,26 MB', $result);
+        $this->assertSame('1,26 MB', $result);
 
         $result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
-        $this->assertEquals('512,05 GB', $result);
+        $this->assertSame('512,05 GB', $result);
     }
 
     /**
@@ -557,14 +557,14 @@ class NumberTest extends TestCase
     public function testConfig()
     {
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
-        $this->assertEquals('₹ 15,000.00', $result);
+        $this->assertSame('₹ 15,000.00', $result);
 
         Number::config('en_IN', \NumberFormatter::CURRENCY, [
             'pattern' => '¤ #,##,##0',
         ]);
 
         $result = $this->Number->currency(15000, 'INR', ['locale' => 'en_IN']);
-        $this->assertEquals('₹ 15,000', $result);
+        $this->assertSame('₹ 15,000', $result);
     }
 
     /**
@@ -576,27 +576,27 @@ class NumberTest extends TestCase
     {
         I18n::setLocale('en_US');
         $result = $this->Number->ordinal(1);
-        $this->assertEquals('1st', $result);
+        $this->assertSame('1st', $result);
 
         $result = $this->Number->ordinal(2);
-        $this->assertEquals('2nd', $result);
+        $this->assertSame('2nd', $result);
 
         $result = $this->Number->ordinal(2, [
             'locale' => 'fr_FR',
         ]);
-        $this->assertEquals('2e', $result);
+        $this->assertSame('2e', $result);
 
         $result = $this->Number->ordinal(3);
-        $this->assertEquals('3rd', $result);
+        $this->assertSame('3rd', $result);
 
         $result = $this->Number->ordinal(4);
-        $this->assertEquals('4th', $result);
+        $this->assertSame('4th', $result);
 
         I18n::setLocale('fr_FR');
         $result = $this->Number->ordinal(1);
-        $this->assertEquals('1er', $result);
+        $this->assertSame('1er', $result);
 
         $result = $this->Number->ordinal(2);
-        $this->assertEquals('2e', $result);
+        $this->assertSame('2e', $result);
     }
 }

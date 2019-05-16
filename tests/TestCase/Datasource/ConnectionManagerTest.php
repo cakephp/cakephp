@@ -123,7 +123,7 @@ class ConnectionManagerTest extends TestCase
         $ds = ConnectionManager::get('test');
         $this->assertSame($ds, ConnectionManager::get('test'));
         $this->assertInstanceOf('Cake\Database\Connection', $ds);
-        $this->assertEquals('test', $ds->configName());
+        $this->assertSame('test', $ds->configName());
     }
 
     /**
@@ -441,7 +441,7 @@ class ConnectionManagerTest extends TestCase
     {
         $connection = new FakeConnection();
         $callable = function ($alias) use ($connection) {
-            $this->assertEquals('test_variant', $alias);
+            $this->assertSame('test_variant', $alias);
 
             return $connection;
         };

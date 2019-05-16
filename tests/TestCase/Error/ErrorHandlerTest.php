@@ -388,7 +388,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         $result = $errorHandler->response;
-        $this->assertEquals('Rendered by test plugin', $result);
+        $this->assertSame('Rendered by test plugin', $result);
     }
 
     /**

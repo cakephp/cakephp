@@ -38,9 +38,9 @@ class ResponseTest extends TestCase
         ];
         $response = new Response($headers, 'winner!');
 
-        $this->assertEquals('1.0', $response->getProtocolVersion());
+        $this->assertSame('1.0', $response->getProtocolVersion());
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertEquals('OK', $response->getReasonPhrase());
+        $this->assertSame('OK', $response->getReasonPhrase());
         $this->assertEquals(
             'text/html;charset="UTF-8"',
             $response->getHeaderLine('content-type')
@@ -49,7 +49,7 @@ class ResponseTest extends TestCase
             'Tue, 25 Dec 2012 04:43:47 GMT',
             $response->getHeaderLine('Date')
         );
-        $this->assertEquals('winner!', '' . $response->getBody());
+        $this->assertSame('winner!', '' . $response->getBody());
     }
 
     /**
@@ -67,7 +67,7 @@ class ResponseTest extends TestCase
         $response = new Response($headers, 'ok');
 
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertEquals('1.0', $response->getProtocolVersion());
+        $this->assertSame('1.0', $response->getProtocolVersion());
         $this->assertEquals(
             'text/html;charset="UTF-8"',
             $response->getHeaderLine('content-type')
@@ -87,7 +87,7 @@ class ResponseTest extends TestCase
         ];
         $response = new Response($headers, 'ok');
 
-        $this->assertEquals('1.0', $response->getProtocolVersion());
+        $this->assertSame('1.0', $response->getProtocolVersion());
         $this->assertSame(200, $response->getStatusCode());
     }
 
@@ -100,7 +100,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response([], 'string');
 
-        $this->assertEquals('string', $response->getStringBody());
+        $this->assertSame('string', $response->getStringBody());
     }
 
     /**
@@ -168,7 +168,7 @@ class ResponseTest extends TestCase
 </root>
 XML;
         $response = new Response([], $data);
-        $this->assertEquals('Test', (string)$response->getXml()->test);
+        $this->assertSame('Test', (string)$response->getXml()->test);
 
         $data = '';
         $response = new Response([], $data);
@@ -349,18 +349,18 @@ XML;
         $response = new Response($headers, '');
 
         $this->assertNull($response->getCookie('undef'));
-        $this->assertEquals('value', $response->getCookie('test'));
-        $this->assertEquals('soon', $response->getCookie('expiring'));
+        $this->assertSame('value', $response->getCookie('test'));
+        $this->assertSame('soon', $response->getCookie('expiring'));
 
         $result = $response->getCookieData('expiring');
-        $this->assertEquals('soon', $result['value']);
+        $this->assertSame('soon', $result['value']);
         $this->assertTrue($result['httponly']);
         $this->assertTrue($result['secure']);
         $this->assertEquals(
             'Wed, 09-Jun-2021 10:18:14 GMT',
             $result['expires']
         );
-        $this->assertEquals('/', $result['path']);
+        $this->assertSame('/', $result['path']);
 
         $result = $response->getCookies();
         $this->assertCount(3, $result);
@@ -432,14 +432,14 @@ XML;
             'Content-Type: text/html; charset="UTF-8"',
         ];
         $response = new Response($headers, '');
-        $this->assertEquals('UTF-8', $response->getEncoding());
+        $this->assertSame('UTF-8', $response->getEncoding());
 
         $headers = [
             'HTTP/1.0 200 Ok',
             "Content-Type: text/html; charset='ISO-8859-1'",
         ];
         $response = new Response($headers, '');
-        $this->assertEquals('ISO-8859-1', $response->getEncoding());
+        $this->assertSame('ISO-8859-1', $response->getEncoding());
     }
 
     /**
@@ -457,6 +457,6 @@ XML;
         ];
         $body = base64_decode('H4sIAAAAAAAAA/NIzcnJVyjPL8pJUQQAlRmFGwwAAAA=');
         $response = new Response($headers, $body);
-        $this->assertEquals('Hello world!', $response->getBody()->getContents());
+        $this->assertSame('Hello world!', $response->getBody()->getContents());
     }
 }

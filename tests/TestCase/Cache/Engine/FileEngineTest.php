@@ -138,8 +138,8 @@ class FileEngineTest extends TestCase
         $resultB = Cache::read('rw', 'file_test');
 
         Cache::delete('rw', 'file_test');
-        $this->assertEquals('first write', $result);
-        $this->assertEquals('second write', $resultB);
+        $this->assertSame('first write', $result);
+        $this->assertSame('second write', $resultB);
     }
 
     /**
@@ -338,7 +338,7 @@ class FileEngineTest extends TestCase
         $this->assertFileExists(TMP . 'tests/cake_views.countries.something');
 
         $result = Cache::read('views.countries.something', 'file_test');
-        $this->assertEquals('here', $result);
+        $this->assertSame('here', $result);
 
         $result = Cache::clear('file_test');
         $this->assertTrue($result);
@@ -548,7 +548,7 @@ class FileEngineTest extends TestCase
             'groups' => ['group_a', 'group_b'],
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'file_groups'));
 
         $this->assertTrue(Cache::write('test_groups2', 'value2', 'file_groups'));
         $this->assertTrue(Cache::write('test_groups3', 'value3', 'file_groups'));
@@ -567,19 +567,19 @@ class FileEngineTest extends TestCase
         ]);
 
         $this->assertTrue(Cache::write('user', 'rchavik', 'repeat'));
-        $this->assertEquals('rchavik', Cache::read('user', 'repeat'));
+        $this->assertSame('rchavik', Cache::read('user', 'repeat'));
 
         Cache::delete('user', 'repeat');
         $this->assertNull(Cache::read('user', 'repeat'));
 
         $this->assertTrue(Cache::write('user', 'ADmad', 'repeat'));
-        $this->assertEquals('ADmad', Cache::read('user', 'repeat'));
+        $this->assertSame('ADmad', Cache::read('user', 'repeat'));
 
         Cache::clearGroup('users', 'repeat');
         $this->assertNull(Cache::read('user', 'repeat'));
 
         $this->assertTrue(Cache::write('user', 'markstory', 'repeat'));
-        $this->assertEquals('markstory', Cache::read('user', 'repeat'));
+        $this->assertSame('markstory', Cache::read('user', 'repeat'));
 
         Cache::drop('repeat');
     }
@@ -597,7 +597,7 @@ class FileEngineTest extends TestCase
             'groups' => ['group_a', 'group_b'],
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'file_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'file_groups'));
 
         $this->assertNull(Cache::read('test_groups', 'file_groups'));
@@ -634,7 +634,7 @@ class FileEngineTest extends TestCase
         $this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
         $this->assertNull(Cache::read('test_groups', 'file_groups'));
         $this->assertNull(Cache::read('test_groups2', 'file_groups2'));
-        $this->assertEquals('value 3', Cache::read('test_groups3', 'file_groups3'));
+        $this->assertSame('value 3', Cache::read('test_groups3', 'file_groups3'));
 
         $this->assertTrue(Cache::write('test_groups4', 'value', 'file_groups'));
         $this->assertTrue(Cache::write('test_groups5', 'value 2', 'file_groups2'));
@@ -643,7 +643,7 @@ class FileEngineTest extends TestCase
         $this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
         $this->assertNull(Cache::read('test_groups4', 'file_groups'));
         $this->assertNull(Cache::read('test_groups5', 'file_groups2'));
-        $this->assertEquals('value 3', Cache::read('test_groups6', 'file_groups3'));
+        $this->assertSame('value 3', Cache::read('test_groups6', 'file_groups3'));
     }
 
     /**

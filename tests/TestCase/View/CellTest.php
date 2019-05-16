@@ -74,7 +74,7 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles::teaserList');
         $render = "{$cell}";
 
-        $this->assertEquals('teaser_list', $cell->viewBuilder()->getTemplate());
+        $this->assertSame('teaser_list', $cell->viewBuilder()->getTemplate());
         $this->assertStringContainsString('<h2>Lorem ipsum</h2>', $render);
         $this->assertStringContainsString('<h2>Usectetur adipiscing eli</h2>', $render);
         $this->assertStringContainsString('<h2>Topis semper blandit eu non</h2>', $render);
@@ -96,7 +96,7 @@ class CellTest extends TestCase
         $data = $cell->__debugInfo();
         $this->assertArrayHasKey('request', $data);
         $this->assertArrayHasKey('response', $data);
-        $this->assertEquals('teaserList', $data['action']);
+        $this->assertSame('teaserList', $data['action']);
         $this->assertEquals([], $data['args']);
     }
 
@@ -143,12 +143,12 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles');
 
-        $this->assertEquals('display', $appCell->viewBuilder()->getTemplate());
+        $this->assertSame('display', $appCell->viewBuilder()->getTemplate());
         $this->assertStringContainsString('dummy', "{$appCell}");
 
         $pluginCell = $this->View->cell('TestPlugin.Dummy');
         $this->assertStringContainsString('dummy', "{$pluginCell}");
-        $this->assertEquals('display', $pluginCell->viewBuilder()->getTemplate());
+        $this->assertSame('display', $pluginCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -161,7 +161,7 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles::customTemplatePath');
 
         $this->assertStringContainsString('Articles subdir custom_template_path template', "{$appCell}");
-        $this->assertEquals('custom_template_path', $appCell->viewBuilder()->getTemplate());
+        $this->assertSame('custom_template_path', $appCell->viewBuilder()->getTemplate());
         $this->assertEquals(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
@@ -175,7 +175,7 @@ class CellTest extends TestCase
         $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
 
         $this->assertStringContainsString('This is the alternate template', "{$appCell}");
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
+        $this->assertSame('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
     }
 
     /**

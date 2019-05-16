@@ -93,7 +93,7 @@ class FileTest extends TestCase
         $this->assertEquals($expecting, $result);
 
         $result = $this->File->ext();
-        $this->assertEquals('', $result);
+        $this->assertSame('', $result);
 
         $result = $this->File->name();
         $expecting = 'LICENSE';
@@ -132,7 +132,7 @@ class FileTest extends TestCase
     public function testUtf8Filenames()
     {
         $File = new File(TMP . 'tests/permissions/نام فارسی.php', true);
-        $this->assertEquals('نام فارسی', $File->name());
+        $this->assertSame('نام فارسی', $File->name());
         $this->assertTrue($File->exists());
         $this->assertTrue($File->readable());
     }
@@ -399,7 +399,7 @@ class FileTest extends TestCase
     {
         $someFile = new File(TMP . 'some_file.txt', false);
         $this->assertTrue($someFile->open());
-        $this->assertEquals('', $someFile->read());
+        $this->assertSame('', $someFile->read());
         $someFile->close();
         $someFile->delete();
     }

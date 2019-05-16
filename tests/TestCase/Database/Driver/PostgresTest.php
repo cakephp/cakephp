@@ -163,7 +163,7 @@ class PostgresTest extends TestCase
             ->values([1, 'foo']);
         $translator = $driver->queryTranslator('insert');
         $query = $translator($query);
-        $this->assertEquals('RETURNING *', $query->clause('epilog'));
+        $this->assertSame('RETURNING *', $query->clause('epilog'));
 
         $query = new Query($connection);
         $query->insert(['id', 'title'])
@@ -171,6 +171,6 @@ class PostgresTest extends TestCase
             ->values([1, 'foo'])
             ->epilog('FOO');
         $query = $translator($query);
-        $this->assertEquals('FOO', $query->clause('epilog'));
+        $this->assertSame('FOO', $query->clause('epilog'));
     }
 }

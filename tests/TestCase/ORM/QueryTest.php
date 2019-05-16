@@ -1220,9 +1220,9 @@ class QueryTest extends TestCase
         $first = $results[0];
         $this->assertEquals(1, $first->id);
         $this->assertEquals(1, $first->author_id);
-        $this->assertEquals('First Article', $first->title);
-        $this->assertEquals('First Article Body', $first->body);
-        $this->assertEquals('Y', $first->published);
+        $this->assertSame('First Article', $first->title);
+        $this->assertSame('First Article Body', $first->body);
+        $this->assertSame('Y', $first->published);
     }
 
     /**
@@ -1459,9 +1459,9 @@ class QueryTest extends TestCase
         $first = $results[0];
         $this->assertEquals(1, $first->id);
         $this->assertEquals(1, $first->author_id);
-        $this->assertEquals('First Article', $first->title);
-        $this->assertEquals('First Article Body', $first->body);
-        $this->assertEquals('Y', $first->published);
+        $this->assertSame('First Article', $first->title);
+        $this->assertSame('First Article Body', $first->body);
+        $this->assertSame('Y', $first->published);
     }
 
     /**
@@ -2528,7 +2528,7 @@ class QueryTest extends TestCase
 
         $results = $query->toArray();
         $this->assertCount(1, $results);
-        $this->assertEquals('tag3', $results[0]->_matchingData['tags']->name);
+        $this->assertSame('tag3', $results[0]->_matchingData['tags']->name);
     }
 
     /**

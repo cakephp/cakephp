@@ -69,7 +69,7 @@ class BaseApplicationTest extends TestCase
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals('Hello Jane', '' . $result->getBody());
+        $this->assertSame('Hello Jane', '' . $result->getBody());
     }
 
     /**

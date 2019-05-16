@@ -125,7 +125,7 @@ class CacheCommandsTest extends ConsoleIntegrationTestCase
         $this->exec('cache clear _cake_core_');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertEquals('value', Cache::read('key', 'test'));
+        $this->assertSame('value', Cache::read('key', 'test'));
     }
 
     /**

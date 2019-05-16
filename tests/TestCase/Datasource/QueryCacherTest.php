@@ -70,7 +70,7 @@ class QueryCacherTest extends TestCase
         }, 'queryCache');
 
         $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
+        $this->assertSame('A winner', $result);
     }
 
     /**
@@ -103,7 +103,7 @@ class QueryCacherTest extends TestCase
         $cacher = new QueryCacher('my_key', 'queryCache');
         $query = $this->getMockBuilder('stdClass')->getMock();
         $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
+        $this->assertSame('A winner', $result);
     }
 
     /**
@@ -117,7 +117,7 @@ class QueryCacherTest extends TestCase
         $cacher = new QueryCacher('my_key', $this->engine);
         $query = $this->getMockBuilder('stdClass')->getMock();
         $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
+        $this->assertSame('A winner', $result);
     }
 
     /**

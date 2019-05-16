@@ -270,7 +270,7 @@ class PaginatorComponentTest extends TestCase
             ->will($this->returnValue($query));
 
         $this->Paginator->paginate($table, $settings);
-        $this->assertEquals('popular', $this->controller->getRequest()->getParam('paging.PaginatorPosts.finder'));
+        $this->assertSame('popular', $this->controller->getRequest()->getParam('paging.PaginatorPosts.finder'));
     }
 
     /**
@@ -365,8 +365,8 @@ class PaginatorComponentTest extends TestCase
             ]);
 
         $this->Paginator->paginate($table, $settings);
-        $this->assertEquals('PaginatorPosts.id', $this->controller->getRequest()->getParam('paging.PaginatorPosts.sortDefault'));
-        $this->assertEquals('DESC', $this->controller->getRequest()->getParam('paging.PaginatorPosts.directionDefault'));
+        $this->assertSame('PaginatorPosts.id', $this->controller->getRequest()->getParam('paging.PaginatorPosts.sortDefault'));
+        $this->assertSame('DESC', $this->controller->getRequest()->getParam('paging.PaginatorPosts.directionDefault'));
     }
 
     /**
@@ -680,8 +680,8 @@ class PaginatorComponentTest extends TestCase
             'direction' => 'herp',
         ]));
         $this->Paginator->paginate($table);
-        $this->assertEquals('id', $this->controller->getRequest()->getParam('paging.PaginatorPosts.sort'));
-        $this->assertEquals('asc', $this->controller->getRequest()->getParam('paging.PaginatorPosts.direction'));
+        $this->assertSame('id', $this->controller->getRequest()->getParam('paging.PaginatorPosts.sort'));
+        $this->assertSame('asc', $this->controller->getRequest()->getParam('paging.PaginatorPosts.direction'));
     }
 
     /**
@@ -702,7 +702,7 @@ class PaginatorComponentTest extends TestCase
         $options = ['sort' => 'something', 'direction' => 'boogers'];
         $result = $this->Paginator->validateSort($model, $options);
 
-        $this->assertEquals('asc', $result['order']['model.something']);
+        $this->assertSame('asc', $result['order']['model.something']);
     }
 
     /**
@@ -1315,8 +1315,8 @@ class PaginatorComponentTest extends TestCase
 
         $result = $results->toArray();
         $this->assertCount(2, $result);
-        $this->assertEquals('First Post', $result[0]->title);
-        $this->assertEquals('Third Post', $result[1]->title);
+        $this->assertSame('First Post', $result[0]->title);
+        $this->assertSame('Third Post', $result[1]->title);
     }
 
     /**

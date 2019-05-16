@@ -1424,8 +1424,8 @@ class SecurityComponentTest extends TestCase
             $message = $ex->getMessage();
             $reason = $ex->getReason();
         }
-        $this->assertEquals('The request has been black-holed', $message);
-        $this->assertEquals('error description', $reason);
+        $this->assertSame('The request has been black-holed', $message);
+        $this->assertSame('error description', $reason);
     }
 
     /**

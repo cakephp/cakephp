@@ -93,8 +93,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $cookie = $response->getCookie('csrfToken');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-        $this->assertEquals(0, $cookie['expire'], 'session duration.');
-        $this->assertEquals('/dir/', $cookie['path'], 'session path.');
+        $this->assertSame(0, $cookie['expire'], 'session duration.');
+        $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertEquals($cookie['value'], $updatedRequest->getParam('_csrfToken'));
     }
 
@@ -285,7 +285,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');
-        $this->assertEquals('/dir/', $cookie['path'], 'session path.');
+        $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
         $this->assertTrue($cookie['httpOnly'], 'cookie httpOnly flag missing');
     }

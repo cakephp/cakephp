@@ -115,9 +115,9 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author,
         ]);
-        $this->assertEquals('author_id', $assoc->getForeignKey());
+        $this->assertSame('author_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->getForeignKey());
+        $this->assertSame('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -131,7 +131,7 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author,
         ]);
-        $this->assertEquals('author_id', $assoc->getForeignKey());
+        $this->assertSame('author_id', $assoc->getForeignKey());
     }
 
     /**
@@ -542,7 +542,7 @@ class HasManyTest extends TestCase
         $this->assertTrue($association->cascadeDelete($author));
 
         $query = $articles->query()->where(['author_id' => 1]);
-        $this->assertEquals(0, $query->count(), 'Cleared related rows');
+        $this->assertSame(0, $query->count(), 'Cleared related rows');
 
         $query = $articles->query()->where(['author_id' => 3]);
         $this->assertEquals(1, $query->count(), 'other records left behind');
@@ -589,7 +589,7 @@ class HasManyTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new HasMany('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->getProperty());
+        $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -607,7 +607,7 @@ class HasManyTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
-        $this->assertEquals('addresses', $association->getProperty());
+        $this->assertSame('addresses', $association->getProperty());
     }
 
     /**

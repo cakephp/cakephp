@@ -90,7 +90,7 @@ class ShellTest extends TestCase
      */
     public function testConstruct()
     {
-        $this->assertEquals('ShellTestShell', $this->Shell->name);
+        $this->assertSame('ShellTestShell', $this->Shell->name);
         $this->assertInstanceOf(ConsoleIo::class, $this->Shell->getIo());
     }
 
@@ -132,7 +132,7 @@ class ShellTest extends TestCase
             'TestApp\Model\Table\ArticlesTable',
             $Shell->Articles
         );
-        $this->assertEquals('Articles', $Shell->modelClass);
+        $this->assertSame('Articles', $Shell->modelClass);
 
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
@@ -165,10 +165,10 @@ class ShellTest extends TestCase
             ->will($this->returnValue('n'));
 
         $result = $this->Shell->in('Just a test?', ['y', 'n'], 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
 
         $result = $this->Shell->in('Just a test?', null, 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
     }
 
     /**
@@ -186,7 +186,7 @@ class ShellTest extends TestCase
         $this->Shell->interactive = false;
 
         $result = $this->Shell->in('Just a test?', 'y/n', 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
     }
 
     /**
@@ -722,7 +722,7 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['cakes', '--verbose']);
         $this->assertTrue($result);
-        $this->assertEquals('main', $shell->command);
+        $this->assertSame('main', $shell->command);
     }
 
     /**
@@ -745,7 +745,7 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['hit_me', 'cakes', '--verbose'], true);
         $this->assertTrue($result);
-        $this->assertEquals('hit_me', $shell->command);
+        $this->assertSame('hit_me', $shell->command);
     }
 
     /**
@@ -1346,7 +1346,7 @@ TEXT;
         $this->Shell->plugin = 'plugin';
         $parser = $this->Shell->getOptionParser();
 
-        $this->assertEquals('plugin.test', $parser->getCommand());
+        $this->assertSame('plugin.test', $parser->getCommand());
     }
 
     /**

@@ -92,8 +92,8 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertEquals(I18nTable::class, $i18n->getName());
         $this->assertInstanceOf(I18nTable::class, $i18n->getTarget());
-        $this->assertEquals('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
-        $this->assertEquals('custom_i18n_table', $i18n->getTarget()->getTable());
+        $this->assertSame('test_custom_i18n_datasource', $i18n->getTarget()->getConnection()->configName());
+        $this->assertSame('custom_i18n_table', $i18n->getTarget()->getTable());
     }
 
     /**
@@ -113,7 +113,7 @@ class TranslateBehaviorTest extends TestCase
         $items = $table->associations();
         $i18n = $items->getByProperty('_i18n');
 
-        $this->assertEquals('select', $i18n->getStrategy());
+        $this->assertSame('select', $i18n->getStrategy());
     }
 
     /**
@@ -324,16 +324,16 @@ class TranslateBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
 
-        $this->assertEquals('en_US', $table->getLocale());
+        $this->assertSame('en_US', $table->getLocale());
 
         $table->setLocale('fr_FR');
-        $this->assertEquals('fr_FR', $table->getLocale());
+        $this->assertSame('fr_FR', $table->getLocale());
 
         $table->setLocale(null);
-        $this->assertEquals('en_US', $table->getLocale());
+        $this->assertSame('en_US', $table->getLocale());
 
         I18n::setLocale('fr_FR');
-        $this->assertEquals('fr_FR', $table->getLocale());
+        $this->assertSame('fr_FR', $table->getLocale());
     }
 
     /**
@@ -695,8 +695,8 @@ class TranslateBehaviorTest extends TestCase
         $translations = $this->_extractTranslations($comments);
         $this->assertEquals($expected, $translations->toArray());
 
-        $this->assertEquals('Titulek #1', $results->first()->title);
-        $this->assertEquals('Obsah #1', $results->first()->body);
+        $this->assertSame('Titulek #1', $results->first()->title);
+        $this->assertSame('Obsah #1', $results->first()->body);
     }
 
     /**
@@ -766,7 +766,7 @@ class TranslateBehaviorTest extends TestCase
         $result = $table->get(2, ['contain' => 'Tags']);
         $this->assertNotEmpty($result);
         $this->assertNotEmpty($result->tags);
-        $this->assertEquals('Translated Info', $result->tags[0]->special_tags[0]->extra_info);
+        $this->assertSame('Translated Info', $result->tags[0]->special_tags[0]->extra_info);
     }
 
     /**
@@ -787,13 +787,13 @@ class TranslateBehaviorTest extends TestCase
 
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
-        $this->assertEquals('New translated article', $article->get('title'));
-        $this->assertEquals('Content #1', $article->get('body'));
+        $this->assertSame('New translated article', $article->get('title'));
+        $this->assertSame('Content #1', $article->get('body'));
 
         $table->setLocale(false);
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
-        $this->assertEquals('First Article', $article->get('title'));
+        $this->assertSame('First Article', $article->get('title'));
 
         $table->setLocale('eng');
         $article->set('title', 'Wow, such translated article');
@@ -803,8 +803,8 @@ class TranslateBehaviorTest extends TestCase
 
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
-        $this->assertEquals('Wow, such translated article', $article->get('title'));
-        $this->assertEquals('A translated body', $article->get('body'));
+        $this->assertSame('Wow, such translated article', $article->get('title'));
+        $this->assertSame('A translated body', $article->get('body'));
     }
 
     /**
@@ -822,12 +822,12 @@ class TranslateBehaviorTest extends TestCase
         $this->assertEquals(1, $article->get('id'));
         $article->set('title', 'Le titre');
         $table->save($article);
-        $this->assertEquals('fra', $article->get('_locale'));
+        $this->assertSame('fra', $article->get('_locale'));
 
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
-        $this->assertEquals('Le titre', $article->get('title'));
-        $this->assertEquals('First Article Body', $article->get('body'));
+        $this->assertSame('Le titre', $article->get('title'));
+        $this->assertSame('First Article Body', $article->get('body'));
 
         $article->set('title', 'Un autre titre');
         $article->set('body', 'Le contenu');
@@ -835,8 +835,8 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNull($article->get('_i18n'));
 
         $article = $table->find()->first();
-        $this->assertEquals('Un autre titre', $article->get('title'));
-        $this->assertEquals('Le contenu', $article->get('body'));
+        $this->assertSame('Un autre titre', $article->get('title'));
+        $this->assertSame('Le contenu', $article->get('body'));
     }
 
     /**
@@ -996,14 +996,14 @@ class TranslateBehaviorTest extends TestCase
 
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
-        $this->assertEquals('First Article', $article->get('title'));
-        $this->assertEquals('First Article Body', $article->get('body'));
+        $this->assertSame('First Article', $article->get('title'));
+        $this->assertSame('First Article Body', $article->get('body'));
 
         $table->setLocale('fra');
         $article = $table->find()->first();
         $this->assertEquals(1, $article->get('id'));
-        $this->assertEquals('Le titre', $article->get('title'));
-        $this->assertEquals('First Article Body', $article->get('body'));
+        $this->assertSame('Le titre', $article->get('title'));
+        $this->assertSame('First Article Body', $article->get('body'));
     }
 
     /**
@@ -1026,7 +1026,7 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNull($article->get('_i18n'));
 
         $article = $table->find()->first();
-        $this->assertEquals('Le titre', $article->get('title'));
+        $this->assertSame('Le titre', $article->get('title'));
     }
 
     /**
@@ -1044,7 +1044,7 @@ class TranslateBehaviorTest extends TestCase
         $translations = $this->getTableLocator()->get('I18n')->find()
             ->where(['model' => 'Articles', 'foreign_key' => $article->id])
             ->count();
-        $this->assertEquals(0, $translations);
+        $this->assertSame(0, $translations);
     }
 
     /**
@@ -1068,8 +1068,8 @@ class TranslateBehaviorTest extends TestCase
 
         $article = $results = $table->find('translations')->first();
         $translations = $article->get('_translations');
-        $this->assertEquals('Another title', $translations['deu']->get('title'));
-        $this->assertEquals('Another body', $translations['eng']->get('body'));
+        $this->assertSame('Another title', $translations['deu']->get('title'));
+        $this->assertSame('Another body', $translations['eng']->get('body'));
     }
 
     /**
@@ -1094,10 +1094,10 @@ class TranslateBehaviorTest extends TestCase
 
         $article = $results = $table->find('translations')->first();
         $translations = $article->get('_translations');
-        $this->assertEquals('Another title', $translations['deu']->get('title'));
-        $this->assertEquals('Another body', $translations['eng']->get('body'));
-        $this->assertEquals('Titulo', $translations['spa']->get('title'));
-        $this->assertEquals('Titre', $translations['fre']->get('title'));
+        $this->assertSame('Another title', $translations['deu']->get('title'));
+        $this->assertSame('Another body', $translations['eng']->get('body'));
+        $this->assertSame('Titulo', $translations['spa']->get('title'));
+        $this->assertSame('Titre', $translations['fre']->get('title'));
     }
 
     /**
@@ -1141,8 +1141,8 @@ class TranslateBehaviorTest extends TestCase
 
         $table->save($article);
         $article = $table->find('translations')->where(['Articles.id' => 1])->first();
-        $this->assertEquals('Un article', $article->translation('fra')->title);
-        $this->assertEquals('Un artículo', $article->translation('spa')->title);
+        $this->assertSame('Un article', $article->translation('fra')->title);
+        $this->assertSame('Un artículo', $article->translation('spa')->title);
     }
 
     /**
@@ -1161,8 +1161,8 @@ class TranslateBehaviorTest extends TestCase
         $results = $query->sortBy('id', SORT_ASC)->toList();
         $this->assertCount(2, $results);
 
-        $this->assertEquals('First Comment for Second Article', $results[0]->comment);
-        $this->assertEquals('Second Comment for Second Article', $results[1]->comment);
+        $this->assertSame('First Comment for Second Article', $results[0]->comment);
+        $this->assertSame('Second Comment for Second Article', $results[1]->comment);
     }
 
     /**
@@ -1188,7 +1188,7 @@ class TranslateBehaviorTest extends TestCase
         foreach ($association->getConditions() as $key => $value) {
             if (strpos($key, 'comment_translation.model') !== false) {
                 $found = true;
-                $this->assertEquals('Comments', $value);
+                $this->assertSame('Comments', $value);
                 break;
             }
         }
@@ -1218,7 +1218,7 @@ class TranslateBehaviorTest extends TestCase
         foreach ($association->getConditions() as $key => $value) {
             if (strpos($key, 'body_translation.model') !== false) {
                 $found = true;
-                $this->assertEquals('Posts', $value);
+                $this->assertSame('Posts', $value);
                 break;
             }
         }
@@ -1311,7 +1311,7 @@ class TranslateBehaviorTest extends TestCase
         $article->set('body', 'New Body');
         $table->save($article);
         $result = $table->get(1);
-        $this->assertEquals('New Body', $result->body);
+        $this->assertSame('New Body', $result->body);
         $this->assertSame($article->title, $result->title);
     }
 
@@ -1432,7 +1432,7 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertArrayHasKey('es', $results, 'New translation added');
         $this->assertArrayHasKey('eng', $results, 'Old translations present');
-        $this->assertEquals('Spanish Translation', $results['es']['title']);
+        $this->assertSame('Spanish Translation', $results['es']['title']);
     }
 
     /**
@@ -1470,11 +1470,11 @@ class TranslateBehaviorTest extends TestCase
             $table->find('translations')->where(['id' => 1])
         )->first();
 
-        $this->assertEquals('Mi nuevo titulo', $results['spa']['title']);
-        $this->assertEquals('Contenido Actualizado', $results['spa']['body']);
+        $this->assertSame('Mi nuevo titulo', $results['spa']['title']);
+        $this->assertSame('Contenido Actualizado', $results['spa']['body']);
 
-        $this->assertEquals('First Article1', $results['eng']['title']);
-        $this->assertEquals('Description #1', $results['eng']['description']);
+        $this->assertSame('First Article1', $results['eng']['title']);
+        $this->assertSame('Description #1', $results['eng']['description']);
     }
 
     /**
@@ -1498,8 +1498,8 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNull($article->get('_i18n'));
 
         $article = $table->get(1);
-        $this->assertEquals('New title', $article->get('title'));
-        $this->assertEquals('New body', $article->get('body'));
+        $this->assertSame('New title', $article->get('title'));
+        $this->assertSame('New body', $article->get('body'));
     }
 
     /**
@@ -1530,11 +1530,11 @@ class TranslateBehaviorTest extends TestCase
         $this->assertNull($article->get('_i18n'));
 
         $article = $table->find('translations')->where(['id' => 1])->first();
-        $this->assertEquals('New title', $article->get('title'));
-        $this->assertEquals('New body', $article->get('body'));
+        $this->assertSame('New title', $article->get('title'));
+        $this->assertSame('New body', $article->get('body'));
 
-        $this->assertEquals('ES title', $article->_translations['es']->title);
-        $this->assertEquals('ES body', $article->_translations['es']->body);
+        $this->assertSame('ES title', $article->_translations['es']->title);
+        $this->assertSame('ES body', $article->_translations['es']->body);
     }
 
     /**
@@ -1622,8 +1622,8 @@ class TranslateBehaviorTest extends TestCase
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('en', $result);
         $this->assertArrayHasKey('es', $result);
-        $this->assertEquals('English Title', $result['en']->title);
-        $this->assertEquals('Titulo Español', $result['es']->title);
+        $this->assertSame('English Title', $result['en']->title);
+        $this->assertSame('Titulo Español', $result['es']->title);
     }
 
     /**
@@ -1663,8 +1663,8 @@ class TranslateBehaviorTest extends TestCase
         ];
         $this->assertEquals($expected, $entity->getError('es'));
 
-        $this->assertEquals('English Title', $result['en']->title);
-        $this->assertEquals('', $result['es']->title);
+        $this->assertSame('English Title', $result['en']->title);
+        $this->assertNull($result['es']->title);
     }
 
     /**
@@ -1703,10 +1703,10 @@ class TranslateBehaviorTest extends TestCase
         $this->assertSame($en, $entity->get('_translations')['en']);
         $this->assertSame($es, $entity->get('_translations')['es']);
 
-        $this->assertEquals('English Title', $result['en']->title);
-        $this->assertEquals('Spanish Title', $result['es']->title);
-        $this->assertEquals('Old body', $result['en']->body);
-        $this->assertEquals('Old body', $result['es']->body);
+        $this->assertSame('English Title', $result['en']->title);
+        $this->assertSame('Spanish Title', $result['es']->title);
+        $this->assertSame('Old body', $result['en']->body);
+        $this->assertSame('Old body', $result['es']->body);
     }
 
     /**

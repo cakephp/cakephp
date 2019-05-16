@@ -129,7 +129,7 @@ class DebuggerTest extends TestCase
     public function testSetOutputFormat()
     {
         Debugger::setOutputFormat('html');
-        $this->assertEquals('html', Debugger::getOutputFormat());
+        $this->assertSame('html', Debugger::getOutputFormat());
     }
 
     /**
@@ -140,7 +140,7 @@ class DebuggerTest extends TestCase
     public function testGetSetOutputFormat()
     {
         Debugger::setOutputFormat('html');
-        $this->assertEquals('html', Debugger::getOutputFormat());
+        $this->assertSame('html', Debugger::getOutputFormat());
     }
 
     /**
@@ -289,9 +289,9 @@ class DebuggerTest extends TestCase
      */
     public function testTrimPath()
     {
-        $this->assertEquals('APP/', Debugger::trimPath(APP));
-        $this->assertEquals('CORE' . DS . 'src' . DS, Debugger::trimPath(CAKE));
-        $this->assertEquals('Some/Other/Path', Debugger::trimPath('Some/Other/Path'));
+        $this->assertSame('APP/', Debugger::trimPath(APP));
+        $this->assertSame('CORE' . DS . 'src' . DS, Debugger::trimPath(CAKE));
+        $this->assertSame('Some/Other/Path', Debugger::trimPath('Some/Other/Path'));
     }
 
     /**

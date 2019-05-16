@@ -37,8 +37,8 @@ class SchemaTest extends TestCase
             'body' => ['type' => 'string', 'length' => 1000],
         ]);
         $this->assertEquals(['email', 'body'], $schema->fields());
-        $this->assertEquals('string', $schema->field('email')['type']);
-        $this->assertEquals('string', $schema->field('body')['type']);
+        $this->assertSame('string', $schema->field('email')['type']);
+        $this->assertSame('string', $schema->field('body')['type']);
     }
 
     /**
@@ -113,8 +113,8 @@ class SchemaTest extends TestCase
                 'type' => 'decimal',
                 'required' => true,
             ]);
-        $this->assertEquals('string', $schema->fieldType('name'));
-        $this->assertEquals('decimal', $schema->fieldType('numbery'));
+        $this->assertSame('string', $schema->fieldType('name'));
+        $this->assertSame('decimal', $schema->fieldType('numbery'));
         $this->assertNull($schema->fieldType('nope'));
     }
 

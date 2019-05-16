@@ -226,7 +226,7 @@ class ServerTest extends TestCase
         ob_start();
         $server->emit($response);
         $result = ob_get_clean();
-        $this->assertEquals('body content', $result);
+        $this->assertSame('body content', $result);
     }
 
     /**

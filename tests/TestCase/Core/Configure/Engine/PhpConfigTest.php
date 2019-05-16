@@ -64,8 +64,8 @@ class PhpConfigTest extends TestCase
     {
         $engine = new PhpConfig($this->path);
         $values = $engine->read('var_test');
-        $this->assertEquals('value', $values['Read']);
-        $this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
+        $this->assertSame('value', $values['Read']);
+        $this->assertSame('buried', $values['Deep']['Deeper']['Deepest']);
     }
 
     /**

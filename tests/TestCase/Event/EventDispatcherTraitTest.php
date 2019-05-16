@@ -73,7 +73,7 @@ class EventDispatcherTraitTest extends TestCase
 
         $this->assertInstanceOf(Event::class, $event);
         $this->assertSame($this->subject, $event->getSubject());
-        $this->assertEquals('some.event', $event->getName());
+        $this->assertSame('some.event', $event->getName());
         $this->assertEquals(['foo' => 'bar'], $event->getData());
     }
 }

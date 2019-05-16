@@ -219,7 +219,7 @@ class EntityContextTest extends TestCase
         $this->assertNull($context->val('title'));
         $this->assertFalse($context->isRequired('title'));
         $this->assertFalse($context->hasError('title'));
-        $this->assertEquals('string', $context->type('title'));
+        $this->assertSame('string', $context->type('title'));
         $this->assertEquals([], $context->error('title'));
 
         $attrs = $context->attributes('title');
@@ -265,7 +265,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $result = $context->val('0.title');
-        $this->assertEquals('First post', $result);
+        $this->assertSame('First post', $result);
 
         $result = $context->error('1.body');
         $this->assertEquals(['Not long enough'], $result);
@@ -314,16 +314,16 @@ class EntityContextTest extends TestCase
         ]);
 
         $result = $context->val('0.title');
-        $this->assertEquals('First post', $result);
+        $this->assertSame('First post', $result);
 
         $result = $context->val('0.user.username');
-        $this->assertEquals('mark', $result);
+        $this->assertSame('mark', $result);
 
         $result = $context->val('1.title');
-        $this->assertEquals('Second post', $result);
+        $this->assertSame('Second post', $result);
 
         $result = $context->val('1.user.username');
-        $this->assertEquals('jose', $result);
+        $this->assertSame('jose', $result);
 
         $this->assertNull($context->val('nope'));
         $this->assertNull($context->val('99.title'));
@@ -344,16 +344,16 @@ class EntityContextTest extends TestCase
         ]);
 
         $result = $context->val('Articles.0.title');
-        $this->assertEquals('First post', $result);
+        $this->assertSame('First post', $result);
 
         $result = $context->val('Articles.0.user.username');
-        $this->assertEquals('mark', $result);
+        $this->assertSame('mark', $result);
 
         $result = $context->val('Articles.1.title');
-        $this->assertEquals('Second post', $result);
+        $this->assertSame('Second post', $result);
 
         $result = $context->val('Articles.1.user.username');
-        $this->assertEquals('jose', $result);
+        $this->assertSame('jose', $result);
 
         $this->assertNull($context->val('Articles.99.title'));
     }
@@ -397,11 +397,11 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertEquals('string', $context->type('0.title'));
-        $this->assertEquals('text', $context->type('1.body'));
-        $this->assertEquals('string', $context->type('0.user.username'));
-        $this->assertEquals('string', $context->type('1.user.username'));
-        $this->assertEquals('string', $context->type('99.title'));
+        $this->assertSame('string', $context->type('0.title'));
+        $this->assertSame('text', $context->type('1.body'));
+        $this->assertSame('string', $context->type('0.user.username'));
+        $this->assertSame('string', $context->type('1.user.username'));
+        $this->assertSame('string', $context->type('99.title'));
         $this->assertNull($context->type('0.nope'));
 
         $expected = ['length' => 255, 'precision' => null];
@@ -474,8 +474,8 @@ class EntityContextTest extends TestCase
             ]),
             'table' => 'Articles',
         ]);
-        $this->assertEquals('foo', $context->val('prop.title', ['default' => 'bar']));
-        $this->assertEquals('bar', $context->val('prop.nope', ['default' => 'bar']));
+        $this->assertSame('foo', $context->val('prop.title', ['default' => 'bar']));
+        $this->assertSame('bar', $context->val('prop.nope', ['default' => 'bar']));
     }
 
     /**
@@ -536,8 +536,8 @@ class EntityContextTest extends TestCase
             'entity' => $row,
             'table' => 'Articles',
         ]);
-        $this->assertEquals('New title', $context->val('title'));
-        $this->assertEquals('yes', $context->val('notInEntity'));
+        $this->assertSame('New title', $context->val('title'));
+        $this->assertSame('yes', $context->val('notInEntity'));
         $this->assertEquals($row->body, $context->val('body'));
     }
 
@@ -624,10 +624,10 @@ class EntityContextTest extends TestCase
         ]);
 
         $result = $context->val('user.articles.0.title');
-        $this->assertEquals('First post', $result);
+        $this->assertSame('First post', $result);
 
         $result = $context->val('user.articles.1.title');
-        $this->assertEquals('Second post', $result);
+        $this->assertSame('Second post', $result);
     }
 
     /**
@@ -706,7 +706,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $result = $context->val('title');
-        $this->assertEquals('default title', $result);
+        $this->assertSame('default title', $result);
     }
 
     /**
@@ -727,7 +727,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $result = $context->val('comments.0.comment');
-        $this->assertEquals('default comment', $result);
+        $this->assertSame('default comment', $result);
     }
 
     /**
@@ -753,7 +753,7 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
         $result = $context->val('tags.0._joinData.column');
-        $this->assertEquals('default join table column value', $result);
+        $this->assertSame('default join table column value', $result);
     }
 
     /**
@@ -1040,9 +1040,9 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertEquals('string', $context->type('title'));
-        $this->assertEquals('text', $context->type('body'));
-        $this->assertEquals('integer', $context->type('user_id'));
+        $this->assertSame('string', $context->type('title'));
+        $this->assertSame('text', $context->type('body'));
+        $this->assertSame('integer', $context->type('user_id'));
         $this->assertNull($context->type('nope'));
     }
 
@@ -1064,8 +1064,8 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertEquals('string', $context->type('user.username'));
-        $this->assertEquals('text', $context->type('user.bio'));
+        $this->assertSame('string', $context->type('user.username'));
+        $this->assertSame('text', $context->type('user.bio'));
         $this->assertNull($context->type('user.nope'));
     }
 
@@ -1093,12 +1093,12 @@ class EntityContextTest extends TestCase
             'table' => 'Articles',
         ]);
 
-        $this->assertEquals('integer', $context->type('tags.0._joinData.article_id'));
+        $this->assertSame('integer', $context->type('tags.0._joinData.article_id'));
         $this->assertNull($context->type('tags.0._joinData.non_existent'));
 
         // tests the fallback behavior
-        $this->assertEquals('integer', $context->type('tags.0._joinData._joinData.article_id'));
-        $this->assertEquals('integer', $context->type('tags.0._joinData.non_existent.article_id'));
+        $this->assertSame('integer', $context->type('tags.0._joinData._joinData.article_id'));
+        $this->assertSame('integer', $context->type('tags.0._joinData.non_existent.article_id'));
         $this->assertNull($context->type('tags.0._joinData._joinData.non_existent'));
         $this->assertNull($context->type('tags.0._joinData.non_existent'));
     }

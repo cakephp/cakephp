@@ -67,7 +67,7 @@ class IniConfigTest extends TestCase
 
         $this->assertArrayHasKey('admin', $config);
         $this->assertTrue(isset($config['paul']['groups']));
-        $this->assertEquals('ads', $config['admin']['deny']);
+        $this->assertSame('ads', $config['admin']['deny']);
     }
 
     /**
@@ -96,7 +96,7 @@ class IniConfigTest extends TestCase
         $config = $engine->read('acl');
 
         $this->assertArrayHasKey('groups', $config);
-        $this->assertEquals('administrators', $config['groups']);
+        $this->assertSame('administrators', $config['groups']);
     }
 
     /**
@@ -127,7 +127,7 @@ class IniConfigTest extends TestCase
         $config = $engine->read('nested');
 
         $this->assertTrue(isset($config['database']['db']['username']));
-        $this->assertEquals('mark', $config['database']['db']['username']);
+        $this->assertSame('mark', $config['database']['db']['username']);
         $this->assertEquals(3, $config['nesting']['one']['two']['three']);
         $this->assertFalse(isset($config['database.db.username']));
         $this->assertFalse(isset($config['database']['db.username']));
@@ -215,12 +215,12 @@ class IniConfigTest extends TestCase
         $result = $engine->read('TestPlugin.nested');
 
         $this->assertTrue(isset($result['database']['db']['username']));
-        $this->assertEquals('bar', $result['database']['db']['username']);
+        $this->assertSame('bar', $result['database']['db']['username']);
         $this->assertFalse(isset($result['database.db.username']));
         $this->assertFalse(isset($result['database']['db.username']));
 
         $result = $engine->read('TestPlugin.nested');
-        $this->assertEquals('foo', $result['database']['db']['password']);
+        $this->assertSame('foo', $result['database']['db']['password']);
         $this->clearPlugins();
     }
 

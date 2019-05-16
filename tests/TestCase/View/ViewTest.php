@@ -659,7 +659,7 @@ class ViewTest extends TestCase
     public function testElement()
     {
         $result = $this->View->element('test_element');
-        $this->assertEquals('this is the test element', $result);
+        $this->assertSame('this is the test element', $result);
 
         $result = $this->View->element('TestPlugin.plugin_element');
         $this->assertEquals("Element in the TestPlugin\n", $result);
@@ -681,21 +681,21 @@ class ViewTest extends TestCase
     {
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $result = $this->View->element('prefix_element');
-        $this->assertEquals('this is a prefixed test element', $result);
+        $this->assertSame('this is a prefixed test element', $result);
 
         $result = $this->View->element('TestPlugin.plugin_element');
-        $this->assertEquals('this is the plugin prefixed element using params[plugin]', $result);
+        $this->assertSame('this is the plugin prefixed element using params[plugin]', $result);
 
         $this->View->setRequest($this->View->getRequest()->withParam('plugin', 'TestPlugin'));
         $result = $this->View->element('test_plugin_element');
-        $this->assertEquals('this is the test set using View::$plugin plugin prefixed element', $result);
+        $this->assertSame('this is the test set using View::$plugin plugin prefixed element', $result);
 
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'FooPrefix/BarPrefix'));
         $result = $this->View->element('prefix_element');
-        $this->assertEquals('this is a nested prefixed test element', $result);
+        $this->assertSame('this is a nested prefixed test element', $result);
 
         $result = $this->View->element('prefix_element_in_parent');
-        $this->assertEquals('this is a nested prefixed test element in first level element', $result);
+        $this->assertSame('this is a nested prefixed test element in first level element', $result);
     }
 
     /**
@@ -754,11 +754,11 @@ class ViewTest extends TestCase
 
         $View = $Controller->createView();
         $result = $View->element('type_check', ['form' => 'string'], ['callbacks' => true]);
-        $this->assertEquals('string', $result);
+        $this->assertSame('string', $result);
 
         $View->set('form', 'string');
         $result = $View->element('type_check', [], ['callbacks' => true]);
-        $this->assertEquals('string', $result);
+        $this->assertSame('string', $result);
     }
 
     /**
@@ -771,7 +771,7 @@ class ViewTest extends TestCase
         $Controller = new ViewPostsController();
         $View = $Controller->createView();
         $result = $View->element('test_element', ['ram' => 'val', 'test' => ['foo', 'bar']]);
-        $this->assertEquals('this is the test element', $result);
+        $this->assertSame('this is the test element', $result);
     }
 
     /**
@@ -868,7 +868,7 @@ class ViewTest extends TestCase
         $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
 
         $config = $View->Html->getConfig();
-        $this->assertEquals('bar', $config['foo']);
+        $this->assertSame('bar', $config['foo']);
     }
 
     /**
@@ -907,10 +907,10 @@ class ViewTest extends TestCase
         $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
 
         $config = $View->Html->getConfig();
-        $this->assertEquals('bar', $config['foo']);
+        $this->assertSame('bar', $config['foo']);
 
         $config = $View->Form->getConfig();
-        $this->assertEquals('baz', $config['foo']);
+        $this->assertSame('baz', $config['foo']);
     }
 
     /**
@@ -935,7 +935,7 @@ class ViewTest extends TestCase
     {
         $View = new TestView();
         $config = $View->Html->getConfig();
-        $this->assertEquals('myval', $config['mykey']);
+        $this->assertSame('myval', $config['mykey']);
     }
 
     /**
@@ -1040,7 +1040,7 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
         $View->render('index');
-        $this->assertEquals('Valuation', $View->helpers()->TestBeforeAfter->property);
+        $this->assertSame('Valuation', $View->helpers()->TestBeforeAfter->property);
     }
 
     /**
@@ -1077,7 +1077,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
 
         $result = $View->render('index', false);
-        $this->assertEquals('posts index', $result);
+        $this->assertSame('posts index', $result);
 
         $attached = $View->helpers()->loaded();
         // HtmlHelper is loaded in TestView::initialize()
@@ -1090,7 +1090,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
 
         $result = $View->render('index', false);
-        $this->assertEquals('posts index', $result);
+        $this->assertSame('posts index', $result);
 
         $attached = $View->helpers()->loaded();
         $expected = ['Html', 'Form', 'Number', 'PluggedHelper'];
@@ -1137,7 +1137,7 @@ class ViewTest extends TestCase
         $View->setTemplatePath($this->PostsController->getName());
         $View->setTemplate('cache_form');
 
-        $this->assertEquals('cache_form', $View->getTemplate());
+        $this->assertSame('cache_form', $View->getTemplate());
         $result = $View->render();
         $this->assertRegExp('/Add User/', $result);
     }
@@ -1269,7 +1269,7 @@ class ViewTest extends TestCase
         $this->View->end();
 
         $result = $this->View->fetch('test');
-        $this->assertEquals('New content', $result);
+        $this->assertSame('New content', $result);
     }
 
     /**
@@ -1289,7 +1289,7 @@ class ViewTest extends TestCase
         $this->View->end();
 
         $result = $this->View->fetch('test');
-        $this->assertEquals('Block contentNew content', $result);
+        $this->assertSame('Block contentNew content', $result);
     }
 
     /**
@@ -1304,7 +1304,7 @@ class ViewTest extends TestCase
         $this->View->end();
 
         $result = $this->View->fetch('test');
-        $this->assertEquals('Block content', $result);
+        $this->assertSame('Block content', $result);
     }
 
     /**
@@ -1325,7 +1325,7 @@ class ViewTest extends TestCase
         $this->View->end();
 
         $result = $this->View->fetch('test');
-        $this->assertEquals('Content appended', $result);
+        $this->assertSame('Content appended', $result);
     }
 
     /**
@@ -1339,7 +1339,7 @@ class ViewTest extends TestCase
         $this->assertSame($this->View, $result);
 
         $result = $this->View->fetch('test');
-        $this->assertEquals('Block content', $result);
+        $this->assertSame('Block content', $result);
     }
 
     /**
@@ -1433,7 +1433,7 @@ class ViewTest extends TestCase
     {
         $this->View->assign('testWithDecimal', 1.23456789);
         $result = $this->View->fetch('testWithDecimal');
-        $this->assertEquals('1.23456789', $result);
+        $this->assertSame('1.23456789', $result);
     }
 
     /**
@@ -1526,7 +1526,7 @@ class ViewTest extends TestCase
         $this->assertSame($this->View, $result);
 
         $result = $this->View->fetch('test');
-        $this->assertEquals('Unknown', $result);
+        $this->assertSame('Unknown', $result);
     }
 
     /**
@@ -1538,7 +1538,7 @@ class ViewTest extends TestCase
     {
         $this->View->prepend('test', 'Unknown');
         $result = $this->View->fetch('test');
-        $this->assertEquals('Unknown', $result);
+        $this->assertSame('Unknown', $result);
     }
 
     /**
@@ -1569,8 +1569,8 @@ class ViewTest extends TestCase
         echo 'In first';
         $this->View->end();
 
-        $this->assertEquals('In first In first', $this->View->fetch('first'));
-        $this->assertEquals('In second', $this->View->fetch('second'));
+        $this->assertSame('In first In first', $this->View->fetch('first'));
+        $this->assertSame('In second', $this->View->fetch('second'));
     }
 
     /**

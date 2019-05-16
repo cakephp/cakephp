@@ -65,7 +65,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals('', $body);
+        $this->assertSame('', $body);
         $this->assertEquals(304, $res->getStatusCode());
         $this->assertNotEmpty($res->getHeaderLine('Last-Modified'));
     }
@@ -84,7 +84,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals('', $body);
+        $this->assertSame('', $body);
     }
 
     /**

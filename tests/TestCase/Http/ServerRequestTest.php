@@ -157,7 +157,7 @@ class ServerRequestTest extends TestCase
         ];
         $request = new ServerRequest($data);
         $this->assertEquals($request->getQueryParams(), $data['query']);
-        $this->assertEquals('/some/path', $request->getRequestTarget());
+        $this->assertSame('/some/path', $request->getRequestTarget());
     }
 
     /**
@@ -170,10 +170,10 @@ class ServerRequestTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/some/other/path';
 
         $request = new ServerRequest(['url' => '/articles/view/1']);
-        $this->assertEquals('/articles/view/1', $request->getUri()->getPath());
+        $this->assertSame('/articles/view/1', $request->getUri()->getPath());
 
         $request = new ServerRequest(['url' => '/']);
-        $this->assertEquals('/', $request->getUri()->getPath());
+        $this->assertSame('/', $request->getUri()->getPath());
     }
     /**
      * Test that querystring args provided in the URL string are parsed.
@@ -186,8 +186,8 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
         $expected = ['one' => 'something', 'two' => 'else'];
         $this->assertEquals($expected, $request->getQueryParams());
-        $this->assertEquals('/some/path', $request->getUri()->getPath());
-        $this->assertEquals('one=something&two=else', $request->getUri()->getQuery());
+        $this->assertSame('/some/path', $request->getUri()->getPath());
+        $this->assertSame('one=something&two=else', $request->getUri()->getQuery());
     }
 
     /**
@@ -199,19 +199,19 @@ class ServerRequestTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/tasks/index?ts=123456';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/tasks/index', $request->getRequestTarget());
+        $this->assertSame('/tasks/index', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = '/tasks/index/?ts=123456';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/tasks/index/', $request->getRequestTarget());
+        $this->assertSame('/tasks/index/', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = '/some/path?url=http://cakephp.org';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/some/path', $request->getRequestTarget());
+        $this->assertSame('/some/path', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/other/path', $request->getRequestTarget());
+        $this->assertSame('/other/path', $request->getRequestTarget());
     }
 
     /**
@@ -221,11 +221,11 @@ class ServerRequestTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/jump/http://cakephp.org';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/jump/http://cakephp.org', $request->getRequestTarget());
+        $this->assertSame('/jump/http://cakephp.org', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/jump/http://cakephp.org';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/jump/http://cakephp.org', $request->getRequestTarget());
+        $this->assertSame('/jump/http://cakephp.org', $request->getRequestTarget());
     }
 
     /**
@@ -239,10 +239,10 @@ class ServerRequestTest extends TestCase
         $this->assertSame('/', $request->getPath());
 
         $request = new ServerRequest(['url' => 'some/path?one=something&two=else']);
-        $this->assertEquals('/some/path', $request->getPath());
+        $this->assertSame('/some/path', $request->getPath());
 
         $request = $request->withRequestTarget('/foo/bar?x=y');
-        $this->assertEquals('/foo/bar', $request->getPath());
+        $this->assertSame('/foo/bar', $request->getPath());
     }
 
     /**
@@ -449,14 +449,14 @@ class ServerRequestTest extends TestCase
         $uploads = $request->getUploadedFiles();
         $this->assertCount(3, $uploads);
         $this->assertArrayHasKey(0, $uploads);
-        $this->assertEquals('scratch.text', $uploads[0]['image']->getClientFilename());
+        $this->assertSame('scratch.text', $uploads[0]['image']->getClientFilename());
 
         $this->assertArrayHasKey('pictures', $uploads);
-        $this->assertEquals('a-file.png', $uploads['pictures'][0]['file']->getClientFilename());
-        $this->assertEquals('a-moose.png', $uploads['pictures'][1]['file']->getClientFilename());
+        $this->assertSame('a-file.png', $uploads['pictures'][0]['file']->getClientFilename());
+        $this->assertSame('a-moose.png', $uploads['pictures'][1]['file']->getClientFilename());
 
         $this->assertArrayHasKey('image_main', $uploads);
-        $this->assertEquals('born on.txt', $uploads['image_main']['file']->getClientFilename());
+        $this->assertSame('born on.txt', $uploads['image_main']['file']->getClientFilename());
     }
 
     /**
@@ -491,9 +491,9 @@ class ServerRequestTest extends TestCase
         $uploads = $request->getUploadedFiles();
         $this->assertCount(1, $uploads);
         $this->assertArrayHasKey('birth_cert', $uploads);
-        $this->assertEquals('born on.txt', $uploads['birth_cert']->getClientFilename());
-        $this->assertEquals(0, $uploads['birth_cert']->getError());
-        $this->assertEquals('application/octet-stream', $uploads['birth_cert']->getClientMediaType());
+        $this->assertSame('born on.txt', $uploads['birth_cert']->getClientFilename());
+        $this->assertSame(0, $uploads['birth_cert']->getError());
+        $this->assertSame('application/octet-stream', $uploads['birth_cert']->getClientMediaType());
         $this->assertEquals(123, $uploads['birth_cert']->getSize());
     }
 
@@ -632,21 +632,21 @@ class ServerRequestTest extends TestCase
     {
         $post = ['_method' => 'POST'];
         $request = new ServerRequest(compact('post'));
-        $this->assertEquals('POST', $request->getEnv('REQUEST_METHOD'));
+        $this->assertSame('POST', $request->getEnv('REQUEST_METHOD'));
 
         $post = ['_method' => 'DELETE'];
         $request = new ServerRequest(compact('post'));
-        $this->assertEquals('DELETE', $request->getEnv('REQUEST_METHOD'));
+        $this->assertSame('DELETE', $request->getEnv('REQUEST_METHOD'));
 
         $request = new ServerRequest(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
-        $this->assertEquals('PUT', $request->getEnv('REQUEST_METHOD'));
+        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
 
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'POST'],
             'post' => ['_method' => 'PUT'],
         ]);
-        $this->assertEquals('PUT', $request->getEnv('REQUEST_METHOD'));
-        $this->assertEquals('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
+        $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
+        $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
     }
 
     /**
@@ -664,22 +664,22 @@ class ServerRequestTest extends TestCase
         ]]);
 
         $request->trustProxy = true;
-        $this->assertEquals('real.ip', $request->clientIp());
+        $this->assertSame('real.ip', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
-        $this->assertEquals('192.168.1.1', $request->clientIp());
+        $this->assertSame('192.168.1.1', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_REAL_IP', '');
-        $this->assertEquals('192.168.1.2', $request->clientIp());
+        $this->assertSame('192.168.1.2', $request->clientIp());
 
         $request->trustProxy = false;
-        $this->assertEquals('192.168.1.3', $request->clientIp());
+        $this->assertSame('192.168.1.3', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
-        $this->assertEquals('192.168.1.3', $request->clientIp());
+        $this->assertSame('192.168.1.3', $request->clientIp());
 
         $request = $request->withEnv('HTTP_CLIENT_IP', '');
-        $this->assertEquals('192.168.1.3', $request->clientIp());
+        $this->assertSame('192.168.1.3', $request->clientIp());
     }
 
     /**
@@ -703,19 +703,19 @@ class ServerRequestTest extends TestCase
             '192.168.1.3',
         ]);
 
-        $this->assertEquals('real.ip', $request->clientIp());
+        $this->assertSame('real.ip', $request->clientIp());
 
         $request = $request->withEnv(
             'HTTP_X_FORWARDED_FOR',
             'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
         );
-        $this->assertEquals('192.168.1.3', $request->clientIp());
+        $this->assertSame('192.168.1.3', $request->clientIp());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_FOR', '');
-        $this->assertEquals('192.168.1.1', $request->clientIp());
+        $this->assertSame('192.168.1.1', $request->clientIp());
 
         $request->trustProxy = false;
-        $this->assertEquals('192.168.1.4', $request->clientIp());
+        $this->assertSame('192.168.1.4', $request->clientIp());
     }
 
     /**
@@ -873,7 +873,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'delete'],
         ]);
-        $this->assertEquals('delete', $request->getMethod());
+        $this->assertSame('delete', $request->getMethod());
     }
 
     /**
@@ -888,8 +888,8 @@ class ServerRequestTest extends TestCase
         ]);
         $new = $request->withMethod('put');
         $this->assertNotSame($new, $request);
-        $this->assertEquals('delete', $request->getMethod());
-        $this->assertEquals('put', $new->getMethod());
+        $this->assertSame('delete', $request->getMethod());
+        $this->assertSame('put', $new->getMethod());
     }
 
     /**
@@ -915,13 +915,13 @@ class ServerRequestTest extends TestCase
     public function testGetProtocolVersion()
     {
         $request = new ServerRequest();
-        $this->assertEquals('1.1', $request->getProtocolVersion());
+        $this->assertSame('1.1', $request->getProtocolVersion());
 
         // SERVER var.
         $request = new ServerRequest([
             'environment' => ['SERVER_PROTOCOL' => 'HTTP/1.0'],
         ]);
-        $this->assertEquals('1.0', $request->getProtocolVersion());
+        $this->assertSame('1.0', $request->getProtocolVersion());
     }
 
     /**
@@ -934,8 +934,8 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest();
         $new = $request->withProtocolVersion('1.0');
         $this->assertNotSame($new, $request);
-        $this->assertEquals('1.1', $request->getProtocolVersion());
-        $this->assertEquals('1.0', $new->getProtocolVersion());
+        $this->assertSame('1.1', $request->getProtocolVersion());
+        $this->assertSame('1.0', $new->getProtocolVersion());
     }
 
     /**
@@ -962,10 +962,10 @@ class ServerRequestTest extends TestCase
             'HTTP_HOST' => 'localhost',
             'HTTP_X_FORWARDED_HOST' => 'cakephp.org',
         ]]);
-        $this->assertEquals('localhost', $request->host());
+        $this->assertSame('localhost', $request->host());
 
         $request->trustProxy = true;
-        $this->assertEquals('cakephp.org', $request->host());
+        $this->assertSame('cakephp.org', $request->host());
     }
 
     /**
@@ -977,14 +977,14 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => ['SERVER_PORT' => '80']]);
 
-        $this->assertEquals('80', $request->port());
+        $this->assertSame('80', $request->port());
 
         $request = $request->withEnv('SERVER_PORT', '443');
         $request = $request->withEnv('HTTP_X_FORWARDED_PORT', '80');
-        $this->assertEquals('443', $request->port());
+        $this->assertSame('443', $request->port());
 
         $request->trustProxy = true;
-        $this->assertEquals('80', $request->port());
+        $this->assertSame('80', $request->port());
     }
 
     /**
@@ -996,10 +996,10 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
-        $this->assertEquals('example.com', $request->domain());
+        $this->assertSame('example.com', $request->domain());
 
         $request = $request->withEnv('HTTP_HOST', 'something.example.co.uk');
-        $this->assertEquals('example.co.uk', $request->domain(2));
+        $this->assertSame('example.co.uk', $request->domain(2));
     }
 
     /**
@@ -1011,14 +1011,14 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['environment' => ['HTTPS' => 'on']]);
 
-        $this->assertEquals('https', $request->scheme());
+        $this->assertSame('https', $request->scheme());
 
         $request = $request->withEnv('HTTPS', '');
-        $this->assertEquals('http', $request->scheme());
+        $this->assertSame('http', $request->scheme());
 
         $request = $request->withEnv('HTTP_X_FORWARDED_PROTO', 'https');
         $request->trustProxy = true;
-        $this->assertEquals('https', $request->scheme());
+        $this->assertSame('https', $request->scheme());
     }
 
     /**
@@ -1285,13 +1285,13 @@ class ServerRequestTest extends TestCase
             'HTTP_CONTENT_MD5' => 'abc123',
             'HTTP_DOUBLE' => ['a', 'b'],
         ]]);
-        $this->assertEquals('', $request->getHeaderLine('Authorization'));
+        $this->assertSame('', $request->getHeaderLine('Authorization'));
 
         $expected = $request->getEnv('CONTENT_LENGTH');
         $this->assertEquals($expected, $request->getHeaderLine('Content-Length'));
         $this->assertEquals($expected, $request->getHeaderLine('content-Length'));
         $this->assertEquals($expected, $request->getHeaderLine('ConTent-LenGth'));
-        $this->assertEquals('a, b', $request->getHeaderLine('Double'));
+        $this->assertSame('a, b', $request->getHeaderLine('Double'));
     }
 
     /**
@@ -1335,8 +1335,8 @@ class ServerRequestTest extends TestCase
         $new = $request->withAddedHeader('Double', 'c');
         $this->assertNotSame($new, $request);
 
-        $this->assertEquals('a, b', $request->getHeaderLine('Double'), 'old request is unchanged');
-        $this->assertEquals('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
+        $this->assertSame('a, b', $request->getHeaderLine('Double'), 'old request is unchanged');
+        $this->assertSame('a, b, c', $new->getHeaderLine('Double'), 'new request is correct');
 
         $new = $request->withAddedHeader('Content-Length', 777);
         $this->assertEquals([1337, 777], $new->getHeader('Content-Length'), 'scalar values are appended');
@@ -1363,7 +1363,7 @@ class ServerRequestTest extends TestCase
         $this->assertNotSame($new, $request);
 
         $this->assertEquals(1337, $request->getHeaderLine('Content-length'), 'old request is unchanged');
-        $this->assertEquals('', $new->getHeaderLine('Content-length'), 'new request is correct');
+        $this->assertSame('', $new->getHeaderLine('Content-length'), 'new request is correct');
     }
 
     /**
@@ -1515,41 +1515,41 @@ class ServerRequestTest extends TestCase
         $_SERVER['PATH_INFO'] = '/posts/view/1';
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/urlencode%20me', $request->getAttribute('base'));
-        $this->assertEquals('/urlencode%20me/', $request->getAttribute('webroot'));
-        $this->assertEquals('/posts/view/1', $request->getRequestTarget());
+        $this->assertSame('/urlencode%20me', $request->getAttribute('base'));
+        $this->assertSame('/urlencode%20me/', $request->getAttribute('webroot'));
+        $this->assertSame('/posts/view/1', $request->getRequestTarget());
 
         $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
         $_SERVER['PHP_SELF'] = '/1.2.x.x/webroot/index.php';
         $_SERVER['PATH_INFO'] = '/posts/view/1';
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/1.2.x.x', $request->getAttribute('base'));
-        $this->assertEquals('/1.2.x.x/', $request->getAttribute('webroot'));
-        $this->assertEquals('/posts/view/1', $request->getRequestTarget());
+        $this->assertSame('/1.2.x.x', $request->getAttribute('base'));
+        $this->assertSame('/1.2.x.x/', $request->getAttribute('webroot'));
+        $this->assertSame('/posts/view/1', $request->getRequestTarget());
 
         $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/webroot';
         $_SERVER['PHP_SELF'] = '/index.php';
         $_SERVER['PATH_INFO'] = '/posts/add';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('', $request->getAttribute('base'));
-        $this->assertEquals('/', $request->getAttribute('webroot'));
-        $this->assertEquals('/posts/add', $request->getRequestTarget());
+        $this->assertSame('', $request->getAttribute('base'));
+        $this->assertSame('/', $request->getAttribute('webroot'));
+        $this->assertSame('/posts/add', $request->getRequestTarget());
 
         $_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('', $request->getAttribute('base'));
-        $this->assertEquals('/', $request->getAttribute('webroot'));
+        $this->assertSame('', $request->getAttribute('base'));
+        $this->assertSame('/', $request->getAttribute('webroot'));
 
         $_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('', $request->getAttribute('base'));
-        $this->assertEquals('/', $request->getAttribute('webroot'));
+        $this->assertSame('', $request->getAttribute('base'));
+        $this->assertSame('/', $request->getAttribute('webroot'));
 
         Configure::write('App.dir', 'auth');
 
@@ -1558,8 +1558,8 @@ class ServerRequestTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/demos', $request->getAttribute('base'));
-        $this->assertEquals('/demos/', $request->getAttribute('webroot'));
+        $this->assertSame('/demos', $request->getAttribute('base'));
+        $this->assertSame('/demos/', $request->getAttribute('webroot'));
 
         Configure::write('App.dir', 'code');
 
@@ -1567,8 +1567,8 @@ class ServerRequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/clients/PewterReport/webroot/index.php';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/clients/PewterReport', $request->getAttribute('base'));
-        $this->assertEquals('/clients/PewterReport/', $request->getAttribute('webroot'));
+        $this->assertSame('/clients/PewterReport', $request->getAttribute('base'));
+        $this->assertSame('/clients/PewterReport/', $request->getAttribute('webroot'));
     }
 
     /**
@@ -1585,8 +1585,8 @@ class ServerRequestTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/control', $request->getAttribute('base'));
-        $this->assertEquals('/control/', $request->getAttribute('webroot'));
+        $this->assertSame('/control', $request->getAttribute('base'));
+        $this->assertSame('/control/', $request->getAttribute('webroot'));
 
         Configure::write('App.base', false);
         Configure::write('App.dir', 'affiliate');
@@ -1596,8 +1596,8 @@ class ServerRequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('', $request->getAttribute('base'));
-        $this->assertEquals('/', $request->getAttribute('webroot'));
+        $this->assertSame('', $request->getAttribute('base'));
+        $this->assertSame('/', $request->getAttribute('webroot'));
     }
 
     /**
@@ -1619,45 +1619,45 @@ class ServerRequestTest extends TestCase
         unset($_SERVER['PATH_INFO']);
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/cakephp', $request->getAttribute('base'));
-        $this->assertEquals('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertEquals('/', $request->getRequestTarget());
+        $this->assertSame('/cakephp', $request->getAttribute('base'));
+        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
+        $this->assertSame('/', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/';
         $_SERVER['PATH_INFO'] = '/';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/cakephp', $request->getAttribute('base'));
-        $this->assertEquals('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertEquals('/', $request->getRequestTarget());
+        $this->assertSame('/cakephp', $request->getAttribute('base'));
+        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
+        $this->assertSame('/', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/apples';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/apples';
         $_SERVER['PATH_INFO'] = '/apples';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/cakephp', $request->getAttribute('base'));
-        $this->assertEquals('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertEquals('/apples', $request->getRequestTarget());
+        $this->assertSame('/cakephp', $request->getAttribute('base'));
+        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
+        $this->assertSame('/apples', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/melons/share/';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/melons/share/';
         $_SERVER['PATH_INFO'] = '/melons/share/';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/cakephp', $request->getAttribute('base'));
-        $this->assertEquals('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertEquals('/melons/share/', $request->getRequestTarget());
+        $this->assertSame('/cakephp', $request->getAttribute('base'));
+        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
+        $this->assertSame('/melons/share/', $request->getRequestTarget());
 
         $_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
         $_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
         $_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/cakephp', $request->getAttribute('base'));
-        $this->assertEquals('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertEquals('/bananas/eat/tasty_banana', $request->getRequestTarget());
+        $this->assertSame('/cakephp', $request->getAttribute('base'));
+        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
+        $this->assertSame('/bananas/eat/tasty_banana', $request->getRequestTarget());
     }
 
     /**
@@ -1673,9 +1673,9 @@ class ServerRequestTest extends TestCase
         $_SERVER['PATH_INFO'] = '/bananas/eat';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/cakephp', $request->getAttribute('base'));
-        $this->assertEquals('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertEquals('/bananas/eat', $request->getRequestTarget());
+        $this->assertSame('/cakephp', $request->getAttribute('base'));
+        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
+        $this->assertSame('/bananas/eat', $request->getRequestTarget());
     }
 
     /**
@@ -1698,9 +1698,9 @@ class ServerRequestTest extends TestCase
         ]);
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/cake/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/cake/webroot/', $request->getAttribute('webroot'));
-        $this->assertEquals('/posts/index', $request->getRequestTarget());
+        $this->assertSame('/cake/index.php', $request->getAttribute('base'));
+        $this->assertSame('/cake/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/posts/index', $request->getRequestTarget());
     }
 
     /**
@@ -1714,43 +1714,43 @@ class ServerRequestTest extends TestCase
         Configure::write('App.baseUrl', '/App/webroot/index.php');
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/App/webroot/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/App/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/App/webroot/index.php', $request->getAttribute('base'));
+        $this->assertSame('/App/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/App/webroot/test.php');
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/App/webroot/test.php', $request->getAttribute('base'));
-        $this->assertEquals('/App/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/App/webroot/test.php', $request->getAttribute('base'));
+        $this->assertSame('/App/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/App/index.php');
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/App/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/App/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/App/index.php', $request->getAttribute('base'));
+        $this->assertSame('/App/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/CakeBB/App/webroot/index.php');
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/CakeBB/App/webroot/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/CakeBB/App/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/CakeBB/App/webroot/index.php', $request->getAttribute('base'));
+        $this->assertSame('/CakeBB/App/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/CakeBB/App/index.php');
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/CakeBB/App/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/CakeBB/App/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/CakeBB/App/index.php', $request->getAttribute('base'));
+        $this->assertSame('/CakeBB/App/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/CakeBB/index.php');
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/CakeBB/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/CakeBB/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/CakeBB/index.php', $request->getAttribute('base'));
+        $this->assertSame('/CakeBB/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/dbhauser/index.php');
         $_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
         $_SERVER['SCRIPT_FILENAME'] = '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php';
         $request = ServerRequestFactory::fromGlobals();
 
-        $this->assertEquals('/dbhauser/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/dbhauser/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/dbhauser/index.php', $request->getAttribute('base'));
+        $this->assertSame('/dbhauser/webroot/', $request->getAttribute('webroot'));
     }
 
     /**
@@ -1765,8 +1765,8 @@ class ServerRequestTest extends TestCase
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/index.php';
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/index.php', $request->getAttribute('base'));
+        $this->assertSame('/webroot/', $request->getAttribute('webroot'));
     }
 
     /**
@@ -1781,16 +1781,16 @@ class ServerRequestTest extends TestCase
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/approval/index.php';
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/approval/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/approval/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/approval/index.php', $request->getAttribute('base'));
+        $this->assertSame('/approval/webroot/', $request->getAttribute('webroot'));
 
         Configure::write('App.baseUrl', '/webrootable/index.php');
         $_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/webrootable/index.php';
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/webrootable/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/webrootable/webroot/', $request->getAttribute('webroot'));
+        $this->assertSame('/webrootable/index.php', $request->getAttribute('base'));
+        $this->assertSame('/webrootable/webroot/', $request->getAttribute('webroot'));
     }
 
     /**
@@ -1805,8 +1805,8 @@ class ServerRequestTest extends TestCase
         $_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/webroot/index.php';
 
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/index.php', $request->getAttribute('base'));
-        $this->assertEquals('/', $request->getAttribute('webroot'));
+        $this->assertSame('/index.php', $request->getAttribute('base'));
+        $this->assertSame('/', $request->getAttribute('webroot'));
     }
 
     /**
@@ -1822,7 +1822,7 @@ class ServerRequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/posts/index/add.add';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('', $request->getAttribute('base'));
+        $this->assertSame('', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
 
         $_GET = [];
@@ -1830,7 +1830,7 @@ class ServerRequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/cake_dev', $request->getAttribute('base'));
+        $this->assertSame('/cake_dev', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
     }
 
@@ -1846,7 +1846,7 @@ class ServerRequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('', $request->getAttribute('base'));
+        $this->assertSame('', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
 
         $_GET = [];
@@ -1854,7 +1854,7 @@ class ServerRequestTest extends TestCase
         $_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
         $_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('/cake_dev', $request->getAttribute('base'));
+        $this->assertSame('/cake_dev', $request->getAttribute('base'));
         $this->assertEquals([], $request->getQueryParams());
     }
 
@@ -2278,7 +2278,7 @@ class ServerRequestTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $uri = $request->getUri();
 
-        $this->assertEquals('/' . $expected['url'], $uri->getPath(), 'Uri->getPath() is incorrect');
+        $this->assertSame('/' . $expected['url'], $uri->getPath(), 'Uri->getPath() is incorrect');
         $this->assertEquals($expected['base'], $request->getAttribute('base'), 'base is incorrect');
         $this->assertEquals($expected['webroot'], $request->getAttribute('webroot'), 'webroot is incorrect');
 
@@ -2641,7 +2641,7 @@ class ServerRequestTest extends TestCase
             'input' => 'I came from stdin',
         ]);
         $result = $request->input();
-        $this->assertEquals('I came from stdin', $result);
+        $this->assertSame('I came from stdin', $result);
     }
 
     /**
@@ -2697,7 +2697,7 @@ XML;
         ]);
         $result = $request->getBody();
         $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
-        $this->assertEquals('key=val&some=data', $result->getContents());
+        $this->assertSame('key=val&some=data', $result->getContents());
     }
 
     /**
@@ -2727,7 +2727,7 @@ XML;
         $request = new ServerRequest(['url' => 'articles/view/3']);
         $result = $request->getUri();
         $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
-        $this->assertEquals('/articles/view/3', $result->getPath());
+        $this->assertSame('/articles/view/3', $result->getPath());
     }
 
     /**
@@ -2836,7 +2836,7 @@ XML;
                 ],
             ],
         ]);
-        $this->assertEquals('A value in the cookie', $request->getCookie('testing'));
+        $this->assertSame('A value in the cookie', $request->getCookie('testing'));
         $this->assertNull($request->getCookie('not there'));
         $this->assertSame('default', $request->getCookie('not there', 'default'));
 
@@ -2981,11 +2981,11 @@ XML;
     {
         $_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('application/json', $request->contentType());
+        $this->assertSame('application/json', $request->contentType());
 
         $_SERVER['CONTENT_TYPE'] = 'application/xml';
         $request = ServerRequestFactory::fromGlobals();
-        $this->assertEquals('application/xml', $request->contentType(), 'prefer non http header.');
+        $this->assertSame('application/xml', $request->contentType(), 'prefer non http header.');
     }
 
     /**
@@ -3087,9 +3087,9 @@ XML;
         $result = $request->withData('Model.new_value', 'new value');
         $this->assertNull($request->getData('Model.new_value'), 'Original request should not change.');
         $this->assertNotSame($result, $request);
-        $this->assertEquals('new value', $result->getData('Model.new_value'));
-        $this->assertEquals('new value', $result->getData()['Model']['new_value']);
-        $this->assertEquals('value', $result->getData('Model.field'));
+        $this->assertSame('new value', $result->getData('Model.new_value'));
+        $this->assertSame('new value', $result->getData()['Model']['new_value']);
+        $this->assertSame('value', $result->getData('Model.field'));
     }
 
     /**
@@ -3272,7 +3272,7 @@ XML;
             $request->getRequestTarget(),
             'should be unchanged.'
         );
-        $this->assertEquals('/articles/view/3', $new->getRequestTarget(), 'reflects method call');
+        $this->assertSame('/articles/view/3', $new->getRequestTarget(), 'reflects method call');
     }
 
     /**

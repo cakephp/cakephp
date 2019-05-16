@@ -316,6 +316,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
         });
         $response = $middleware->process($request, $handler);
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals('An Internal Server Error Occurred', '' . $response->getBody());
+        $this->assertSame('An Internal Server Error Occurred', '' . $response->getBody());
     }
 }

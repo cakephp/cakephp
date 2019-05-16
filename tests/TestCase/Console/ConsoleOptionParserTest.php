@@ -38,7 +38,7 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->setDescription('A test');
 
         $this->assertEquals($parser, $result, 'Setting description is not chainable');
-        $this->assertEquals('A test', $parser->getDescription(), 'getting value is wrong.');
+        $this->assertSame('A test', $parser->getDescription(), 'getting value is wrong.');
 
         $result = $parser->setDescription(['A test', 'something']);
         $this->assertEquals("A test\nsomething", $parser->getDescription(), 'getting value is wrong.');
@@ -55,7 +55,7 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->setEpilog('A test');
 
         $this->assertEquals($parser, $result, 'Setting epilog is not chainable');
-        $this->assertEquals('A test', $parser->getEpilog(), 'getting value is wrong.');
+        $this->assertSame('A test', $parser->getEpilog(), 'getting value is wrong.');
 
         $result = $parser->setEpilog(['A test', 'something']);
         $this->assertEquals("A test\nsomething", $parser->getEpilog(), 'getting value is wrong.');
@@ -451,7 +451,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addArgument(new ConsoleInputArgument('test'));
         $result = $parser->arguments();
         $this->assertCount(1, $result);
-        $this->assertEquals('test', $result[0]->name());
+        $this->assertSame('test', $result[0]->name());
     }
 
     /**
@@ -468,9 +468,9 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->arguments();
         $this->assertCount(3, $result);
-        $this->assertEquals('other', $result[0]->name());
-        $this->assertEquals('name', $result[1]->name());
-        $this->assertEquals('bag', $result[2]->name());
+        $this->assertSame('other', $result[0]->name());
+        $this->assertSame('name', $result[1]->name());
+        $this->assertSame('bag', $result[2]->name());
         $this->assertSame([0, 1, 2], array_keys($result));
         $this->assertEquals(
             ['other', 'name', 'bag'],
@@ -639,7 +639,7 @@ class ConsoleOptionParserTest extends TestCase
         ])->addArgument('name', ['required' => false]);
 
         $result = $parser->parse(['build']);
-        $this->assertEquals('default', $result[0]['connection']);
+        $this->assertSame('default', $result[0]['connection']);
 
         $result = $parser->subcommands();
         $this->assertArrayHasKey('build', $result);
@@ -657,7 +657,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addSubcommand(new ConsoleInputSubcommand('test'));
         $result = $parser->subcommands();
         $this->assertCount(1, $result);
-        $this->assertEquals('test', $result['test']->name());
+        $this->assertSame('test', $result['test']->name());
     }
 
     /**
@@ -666,15 +666,15 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddSubcommandSort()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $this->assertEquals(true, $parser->isSubcommandSortEnabled());
+        $this->assertTrue($parser->isSubcommandSortEnabled());
         $parser->enableSubcommandSort(false);
-        $this->assertEquals(false, $parser->isSubcommandSortEnabled());
+        $this->assertFalse($parser->isSubcommandSortEnabled());
         $parser->addSubcommand(new ConsoleInputSubcommand('betaTest'), []);
         $parser->addSubcommand(new ConsoleInputSubcommand('alphaTest'), []);
         $result = $parser->subcommands();
         $this->assertCount(2, $result);
         $firstResult = key($result);
-        $this->assertEquals('betaTest', $firstResult);
+        $this->assertSame('betaTest', $firstResult);
     }
 
     /**
@@ -994,7 +994,7 @@ TEXT;
     {
         $parser = ConsoleOptionParser::create('factory', false);
         $this->assertInstanceOf('Cake\Console\ConsoleOptionParser', $parser);
-        $this->assertEquals('factory', $parser->getCommand());
+        $this->assertSame('factory', $parser->getCommand());
     }
 
     /**
@@ -1005,7 +1005,7 @@ TEXT;
     public function testCommandInflection()
     {
         $parser = new ConsoleOptionParser('CommandLine');
-        $this->assertEquals('command_line', $parser->getCommand());
+        $this->assertSame('command_line', $parser->getCommand());
     }
 
     /**

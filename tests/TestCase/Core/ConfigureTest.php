@@ -106,7 +106,7 @@ class ConfigureTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $result = Configure::read('level1.level2.level3_2');
-        $this->assertEquals('something_else', $result);
+        $this->assertSame('something_else', $result);
 
         $result = Configure::read('debug');
         $this->assertGreaterThanOrEqual(0, $result);
@@ -137,7 +137,7 @@ class ConfigureTest extends TestCase
     {
         $this->assertTrue(Configure::write('SomeName.someKey', 'myvalue'));
         $result = Configure::read('SomeName.someKey');
-        $this->assertEquals('myvalue', $result);
+        $this->assertSame('myvalue', $result);
 
         $this->assertTrue(Configure::write('SomeName.someKey', null));
         $result = Configure::read('SomeName.someKey');
@@ -156,11 +156,11 @@ class ConfigureTest extends TestCase
         $this->assertEquals($expected['One']['Two'], $result);
 
         $result = Configure::read('Key.One.Two.Three.Four.Five');
-        $this->assertEquals('cool', $result);
+        $this->assertSame('cool', $result);
 
         Configure::write('one.two.three.four', '4');
         $result = Configure::read('one.two.three.four');
-        $this->assertEquals('4', $result);
+        $this->assertSame('4', $result);
     }
 
     /**
@@ -176,7 +176,7 @@ class ConfigureTest extends TestCase
         );
         Configure::write('debug', false);
         $result = ini_get('display_errors');
-        $this->assertEquals(0, $result);
+        $this->assertSame(0, $result);
 
         Configure::write('debug', true);
         $result = ini_get('display_errors');
@@ -192,7 +192,7 @@ class ConfigureTest extends TestCase
     {
         Configure::write('SomeName.someKey', 'myvalue');
         $result = Configure::read('SomeName.someKey');
-        $this->assertEquals('myvalue', $result);
+        $this->assertSame('myvalue', $result);
 
         Configure::delete('SomeName.someKey');
         $result = Configure::read('SomeName.someKey');
@@ -201,10 +201,10 @@ class ConfigureTest extends TestCase
         Configure::write('SomeName', ['someKey' => 'myvalue', 'otherKey' => 'otherValue']);
 
         $result = Configure::read('SomeName.someKey');
-        $this->assertEquals('myvalue', $result);
+        $this->assertSame('myvalue', $result);
 
         $result = Configure::read('SomeName.otherKey');
-        $this->assertEquals('otherValue', $result);
+        $this->assertSame('otherValue', $result);
 
         Configure::delete('SomeName');
 
@@ -312,16 +312,16 @@ class ConfigureTest extends TestCase
         $result = Configure::load('var_test', 'test');
         $this->assertTrue($result);
 
-        $this->assertEquals('value', Configure::read('Read'));
+        $this->assertSame('value', Configure::read('Read'));
 
         $result = Configure::load('var_test2', 'test', true);
         $this->assertTrue($result);
 
-        $this->assertEquals('value2', Configure::read('Read'));
-        $this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
-        $this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'));
-        $this->assertEquals('Overwrite', Configure::read('TestAcl.classname'));
-        $this->assertEquals('one', Configure::read('TestAcl.custom'));
+        $this->assertSame('value2', Configure::read('Read'));
+        $this->assertSame('buried2', Configure::read('Deep.Second.SecondDeepest'));
+        $this->assertSame('buried', Configure::read('Deep.Deeper.Deepest'));
+        $this->assertSame('Overwrite', Configure::read('TestAcl.classname'));
+        $this->assertSame('one', Configure::read('TestAcl.custom'));
     }
 
     /**
@@ -336,13 +336,13 @@ class ConfigureTest extends TestCase
         $result = Configure::load('var_test', 'test');
         $this->assertTrue($result);
 
-        $this->assertEquals('value', Configure::read('Read'));
+        $this->assertSame('value', Configure::read('Read'));
 
         $result = Configure::load('var_test2', 'test', false);
         $this->assertTrue($result);
 
-        $this->assertEquals('value2', Configure::read('Read'));
-        $this->assertEquals('buried2', Configure::read('Deep.Second.SecondDeepest'));
+        $this->assertSame('value2', Configure::read('Read'));
+        $this->assertSame('buried2', Configure::read('Deep.Second.SecondDeepest'));
         $this->assertNull(Configure::read('Deep.Deeper.Deepest'));
     }
 
@@ -357,8 +357,8 @@ class ConfigureTest extends TestCase
         Configure::write('my_key', 'value');
 
         Configure::load('var_test', 'test');
-        $this->assertEquals('value', Configure::read('my_key'), 'Should not overwrite existing data.');
-        $this->assertEquals('value', Configure::read('Read'), 'Should load new data.');
+        $this->assertSame('value', Configure::read('my_key'), 'Should not overwrite existing data.');
+        $this->assertSame('value', Configure::read('Read'), 'Should load new data.');
     }
 
     /**
@@ -375,11 +375,11 @@ class ConfigureTest extends TestCase
         Configure::write('TestAcl.classname', 'old');
 
         Configure::load('var_test', 'test', true);
-        $this->assertEquals('value', Configure::read('Read'), 'Should load new data.');
-        $this->assertEquals('buried', Configure::read('Deep.Deeper.Deepest'), 'Should load new data');
-        $this->assertEquals('old', Configure::read('Deep.old'), 'Should not destroy old data.');
-        $this->assertEquals('value', Configure::read('my_key'), 'Should not destroy data.');
-        $this->assertEquals('Original', Configure::read('TestAcl.classname'), 'No arrays');
+        $this->assertSame('value', Configure::read('Read'), 'Should load new data.');
+        $this->assertSame('buried', Configure::read('Deep.Deeper.Deepest'), 'Should load new data');
+        $this->assertSame('old', Configure::read('Deep.old'), 'Should not destroy old data.');
+        $this->assertSame('value', Configure::read('my_key'), 'Should not destroy data.');
+        $this->assertSame('Original', Configure::read('TestAcl.classname'), 'No arrays');
     }
 
     /**
@@ -425,7 +425,7 @@ class ConfigureTest extends TestCase
         $this->assertNull(Configure::read('Testing'));
 
         Configure::restore('store_test', 'configure');
-        $this->assertEquals('yummy', Configure::read('Testing'));
+        $this->assertSame('yummy', Configure::read('Testing'));
 
         Cache::delete('store_test', 'configure');
         Cache::drop('configure');
@@ -450,7 +450,7 @@ class ConfigureTest extends TestCase
         $this->assertNull(Configure::read('store_test'), 'Calling store with data shouldn\'t modify runtime.');
 
         Configure::restore('store_test', 'configure');
-        $this->assertEquals('one', Configure::read('store_test'));
+        $this->assertSame('one', Configure::read('store_test'));
         $this->assertNull(Configure::read('testing'), 'Values that were not stored are not restored.');
 
         Cache::delete('store_test', 'configure');
@@ -563,10 +563,10 @@ class ConfigureTest extends TestCase
         Configure::write('Test', ['key' => 'value', 'key2' => 'value2']);
 
         $result = Configure::consume('Test.key');
-        $this->assertEquals('value', $result);
+        $this->assertSame('value', $result);
 
         $result = Configure::read('Test.key2');
-        $this->assertEquals('value2', $result, 'Other values should remain.');
+        $this->assertSame('value2', $result, 'Other values should remain.');
 
         $result = Configure::consume('Test');
         $expected = ['key2' => 'value2'];

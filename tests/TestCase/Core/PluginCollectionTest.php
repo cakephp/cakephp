@@ -170,7 +170,7 @@ PHP;
         $path = $plugins->findPath('TestPlugin');
         unlink($configPath);
 
-        $this->assertEquals('/config/path', $path);
+        $this->assertSame('/config/path', $path);
     }
 
     public function testFindPathConfigureData()
@@ -179,7 +179,7 @@ PHP;
         $plugins = new PluginCollection();
         $path = $plugins->findPath('TestPlugin');
 
-        $this->assertEquals('/some/path', $path);
+        $this->assertSame('/some/path', $path);
     }
 
     public function testFindPathMissingPlugin()

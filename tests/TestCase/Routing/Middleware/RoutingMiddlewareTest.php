@@ -67,7 +67,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = $middleware->process($request, $handler);
 
         $this->assertEquals(301, $response->getStatusCode());
-        $this->assertEquals('http://localhost/subdir/pages', $response->getHeaderLine('Location'));
+        $this->assertSame('http://localhost/subdir/pages', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -88,7 +88,7 @@ class RoutingMiddlewareTest extends TestCase
         $response = $middleware->process($request, $handler);
 
         $this->assertEquals(301, $response->getStatusCode());
-        $this->assertEquals('http://localhost/pages', $response->getHeaderLine('Location'));
+        $this->assertSame('http://localhost/pages', $response->getHeaderLine('Location'));
     }
 
     /**
@@ -161,7 +161,7 @@ class RoutingMiddlewareTest extends TestCase
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
             $this->assertNotEmpty(Router::routes());
-            $this->assertEquals('/app/articles', Router::routes()[0]->template);
+            $this->assertSame('/app/articles', Router::routes()[0]->template);
 
             return new Response();
         });
@@ -251,7 +251,7 @@ class RoutingMiddlewareTest extends TestCase
                 '_matchedRoute' => '/articles-patch',
             ];
             $this->assertEquals($expected, $req->getAttribute('params'));
-            $this->assertEquals('PATCH', $req->getMethod());
+            $this->assertSame('PATCH', $req->getMethod());
 
             return new Response();
         });
