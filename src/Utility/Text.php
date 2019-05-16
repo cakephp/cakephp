@@ -1031,7 +1031,7 @@ class Text
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);
 
-            return $size * pow(1024, $i + 1);
+            return (int)($size * pow(1024, $i + 1));
         }
 
         if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {

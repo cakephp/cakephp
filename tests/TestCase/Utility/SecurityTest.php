@@ -95,7 +95,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key);
         $this->assertNotEquals($txt, $result, 'Should be encrypted.');
         $this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
-        $this->assertEquals($txt, Security::decrypt($result, $key));
+        $this->assertSame($txt, Security::decrypt($result, $key));
     }
 
     /**
@@ -228,7 +228,7 @@ class SecurityTest extends TestCase
     public function testSalt()
     {
         Security::setSalt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::getSalt());
+        $this->assertSame('foobarbaz', Security::getSalt());
     }
 
     /**
@@ -239,7 +239,7 @@ class SecurityTest extends TestCase
     public function testGetSetSalt()
     {
         Security::setSalt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::getSalt());
+        $this->assertSame('foobarbaz', Security::getSalt());
     }
 
     /**

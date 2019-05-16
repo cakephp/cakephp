@@ -40,19 +40,19 @@ class BasicsTest extends TestCase
         $two = ['one' => 'one', 'two' => 'two'];
         $result = array_diff_key($one, $two);
         $expected = ['three' => 3];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $one = ['one' => ['value', 'value-two'], 'two' => 2, 'three' => 3];
         $two = ['two' => 'two'];
         $result = array_diff_key($one, $two);
         $expected = ['one' => ['value', 'value-two'], 'three' => 3];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $one = ['one' => null, 'two' => 2, 'three' => '', 'four' => 0];
         $two = ['two' => 'two'];
         $result = array_diff_key($one, $two);
         $expected = ['one' => null, 'three' => '', 'four' => 0];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $one = ['minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true];
         $two = ['minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true];
@@ -79,13 +79,13 @@ class BasicsTest extends TestCase
         $_SERVER = $_ENV = [];
 
         $_SERVER['SCRIPT_NAME'] = '/a/test/test.php';
-        $this->assertEquals(env('SCRIPT_NAME'), '/a/test/test.php');
+        $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
 
         $_SERVER = $_ENV = [];
 
         $_ENV['CGI_MODE'] = 'BINARY';
         $_ENV['SCRIPT_URL'] = '/a/test/test.php';
-        $this->assertEquals(env('SCRIPT_NAME'), '/a/test/test.php');
+        $this->assertSame(env('SCRIPT_NAME'), '/a/test/test.php');
 
         $_SERVER = $_ENV = [];
 
@@ -125,13 +125,13 @@ class BasicsTest extends TestCase
         $this->assertNull(env('TEST_ME'));
 
         $_ENV['TEST_ME'] = 'a';
-        $this->assertEquals(env('TEST_ME'), 'a');
+        $this->assertSame(env('TEST_ME'), 'a');
 
         $_SERVER['TEST_ME'] = 'b';
-        $this->assertEquals(env('TEST_ME'), 'b');
+        $this->assertSame(env('TEST_ME'), 'b');
 
         unset($_ENV['TEST_ME']);
-        $this->assertEquals(env('TEST_ME'), 'b');
+        $this->assertSame(env('TEST_ME'), 'b');
 
         $_SERVER = $server;
         $_ENV = $env;
@@ -146,20 +146,20 @@ class BasicsTest extends TestCase
     {
         $string = '<foo>';
         $result = h($string);
-        $this->assertEquals('&lt;foo&gt;', $result);
+        $this->assertSame('&lt;foo&gt;', $result);
 
         $in = ['this & that', '<p>Which one</p>'];
         $result = h($in);
         $expected = ['this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;'];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $string = '<foo> & &nbsp;';
         $result = h($string);
-        $this->assertEquals('&lt;foo&gt; &amp; &amp;nbsp;', $result);
+        $this->assertSame('&lt;foo&gt; &amp; &amp;nbsp;', $result);
 
         $string = '<foo> & &nbsp;';
         $result = h($string, false);
-        $this->assertEquals('&lt;foo&gt; &amp; &nbsp;', $result);
+        $this->assertSame('&lt;foo&gt; &amp; &nbsp;', $result);
 
         $string = "An invalid\x80string";
         $result = h($string);
@@ -171,7 +171,7 @@ class BasicsTest extends TestCase
             '&lt;foo&gt;',
             '&amp;nbsp;',
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $arr = ['<foo>', '&nbsp;'];
         $result = h($arr, false);
@@ -179,7 +179,7 @@ class BasicsTest extends TestCase
             '&lt;foo&gt;',
             '&nbsp;',
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $arr = ['f' => '<foo>', 'n' => '&nbsp;'];
         $result = h($arr, false);
@@ -187,12 +187,12 @@ class BasicsTest extends TestCase
             'f' => '&lt;foo&gt;',
             'n' => '&nbsp;',
         ];
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $arr = ['invalid' => "\x99An invalid\x80string", 'good' => 'Good string'];
         $result = h($arr);
         $this->assertStringContainsString('An invalid', $result['invalid']);
-        $this->assertEquals('Good string', $result['good']);
+        $this->assertSame('Good string', $result['good']);
 
         // Test that boolean values are not converted to strings
         $result = h(false);
@@ -205,11 +205,11 @@ class BasicsTest extends TestCase
 
         $obj = new \stdClass();
         $result = h($obj);
-        $this->assertEquals('(object)stdClass', $result);
+        $this->assertSame('(object)stdClass', $result);
 
         $obj = new Response(['body' => 'Body content']);
         $result = h($obj);
-        $this->assertEquals('Body content', $result);
+        $this->assertSame('Body content', $result);
     }
 
     /**
@@ -220,7 +220,7 @@ class BasicsTest extends TestCase
     public function testDebug()
     {
         ob_start();
-        $this->assertEquals('this-is-a-test', debug('this-is-a-test', false));
+        $this->assertSame('this-is-a-test', debug('this-is-a-test', false));
         $result = ob_get_clean();
         $expectedText = <<<EXPECTED
 %s (line %d)
@@ -231,7 +231,7 @@ class BasicsTest extends TestCase
 EXPECTED;
         $expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $value = '<div>this-is-a-test</div>';
@@ -246,7 +246,7 @@ EXPECTED;
 </div>
 EXPECTED;
         $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', true, true);
@@ -260,7 +260,7 @@ EXPECTED;
 </div>
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', true, false);
@@ -274,7 +274,7 @@ EXPECTED;
 </div>
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 10);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', null);
@@ -299,7 +299,7 @@ EXPECTED;
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
         }
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', null, false);
@@ -324,7 +324,7 @@ EXPECTED;
         } else {
             $expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
         }
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', false);
@@ -337,7 +337,7 @@ EXPECTED;
 
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', false, true);
@@ -350,7 +350,7 @@ EXPECTED;
 
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         debug('<div>this-is-a-test</div>', false, false);
@@ -363,7 +363,7 @@ EXPECTED;
 
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertFalse(debug(false, false, false));
@@ -376,7 +376,7 @@ false
 
 EXPECTED;
         $expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -390,43 +390,43 @@ EXPECTED;
         $this->assertTrue(pr(true));
         $result = ob_get_clean();
         $expected = "\n1\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertFalse(pr(false));
         $result = ob_get_clean();
         $expected = "\n\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertNull(pr(null));
         $result = ob_get_clean();
         $expected = "\n\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertSame(123, pr(123));
         $result = ob_get_clean();
         $expected = "\n123\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         pr('123');
         $result = ob_get_clean();
         $expected = "\n123\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         pr('this is a test');
         $result = ob_get_clean();
         $expected = "\nthis is a test\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         pr(['this' => 'is', 'a' => 'test', 123 => 456]);
         $result = ob_get_clean();
         $expected = "\nArray\n(\n    [this] => is\n    [a] => test\n    [123] => 456\n)\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -440,44 +440,44 @@ EXPECTED;
         $this->assertTrue(pj(true));
         $result = ob_get_clean();
         $expected = "\ntrue\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertFalse(pj(false));
         $result = ob_get_clean();
         $expected = "\nfalse\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertNull(pj(null));
         $result = ob_get_clean();
         $expected = "\nnull\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $this->assertSame(123, pj(123));
         $result = ob_get_clean();
         $expected = "\n123\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         pj('123');
         $result = ob_get_clean();
         $expected = "\n\"123\"\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         pj('this is a test');
         $result = ob_get_clean();
         $expected = "\n\"this is a test\"\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         ob_start();
         $value = ['this' => 'is', 'a' => 'test', 123 => 456];
         $this->assertSame($value, pj($value));
         $result = ob_get_clean();
         $expected = "\n{\n    \"this\": \"is\",\n    \"a\": \"test\",\n    \"123\": 456\n}\n\n";
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -488,25 +488,25 @@ EXPECTED;
     public function testPluginSplit()
     {
         $result = pluginSplit('Something.else');
-        $this->assertEquals(['Something', 'else'], $result);
+        $this->assertSame(['Something', 'else'], $result);
 
         $result = pluginSplit('Something.else.more.dots');
-        $this->assertEquals(['Something', 'else.more.dots'], $result);
+        $this->assertSame(['Something', 'else.more.dots'], $result);
 
         $result = pluginSplit('Somethingelse');
-        $this->assertEquals([null, 'Somethingelse'], $result);
+        $this->assertSame([null, 'Somethingelse'], $result);
 
         $result = pluginSplit('Something.else', true);
-        $this->assertEquals(['Something.', 'else'], $result);
+        $this->assertSame(['Something.', 'else'], $result);
 
         $result = pluginSplit('Something.else.more.dots', true);
-        $this->assertEquals(['Something.', 'else.more.dots'], $result);
+        $this->assertSame(['Something.', 'else.more.dots'], $result);
 
         $result = pluginSplit('Post', false, 'Blog');
-        $this->assertEquals(['Blog', 'Post'], $result);
+        $this->assertSame(['Blog', 'Post'], $result);
 
         $result = pluginSplit('Blog.Post', false, 'Ultimate');
-        $this->assertEquals(['Blog', 'Post'], $result);
+        $this->assertSame(['Blog', 'Post'], $result);
     }
 
     /**
@@ -517,16 +517,16 @@ EXPECTED;
     public function testNamespaceSplit()
     {
         $result = namespaceSplit('Something');
-        $this->assertEquals(['', 'Something'], $result);
+        $this->assertSame(['', 'Something'], $result);
 
         $result = namespaceSplit('\Something');
-        $this->assertEquals(['', 'Something'], $result);
+        $this->assertSame(['', 'Something'], $result);
 
         $result = namespaceSplit('Cake\Something');
-        $this->assertEquals(['Cake', 'Something'], $result);
+        $this->assertSame(['Cake', 'Something'], $result);
 
         $result = namespaceSplit('Cake\Test\Something');
-        $this->assertEquals(['Cake\Test', 'Something'], $result);
+        $this->assertSame(['Cake\Test', 'Something'], $result);
     }
 
     /**
@@ -539,13 +539,13 @@ EXPECTED;
         ob_start();
         [$r, $expected] = [stackTrace(), \Cake\Error\Debugger::trace()];
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
 
         $opts = ['args' => true];
         ob_start();
         [$r, $expected] = [stackTrace($opts), \Cake\Error\Debugger::trace($opts)];
         $result = ob_get_clean();
-        $this->assertEquals($expected, $result);
+        $this->assertSame($expected, $result);
     }
 
     /**
