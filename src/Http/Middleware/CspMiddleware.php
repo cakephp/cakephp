@@ -33,7 +33,7 @@ class CspMiddleware implements MiddlewareInterface
     /**
      * CSP Builder
      *
-     * @var \ParagonIE\CSPBuilder\CSPBuilder|array|null $csp CSP Builder or config array
+     * @var \ParagonIE\CSPBuilder\CSPBuilder $csp CSP Builder or config array
      */
     protected $csp;
 
@@ -79,6 +79,9 @@ class CspMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        return $this->csp->injectCSPHeader($response);
+        /** @var \Psr\Http\Message\ResponseInterface $response */
+        $response = $this->csp->injectCSPHeader($response);
+
+        return $response;
     }
 }
