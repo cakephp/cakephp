@@ -631,9 +631,6 @@ class EagerLoader
         foreach ($external as $meta) {
             $contain = $meta->associations();
             $instance = $meta->instance();
-            if (!$instance) {
-                throw new \RuntimeException('No instance available.');
-            }
             $config = $meta->getConfig();
             $alias = $instance->getSource()->getAlias();
             $path = $meta->aliasPath();
@@ -696,16 +693,12 @@ class EagerLoader
      * @param \Cake\ORM\EagerLoadable[] $level An array of EagerLoadable instances.
      * @param bool $matching Whether or not it is an association loaded through `matching()`.
      * @return array
-     * @throws \RuntimeException
      */
     protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
     {
         foreach ($level as $assoc => $meta) {
             $canBeJoined = $meta->canBeJoined();
             $instance = $meta->instance();
-            if (!$instance) {
-                throw new \RuntimeException('No instance available.');
-            }
             $associations = $meta->associations();
             $forMatching = $meta->forMatching();
             $map[] = [
@@ -762,16 +755,12 @@ class EagerLoader
      * @param \Cake\ORM\Query $query The query from which the results where generated
      * @param \Cake\Database\StatementInterface $statement The statement to work on
      * @return array
-     * @throws \RuntimeException
      */
     protected function _collectKeys(array $external, Query $query, $statement): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {
             $instance = $meta->instance();
-            if (!$instance) {
-                throw new \RuntimeException('No instance available.');
-            }
             if (!$instance->requiresKeys($meta->getConfig())) {
                 continue;
             }
