@@ -292,7 +292,7 @@ class FixtureManager
                     $this->_insertionMap[$configName] = [];
                 }
 
-                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
+                /** @var \Cake\TestSuite\Fixture\TestFixture[] $fixtures */
                 foreach ($fixtures as $fixture) {
                     if (in_array($fixture->table, $tables, true)) {
                         try {
