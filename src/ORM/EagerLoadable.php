@@ -157,7 +157,7 @@ class EagerLoadable
     /**
      * Returns the Association class instance to use for loading the records.
      *
-     * @return array
+     * @return \Cake\ORM\EagerLoadable[]
      */
     public function associations(): array
     {

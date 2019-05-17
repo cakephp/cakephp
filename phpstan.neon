@@ -32,6 +32,10 @@ parameters:
         - '#Parameter \#1 \$filename of function fopen expects string, resource given.#'
         - '#Parameter \#1 \$it of method AppendIterator::append\(\) expects Iterator, Traversable given.#'
         - '#Parameter \#1 \$it of class .+Iterator constructor expects Iterator, Traversable given.#'
+        - '#Parameter \#1 \$assoc of method Cake\\ORM\\Marshaller::_belongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
+        - '#Parameter \#2 \$assoc of method Cake\\ORM\\Marshaller::_mergeBelongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
+        - '#Parameter \#1 \$table of method Cake\\ORM\\Query::addDefaultTypes\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
+        - '#Parameter \#1 \$table of method Cake\\ORM\\Query::_addAssociationsToTypeMap\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'

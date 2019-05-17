@@ -440,7 +440,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached
-     * @return array
+     * @return \Cake\ORM\EagerLoadable[]
      */
     public function attachableAssociations(Table $repository): array
     {
@@ -576,9 +576,9 @@ class EagerLoader
      * Helper function used to compile a list of all associations that can be
      * joined in the query.
      *
-     * @param array $associations list of associations from which to obtain joins.
-     * @param array $matching list of associations that should be forcibly joined.
-     * @return array
+     * @param \Cake\ORM\EagerLoadable[] $associations list of associations from which to obtain joins.
+     * @param \Cake\ORM\EagerLoadable[] $matching list of associations that should be forcibly joined.
+     * @return \Cake\ORM\EagerLoadable[]
      */
     protected function _resolveJoins(array $associations, array $matching = []): array
     {
@@ -614,6 +614,7 @@ class EagerLoader
      * associations
      * @param \Cake\Database\StatementInterface $statement The statement created after executing the $query
      * @return \Cake\Database\StatementInterface statement modified statement with extra loaders
+     * @throws \RuntimeException
      */
     public function loadExternal(Query $query, StatementInterface $statement): StatementInterface
     {
@@ -630,6 +631,9 @@ class EagerLoader
         foreach ($external as $meta) {
             $contain = $meta->associations();
             $instance = $meta->instance();
+            if (!$instance) {
+                throw new \RuntimeException('No instance available.');
+            }
             $config = $meta->getConfig();
             $alias = $instance->getSource()->getAlias();
             $path = $meta->aliasPath();
@@ -689,16 +693,19 @@ class EagerLoader
      * associationsMap() method.
      *
      * @param array $map An initial array for the map.
-     * @param array $level An array of EagerLoadable instances.
+     * @param \Cake\ORM\EagerLoadable[] $level An array of EagerLoadable instances.
      * @param bool $matching Whether or not it is an association loaded through `matching()`.
      * @return array
+     * @throws \RuntimeException
      */
     protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
     {
-        /** @var \Cake\ORM\EagerLoadable $meta */
         foreach ($level as $assoc => $meta) {
             $canBeJoined = $meta->canBeJoined();
             $instance = $meta->instance();
+            if (!$instance) {
+                throw new \RuntimeException('No instance available.');
+            }
             $associations = $meta->associations();
             $forMatching = $meta->forMatching();
             $map[] = [
