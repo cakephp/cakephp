@@ -228,7 +228,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function __get(string $name)
     {
-        return $this->has($name) ? $this->get($name) : null;
+        return $this->_loaded[$name] ?? null;
     }
 
     /**
