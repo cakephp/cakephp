@@ -617,7 +617,9 @@ class EagerLoader
      */
     public function loadExternal(Query $query, StatementInterface $statement): StatementInterface
     {
-        $external = $this->externalAssociations($query->getRepository());
+        /** @var \Cake\ORM\Table $table */
+        $table = $query->getRepository();
+        $external = $this->externalAssociations($table);
         if (empty($external)) {
             return $statement;
         }
@@ -751,14 +753,18 @@ class EagerLoader
      *
      * @param \Cake\ORM\EagerLoadable[] $external the list of external associations to be loaded
      * @param \Cake\ORM\Query $query The query from which the results where generated
-     * @param \Cake\Database\Statement\BufferedStatement $statement The statement to work on
+     * @param \Cake\Database\StatementInterface $statement The statement to work on
      * @return array
+     * @throws \RuntimeException
      */
     protected function _collectKeys(array $external, Query $query, $statement): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {
             $instance = $meta->instance();
+            if (!$instance) {
+                throw new \RuntimeException('No instance available.');
+            }
             if (!$instance->requiresKeys($meta->getConfig())) {
                 continue;
             }
