@@ -335,9 +335,7 @@ class Response extends Message implements ResponseInterface
             return null;
         }
 
-        $cookie = $this->cookies->get($name);
-
-        return $cookie->getValue();
+        return $this->cookies->get($name)->getValue();
     }
 
     /**
