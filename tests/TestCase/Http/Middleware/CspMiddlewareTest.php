@@ -104,36 +104,4 @@ class CspMiddlewareTest extends TestCase
         $this->assertNotEmpty($headers['Content-Security-Policy']);
         $this->assertEquals($expected, $headers['Content-Security-Policy']);
     }
-
-    /**
-     * testPassingACSPBuilderInstance
-     *
-     * @return void
-     */
-    public function testWithAppConfigInstance()
-    {
-        $request = new ServerRequest();
-
-        Configure::write('App.CSP', [
-            'script-src' => [
-                'allow' => [
-                    'https://www.google-analytics.com',
-                ],
-                'self' => true,
-                'unsafe-inline' => false,
-                'unsafe-eval' => false,
-            ],
-        ]);
-
-        $middleware = new CspMiddleware();
-
-        $response = $middleware->process($request, $this->_getRequestHandler());
-        $headers = $response->getHeaders();
-        $expected = [
-            'script-src \'self\' https://www.google-analytics.com; ',
-        ];
-
-        $this->assertNotEmpty($headers['Content-Security-Policy']);
-        $this->assertEquals($expected, $headers['Content-Security-Policy']);
-    }
 }

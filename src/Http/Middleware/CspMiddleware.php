@@ -40,29 +40,13 @@ class CspMiddleware implements MiddlewareInterface
     /**
      * Constructor
      *
-     * @param \ParagonIE\CSPBuilder\CSPBuilder|array|null $csp CSP object or config array
+     * @param \ParagonIE\CSPBuilder\CSPBuilder|array $csp CSP object or config array
      * @throws \Exception
      */
-    public function __construct($csp = null)
+    public function __construct($csp)
     {
-        if ($csp === null) {
-            $cspConfig = (array)Configure::read('App.CSP');
-        } else {
-            $cspConfig = $csp;
-        }
-
-        if (!empty($cspConfig) && is_array($cspConfig)) {
-            $this->csp = new CSPBuilder($cspConfig);
-
-            return;
-        }
-
         if (!$csp instanceof CSPBuilder) {
-            throw new InvalidArgumentException(sprintf(
-                'Expected `%s`, `%s` given.',
-                CSPBuilder::class,
-                getTypeName($csp)
-            ));
+            $csp = new CSPBuilder($csp);
         }
 
         $this->csp = $csp;
