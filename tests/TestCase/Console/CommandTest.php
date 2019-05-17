@@ -21,6 +21,9 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
+use TestApp\Command\AbortCommand;
+use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 
 /**
@@ -50,6 +53,17 @@ class CommandTest extends TestCase
         $command = new Command();
         $command->loadModel('Comments');
         $this->assertInstanceOf(Table::class, $command->Comments);
+    }
+
+    /**
+     * test loadModel is configured properly
+     *
+     * @return void
+     */
+    public function testConstructorAutoLoadModel()
+    {
+        $command = new AutoLoadModelCommand();
+        $this->assertInstanceOf(Table::class, $command->Posts);
     }
 
     /**
@@ -259,6 +273,102 @@ class CommandTest extends TestCase
     {
         $command = new Command();
         $command->abort(99);
+    }
+
+    /**
+     * test executeCommand with a string class
+     *
+     * @return void
+     */
+    public function testExecuteCommandString()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $result = $command->executeCommand(DemoCommand::class, [], $this->getMockIo($output));
+        $this->assertNull($result);
+        $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+    }
+
+    /**
+     * test executeCommand with an invalid string class
+     *
+     * @return void
+     */
+    public function testExecuteCommandStringInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Command class 'Nope' does not exist");
+
+        $command = new Command();
+        $command->executeCommand('Nope', [], $this->getMockIo(new ConsoleOutput()));
+    }
+
+    /**
+     * test executeCommand with arguments
+     *
+     * @return void
+     */
+    public function testExecuteCommandArguments()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $command->executeCommand(DemoCommand::class, ['Jane'], $this->getMockIo($output));
+        $this->assertEquals(['Quiet!', 'Demo Command!', 'Jane'], $output->messages());
+    }
+
+    /**
+     * test executeCommand with arguments
+     *
+     * @return void
+     */
+    public function testExecuteCommandArgumentsOptions()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $command->executeCommand(DemoCommand::class, ['--quiet', 'Jane'], $this->getMockIo($output));
+        $this->assertEquals(['Quiet!'], $output->messages());
+    }
+
+    /**
+     * test executeCommand with an instance
+     *
+     * @return void
+     */
+    public function testExecuteCommandInstance()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $result = $command->executeCommand(new DemoCommand(), [], $this->getMockIo($output));
+        $this->assertNull($result);
+        $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
+    }
+
+    /**
+     * test executeCommand with an abort
+     *
+     * @return void
+     */
+    public function testExecuteCommandAbort()
+    {
+        $output = new ConsoleOutput();
+        $command = new Command();
+        $result = $command->executeCommand(AbortCommand::class, [], $this->getMockIo($output));
+        $this->assertSame(127, $result);
+        $this->assertEquals(['<error>Command aborted</error>'], $output->messages());
+    }
+
+    /**
+     * test executeCommand with an invalid instance
+     *
+     * @return void
+     */
+    public function testExecuteCommandInstanceInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Command 'stdClass' is not a subclass");
+
+        $command = new Command();
+        $command->executeCommand(new \stdClass, [], $this->getMockIo(new ConsoleOutput()));
     }
 
     protected function getMockIo($output)

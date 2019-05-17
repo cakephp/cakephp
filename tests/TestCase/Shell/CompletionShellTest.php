@@ -117,7 +117,7 @@ class CompletionShellTest extends TestCase
 
         $expected = 'TestPlugin.example TestPlugin.sample TestPluginTwo.example unique welcome ' .
             'cache help i18n orm_cache plugin routes schema_cache server version ' .
-            "abort demo i18m integration merge sample shell_test testing_dispatch\n";
+            "abort auto_load_model demo i18m integration merge sample shell_test testing_dispatch\n";
         $this->assertTextEquals($expected, $output);
     }
 

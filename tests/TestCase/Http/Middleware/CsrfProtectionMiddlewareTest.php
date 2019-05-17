@@ -19,6 +19,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Test for CsrfProtection
@@ -306,6 +307,28 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'field' => 'token',
             'expiry' => 90,
         ]);
+        $response = $middleware($request, $response, $this->_getNextClosure());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSkippingTokenCheckUsingWhitelistCallback()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->whitelistCallback(function (ServerRequestInterface $request) {
+            $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
+
+            return true;
+        });
         $response = $middleware($request, $response, $this->_getNextClosure());
         $this->assertInstanceOf(Response::class, $response);
     }
