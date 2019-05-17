@@ -58,6 +58,9 @@ parameters:
         -
             message: '#Method Cake\\Utility\\Security::engine\(\) should return Cake\\Utility\\Crypto\\OpenSsl but returns object#'
             path: 'src/Utility/Security.php'
+        -
+            message: '#Method Cake\\Http\\Middleware\\CspMiddleware::process\(\) should return Psr\\Http\\Message\\ResponseInterface but returns Psr\\Http\\Message\\MessageInterface#'
+            path: 'src/Http/Middleware/CspMiddleware.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

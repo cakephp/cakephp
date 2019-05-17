@@ -61,7 +61,7 @@ class CspMiddleware implements MiddlewareInterface
             throw new InvalidArgumentException(sprintf(
                 'Expected `%s`, `%s` given.',
                 CSPBuilder::class,
-                gettype($csp)
+                getTypeName($csp)
             ));
         }
 
@@ -79,9 +79,7 @@ class CspMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        /** @var \Psr\Http\Message\ResponseInterface $response */
-        $response = $this->csp->injectCSPHeader($response);
-
-        return $response;
+        /** @var \Psr\Http\Message\ResponseInterface */
+        return $this->csp->injectCSPHeader($response);
     }
 }
