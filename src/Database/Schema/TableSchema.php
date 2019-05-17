@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\TypeFactory;
+use Cake\Datasource\ConnectionInterface;
 
 /**
  * Represents a single table in a database schema.
@@ -703,7 +703,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function createSql(Connection $connection): array
+    public function createSql(ConnectionInterface $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
         $columns = $constraints = $indexes = [];
@@ -723,7 +723,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function dropSql(Connection $connection): array
+    public function dropSql(ConnectionInterface $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -733,7 +733,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function truncateSql(Connection $connection): array
+    public function truncateSql(ConnectionInterface $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -743,7 +743,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addConstraintSql(Connection $connection): array
+    public function addConstraintSql(ConnectionInterface $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 
@@ -753,7 +753,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function dropConstraintSql(Connection $connection): array
+    public function dropConstraintSql(ConnectionInterface $connection): array
     {
         $dialect = $connection->getDriver()->schemaDialect();
 

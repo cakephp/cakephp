@@ -245,10 +245,10 @@ class Router
      * Push a request onto the request stack. Pushing a request
      * sets the request context used when generating URLs.
      *
-     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
      * @return void
      */
-    public static function pushRequest(ServerRequest $request): void
+    public static function pushRequest(ServerRequestInterface $request): void
     {
         static::$_requests[] = $request;
         static::setRequestContext($request);

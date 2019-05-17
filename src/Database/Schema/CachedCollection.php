@@ -70,7 +70,7 @@ class CachedCollection implements CollectionInterface
     /**
      * {@inheritDoc}
      */
-    public function describe(string $name, array $options = []): TableSchemaInterface
+    public function describe(string $name, array $options = []): TableSchema
     {
         $options += ['forceRefresh' => false];
         $cacheConfig = $this->getCacheMetadata();

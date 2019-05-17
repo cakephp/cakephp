@@ -85,7 +85,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Checks and sets the CSRF token depending on the HTTP verb.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
+     * @param \Cake\Http\ServerRequest $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
      * @return \Psr\Http\Message\ResponseInterface A response.
      */
@@ -104,6 +104,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         if ($method === 'GET' && $cookieData === null) {
             $token = $this->_createToken();
             $request = $this->_addTokenToRequest($token, $request);
+            /** @var \Cake\Http\Response $response */
             $response = $handler->handle($request);
 
             return $this->_addTokenCookie($token, $request, $response);
@@ -147,10 +148,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * Add a CSRF token to the request parameters.
      *
      * @param string $token The token to add.
-     * @param \Cake\Http\ServerRequest $request The request to augment
-     * @return \Cake\Http\ServerRequest Modified request
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to augment
+     * @return \Psr\Http\Message\ServerRequestInterface Modified request
      */
-    protected function _addTokenToRequest(string $token, ServerRequest $request): ServerRequest
+    protected function _addTokenToRequest(string $token, ServerRequestInterface $request): ServerRequestInterface
     {
         $params = $request->getAttribute('params');
         $params['_csrfToken'] = $token;
@@ -162,11 +163,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * Add a CSRF token to the response cookies.
      *
      * @param string $token The token to add.
-     * @param \Cake\Http\ServerRequest $request The request to validate against.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to validate against.
      * @param \Cake\Http\Response $response The response.
      * @return \Cake\Http\Response $response Modified response.
      */
-    protected function _addTokenCookie(string $token, ServerRequest $request, Response $response): Response
+    protected function _addTokenCookie(string $token, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $expiry = new Time($this->_config['expiry']);
 

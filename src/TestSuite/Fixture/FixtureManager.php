@@ -285,13 +285,14 @@ class FixtureManager
         }
 
         try {
-            $createTables = function ($db, $fixtures) use ($test): void {
+            $createTables = function (ConnectionInterface $db, $fixtures) use ($test): void {
                 $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 if (!isset($this->_insertionMap[$configName])) {
                     $this->_insertionMap[$configName] = [];
                 }
 
+                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
                 foreach ($fixtures as $fixture) {
                     if (in_array($fixture->table, $tables, true)) {
                         try {
@@ -376,7 +377,7 @@ class FixtureManager
             if ($logQueries && !$this->_debug) {
                 $db->disableQueryLogging();
             }
-            $db->transactional(function ($db) use ($fixtures, $operation): void {
+            $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
                 $db->disableConstraints(function ($db) use ($fixtures, $operation): void {
                     $operation($db, $fixtures);
                 });

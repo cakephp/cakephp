@@ -86,10 +86,10 @@ class Collection implements CollectionInterface
      *
      * @param string $name The name of the table to describe.
      * @param array $options The options to use, see above.
-     * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
+     * @return \Cake\Database\Schema\TableSchema Object with column metadata.
      * @throws \Cake\Database\Exception when table cannot be described.
      */
-    public function describe(string $name, array $options = []): TableSchemaInterface
+    public function describe(string $name, array $options = []): TableSchema
     {
         $config = $this->_connection->config();
         if (strpos($name, '.')) {

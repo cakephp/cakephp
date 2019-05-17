@@ -58,7 +58,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Default table instance
      *
-     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
+     * @var \Cake\ORM\Table
      */
     protected $_defaultTable;
 
@@ -172,7 +172,7 @@ class ResultSet implements ResultSetInterface
         $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $query->getRepository();
+        $this->_defaultTable = $repository;
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();

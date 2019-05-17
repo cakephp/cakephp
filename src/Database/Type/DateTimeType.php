@@ -285,7 +285,7 @@ class DateTimeType extends BaseType
     }
 
     /**
-     * @param \Cake\I18n\Time|\DateTime $date DateTime object
+     * @param \DateTimeInterface $date DateTime object
      * @param mixed $value Request data
      * @return bool
      */

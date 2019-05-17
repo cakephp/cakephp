@@ -47,7 +47,7 @@ class ActionDispatcher
      * Dispatches a Request & Response
      *
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
-     * @param \Psr\Http\Message\ResponseInterface $response The response to dispatch.
+     * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Psr\Http\Message\ResponseInterface A modified/replaced response.
      */
     public function dispatch(ServerRequest $request, ?ResponseInterface $response = null): ResponseInterface

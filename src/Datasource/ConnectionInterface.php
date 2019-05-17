@@ -28,6 +28,7 @@ use Cake\Database\Log\QueryLogger;
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
  * @method string quote($value, $type = null)
+ * @method \Cake\Database\Driver getDriver()
  */
 interface ConnectionInterface
 {
