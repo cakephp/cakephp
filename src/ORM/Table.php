@@ -796,7 +796,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        /** @var \Cake\ORM\Behavior|null $behavior */
+        /** @var \Cake\ORM\Behavior $behavior */
         $behavior = $this->_behaviors->get($name);
 
         return $behavior;
