@@ -24,6 +24,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 /**
  * Content Security Policy Middleware
@@ -45,6 +46,10 @@ class CspMiddleware implements MiddlewareInterface
      */
     public function __construct($csp)
     {
+        if (!class_exists(CSPBuilder::class)) {
+            throw new RuntimeException('You must install paragonie/csp-builder to use CspMiddleware');
+        }
+
         if (!$csp instanceof CSPBuilder) {
             $csp = new CSPBuilder($csp);
         }
