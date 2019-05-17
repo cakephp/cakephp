@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Http\Middleware;
 
-use Cake\Core\Configure;
 use Cake\Http\Middleware\CspMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;

@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Cake\Http\Middleware;
 
-use Cake\Core\Configure;
-use InvalidArgumentException;
 use ParagonIE\CSPBuilder\CSPBuilder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -42,7 +40,7 @@ class CspMiddleware implements MiddlewareInterface
      * Constructor
      *
      * @param \ParagonIE\CSPBuilder\CSPBuilder|array $csp CSP object or config array
-     * @throws \Exception
+     * @throws \RuntimeException
      */
     public function __construct($csp)
     {
