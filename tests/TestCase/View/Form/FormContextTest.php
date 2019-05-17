@@ -295,9 +295,9 @@ class FormContextTest extends TestCase
 
         $context = new FormContext($this->request, ['entity' => $form]);
         $this->assertEquals([], $context->error('empty'));
-        $this->assertEquals(['The provided value is invalid'], $context->error('email'));
-        $this->assertEquals(['The provided value is invalid'], $context->error('name'));
-        $this->assertEquals(['The provided value is invalid'], $context->error('pass.password'));
+        $this->assertEquals(['format' => 'The provided value is invalid'], $context->error('email'));
+        $this->assertEquals(['length' => 'The provided value is invalid'], $context->error('name'));
+        $this->assertEquals(['length' => 'The provided value is invalid'], $context->error('pass.password'));
         $this->assertEquals([], $context->error('Alias.name'));
         $this->assertEquals([], $context->error('nope.nope'));
 
@@ -307,7 +307,7 @@ class FormContextTest extends TestCase
         $form->validate([]);
         $context = new FormContext($this->request, ['entity' => $form]);
         $this->assertEquals(
-            ['should be an array, not a string'],
+            ['_required' => 'should be an array, not a string'],
             $context->error('key'),
             'This test should not produce a PHP warning from array_values().'
         );
