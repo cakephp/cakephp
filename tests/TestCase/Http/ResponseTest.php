@@ -315,7 +315,7 @@ class ResponseTest extends TestCase
         );
         $this->assertSame('application/pdf', $new->getHeaderLine('Content-Type'));
         $this->assertSame(
-            'application/json; charset=UTF-8',
+            'application/json',
             $new->withType('json')->getHeaderLine('Content-Type')
         );
     }
@@ -463,7 +463,6 @@ class ResponseTest extends TestCase
         return [
             ['mp3', 'audio/mpeg'],
             ['js', 'application/javascript; charset=UTF-8'],
-            ['json', 'application/json; charset=UTF-8'],
             ['xml', 'application/xml; charset=UTF-8'],
             ['txt', 'text/plain; charset=UTF-8'],
         ];
@@ -1089,6 +1088,10 @@ class ResponseTest extends TestCase
         $this->assertEquals($now->format($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
 
         $now = time();
+        $new = $response->withModified($now);
+        $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
+
+        $now = new \DateTimeImmutable();
         $new = $response->withModified($now);
         $this->assertEquals(gmdate($format) . ' GMT', $new->getHeaderLine('Last-Modified'));
 

@@ -81,7 +81,7 @@ trait EmailTrait
      * Asserts an email at a specific index was sent to an address
      *
      * @param int $at Email index
-     * @param int $address Email address
+     * @param string $address Email address
      * @param string $message Message
      * @return void
      */
@@ -94,7 +94,7 @@ trait EmailTrait
      * Asserts an email at a specific index was sent from an address
      *
      * @param int $at Email index
-     * @param int $address Email address
+     * @param string $address Email address
      * @param string $message Message
      * @return void
      */
@@ -107,7 +107,7 @@ trait EmailTrait
      * Asserts an email at a specific index contains expected contents
      *
      * @param int $at Email index
-     * @param int $contents Contents
+     * @param string $contents Contents
      * @param string $message Message
      * @return void
      */
@@ -120,7 +120,7 @@ trait EmailTrait
      * Asserts an email at a specific index contains expected html contents
      *
      * @param int $at Email index
-     * @param int $contents Contents
+     * @param string $contents Contents
      * @param string $message Message
      * @return void
      */
@@ -133,7 +133,7 @@ trait EmailTrait
      * Asserts an email at a specific index contains expected text contents
      *
      * @param int $at Email index
-     * @param int $contents Contents
+     * @param string $contents Contents
      * @param string $message Message
      * @return void
      */
@@ -146,8 +146,8 @@ trait EmailTrait
      * Asserts an email at a specific index contains the expected value within an Email getter
      *
      * @param int $at Email index
-     * @param int $expected Contents
-     * @param int $parameter Email getter parameter (e.g. "cc", "subject")
+     * @param string $expected Contents
+     * @param string $parameter Email getter parameter (e.g. "cc", "subject")
      * @param string $message Message
      * @return void
      */
@@ -159,7 +159,7 @@ trait EmailTrait
     /**
      * Asserts an email was sent to an address
      *
-     * @param int $address Email address
+     * @param string $address Email address
      * @param string $message Message
      * @return void
      */
@@ -171,7 +171,7 @@ trait EmailTrait
     /**
      * Asserts an email was sent from an address
      *
-     * @param int $address Email address
+     * @param string $address Email address
      * @param string $message Message
      * @return void
      */
@@ -183,7 +183,7 @@ trait EmailTrait
     /**
      * Asserts an email contains expected contents
      *
-     * @param int $contents Contents
+     * @param string $contents Contents
      * @param string $message Message
      * @return void
      */
@@ -195,7 +195,7 @@ trait EmailTrait
     /**
      * Asserts an email contains expected html contents
      *
-     * @param int $contents Contents
+     * @param string $contents Contents
      * @param string $message Message
      * @return void
      */
@@ -205,22 +205,22 @@ trait EmailTrait
     }
 
     /**
-     * Asserts an email contains expected text contents
+     * Asserts an email contains an expected text content
      *
-     * @param int $contents Contents
-     * @param string $message Message
+     * @param string $expectedText Expected text.
+     * @param string $message Message to display if assertion fails.
      * @return void
      */
-    public function assertMailContainsText($contents, $message = null)
+    public function assertMailContainsText($expectedText, $message = null)
     {
-        $this->assertThat($contents, new MailContainsText(), $message);
+        $this->assertThat($expectedText, new MailContainsText(), $message);
     }
 
     /**
      * Asserts an email contains the expected value within an Email getter
      *
-     * @param int $expected Contents
-     * @param int $parameter Email getter parameter (e.g. "cc", "subject")
+     * @param string $expected Contents
+     * @param string $parameter Email getter parameter (e.g. "cc", "subject")
      * @param string $message Message
      * @return void
      */

@@ -33,7 +33,7 @@ init:
 
 install:
   - IF EXIST C:\php (SET PHP=0)
-  - ps: appveyor-retry cinst --params '""/InstallDir:C:\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
+  - ps: appveyor-retry cinst --no-progress --params '""/InstallDir:C:\php""' --ignore-checksums -y php --version ((choco search php --exact --all-versions -r | select-string -pattern $env:php_ver_target | sort { [version]($_ -split '\|' | select -last 1) } -Descending | Select-Object -first 1) -replace '[php|]','')
   - cd C:\php
   - copy php.ini-production php.ini /Y
   - echo date.timezone="UTC" >> php.ini
@@ -44,14 +44,14 @@ install:
   - echo extension=php_fileinfo.dll >> php.ini
 
   - curl -fsS https://windows.php.net/downloads/pecl/releases/pdo_sqlsrv/5.2.0/php_pdo_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o pdosqlsrv.zip
-  - 7z x pdosqlsrv.zip -oC:\php\ext php_pdo_sqlsrv.dll > nul
+  - 7z x pdosqlsrv.zip -oC:\php\ext php_pdo_sqlsrv.dll -aoa > nul
   - curl -fsS https://windows.php.net/downloads/pecl/releases/sqlsrv/5.2.0/php_sqlsrv-5.2.0-7.2-nts-vc15-x64.zip -o sqlsrv.zip
-  - 7z x sqlsrv.zip -oC:\php\ext php_sqlsrv.dll > nul
+  - 7z x sqlsrv.zip -oC:\php\ext php_sqlsrv.dll -aoa > nul
   - echo extension=php_pdo_sqlsrv.dll >> php.ini
   - echo extension=php_sqlsrv.dll >> php.ini
 
   - curl -fsS https://windows.php.net/downloads/pecl/releases/wincache/2.0.0.8/php_wincache-2.0.0.8-7.2-nts-vc15-x64.zip -o wincache.zip
-  - 7z x wincache.zip -oC:\php\ext php_wincache.dll > nul
+  - 7z x wincache.zip -oC:\php\ext php_wincache.dll -aoa > nul
   - echo extension=php_wincache.dll >> php.ini
   - echo wincache.enablecli = 1 >> php.ini
 

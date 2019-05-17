@@ -398,7 +398,7 @@ class ConsoleIo
      */
     public function styles($style = null, $definition = null)
     {
-        $this->_out->styles($style, $definition);
+        return $this->_out->styles($style, $definition);
     }
 
     /**

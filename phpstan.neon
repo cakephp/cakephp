@@ -17,9 +17,6 @@ parameters:
         - '#Access to an undefined property Exception::\$queryString#'
         - '#Access to an undefined property PHPUnit\\Framework\\Test::\$fixtureManager#'
         - '#Call to an undefined method Traversable::getArrayCopy().#'
-        - '#Variable \$config in isset\(\) is never defined#'
-        - '#Variable \$plural in isset\(\) is never defined#'
-        - '#Variable \$context in isset\(\) is never defined#'
         - '#Call to static method id\(\) on an unknown class PHPUnit_Runner_Version#'
         - '#Call to an undefined method DateTimeInterface::i18nFormat\(\)#'
         - '#Cannot call method lastInsertId\(\) on null#'
@@ -27,10 +24,10 @@ parameters:
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception is not subtype of Throwable#'
-        - '#Call to an undefined method PHPUnit\\Framework\\MockObject\\MockObject#'
         - '#Call to an undefined method DOMNode::setAttribute\(\)#'
         - '#Binary operation "\+" between array|false and array results in an error#'
         - '#Result of method Cake\\Auth\\BaseAuthenticate::unauthenticated\(\) \(void\) is used#'
+        - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

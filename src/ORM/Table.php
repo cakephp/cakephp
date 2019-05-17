@@ -339,6 +339,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the database table name.
      *
+     * This can include the database schema name in the form 'schema.table'.
+     * If the name must be quoted, enable automatic identifier quoting.
+     *
      * @param string $table Table name.
      * @return $this
      */
@@ -351,6 +354,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
     /**
      * Returns the database table name.
+     *
+     * This can include the database schema name if set using `setTable()`.
      *
      * @return string
      */
@@ -1593,7 +1598,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidPrimaryKeyException(sprintf(
                 'Record not found in table "%s" with primary key [%s]',
                 $this->getTable(),
-                implode($primaryKey, ', ')
+                implode(', ', $primaryKey)
             ));
         }
         $conditions = array_combine($key, $primaryKey);
@@ -1674,7 +1679,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param array|\Cake\ORM\Query $search The criteria to find existing
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|null $callback A callback that will be invoked for newly
@@ -1704,7 +1709,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param array|callable $search The criteria to find an existing record by, or a callable tha will
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find an existing record by, or a callable tha will
      *   customize the find query.
      * @param callable|null $callback A callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1714,20 +1719,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _processFindOrCreate($search, callable $callback = null, $options = [])
     {
-        if (is_callable($search)) {
-            $query = $this->find();
-            $search($query);
-        } elseif (is_array($search)) {
-            $query = $this->find()->where($search);
-        } elseif ($search instanceof Query) {
-            $query = $search;
-        } else {
-            throw new InvalidArgumentException('Search criteria must be an array, callable or Query');
-        }
+        $query = $this->_getFindOrCreateQuery($search);
         $row = $query->first();
         if ($row !== null) {
             return $row;
         }
+
         $entity = $this->newEntity();
         if ($options['defaults'] && is_array($search)) {
             $accessibleFields = array_combine(array_keys($search), array_fill(0, count($search), true));
@@ -1750,16 +1747,23 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param array|\Cake\ORM\Query|string $search The criteria to find existing records by.
+     * @param array|callable|\Cake\ORM\Query $search The criteria to find existing records by.
      * @return \Cake\ORM\Query
      */
     protected function _getFindOrCreateQuery($search)
     {
-        if ($search instanceof Query) {
-            return $search;
+        if (is_callable($search)) {
+            $query = $this->find();
+            $search($query);
+        } elseif (is_array($search)) {
+            $query = $this->find()->where($search);
+        } elseif ($search instanceof Query) {
+            $query = $search;
+        } else {
+            throw new InvalidArgumentException('Search criteria must be an array, callable or Query');
         }
 
-        return $this->find()->where($search);
+        return $query;
     }
 
     /**

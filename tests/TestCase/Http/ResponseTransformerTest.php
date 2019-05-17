@@ -301,10 +301,6 @@ class ResponseTransformerTest extends TestCase
         $cake->type('application/octet-stream');
         $result = ResponseTransformer::toPsr($cake);
         $this->assertSame('application/octet-stream', $result->getHeaderLine('Content-Type'));
-
-        $cake->type('application/json');
-        $result = ResponseTransformer::toPsr($cake);
-        $this->assertSame('application/json; charset=utf-8', $result->getHeaderLine('Content-Type'));
     }
 
     /**

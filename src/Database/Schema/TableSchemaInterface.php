@@ -18,8 +18,6 @@ use Cake\Datasource\SchemaInterface;
 
 /**
  * An interface used by database TableSchema objects.
- *
- * Deprecated 3.5.0: Use Cake\Database\TableSchemaAwareInterface instead.
  */
 interface TableSchemaInterface extends SchemaInterface
 {

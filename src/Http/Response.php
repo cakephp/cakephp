@@ -24,6 +24,7 @@ use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
@@ -580,7 +581,7 @@ class Response implements ResponseInterface
             return;
         }
         $whitelist = [
-            'application/javascript', 'application/json', 'application/xml', 'application/rss+xml'
+            'application/javascript', 'application/xml', 'application/rss+xml'
         ];
 
         $charset = false;
@@ -1608,7 +1609,7 @@ class Response implements ResponseInterface
      * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
      * `$response->expires()` Will return the current expiration header value
      *
-     * @param string|\DateTime|null $time Valid time string or \DateTime instance.
+     * @param string|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return string|null
      * @deprecated 3.4.0 Use withExpires() instead.
      */
@@ -1644,7 +1645,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTime $time Valid time string or \DateTime instance.
+     * @param string|\DateTimeInterface $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time)
@@ -1664,7 +1665,7 @@ class Response implements ResponseInterface
      * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
      * `$response->modified()` Will return the current Last-Modified header value
      *
-     * @param string|\DateTime|null $time Valid time string or \DateTime instance.
+     * @param string|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return string|null
      * @deprecated 3.4.0 Use withModified() instead.
      */
@@ -1700,7 +1701,7 @@ class Response implements ResponseInterface
      * $response->withModified(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTime $time Valid time string or \DateTime instance.
+     * @param string|\DateTimeInterface $time Valid time string or \DateTimeInterface instance.
      * @return static
      */
     public function withModified($time)
@@ -1885,21 +1886,20 @@ class Response implements ResponseInterface
      * Returns a DateTime object initialized at the $time param and using UTC
      * as timezone
      *
-     * @param string|int|\DateTime|null $time Valid time string or \DateTime instance.
-     * @return \DateTime
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTimeInterface instance.
+     * @return \DateTimeInterface
      */
     protected function _getUTCDate($time = null)
     {
-        if ($time instanceof DateTime) {
+        if ($time instanceof DateTimeInterface) {
             $result = clone $time;
         } elseif (is_int($time)) {
             $result = new DateTime(date('Y-m-d H:i:s', $time));
         } else {
             $result = new DateTime($time);
         }
-        $result->setTimezone(new DateTimeZone('UTC'));
 
-        return $result;
+        return $result->setTimezone(new DateTimeZone('UTC'));
     }
 
     /**

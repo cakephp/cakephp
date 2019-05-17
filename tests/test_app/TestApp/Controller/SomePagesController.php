@@ -49,9 +49,7 @@ class SomePagesController extends Controller
      */
     public function responseGenerator()
     {
-        $this->response->body('new response');
-
-        return $this->response;
+        return $this->response->withStringBody('new response');
     }
 
     protected function _fail()

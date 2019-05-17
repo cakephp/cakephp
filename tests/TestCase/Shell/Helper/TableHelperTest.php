@@ -271,6 +271,28 @@ class TableHelperTest extends TestCase
     }
 
     /**
+     * Test output with formatted cells
+     *
+     * @return void
+     */
+    public function testOutputWithFormattedCells()
+    {
+        $data = [
+            ['short', 'Longish thing', '<info>short</info>'],
+            ['Longer thing', 'short', '<warning>Longest</warning> <error>Value</error>'],
+        ];
+        $this->helper->setConfig(['headers' => false]);
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+---------------+',
+            '| short        | Longish thing | <info>short</info>         |',
+            '| Longer thing | short         | <warning>Longest</warning> <error>Value</error> |',
+            '+--------------+---------------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
      * Test output with row separator
      *
      * @return void
@@ -280,7 +302,7 @@ class TableHelperTest extends TestCase
         $data = [
             ['Header 1', 'Header', 'Long Header'],
             ['short', 'Longish thing', 'short'],
-            ['Longer thing', 'short', 'Longest Value']
+            ['Longer thing', 'short', 'Longest Value'],
         ];
         $this->helper->setConfig(['rowSeparator' => true]);
         $this->helper->output($data);
@@ -337,7 +359,7 @@ class TableHelperTest extends TestCase
     public function testOutputWithHeaderAndNoData()
     {
         $data = [
-            ['Header 1', 'Header', 'Long Header']
+            ['Header 1', 'Header', 'Long Header'],
         ];
         $this->helper->output($data);
         $expected = [

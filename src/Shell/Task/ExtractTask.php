@@ -405,6 +405,18 @@ class ExtractTask extends Shell
         $progress->init(['total' => count($this->_files)]);
         $isVerbose = $this->param('verbose');
 
+        $functions = [
+            '__' => ['singular'],
+            '__n' => ['singular', 'plural'],
+            '__d' => ['domain', 'singular'],
+            '__dn' => ['domain', 'singular', 'plural'],
+            '__x' => ['context', 'singular'],
+            '__xn' => ['context', 'singular', 'plural'],
+            '__dx' => ['domain', 'context', 'singular'],
+            '__dxn' => ['domain', 'context', 'singular', 'plural'],
+        ];
+        $pattern = '/(' . implode('|', array_keys($functions)) . ')\s*\(/';
+
         foreach ($this->_files as $file) {
             $this->_file = $file;
             if ($isVerbose) {
@@ -412,23 +424,22 @@ class ExtractTask extends Shell
             }
 
             $code = file_get_contents($file);
-            $allTokens = token_get_all($code);
 
-            $this->_tokens = [];
-            foreach ($allTokens as $token) {
-                if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
-                    $this->_tokens[] = $token;
+            if (preg_match($pattern, $code) === 1) {
+                $allTokens = token_get_all($code);
+
+                $this->_tokens = [];
+                foreach ($allTokens as $token) {
+                    if (!is_array($token) || ($token[0] !== T_WHITESPACE && $token[0] !== T_INLINE_HTML)) {
+                        $this->_tokens[] = $token;
+                    }
+                }
+                unset($allTokens);
+
+                foreach ($functions as $functionName => $map) {
+                    $this->_parse($functionName, $map);
                 }
             }
-            unset($allTokens);
-            $this->_parse('__', ['singular']);
-            $this->_parse('__n', ['singular', 'plural']);
-            $this->_parse('__d', ['domain', 'singular']);
-            $this->_parse('__dn', ['domain', 'singular', 'plural']);
-            $this->_parse('__x', ['context', 'singular']);
-            $this->_parse('__xn', ['context', 'singular', 'plural']);
-            $this->_parse('__dx', ['domain', 'context', 'singular']);
-            $this->_parse('__dxn', ['domain', 'context', 'singular', 'plural']);
 
             if (!$isVerbose) {
                 $progress->increment(1);
@@ -475,7 +486,12 @@ class ExtractTask extends Shell
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
-                    $singular = null;
+                    $singular = $plural = $context = null;
+                    /**
+                     * @var string $singular
+                     * @var string|null $plural
+                     * @var string|null $context
+                     */
                     extract(array_combine($map, $strings));
                     $domain = isset($domain) ? $domain : 'default';
                     $details = [
@@ -485,10 +501,10 @@ class ExtractTask extends Shell
                     if ($this->_relativePaths) {
                         $details['file'] = '.' . str_replace(ROOT, '', $details['file']);
                     }
-                    if (isset($plural)) {
+                    if ($plural !== null) {
                         $details['msgid_plural'] = $plural;
                     }
-                    if (isset($context)) {
+                    if ($context !== null) {
                         $details['msgctxt'] = $context;
                     }
                     $this->_addTranslation($domain, $singular, $details);

@@ -162,7 +162,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * the long name (`plugin.command`) will be returned.
      *
      * @param string $plugin The plugin to scan.
-     * @return array Discovered plugin commands.
+     * @return string[] Discovered plugin commands.
      */
     public function discoverPlugin($plugin)
     {
@@ -176,7 +176,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Resolve names based on existing commands
      *
      * @param array $input The results of a CommandScanner operation.
-     * @return array A flat map of command names => class names.
+     * @return string[] A flat map of command names => class names.
      */
     protected function resolveNames(array $input)
     {
@@ -213,7 +213,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Commands defined in the application will ovewrite commands with
      * the same name provided by CakePHP.
      *
-     * @return array An array of command names and their classes.
+     * @return string[] An array of command names and their classes.
      */
     public function autoDiscover()
     {

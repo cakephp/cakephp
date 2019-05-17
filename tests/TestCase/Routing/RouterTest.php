@@ -23,6 +23,7 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 
 /**
  * RouterTest class
@@ -1336,6 +1337,72 @@ class RouterTest extends TestCase
         $result = Router::url(['controller' => 'tasks', 'action' => 'edit']);
         $this->assertEquals('/en/tasks/edit/1234', $result);
         $this->assertEquals(2, $calledCount);
+    }
+
+    /**
+     * Test that url filter failure gives better errors
+     *
+     * @return void
+     */
+    public function testUrlGenerationWithUrlFilterFailureClosure()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageRegExp(
+            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
+            ' The filter failed with: nope/'
+        );
+        Router::connect('/:lang/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'lang' => 'en',
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
+        ]);
+        Router::pushRequest($request);
+
+        Router::addUrlFilter(function ($url, $request) {
+            throw new RuntimeException('nope');
+        });
+        Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
+    }
+
+    /**
+     * Test that url filter failure gives better errors
+     *
+     * @return void
+     */
+    public function testUrlGenerationWithUrlFilterFailureMethod()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageRegExp(
+            '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
+            ' The filter failed with: /'
+        );
+        Router::connect('/:lang/:controller/:action/*');
+        $request = new ServerRequest([
+            'params' => [
+                'plugin' => null,
+                'lang' => 'en',
+                'controller' => 'posts',
+                'action' => 'index'
+            ]
+        ]);
+        Router::pushRequest($request);
+
+        Router::addUrlFilter([$this, 'badFilter']);
+        Router::url(['controller' => 'posts', 'action' => 'index', 'lang' => 'en']);
+    }
+
+    /**
+     * Testing stub for broken URL filters.
+     *
+     * @throws \RuntimeException
+     */
+    public function badFilter()
+    {
+        throw new RuntimeException('nope');
     }
 
     /**
