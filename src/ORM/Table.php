@@ -2069,7 +2069,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Exception
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      */
-    public function saveManyOrFail(iterable $entities, $options = [])
+    public function saveManyOrFail(iterable $entities, $options = []): iterable
     {
         return $this->_saveMany($entities, $options);
     }
@@ -2081,7 +2081,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      */
-    public function _saveMany(iterable $entities, $options = [])
+    protected function _saveMany(iterable $entities, $options = []): iterable
     {
         /** @var bool[] $isNew */
         $isNew = [];
