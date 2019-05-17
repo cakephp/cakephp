@@ -2067,7 +2067,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
      * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
      * @throws \Exception
-     * @throws \Cake\ORM\Exception\PersistenceFailedException
+     * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
     public function saveManyOrFail(iterable $entities, $options = []): iterable
     {
@@ -2075,17 +2075,15 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     }
 
     /**
-     * @param iterable $entities
-     * @param array $options
-     *
-     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface
-     * @throws \Cake\ORM\Exception\PersistenceFailedException
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to save.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
      */
     protected function _saveMany(iterable $entities, $options = []): iterable
     {
         /** @var bool[] $isNew */
         $isNew = [];
-        $failed = null;
         $cleanup = function ($entities) use (&$isNew): void {
             /** @var \Cake\Datasource\EntityInterface[] $entities */
             foreach ($entities as $key => $entity) {
@@ -2097,14 +2095,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         };
 
         try {
-            $return = $this->getConnection()
-                ->transactional(function () use ($entities, $options, &$isNew, &$failed) {
+            $failed = $this->getConnection()
+                ->transactional(function () use ($entities, $options, &$isNew) {
                     foreach ($entities as $key => $entity) {
                         $isNew[$key] = $entity->isNew();
                         if ($this->save($entity, $options) === false) {
-                            $failed = $entity;
-
-                            return false;
+                            return $entity;
                         }
                     }
                 });
@@ -2114,7 +2110,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw $e;
         }
 
-        if ($return === false) {
+        if ($failed !== null) {
             $cleanup($entities);
 
             throw new PersistenceFailedException($failed, ['saveMany']);
