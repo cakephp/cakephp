@@ -52,7 +52,7 @@ class CspMiddleware implements MiddlewareInterface
         }
 
         if (!empty($cspConfig) && is_array($cspConfig)) {
-            $this->csp = CSPBuilder::fromData(json_encode($cspConfig));
+            $this->csp = new CSPBuilder($cspConfig);
 
             return;
         }
