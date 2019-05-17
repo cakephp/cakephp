@@ -18,7 +18,6 @@ namespace Cake\Http\Middleware;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
-use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\Utility\Hash;
