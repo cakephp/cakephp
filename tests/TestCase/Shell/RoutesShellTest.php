@@ -33,9 +33,8 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function setUp(): void
     {
         parent::setUp();
-        Router::connect('/articles/:action/*', ['controller' => 'Articles']);
-        Router::connect('/bake/:controller/:action', ['plugin' => 'Bake']);
-        Router::connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
+        $this->setAppNamespace();
+        $this->useCommandRunner();
     }
 
     /**
@@ -65,7 +64,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
-            '/articles/:action/*',
+            '/app/articles/:action/*',
             '{"action":"index","controller":"Articles","plugin":null}',
         ]);
         $this->assertOutputContainsRow([
@@ -75,7 +74,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         ]);
         $this->assertOutputContainsRow([
             'testName',
-            '/tests/:action/*',
+            '/app/tests/:action/*',
             '{"action":"index","controller":"Tests","plugin":null}',
         ]);
     }
@@ -87,7 +86,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
      */
     public function testCheck()
     {
-        $this->exec('routes check /articles/check');
+        $this->exec('routes check /app/articles/check');
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
@@ -96,7 +95,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
-            '/articles/check',
+            '/app/articles/check',
             '{"action":"check","controller":"Articles","pass":[],"plugin":null}',
         ]);
     }
@@ -108,7 +107,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
      */
     public function testCheckWithNamedRoute()
     {
-        $this->exec('routes check /tests/index');
+        $this->exec('routes check /app/tests/index');
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
@@ -117,7 +116,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
         ]);
         $this->assertOutputContainsRow([
             'testName',
-            '/tests/index',
+            '/app/tests/index',
             '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}',
         ]);
     }
@@ -143,7 +142,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     {
         $this->exec('routes generate controller:Articles action:index');
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertOutputContains('> /articles/index');
+        $this->assertOutputContains('> /app/articles');
         $this->assertErrorEmpty();
     }
 
@@ -156,7 +155,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     {
         $this->exec('routes generate controller:Articles action:view 2 3');
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertOutputContains('> /articles/view/2/3');
+        $this->assertOutputContains('> /app/articles/view/2/3');
         $this->assertErrorEmpty();
     }
 
@@ -169,7 +168,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     {
         $this->exec('routes generate controller:Articles action:index _ssl:true _host:example.com');
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertOutputContains('> https://example.com/articles/index');
+        $this->assertOutputContains('> https://example.com/app/articles');
     }
 
     /**
@@ -179,7 +178,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
      */
     public function testGenerateMissing()
     {
-        $this->exec('routes generate controller:Derp');
+        $this->exec('routes generate plugin:Derp controller:Derp');
         $this->assertExitCode(Shell::CODE_ERROR);
         $this->assertErrorContains('do not match');
     }
