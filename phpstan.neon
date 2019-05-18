@@ -36,6 +36,7 @@ parameters:
         - '#Parameter \#2 \$assoc of method Cake\\ORM\\Marshaller::_mergeBelongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
         - '#Parameter \#1 \$table of method Cake\\ORM\\Query::addDefaultTypes\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
         - '#Parameter \#1 \$table of method Cake\\ORM\\Query::_addAssociationsToTypeMap\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
+        - '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'
