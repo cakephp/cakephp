@@ -226,6 +226,6 @@ class FormContext implements ContextInterface
      */
     public function error($field)
     {
-        return array_values((array)Hash::get($this->_form->getErrors(), $field, []));
+        return (array)Hash::get($this->_form->getErrors(), $field, []);
     }
 }
