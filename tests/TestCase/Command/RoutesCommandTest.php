@@ -14,16 +14,16 @@ declare(strict_types=1);
  * @since         3.1.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
-use Cake\Console\Shell;
+use Cake\Console\Command;
 use Cake\Routing\Router;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * RoutesShellTest
+ * RoutesCommandTest
  */
-class RoutesShellTest extends ConsoleIntegrationTestCase
+class RoutesCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setUp method
@@ -49,14 +49,27 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * Ensure help for `routes` works
+     *
+     * @return void
+     */
+    public function testRouteListHelp()
+    {
+        $this->exec('routes -h');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('list of routes');
+        $this->assertErrorEmpty();
+    }
+
+    /**
      * Test checking an non-existing route.
      *
      * @return void
      */
-    public function testMain()
+    public function testRouteList()
     {
         $this->exec('routes');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
@@ -80,6 +93,19 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * Ensure help for `routes` works
+     *
+     * @return void
+     */
+    public function testCheckHelp()
+    {
+        $this->exec('routes check -h');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('Check a URL');
+        $this->assertErrorEmpty();
+    }
+
+    /**
      * Test checking an existing route.
      *
      * @return void
@@ -87,7 +113,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testCheck()
     {
         $this->exec('routes check /app/articles/check');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
@@ -108,7 +134,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testCheckWithNamedRoute()
     {
         $this->exec('routes check /app/tests/index');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContainsRow([
             '<info>Route name</info>',
             '<info>URI template</info>',
@@ -129,8 +155,21 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testCheckNotFound()
     {
         $this->exec('routes check /nope');
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitCode(Command::CODE_ERROR);
         $this->assertErrorContains('did not match');
+    }
+
+    /**
+     * Ensure help for `routes` works
+     *
+     * @return void
+     */
+    public function testGenerareHelp()
+    {
+        $this->exec('routes generate -h');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('Check a routing array');
+        $this->assertErrorEmpty();
     }
 
     /**
@@ -141,7 +180,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGenerateNoPassArgs()
     {
         $this->exec('routes generate controller:Articles action:index');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('> /app/articles');
         $this->assertErrorEmpty();
     }
@@ -154,7 +193,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGeneratePassedArguments()
     {
         $this->exec('routes generate controller:Articles action:view 2 3');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('> /app/articles/view/2/3');
         $this->assertErrorEmpty();
     }
@@ -167,7 +206,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGenerateBoolParams()
     {
         $this->exec('routes generate controller:Articles action:index _ssl:true _host:example.com');
-        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitCode(Command::CODE_SUCCESS);
         $this->assertOutputContains('> https://example.com/app/articles');
     }
 
@@ -179,7 +218,7 @@ class RoutesShellTest extends ConsoleIntegrationTestCase
     public function testGenerateMissing()
     {
         $this->exec('routes generate plugin:Derp controller:Derp');
-        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitCode(Command::CODE_ERROR);
         $this->assertErrorContains('do not match');
     }
 }
