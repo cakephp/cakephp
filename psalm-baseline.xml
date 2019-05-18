@@ -32,9 +32,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>DigestAuthenticate</code>
     </PropertyNotSetInConstructor>
-    <TypeDoesNotContainType occurrences="1">
-      <code>empty($req)</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Auth/FormAuthenticate.php">
     <PossiblyInvalidArgument occurrences="2">
@@ -1408,9 +1405,8 @@
       <code>$end</code>
       <code>$start</code>
     </PossiblyInvalidOperand>
-    <PossiblyNullArgument occurrences="2">
+    <PossiblyNullArgument occurrences="1">
       <code>$weak ? 'W/' : null</code>
-      <code>$cookie</code>
     </PossiblyNullArgument>
   </file>
   <file src="src/Http/ResponseEmitter.php">
@@ -2378,16 +2374,6 @@
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$dataValue</code>
     </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/CookieEncryptedEquals.php">
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$cookie['value']</code>
-    </PossiblyNullArrayAccess>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/CookieEquals.php">
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$cookie['value']</code>
-    </PossiblyNullArrayAccess>
   </file>
   <file src="src/TestSuite/Constraint/Response/FileSentAs.php">
     <PossiblyNullReference occurrences="1">

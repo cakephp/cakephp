@@ -331,12 +331,11 @@ class Response extends Message implements ResponseInterface
     {
         $this->buildCookieCollection();
 
-        $cookie = $this->cookies->get($name);
-        if ($cookie === null) {
+        if (!$this->cookies->has($name)) {
             return null;
         }
 
-        return $cookie->getValue();
+        return $this->cookies->get($name)->getValue();
     }
 
     /**
@@ -349,10 +348,11 @@ class Response extends Message implements ResponseInterface
     {
         $this->buildCookieCollection();
 
-        $cookie = $this->cookies->get($name);
-        if ($cookie === null) {
+        if (!$this->cookies->has($name)) {
             return null;
         }
+
+        $cookie = $this->cookies->get($name);
 
         return $this->convertCookieToArray($cookie);
     }
@@ -401,12 +401,14 @@ class Response extends Message implements ResponseInterface
     {
         $this->buildCookieCollection();
 
-        $cookies = [];
-        foreach ($this->cookies as $cookie) {
-            $cookies[$cookie->getName()] = $this->convertCookieToArray($cookie);
+        $out = [];
+        /** @var \Cake\Http\Cookie\Cookie[] $cookies */
+        $cookies = $this->cookies;
+        foreach ($cookies as $cookie) {
+            $out[$cookie->getName()] = $this->convertCookieToArray($cookie);
         }
 
-        return $cookies;
+        return $out;
     }
 
     /**
