@@ -753,7 +753,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    protected function _mergeBelongsToMany(array $original, Association $assoc, $value, array $options): array
+    protected function _mergeBelongsToMany(array $original, BelongsToMany $assoc, array $value, array $options): array
     {
         $associated = $options['associated'] ?? [];
 
