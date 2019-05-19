@@ -505,14 +505,8 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$key</code>
     </PossiblyInvalidArgument>
-    <UndefinedPropertyAssignment occurrences="1">
-      <code>static::$_dsnClassMap</code>
-    </UndefinedPropertyAssignment>
-    <UndefinedPropertyFetch occurrences="4">
+    <UndefinedPropertyFetch occurrences="1">
       <code>static::$_registry</code>
-      <code>static::$_dsnClassMap</code>
-      <code>static::$_dsnClassMap</code>
-      <code>static::$_dsnClassMap</code>
     </UndefinedPropertyFetch>
   </file>
   <file src="src/Core/functions.php">
@@ -2065,10 +2059,9 @@
       <code>$type</code>
       <code>$typeName</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="7">
       <code>$_table</code>
       <code>$_alias</code>
-      <code>$_schema</code>
       <code>$_primaryKey</code>
       <code>$_displayField</code>
       <code>$_entityClass</code>

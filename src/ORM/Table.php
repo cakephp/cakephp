@@ -189,7 +189,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The schema object containing a description of this table fields
      *
-     * @var \Cake\Database\Schema\TableSchemaInterface
+     * @var \Cake\Database\Schema\TableSchemaInterface|null
      */
     protected $_schema;
 
