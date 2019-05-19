@@ -21,6 +21,7 @@ use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -188,7 +189,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The schema object containing a description of this table fields
      *
-     * @var \Cake\Database\Schema\TableSchema
+     * @var \Cake\Database\Schema\TableSchemaInterface
      */
     protected $_schema;
 
@@ -244,7 +245,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - connection: The connection instance to use
      * - entityClass: The fully namespaced class name of the entity class that will
      *   represent rows in this table.
-     * - schema: A \Cake\Database\Schema\TableSchema object or an array that can be
+     * - schema: A \Cake\Database\Schema\TableSchemaInterface object or an array that can be
      *   passed to it.
      * - eventManager: An instance of an event manager to use for internal events
      * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
@@ -482,9 +483,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the schema table object describing this table's properties.
      *
-     * @return \Cake\Database\Schema\TableSchema
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function getSchema(): TableSchema
+    public function getSchema(): TableSchemaInterface
     {
         if ($this->_schema === null) {
             $this->_schema = $this->_initializeSchema(
@@ -500,10 +501,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the schema table object describing this table's properties.
      *
-     * If an array is passed, a new TableSchema will be constructed
+     * If an array is passed, a new TableSchemaInterface will be constructed
      * out of it and used as the schema for this table.
      *
-     * @param array|\Cake\Database\Schema\TableSchema $schema Schema to be used for this table
+     * @param array|\Cake\Database\Schema\TableSchemaInterface $schema Schema to be used for this table
      * @return $this
      */
     public function setSchema($schema)
@@ -538,16 +539,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ### Example:
      *
      * ```
-     * protected function _initializeSchema(\Cake\Database\Schema\TableSchema $schema) {
+     * protected function _initializeSchema(\Cake\Database\Schema\TableSchemaInterface $schema) {
      *  $schema->setColumnType('preferences', 'json');
      *  return $schema;
      * }
      * ```
      *
-     * @param \Cake\Database\Schema\TableSchema $schema The table definition fetched from database.
-     * @return \Cake\Database\Schema\TableSchema the altered schema
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table definition fetched from database.
+     * @return \Cake\Database\Schema\TableSchemaInterface the altered schema
      */
-    protected function _initializeSchema(TableSchema $schema): TableSchema
+    protected function _initializeSchema(TableSchemaInterface $schema): TableSchemaInterface
     {
         return $schema;
     }
