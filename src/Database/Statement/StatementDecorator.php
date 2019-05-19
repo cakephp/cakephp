@@ -47,7 +47,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Reference to the driver object associated to this statement.
      *
-     * @var \Cake\Database\Driver|null
+     * @var \Cake\Database\DriverInterface|null
      */
     protected $_driver;
 
@@ -63,7 +63,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @param \Cake\Database\StatementInterface|\PDOStatement|null $statement Statement implementation
      *  such as PDOStatement.
-     * @param \Cake\Database\Driver|null $driver Driver instance
+     * @param \Cake\Database\DriverInterface|null $driver Driver instance
      */
     public function __construct($statement = null, $driver = null)
     {

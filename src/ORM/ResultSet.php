@@ -156,7 +156,7 @@ class ResultSet implements ResultSetInterface
      *
      * Cached in a property to avoid multiple calls to the same function.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 

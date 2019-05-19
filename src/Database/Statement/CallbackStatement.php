@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 
 /**
@@ -38,10 +38,10 @@ class CallbackStatement extends StatementDecorator
      * Constructor
      *
      * @param \Cake\Database\StatementInterface $statement The statement to decorate.
-     * @param \Cake\Database\Driver $driver The driver instance used by the statement.
+     * @param \Cake\Database\DriverInterface $driver The driver instance used by the statement.
      * @param callable $callback The callback to apply to results before they are returned.
      */
-    public function __construct(StatementInterface $statement, Driver $driver, callable $callback)
+    public function __construct(StatementInterface $statement, DriverInterface $driver, callable $callback)
     {
         parent::__construct($statement, $driver);
         $this->_callback = $callback;

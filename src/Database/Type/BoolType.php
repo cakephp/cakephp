@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -31,10 +31,10 @@ class BoolType extends BaseType implements BatchCastingInterface
      * Convert bool data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return bool|null
      */
-    public function toDatabase($value, Driver $driver): ?bool
+    public function toDatabase($value, DriverInterface $driver): ?bool
     {
         if ($value === true || $value === false || $value === null) {
             return $value;
@@ -54,10 +54,10 @@ class BoolType extends BaseType implements BatchCastingInterface
      * Convert bool values to PHP booleans
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return bool|null
      */
-    public function toPHP($value, Driver $driver): ?bool
+    public function toPHP($value, DriverInterface $driver): ?bool
     {
         if ($value === null || $value === true || $value === false) {
             return $value;
@@ -75,7 +75,7 @@ class BoolType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver): array
+    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field]) || $values[$field] === true || $values[$field] === false) {
@@ -108,10 +108,10 @@ class BoolType extends BaseType implements BatchCastingInterface
      * Get the correct PDO binding type for bool data.
      *
      * @param mixed $value The value being bound.
-     * @param \Cake\Database\Driver $driver The driver.
+     * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver): int
+    public function toStatement($value, DriverInterface $driver): int
     {
         if ($value === null) {
             return PDO::PARAM_NULL;
