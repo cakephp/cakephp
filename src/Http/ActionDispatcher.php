@@ -50,7 +50,7 @@ class ActionDispatcher
      * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Psr\Http\Message\ResponseInterface A modified/replaced response.
      */
-    public function dispatch(ServerRequest $request, ?ResponseInterface $response = null): ResponseInterface
+    public function dispatch(ServerRequest $request, ?Response $response = null): ResponseInterface
     {
         if ($response === null) {
             $response = new Response();
