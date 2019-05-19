@@ -32,9 +32,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>DigestAuthenticate</code>
     </PropertyNotSetInConstructor>
-    <TypeDoesNotContainType occurrences="1">
-      <code>empty($req)</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Auth/FormAuthenticate.php">
     <PossiblyInvalidArgument occurrences="2">
