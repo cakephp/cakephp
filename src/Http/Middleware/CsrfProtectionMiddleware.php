@@ -18,7 +18,7 @@ namespace Cake\Http\Middleware;
 
 use Cake\Http\Cookie\Cookie;
 use Cake\Http\Exception\InvalidCsrfTokenException;
-use Cake\Http\ServerRequest;
+use Cake\Http\Response;
 use Cake\I18n\Time;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -84,7 +84,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Checks and sets the CSRF token depending on the HTTP verb.
      *
-     * @param \Cake\Http\ServerRequest $request The request.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
      * @return \Psr\Http\Message\ResponseInterface A response.
      */
@@ -116,12 +116,14 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Checks if the request is POST, PUT, DELETE or PATCH and validates the CSRF token
      *
-     * @param \Cake\Http\ServerRequest $request The request object.
-     * @return \Cake\Http\ServerRequest
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
+     * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function _validateAndUnsetTokenField(ServerRequest $request): ServerRequest
+    protected function _validateAndUnsetTokenField(ServerRequestInterface $request): ServerRequestInterface
     {
-        if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true) || $request->getData()) {
+        if (in_array($request->getMethod(), ['PUT', 'POST', 'DELETE', 'PATCH'], true)
+            || $request->getParsedBody()
+        ) {
             $this->_validateToken($request);
             $body = $request->getParsedBody();
             if (is_array($body)) {
@@ -166,7 +168,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param \Cake\Http\Response $response The response.
      * @return \Cake\Http\Response $response Modified response.
      */
-    protected function _addTokenCookie(string $token, ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    protected function _addTokenCookie(string $token, ServerRequestInterface $request, Response $response): Response
     {
         $expiry = new Time($this->_config['expiry']);
 
@@ -186,11 +188,11 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * Validate the request data against the cookie token.
      *
-     * @param \Cake\Http\ServerRequest $request The request to validate against.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to validate against.
      * @return void
      * @throws \Cake\Http\Exception\InvalidCsrfTokenException When the CSRF token is invalid or missing.
      */
-    protected function _validateToken(ServerRequest $request): void
+    protected function _validateToken(ServerRequestInterface $request): void
     {
         $cookies = $request->getCookieParams();
         $cookie = Hash::get($cookies, $this->_config['cookieName']);
