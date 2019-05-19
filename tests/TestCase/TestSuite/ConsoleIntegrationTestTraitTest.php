@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Console\Shell;
-use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use PHPUnit\Framework\AssertionFailedError;
 
@@ -31,7 +30,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        $this->setAppNamespace();
     }
 
     /**
@@ -55,9 +54,9 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExec()
     {
-        $this->exec('routes');
+        $this->exec('sample');
 
-        $this->assertOutputContains('Route name');
+        $this->assertOutputContains('SampleShell');
         $this->assertExitCode(Shell::CODE_SUCCESS);
     }
 
@@ -93,6 +92,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExecCoreCommand()
     {
+        $this->useCommandRunner();
         $this->exec('routes');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
@@ -161,9 +161,9 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testAssertOutputRegExp()
     {
-        $this->exec('routes');
+        $this->exec('sample');
 
-        $this->assertOutputRegExp('/^\+[\-\+]+\+$/m');
+        $this->assertOutputRegExp('/^[A-Z]+/mi');
     }
 
     /**
@@ -216,6 +216,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);
 
+        $this->useCommandRunner();
         $this->exec($command);
 
         call_user_func_array([$this, $assertion], $rest);

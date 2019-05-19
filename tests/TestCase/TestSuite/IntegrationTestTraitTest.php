@@ -322,8 +322,15 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertResponseSuccess();
+    }
 
-        $this->_response = null;
+    /**
+     * Test sending head requests.
+     *
+     * @return void
+     */
+    public function testHeadMethodRoute()
+    {
         $this->head('/head/request_action/test_request_action');
         $this->assertResponseSuccess();
     }
@@ -341,8 +348,15 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertResponseSuccess();
+    }
 
-        $this->_response = null;
+    /**
+     * Test sending options requests.
+     *
+     * @return void
+     */
+    public function testOptionsMethodRoute()
+    {
         $this->options('/options/request_action/test_request_action');
         $this->assertResponseSuccess();
     }
