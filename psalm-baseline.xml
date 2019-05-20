@@ -833,14 +833,6 @@
       <code>$on</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Database/Schema/CachedCollection.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$cacheConfig</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$cacheConfig</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Database/Schema/Collection.php">
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array</code>
@@ -2058,13 +2050,12 @@
       <code>$type</code>
       <code>$typeName</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="7">
+    <PropertyNotSetInConstructor occurrences="6">
       <code>$_table</code>
       <code>$_alias</code>
       <code>$_primaryKey</code>
       <code>$_displayField</code>
       <code>$_entityClass</code>
-      <code>$_registryAlias</code>
       <code>Table</code>
     </PropertyNotSetInConstructor>
     <TypeDoesNotContainType occurrences="1">
@@ -2156,15 +2147,6 @@
     </DeprecatedClass>
     <PropertyNotSetInConstructor occurrences="1">
       <code>PluginShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/RoutesShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>RoutesShell</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/SchemaCacheShell.php">
@@ -2274,9 +2256,6 @@
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
       <code>$exception-&gt;getCode()</code>
     </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;_exitCode</code>
-    </PossiblyNullArgument>
     <PossiblyNullReference occurrences="8">
       <code>messages</code>
       <code>messages</code>
