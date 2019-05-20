@@ -16,6 +16,10 @@
         </ignoreFiles>
     </projectFiles>
 
+    <stubs>
+        <file name="tests/bootstrap.php" />
+    </stubs>
+
     <issueHandlers>
         <LessSpecificReturnType errorLevel="info" />
         <RedundantConditionGivenDocblockType errorLevel="info" />

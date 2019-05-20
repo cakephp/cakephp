@@ -194,10 +194,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>$commands</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>ROOT</code>
-      <code>CORE_PATH</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Command/UpgradeCommand.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -207,9 +203,6 @@
       <code>$args</code>
       <code>$io</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="1">
-      <code>APP</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Console/Command.php">
     <MissingClosureParamType occurrences="1">
@@ -297,9 +290,6 @@
       <code>$name</code>
       <code>$plugin</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="1">
-      <code>ROOT</code>
-    </UndefinedConstant>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;name</code>
     </UninitializedProperty>
@@ -311,9 +301,6 @@
       <code>static::alias($shell, "$plugin.$shell")</code>
       <code>static::alias($shell)</code>
     </DeprecatedClass>
-    <UndefinedConstant occurrences="1">
-      <code>CAKE_CORE_INCLUDE_PATH</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Console/TaskRegistry.php">
     <MoreSpecificImplementedParamType occurrences="2">
@@ -452,11 +439,6 @@
     <PossiblyFalseOperand occurrences="1">
       <code>$pos</code>
     </PossiblyFalseOperand>
-    <UndefinedConstant occurrences="3">
-      <code>APP</code>
-      <code>CORE_PATH</code>
-      <code>CAKE</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Core/BasePlugin.php">
     <PropertyNotSetInConstructor occurrences="5">
@@ -468,9 +450,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Core/Configure.php">
-    <UndefinedConstant occurrences="1">
-      <code>CORE_PATH</code>
-    </UndefinedConstant>
     <UnresolvableInclude occurrences="1">
       <code>require CORE_PATH . 'config/config.php'</code>
     </UnresolvableInclude>
@@ -479,19 +458,8 @@
     <LoopInvalidation occurrences="1">
       <code>$values</code>
     </LoopInvalidation>
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
-  </file>
-  <file src="src/Core/Configure/Engine/JsonConfig.php">
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Core/Configure/Engine/PhpConfig.php">
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
     <UnresolvableInclude occurrences="1">
       <code>include $file</code>
     </UnresolvableInclude>
@@ -1469,9 +1437,6 @@
       <code>$_engine</code>
       <code>$_started</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="1">
-      <code>TMP</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Http/Session/DatabaseSession.php">
     <InvalidArgument occurrences="2">
@@ -2167,10 +2132,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>ServerShell</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>APP</code>
-      <code>WWW_ROOT</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Shell/Task/AssetsTask.php">
     <DeprecatedClass occurrences="2">
@@ -2208,12 +2169,9 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>ExtractTask</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="6">
+    <UndefinedConstant occurrences="3">
       <code>APP</code>
-      <code>CAKE</code>
-      <code>ROOT</code>
       <code>APP</code>
-      <code>CAKE_CORE_INCLUDE_PATH</code>
       <code>APP</code>
     </UndefinedConstant>
   </file>
@@ -2226,10 +2184,6 @@
       <code>$bootstrap</code>
       <code>LoadTask</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>ROOT</code>
-      <code>APP</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Shell/Task/UnloadTask.php">
     <DeprecatedClass occurrences="2">
@@ -2240,10 +2194,6 @@
       <code>$bootstrap</code>
       <code>UnloadTask</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>ROOT</code>
-      <code>APP</code>
-    </UndefinedConstant>
   </file>
   <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
     <InternalMethod occurrences="2">
@@ -2276,9 +2226,6 @@
       <code>messages</code>
       <code>messages</code>
     </PossiblyUndefinedMethod>
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
   </file>
   <file src="src/TestSuite/Constraint/Console/ContentsContainRow.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -2471,9 +2418,6 @@
     <RedundantCondition occurrences="1">
       <code>$this-&gt;app instanceof HttpApplicationInterface</code>
     </RedundantCondition>
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
   </file>
   <file src="src/TestSuite/TestCase.php">
     <PossiblyFalseArgument occurrences="3">
