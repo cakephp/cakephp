@@ -635,7 +635,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The HTML string to check.
      * @param bool $fullDebug Whether or not more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
-     * @return string|bool
+     * @return string|false
      */
     protected function _assertAttributes(array $assertions, string $string, bool $fullDebug = false, $regex = '')
     {

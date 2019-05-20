@@ -55,6 +55,9 @@ parameters:
             message: '#Result of && is always false#'
             path: 'src/Routing/Route/EntityRoute.php'
         -
+            message: '#Call to an undefined method Cake\\ORM\\Association::junction\(\).#'
+            path: 'src/View/Form/EntityContext.php'
+        -
             message: '#Result of || is always true#'
             path: 'src/Shell/Task/ExtractTask.php'
         -
