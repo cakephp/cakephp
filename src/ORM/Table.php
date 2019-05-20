@@ -231,7 +231,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Registry key used to create this table object
      *
-     * @var string
+     * @var string|null
      */
     protected $_registryAlias;
 
