@@ -27,7 +27,7 @@ class CachedCollection implements CollectionInterface
      * The name of the cache config key to use for caching table metadata,
      * of false if disabled.
      *
-     * @var string|bool
+     * @var string|false
      */
     protected $_cache = false;
 
@@ -124,7 +124,7 @@ class CachedCollection implements CollectionInterface
     /**
      * Gets the cache config name to use for caching table metadata, false means disabled.
      *
-     * @return string|bool
+     * @return string|false
      */
     public function getCacheMetadata()
     {

@@ -29,7 +29,7 @@ class TransportFactory
     /**
      * Transport Registry used for creating and using transport instances.
      *
-     * @var \Cake\Mailer\TransportRegistry
+     * @var \Cake\Mailer\TransportRegistry|null
      */
     protected static $_registry;
 
