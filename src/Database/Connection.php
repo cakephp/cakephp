@@ -51,7 +51,7 @@ class Connection implements ConnectionInterface
      * Driver object, responsible for creating the real connection
      * and provide specific SQL dialect.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -162,7 +162,7 @@ class Connection implements ConnectionInterface
      * Sets the driver instance. If a string is passed it will be treated
      * as a class name and will be instantiated.
      *
-     * @param \Cake\Database\Driver|string $driver The driver instance to use.
+     * @param \Cake\Database\DriverInterface|string $driver The driver instance to use.
      * @param array $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
@@ -200,9 +200,9 @@ class Connection implements ConnectionInterface
     /**
      * Gets the driver instance.
      *
-     * @return \Cake\Database\Driver
+     * @return \Cake\Database\DriverInterface
      */
-    public function getDriver(): Driver
+    public function getDriver(): DriverInterface
     {
         return $this->_driver;
     }

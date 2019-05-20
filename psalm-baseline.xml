@@ -300,9 +300,6 @@
     <UndefinedConstant occurrences="1">
       <code>ROOT</code>
     </UndefinedConstant>
-    <UndefinedMethod occurrences="1">
-      <code>main</code>
-    </UndefinedMethod>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;name</code>
     </UninitializedProperty>
@@ -1923,8 +1920,7 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/EagerLoadable.php">
-    <PropertyNotSetInConstructor occurrences="5">
-      <code>$_instance</code>
+    <PropertyNotSetInConstructor occurrences="4">
       <code>$_aliasPath</code>
       <code>$_propertyPath</code>
       <code>$_forMatching</code>
@@ -1947,11 +1943,8 @@
     <PossiblyNullArrayOffset occurrences="1">
       <code>$collectKeys</code>
     </PossiblyNullArrayOffset>
-    <PossiblyNullReference occurrences="4">
-      <code>getSource</code>
+    <PossiblyNullReference occurrences="1">
       <code>normalized</code>
-      <code>getTarget</code>
-      <code>requiresKeys</code>
     </PossiblyNullReference>
   </file>
   <file src="src/ORM/LazyEagerLoader.php">
@@ -2417,12 +2410,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/Fixture/FixtureManager.php">
-    <MissingClosureParamType occurrences="9">
-      <code>$db</code>
+    <MissingClosureParamType occurrences="7">
       <code>$fixtures</code>
       <code>$db</code>
       <code>$fixtures</code>
-      <code>$db</code>
       <code>$db</code>
       <code>$db</code>
       <code>$fixtures</code>
@@ -2434,9 +2425,6 @@
     <RedundantCondition occurrences="1">
       <code>$exists &amp;&amp; !$isFixtureSetup &amp;&amp; $hasSchema</code>
     </RedundantCondition>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getSchemaCollection</code>
-    </UndefinedInterfaceMethod>
     <UndefinedPropertyAssignment occurrences="1">
       <code>$test-&gt;fixtures</code>
     </UndefinedPropertyAssignment>
@@ -2454,20 +2442,10 @@
     <PossiblyNullArrayAccess occurrences="1">
       <code>$this-&gt;_schema-&gt;getColumn($field)['type']</code>
     </PossiblyNullArrayAccess>
-    <PropertyNotSetInConstructor occurrences="1">
+    <PropertyNotSetInConstructor occurrences="2">
       <code>$table</code>
+      <code>$_schema</code>
     </PropertyNotSetInConstructor>
-    <UndefinedInterfaceMethod occurrences="9">
-      <code>supportsDynamicConstraints</code>
-      <code>getSchemaCollection</code>
-      <code>getSchemaCollection</code>
-      <code>prepare</code>
-      <code>execute</code>
-      <code>newQuery</code>
-      <code>execute</code>
-      <code>execute</code>
-      <code>execute</code>
-    </UndefinedInterfaceMethod>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;table</code>
     </UninitializedProperty>
