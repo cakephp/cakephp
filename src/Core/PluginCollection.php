@@ -273,7 +273,7 @@ class PluginCollection implements Iterator, Countable
         if (!in_array($hook, PluginInterface::VALID_HOOKS)) {
             throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");
         }
-        foreach ($this as $plugin) {
+        foreach ($this->plugins as $plugin) {
             if ($plugin->isEnabled($hook)) {
                 yield $plugin;
             }
