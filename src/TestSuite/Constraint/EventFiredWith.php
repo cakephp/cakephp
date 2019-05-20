@@ -61,6 +61,7 @@ class EventFiredWith extends Constraint
      *
      * @param mixed $other Constraint check
      * @return bool
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function matches($other): bool
     {
@@ -72,7 +73,7 @@ class EventFiredWith extends Constraint
         }
 
         $eventGroup = collection($firedEvents)
-            ->groupBy(function (EventInterface $event) {
+            ->groupBy(function (EventInterface $event): string {
                 return $event->getName();
             })
             ->toArray();
