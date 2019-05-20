@@ -582,12 +582,12 @@ trait IntegrationTestTrait
     /**
      * Creates a request object with the configured options and parameters.
      *
-     * @param string|array $url The URL
+     * @param string $url The URL
      * @param string $method The HTTP method
      * @param string|array|null $data The request data.
      * @return array The request context
      */
-    protected function _buildRequest($url, $method, $data): array
+    protected function _buildRequest(string $url, $method, $data): array
     {
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
@@ -706,10 +706,10 @@ trait IntegrationTestTrait
     /**
      * Creates a valid request url and parameter array more like Request::_url()
      *
-     * @param string|array $url The URL
+     * @param string $url The URL
      * @return array Qualified URL, the query parameters, and host data
      */
-    protected function _url($url): array
+    protected function _url(string $url): array
     {
         $uri = new Uri($url);
         $path = $uri->getPath();
