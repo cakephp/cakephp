@@ -66,7 +66,7 @@ class TestController extends ControllerTestAppController
 
     public function returner()
     {
-        return 'I am from the controller.';
+        return $this->response->withStringBody('I am from the controller.');
     }
 
     // phpcs:disable

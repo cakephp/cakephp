@@ -62,7 +62,7 @@ class FrozenTime extends Chronos implements I18nDateTimeInterface
      * @var string|array|int
      * @see \Cake\I18n\Time::i18nFormat()
      */
-    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssxxx";
+    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
 
     /**
      * The format to use when formatting a time using `Cake\I18n\FrozenTime::nice()`

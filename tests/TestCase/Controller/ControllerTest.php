@@ -722,11 +722,13 @@ class ControllerTest extends TestCase
                 'pass' => [],
             ],
         ]);
-        $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
+        $response = new Response();
 
         $Controller = new TestController($url, $response);
         $result = $Controller->invokeAction();
-        $this->assertEquals('I am from the controller.', $result);
+
+        $this->assertEquals('I am from the controller.', (string)$result);
+        $this->assertEquals('I am from the controller.', (string)$Controller->getResponse());
     }
 
     /**

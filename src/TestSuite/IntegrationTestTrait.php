@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
 use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
-use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -62,6 +61,7 @@ use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpUnitException;
 use Throwable;
+use Zend\Diactoros\Uri;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -594,7 +594,7 @@ trait IntegrationTestTrait
         ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
-        [$url, $query] = $this->_url($url);
+        [$url, $query, $hostInfo] = $this->_url($url);
         $tokenUrl = $url;
 
         if ($query) {
@@ -622,6 +622,12 @@ trait IntegrationTestTrait
             'QUERY_STRING' => $query,
             'REQUEST_URI' => $url,
         ];
+        if (!empty($hostInfo['ssl'])) {
+            $env['HTTPS'] = 'on';
+        }
+        if (isset($hostInfo['host'])) {
+            $env['HTTP_HOST'] = $hostInfo['host'];
+        }
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
                 $name = strtoupper(str_replace('-', '_', $k));
@@ -701,23 +707,23 @@ trait IntegrationTestTrait
      * Creates a valid request url and parameter array more like Request::_url()
      *
      * @param string|array $url The URL
-     * @return array Qualified URL and the query parameters
+     * @return array Qualified URL, the query parameters, and host data
      */
     protected function _url($url): array
     {
-        // re-create URL in ServerRequest's context so
-        // query strings are encoded as expected
-        $request = new ServerRequest(['url' => $url]);
-        $url = $request->getRequestTarget();
+        $uri = new Uri($url);
+        $path = $uri->getPath();
+        $query = $uri->getQuery();
 
-        $query = '';
-
-        $path = parse_url($url, PHP_URL_PATH);
-        if (strpos($url, '?') !== false) {
-            $query = parse_url($url, PHP_URL_QUERY);
+        $hostData = [];
+        if ($uri->getHost()) {
+            $hostData['host'] = $uri->getHost();
+        }
+        if ($uri->getScheme()) {
+            $hostData['ssl'] = $uri->getScheme() === 'https';
         }
 
-        return [$path, $query];
+        return [$path, $query, $hostData];
     }
 
     /**
