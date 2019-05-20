@@ -21,6 +21,7 @@ use BadMethodCallException;
 use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
@@ -188,7 +189,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The schema object containing a description of this table fields
      *
-     * @var \Cake\Database\Schema\TableSchema
+     * @var \Cake\Database\Schema\TableSchemaInterface|null
      */
     protected $_schema;
 
@@ -230,7 +231,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Registry key used to create this table object
      *
-     * @var string
+     * @var string|null
      */
     protected $_registryAlias;
 
@@ -244,7 +245,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * - connection: The connection instance to use
      * - entityClass: The fully namespaced class name of the entity class that will
      *   represent rows in this table.
-     * - schema: A \Cake\Database\Schema\TableSchema object or an array that can be
+     * - schema: A \Cake\Database\Schema\TableSchemaInterface object or an array that can be
      *   passed to it.
      * - eventManager: An instance of an event manager to use for internal events
      * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
@@ -482,9 +483,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the schema table object describing this table's properties.
      *
-     * @return \Cake\Database\Schema\TableSchema
+     * @return \Cake\Database\Schema\TableSchemaInterface
      */
-    public function getSchema(): TableSchema
+    public function getSchema(): TableSchemaInterface
     {
         if ($this->_schema === null) {
             $this->_schema = $this->_initializeSchema(
@@ -500,10 +501,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the schema table object describing this table's properties.
      *
-     * If an array is passed, a new TableSchema will be constructed
+     * If an array is passed, a new TableSchemaInterface will be constructed
      * out of it and used as the schema for this table.
      *
-     * @param array|\Cake\Database\Schema\TableSchema $schema Schema to be used for this table
+     * @param array|\Cake\Database\Schema\TableSchemaInterface $schema Schema to be used for this table
      * @return $this
      */
     public function setSchema($schema)
@@ -538,16 +539,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ### Example:
      *
      * ```
-     * protected function _initializeSchema(\Cake\Database\Schema\TableSchema $schema) {
+     * protected function _initializeSchema(\Cake\Database\Schema\TableSchemaInterface $schema) {
      *  $schema->setColumnType('preferences', 'json');
      *  return $schema;
      * }
      * ```
      *
-     * @param \Cake\Database\Schema\TableSchema $schema The table definition fetched from database.
-     * @return \Cake\Database\Schema\TableSchema the altered schema
+     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table definition fetched from database.
+     * @return \Cake\Database\Schema\TableSchemaInterface the altered schema
      */
-    protected function _initializeSchema(TableSchema $schema): TableSchema
+    protected function _initializeSchema(TableSchemaInterface $schema): TableSchemaInterface
     {
         return $schema;
     }
@@ -2139,6 +2140,91 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         return $success;
+    }
+
+    /**
+     * Deletes multiple entities of a table.
+     *
+     * The records will be deleted in a transaction which will be rolled back if
+     * any one of the records fails to delete due to failed validation or database
+     * error.
+     *
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return bool|\Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface
+     *  False on failure, entities list on success.
+     * @throws \Exception
+     * @see \Cake\ORM\Table::delete() for options and events related to this method.
+     */
+    public function deleteMany(iterable $entities, $options = [])
+    {
+        $failed = $this->_deleteMany($entities, $options);
+
+        if ($failed !== null) {
+            return false;
+        }
+
+        return $entities;
+    }
+
+    /**
+     * Deletes multiple entities of a table.
+     *
+     * The records will be deleted in a transaction which will be rolled back if
+     * any one of the records fails to delete due to failed validation or database
+     * error.
+     *
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array|\ArrayAccess $options Options used when calling Table::save() for each entity.
+     * @return \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface Entities list.
+     * @throws \Exception
+     * @throws \Cake\ORM\Exception\PersistenceFailedException
+     * @see \Cake\ORM\Table::delete() for options and events related to this method.
+     */
+    public function deleteManyOrFail(iterable $entities, $options = []): iterable
+    {
+        $failed = $this->_deleteMany($entities, $options);
+
+        if ($failed !== null) {
+            throw new PersistenceFailedException($failed, ['deleteMany']);
+        }
+
+        return $entities;
+    }
+
+    /**
+     * @param \Cake\Datasource\EntityInterface[]|\Cake\Datasource\ResultSetInterface $entities Entities to delete.
+     * @param array|\ArrayAccess $options Options used.
+     * @return \Cake\Datasource\EntityInterface|null
+     */
+    protected function _deleteMany(iterable $entities, $options = []): ?EntityInterface
+    {
+        $options = new ArrayObject((array)$options + [
+                'atomic' => true,
+                'checkRules' => true,
+                '_primary' => true,
+            ]);
+
+        $failed = $this->_executeTransaction(function () use ($entities, $options) {
+            foreach ($entities as $entity) {
+                if (!$this->_processDelete($entity, $options)) {
+                    return $entity;
+                }
+            }
+
+            return null;
+        }, $options['atomic']);
+
+        if ($failed === null && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+            foreach ($entities as $entity) {
+                $this->dispatchEvent('Model.afterDeleteCommit', [
+                    'entity' => $entity,
+                    'options' => $options,
+                ]);
+            }
+        }
+
+        return $failed;
     }
 
     /**

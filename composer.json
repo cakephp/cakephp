@@ -45,11 +45,13 @@
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
-        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
+        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
+        "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "dev-next",
         "mikey179/vfsstream": "^1.6",
+        "paragonie/csp-builder": "^2.3",
         "phpunit/phpunit": "^8.0"
     },
     "autoload": {

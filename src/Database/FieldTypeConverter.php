@@ -53,7 +53,7 @@ class FieldTypeConverter
     /**
      * The driver object to be used in the type conversion
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -61,9 +61,9 @@ class FieldTypeConverter
      * Builds the type map
      *
      * @param \Cake\Database\TypeMap $typeMap Contains the types to use for converting results
-     * @param \Cake\Database\Driver $driver The driver to use for the type conversion
+     * @param \Cake\Database\DriverInterface $driver The driver to use for the type conversion
      */
-    public function __construct(TypeMap $typeMap, Driver $driver)
+    public function __construct(TypeMap $typeMap, DriverInterface $driver)
     {
         $this->_driver = $driver;
         $map = $typeMap->toArray();

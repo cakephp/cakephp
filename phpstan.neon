@@ -1,5 +1,5 @@
 parameters:
-    level: 4
+    level: 5
     autoload_files:
         - tests/bootstrap.php
     ignoreErrors:
@@ -19,7 +19,6 @@ parameters:
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
-        - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
         - '#Binary operation "\+" between array|false and array results in an error#'
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::dateAgoInWords\(\)#'
@@ -28,6 +27,15 @@ parameters:
         - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
+        - '#Parameter \#3 \$in of class Cake\\Console\\ConsoleIo constructor expects Cake\\Console\\ConsoleInput|null, PHPUnit\\Framework\\MockObject\\MockObject given.#'
+        - '#Parameter \#1 \$filename of function fopen expects string, resource given.#'
+        - '#Parameter \#1 \$it of method AppendIterator::append\(\) expects Iterator, Traversable given.#'
+        - '#Parameter \#1 \$it of class .+Iterator constructor expects Iterator, Traversable given.#'
+        - '#Parameter \#1 \$assoc of method Cake\\ORM\\Marshaller::_belongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
+        - '#Parameter \#2 \$assoc of method Cake\\ORM\\Marshaller::_mergeBelongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
+        - '#Parameter \#1 \$table of method Cake\\ORM\\Query::addDefaultTypes\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
+        - '#Parameter \#1 \$table of method Cake\\ORM\\Query::_addAssociationsToTypeMap\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
+        - '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'
@@ -58,6 +66,9 @@ parameters:
         -
             message: '#Method Cake\\Utility\\Security::engine\(\) should return Cake\\Utility\\Crypto\\OpenSsl but returns object#'
             path: 'src/Utility/Security.php'
+        -
+            message: '#Method Cake\\Http\\Middleware\\CspMiddleware::process\(\) should return Psr\\Http\\Message\\ResponseInterface but returns Psr\\Http\\Message\\MessageInterface#'
+            path: 'src/Http/Middleware/CspMiddleware.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

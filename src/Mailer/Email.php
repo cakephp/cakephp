@@ -77,6 +77,13 @@ class Email implements JsonSerializable, Serializable
     public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
     /**
+     * Email driver class map.
+     *
+     * @var array
+     */
+    protected static $_dsnClassMap = [];
+
+    /**
      * The transport instance to use for sending mail.
      *
      * @var \Cake\Mailer\AbstractTransport|null

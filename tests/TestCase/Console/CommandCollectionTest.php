@@ -16,10 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\Console;
 
+use Cake\Command\RoutesCommand;
+use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\Shell\I18nShell;
-use Cake\Shell\RoutesShell;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
@@ -45,7 +46,7 @@ class CommandCollectionTest extends TestCase
     {
         $collection = new CommandCollection([
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class,
+            'routes' => RoutesCommand::class,
         ]);
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
@@ -75,9 +76,9 @@ class CommandCollectionTest extends TestCase
     public function testAdd()
     {
         $collection = new CommandCollection();
-        $this->assertSame($collection, $collection->add('routes', RoutesShell::class));
+        $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
         $this->assertTrue($collection->has('routes'));
-        $this->assertSame(RoutesShell::class, $collection->get('routes'));
+        $this->assertSame(RoutesCommand::class, $collection->get('routes'));
     }
 
     /**
@@ -101,7 +102,7 @@ class CommandCollectionTest extends TestCase
     public function testAddReplace()
     {
         $collection = new CommandCollection();
-        $this->assertSame($collection, $collection->add('routes', RoutesShell::class));
+        $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
         $this->assertSame($collection, $collection->add('routes', I18nShell::class));
         $this->assertTrue($collection->has('routes'));
         $this->assertSame(I18nShell::class, $collection->get('routes'));
@@ -118,7 +119,7 @@ class CommandCollectionTest extends TestCase
         $io = $this->getMockBuilder('Cake\Console\ConsoleIo')
             ->disableOriginalConstructor()
             ->getMock();
-        $shell = new RoutesShell($io);
+        $shell = new RoutesCommand($io);
         $collection->add('routes', $shell);
 
         $this->assertTrue($collection->has('routes'));
@@ -191,7 +192,7 @@ class CommandCollectionTest extends TestCase
     public function testRemove()
     {
         $collection = new CommandCollection();
-        $collection->add('routes', RoutesShell::class);
+        $collection->add('routes', RoutesCommand::class);
         $this->assertSame($collection, $collection->remove('routes'));
         $this->assertFalse($collection->has('routes'));
     }
@@ -217,7 +218,7 @@ class CommandCollectionTest extends TestCase
     {
         $in = [
             'i18n' => I18nShell::class,
-            'routes' => RoutesShell::class,
+            'routes' => RoutesCommand::class,
         ];
         $collection = new CommandCollection($in);
         $out = [];
@@ -268,9 +269,9 @@ class CommandCollectionTest extends TestCase
         $this->assertFalse($collection->has('command_list'), 'Hidden commands should stay hidden');
 
         // These have to be strings as ::class uses the local namespace.
-        $this->assertSame('Cake\Shell\RoutesShell', $collection->get('routes'));
-        $this->assertSame('Cake\Shell\I18nShell', $collection->get('i18n'));
-        $this->assertSame('Cake\Command\VersionCommand', $collection->get('version'));
+        $this->assertSame(RoutesCommand::class, $collection->get('routes'));
+        $this->assertSame(I18nShell::class, $collection->get('i18n'));
+        $this->assertSame(VersionCommand::class, $collection->get('version'));
     }
 
     /**

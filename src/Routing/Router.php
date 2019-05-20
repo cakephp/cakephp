@@ -52,7 +52,7 @@ class Router
      * Contains the base string that will be applied to all generated URLs
      * For example `https://example.com`
      *
-     * @var string
+     * @var string|null
      */
     protected static $_fullBaseUrl;
 
@@ -245,10 +245,10 @@ class Router
      * Push a request onto the request stack. Pushing a request
      * sets the request context used when generating URLs.
      *
-     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
      * @return void
      */
-    public static function pushRequest(ServerRequest $request): void
+    public static function pushRequest(ServerRequestInterface $request): void
     {
         static::$_requests[] = $request;
         static::setRequestContext($request);
@@ -613,11 +613,11 @@ class Router
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
         }
-        if (empty(static::$_fullBaseUrl)) {
+        if (!static::$_fullBaseUrl) {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
 
-        return static::$_fullBaseUrl;
+        return (string)static::$_fullBaseUrl;
     }
 
     /**

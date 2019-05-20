@@ -58,7 +58,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Provides the request handler
      *
-     * @return \Psr\Server\RequestHandlerInterface
+     * @return \Psr\Http\Server\RequestHandlerInterface
      */
     protected function _getRequestHandler()
     {

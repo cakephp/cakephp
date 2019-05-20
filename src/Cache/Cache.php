@@ -100,7 +100,7 @@ class Cache
     /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry
+     * @var \Cake\Cache\CacheRegistry|null
      */
     protected static $_registry;
 
@@ -251,7 +251,7 @@ class Cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True if the data was successfully cached, false on failure
      */
-    public static function write(string $key, $value, $config = 'default'): bool
+    public static function write(string $key, $value, string $config = 'default'): bool
     {
         if (is_resource($value)) {
             return false;
@@ -613,7 +613,7 @@ class Cache
      * @return bool True if the data was successfully cached, false on failure.
      *   Or if the key existed already.
      */
-    public static function add(string $key, $value, $config = 'default'): bool
+    public static function add(string $key, $value, string $config = 'default'): bool
     {
         if (is_resource($value)) {
             return false;

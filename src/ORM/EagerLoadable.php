@@ -43,7 +43,7 @@ class EagerLoadable
     /**
      * The Association class instance to use for loading the records.
      *
-     * @var \Cake\ORM\Association
+     * @var \Cake\ORM\Association|null
      */
     protected $_instance;
 
@@ -157,7 +157,7 @@ class EagerLoadable
     /**
      * Returns the Association class instance to use for loading the records.
      *
-     * @return array
+     * @return \Cake\ORM\EagerLoadable[]
      */
     public function associations(): array
     {
@@ -167,10 +167,15 @@ class EagerLoadable
     /**
      * Gets the Association class instance to use for loading the records.
      *
-     * @return \Cake\ORM\Association|null
+     * @return \Cake\ORM\Association
+     * @throws \RuntimeException
      */
-    public function instance(): ?Association
+    public function instance(): Association
     {
+        if ($this->_instance === null) {
+            throw new \RuntimeException('No instance set.');
+        }
+
         return $this->_instance;
     }
 

@@ -448,7 +448,8 @@ class ControllerTest extends TestCase
      */
     public function testRefererSlash(): void
     {
-        $request = $this->getMockBuilder('Cake\Http\ServerRequest')
+        /** @var \Cake\Http\ServerRequest|\PHPUnit\Framework\MockObject\MockObject $request */
+        $request = $this->getMockBuilder(ServerRequest::class)
             ->setMethods(['referer'])
             ->getMock();
         $request = $request->withAttribute('base', '/base');
