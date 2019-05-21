@@ -268,7 +268,7 @@
     <MissingConstructor occurrences="1">
       <code>$_io</code>
     </MissingConstructor>
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
@@ -303,7 +303,7 @@
     </DeprecatedClass>
   </file>
   <file src="src/Console/TaskRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
@@ -388,7 +388,7 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/ComponentRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
@@ -463,11 +463,6 @@
     <UnresolvableInclude occurrences="1">
       <code>include $file</code>
     </UnresolvableInclude>
-  </file>
-  <file src="src/Core/ObjectRegistry.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$className</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Core/StaticConfigTrait.php">
     <PossiblyInvalidArgument occurrences="1">
@@ -1650,7 +1645,7 @@
     </PossiblyInvalidIterator>
   </file>
   <file src="src/Mailer/TransportRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
@@ -1861,7 +1856,7 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
@@ -1958,9 +1953,6 @@
       <code>$method</code>
       <code>$arguments</code>
     </MissingParamType>
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$table</code>
-    </MoreSpecificImplementedParamType>
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
@@ -2562,12 +2554,6 @@
     <InvalidOperand occurrences="1">
       <code>$check[$position]</code>
     </InvalidOperand>
-    <PossiblyInvalidArgument occurrences="4">
-      <code>$file</code>
-      <code>$file</code>
-      <code>$file</code>
-      <code>$file</code>
-    </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$check-&gt;getClientFilename()</code>
       <code>$operator</code>
@@ -2651,17 +2637,6 @@
       <code>$entity</code>
       <code>$entity</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidMethodCall occurrences="9">
-      <code>getPrimaryKey</code>
-      <code>getSchema</code>
-      <code>getPrimaryKey</code>
-      <code>newEmptyEntity</code>
-      <code>getSchema</code>
-      <code>getAlias</code>
-      <code>getValidator</code>
-      <code>getSchema</code>
-      <code>getSchema</code>
-    </PossiblyInvalidMethodCall>
     <PossiblyNullReference occurrences="1">
       <code>getTarget</code>
     </PossiblyNullReference>
@@ -2758,7 +2733,7 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/View/HelperRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
