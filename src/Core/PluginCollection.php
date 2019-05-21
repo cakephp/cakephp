@@ -28,6 +28,9 @@ use Iterator;
  * This class implements the Iterator interface to allow plugins
  * to be iterated, handling the situation where a plugin's hook
  * method (usually bootstrap) loads another plugin during iteration.
+ *
+ * While its implementation supported nested iteration it does not
+ * support using `continue` or `break` inside loops.
  */
 class PluginCollection implements Iterator, Countable
 {
@@ -46,11 +49,18 @@ class PluginCollection implements Iterator, Countable
     protected $names = [];
 
     /**
-     * Iterator position.
+     * Iterator position stack.
+     *
+     * @var int[]
+     */
+    protected $positions = [];
+
+    /**
+     * Loop depth
      *
      * @var int
      */
-    protected $position = 0;
+    protected $loopDepth = -1;
 
     /**
      * Constructor
@@ -198,13 +208,25 @@ class PluginCollection implements Iterator, Countable
     }
 
     /**
+     * Implementation of Countable.
+     *
+     * Get the number of plugins in the collection.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->plugins);
+    }
+
+    /**
      * Part of Iterator Interface
      *
      * @return void
      */
     public function next()
     {
-        $this->position++;
+        $this->positions[$this->loopDepth]++;
     }
 
     /**
@@ -214,7 +236,7 @@ class PluginCollection implements Iterator, Countable
      */
     public function key()
     {
-        return $this->names[$this->position];
+        return $this->names[$this->positions[$this->loopDepth]];
     }
 
     /**
@@ -224,7 +246,8 @@ class PluginCollection implements Iterator, Countable
      */
     public function current()
     {
-        $name = $this->names[$this->position];
+        $position = $this->positions[$this->loopDepth];
+        $name = $this->names[$position];
 
         return $this->plugins[$name];
     }
@@ -236,7 +259,8 @@ class PluginCollection implements Iterator, Countable
      */
     public function rewind()
     {
-        $this->position = 0;
+        $this->positions[] = 0;
+        $this->loopDepth += 1;
     }
 
     /**
@@ -246,19 +270,13 @@ class PluginCollection implements Iterator, Countable
      */
     public function valid()
     {
-        return $this->position < count($this->plugins);
-    }
+        $valid = isset($this->names[$this->positions[$this->loopDepth]]);
+        if (!$valid) {
+            array_pop($this->positions);
+            $this->loopDepth -= 1;
+        }
 
-    /**
-     * Implementation of Countable.
-     *
-     * Get the number of plugins in the collection.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return count($this->plugins);
+        return $valid;
     }
 
     /**
@@ -273,7 +291,7 @@ class PluginCollection implements Iterator, Countable
         if (!in_array($hook, PluginInterface::VALID_HOOKS)) {
             throw new InvalidArgumentException("The `{$hook}` hook is not a known plugin hook.");
         }
-        foreach ($this->plugins as $plugin) {
+        foreach ($this as $plugin) {
             if ($plugin->isEnabled($hook)) {
                 yield $plugin;
             }
