@@ -20,8 +20,6 @@ use Cake\Database\Schema\BaseSchema;
 
 /**
  * Interface for database driver.
- *
- * @method $this disableAutoQuoting()
  */
 interface DriverInterface
 {
@@ -231,6 +229,13 @@ interface DriverInterface
      * @return $this
      */
     public function enableAutoQuoting(bool $enable = true);
+
+    /**
+     * Disable auto quoting of identifiers in queries.
+     *
+     * @return $this
+     */
+    public function disableAutoQuoting();
 
     /**
      * Returns whether or not this driver should automatically quote identifiers
