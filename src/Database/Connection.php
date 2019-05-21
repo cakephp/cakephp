@@ -32,6 +32,7 @@ use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * Represents a connection with a database server.
@@ -87,7 +88,7 @@ class Connection implements ConnectionInterface
     /**
      * Logger object instance.
      *
-     * @var \Cake\Database\Log\QueryLogger|null
+     * @var \Psr\Log\LoggerInterface|null
      */
     protected $_logger;
 
@@ -828,10 +829,10 @@ class Connection implements ConnectionInterface
     /**
      * Sets a logger
      *
-     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
+     * @param \Psr\Log\LoggerInterface $logger Logger object
      * @return $this
      */
-    public function setLogger(?QueryLogger $logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->_logger = $logger;
 
@@ -841,9 +842,9 @@ class Connection implements ConnectionInterface
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Psr\Log\LoggerInterface logger instance
      */
-    public function getLogger(): QueryLogger
+    public function getLogger(): LoggerInterface
     {
         if ($this->_logger === null) {
             $this->_logger = new QueryLogger();
@@ -862,7 +863,7 @@ class Connection implements ConnectionInterface
     {
         $query = new LoggedQuery();
         $query->query = $sql;
-        $this->getLogger()->log($query);
+        $this->getLogger()->debug((string)$query, ['query' => $query]);
     }
 
     /**

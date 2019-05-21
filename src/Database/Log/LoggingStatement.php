@@ -29,7 +29,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Logger instance responsible for actually doing the logging task
      *
-     * @var \Cake\Database\Log\QueryLogger|null
+     * @var \Cake\Database\Log\QueryLogger
      */
     protected $_logger;
 
@@ -82,7 +82,7 @@ class LoggingStatement extends StatementDecorator
         $query->took = (int)round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
         $query->query = $this->queryString;
-        $this->getLogger()->log($query);
+        $this->getLogger()->debug((string)$query, ['query' => $query]);
     }
 
     /**
@@ -120,9 +120,9 @@ class LoggingStatement extends StatementDecorator
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger|null logger instance
+     * @return \Cake\Database\Log\QueryLogger logger instance
      */
-    public function getLogger(): ?QueryLogger
+    public function getLogger(): QueryLogger
     {
         return $this->_logger;
     }

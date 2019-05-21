@@ -60,12 +60,57 @@ class LoggedQuery
     public $error;
 
     /**
+     * Helper function used to replace query placeholders by the real
+     * params used to execute the query
+     *
+     * @return string
+     */
+    protected function interpolate(): string
+    {
+        $params = array_map(function ($p) {
+            if ($p === null) {
+                return 'NULL';
+            }
+            if (is_bool($p)) {
+                return $p ? '1' : '0';
+            }
+
+            if (is_string($p)) {
+                $replacements = [
+                    '$' => '\\$',
+                    '\\' => '\\\\\\\\',
+                    "'" => "''",
+                ];
+
+                $p = strtr($p, $replacements);
+
+                return "'$p'";
+            }
+
+            return $p;
+        }, $this->params);
+
+        $keys = [];
+        $limit = is_int(key($params)) ? 1 : -1;
+        foreach ($params as $key => $param) {
+            $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
+        }
+
+        return preg_replace($keys, $params, $this->query, $limit);
+    }
+
+    /**
      * Returns the string representation of this logged query
      *
      * @return string
      */
     public function __toString(): string
     {
-        return "duration={$this->took} rows={$this->numRows} {$this->query}";
+        $sql = $this->query;
+        if (!empty($this->params)) {
+            $sql = $this->interpolate();
+        }
+
+        return "duration={$this->took} rows={$this->numRows} {$sql}";
     }
 }

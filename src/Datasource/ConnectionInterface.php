@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\Database\Log\QueryLogger;
+use Psr\Log\LoggerInterface;
 
 /**
  * This interface defines the methods you can depend on in
@@ -35,17 +35,17 @@ interface ConnectionInterface
     /**
      * Set a logger, or clear the current logger.
      *
-     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
+     * @param \Psr\Log\LoggerInterface $logger Logger object
      * @return $this
      */
-    public function setLogger(?QueryLogger $logger);
+    public function setLogger(LoggerInterface $logger);
 
     /**
      * Gets the current logger object.
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Psr\Log\LoggerInterface logger instance
      */
-    public function getLogger(): QueryLogger;
+    public function getLogger(): LoggerInterface;
 
     /**
      * Get the configuration name for this connection.
