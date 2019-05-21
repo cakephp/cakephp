@@ -32,15 +32,11 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|object $class Partial classname to resolve.
-     * @return string|null|object Either the correct class name or null.
+     * @param string $class Partial classname to resolve.
+     * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
-        if (is_object($class)) {
-            return $class;
-        }
-
         return App::className($class, 'Datasource');
     }
 

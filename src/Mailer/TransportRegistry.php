@@ -31,15 +31,11 @@ class TransportRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|\Cake\Mailer\AbstractTransport $class Partial classname to resolve or transport instance.
-     * @return string|\Cake\Mailer\AbstractTransport|null Either the correct classname or null.
+     * @param string $class Partial classname to resolve or transport instance.
+     * @return string|null Either the correct classname or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
-        if (is_object($class)) {
-            return $class;
-        }
-
         return App::className($class, 'Mailer/Transport', 'Transport');
     }
 

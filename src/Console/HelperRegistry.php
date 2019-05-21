@@ -53,16 +53,16 @@ class HelperRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return string|object|null Either the correct class name or null.
+     * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
         $name = App::className($class, 'Command/Helper', 'Helper');
-        if ($name) {
-            return $name;
+        if ($name === null) {
+            return App::className($class, 'Shell/Helper', 'Helper');
         }
 
-        return App::className($class, 'Shell/Helper', 'Helper');
+        return $name;
     }
 
     /**

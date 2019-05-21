@@ -161,7 +161,7 @@ class QueryLoggerTest extends TestCase
         $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ?';
         $query->params = ['string', '3', null];
 
-        $engine = $this->getMockBuilder('Cake\Log\Engine\BaseLog')
+        $this->getMockBuilder('Cake\Log\Engine\BaseLog')
             ->setMethods(['log'])
             ->setConstructorArgs(['scopes' => ['queriesLog']])
             ->getMock();

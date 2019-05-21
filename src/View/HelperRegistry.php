@@ -86,7 +86,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return mixed
+     * @return object|null
      */
     public function __get(string $name)
     {
@@ -108,7 +108,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
         return App::className($class, 'View/Helper', 'Helper');
     }
