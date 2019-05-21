@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Countable;
@@ -65,7 +66,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *  such as PDOStatement.
      * @param \Cake\Database\DriverInterface|null $driver Driver instance
      */
-    public function __construct($statement = null, $driver = null)
+    public function __construct($statement = null, ?DriverInterface $driver = null)
     {
         $this->_statement = $statement;
         $this->_driver = $driver;
