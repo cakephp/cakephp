@@ -1204,7 +1204,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This changes the query type to be 'update'.
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param string|null $table Unused parameter.
+     * @param string|\Cake\Database\ExpressionInterface|null $table Unused parameter.
      * @return $this
      */
     public function update($table = null)
