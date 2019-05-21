@@ -417,27 +417,6 @@
       <code>ErrorController</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Controller/Exception/AuthSecurityException.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AuthSecurityException</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Controller/Exception/SecurityException.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$reason</code>
-    </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_reason</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Core/App.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$pos</code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand occurrences="1">
-      <code>$pos</code>
-    </PossiblyFalseOperand>
-  </file>
   <file src="src/Core/BasePlugin.php">
     <PropertyNotSetInConstructor occurrences="5">
       <code>$path</code>

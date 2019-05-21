@@ -121,6 +121,10 @@ class App
         $type = '/' . $type . '/';
 
         $pos = strrpos($class, $type);
+        if ($pos === false) {
+            return $class;
+        }
+
         $pluginName = substr($class, 0, $pos);
         $name = substr($class, $pos + strlen($type));
 
