@@ -38,10 +38,10 @@
         height: 100%;
     }
     header {
+        flex: 1;
         background-color: #D33C47;
         color: #ffffff;
         padding: 10px;
-        height: 100px;
     }
     .header-title {
         font-size: 30px;
@@ -60,7 +60,6 @@
     }
     .col-left,
     .col-right {
-        height: calc(100vh - 100px);
         overflow-y: auto;
         padding: 15px;
     }
@@ -104,11 +103,11 @@
     }
     .error-subheading {
         color: #fff;
-        background-color: #2f365f;
+        background-color: #319795;
     }
     .error-subheading strong {
         color: #fff;
-        background-color: #6574cd;
+        background-color: #4fd1c5;
         border-radius: 9999px;
         padding: 4px 12px;
         margin-right: 8px;
