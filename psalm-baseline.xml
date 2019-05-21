@@ -2709,9 +2709,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/NumberHelper.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$currency</code>
-    </InvalidScalarArgument>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed</code>
     </LessSpecificImplementedReturnType>

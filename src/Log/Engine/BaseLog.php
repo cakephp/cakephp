@@ -73,7 +73,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return array|bool
+     * @return array|false
      */
     public function scopes()
     {
