@@ -796,7 +796,7 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
-                $data = array_combine($name, $value);
+                $data = array_combine($name, $value) ?: [];
             } else {
                 $data = $name;
             }
