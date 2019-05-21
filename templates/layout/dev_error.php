@@ -33,7 +33,7 @@
         font-size: 14px;
         letter-spacing: .01em;
         line-height: 1.6;
-        padding: 0;
+        padding: 0 0 40px;
         margin: 0;
         height: 100%;
     }
