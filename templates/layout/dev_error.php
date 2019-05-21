@@ -41,6 +41,7 @@
         background-color: #D33C47;
         color: #ffffff;
         padding: 10px;
+        height: 100px;
     }
     .header-title {
         font-size: 30px;
@@ -49,10 +50,6 @@
     .header-type {
         display: block;
         font-size: 16px;
-    }
-    .header-help {
-        float: right;
-        font-size: 12px;
     }
     .header-help a {
         color: #fff;
@@ -226,10 +223,6 @@
 </head>
 <body>
     <header>
-        <!-- <div class="header-help">
-            <a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a>
-            <a target="_blank" href="https://api.cakephp.org/">API</a>
-        </div> -->
         <h1 class="header-title">
             <?= h($this->fetch('title')) ?>
         </h1>

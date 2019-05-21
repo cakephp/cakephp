@@ -21,12 +21,13 @@ $this->start('subheading');
 ?>
     <strong>Error</strong>
     <?= h($error->getMessage()) ?>
-    <br/>
+    <br>
+    <br>
 
     <strong>File</strong>
     <?= h($error->getFile()) ?>
-    <br/>
-    <strong>Line: </strong>
+    <br><br>
+    <strong>Line</strong>
     <?= h($error->getLine()) ?>
 <?php $this->end() ?>
 
