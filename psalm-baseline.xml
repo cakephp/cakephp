@@ -270,7 +270,6 @@
     </MissingConstructor>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
-      <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Console/Shell.php">
@@ -304,7 +303,6 @@
   </file>
   <file src="src/Console/TaskRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
@@ -390,7 +388,6 @@
   <file src="src/Controller/ComponentRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
-      <code>$class</code>
     </MoreSpecificImplementedParamType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>ComponentRegistry</code>
@@ -418,27 +415,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>ErrorController</code>
     </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Controller/Exception/AuthSecurityException.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AuthSecurityException</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Controller/Exception/SecurityException.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$reason</code>
-    </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_reason</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Core/App.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$pos</code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand occurrences="1">
-      <code>$pos</code>
-    </PossiblyFalseOperand>
   </file>
   <file src="src/Core/BasePlugin.php">
     <PropertyNotSetInConstructor occurrences="5">
@@ -1647,7 +1623,6 @@
   <file src="src/Mailer/TransportRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
-      <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Network/Socket.php">
@@ -1857,7 +1832,6 @@
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
     <PropertyNotSetInConstructor occurrences="2">
@@ -2734,7 +2708,6 @@
   </file>
   <file src="src/View/HelperRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>

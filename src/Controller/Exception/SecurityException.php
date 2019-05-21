@@ -30,7 +30,7 @@ class SecurityException extends BadRequestException
     /**
      * Reason for request blackhole
      *
-     * @var string
+     * @var string|null
      */
     protected $_reason;
 
@@ -59,19 +59,21 @@ class SecurityException extends BadRequestException
      * Set Reason
      *
      * @param string|null $reason Reason details
-     * @return void
+     * @return $this
      */
-    public function setReason(?string $reason = null): void
+    public function setReason(?string $reason = null)
     {
         $this->_reason = $reason;
+
+        return $this;
     }
 
     /**
      * Get Reason
      *
-     * @return string
+     * @return string|null
      */
-    public function getReason(): string
+    public function getReason(): ?string
     {
         return $this->_reason;
     }
