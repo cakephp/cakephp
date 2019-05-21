@@ -728,30 +728,30 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest(['webroot' => '/']);
 
         $request = $request->withEnv('HTTP_REFERER', 'http://cakephp.org');
-        $result = $request->referer();
+        $result = $request->referer(false);
         $this->assertSame('http://cakephp.org', $result);
 
         $request = $request->withEnv('HTTP_REFERER', '');
         $result = $request->referer(true);
         $this->assertNull($result);
 
-        $result = $request->referer();
+        $result = $request->referer(false);
         $this->assertNull($result);
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
-        $result = $request->referer(true);
+        $result = $request->referer();
         $this->assertSame('/some/path', $result);
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '///cakephp.org/');
-        $result = $request->referer(true);
+        $result = $request->referer();
         $this->assertSame('/', $result); // Avoid returning scheme-relative URLs.
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/0');
-        $result = $request->referer(true);
+        $result = $request->referer();
         $this->assertSame('/0', $result);
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/');
-        $result = $request->referer(true);
+        $result = $request->referer();
         $this->assertSame('/', $result);
 
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
@@ -774,7 +774,7 @@ class ServerRequestTest extends TestCase
         ]);
         $request = $request->withEnv('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/waves/waves/add');
 
-        $result = $request->referer(true);
+        $result = $request->referer();
         $this->assertSame('/waves/add', $result);
     }
 
