@@ -16,13 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use JsonSerializable;
+
 /**
  * Contains a query string, the params used to executed it, time taken to do it
  * and the number of rows found or affected by its execution.
  *
  * @internal
  */
-class LoggedQuery
+class LoggedQuery implements JsonSerializable
 {
     /**
      * Query string that was executed
@@ -97,6 +99,31 @@ class LoggedQuery
         }
 
         return preg_replace($keys, $params, $this->query, $limit);
+    }
+
+    /**
+     * Returns data that will be serialized as JSON
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        $error = $this->error;
+        if ($error !== null) {
+            $error = [
+                'class' => get_class($error),
+                'message' => $error->getMessage(),
+                'code' => $error->getCode(),
+            ];
+        }
+
+        return [
+            'query' => $this->query,
+            'numRows' => $this->numRows,
+            'params' => $this->params,
+            'took' => $this->took,
+            'error' => $error,
+        ];
     }
 
     /**

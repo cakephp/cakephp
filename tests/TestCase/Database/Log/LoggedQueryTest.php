@@ -110,4 +110,23 @@ class LoggedQueryTest extends TestCase
         $expected = "duration=0 rows=0 SELECT a FROM b where a = '\$2y\$10\$dUAIj' AND b = '\$0.23' AND c = 'a\\\\0b\\\\1c\\\\d' AND d = 'a''b'";
         $this->assertEquals($expected, (string)$query);
     }
+
+    public function testJsonSerialize()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1';
+        $query->params = ['p1' => '$2y$10$dUAIj'];
+        $query->numRows = 4;
+        $query->error = new \Exception('You fail!');
+
+        $expected = json_encode([
+            'query' => $query->query,
+            'numRows' => 4,
+            'params' => $query->params,
+            'took' => 0,
+            'error' => $query->error,
+        ]);
+
+        $this->assertEquals($expected, json_encode($query));
+    }
 }
