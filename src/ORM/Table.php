@@ -2532,10 +2532,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$association) {
             throw new RuntimeException(sprintf(
                 'Undefined property `%s`. ' .
-                'You have tried to use the `%s` property on %s, but that association does not exist.',
+                'You have not defined the `%s` association on `%s`.',
                 $property,
                 $property,
-                get_class($this),
+                static::class
             ));
         }
 
