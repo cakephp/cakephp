@@ -35,4 +35,79 @@ class LoggedQueryTest extends TestCase
         $logged->query = 'SELECT foo FROM bar';
         $this->assertEquals('duration=0 rows=0 SELECT foo FROM bar', (string)$logged);
     }
+
+    /**
+     * Tests that query placeholders are replaced when logged
+     *
+     * @return void
+     */
+    public function testStringInterpolation()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4 AND e = :p5 AND f = :p6';
+        $query->params = ['p1' => 'string', 'p3' => null, 'p2' => 3, 'p4' => true, 'p5' => false, 'p6' => 0];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 3 AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
+     * Tests that positional placeholders are replaced when logging a query
+     *
+     * @return void
+     */
+    public function testStringInterpolationNotNamed()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = ? AND b = ? AND c = ? AND d = ? AND e = ? AND f = ?';
+        $query->params = ['string', '3', null, true, false, 0];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = '3' AND c = NULL AND d = 1 AND e = 0 AND f = 0";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
+     * Tests that repeated placeholders are correctly replaced
+     *
+     * @return void
+     */
+    public function testStringInterpolationDuplicate()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1 AND b = :p1 AND c = :p2 AND d = :p2';
+        $query->params = ['p1' => 'string', 'p2' => 3];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 'string' AND c = 3 AND d = 3";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
+     * Tests that named placeholders
+     *
+     * @return void
+     */
+    public function testStringInterpolationNamed()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1 AND b = :p11 AND c = :p20 AND d = :p2';
+        $query->params = ['p11' => 'test', 'p1' => 'string', 'p2' => 3, 'p20' => 5];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = 'string' AND b = 'test' AND c = 5 AND d = 3";
+        $this->assertEquals($expected, (string)$query);
+    }
+
+    /**
+     * Tests that placeholders are replaced with correctly escaped strings
+     *
+     * @return void
+     */
+    public function testStringInterpolationSpecialChars()
+    {
+        $query = new LoggedQuery();
+        $query->query = 'SELECT a FROM b where a = :p1 AND b = :p2 AND c = :p3 AND d = :p4';
+        $query->params = ['p1' => '$2y$10$dUAIj', 'p2' => '$0.23', 'p3' => 'a\\0b\\1c\\d', 'p4' => "a'b"];
+
+        $expected = "duration=0 rows=0 SELECT a FROM b where a = '\$2y\$10\$dUAIj' AND b = '\$0.23' AND c = 'a\\\\0b\\\\1c\\\\d' AND d = 'a''b'";
+        $this->assertEquals($expected, (string)$query);
+    }
 }
