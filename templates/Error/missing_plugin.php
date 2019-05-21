@@ -23,7 +23,7 @@ $this->assign('templateName', 'missing_plugin.php');
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     The application is trying to load a file from the <em><?= h($plugin) ?></em> plugin.
     <br>
     <br>

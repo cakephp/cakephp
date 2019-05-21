@@ -25,7 +25,7 @@ $attributes = $error->getAttributes();
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= h($error->getMessage()); ?>
 <?php $this->end() ?>
 

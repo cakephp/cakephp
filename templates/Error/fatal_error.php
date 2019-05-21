@@ -19,7 +19,7 @@ $this->assign('templateName', 'fatal_error.php');
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= h($error->getMessage()) ?>
     <br/>
 
