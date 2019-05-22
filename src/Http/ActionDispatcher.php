@@ -18,7 +18,6 @@ namespace Cake\Http;
 
 use Cake\Controller\Controller;
 use Cake\Routing\Router;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -69,7 +68,6 @@ class ActionDispatcher
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
-     * @throws \LogicException If the controller action returns a non-response value.
      */
     protected function _invoke(Controller $controller): ResponseInterface
     {
@@ -79,11 +77,7 @@ class ActionDispatcher
         }
 
         $response = $controller->invokeAction();
-        if ($response !== null && !($response instanceof ResponseInterface)) {
-            throw new LogicException('Controller actions can only return Cake\Http\Response or null.');
-        }
-
-        if (!$response && $controller->isAutoRenderEnabled()) {
+        if ($response === null && $controller->isAutoRenderEnabled()) {
             $controller->render();
         }
 
@@ -91,10 +85,7 @@ class ActionDispatcher
         if ($result instanceof ResponseInterface) {
             return $result;
         }
-        if (!$response) {
-            $response = $controller->getResponse();
-        }
 
-        return $response;
+        return $controller->getResponse();
     }
 }

@@ -757,6 +757,30 @@ class ControllerTest extends TestCase
     }
 
     /**
+     * test invalid return value from action method.
+     *
+     * @return void
+     */
+    public function testInvokeActionException()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Controller actions can only return ResponseInterface instance or null');
+
+        $url = new ServerRequest([
+            'url' => 'test/willCauseException',
+            'params' => [
+                'controller' => 'Test',
+                'action' => 'willCauseException',
+                'pass' => [],
+            ],
+        ]);
+        $response = $this->getMockBuilder(Response::class)->getMock();
+
+        $Controller = new TestController($url, $response);
+        $result = $Controller->invokeAction();
+    }
+
+    /**
      * test that a classes namespace is used in the viewPath.
      *
      * @return void

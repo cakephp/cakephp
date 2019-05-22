@@ -77,28 +77,6 @@ class ActionDispatcherTest extends TestCase
     }
 
     /**
-     * test invalid response from dispatch process.
-     *
-     * @return void
-     */
-    public function testDispatchInvalidResponse()
-    {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Controller actions can only return Cake\Http\Response or null');
-        $req = new ServerRequest([
-            'url' => '/cakes',
-            'params' => [
-                'plugin' => null,
-                'controller' => 'Cakes',
-                'action' => 'invalid',
-                'pass' => [],
-            ],
-        ]);
-        $res = new Response();
-        $result = $this->dispatcher->dispatch($req, $res);
-    }
-
-    /**
      * Test dispatch with autorender
      *
      * @return void
