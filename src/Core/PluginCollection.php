@@ -176,6 +176,9 @@ class PluginCollection implements Iterator, Countable
     public function clear()
     {
         $this->plugins = [];
+        $this->names = [];
+        $this->positions = [];
+        $this->loopDepth = -1;
 
         return $this;
     }
