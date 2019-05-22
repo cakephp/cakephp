@@ -517,9 +517,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if (!$result instanceof ResponseInterface) {
-            throw new UnexpectedValueException(
-                'Controller actions can only return ResponseInterface instance or null.'
-            );
+            throw new UnexpectedValueException(sprintf(
+                'Controller actions can only return ResponseInterface instance or null. '
+                . 'Got %s instead.',
+                getTypeName($result)
+            ));
         }
 
         return $this->response = $result;

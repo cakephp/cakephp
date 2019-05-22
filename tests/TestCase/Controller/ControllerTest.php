@@ -764,7 +764,10 @@ class ControllerTest extends TestCase
     public function testInvokeActionException()
     {
         $this->expectException(\UnexpectedValueException::class);
-        $this->expectExceptionMessage('Controller actions can only return ResponseInterface instance or null');
+        $this->expectExceptionMessage(
+            'Controller actions can only return ResponseInterface instance or null. '
+            . 'Got string instead.'
+        );
 
         $url = new ServerRequest([
             'url' => 'test/willCauseException',
