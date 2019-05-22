@@ -26,9 +26,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/DigestAuthenticate.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$request-&gt;getEnv('ORIGINAL_REQUEST_METHOD')</code>
-    </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>DigestAuthenticate</code>
     </PropertyNotSetInConstructor>
@@ -46,9 +43,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$user</code>
     </MoreSpecificImplementedParamType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_user</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Cache/CacheRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -56,10 +50,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Cache/Engine/FileEngine.php">
-    <ImplementedReturnTypeMismatch occurrences="2">
-      <code>void</code>
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
     <PossiblyInvalidOperand occurrences="1">
       <code>$this-&gt;_File-&gt;current()</code>
     </PossiblyInvalidOperand>
@@ -76,9 +66,6 @@
     <MissingConstructor occurrences="1">
       <code>$_Memcached</code>
     </MissingConstructor>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$name</code>
-    </PossiblyInvalidArgument>
     <UndefinedConstant occurrences="3">
       <code>DAY</code>
       <code>DAY</code>
@@ -2479,15 +2466,12 @@
     </TypeDoesNotContainType>
   </file>
   <file src="src/Utility/Inflector.php">
-    <NullableReturnStatement occurrences="4">
+    <NullableReturnStatement occurrences="3">
       <code>static::$_cache['pluralize'][$word]</code>
       <code>static::$_cache['pluralize'][$word]</code>
       <code>static::$_cache['singularize'][$word]</code>
       <code>static::$_cache['singularize'][$word]</code>
     </NullableReturnStatement>
-    <PossiblyFalseArgument occurrences="1">
-      <code>array_search(strtolower($regs[2]), static::$_irregular, true)</code>
-    </PossiblyFalseArgument>
   </file>
   <file src="src/Utility/Security.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -2677,8 +2661,7 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$options['templates']</code>
     </PossiblyUndefinedArrayOffset>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_defaultModel</code>
+    <PropertyNotSetInConstructor occurrences="1">
       <code>PaginatorHelper</code>
     </PropertyNotSetInConstructor>
   </file>
@@ -2688,9 +2671,6 @@
     </LessSpecificImplementedReturnType>
   </file>
   <file src="src/View/Helper/TimeHelper.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$format</code>
-    </InvalidScalarArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>TimeHelper</code>
     </PropertyNotSetInConstructor>
@@ -2746,11 +2726,6 @@
     <UnresolvableInclude occurrences="1">
       <code>include func_get_arg(0)</code>
     </UnresolvableInclude>
-  </file>
-  <file src="src/View/Widget/MultiCheckboxWidget.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$labelAttrs</code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/View/XmlView.php">
     <PossiblyUndefinedMethod occurrences="1">

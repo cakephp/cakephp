@@ -321,10 +321,10 @@ class FileEngine extends CacheEngine
      *
      * @param string $key The key to decrement
      * @param int $offset The number to offset
-     * @return void
+     * @return int|false
      * @throws \LogicException
      */
-    public function decrement(string $key, int $offset = 1): void
+    public function decrement(string $key, int $offset = 1)
     {
         throw new LogicException('Files cannot be atomically decremented.');
     }
@@ -334,10 +334,10 @@ class FileEngine extends CacheEngine
      *
      * @param string $key The key to increment
      * @param int $offset The number to offset
-     * @return void
+     * @return int|false
      * @throws \LogicException
      */
-    public function increment(string $key, int $offset = 1): void
+    public function increment(string $key, int $offset = 1)
     {
         throw new LogicException('Files cannot be atomically incremented.');
     }

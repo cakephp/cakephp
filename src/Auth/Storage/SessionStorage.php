@@ -33,7 +33,7 @@ class SessionStorage implements StorageInterface
      * Stores user record array if fetched from session or false if session
      * does not have user record.
      *
-     * @var \ArrayAccess|array|false
+     * @var \ArrayAccess|array|false|null
      */
     protected $_user;
 

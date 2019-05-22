@@ -558,8 +558,9 @@ class Inflector
         }
 
         if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
-            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
-                substr(array_search(strtolower($regs[2]), static::$_irregular, true), 1);
+            $suffix = array_search(strtolower($regs[2]), static::$_irregular, true);
+            $suffix = $word === false ? '' : substr($suffix, 1);
+            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) . $suffix;
 
             return static::$_cache['singularize'][$word];
         }

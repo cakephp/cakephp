@@ -91,7 +91,7 @@ class PaginatorHelper extends Helper
     /**
      * Default model of the paged sets
      *
-     * @var string
+     * @var string|null
      */
     protected $_defaultModel;
 
