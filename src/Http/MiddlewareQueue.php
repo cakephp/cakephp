@@ -69,7 +69,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     {
         if (is_string($middleware)) {
             $className = App::className($middleware, 'Middleware', 'Middleware');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new RuntimeException(sprintf(
                     'Middleware "%s" was not found.',
                     $middleware

@@ -67,6 +67,12 @@ class AppTest extends TestCase
         $this->assertSame($expected === false ? null : $expected, $return);
     }
 
+    public function testClassnameWithFqcn()
+    {
+        $this->assertSame(TestCase::class, App::className(TestCase::class));
+        $this->assertNull(App::className('\Foo'));
+    }
+
     /**
      * testShortName
      *

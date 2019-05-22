@@ -532,7 +532,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authorize');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authorize')) {
@@ -826,7 +826,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authenticate');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authenticate')) {

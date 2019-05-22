@@ -185,7 +185,7 @@ class WidgetLocator
 
         $class = array_shift($widget);
         $className = App::className($class, 'View/Widget', 'Widget');
-        if ($className === null || !class_exists($className)) {
+        if ($className === null) {
             throw new RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
         }
         if ($type === 'array' && count($widget)) {

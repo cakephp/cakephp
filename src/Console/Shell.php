@@ -305,7 +305,7 @@ class Shell
     {
         foreach ($this->_taskMap as $taskName => $task) {
             $class = App::className($task['class'], 'Shell/Task', 'Task');
-            if ($class === null || !class_exists($class)) {
+            if ($class === null) {
                 throw new RuntimeException(sprintf(
                     'Task `%s` not found. Maybe you made a typo or a plugin is missing or not loaded?',
                     $taskName
