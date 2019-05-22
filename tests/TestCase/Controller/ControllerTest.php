@@ -777,7 +777,7 @@ class ControllerTest extends TestCase
         $response = $this->getMockBuilder(Response::class)->getMock();
 
         $Controller = new TestController($url, $response);
-        $result = $Controller->invokeAction();
+        $Controller->invokeAction();
     }
 
     /**
