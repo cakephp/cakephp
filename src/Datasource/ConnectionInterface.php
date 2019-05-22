@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,16 +31,8 @@ use Psr\Log\LoggerInterface;
  * @method string quote($value, $type = null)
  * @method \Cake\Database\DriverInterface getDriver()
  */
-interface ConnectionInterface
+interface ConnectionInterface extends LoggerAwareInterface
 {
-    /**
-     * Set a logger, or clear the current logger.
-     *
-     * @param \Psr\Log\LoggerInterface $logger Logger object
-     * @return $this
-     */
-    public function setLogger(LoggerInterface $logger);
-
     /**
      * Gets the current logger object.
      *
