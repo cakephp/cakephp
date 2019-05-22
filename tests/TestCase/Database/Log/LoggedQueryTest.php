@@ -124,7 +124,11 @@ class LoggedQueryTest extends TestCase
             'numRows' => 4,
             'params' => $query->params,
             'took' => 0,
-            'error' => $query->error,
+            'error' => [
+                'class' => get_class($query->error),
+                'message' => $query->error->getMessage(),
+                'code' => $query->error->getCode(),
+            ],
         ]);
 
         $this->assertEquals($expected, json_encode($query));
