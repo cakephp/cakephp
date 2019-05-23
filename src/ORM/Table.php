@@ -2487,9 +2487,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $association = $this->_associations->get($property);
         if (!$association) {
             throw new RuntimeException(sprintf(
-                'Table "%s" is not associated with "%s"',
-                static::class,
-                $property
+                'Undefined property `%s`. ' .
+                'You have not defined the `%s` association on `%s`.',
+                $property,
+                $property,
+                static::class
             ));
         }
 

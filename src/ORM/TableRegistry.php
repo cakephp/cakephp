@@ -43,8 +43,7 @@ use Cake\ORM\Locator\LocatorInterface;
  *
  * ### Getting instances
  *
- * You can fetch instances out of the registry through the `TableLocator`.
- * {@link TableLocator::get()}
+ * You can fetch instances out of the registry through `TableLocator::get()`.
  * One instance is stored per alias. Once an alias is populated the same
  * instance will always be returned. This reduces the ORM memory cost and
  * helps make cyclic references easier to solve.
