@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
@@ -32,6 +33,7 @@ use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Exception;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Represents a connection with a database server.
@@ -90,6 +92,13 @@ class Connection implements ConnectionInterface
      * @var \Cake\Database\Log\QueryLogger|null
      */
     protected $_logger;
+
+    /**
+     * Cacher object instance.
+     *
+     * @var \Psr\SimpleCache\CacheInterface|null
+     */
+    protected $cacher;
 
     /**
      * The schema collection object
@@ -788,6 +797,33 @@ class Connection implements ConnectionInterface
     {
         $this->_schemaCollection = null;
         $this->_config['cacheMetadata'] = $cache;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCacher(CacheInterface $cacher)
+    {
+        $this->cacher = $cacher;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCacher(): CacheInterface
+    {
+        if ($this->cacher === null) {
+            $configName = $this->_config['cacheMetadata'] ?? '_cake_model_';
+            if (!is_string($configName)) {
+                $configName = '_cake_model_';
+            }
+
+            $this->cacher = Cache::pool($configName);
+        }
+
+        return $this->cacher;
     }
 
     /**

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Database\Log\QueryLogger;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * This interface defines the methods you can depend on in
@@ -46,6 +47,21 @@ interface ConnectionInterface
      * @return \Cake\Database\Log\QueryLogger logger instance
      */
     public function getLogger(): QueryLogger;
+
+    /**
+     * Set a cacher.
+     *
+     * @param \Psr\SimpleCache\CacheInterface $cacher Cacher object
+     * @return $this
+     */
+    public function setCacher(CacheInterface $cacher);
+
+    /**
+     * Get a cacher.
+     *
+     * @return \Psr\SimpleCache\CacheInterface $cacher Cacher object
+     */
+    public function getCacher(): CacheInterface;
 
     /**
      * Get the configuration name for this connection.

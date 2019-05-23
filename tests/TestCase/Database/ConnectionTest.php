@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\NullEngine;
 use Cake\Collection\Collection;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
@@ -1013,6 +1015,21 @@ class ConnectionTest extends TestCase
         $connection->enableQueryLogging(true);
         $connection->begin();
         $connection->commit();
+    }
+
+    /**
+     * Tests setting and getting the cacher object
+     *
+     * @return void
+     */
+    public function testGetAndSetCacher()
+    {
+        $modelCacher = Cache::pool('_cake_model_');
+        $this->assertSame($modelCacher, $this->connection->getCacher());
+
+        $cacher = new NullEngine();
+        $this->connection->setCacher($cacher);
+        $this->assertSame($cacher, $this->connection->getCacher());
     }
 
     /**
