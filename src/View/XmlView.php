@@ -81,32 +81,43 @@ class XmlView extends SerializedView
     protected $_responseType = 'xml';
 
     /**
+     * Option to allow setting an array of custom options for Xml::fromArray()
+     *
+     * For e.g. 'format' as 'attributes' instead of 'tags'.
+     *
+     * @var array|null
+     */
+    protected $xmlOptions;
+
+    /**
+     * Root node name.
+     *
+     * Defaults to "response".
+     *
+     * @var string|null
+     */
+    protected $rootNode;
+
+    /**
      * List of special view vars.
+     *
+     * Use ViewBuilder::setOption()/setOptions() to set these vars.
      *
      * @var array
      */
-    protected $_specialVars = ['_serialize', '_rootNode', '_xmlOptions'];
+    protected $_specialVars = ['serialize', 'rootNode', 'xmlOptions'];
 
     /**
      * Serialize view vars.
      *
-     * ### Special parameters
-     * `_xmlOptions` You can set an array of custom options for Xml::fromArray() this way, e.g.
-     *   'format' as 'attributes' instead of 'tags'.
-     *
-     * @param array|string|true $serialize The name(s) of the view variable(s) that need(s) to be serialized
+     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
      * @return string|false The serialized data
      */
     protected function _serialize($serialize)
     {
-        $rootNode = $this->viewVars['_rootNode'] ?? 'response';
+        $rootNode = $this->getOption('rootNode') ?? 'response';
 
-        if ($serialize === true) {
-            $serialize = array_diff(
-                array_keys($this->viewVars),
-                $this->_specialVars
-            );
-
+        if (is_array($serialize)) {
             if (empty($serialize)) {
                 $serialize = null;
             } elseif (count($serialize) === 1) {
@@ -131,10 +142,7 @@ class XmlView extends SerializedView
             }
         }
 
-        $options = [];
-        if (isset($this->viewVars['_xmlOptions'])) {
-            $options = $this->viewVars['_xmlOptions'];
-        }
+        $options = $this->getOption('xmlOptions') ?? [];
         if (Configure::read('debug')) {
             $options['pretty'] = true;
         }

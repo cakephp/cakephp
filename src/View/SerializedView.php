@@ -34,6 +34,26 @@ abstract class SerializedView extends View
     protected $_responseType;
 
     /**
+     * List of special view vars.
+     *
+     * Use ViewBuilder::setOption()/setOptions() to set these vars.
+     *
+     * @var array
+     */
+    protected $_specialVars = ['serialize'];
+
+    /**
+     * To convert a set of view variables into a serialized response.
+     *
+     * Its value can be a string for single variable name or array for multiple
+     * names. If true all view variables will be serialized. If unset or false
+     * normal view template will be rendered.
+     *
+     * @var bool|array|null
+     */
+    protected $serialize;
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
@@ -50,6 +70,9 @@ abstract class SerializedView extends View
         if ($response) {
             $response = $response->withType($this->_responseType);
         }
+
+        $this->_passedVars = array_merge($this->_passedVars, $this->_specialVars);
+
         parent::__construct($request, $response, $eventManager, $viewOptions);
     }
 
@@ -60,7 +83,7 @@ abstract class SerializedView extends View
      */
     public function loadHelpers()
     {
-        if (empty($this->viewVars['_serialize'])) {
+        if (!$this->getOption('serialize')) {
             parent::loadHelpers();
         }
 
@@ -79,21 +102,26 @@ abstract class SerializedView extends View
     /**
      * Render view template or return serialized data.
      *
-     * ### Special parameters
-     * `_serialize` To convert a set of view variables into a serialized form.
-     *   Its value can be a string for single variable name or array for multiple
-     *   names. If true all view variables will be serialized. If unset normal
-     *   view template will be rendered.
-     *
      * @param string|null $template The template being rendered.
      * @param string|null|false $layout The layout being rendered.
      * @return string The rendered view.
      */
     public function render(?string $template = null, $layout = null): string
     {
-        $serialize = false;
-        if (isset($this->viewVars['_serialize'])) {
-            $serialize = $this->viewVars['_serialize'];
+        $serialize = $this->getOption('serialize') ?? false;
+
+        if ($serialize === true) {
+            $specialVars = array_map(
+                function ($v) {
+                    return '_' . $v;
+                },
+                $this->_specialVars
+            );
+
+            $serialize = array_diff(
+                array_keys($this->viewVars),
+                $specialVars
+            );
         }
 
         if ($serialize !== false) {
@@ -106,5 +134,21 @@ abstract class SerializedView extends View
         }
 
         return parent::render($template, false);
+    }
+
+    /**
+     * Get value of option with fallback to corresponding deprecated view var.
+     *
+     * @param string $name Option name
+     * @return mixed
+     * @internal
+     */
+    protected function getOption(string $name)
+    {
+        if (isset($this->{$name})) {
+            return $this->{$name};
+        }
+
+        return $this->viewVars["_{$name}"] ?? null;
     }
 }
