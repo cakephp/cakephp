@@ -69,6 +69,11 @@ class TestController extends ControllerTestAppController
         return $this->response->withStringBody('I am from the controller.');
     }
 
+    public function willCauseException()
+    {
+        return '';
+    }
+
     // phpcs:disable
     protected function protected_m()
     {

@@ -29,10 +29,12 @@ use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Routing\Router;
 use Cake\View\ViewVarsTrait;
+use Psr\Http\Message\ResponseInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Application controller class for organization of business logic.
@@ -489,10 +491,11 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Dispatches the controller action. Checks that the action
      * exists and isn't private.
      *
-     * @return mixed The resulting response.
-     * @throws \ReflectionException
+     * @return \Psr\Http\Message\ResponseInterface The resulting response.
+     * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
+     * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
-    public function invokeAction()
+    public function invokeAction(): ?ResponseInterface
     {
         $request = $this->request;
 
@@ -504,15 +507,24 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'plugin' => $request->getParam('plugin'),
             ]);
         }
+
         /** @var callable $callable */
         $callable = [$this, $request->getParam('action')];
 
         $result = $callable(...array_values($request->getParam('pass')));
-        if ($result instanceof Response) {
-            $this->response = $result;
+        if ($result === null) {
+            return $result;
         }
 
-        return $result;
+        if (!$result instanceof ResponseInterface) {
+            throw new UnexpectedValueException(sprintf(
+                'Controller actions can only return ResponseInterface instance or null. '
+                . 'Got %s instead.',
+                getTypeName($result)
+            ));
+        }
+
+        return $this->response = $result;
     }
 
     /**
