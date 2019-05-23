@@ -214,8 +214,8 @@ class ExceptionRenderer implements ExceptionRendererInterface
             'url' => h($url),
             'error' => $exception,
             'code' => $code,
-            '_serialize' => ['message', 'url', 'code'],
         ];
+        $serialize = ['message', 'url', 'code'];
 
         $isDebug = Configure::read('debug');
         if ($isDebug) {
@@ -225,10 +225,11 @@ class ExceptionRenderer implements ExceptionRendererInterface
             ]);
             $viewVars['file'] = $exception->getFile() ?: 'null';
             $viewVars['line'] = $exception->getLine() ?: 'null';
-            $viewVars['_serialize'][] = 'file';
-            $viewVars['_serialize'][] = 'line';
+            $serialize[] = 'file';
+            $serialize[] = 'line';
         }
         $this->controller->set($viewVars);
+        $this->controller->viewBuilder()->setOption('serialize', $serialize);
 
         if ($exception instanceof CakeException && $isDebug) {
             $this->controller->set($exception->getAttributes());
