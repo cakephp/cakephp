@@ -149,6 +149,16 @@ abstract class SerializedView extends View
             return $this->{$name};
         }
 
-        return $this->viewVars["_{$name}"] ?? null;
+        if (isset($this->viewVars["_{$name}"])) {
+            deprecationWarning(sprintf(
+                'Setting special view var "_%s" is deprecated. Use ViewBuilder::setOption(\'%s\', $value) instead.',
+                $name,
+                $name
+            ));
+
+            return $this->viewVars["_{$name}"];
+        }
+
+        return null;
     }
 }
