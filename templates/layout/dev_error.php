@@ -247,7 +247,7 @@
             <?php if ($this->fetch('templateName')): ?>
             <p class="customize">
                 If you want to customize this error message, create
-                <em><?= APP_DIR . DIRECTORY_SEPARATOR . 'Template' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
+                <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
             </p>
             <?php endif; ?>
         </div>
