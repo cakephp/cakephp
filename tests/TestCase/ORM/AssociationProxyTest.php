@@ -68,7 +68,7 @@ class AssociationProxyTest extends TestCase
     public function testGetBadAssociation()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Table "Cake\ORM\Table" is not associated with "posts"');
+        $this->expectExceptionMessage('You have not defined');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
     }
