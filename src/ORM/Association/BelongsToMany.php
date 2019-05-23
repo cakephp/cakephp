@@ -1169,7 +1169,7 @@ class BelongsToMany extends Association
                     $inserted = array_combine(
                         array_keys($inserts),
                         (array)$sourceEntity->get($property)
-                    );
+                    ) ?: [];
                     $targetEntities = $inserted + $targetEntities;
                 }
 

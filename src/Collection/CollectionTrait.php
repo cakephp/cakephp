@@ -1015,6 +1015,7 @@ trait CollectionTrait
      */
     protected function optimizeUnwrap(): iterable
     {
+        /** @var \ArrayObject $iterator */
         $iterator = $this->unwrap();
 
         if (get_class($iterator) === ArrayIterator::class) {

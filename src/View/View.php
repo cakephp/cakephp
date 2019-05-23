@@ -791,12 +791,16 @@ class View implements EventDispatcherInterface
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
+     * @throws \RuntimeException If the array combine operation failed.
      */
     public function set($name, $value = null)
     {
         if (is_array($name)) {
             if (is_array($value)) {
                 $data = array_combine($name, $value);
+                if ($data === false) {
+                    throw new RuntimeException('Invalid data provided for array_combine() to work: Both $name and $value require same count.');
+                }
             } else {
                 $data = $name;
             }
