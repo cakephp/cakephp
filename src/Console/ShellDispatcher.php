@@ -364,7 +364,7 @@ class ShellDispatcher
     protected function _shellExists(string $shell): ?string
     {
         $class = App::className($shell, 'Shell', 'Shell');
-        if ($class && class_exists($class)) {
+        if ($class) {
             return $class;
         }
 

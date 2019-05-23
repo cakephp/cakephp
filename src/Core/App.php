@@ -54,7 +54,7 @@ class App
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
         if (strpos($class, '\\') !== false) {
-            return $class;
+            return class_exists($class) ? $class : null;
         }
 
         [$plugin, $name] = pluginSplit($class);
