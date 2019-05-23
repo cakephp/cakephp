@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Cache\Cache;
+use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
+use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
 use Cake\Shell\SchemaCacheShell;
 use Cake\TestSuite\TestCase;
@@ -34,6 +36,8 @@ class SchemaCacheShellTest extends TestCase
      */
     public $fixtures = ['core.Articles', 'core.Tags'];
 
+    protected $connection;
+
     /**
      * setup method
      *
@@ -42,8 +46,6 @@ class SchemaCacheShellTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new SchemaCacheShell($this->io);
 
         $this->cache = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $this->cache->expects($this->any())
@@ -51,8 +53,8 @@ class SchemaCacheShellTest extends TestCase
             ->will($this->returnValue(true));
         Cache::setConfig('orm_cache', $this->cache);
 
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata('orm_cache');
+        $this->connection = clone ConnectionManager::get('test');
+        $this->connection->cacheMetadata('orm_cache');
     }
 
     /**
@@ -65,8 +67,23 @@ class SchemaCacheShellTest extends TestCase
         parent::tearDown();
         Cache::drop('orm_cache');
 
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata(false);
+        unset($this->connection);
+    }
+
+    protected function getShell()
+    {
+        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
+        $shell = $this->getMockBuilder(SchemaCacheShell::class)
+            ->setConstructorArgs([$io])
+            ->setMethods(['_getSchemaCache'])
+            ->getMock();
+
+        $schemaCache = new SchemaCache($this->connection);
+        $shell->expects($this->once())
+            ->method('_getSchemaCache')
+            ->willReturn($schemaCache);
+
+        return $shell;
     }
 
     /**
@@ -76,12 +93,12 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testClearEnablesMetadataCache()
     {
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata(false);
+        $this->connection->cacheMetadata(false);
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->clear();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->clear();
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
     }
 
     /**
@@ -91,12 +108,12 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testBuildEnablesMetadataCache()
     {
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata(false);
+        $this->connection->cacheMetadata(false);
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->build();
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
     }
 
     /**
@@ -114,8 +131,9 @@ class SchemaCacheShellTest extends TestCase
             ->with('test_articles')
             ->will($this->returnValue(true));
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build();
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->build();
     }
 
     /**
@@ -133,8 +151,9 @@ class SchemaCacheShellTest extends TestCase
             ->method('delete')
             ->will($this->returnValue(false));
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build('articles');
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->build('articles');
     }
 
     /**
@@ -154,8 +173,9 @@ class SchemaCacheShellTest extends TestCase
             ->method('delete')
             ->will($this->returnValue(false));
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->build('articles');
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->build('articles');
     }
 
     /**
@@ -166,8 +186,10 @@ class SchemaCacheShellTest extends TestCase
     public function testBuildInvalidConnection()
     {
         $this->expectException(StopException::class);
-        $this->shell->params['connection'] = 'derpy-derp';
-        $this->shell->build('articles');
+
+        $shell = new SchemaCacheShell(new ConsoleIo());
+        $shell->params['connection'] = 'derpy-derp';
+        $shell->build('articles');
     }
 
     /**
@@ -178,8 +200,10 @@ class SchemaCacheShellTest extends TestCase
     public function testClearInvalidConnection()
     {
         $this->expectException(StopException::class);
-        $this->shell->params['connection'] = 'derpy-derp';
-        $this->shell->clear('articles');
+
+        $shell = new SchemaCacheShell(new ConsoleIo());
+        $shell->params['connection'] = 'derpy-derp';
+        $shell->clear('articles');
     }
 
     /**
@@ -195,8 +219,9 @@ class SchemaCacheShellTest extends TestCase
             ->method('delete')
             ->with('test_articles');
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->clear();
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->clear();
     }
 
     /**
@@ -214,7 +239,8 @@ class SchemaCacheShellTest extends TestCase
             ->with('test_articles')
             ->will($this->returnValue(false));
 
-        $this->shell->params['connection'] = 'test';
-        $this->shell->clear('articles');
+        $shell = $this->getShell();
+        $shell->params['connection'] = 'test';
+        $shell->clear('articles');
     }
 }
