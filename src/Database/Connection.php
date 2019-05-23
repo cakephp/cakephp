@@ -379,7 +379,7 @@ class Connection implements ConnectionInterface
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
                 $this->configName(),
-                $this->_config['cacheMetadata']
+                $this->getCacher()
             );
         }
 

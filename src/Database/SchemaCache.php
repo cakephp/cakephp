@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Cache\Cache;
 use Cake\Database\Schema\CachedCollection;
 
 /**
@@ -78,12 +77,12 @@ class SchemaCache
         if (empty($name)) {
             $tables = $this->_schema->listTables();
         }
-        /** @var string $configName */
-        $configName = $this->_schema->getCacheMetadata();
+
+        $cacher = $this->_schema->getCacher();
 
         foreach ($tables as $table) {
             $key = $this->_schema->cacheKey($table);
-            Cache::delete($key, $configName);
+            $cacher->delete($key);
         }
 
         return $tables;
