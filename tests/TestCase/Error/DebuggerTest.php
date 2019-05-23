@@ -348,6 +348,7 @@ object(Cake\View\View) {
 		(int) 8 => 'templatePath',
 		(int) 9 => 'plugin'
 	]
+	[protected] _defaultConfig => []
 	[protected] _paths => []
 	[protected] _pathsForPlugin => []
 	[protected] _parents => []
@@ -357,6 +358,8 @@ object(Cake\View\View) {
 	[protected] _viewBlockClass => 'Cake\View\ViewBlock'
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
 	[protected] _eventClass => 'Cake\Event\Event'
+	[protected] _config => []
+	[protected] _configInitialized => true
 	[protected] _viewBuilder => null
 }
 TEXT;
