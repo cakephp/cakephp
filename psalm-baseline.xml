@@ -718,22 +718,22 @@
       <code>function ($part, &amp;$field) {</code>
     </MissingClosureReturnType>
   </file>
+  <file src="src/Database/Log/LoggedQuery.php">
+    <MissingClosureReturnType occurrences="1">
+      <code>function ($p) {</code>
+    </MissingClosureReturnType>
+  </file>
   <file src="src/Database/Log/LoggingStatement.php">
     <InvalidScalarArgument occurrences="2">
       <code>$type</code>
       <code>$type</code>
     </InvalidScalarArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>log</code>
-    </PossiblyNullReference>
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>$_logger</code>
+    </PropertyNotSetInConstructor>
     <UndefinedPropertyAssignment occurrences="1">
       <code>$e-&gt;queryString</code>
     </UndefinedPropertyAssignment>
-  </file>
-  <file src="src/Database/Log/QueryLogger.php">
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($p) {</code>
-    </MissingClosureReturnType>
   </file>
   <file src="src/Database/Query.php">
     <ImplementedReturnTypeMismatch occurrences="1">

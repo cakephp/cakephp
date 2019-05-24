@@ -21,6 +21,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
@@ -63,7 +64,6 @@ class ConnectionTest extends TestCase
     {
         Log::reset();
         $this->connection->disableSavePoints();
-        $this->connection->setLogger(null);
         unset($this->connection);
         parent::tearDown();
     }
@@ -944,13 +944,20 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->connection->setLogger($logger);
-        $logger->expects($this->once())->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'SELECT 1')
-            ));
+        $logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 SELECT 1',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 SELECT 1';
+                })
+            );
         $this->connection->log('SELECT 1');
     }
 
@@ -971,18 +978,31 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->setDriver($driver);
 
-        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->setLogger($logger);
-        $logger->expects($this->at(0))->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'BEGIN')
-            ));
-        $logger->expects($this->at(1))->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'ROLLBACK')
-            ));
+
+        $logger
+            ->expects($this->at(0))
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 BEGIN',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 BEGIN';
+                })
+            );
+        $logger
+            ->expects($this->at(1))
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 ROLLBACK',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 ROLLBACK';
+                })
+            );
 
         $connection->begin();
         $connection->begin(); //This one will not be logged
@@ -1002,14 +1022,22 @@ class ConnectionTest extends TestCase
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
 
-        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->setLogger($logger);
 
-        $logger->expects($this->at(1))->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'COMMIT')
-            ));
+        $logger
+            ->expects($this->at(1))
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 COMMIT',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 COMMIT';
+                })
+            );
+
         $connection->enableQueryLogging(true);
         $connection->begin();
         $connection->commit();

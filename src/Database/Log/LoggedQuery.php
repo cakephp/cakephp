@@ -16,13 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use JsonSerializable;
+
 /**
  * Contains a query string, the params used to executed it, time taken to do it
  * and the number of rows found or affected by its execution.
  *
  * @internal
  */
-class LoggedQuery
+class LoggedQuery implements JsonSerializable
 {
     /**
      * Query string that was executed
@@ -60,12 +62,82 @@ class LoggedQuery
     public $error;
 
     /**
+     * Helper function used to replace query placeholders by the real
+     * params used to execute the query
+     *
+     * @return string
+     */
+    protected function interpolate(): string
+    {
+        $params = array_map(function ($p) {
+            if ($p === null) {
+                return 'NULL';
+            }
+            if (is_bool($p)) {
+                return $p ? '1' : '0';
+            }
+
+            if (is_string($p)) {
+                $replacements = [
+                    '$' => '\\$',
+                    '\\' => '\\\\\\\\',
+                    "'" => "''",
+                ];
+
+                $p = strtr($p, $replacements);
+
+                return "'$p'";
+            }
+
+            return $p;
+        }, $this->params);
+
+        $keys = [];
+        $limit = is_int(key($params)) ? 1 : -1;
+        foreach ($params as $key => $param) {
+            $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
+        }
+
+        return preg_replace($keys, $params, $this->query, $limit);
+    }
+
+    /**
+     * Returns data that will be serialized as JSON
+     *
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        $error = $this->error;
+        if ($error !== null) {
+            $error = [
+                'class' => get_class($error),
+                'message' => $error->getMessage(),
+                'code' => $error->getCode(),
+            ];
+        }
+
+        return [
+            'query' => $this->query,
+            'numRows' => $this->numRows,
+            'params' => $this->params,
+            'took' => $this->took,
+            'error' => $error,
+        ];
+    }
+
+    /**
      * Returns the string representation of this logged query
      *
      * @return string
      */
     public function __toString(): string
     {
-        return "duration={$this->took} rows={$this->numRows} {$this->query}";
+        $sql = $this->query;
+        if (!empty($this->params)) {
+            $sql = $this->interpolate();
+        }
+
+        return "duration={$this->took} rows={$this->numRows} {$sql}";
     }
 }

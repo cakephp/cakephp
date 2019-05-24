@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Log;
 
+use Cake\Log\Engine\BaseLog;
 use Cake\Log\Log;
 
 /**
@@ -24,72 +25,29 @@ use Cake\Log\Log;
  *
  * @internal
  */
-class QueryLogger
+class QueryLogger extends BaseLog
 {
     /**
-     * Writes a LoggedQuery into a log
+     * Constructor.
      *
-     * @param \Cake\Database\Log\LoggedQuery $query to be written in log
-     * @return void
+     * @param array $config Configuration array
      */
-    public function log(LoggedQuery $query): void
+    public function __construct(array $config = [])
     {
-        if (!empty($query->params)) {
-            $query->query = $this->_interpolate($query);
-        }
-        $this->_log($query);
+        $this->_defaultConfig['scopes'] = ['queriesLog'];
+
+        parent::__construct($config);
     }
 
     /**
-     * Wrapper function for the logger object, useful for unit testing
-     * or for overriding in subclasses.
-     *
-     * @param \Cake\Database\Log\LoggedQuery $query to be written in log
-     * @return void
+     * @inheritDoc
      */
-    protected function _log(LoggedQuery $query): void
+    public function log($level, $message, array $context = [])
     {
-        Log::write('debug', $query, ['queriesLog']);
-    }
-
-    /**
-     * Helper function used to replace query placeholders by the real
-     * params used to execute the query
-     *
-     * @param \Cake\Database\Log\LoggedQuery $query The query to log
-     * @return string
-     */
-    protected function _interpolate(LoggedQuery $query): string
-    {
-        $params = array_map(function ($p) {
-            if ($p === null) {
-                return 'NULL';
-            }
-            if (is_bool($p)) {
-                return $p ? '1' : '0';
-            }
-
-            if (is_string($p)) {
-                $replacements = [
-                    '$' => '\\$',
-                    '\\' => '\\\\\\\\',
-                    "'" => "''",
-                ];
-
-                $p = strtr($p, $replacements);
-
-                return "'$p'";
-            }
-
-            return $p;
-        }, $query->params);
-
-        $keys = [];
-        $limit = is_int(key($params)) ? 1 : -1;
-        foreach ($params as $key => $param) {
-            $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
-        }
-
-        return preg_replace($keys, $params, $query->query, $limit);
+        Log::write(
+            'debug',
+            (string)$context['query'],
+            ['scope' => $this->scopes() ?: ['queriesLog']]
+        );
     }
 }
