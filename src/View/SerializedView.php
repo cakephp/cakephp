@@ -34,24 +34,20 @@ abstract class SerializedView extends View
     protected $_responseType;
 
     /**
-     * List of special view vars.
+     * List of view options.
      *
      * Use ViewBuilder::setOption()/setOptions() to set these vars.
      *
-     * @var array
-     */
-    protected $_specialVars = ['serialize'];
-
-    /**
-     * To convert a set of view variables into a serialized response.
+     * - `serialize`: Option to convert a set of view variables into a serialized response.
+     *   Its value can be a string for single variable name or array for multiple
+     *   names. If true all view variables will be serialized. If null or false
+     *   normal view template will be rendered.
      *
-     * Its value can be a string for single variable name or array for multiple
-     * names. If true all view variables will be serialized. If unset or false
-     * normal view template will be rendered.
-     *
-     * @var bool|array|null
+     * @var array{serialize:string|bool|null}
      */
-    protected $serialize;
+    protected $options = [
+        'serialize' => null,
+    ];
 
     /**
      * Constructor
@@ -70,8 +66,6 @@ abstract class SerializedView extends View
         if ($response) {
             $response = $response->withType($this->_responseType);
         }
-
-        $this->_passedVars = array_merge($this->_passedVars, $this->_specialVars);
 
         parent::__construct($request, $response, $eventManager, $viewOptions);
     }
@@ -111,19 +105,18 @@ abstract class SerializedView extends View
         $serialize = $this->getOption('serialize') ?? false;
 
         if ($serialize === true) {
-            $specialVars = array_map(
+            $options = array_map(
                 function ($v) {
                     return '_' . $v;
                 },
-                $this->_specialVars
+                array_keys($this->options)
             );
 
             $serialize = array_diff(
                 array_keys($this->viewVars),
-                $specialVars
+                $options
             );
         }
-
         if ($serialize !== false) {
             $result = $this->_serialize($serialize);
             if ($result === false) {
@@ -134,31 +127,5 @@ abstract class SerializedView extends View
         }
 
         return parent::render($template, false);
-    }
-
-    /**
-     * Get value of option with fallback to corresponding deprecated view var.
-     *
-     * @param string $name Option name
-     * @return mixed
-     * @internal
-     */
-    protected function getOption(string $name)
-    {
-        if (isset($this->{$name})) {
-            return $this->{$name};
-        }
-
-        if (isset($this->viewVars["_{$name}"])) {
-            deprecationWarning(sprintf(
-                'Setting special view var "_%s" is deprecated. Use ViewBuilder::setOption(\'%s\', $value) instead.',
-                $name,
-                $name
-            ));
-
-            return $this->viewVars["_{$name}"];
-        }
-
-        return null;
     }
 }

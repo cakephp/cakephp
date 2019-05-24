@@ -348,6 +348,7 @@ object(Cake\View\View) {
 		(int) 8 => 'templatePath',
 		(int) 9 => 'plugin'
 	]
+	[protected] options => []
 	[protected] _paths => []
 	[protected] _pathsForPlugin => []
 	[protected] _parents => []

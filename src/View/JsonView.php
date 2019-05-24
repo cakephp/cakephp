@@ -79,33 +79,27 @@ class JsonView extends SerializedView
     protected $_responseType = 'json';
 
     /**
-     * List of special view vars.
+     * List of view options.
      *
      * Use ViewBuilder::setOption()/setOptions() to set these vars.
      *
-     * @var array
-     */
-    protected $_specialVars = ['serialize', 'jsonOptions', 'jsonp'];
-
-    /**
-     * Options for json_encode().
-     *
-     * e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
-     *
-     * @var int|null
-     */
-    protected $jsonOptions;
-
-    /**
-     * Enables JSONP support and wraps response in callback function provided in query string.
-     *
-     * - Setting it to true enables the default query string parameter "callback".
-     * - Setting it to a string value, uses the provided query string parameter
+     * - `serialize`: Option to convert a set of view variables into a serialized response.
+     *   Its value can be a string for single variable name or array for multiple
+     *   names. If true all view variables will be serialized. If null or false
+     *   normal view template will be rendered.
+     * - `jsonOptions`: Options for json_encode(). For e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
+     * - `jsonp`: Enables JSONP support and wraps response in callback function provided in query string.
+     *   - Setting it to true enables the default query string parameter "callback".
+     *   - Setting it to a string value, uses the provided query string parameter
      *     for finding the JSONP callback name.
      *
-     * @var true|string|null
+     * @var array{serialize:string|bool|null, jsonOptions: int|null, jsonp: bool|string|null}
      */
-    protected $jsonp;
+    protected $options = [
+        'serialize' => null,
+        'jsonOptions' => null,
+        'jsonp' => null,
+    ];
 
     /**
      * Render a JSON view.

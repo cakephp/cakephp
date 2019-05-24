@@ -90,22 +90,25 @@ class XmlView extends SerializedView
     protected $xmlOptions;
 
     /**
-     * Root node name.
-     *
-     * Defaults to "response".
-     *
-     * @var string|null
-     */
-    protected $rootNode;
-
-    /**
-     * List of special view vars.
+     * List of view options.
      *
      * Use ViewBuilder::setOption()/setOptions() to set these vars.
      *
-     * @var array
+     * - `serialize`: Option to convert a set of view variables into a serialized response.
+     *   Its value can be a string for single variable name or array for multiple
+     *   names. If true all view variables will be serialized. If null or false
+     *   normal view template will be rendered.
+     * - `xmlOptions`: Option to allow setting an array of custom options for Xml::fromArray().
+     *   For e.g. 'format' as 'attributes' instead of 'tags'.
+     * - `rootNode`: Root node name. Defaults to "response".
+     *
+     * @var array{serialize:string|bool|null, xmlOptions: int|null, rootNode: string|null}
      */
-    protected $_specialVars = ['serialize', 'rootNode', 'xmlOptions'];
+    protected $options = [
+        'serialize' => null,
+        'xmlOptions' => null,
+        'rootNode' => null,
+    ];
 
     /**
      * Serialize view vars.

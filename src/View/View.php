@@ -217,6 +217,13 @@ class View implements EventDispatcherInterface
     ];
 
     /**
+     * Custom view options.
+     *
+     * @var array
+     */
+    protected $options = [];
+
+    /**
      * Holds an array of paths.
      *
      * @var string[]
@@ -321,6 +328,8 @@ class View implements EventDispatcherInterface
                 $this->{$var} = $viewOptions[$var];
             }
         }
+        $this->options = array_intersect_key($viewOptions, $this->options) + $this->options;
+
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
@@ -565,6 +574,35 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get option value.
+     *
+     * Currently if option is not set it fallbacks to checking corresponding
+     * view var with underscore prefix. Using unscored prefixed special view
+     * vars is deprecated and this fallback will be removed in CakePHP 4.1.0.
+     *
+     * @param string $name Option name
+     * @return mixed
+     */
+    protected function getOption(string $name)
+    {
+        if (isset($this->options[$name])) {
+            return $this->options[$name];
+        }
+
+        if (isset($this->viewVars["_{$name}"])) {
+            deprecationWarning(sprintf(
+                'Setting special view var "_%s" is deprecated. Use ViewBuilder::setOption(\'%s\', $value) instead.',
+                $name,
+                $name
+            ));
+
+            return $this->viewVars["_{$name}"];
+        }
+
+        return null;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
@@ -799,7 +837,9 @@ class View implements EventDispatcherInterface
             if (is_array($value)) {
                 $data = array_combine($name, $value);
                 if ($data === false) {
-                    throw new RuntimeException('Invalid data provided for array_combine() to work: Both $name and $value require same count.');
+                    throw new RuntimeException(
+                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.'
+                    );
                 }
             } else {
                 $data = $name;
