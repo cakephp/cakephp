@@ -42,8 +42,10 @@ foreach ($error->getTrace() as $i => $stack):
     endif;
 ?>
     <div id="stack-frame-<?= $i ?>" style="display:none;" class="stack-details">
-        <span class="stack-frame-file"><?= h($file) ?></span>
-        <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">toggle arguments</a>
+        <div class="stack-frame-header">
+            <span class="stack-frame-file"><?= h($file) ?></span>
+            <a href="#" class="toggle-link stack-frame-args" data-target="stack-args-<?= $i ?>">Toggle Arguments</a>
+        </div>
 
         <table class="code-excerpt" cellspacing="0" cellpadding="0">
         <?php $lineno = isset($stack['line']) ? $stack['line'] - 4 : 0 ?>

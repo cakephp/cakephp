@@ -14,7 +14,7 @@
  */
 use Cake\Error\Debugger;
 ?>
-<a href="#" class="toggle-link toggle-vendor-frames">toggle vendor stack frames</a>
+<a href="#" class="toggle-link toggle-vendor-frames">Toggle Vendor Stack Frames</a>
 
 <ul class="stack-trace">
 <?php foreach ($error->getTrace() as $i => $stack): ?>

@@ -24,10 +24,10 @@ $isEmail = strpos($file, 'Email/') === 0;
 $this->start('subheading');
 ?>
 <?php if ($isEmail): ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= sprintf('The template %s</em> was not found.', h($file)); ?>
 <?php else: ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= sprintf(
         'The view for <em>%sController::%s()</em> was not found.',
         h(Inflector::camelize($this->request->getParam('controller', ''))),

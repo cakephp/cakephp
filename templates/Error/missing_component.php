@@ -44,7 +44,7 @@ $this->end();
 $this->start('file');
 ?>
 <p class="error">
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Controller' . DIRECTORY_SEPARATOR . 'Component' . DIRECTORY_SEPARATOR . h($class) . '.php'); ?>
 </p>
 <?php
