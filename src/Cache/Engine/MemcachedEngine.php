@@ -266,10 +266,11 @@ class MemcachedEngine extends CacheEngine
     /**
      * Read an option value from the memcached connection.
      *
-     * @param string|int $name The option name to read.
+     * @param int $name The option name to read.
      * @return string|int|null|bool
+     * @see https://secure.php.net/manual/en/memcached.getoption.php
      */
-    public function getOption($name)
+    public function getOption(int $name)
     {
         return $this->_Memcached->getOption($name);
     }

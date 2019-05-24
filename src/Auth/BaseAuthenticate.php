@@ -105,7 +105,7 @@ abstract class BaseAuthenticate implements EventListenerInterface
     {
         $result = $this->_query($username)->first();
 
-        if (empty($result)) {
+        if ($result === null) {
             // Waste time hashing the password, to prevent
             // timing side-channels. However, don't hash
             // null passwords as authentication systems
