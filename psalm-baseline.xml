@@ -2466,7 +2466,7 @@
     </TypeDoesNotContainType>
   </file>
   <file src="src/Utility/Inflector.php">
-    <NullableReturnStatement occurrences="3">
+    <NullableReturnStatement occurrences="4">
       <code>static::$_cache['pluralize'][$word]</code>
       <code>static::$_cache['pluralize'][$word]</code>
       <code>static::$_cache['singularize'][$word]</code>
