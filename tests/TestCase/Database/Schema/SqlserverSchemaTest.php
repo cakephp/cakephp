@@ -480,7 +480,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('dbo.schema_articles');
         $this->assertEquals(['id'], $result->primaryKey());
-        $this->assertEquals('schema_articles', $result->name());
+        $this->assertSame('schema_articles', $result->name());
     }
 
     /**
@@ -1008,7 +1008,7 @@ SQL;
         $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('DROP TABLE [schema_articles]', $result[0]);
+        $this->assertSame('DROP TABLE [schema_articles]', $result[0]);
     }
 
     /**
@@ -1033,7 +1033,7 @@ SQL;
             ]);
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
-        $this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
+        $this->assertSame('DELETE FROM [schema_articles]', $result[0]);
         $this->assertEquals("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
     }
 

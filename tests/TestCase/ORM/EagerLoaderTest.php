@@ -506,18 +506,18 @@ class EagerLoaderTest extends TestCase
         $loader = new EagerLoader();
         $loader->contain($contains);
         $normalized = $loader->normalized($this->table);
-        $this->assertEquals('clients', $normalized['clients']->aliasPath());
-        $this->assertEquals('client', $normalized['clients']->propertyPath());
+        $this->assertSame('clients', $normalized['clients']->aliasPath());
+        $this->assertSame('client', $normalized['clients']->propertyPath());
 
         $assocs = $normalized['clients']->associations();
-        $this->assertEquals('clients.orders', $assocs['orders']->aliasPath());
-        $this->assertEquals('client.order', $assocs['orders']->propertyPath());
+        $this->assertSame('clients.orders', $assocs['orders']->aliasPath());
+        $this->assertSame('client.order', $assocs['orders']->propertyPath());
 
         $assocs = $assocs['orders']->associations();
-        $this->assertEquals('clients.orders.orderTypes', $assocs['orderTypes']->aliasPath());
-        $this->assertEquals('client.order.order_type', $assocs['orderTypes']->propertyPath());
-        $this->assertEquals('clients.orders.stuff', $assocs['stuff']->aliasPath());
-        $this->assertEquals('client.order.stuff', $assocs['stuff']->propertyPath());
+        $this->assertSame('clients.orders.orderTypes', $assocs['orderTypes']->aliasPath());
+        $this->assertSame('client.order.order_type', $assocs['orderTypes']->propertyPath());
+        $this->assertSame('clients.orders.stuff', $assocs['stuff']->aliasPath());
+        $this->assertSame('client.order.stuff', $assocs['stuff']->propertyPath());
 
         $assocs = $assocs['stuff']->associations();
         $this->assertEquals(

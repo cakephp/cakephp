@@ -43,7 +43,7 @@ class SubjectFilterDecoratorTest extends TestCase
         ]);
 
         $this->assertTrue($decorator->canTrigger($event));
-        $this->assertEquals('success', $decorator($event));
+        $this->assertSame('success', $decorator($event));
 
         $decorator = new SubjectFilterDecorator($callable, [
             'allowedSubject' => '\Some\Other\Class',

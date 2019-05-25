@@ -111,7 +111,7 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
         $this->assertStringContainsString('500 5.3.3 Unrecognized command', $e->getPrevious()->getMessage());
     }
@@ -173,7 +173,7 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the connection.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the connection.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
         $this->assertStringContainsString('200 Not Accepted', $e->getPrevious()->getMessage());
     }
@@ -264,7 +264,7 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the username.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the username.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
         $this->assertStringContainsString('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
     }
@@ -291,7 +291,7 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the password.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the password.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
         $this->assertStringContainsString('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
     }

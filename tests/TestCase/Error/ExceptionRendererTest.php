@@ -120,8 +120,8 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin');
         $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
@@ -130,15 +130,15 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertEquals('missingAction', $controller->viewBuilder()->getTemplate());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('missingAction', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
 
         Configure::write('debug', false);
         $ExceptionRenderer = new ExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertEquals(
             'Admin' . DIRECTORY_SEPARATOR . 'Error',
             $controller->viewBuilder()->getTemplatePath()
@@ -158,7 +158,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = $ExceptionRenderer->render();
 
-        $this->assertEquals('widget thing is missing', (string)$result->getBody());
+        $this->assertSame('widget thing is missing', (string)$result->getBody());
     }
 
     /**
@@ -242,7 +242,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$ExceptionRenderer->render()->getBody();
 
-        $this->assertEquals('error400', $ExceptionRenderer->__debugInfo()['template']);
+        $this->assertSame('error400', $ExceptionRenderer->__debugInfo()['template']);
         $this->assertStringContainsString('Not Found', $result);
         $this->assertStringNotContainsString('Secret info not to be leaked', $result);
     }
@@ -456,7 +456,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = $ExceptionRenderer->render();
         $this->assertTrue($result->hasHeader('Allow'));
-        $this->assertEquals('POST, DELETE', $result->getHeaderLine('Allow'));
+        $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
     }
 
     /**
@@ -757,11 +757,11 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
-        $this->assertEquals('text/html', $response->getType());
+        $this->assertSame('text/html', $response->getType());
         $this->assertStringContainsString('Not Found', (string)$response->getBody());
         $this->assertTrue($this->called, 'Listener added was not triggered.');
-        $this->assertEquals('', $controller->viewBuilder()->getLayoutPath());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('', $controller->viewBuilder()->getLayoutPath());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -788,7 +788,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
-        $this->assertEquals('text/html', $response->getType());
+        $this->assertSame('text/html', $response->getType());
         $this->assertStringContainsString('Not Found', (string)$response->getBody());
         $this->assertTrue($this->called, 'Listener added was not triggered.');
         $this->assertSame('', $controller->viewBuilder()->getLayoutPath());

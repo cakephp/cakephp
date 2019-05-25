@@ -32,7 +32,7 @@ class IcuFormatterTest extends TestCase
     public function testFormatEmptyValues()
     {
         $formatter = new IcuFormatter();
-        $this->assertEquals('', $formatter->format('en_US', '', []));
+        $this->assertSame('', $formatter->format('en_US', '', []));
     }
 
     /**
@@ -43,13 +43,13 @@ class IcuFormatterTest extends TestCase
     public function testFormatSimple()
     {
         $formatter = new IcuFormatter();
-        $this->assertEquals('Hello José', $formatter->format('en_US', 'Hello {0}', ['José']));
+        $this->assertSame('Hello José', $formatter->format('en_US', 'Hello {0}', ['José']));
         $result = $formatter->format(
             '1 Orange',
             '{0, number} {1}',
             [1.0, 'Orange']
         );
-        $this->assertEquals('1 Orange', $result);
+        $this->assertSame('1 Orange', $result);
     }
 
     /**

@@ -280,7 +280,7 @@ class ControllerTest extends TestCase
         $debug = Configure::read('debug');
         Configure::write('debug', false);
         $result = $Controller->render('index');
-        $this->assertEquals('{"test":"value"}', (string)$result->getBody());
+        $this->assertSame('{"test":"value"}', (string)$result->getBody());
         Configure::write('debug', $debug);
     }
 
@@ -333,7 +333,7 @@ class ControllerTest extends TestCase
         $response = $Controller->redirect('http://cakephp.org', (int)$code);
         $this->assertSame($response, $Controller->getResponse());
         $this->assertEquals($code, $response->getStatusCode());
-        $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertSame('http://cakephp.org', $response->getHeaderLine('Location'));
         $this->assertFalse($Controller->isAutoRenderEnabled());
     }
 
@@ -352,7 +352,7 @@ class ControllerTest extends TestCase
         });
 
         $response = $Controller->redirect('http://cakephp.org', 301);
-        $this->assertEquals('https://book.cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertSame('https://book.cakephp.org', $response->getHeaderLine('Location'));
         $this->assertEquals(301, $response->getStatusCode());
     }
 
@@ -373,7 +373,7 @@ class ControllerTest extends TestCase
 
         $response = $Controller->redirect('http://cakephp.org', 301);
 
-        $this->assertEquals('http://cakephp.org', $response->getHeaderLine('Location'));
+        $this->assertSame('http://cakephp.org', $response->getHeaderLine('Location'));
         $this->assertEquals(302, $response->getStatusCode());
     }
 
@@ -410,7 +410,7 @@ class ControllerTest extends TestCase
 
         $Controller = new Controller($request);
         $result = $Controller->referer();
-        $this->assertEquals('/posts/index', $result);
+        $this->assertSame('/posts/index', $result);
 
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['referer'])
@@ -420,7 +420,7 @@ class ControllerTest extends TestCase
             ->will($this->returnValue('/posts/index'));
         $Controller = new Controller($request);
         $result = $Controller->referer(['controller' => 'posts', 'action' => 'index'], true);
-        $this->assertEquals('/posts/index', $result);
+        $this->assertSame('/posts/index', $result);
 
         $request = $this->getMockBuilder('Cake\Http\ServerRequest')
             ->setMethods(['referer'])
@@ -432,11 +432,11 @@ class ControllerTest extends TestCase
 
         $Controller = new Controller($request);
         $result = $Controller->referer(null, false);
-        $this->assertEquals('http://localhost/posts/index', $result);
+        $this->assertSame('http://localhost/posts/index', $result);
 
         $Controller = new Controller(null);
         $result = $Controller->referer('/', false);
-        $this->assertEquals('http://localhost/', $result);
+        $this->assertSame('http://localhost/', $result);
     }
 
     /**
@@ -460,11 +460,11 @@ class ControllerTest extends TestCase
 
         $controller = new Controller($request);
         $result = $controller->referer('/', true);
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
 
         $controller = new Controller($request);
         $result = $controller->referer('/some/path', true);
-        $this->assertEquals('/some/path', $result);
+        $this->assertSame('/some/path', $result);
     }
 
     /**
@@ -727,8 +727,8 @@ class ControllerTest extends TestCase
         $Controller = new TestController($url, $response);
         $result = $Controller->invokeAction();
 
-        $this->assertEquals('I am from the controller.', (string)$result);
-        $this->assertEquals('I am from the controller.', (string)$Controller->getResponse());
+        $this->assertSame('I am from the controller.', (string)$result);
+        $this->assertSame('I am from the controller.', (string)$Controller->getResponse());
     }
 
     /**
@@ -800,7 +800,7 @@ class ControllerTest extends TestCase
             return $e->getSubject()->getResponse();
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin/super');
         $response = $this->getMockBuilder('Cake\Http\Response')->getMock();
@@ -809,7 +809,7 @@ class ControllerTest extends TestCase
             return $e->getSubject()->getResponse();
         });
         $Controller->render();
-        $this->assertEquals('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
 
         $request = new ServerRequest([
             'url' => 'pages/home',
@@ -822,7 +822,7 @@ class ControllerTest extends TestCase
             return $e->getSubject()->getResponse();
         });
         $Controller->render();
-        $this->assertEquals('Pages', $Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -1005,10 +1005,10 @@ class ControllerTest extends TestCase
     public function testName(): void
     {
         $controller = new PostsController();
-        $this->assertEquals('Posts', $controller->getName());
+        $this->assertSame('Posts', $controller->getName());
 
         $this->assertSame($controller, $controller->setName('Articles'));
-        $this->assertEquals('Articles', $controller->getName());
+        $this->assertSame('Articles', $controller->getName());
     }
 
     /**
@@ -1019,10 +1019,10 @@ class ControllerTest extends TestCase
     public function testPlugin(): void
     {
         $controller = new PostsController();
-        $this->assertEquals('', $controller->getPlugin());
+        $this->assertNull($controller->getPlugin());
 
         $this->assertSame($controller, $controller->setPlugin('Articles'));
-        $this->assertEquals('Articles', $controller->getPlugin());
+        $this->assertSame('Articles', $controller->getPlugin());
     }
 
     /**
@@ -1047,7 +1047,7 @@ class ControllerTest extends TestCase
         $this->assertSame($controller, $controller->setRequest($request));
         $this->assertSame($request, $controller->getRequest());
 
-        $this->assertEquals('Posts', $controller->getRequest()->getParam('plugin'));
+        $this->assertSame('Posts', $controller->getRequest()->getParam('plugin'));
         $this->assertEquals(['foo', 'bar'], $controller->getRequest()->getParam('pass'));
     }
 

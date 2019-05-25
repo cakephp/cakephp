@@ -471,7 +471,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $translations = $this->getTableLocator()->get('ArticlesTranslations')->find()
             ->where(['id' => $article->id])
             ->count();
-        $this->assertEquals(0, $translations);
+        $this->assertSame(0, $translations);
     }
 
     /**
@@ -863,10 +863,10 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             $table->find('translations')->where(['id' => 1])
         )->first();
 
-        $this->assertEquals('Mi nuevo titulo', $results['spa']['title']);
-        $this->assertEquals('Contenido Actualizado', $results['spa']['body']);
+        $this->assertSame('Mi nuevo titulo', $results['spa']['title']);
+        $this->assertSame('Contenido Actualizado', $results['spa']['body']);
 
-        $this->assertEquals('First Article1', $results['eng']['title']);
+        $this->assertSame('First Article1', $results['eng']['title']);
     }
 
     /**
@@ -1058,8 +1058,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('en', $result);
         $this->assertArrayHasKey('es', $result);
-        $this->assertEquals('English Title', $result['en']->title);
-        $this->assertEquals('Titulo Español', $result['es']->title);
+        $this->assertSame('English Title', $result['en']->title);
+        $this->assertSame('Titulo Español', $result['es']->title);
     }
 
     /**

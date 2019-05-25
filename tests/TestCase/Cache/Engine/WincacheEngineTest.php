@@ -243,7 +243,7 @@ class WincacheEngineTest extends TestCase
         $result = Cache::clear('wincache');
         $this->assertTrue($result);
         $this->assertNull(Cache::read('some_value', 'wincache'));
-        $this->assertEquals('safe', wincache_ucache_get('not_cake'));
+        $this->assertSame('safe', wincache_ucache_get('not_cake'));
     }
 
     /**
@@ -262,17 +262,17 @@ class WincacheEngineTest extends TestCase
             'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'wincache_groups'));
 
         wincache_ucache_inc('test_group_a');
         $this->assertNull(Cache::read('test_groups', 'wincache_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'wincache_groups'));
-        $this->assertEquals('value2', Cache::read('test_groups', 'wincache_groups'));
+        $this->assertSame('value2', Cache::read('test_groups', 'wincache_groups'));
 
         wincache_ucache_inc('test_group_b');
         $this->assertNull(Cache::read('test_groups', 'wincache_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'wincache_groups'));
-        $this->assertEquals('value3', Cache::read('test_groups', 'wincache_groups'));
+        $this->assertSame('value3', Cache::read('test_groups', 'wincache_groups'));
     }
 
     /**
@@ -289,7 +289,7 @@ class WincacheEngineTest extends TestCase
             'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'wincache_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'wincache_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'wincache_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'wincache_groups'));
 
         $this->assertNull(Cache::read('test_groups', 'wincache_groups'));

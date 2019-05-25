@@ -2065,7 +2065,7 @@ class EmailTest extends TestCase
 
         $template = $this->Email->viewBuilder()->getTemplate();
         $layout = $this->Email->viewBuilder()->getLayout();
-        $this->assertEquals('', $template);
+        $this->assertSame('', $template);
         $this->assertEquals($configs['layout'], $layout);
     }
 
@@ -2112,13 +2112,13 @@ class EmailTest extends TestCase
     public function testViewRender()
     {
         $result = $this->Email->getViewRenderer();
-        $this->assertEquals('Cake\View\View', $result);
+        $this->assertSame('Cake\View\View', $result);
 
         $result = $this->Email->setViewRenderer('Cake\View\ThemeView');
         $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->Email->getViewRenderer();
-        $this->assertEquals('Cake\View\ThemeView', $result);
+        $this->assertSame('Cake\View\ThemeView', $result);
     }
 
     /**
@@ -2129,13 +2129,13 @@ class EmailTest extends TestCase
     public function testEmailFormat()
     {
         $result = $this->Email->getEmailFormat();
-        $this->assertEquals('text', $result);
+        $this->assertSame('text', $result);
 
         $result = $this->Email->setEmailFormat('html');
         $this->assertInstanceOf('Cake\Mailer\Email', $result);
 
         $result = $this->Email->getEmailFormat();
-        $this->assertEquals('html', $result);
+        $this->assertSame('html', $result);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->Email->setEmailFormat('invalid');
@@ -2153,16 +2153,16 @@ class EmailTest extends TestCase
         $this->assertEquals(Configure::read('App.encoding'), $email->getHeaderCharset());
 
         $email = new Email(['charset' => 'iso-2022-jp', 'headerCharset' => 'iso-2022-jp-ms']);
-        $this->assertEquals('iso-2022-jp', $email->getCharset());
-        $this->assertEquals('iso-2022-jp-ms', $email->getHeaderCharset());
+        $this->assertSame('iso-2022-jp', $email->getCharset());
+        $this->assertSame('iso-2022-jp-ms', $email->getHeaderCharset());
 
         $email = new Email(['charset' => 'iso-2022-jp']);
-        $this->assertEquals('iso-2022-jp', $email->getCharset());
-        $this->assertEquals('iso-2022-jp', $email->getHeaderCharset());
+        $this->assertSame('iso-2022-jp', $email->getCharset());
+        $this->assertSame('iso-2022-jp', $email->getHeaderCharset());
 
         $email = new Email(['headerCharset' => 'iso-2022-jp-ms']);
         $this->assertEquals(Configure::read('App.encoding'), $email->getCharset());
-        $this->assertEquals('iso-2022-jp-ms', $email->getHeaderCharset());
+        $this->assertSame('iso-2022-jp-ms', $email->getHeaderCharset());
     }
 
     /**

@@ -451,7 +451,7 @@ class RedisEngineTest extends TestCase
         $result = Cache::clear('redis');
         $this->assertTrue($result);
         $this->assertNull(Cache::read('some_value', 'redis'));
-        $this->assertEquals('cache2', Cache::read('some_value', 'redis2'));
+        $this->assertSame('cache2', Cache::read('some_value', 'redis2'));
 
         Cache::clear('redis2');
     }
@@ -468,7 +468,7 @@ class RedisEngineTest extends TestCase
 
         $this->assertTrue($result);
         $result = Cache::read('test_key', 'redis');
-        $this->assertEquals('written!', $result);
+        $this->assertSame('written!', $result);
     }
 
     /**
@@ -492,17 +492,17 @@ class RedisEngineTest extends TestCase
             'prefix' => 'test_',
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'redis_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'redis_groups'));
 
         Cache::increment('group_a', 1, 'redis_helper');
         $this->assertNull(Cache::read('test_groups', 'redis_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'redis_groups'));
-        $this->assertEquals('value2', Cache::read('test_groups', 'redis_groups'));
+        $this->assertSame('value2', Cache::read('test_groups', 'redis_groups'));
 
         Cache::increment('group_b', 1, 'redis_helper');
         $this->assertNull(Cache::read('test_groups', 'redis_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'redis_groups'));
-        $this->assertEquals('value3', Cache::read('test_groups', 'redis_groups'));
+        $this->assertSame('value3', Cache::read('test_groups', 'redis_groups'));
     }
 
     /**
@@ -518,7 +518,7 @@ class RedisEngineTest extends TestCase
             'groups' => ['group_a', 'group_b'],
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'redis_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'redis_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'redis_groups'));
 
         $this->assertNull(Cache::read('test_groups', 'redis_groups'));

@@ -72,10 +72,10 @@ class ValidationRuleTest extends TestCase
         $this->assertTrue($Rule->process($data, $providers, $context));
 
         $Rule = new ValidationRule(['rule' => 'willFail3']);
-        $this->assertEquals('string', $Rule->process($data, $providers, $context));
+        $this->assertSame('string', $Rule->process($data, $providers, $context));
 
         $Rule = new ValidationRule(['rule' => 'willFail', 'message' => 'foo']);
-        $this->assertEquals('foo', $Rule->process($data, $providers, $context));
+        $this->assertSame('foo', $Rule->process($data, $providers, $context));
     }
 
     /**
@@ -183,16 +183,16 @@ class ValidationRuleTest extends TestCase
     {
         $Rule = new ValidationRule(['rule' => 'willFail', 'message' => 'foo']);
 
-        $this->assertEquals('willFail', $Rule->get('rule'));
-        $this->assertEquals('foo', $Rule->get('message'));
-        $this->assertEquals('default', $Rule->get('provider'));
+        $this->assertSame('willFail', $Rule->get('rule'));
+        $this->assertSame('foo', $Rule->get('message'));
+        $this->assertSame('default', $Rule->get('provider'));
         $this->assertEquals([], $Rule->get('pass'));
         $this->assertNull($Rule->get('non-existent'));
 
         $Rule = new ValidationRule(['rule' => ['willPass', 'param'], 'message' => 'bar']);
 
-        $this->assertEquals('willPass', $Rule->get('rule'));
-        $this->assertEquals('bar', $Rule->get('message'));
+        $this->assertSame('willPass', $Rule->get('rule'));
+        $this->assertSame('bar', $Rule->get('message'));
         $this->assertEquals(['param'], $Rule->get('pass'));
     }
 }

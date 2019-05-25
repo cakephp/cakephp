@@ -140,7 +140,7 @@ class ServerRequestFactoryTest extends TestCase
         $res = ServerRequestFactory::fromGlobals($server);
         $session = $res->getAttribute('session');
         $this->assertInstanceOf(Session::class, $session);
-        $this->assertEquals('/basedir/', ini_get('session.cookie_path'), 'Needs trailing / for cookie to work');
+        $this->assertSame('/basedir/', ini_get('session.cookie_path'), 'Needs trailing / for cookie to work');
     }
 
     /**
@@ -157,9 +157,9 @@ class ServerRequestFactoryTest extends TestCase
             'REQUEST_URI' => '/posts/add',
         ];
         $res = ServerRequestFactory::fromGlobals($server);
-        $this->assertEquals('basedir', $res->getAttribute('base'));
-        $this->assertEquals('basedir/', $res->getAttribute('webroot'));
-        $this->assertEquals('/posts/add', $res->getUri()->getPath());
+        $this->assertSame('basedir', $res->getAttribute('base'));
+        $this->assertSame('basedir/', $res->getAttribute('webroot'));
+        $this->assertSame('/posts/add', $res->getUri()->getPath());
     }
 
     /**
@@ -178,9 +178,9 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $res = ServerRequestFactory::fromGlobals($server);
 
-        $this->assertEquals('/urlencode%20me', $res->getAttribute('base'));
-        $this->assertEquals('/urlencode%20me/', $res->getAttribute('webroot'));
-        $this->assertEquals('/posts/view/1', $res->getUri()->getPath());
+        $this->assertSame('/urlencode%20me', $res->getAttribute('base'));
+        $this->assertSame('/urlencode%20me/', $res->getAttribute('webroot'));
+        $this->assertSame('/posts/view/1', $res->getUri()->getPath());
     }
 
     /**
@@ -197,9 +197,9 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $res = ServerRequestFactory::fromGlobals($server);
 
-        $this->assertEquals('', $res->getAttribute('base'));
-        $this->assertEquals('/', $res->getAttribute('webroot'));
-        $this->assertEquals('/posts/add', $res->getUri()->getPath());
+        $this->assertSame('', $res->getAttribute('base'));
+        $this->assertSame('/', $res->getAttribute('webroot'));
+        $this->assertSame('/posts/add', $res->getUri()->getPath());
     }
 
     /**
@@ -278,8 +278,8 @@ class ServerRequestFactoryTest extends TestCase
         ];
         $res = ServerRequestFactory::fromGlobals($server);
 
-        $this->assertEquals('/webroot/', $res->getAttribute('webroot'));
-        $this->assertEquals('/index.php', $res->getAttribute('base'));
-        $this->assertEquals('/posts/add', $res->getUri()->getPath());
+        $this->assertSame('/webroot/', $res->getAttribute('webroot'));
+        $this->assertSame('/index.php', $res->getAttribute('base'));
+        $this->assertSame('/posts/add', $res->getUri()->getPath());
     }
 }

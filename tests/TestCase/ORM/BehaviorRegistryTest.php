@@ -107,7 +107,7 @@ class BehaviorRegistryTest extends TestCase
         $result = $this->EventManager->listeners('Model.beforeFind');
         $this->assertCount(1, $result);
         $this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result[0]['callable'][0]);
-        $this->assertEquals('beforeFind', $result[0]['callable'][1], 'Method name should match.');
+        $this->assertSame('beforeFind', $result[0]['callable'][1], 'Method name should match.');
     }
 
     /**

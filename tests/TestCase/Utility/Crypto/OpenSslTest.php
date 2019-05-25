@@ -53,7 +53,7 @@ class OpenSslTest extends TestCase
         $result = $this->crypt->encrypt($txt, $key);
         $this->assertNotEquals($txt, $result, 'Should be encrypted.');
         $this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
-        $this->assertEquals($txt, $this->crypt->decrypt($result, $key));
+        $this->assertSame($txt, $this->crypt->decrypt($result, $key));
     }
 
     /**

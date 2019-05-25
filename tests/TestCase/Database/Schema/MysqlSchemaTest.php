@@ -1262,7 +1262,7 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('DROP TABLE `articles`', $result[0]);
+        $this->assertSame('DROP TABLE `articles`', $result[0]);
     }
 
     /**
@@ -1282,7 +1282,7 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
+        $this->assertSame('TRUNCATE TABLE `articles`', $result[0]);
     }
 
     /**

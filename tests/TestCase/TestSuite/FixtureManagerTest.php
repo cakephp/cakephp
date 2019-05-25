@@ -160,7 +160,7 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
+        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->manager->unload($test);
 
         $this->manager->load($test);
@@ -179,7 +179,7 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
+        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
 
         $this->manager->unload($test);
     }
@@ -360,7 +360,7 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
+        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
 
         $this->manager->unload($test);
@@ -385,7 +385,7 @@ class FixtureManagerTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertEquals($expectedConstraint, $schema->getConstraint('tag_id_fk'));
+        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
         $this->manager->unload($test);
     }

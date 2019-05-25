@@ -214,8 +214,8 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) use ($cookies, $headers) {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
-                $this->assertEquals('split=value', $request->getHeaderLine('Cookie'));
+                $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
+                $this->assertSame('split=value', $request->getHeaderLine('Cookie'));
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
                 $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
 
@@ -354,8 +354,8 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->callback(function ($request) {
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/search', '' . $request->getUri());
-                $this->assertEquals('some data', '' . $request->getBody());
+                $this->assertSame('http://cakephp.org/search', '' . $request->getUri());
+                $this->assertSame('some data', '' . $request->getBody());
 
                 return true;
             }))
@@ -414,7 +414,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->callback(function ($request) use ($headers) {
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/', '' . $request->getUri());
+                $this->assertSame('http://cakephp.org/', '' . $request->getUri());
                 $this->assertEquals($headers['Authorization'], $request->getHeaderLine('Authorization'));
                 $this->assertEquals($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
 
@@ -468,7 +468,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) use ($method) {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals($method, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/projects/add', '' . $request->getUri());
+                $this->assertSame('http://cakephp.org/projects/add', '' . $request->getUri());
 
                 return true;
             }))
@@ -550,7 +550,7 @@ class ClientTest extends TestCase
             ->method('send')
             ->with($this->callback(function ($request) use ($data) {
                 $this->assertEquals($data, '' . $request->getBody());
-                $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
+                $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
 
                 return true;
             }))
@@ -703,7 +703,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) {
                 $this->assertInstanceOf('Cake\Http\Client\Request', $request);
                 $this->assertEquals(Request::METHOD_HEAD, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/search?q=hi+there', '' . $request->getUri());
+                $this->assertSame('http://cakephp.org/search?q=hi+there', '' . $request->getUri());
 
                 return true;
             }))
@@ -828,7 +828,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) use ($headers) {
                 $this->assertInstanceOf('Zend\Diactoros\Request', $request);
                 $this->assertEquals(Request::METHOD_GET, $request->getMethod());
-                $this->assertEquals('http://cakephp.org/test.html', $request->getUri() . '');
+                $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('content-type'));
                 $this->assertEquals($headers['Connection'], $request->getHeaderLine('connection'));
 

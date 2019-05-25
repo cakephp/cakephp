@@ -365,18 +365,18 @@ class ConnectionTest extends TestCase
 
         $result = $this->connection->execute('SELECT title, body  FROM things');
         $row = $result->fetch('assoc');
-        $this->assertEquals('a title', $row['title']);
-        $this->assertEquals('a body', $row['body']);
+        $this->assertSame('a title', $row['title']);
+        $this->assertSame('a body', $row['body']);
 
         $row = $result->fetch('assoc');
         $result->closeCursor();
-        $this->assertEquals('another title', $row['title']);
-        $this->assertEquals('another body', $row['body']);
+        $this->assertSame('another title', $row['title']);
+        $this->assertSame('another body', $row['body']);
 
         $result->execute();
         $row = $result->fetch('assoc');
         $result->closeCursor();
-        $this->assertEquals('a title', $row['title']);
+        $this->assertSame('a title', $row['title']);
     }
 
     /**
@@ -389,8 +389,8 @@ class ConnectionTest extends TestCase
     {
         $result = $this->connection->execute('SELECT title, body  FROM things');
         $row = $result->fetch(\PDO::FETCH_OBJ);
-        $this->assertEquals('a title', $row->title);
-        $this->assertEquals('a body', $row->body);
+        $this->assertSame('a title', $row->title);
+        $this->assertSame('a body', $row->body);
     }
 
     /**
@@ -452,9 +452,9 @@ class ConnectionTest extends TestCase
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $this->assertCount(2, $result);
         $row = $result->fetch('assoc');
-        $this->assertEquals('2012-01-01', $row['body']);
+        $this->assertSame('2012-01-01', $row['body']);
         $row = $result->fetch('assoc');
-        $this->assertEquals('2012-01-01', $row['body']);
+        $this->assertSame('2012-01-01', $row['body']);
         $result->closeCursor();
     }
 
@@ -472,7 +472,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $this->assertCount(1, $result);
         $row = $result->fetch('assoc');
-        $this->assertEquals('2012-01-01', $row['body']);
+        $this->assertSame('2012-01-01', $row['body']);
         $result->closeCursor();
     }
 
@@ -1063,7 +1063,7 @@ class ConnectionTest extends TestCase
 
             return 'thing';
         });
-        $this->assertEquals('thing', $result);
+        $this->assertSame('thing', $result);
     }
 
     /**

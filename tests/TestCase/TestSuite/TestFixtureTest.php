@@ -69,24 +69,24 @@ class TestFixtureTest extends TestCase
     public function testInitStaticFixture()
     {
         $Fixture = new ArticlesFixture();
-        $this->assertEquals('articles', $Fixture->table);
+        $this->assertSame('articles', $Fixture->table);
 
         $Fixture = new ArticlesFixture();
         $Fixture->table = null;
         $Fixture->init();
-        $this->assertEquals('articles', $Fixture->table);
+        $this->assertSame('articles', $Fixture->table);
 
         $schema = $Fixture->getTableSchema();
         $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $schema);
 
         $fields = $Fixture->fields;
         unset($fields['_constraints'], $fields['_indexes']);
-        $this->assertEquals(
+        $this->assertSame(
             array_keys($fields),
             $schema->columns(),
             'Fields do not match'
         );
-        $this->assertEquals(array_keys($Fixture->fields['_constraints']), $schema->constraints());
+        $this->assertSame(array_keys($Fixture->fields['_constraints']), $schema->constraints());
         $this->assertEmpty($schema->indexes());
     }
 
@@ -112,7 +112,7 @@ class TestFixtureTest extends TestCase
             'body',
             'published',
         ];
-        $this->assertEquals($expected, $fixture->getTableSchema()->columns());
+        $this->assertSame($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
@@ -137,7 +137,7 @@ class TestFixtureTest extends TestCase
             'body',
             'published',
         ];
-        $this->assertEquals($expected, $fixture->getTableSchema()->columns());
+        $this->assertSame($expected, $fixture->getTableSchema()->columns());
     }
 
     /**
@@ -175,7 +175,7 @@ class TestFixtureTest extends TestCase
 
         $fixture = new LettersFixture();
         $fixture->init();
-        $this->assertEquals(['id', 'letter'], $fixture->getTableSchema()->columns());
+        $this->assertSame(['id', 'letter'], $fixture->getTableSchema()->columns());
 
         $db = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['prepare', 'execute'])

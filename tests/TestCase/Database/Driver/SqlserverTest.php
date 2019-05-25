@@ -273,7 +273,7 @@ class SqlserverTest extends TestCase
             ->from('articles')
             ->order(['id'])
             ->offset(10);
-        $this->assertEquals('SELECT id, title FROM articles ORDER BY id OFFSET 10 ROWS', $query->sql());
+        $this->assertSame('SELECT id, title FROM articles ORDER BY id OFFSET 10 ROWS', $query->sql());
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
@@ -281,19 +281,19 @@ class SqlserverTest extends TestCase
             ->order(['id'])
             ->limit(10)
             ->offset(50);
-        $this->assertEquals('SELECT id, title FROM articles ORDER BY id OFFSET 50 ROWS FETCH FIRST 10 ROWS ONLY', $query->sql());
+        $this->assertSame('SELECT id, title FROM articles ORDER BY id OFFSET 50 ROWS FETCH FIRST 10 ROWS ONLY', $query->sql());
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->offset(10);
-        $this->assertEquals('SELECT id, title FROM articles ORDER BY (SELECT NULL) OFFSET 10 ROWS', $query->sql());
+        $this->assertSame('SELECT id, title FROM articles ORDER BY (SELECT NULL) OFFSET 10 ROWS', $query->sql());
 
         $query = new Query($connection);
         $query->select(['id', 'title'])
             ->from('articles')
             ->limit(10);
-        $this->assertEquals('SELECT TOP 10 id, title FROM articles', $query->sql());
+        $this->assertSame('SELECT TOP 10 id, title FROM articles', $query->sql());
     }
 
     /**

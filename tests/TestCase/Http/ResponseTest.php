@@ -73,9 +73,9 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $this->assertSame('', (string)$response->getBody());
-        $this->assertEquals('UTF-8', $response->getCharset());
-        $this->assertEquals('text/html', $response->getType());
-        $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('UTF-8', $response->getCharset());
+        $this->assertSame('text/html', $response->getType());
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
         $this->assertEquals(200, $response->getStatusCode());
 
         $options = [
@@ -85,10 +85,10 @@ class ResponseTest extends TestCase
             'status' => 203,
         ];
         $response = new Response($options);
-        $this->assertEquals('This is the body', (string)$response->getBody());
-        $this->assertEquals('my-custom-charset', $response->getCharset());
-        $this->assertEquals('audio/mpeg', $response->getType());
-        $this->assertEquals('audio/mpeg', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('This is the body', (string)$response->getBody());
+        $this->assertSame('my-custom-charset', $response->getCharset());
+        $this->assertSame('audio/mpeg', $response->getType());
+        $this->assertSame('audio/mpeg', $response->getHeaderLine('Content-Type'));
         $this->assertEquals(203, $response->getStatusCode());
     }
 
@@ -100,13 +100,13 @@ class ResponseTest extends TestCase
     public function testWithCharset()
     {
         $response = new Response();
-        $this->assertEquals('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
+        $this->assertSame('text/html; charset=UTF-8', $response->getHeaderLine('Content-Type'));
 
         $new = $response->withCharset('iso-8859-1');
         $this->assertStringNotContainsString('iso', $response->getHeaderLine('Content-Type'), 'Old instance not changed');
         $this->assertSame('iso-8859-1', $new->getCharset());
 
-        $this->assertEquals('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
+        $this->assertSame('text/html; charset=iso-8859-1', $new->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -117,7 +117,7 @@ class ResponseTest extends TestCase
     public function testGetType()
     {
         $response = new Response();
-        $this->assertEquals('text/html', $response->getType());
+        $this->assertSame('text/html', $response->getType());
 
         $this->assertEquals(
             'application/pdf',
@@ -142,7 +142,7 @@ class ResponseTest extends TestCase
         $response->setTypeMap('ical', 'text/calendar');
 
         $response = $response->withType('ical')->getType();
-        $this->assertEquals('text/calendar', $response);
+        $this->assertSame('text/calendar', $response);
     }
 
     /**
@@ -154,7 +154,7 @@ class ResponseTest extends TestCase
         $response->setTypeMap('ical', ['text/calendar']);
 
         $response = $response->withType('ical')->getType();
-        $this->assertEquals('text/calendar', $response);
+        $this->assertSame('text/calendar', $response);
     }
 
     /**
@@ -290,7 +290,7 @@ class ResponseTest extends TestCase
         $this->assertEquals(gmdate('D, j M Y G:i:s ', $since) . 'GMT', $new->getHeaderLine('Date'));
         $this->assertEquals(gmdate('D, j M Y H:i:s ', $since) . 'GMT', $new->getHeaderLine('Last-Modified'));
         $this->assertEquals(gmdate('D, j M Y H:i:s', $time) . ' GMT', $new->getHeaderLine('Expires'));
-        $this->assertEquals('public, max-age=0', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('public, max-age=0', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
@@ -343,11 +343,11 @@ class ResponseTest extends TestCase
     public function testMapType()
     {
         $response = new Response();
-        $this->assertEquals('wav', $response->mapType('audio/x-wav'));
-        $this->assertEquals('pdf', $response->mapType('application/pdf'));
-        $this->assertEquals('xml', $response->mapType('text/xml'));
-        $this->assertEquals('html', $response->mapType('*/*'));
-        $this->assertEquals('csv', $response->mapType('application/vnd.ms-excel'));
+        $this->assertSame('wav', $response->mapType('audio/x-wav'));
+        $this->assertSame('pdf', $response->mapType('application/pdf'));
+        $this->assertSame('xml', $response->mapType('text/xml'));
+        $this->assertSame('html', $response->mapType('*/*'));
+        $this->assertSame('csv', $response->mapType('application/vnd.ms-excel'));
         $expected = ['json', 'xhtml', 'css'];
         $result = $response->mapType(['application/json', 'application/xhtml+xml', 'text/css']);
         $this->assertEquals($expected, $result);
@@ -419,14 +419,14 @@ class ResponseTest extends TestCase
 
         $new = $response->withAddedLink('http://example.com', ['rel' => 'prev']);
         $this->assertFalse($response->hasHeader('Link'), 'Old instance not modified');
-        $this->assertEquals('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
+        $this->assertSame('<http://example.com>; rel="prev"', $new->getHeaderLine('Link'));
 
         $new = $response->withAddedLink('http://example.com');
-        $this->assertEquals('<http://example.com>', $new->getHeaderLine('Link'));
+        $this->assertSame('<http://example.com>', $new->getHeaderLine('Link'));
 
         $new = $response->withAddedLink('http://example.com?p=1', ['rel' => 'prev'])
             ->withAddedLink('http://example.com?p=2', ['rel' => 'next', 'foo' => 'bar']);
-        $this->assertEquals('<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"', $new->getHeaderLine('Link'));
+        $this->assertSame('<http://example.com?p=1>; rel="prev",<http://example.com?p=2>; rel="next"; foo="bar"', $new->getHeaderLine('Link'));
     }
 
     /**
@@ -494,16 +494,16 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withSharable(true);
         $this->assertFalse($response->hasHeader('Cache-Control'), 'old instance unchanged');
-        $this->assertEquals('public', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('public', $new->getHeaderLine('Cache-Control'));
 
         $new = $response->withSharable(false);
-        $this->assertEquals('private', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('private', $new->getHeaderLine('Cache-Control'));
 
         $new = $response->withSharable(true, 3600);
-        $this->assertEquals('public, max-age=3600', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('public, max-age=3600', $new->getHeaderLine('Cache-Control'));
 
         $new = $response->withSharable(false, 3600);
-        $this->assertEquals('private, max-age=3600', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('private, max-age=3600', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
@@ -517,11 +517,11 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Cache-Control'));
 
         $new = $response->withMaxAge(3600);
-        $this->assertEquals('max-age=3600', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('max-age=3600', $new->getHeaderLine('Cache-Control'));
 
         $new = $response->withMaxAge(3600)
             ->withSharable(false);
-        $this->assertEquals('max-age=3600, private', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('max-age=3600, private', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
@@ -535,10 +535,10 @@ class ResponseTest extends TestCase
         $new = $response->withSharedMaxAge(3600);
 
         $this->assertFalse($response->hasHeader('Cache-Control'));
-        $this->assertEquals('s-maxage=3600', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('s-maxage=3600', $new->getHeaderLine('Cache-Control'));
 
         $new = $response->withSharedMaxAge(3600)->withSharable(true);
-        $this->assertEquals('s-maxage=3600, public', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('s-maxage=3600, public', $new->getHeaderLine('Cache-Control'));
     }
 
     /**
@@ -553,7 +553,7 @@ class ResponseTest extends TestCase
 
         $new = $response->withMustRevalidate(true);
         $this->assertFalse($response->hasHeader('Cache-Control'));
-        $this->assertEquals('must-revalidate', $new->getHeaderLine('Cache-Control'));
+        $this->assertSame('must-revalidate', $new->getHeaderLine('Cache-Control'));
 
         $new = $new->withMustRevalidate(false);
         $this->assertEmpty($new->getHeaderLine('Cache-Control'));
@@ -570,11 +570,11 @@ class ResponseTest extends TestCase
         $new = $response->withVary('Accept-encoding');
 
         $this->assertFalse($response->hasHeader('Vary'));
-        $this->assertEquals('Accept-encoding', $new->getHeaderLine('Vary'));
+        $this->assertSame('Accept-encoding', $new->getHeaderLine('Vary'));
 
         $new = $response->withVary(['Accept-encoding', 'Accept-language']);
         $this->assertFalse($response->hasHeader('Vary'));
-        $this->assertEquals('Accept-encoding,Accept-language', $new->getHeaderLine('Vary'));
+        $this->assertSame('Accept-encoding,Accept-language', $new->getHeaderLine('Vary'));
     }
 
     /**
@@ -588,10 +588,10 @@ class ResponseTest extends TestCase
         $new = $response->withEtag('something');
 
         $this->assertFalse($response->hasHeader('Etag'));
-        $this->assertEquals('"something"', $new->getHeaderLine('Etag'));
+        $this->assertSame('"something"', $new->getHeaderLine('Etag'));
 
         $new = $response->withEtag('something', true);
-        $this->assertEquals('W/"something"', $new->getHeaderLine('Etag'));
+        $this->assertSame('W/"something"', $new->getHeaderLine('Etag'));
     }
 
     /**
@@ -802,7 +802,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withCookie(new Cookie('testing', 'abc123'));
         $this->assertNull($response->getCookie('testing'), 'withCookie does not mutate');
-        $this->assertEquals('abc123', $new->getCookie('testing')['value']);
+        $this->assertSame('abc123', $new->getCookie('testing')['value']);
 
         $new = $response->withCookie(new Cookie('testing', 99));
         $this->assertEquals(99, $new->getCookie('testing')['value']);
@@ -873,7 +873,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $response = $response->withCookie(new Cookie('testing', 'abc123'));
-        $this->assertEquals('abc123', $response->getCookie('testing')['value']);
+        $this->assertSame('abc123', $response->getCookie('testing')['value']);
 
         $new = $response->withExpiredCookie(new Cookie('testing'));
 
@@ -919,17 +919,20 @@ class ResponseTest extends TestCase
         $this->assertLessThan(FrozenTime::createFromTimestamp(1), (string)$expiredCookie->getCookie('testing')['expire']);
     }
 
+    /**
+     * @return void
+     */
     public function testWithExpiredCookieObject()
     {
         $response = new Response();
         $cookie = new Cookie('yay', 'a value');
         $response = $response->withCookie($cookie);
-        $this->assertEquals('a value', $response->getCookie('yay')['value']);
+        $this->assertSame('a value', $response->getCookie('yay')['value']);
 
         $new = $response->withExpiredCookie($cookie);
 
         $this->assertNull($response->getCookie('yay')['expire']);
-        $this->assertEquals('1', $new->getCookie('yay')['expire']);
+        $this->assertSame(1, $new->getCookie('yay')['expire']);
     }
 
     /**
@@ -1133,8 +1136,8 @@ class ResponseTest extends TestCase
             'attachment; filename="something_special.css"',
             $new->getHeaderLine('Content-Disposition')
         );
-        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
-        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
         $this->assertInstanceOf('Zend\Diactoros\Stream', $body);
 
@@ -1153,12 +1156,12 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $new = $response->withFile(CONFIG . 'no_section.ini');
-        $this->assertEquals('text/html; charset=UTF-8', $new->getHeaderLine('Content-Type'));
+        $this->assertSame('text/html; charset=UTF-8', $new->getHeaderLine('Content-Type'));
         $this->assertEquals(
             'attachment; filename="no_section.ini"',
             $new->getHeaderLine('Content-Disposition')
         );
-        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $body = $new->getBody();
         $expected = "some_key = some_value\nbool_key = 1\n";
         $this->assertEquals($expected, $body->getContents());
@@ -1175,7 +1178,7 @@ class ResponseTest extends TestCase
         $response = new Response();
 
         $new = $response->withFile(CONFIG . 'no_section.ini');
-        $this->assertEquals('application/octet-stream', $new->getHeaderLine('Content-Type'));
+        $this->assertSame('application/octet-stream', $new->getHeaderLine('Content-Type'));
         $this->assertEquals(
             'attachment; filename="no_section.ini"',
             $new->getHeaderLine('Content-Disposition')
@@ -1193,7 +1196,7 @@ class ResponseTest extends TestCase
         $response = new Response();
 
         $new = $response->withFile(CONFIG . 'no_section.ini');
-        $this->assertEquals('application/force-download', $new->getHeaderLine('Content-Type'));
+        $this->assertSame('application/force-download', $new->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -1224,7 +1227,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $new = $response->withFile(TEST_APP . 'vendor/img/test_2.JPG');
-        $this->assertEquals('image/jpeg', $new->getHeaderLine('Content-Type'));
+        $this->assertSame('image/jpeg', $new->getHeaderLine('Content-Type'));
     }
 
     /**
@@ -1277,8 +1280,8 @@ class ResponseTest extends TestCase
             'attachment; filename="test_asset.css"',
             $new->getHeaderLine('Content-Disposition')
         );
-        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
-        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertEquals($length, $new->getHeaderLine('Content-Length'));
         $this->assertEquals($offsetResponse, $new->getHeaderLine('Content-Range'));
     }
@@ -1301,10 +1304,10 @@ class ResponseTest extends TestCase
             'attachment; filename="test_asset.css"',
             $new->getHeaderLine('Content-Disposition')
         );
-        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
-        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
-        $this->assertEquals('18', $new->getHeaderLine('Content-Length'));
-        $this->assertEquals('bytes 8-25/38', $new->getHeaderLine('Content-Range'));
+        $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertSame('18', $new->getHeaderLine('Content-Length'));
+        $this->assertSame('bytes 8-25/38', $new->getHeaderLine('Content-Range'));
         $this->assertEquals(206, $new->getStatusCode());
     }
 
@@ -1347,10 +1350,10 @@ class ResponseTest extends TestCase
             'attachment; filename="test_asset.css"',
             $new->getHeaderLine('Content-Disposition')
         );
-        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
-        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
-        $this->assertEquals('38', $new->getHeaderLine('Content-Length'));
-        $this->assertEquals('bytes 0-37/38', $new->getHeaderLine('Content-Range'));
+        $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertSame('38', $new->getHeaderLine('Content-Length'));
+        $this->assertSame('bytes 0-37/38', $new->getHeaderLine('Content-Range'));
         $this->assertEquals(206, $new->getStatusCode());
     }
 
@@ -1372,9 +1375,9 @@ class ResponseTest extends TestCase
             'attachment; filename="test_asset.css"',
             $new->getHeaderLine('Content-Disposition')
         );
-        $this->assertEquals('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
-        $this->assertEquals('bytes', $new->getHeaderLine('Accept-Ranges'));
-        $this->assertEquals('bytes 0-37/38', $new->getHeaderLine('Content-Range'));
+        $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
+        $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
+        $this->assertSame('bytes 0-37/38', $new->getHeaderLine('Content-Range'));
         $this->assertEquals(416, $new->getStatusCode());
     }
 
@@ -1404,7 +1407,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $version = $response->getProtocolVersion();
-        $this->assertEquals('1.1', $version);
+        $this->assertSame('1.1', $version);
     }
 
     /**
@@ -1416,12 +1419,12 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $version = $response->getProtocolVersion();
-        $this->assertEquals('1.1', $version);
+        $this->assertSame('1.1', $version);
         $response2 = $response->withProtocolVersion('1.0');
         $version = $response2->getProtocolVersion();
-        $this->assertEquals('1.0', $version);
+        $this->assertSame('1.0', $version);
         $version = $response->getProtocolVersion();
-        $this->assertEquals('1.1', $version);
+        $this->assertSame('1.1', $version);
         $this->assertNotEquals($response, $response2);
     }
 
@@ -1468,7 +1471,7 @@ class ResponseTest extends TestCase
 
         $response = $response->withStatus(404);
         $reasonPhrase = $response->getReasonPhrase();
-        $this->assertEquals('Not Found', $reasonPhrase);
+        $this->assertSame('Not Found', $reasonPhrase);
     }
 
     /**
@@ -1482,7 +1485,7 @@ class ResponseTest extends TestCase
         $body = $response->getBody();
         $body->rewind();
         $result = $body->getContents();
-        $this->assertEquals('', $result);
+        $this->assertSame('', $result);
 
         $stream = new Stream('php://memory', 'wb+');
         $stream->write('test1');
@@ -1491,12 +1494,12 @@ class ResponseTest extends TestCase
         $body = $response2->getBody();
         $body->rewind();
         $result = $body->getContents();
-        $this->assertEquals('test1', $result);
+        $this->assertSame('test1', $result);
 
         $body = $response->getBody();
         $body->rewind();
         $result = $body->getContents();
-        $this->assertEquals('', $result);
+        $this->assertSame('', $result);
     }
 
     /**
@@ -1636,7 +1639,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $headers = $response->getHeaderLine('Accept');
-        $this->assertEquals('', $headers);
+        $this->assertSame('', $headers);
 
         $response = $response->withAddedHeader('Accept', 'application/json');
         $response = $response->withAddedHeader('Accept', 'application/xml');
