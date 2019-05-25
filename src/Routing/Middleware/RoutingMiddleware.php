@@ -158,6 +158,6 @@ class RoutingMiddleware implements MiddlewareInterface
         $middleware = new MiddlewareQueue($matching);
         $runner = new Runner();
 
-        return $runner->run($middleware, $request, $this->app);
+        return $runner->run($middleware, $request, $handler);
     }
 }
