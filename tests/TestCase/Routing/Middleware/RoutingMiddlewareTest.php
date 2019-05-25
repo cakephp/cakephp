@@ -289,13 +289,13 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/api/ping',
         ]);
-        $handler = new TestRequestHandler();
-        $middleware = new RoutingMiddleware($this->app(function ($req) {
+        $app = $this->app(function ($req) {
             $this->log[] = 'last';
 
             return new Response();
-        }));
-        $result = $middleware->process($request, $handler);
+        });
+        $middleware = new RoutingMiddleware($app);
+        $result = $middleware->process($request, $app);
         $this->assertSame(['second', 'first', 'last'], $this->log);
     }
 
@@ -422,13 +422,13 @@ class RoutingMiddlewareTest extends TestCase
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => $url,
         ]);
-        $handler = new TestRequestHandler();
-        $middleware = new RoutingMiddleware($this->app(function ($req) {
+        $app = $this->app(function ($req) {
             $this->log[] = 'last';
 
             return new Response();
-        }));
-        $result = $middleware->process($request, $handler);
+        });
+        $middleware = new RoutingMiddleware($app);
+        $result = $middleware->process($request, $app);
         $this->assertSame($expected, $this->log);
     }
 
