@@ -889,9 +889,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Get the associations collection for this table.
      *
-     * @return \Cake\ORM\AssociationCollection|\Cake\ORM\Association[] The collection of association objects.
+     * @return \Cake\ORM\AssociationCollection The collection of association objects.
      */
-    public function associations(): iterable
+    public function associations(): AssociationCollection
     {
         return $this->_associations;
     }
