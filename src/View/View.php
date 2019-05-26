@@ -574,6 +574,20 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Set option.
+     *
+     * @param string $name Option name
+     * @param mixed $value Value.
+     * @return $this
+     */
+    public function setOption(string $name, $value)
+    {
+        $this->options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * Get option value.
      *
      * Currently if option is not set it fallbacks to checking corresponding
