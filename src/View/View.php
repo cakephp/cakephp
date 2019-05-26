@@ -583,7 +583,7 @@ class View implements EventDispatcherInterface
      * @param string $name Option name
      * @return mixed
      */
-    protected function getOption(string $name)
+    public function getOption(string $name)
     {
         if (isset($this->options[$name])) {
             return $this->options[$name];
