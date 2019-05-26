@@ -27,7 +27,7 @@ use Cake\Core\Configure;
  *
  * ```
  * $this->set(['posts' => $posts]);
- * $this->set('_serialize', true);
+ * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
  * When the view is rendered, the `$posts` view variable will be serialized
@@ -38,20 +38,20 @@ use Cake\Core\Configure;
  *
  * ```
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('_serialize', true);
+ * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
  * The above would generate a JSON object that looks like:
  *
  * `{"posts": [...], "users": [...]}`
  *
- * You can also set `'_serialize'` to a string or array to serialize only the
+ * You can also set `'serialize'` to a string or array to serialize only the
  * specified view variables.
  *
- * If you don't use the `_serialize`, you will need a view template. You can use
- * extended views to provide layout-like functionality.
+ * If you don't set the `serialize` opton, you will need a view template.
+ * You can use extended views to provide layout-like functionality.
  *
- * You can also enable JSONP support by setting parameter `_jsonp` to true or a
+ * You can also enable JSONP support by setting `jsonp` option to true or a
  * string to specify custom query string parameter name which will contain the
  * callback function name.
  */
