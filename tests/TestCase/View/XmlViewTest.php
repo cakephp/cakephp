@@ -211,7 +211,6 @@ class XmlViewTest extends TestCase
         ];
         $this->assertSame(Xml::build($expected)->asXML(), $output);
 
-        $Controller->set('_rootNode', 'custom_name');
         $Controller->viewBuilder()
             ->setClassName('Xml')
             ->setOption('rootNode', 'custom_name');
