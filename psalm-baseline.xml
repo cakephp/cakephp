@@ -1742,9 +1742,6 @@
       <code>function ($field, $locale, $query, $select) {</code>
       <code>function ($row) {</code>
     </MissingClosureReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>has</code>
-    </PossiblyInvalidMethodCall>
     <UndefinedClass occurrences="1">
       <code>['id', 'field']</code>
     </UndefinedClass>
@@ -1788,9 +1785,6 @@
     <MissingClosureReturnType occurrences="1">
       <code>function ($query) use ($locales, $targetAlias) {</code>
     </MissingClosureReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>getTableLocator</code>
-    </PossiblyInvalidMethodCall>
   </file>
   <file src="src/ORM/Behavior/TreeBehavior.php">
     <MissingClosureParamType occurrences="8">
@@ -1865,9 +1859,6 @@
       <code>function ($entity) use ($primaryKey, $method) {</code>
       <code>function ($exp, $q) use ($primaryKey, $keys, $source) {</code>
     </MissingClosureReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>get</code>
-    </PossiblyInvalidMethodCall>
     <PossiblyNullReference occurrences="1">
       <code>getProperty</code>
     </PossiblyNullReference>
@@ -1937,11 +1928,6 @@
       <code>$_current</code>
       <code>$_count</code>
     </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/ORM/SaveOptionsBuilder.php">
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>has</code>
-    </PossiblyInvalidMethodCall>
   </file>
   <file src="src/ORM/Table.php">
     <MissingClosureParamType occurrences="5">
