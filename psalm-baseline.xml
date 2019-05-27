@@ -1529,12 +1529,12 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Log/Engine/ConsoleLog.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool</code>
-    </ImplementedReturnTypeMismatch>
     <InvalidArgument occurrences="1">
       <code>$this-&gt;_output</code>
     </InvalidArgument>
+    <MoreSpecificImplementedParamType occurrences="1">
+      <code>$level</code>
+    </MoreSpecificImplementedParamType>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;_output</code>
     </UninitializedProperty>
@@ -1543,10 +1543,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$level</code>
     </MoreSpecificImplementedParamType>
-    <PossiblyNullOperand occurrences="2">
-      <code>$this-&gt;_path</code>
-      <code>$this-&gt;_path</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Log/Engine/SyslogLog.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -1557,14 +1553,6 @@
     <PossiblyFalseArgument occurrences="1">
       <code>$level</code>
     </PossiblyFalseArgument>
-    <PossiblyNullPropertyFetch occurrences="2">
-      <code>static::$_registry-&gt;{$name}</code>
-      <code>static::$_registry-&gt;{$name}</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="2">
-      <code>has</code>
-      <code>loaded</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/Log/LogEngineRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">

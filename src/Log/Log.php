@@ -131,7 +131,7 @@ class Log
     /**
      * LogEngineRegistry class
      *
-     * @var \Cake\Log\LogEngineRegistry|null
+     * @var \Cake\Log\LogEngineRegistry
      */
     protected static $_registry;
 
@@ -214,7 +214,9 @@ class Log
      */
     public static function reset(): void
     {
-        static::$_registry = null;
+        if (!empty(static::$_registry)) {
+            static::$_registry->reset();
+        }
         static::$_config = [];
         static::$_dirtyConfig = true;
     }

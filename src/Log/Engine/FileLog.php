@@ -57,7 +57,7 @@ class FileLog extends BaseLog
     /**
      * Path to save log files on.
      *
-     * @var string|null
+     * @var string
      */
     protected $_path;
 
@@ -84,13 +84,8 @@ class FileLog extends BaseLog
     {
         parent::__construct($config);
 
-        if (!empty($this->_config['path'])) {
-            $this->_path = $this->_config['path'];
-        }
-        if ($this->_path !== null &&
-            Configure::read('debug') &&
-            !is_dir($this->_path)
-        ) {
+        $this->_path = $this->getConfig('path', sys_get_temp_dir());
+        if (Configure::read('debug') && !is_dir($this->_path)) {
             mkdir($this->_path, 0775, true);
         }
 
