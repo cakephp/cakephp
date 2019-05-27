@@ -111,8 +111,8 @@ class FormContextTest extends TestCase
             ],
         ]);
         $context = new FormContext($this->request, ['entity' => new Form()]);
-        $this->assertEquals('New title', $context->val('Articles.title'));
-        $this->assertEquals('My copy', $context->val('Articles.body'));
+        $this->assertSame('New title', $context->val('Articles.title'));
+        $this->assertSame('My copy', $context->val('Articles.body'));
         $this->assertNull($context->val('Articles.nope'));
     }
 
@@ -126,7 +126,7 @@ class FormContextTest extends TestCase
 
         $context = new FormContext($this->request, ['entity' => $form]);
 
-        $this->assertEquals('set title', $context->val('title'));
+        $this->assertSame('set title', $context->val('title'));
         $this->assertNull($context->val('Articles.body'));
 
         $this->request = $this->request->withParsedBody([
@@ -134,7 +134,7 @@ class FormContextTest extends TestCase
         ]);
         $context = new FormContext($this->request, ['entity' => $form]);
 
-        $this->assertEquals('New title', $context->val('title'));
+        $this->assertSame('New title', $context->val('title'));
     }
 
     /**
@@ -163,13 +163,13 @@ class FormContextTest extends TestCase
         $this->assertNull($result);
 
         $result = $context->val('title', ['default' => 'default default']);
-        $this->assertEquals('default default', $result);
+        $this->assertSame('default default', $result);
 
         $result = $context->val('name');
-        $this->assertEquals('schema default', $result);
+        $this->assertSame('schema default', $result);
 
         $result = $context->val('name', ['default' => 'custom default']);
-        $this->assertEquals('custom default', $result);
+        $this->assertSame('custom default', $result);
 
         $result = $context->val('name', ['schemaDefault' => false]);
         $this->assertNull($result);
@@ -212,8 +212,8 @@ class FormContextTest extends TestCase
             'entity' => $form,
         ]);
         $this->assertNull($context->type('undefined'));
-        $this->assertEquals('integer', $context->type('user_id'));
-        $this->assertEquals('string', $context->type('email'));
+        $this->assertSame('integer', $context->type('user_id'));
+        $this->assertSame('string', $context->type('email'));
         $this->assertNull($context->type('Prefix.email'));
     }
 

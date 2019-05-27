@@ -73,7 +73,7 @@ class CookieTest extends TestCase
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $result = $cookie->toHeaderValue();
-        $this->assertEquals('cakephp=cakephp-rocks; path=/', $result);
+        $this->assertSame('cakephp=cakephp-rocks; path=/', $result);
 
         $date = Chronos::createFromFormat('m/d/Y h:i:s', '12/1/2027 12:00:00');
 
@@ -97,11 +97,11 @@ class CookieTest extends TestCase
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
         $result = $cookie->getValue();
-        $this->assertEquals('cakephp-rocks', $result);
+        $this->assertSame('cakephp-rocks', $result);
 
         $cookie = new Cookie('cakephp', '');
         $result = $cookie->getValue();
-        $this->assertEquals('', $result);
+        $this->assertSame('', $result);
     }
 
     /**
@@ -380,7 +380,7 @@ class CookieTest extends TestCase
         ];
         $cookie = new Cookie('cakephp', json_encode($data));
         $this->assertFalse($cookie->isExpanded());
-        $this->assertEquals('developer', $cookie->read('profile.profession'));
+        $this->assertSame('developer', $cookie->read('profile.profession'));
         $this->assertTrue($cookie->isExpanded(), 'Cookies expand when read.');
 
         $cookie = $cookie->withValue(json_encode($data));
@@ -418,7 +418,7 @@ class CookieTest extends TestCase
         $this->assertEquals($data, $result);
 
         $result = $cookie->read('profile.profession');
-        $this->assertEquals('developer', $result);
+        $this->assertSame('developer', $result);
     }
 
     /**
@@ -430,7 +430,7 @@ class CookieTest extends TestCase
     {
         $data = 'key|value,key2|value2';
         $cookie = new Cookie('cakephp', $data);
-        $this->assertEquals('value', $cookie->read('key'));
+        $this->assertSame('value', $cookie->read('key'));
         $this->assertNull($cookie->read('nope'));
     }
 
@@ -448,7 +448,7 @@ class CookieTest extends TestCase
             ],
         ];
         $cookie = new Cookie('cakephp', $data);
-        $this->assertEquals('developer', $cookie->read('profile.profession'));
+        $this->assertSame('developer', $cookie->read('profile.profession'));
 
         $expected = '{"username":"florian","profile":{"profession":"developer"}}';
         $this->assertStringContainsString(urlencode($expected), $cookie->toHeaderValue());
@@ -462,12 +462,12 @@ class CookieTest extends TestCase
     public function testGetId()
     {
         $cookie = new Cookie('cakephp', 'cakephp-rocks');
-        $this->assertEquals('cakephp;;/', $cookie->getId());
+        $this->assertSame('cakephp;;/', $cookie->getId());
 
         $cookie = new Cookie('CAKEPHP', 'cakephp-rocks');
-        $this->assertEquals('CAKEPHP;;/', $cookie->getId());
+        $this->assertSame('CAKEPHP;;/', $cookie->getId());
 
         $cookie = new Cookie('test', 'val', null, '/path', 'example.com');
-        $this->assertEquals('test;example.com;/path', $cookie->getId());
+        $this->assertSame('test;example.com;/path', $cookie->getId());
     }
 }

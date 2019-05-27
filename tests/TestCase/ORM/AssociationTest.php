@@ -89,9 +89,9 @@ class AssociationTest extends TestCase
      */
     public function testSetName()
     {
-        $this->assertEquals('Foo', $this->association->getName());
+        $this->assertSame('Foo', $this->association->getName());
         $this->assertSame($this->association, $this->association->setName('Bar'));
-        $this->assertEquals('Bar', $this->association->getName());
+        $this->assertSame('Bar', $this->association->getName());
     }
 
     /**
@@ -102,7 +102,7 @@ class AssociationTest extends TestCase
     public function testSetNameBeforeTarget()
     {
         $this->association->setName('Bar');
-        $this->assertEquals('Bar', $this->association->getName());
+        $this->assertSame('Bar', $this->association->getName());
     }
 
     /**
@@ -191,9 +191,9 @@ class AssociationTest extends TestCase
 
         $this->association->setClassName(AuthorsTable::class);
         $className = get_class($this->association->getTarget());
-        $this->assertEquals('TestApp\Model\Table\AuthorsTable', $className);
+        $this->assertSame('TestApp\Model\Table\AuthorsTable', $className);
         $this->association->setClassName('Authors');
-        $this->assertEquals('Authors', $this->association->getClassName());
+        $this->assertSame('Authors', $this->association->getClassName());
     }
 
     /**
@@ -214,7 +214,7 @@ class AssociationTest extends TestCase
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
 
-        $this->assertEquals('Test', $this->association->getClassName());
+        $this->assertSame('Test', $this->association->getClassName());
     }
 
     /**
@@ -289,7 +289,7 @@ class AssociationTest extends TestCase
     public function testSetBindingKey()
     {
         $this->assertSame($this->association, $this->association->setBindingKey('foo_id'));
-        $this->assertEquals('foo_id', $this->association->getBindingKey());
+        $this->assertSame('foo_id', $this->association->getBindingKey());
     }
 
     /**
@@ -335,9 +335,9 @@ class AssociationTest extends TestCase
      */
     public function testSetForeignKey()
     {
-        $this->assertEquals('a_key', $this->association->getForeignKey());
+        $this->assertSame('a_key', $this->association->getForeignKey());
         $this->assertSame($this->association, $this->association->setForeignKey('another_key'));
-        $this->assertEquals('another_key', $this->association->getForeignKey());
+        $this->assertSame('another_key', $this->association->getForeignKey());
     }
 
     /**
@@ -444,9 +444,9 @@ class AssociationTest extends TestCase
      */
     public function testSetJoinType()
     {
-        $this->assertEquals('INNER', $this->association->getJoinType());
+        $this->assertSame('INNER', $this->association->getJoinType());
         $this->assertSame($this->association, $this->association->setJoinType('LEFT'));
-        $this->assertEquals('LEFT', $this->association->getJoinType());
+        $this->assertSame('LEFT', $this->association->getJoinType());
     }
 
     /**
@@ -456,9 +456,9 @@ class AssociationTest extends TestCase
      */
     public function testSetProperty()
     {
-        $this->assertEquals('foo', $this->association->getProperty());
+        $this->assertSame('foo', $this->association->getProperty());
         $this->assertSame($this->association, $this->association->setProperty('thing'));
-        $this->assertEquals('thing', $this->association->getProperty());
+        $this->assertSame('thing', $this->association->getProperty());
     }
 
     /**
@@ -471,7 +471,7 @@ class AssociationTest extends TestCase
         $this->expectException(\PHPUnit\Framework\Error\Warning::class);
         $this->expectExceptionMessageRegExp('/^Association property name "foo" clashes with field of same name of table "test"/');
         $this->source->setSchema(['foo' => ['type' => 'string']]);
-        $this->assertEquals('foo', $this->association->getProperty());
+        $this->assertSame('foo', $this->association->getProperty());
     }
 
     /**
@@ -500,7 +500,7 @@ class AssociationTest extends TestCase
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
 
-        $this->assertEquals('foo', $association->getProperty());
+        $this->assertSame('foo', $association->getProperty());
     }
 
     /**
@@ -510,13 +510,13 @@ class AssociationTest extends TestCase
      */
     public function testSetStrategy()
     {
-        $this->assertEquals('join', $this->association->getStrategy());
+        $this->assertSame('join', $this->association->getStrategy());
 
         $this->association->setStrategy('select');
-        $this->assertEquals('select', $this->association->getStrategy());
+        $this->assertSame('select', $this->association->getStrategy());
 
         $this->association->setStrategy('subquery');
-        $this->assertEquals('subquery', $this->association->getStrategy());
+        $this->assertSame('subquery', $this->association->getStrategy());
     }
 
     /**
@@ -537,9 +537,9 @@ class AssociationTest extends TestCase
      */
     public function testSetFinderMethod()
     {
-        $this->assertEquals('all', $this->association->getFinder());
+        $this->assertSame('all', $this->association->getFinder());
         $this->assertSame($this->association, $this->association->setFinder('published'));
-        $this->assertEquals('published', $this->association->getFinder());
+        $this->assertSame('published', $this->association->getFinder());
     }
 
     /**
@@ -565,7 +565,7 @@ class AssociationTest extends TestCase
             ])
             ->setConstructorArgs(['Foo', $config])
             ->getMock();
-        $this->assertEquals('published', $assoc->getFinder());
+        $this->assertSame('published', $assoc->getFinder());
     }
 
     /**

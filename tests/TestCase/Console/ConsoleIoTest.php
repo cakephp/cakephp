@@ -91,7 +91,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('y'));
 
         $result = $this->io->askChoice('Just a test?', $choices);
-        $this->assertEquals('y', $result);
+        $this->assertSame('y', $result);
     }
 
     /**
@@ -107,7 +107,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('Y'));
 
         $result = $this->io->askChoice('Just a test?', $choices);
-        $this->assertEquals('Y', $result);
+        $this->assertSame('Y', $result);
     }
 
     /**
@@ -126,7 +126,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('y'));
 
         $result = $this->io->ask('Just a test?');
-        $this->assertEquals('y', $result);
+        $this->assertSame('y', $result);
     }
 
     /**
@@ -145,7 +145,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue(''));
 
         $result = $this->io->ask('Just a test?', 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
     }
 
     /**

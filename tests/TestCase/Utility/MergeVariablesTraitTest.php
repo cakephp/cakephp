@@ -76,7 +76,7 @@ class MergeVariablesTraitTest extends TestCase
                 'citrus' => 'key lime',
             ],
         ];
-        $this->assertEquals($expected, $object->nestedProperty);
+        $this->assertSame($expected, $object->nestedProperty);
     }
 
     /**
@@ -97,7 +97,7 @@ class MergeVariablesTraitTest extends TestCase
         $this->assertEquals($expected, $object->assocProperty);
 
         $expected = ['One', 'Two', 'Three', 'Four', 'Five'];
-        $this->assertSame($expected, $object->listProperty);
+        $this->assertEquals($expected, $object->listProperty);
     }
 
     /**
@@ -110,6 +110,6 @@ class MergeVariablesTraitTest extends TestCase
     {
         $object = new Child();
         $object->mergeVars(['hasBoolean']);
-        $this->assertEquals(['test'], $object->hasBoolean);
+        $this->assertSame(['test'], $object->hasBoolean);
     }
 }

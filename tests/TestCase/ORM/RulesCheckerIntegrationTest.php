@@ -765,7 +765,7 @@ class RulesCheckerIntegrationTest extends TestCase
                     ],
                     $options->getArrayCopy()
                 );
-                $this->assertEquals('create', $operation);
+                $this->assertSame('create', $operation);
                 $event->stopPropagation();
 
                 return true;
@@ -805,7 +805,7 @@ class RulesCheckerIntegrationTest extends TestCase
                     ],
                     $options->getArrayCopy()
                 );
-                $this->assertEquals('create', $operation);
+                $this->assertSame('create', $operation);
                 $this->assertFalse($result);
                 $event->stopPropagation();
 
@@ -1252,8 +1252,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(function ($entity, $options) {
-            $this->assertEquals('bar', $options['foo']);
-            $this->assertEquals('option', $options['another']);
+            $this->assertSame('bar', $options['foo']);
+            $this->assertSame('option', $options['another']);
 
             return false;
         }, ['another' => 'option']);
@@ -1272,8 +1272,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
         $rules->addDelete(function ($entity, $options) {
-            $this->assertEquals('bar', $options['foo']);
-            $this->assertEquals('option', $options['another']);
+            $this->assertSame('bar', $options['foo']);
+            $this->assertSame('option', $options['another']);
 
             return false;
         }, ['another' => 'option']);

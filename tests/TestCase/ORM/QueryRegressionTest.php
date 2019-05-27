@@ -296,7 +296,7 @@ class QueryRegressionTest extends TestCase
         $articles->save($entity);
         $entity = $articles->get(2, ['contain' => ['Highlights']]);
         $this->assertEquals(4, $entity->highlights[0]->_joinData->tag_id);
-        $this->assertEquals('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
+        $this->assertSame('2014-06-01', $entity->highlights[0]->_joinData->highlighted_time->format('Y-m-d'));
     }
 
     /**
@@ -414,12 +414,12 @@ class QueryRegressionTest extends TestCase
                 'Highlights.Authors',
             ],
         ]);
-        $this->assertEquals('mark', end($entity->highlights)->author->name);
+        $this->assertSame('mark', end($entity->highlights)->author->name);
 
         $lastTag = end($entity->special_tags);
         $this->assertTrue($lastTag->highlighted);
-        $this->assertEquals('2014-06-01 10:10:00', $lastTag->highlighted_time->format('Y-m-d H:i:s'));
-        $this->assertEquals('mariano', $lastTag->author->name);
+        $this->assertSame('2014-06-01 10:10:00', $lastTag->highlighted_time->format('Y-m-d H:i:s'));
+        $this->assertSame('mariano', $lastTag->author->name);
     }
 
     /**
@@ -511,8 +511,8 @@ class QueryRegressionTest extends TestCase
             ],
         ]);
         $highlights = $entity->highlights[0];
-        $this->assertEquals('First top article', $highlights->top_articles[0]->title);
-        $this->assertEquals('Second top article', $highlights->top_articles[1]->title);
+        $this->assertSame('First top article', $highlights->top_articles[0]->title);
+        $this->assertSame('Second top article', $highlights->top_articles[1]->title);
         $this->assertEquals(
             new Time('2014-06-01 10:10:00'),
             $highlights->_joinData->highlighted_time
@@ -790,8 +790,8 @@ class QueryRegressionTest extends TestCase
             ->where(['id NOT IN' => $sub]);
         $result = $query->toArray();
         $this->assertCount(2, $result);
-        $this->assertEquals('First Article', $result[0]->title);
-        $this->assertEquals('Third Article', $result[1]->title);
+        $this->assertSame('First Article', $result[0]->title);
+        $this->assertSame('Third Article', $result[1]->title);
     }
 
     /**
@@ -1133,7 +1133,7 @@ class QueryRegressionTest extends TestCase
 
         $results = $query->toArray();
         $this->assertCount(1, $results);
-        $this->assertEquals('redblue', $results[0]->comments[0]->concat);
+        $this->assertSame('redblue', $results[0]->comments[0]->concat);
     }
 
     /**
@@ -1222,7 +1222,7 @@ class QueryRegressionTest extends TestCase
         $this->loadFixtures('Comments');
         $table = $this->getTableLocator()->get('Comments');
         $table->deleteAll(['1 = 1']);
-        $this->assertEquals(0, $table->find()->count());
+        $this->assertSame(0, $table->find()->count());
         $this->assertNull($table->find()->last());
     }
 

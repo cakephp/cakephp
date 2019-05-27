@@ -164,7 +164,7 @@ class TableSchemaTest extends TestCase
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertEquals('string', $table->getColumnType('title'));
+        $this->assertSame('string', $table->getColumnType('title'));
         $this->assertNull($table->getColumnType('not there'));
     }
 
@@ -181,9 +181,9 @@ class TableSchemaTest extends TestCase
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertEquals('string', $table->getColumnType('title'));
+        $this->assertSame('string', $table->getColumnType('title'));
         $table->setColumnType('title', 'json');
-        $this->assertEquals('json', $table->getColumnType('title'));
+        $this->assertSame('json', $table->getColumnType('title'));
     }
 
     /**
@@ -200,8 +200,8 @@ class TableSchemaTest extends TestCase
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertEquals('json', $table->getColumnType('title'));
-        $this->assertEquals('text', $table->baseColumnType('title'));
+        $this->assertSame('json', $table->getColumnType('title'));
+        $this->assertSame('text', $table->baseColumnType('title'));
     }
 
     /**
@@ -217,8 +217,8 @@ class TableSchemaTest extends TestCase
             'type' => 'int',
             'null' => false,
         ]);
-        $this->assertEquals('int', $table->getColumnType('thing'));
-        $this->assertEquals('integer', $table->baseColumnType('thing'));
+        $this->assertSame('int', $table->getColumnType('thing'));
+        $this->assertSame('integer', $table->baseColumnType('thing'));
     }
 
     /**

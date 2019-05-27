@@ -167,9 +167,9 @@ class ArrayContextTest extends TestCase
                 ],
             ],
         ]);
-        $this->assertEquals('New title', $context->val('Articles.title'));
-        $this->assertEquals('My copy', $context->val('Articles.body'));
-        $this->assertEquals(0, $context->val('Articles.published'));
+        $this->assertSame('New title', $context->val('Articles.title'));
+        $this->assertSame('My copy', $context->val('Articles.body'));
+        $this->assertSame(0, $context->val('Articles.published'));
         $this->assertNull($context->val('Articles.nope'));
     }
 
@@ -201,12 +201,12 @@ class ArrayContextTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals('Default value', $context->val('title'));
-        $this->assertEquals('common1', $context->val('users.0.tags'));
-        $this->assertEquals('common1', $context->val('users.99.tags'));
-        $this->assertEquals('common2', $context->val('users.9.9tags'));
+        $this->assertSame('Default value', $context->val('title'));
+        $this->assertSame('common1', $context->val('users.0.tags'));
+        $this->assertSame('common1', $context->val('users.99.tags'));
+        $this->assertSame('common2', $context->val('users.9.9tags'));
         $result = $context->val('title', ['default' => 'explicit default']);
-        $this->assertEquals('explicit default', $result);
+        $this->assertSame('explicit default', $result);
     }
 
     /**
@@ -259,8 +259,8 @@ class ArrayContextTest extends TestCase
             ],
         ]);
         $this->assertNull($context->type('Comments.undefined'));
-        $this->assertEquals('integer', $context->type('Comments.id'));
-        $this->assertEquals('string', $context->type('Comments.0.tags'));
+        $this->assertSame('integer', $context->type('Comments.id'));
+        $this->assertSame('string', $context->type('Comments.0.tags'));
         $this->assertNull($context->type('Comments.comment'));
     }
 

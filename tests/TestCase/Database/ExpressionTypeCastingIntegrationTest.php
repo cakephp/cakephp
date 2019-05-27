@@ -98,7 +98,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(1, $result);
-        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+        $this->assertSame('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 
     /**
@@ -117,7 +117,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(1, $result);
-        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+        $this->assertSame('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 
     /**
@@ -140,8 +140,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(2, $result);
-        $this->assertEquals('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
-        $this->assertEquals('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
+        $this->assertSame('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
+        $this->assertSame('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
     }
 
     /**
@@ -191,6 +191,6 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(1, $result);
-        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+        $this->assertSame('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 }

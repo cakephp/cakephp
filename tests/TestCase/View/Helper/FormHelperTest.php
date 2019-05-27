@@ -221,7 +221,7 @@ class FormHelperTest extends TestCase
             ->with($data)
             ->will($this->returnValue('HTML'));
         $result = $this->Form->widget('test', $data);
-        $this->assertEquals('HTML', $result);
+        $this->assertSame('HTML', $result);
     }
 
     /**
@@ -250,7 +250,7 @@ class FormHelperTest extends TestCase
             ->will($this->returnValue(['test']));
 
         $result = $this->Form->widget('test', $data + ['secure' => true]);
-        $this->assertEquals('HTML', $result);
+        $this->assertSame('HTML', $result);
     }
 
     /**
@@ -264,11 +264,11 @@ class FormHelperTest extends TestCase
         $this->assertEquals([], $this->Form->fields);
 
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '']);
-        $this->assertEquals('<select name=""></select>', $result);
+        $this->assertSame('<select name=""></select>', $result);
         $this->assertEquals([], $this->Form->fields);
 
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '0']);
-        $this->assertEquals('<select name="0"></select>', $result);
+        $this->assertSame('<select name="0"></select>', $result);
         $this->assertEquals(['0'], $this->Form->fields);
     }
 
@@ -1633,10 +1633,10 @@ class FormHelperTest extends TestCase
 
         $this->Form->create();
         $this->Form->text('Address.primary.1');
-        $this->assertEquals('Address.primary', $this->Form->fields[0]);
+        $this->assertSame('Address.primary', $this->Form->fields[0]);
 
         $this->Form->text('Address.secondary.1.0');
-        $this->assertEquals('Address.secondary', $this->Form->fields[1]);
+        $this->assertSame('Address.secondary', $this->Form->fields[1]);
     }
 
     /**
@@ -1988,10 +1988,10 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom]']);
-        $this->assertEquals('User.custom', $this->Form->fields[0]);
+        $this->assertSame('User.custom', $this->Form->fields[0]);
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom][another][value]']);
-        $this->assertEquals('User.custom.another.value', $this->Form->fields[1]);
+        $this->assertSame('User.custom.another.value', $this->Form->fields[1]);
     }
 
     /**
@@ -2752,7 +2752,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
         $result = $this->Form->error('nested.foo');
-        $this->assertEquals('<div class="error-message">not a valid bar</div>', $result);
+        $this->assertSame('<div class="error-message">not a valid bar</div>', $result);
     }
 
     /**
@@ -2770,7 +2770,7 @@ class FormHelperTest extends TestCase
         $inner->setError('bar', ['not a valid one']);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
         $result = $this->Form->error('nested.foo.bar');
-        $this->assertEquals('<div class="error-message">not a valid one</div>', $result);
+        $this->assertSame('<div class="error-message">not a valid one</div>', $result);
     }
 
     /**
@@ -7457,7 +7457,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormEnd()
     {
-        $this->assertEquals('</form>', $this->Form->end());
+        $this->assertSame('</form>', $this->Form->end());
     }
 
     /**
@@ -8005,7 +8005,7 @@ class FormHelperTest extends TestCase
     public function testResetTemplates()
     {
         $this->Form->setTemplates(['input' => '<input/>']);
-        $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
+        $this->assertSame('<input/>', $this->Form->templater()->get('input'));
 
         $this->Form->resetTemplates();
         $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
@@ -8248,7 +8248,7 @@ class FormHelperTest extends TestCase
         $articles->patchEntity($article, ['id' => '3']);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('id', 4)->withQueryParams(['id' => 5])
+            $this->View->getRequest()->withData('id', '4')->withQueryParams(['id' => '5'])
         );
 
         $this->Form->create($article, ['valueSources' => 'query']);
@@ -8258,7 +8258,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('5', $result);
+        $this->assertSame('5', $result);
 
         $this->Form->setValueSources(['context']);
         $this->Form->create($article, ['valueSources' => 'query']);
@@ -8268,7 +8268,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('5', $result);
+        $this->assertSame('5', $result);
 
         $this->Form->setValueSources(['query']);
         $this->Form->create($article, ['valueSources' => 'data']);
@@ -8279,7 +8279,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('4', $result);
+        $this->assertSame('4', $result);
 
         $this->Form->setValueSources(['query']);
         $this->Form->create($article, ['valueSources' => ['context', 'data']]);
@@ -8289,7 +8289,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('4', $result);
+        $this->assertSame('4', $result);
     }
 
     /**
@@ -8305,7 +8305,7 @@ class FormHelperTest extends TestCase
         $articles->patchEntity($article, ['id' => '3']);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('id', 10)->withQueryParams(['id' => 11])
+            $this->View->getRequest()->withData('id', '10')->withQueryParams(['id' => '11'])
         );
 
         $this->Form->setValueSources(['context'])
@@ -8316,7 +8316,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('11', $result);
+        $this->assertSame('11', $result);
 
         $this->View->setRequest($this->View->getRequest()->withQueryParams([]));
         $this->Form->setValueSources(['context'])
@@ -8327,7 +8327,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('10', $result);
+        $this->assertSame('10', $result);
     }
 
     /**
@@ -8402,11 +8402,11 @@ class FormHelperTest extends TestCase
 
         $this->Form->setValueSources(['query', 'context']);
         $result = $this->Form->getSourceValue('category');
-        $this->assertEquals('sesame-cookies', $result);
+        $this->assertSame('sesame-cookies', $result);
 
         $this->Form->setValueSources(['context', 'query']);
         $result = $this->Form->getSourceValue('category');
-        $this->assertEquals('sesame-cookies', $result);
+        $this->assertSame('sesame-cookies', $result);
     }
 
     /**

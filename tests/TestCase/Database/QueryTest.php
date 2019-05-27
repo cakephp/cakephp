@@ -80,8 +80,8 @@ class QueryTest extends TestCase
     public function testDefaultType()
     {
         $query = new Query($this->connection);
-        $this->assertEquals('', $query->sql());
-        $this->assertEquals('select', $query->type());
+        $this->assertSame('', $query->sql());
+        $this->assertSame('select', $query->type());
     }
 
     /**
@@ -151,8 +151,8 @@ class QueryTest extends TestCase
 
         // Overwrite tables and only fetch from authors
         $result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
-        $this->assertEquals(['nate'], $result->fetch());
-        $this->assertEquals(['mariano'], $result->fetch());
+        $this->assertSame(['nate'], $result->fetch());
+        $this->assertSame(['mariano'], $result->fetch());
         $this->assertCount(4, $result);
         $result->closeCursor();
     }
@@ -1359,9 +1359,9 @@ class QueryTest extends TestCase
             ->sql();
         $bindings = $query->getValueBinder()->bindings();
         $this->assertArrayHasKey(':c0', $bindings);
-        $this->assertEquals('c0', $bindings[':c0']['placeholder']);
+        $this->assertSame('c0', $bindings[':c0']['placeholder']);
         $this->assertArrayHasKey(':c1', $bindings);
-        $this->assertEquals('c1', $bindings[':c1']['placeholder']);
+        $this->assertSame('c1', $bindings[':c1']['placeholder']);
     }
 
     /**
@@ -2755,7 +2755,7 @@ class QueryTest extends TestCase
             ->execute();
 
         while ($row = $result->fetch('assoc')) {
-            $this->assertEquals('bar', $row['foo']);
+            $this->assertSame('bar', $row['foo']);
             $this->assertArrayNotHasKey('modified_id', $row);
         }
 
@@ -3487,7 +3487,7 @@ class QueryTest extends TestCase
         $identifier = $query->identifier('foo');
 
         $this->assertInstanceOf(IdentifierExpression::class, $identifier);
-        $this->assertEquals('foo', $identifier->getIdentifier());
+        $this->assertSame('foo', $identifier->getIdentifier());
     }
 
     /**
@@ -3501,10 +3501,10 @@ class QueryTest extends TestCase
         $identifier = $query->identifier('description');
 
         $this->assertInstanceOf(ExpressionInterface::class, $identifier);
-        $this->assertEquals('description', $identifier->getIdentifier());
+        $this->assertSame('description', $identifier->getIdentifier());
 
         $identifier->setIdentifier('title');
-        $this->assertEquals('title', $identifier->getIdentifier());
+        $this->assertSame('title', $identifier->getIdentifier());
     }
 
     /**
@@ -3686,7 +3686,7 @@ class QueryTest extends TestCase
         $this->assertStringContainsString('SELECT', $sql);
         $this->assertStringContainsString('FROM', $sql);
         $this->assertStringContainsString('WHERE', $sql);
-        $this->assertEquals(' FOR UPDATE', substr($sql, -11));
+        $this->assertSame(' FOR UPDATE', substr($sql, -11));
     }
 
     /**
@@ -3706,7 +3706,7 @@ class QueryTest extends TestCase
         $this->assertStringContainsString('INSERT', $sql);
         $this->assertStringContainsString('INTO', $sql);
         $this->assertStringContainsString('VALUES', $sql);
-        $this->assertEquals(' RETURNING id', substr($sql, -13));
+        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -3726,7 +3726,7 @@ class QueryTest extends TestCase
         $this->assertStringContainsString('UPDATE', $sql);
         $this->assertStringContainsString('SET', $sql);
         $this->assertStringContainsString('WHERE', $sql);
-        $this->assertEquals(' RETURNING id', substr($sql, -13));
+        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -3744,7 +3744,7 @@ class QueryTest extends TestCase
             ->sql();
         $this->assertStringContainsString('DELETE FROM', $sql);
         $this->assertStringContainsString('WHERE', $sql);
-        $this->assertEquals(' RETURNING id', substr($sql, -13));
+        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -4203,9 +4203,9 @@ class QueryTest extends TestCase
             ->execute()
             ->fetchAll('assoc');
 
-        $this->assertEquals('Published', $results[2]['status']);
-        $this->assertEquals('Not published', $results[3]['status']);
-        $this->assertEquals('None', $results[6]['status']);
+        $this->assertSame('Published', $results[2]['status']);
+        $this->assertSame('Not published', $results[3]['status']);
+        $this->assertSame('None', $results[6]['status']);
     }
 
     /**

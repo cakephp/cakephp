@@ -108,7 +108,7 @@ class XmlView extends SerializedView
             );
 
             if (empty($serialize)) {
-                $serialize = null;
+                $serialize = '';
             } elseif (count($serialize) === 1) {
                 $serialize = current($serialize);
             }

@@ -141,14 +141,14 @@ class SocketTest extends TestCase
         try {
             $this->Socket = new Socket();
             $this->Socket->connect();
-            $this->assertEquals('127.0.0.1', $this->Socket->address());
+            $this->assertSame('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
             $this->assertNull($this->Socket->lastError());
             $this->assertContains('127.0.0.1', $this->Socket->addresses());
 
             $this->Socket = new Socket(['host' => '127.0.0.1']);
             $this->Socket->connect();
-            $this->assertEquals('127.0.0.1', $this->Socket->address());
+            $this->assertSame('127.0.0.1', $this->Socket->address());
             $this->assertEquals(gethostbyaddr('127.0.0.1'), $this->Socket->host());
             $this->assertNull($this->Socket->lastError());
             $this->assertContains('127.0.0.1', $this->Socket->addresses());
@@ -188,7 +188,7 @@ class SocketTest extends TestCase
             $this->Socket = new Socket($config);
             $this->assertTrue($this->Socket->connect());
             $this->assertNull($this->Socket->read(26));
-            $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
+            $this->assertSame('2: ' . 'Connection timed out', $this->Socket->lastError());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
@@ -209,7 +209,7 @@ class SocketTest extends TestCase
             $config = ['host' => '127.0.0.1', 'timeout' => 1];
             $this->Socket = new Socket($config);
             $this->assertNull($this->Socket->read(1024 * 1024));
-            $this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
+            $this->assertSame('2: ' . 'Connection timed out', $this->Socket->lastError());
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
@@ -224,7 +224,7 @@ class SocketTest extends TestCase
     {
         $this->Socket = new Socket();
         $this->Socket->setLastError(4, 'some error here');
-        $this->assertEquals('4: some error here', $this->Socket->lastError());
+        $this->assertSame('4: some error here', $this->Socket->lastError());
     }
 
     /**
@@ -327,8 +327,8 @@ class SocketTest extends TestCase
         $socket = new Socket($configSslTls);
         try {
             $socket->connect();
-            $this->assertEquals('smtp.gmail.com', $socket->getConfig('host'));
-            $this->assertEquals('ssl', $socket->getConfig('protocol'));
+            $this->assertSame('smtp.gmail.com', $socket->getConfig('host'));
+            $this->assertSame('ssl', $socket->getConfig('protocol'));
         } catch (SocketException $e) {
             $this->markTestSkipped('Cannot test network, skipping.');
         }
@@ -481,7 +481,7 @@ class SocketTest extends TestCase
         $this->assertTrue($result['ssl']['verify_peer']);
         $this->assertFalse($result['ssl']['allow_self_signed']);
         $this->assertEquals(5, $result['ssl']['verify_depth']);
-        $this->assertEquals('smtp.gmail.com', $result['ssl']['CN_match']);
+        $this->assertSame('smtp.gmail.com', $result['ssl']['CN_match']);
         $this->assertArrayNotHasKey('ssl_verify_peer', $socket->getConfig());
         $this->assertArrayNotHasKey('ssl_allow_self_signed', $socket->getConfig());
         $this->assertArrayNotHasKey('ssl_verify_host', $socket->getConfig());

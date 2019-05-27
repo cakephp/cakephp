@@ -16,7 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
-use Cake\Database\Log\QueryLogger;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -31,22 +32,14 @@ use Psr\SimpleCache\CacheInterface;
  * @method string quote($value, $type = null)
  * @method \Cake\Database\DriverInterface getDriver()
  */
-interface ConnectionInterface
+interface ConnectionInterface extends LoggerAwareInterface
 {
-    /**
-     * Set a logger, or clear the current logger.
-     *
-     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
-     * @return $this
-     */
-    public function setLogger(?QueryLogger $logger);
-
     /**
      * Gets the current logger object.
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Psr\Log\LoggerInterface logger instance
      */
-    public function getLogger(): QueryLogger;
+    public function getLogger(): LoggerInterface;
 
     /**
      * Set a cacher.

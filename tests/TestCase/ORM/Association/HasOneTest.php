@@ -74,9 +74,9 @@ class HasOneTest extends TestCase
         $assoc = new HasOne('Profiles', [
             'sourceTable' => $this->user,
         ]);
-        $this->assertEquals('user_id', $assoc->getForeignKey());
+        $this->assertSame('user_id', $assoc->getForeignKey());
         $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->getForeignKey());
+        $this->assertSame('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -251,7 +251,7 @@ class HasOneTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new HasOne('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->getProperty());
+        $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -266,7 +266,7 @@ class HasOneTest extends TestCase
             'targetTable' => $this->profile,
         ];
         $association = new HasOne('Contacts.Profiles', $config);
-        $this->assertEquals('profile', $association->getProperty());
+        $this->assertSame('profile', $association->getProperty());
     }
 
     /**
@@ -362,7 +362,7 @@ class HasOneTest extends TestCase
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
         $query = $this->profile->query()->where(['user_id' => 3]);
-        $this->assertEquals(0, $query->count(), 'Matching record was deleted.');
+        $this->assertSame(0, $query->count(), 'Matching record was deleted.');
     }
 
     /**
@@ -393,6 +393,6 @@ class HasOneTest extends TestCase
         $user = new Entity(['id' => 3]);
         $this->assertTrue($association->cascadeDelete($user));
         $query = $this->profile->query()->where(['user_id' => 3]);
-        $this->assertEquals(0, $query->count(), 'Matching record was deleted.');
+        $this->assertSame(0, $query->count(), 'Matching record was deleted.');
     }
 }

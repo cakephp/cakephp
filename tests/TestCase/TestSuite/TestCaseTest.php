@@ -122,7 +122,7 @@ class TestCaseTest extends TestCase
         $manager->expects($this->once())->method('loadSingle');
         $result = $test->run();
 
-        $this->assertEquals(0, $result->errorCount());
+        $this->assertSame(0, $result->errorCount());
     }
 
     /**
@@ -140,7 +140,7 @@ class TestCaseTest extends TestCase
 
         $result = $test->run();
 
-        $this->assertEquals(0, $result->errorCount());
+        $this->assertSame(0, $result->errorCount());
         $this->assertCount(1, $result->passed());
         $this->assertFalse($test->autoFixtures);
     }
@@ -154,11 +154,11 @@ class TestCaseTest extends TestCase
     {
         $test = new FixturizedTestCase('testSkipIfTrue');
         $result = $test->run();
-        $this->assertEquals(1, $result->skippedCount());
+        $this->assertSame(1, $result->skippedCount());
 
         $test = new FixturizedTestCase('testSkipIfFalse');
         $result = $test->run();
-        $this->assertEquals(0, $result->skippedCount());
+        $this->assertSame(0, $result->skippedCount());
     }
 
     /**
@@ -357,15 +357,15 @@ class TestCaseTest extends TestCase
         $Posts->expects($this->at(0))
             ->method('save')
             ->will($this->returnValue('mocked'));
-        $this->assertEquals('mocked', $Posts->save($entity));
-        $this->assertEquals('Cake\ORM\Entity', $Posts->getEntityClass());
+        $this->assertSame('mocked', $Posts->save($entity));
+        $this->assertSame('Cake\ORM\Entity', $Posts->getEntityClass());
 
         $Posts = $this->getMockForModel('Posts', ['doSomething']);
         $this->assertInstanceOf('Cake\Database\Connection', $Posts->getConnection());
-        $this->assertEquals('test', $Posts->getConnection()->configName());
+        $this->assertSame('test', $Posts->getConnection()->configName());
 
         $Tags = $this->getMockForModel('Tags', ['doSomething']);
-        $this->assertEquals('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
+        $this->assertSame('TestApp\Model\Entity\Tag', $Tags->getEntityClass());
     }
 
     /**
@@ -378,7 +378,7 @@ class TestCaseTest extends TestCase
         ConnectionManager::alias('test', 'secondary');
 
         $post = $this->getMockForModel(SecondaryPostsTable::class, ['save']);
-        $this->assertEquals('test', $post->getConnection()->configName());
+        $this->assertSame('test', $post->getConnection()->configName());
     }
 
     /**
@@ -399,7 +399,7 @@ class TestCaseTest extends TestCase
         $TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', ['save']);
 
         $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $TestPluginComment);
-        $this->assertEquals('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
+        $this->assertSame('Cake\ORM\Entity', $TestPluginComment->getEntityClass());
         $TestPluginComment->expects($this->at(0))
             ->method('save')
             ->will($this->returnValue(true));
@@ -413,7 +413,7 @@ class TestCaseTest extends TestCase
 
         $TestPluginAuthors = $this->getMockForModel('TestPlugin.Authors', ['doSomething']);
         $this->assertInstanceOf('TestPlugin\Model\Table\AuthorsTable', $TestPluginAuthors);
-        $this->assertEquals('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
+        $this->assertSame('TestPlugin\Model\Entity\Author', $TestPluginAuthors->getEntityClass());
         $this->clearPlugins();
     }
 
@@ -432,7 +432,7 @@ class TestCaseTest extends TestCase
 
         $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertEquals('Comments', $Mock->getAlias());
+        $this->assertSame('Comments', $Mock->getAlias());
 
         $Mock->expects($this->at(0))
             ->method('save')
@@ -461,7 +461,7 @@ class TestCaseTest extends TestCase
         );
         $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf(Table::class, $result);
-        $this->assertEquals('Comments', $allMethodsMocks->getAlias());
+        $this->assertSame('Comments', $allMethodsMocks->getAlias());
 
         $this->assertNotEquals($allMethodsStubs, $allMethodsMocks);
     }
@@ -476,9 +476,9 @@ class TestCaseTest extends TestCase
         static::setAppNamespace();
 
         $I18n = $this->getMockForModel('I18n', ['doSomething']);
-        $this->assertEquals('custom_i18n_table', $I18n->getTable());
+        $this->assertSame('custom_i18n_table', $I18n->getTable());
 
         $Tags = $this->getMockForModel('Tags', ['doSomething']);
-        $this->assertEquals('tags', $Tags->getTable());
+        $this->assertSame('tags', $Tags->getTable());
     }
 }

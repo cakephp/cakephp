@@ -323,8 +323,8 @@ class PaginatorTest extends TestCase
 
         $this->Paginator->paginate($table, [], $settings);
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('PaginatorPosts.id', $pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertEquals('DESC', $pagingParams['PaginatorPosts']['directionDefault']);
+        $this->assertSame('PaginatorPosts.id', $pagingParams['PaginatorPosts']['sortDefault']);
+        $this->assertSame('DESC', $pagingParams['PaginatorPosts']['directionDefault']);
     }
 
     /**
@@ -652,8 +652,8 @@ class PaginatorTest extends TestCase
         ];
         $this->Paginator->paginate($table, $params);
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
-        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+        $this->assertSame('id', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertSame('asc', $pagingParams['PaginatorPosts']['direction']);
     }
 
     /**
@@ -674,7 +674,7 @@ class PaginatorTest extends TestCase
         $options = ['sort' => 'something', 'direction' => 'boogers'];
         $result = $this->Paginator->validateSort($model, $options);
 
-        $this->assertEquals('asc', $result['order']['model.something']);
+        $this->assertSame('asc', $result['order']['model.something']);
     }
 
     /**
@@ -712,8 +712,8 @@ class PaginatorTest extends TestCase
         $this->Paginator->paginate($table, [], $options);
         $pagingParams = $this->Paginator->getPagingParams();
 
-        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
-        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+        $this->assertSame('id', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertSame('asc', $pagingParams['PaginatorPosts']['direction']);
     }
 
     /**
@@ -755,11 +755,11 @@ class PaginatorTest extends TestCase
         $this->Paginator->paginate($table, $queryParams, $options);
         $pagingParams = $this->Paginator->getPagingParams();
 
-        $this->assertEquals('title', $pagingParams['PaginatorPosts']['sort']);
-        $this->assertEquals('asc', $pagingParams['PaginatorPosts']['direction']);
+        $this->assertSame('title', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertSame('asc', $pagingParams['PaginatorPosts']['direction']);
 
-        $this->assertEquals('Articles.title', $pagingParams['PaginatorPosts']['sortDefault']);
-        $this->assertEquals('desc', $pagingParams['PaginatorPosts']['directionDefault']);
+        $this->assertSame('Articles.title', $pagingParams['PaginatorPosts']['sortDefault']);
+        $this->assertSame('desc', $pagingParams['PaginatorPosts']['directionDefault']);
     }
 
     /**
@@ -798,7 +798,7 @@ class PaginatorTest extends TestCase
         ];
         $this->Paginator->paginate($table, $params, $options);
         $pagingParams = $this->Paginator->getPagingParams();
-        $this->assertEquals('id', $pagingParams['PaginatorPosts']['sort']);
+        $this->assertSame('id', $pagingParams['PaginatorPosts']['sort']);
     }
 
     /**
@@ -1415,8 +1415,8 @@ class PaginatorTest extends TestCase
 
         $result = $results->toArray();
         $this->assertCount(2, $result);
-        $this->assertEquals('First Post', $result[0]->title);
-        $this->assertEquals('Third Post', $result[1]->title);
+        $this->assertSame('First Post', $result[0]->title);
+        $this->assertSame('Third Post', $result[1]->title);
     }
 
     /**

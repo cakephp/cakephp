@@ -295,7 +295,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('public.schema_articles');
         $this->assertEquals(['id'], $result->primaryKey());
-        $this->assertEquals('schema_articles', $result->name());
+        $this->assertSame('schema_articles', $result->name());
     }
 
     /**
@@ -1271,7 +1271,7 @@ SQL;
         $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('DROP TABLE "schema_articles" CASCADE', $result[0]);
+        $this->assertSame('DROP TABLE "schema_articles" CASCADE', $result[0]);
     }
 
     /**
@@ -1296,7 +1296,7 @@ SQL;
             ]);
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
+        $this->assertSame('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
     }
 
     /**

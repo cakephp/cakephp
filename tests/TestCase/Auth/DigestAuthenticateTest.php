@@ -81,7 +81,7 @@ class DigestAuthenticateTest extends TestCase
             'fields' => ['username' => 'user', 'password' => 'pass'],
             'nonce' => 123456,
         ]);
-        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertSame('AuthUser', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'pass'], $object->getConfig('fields'));
         $this->assertEquals(123456, $object->getConfig('nonce'));
         $this->assertEquals(env('SERVER_NAME'), $object->getConfig('realm'));

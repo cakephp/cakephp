@@ -96,7 +96,7 @@ class ValidatorTest extends TestCase
 
         $validator->add('email', 'notBlank');
         $result = $validator->field('email')->rule('notBlank')->get('rule');
-        $this->assertEquals('notBlank', $result);
+        $this->assertSame('notBlank', $result);
 
         $rule = new ValidationRule();
         $validator->add('field', 'myrule', $rule);
@@ -310,10 +310,10 @@ class ValidatorTest extends TestCase
         $this->assertFalse($validator->field('title')->isPresenceRequired());
 
         $validator->requirePresence('title', 'create');
-        $this->assertEquals('create', $validator->field('title')->isPresenceRequired());
+        $this->assertSame('create', $validator->field('title')->isPresenceRequired());
 
         $validator->requirePresence('title', 'update');
-        $this->assertEquals('update', $validator->field('title')->isPresenceRequired());
+        $this->assertSame('update', $validator->field('title')->isPresenceRequired());
     }
 
     /**
@@ -338,7 +338,7 @@ class ValidatorTest extends TestCase
             'subject',
         ], true);
         $this->assertFalse($validator->field('title')->isPresenceRequired());
-        $this->assertEquals('update', $validator->field('content')->isPresenceRequired());
+        $this->assertSame('update', $validator->field('content')->isPresenceRequired());
         $this->assertTrue($validator->field('subject')->isPresenceRequired());
     }
 
@@ -366,7 +366,7 @@ class ValidatorTest extends TestCase
         $validator->requirePresence('title', function ($context) use (&$require) {
             $this->assertEquals([], $context['data']);
             $this->assertEquals([], $context['providers']);
-            $this->assertEquals('title', $context['field']);
+            $this->assertSame('title', $context['field']);
             $this->assertTrue($context['newRecord']);
 
             return $require;
@@ -611,10 +611,10 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->field('title')->isEmptyAllowed());
 
         $validator->allowEmpty('title', 'create');
-        $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
+        $this->assertSame('create', $validator->field('title')->isEmptyAllowed());
 
         $validator->allowEmpty('title', 'update');
-        $this->assertEquals('update', $validator->field('title')->isEmptyAllowed());
+        $this->assertSame('update', $validator->field('title')->isEmptyAllowed());
     }
 
     /**
@@ -720,11 +720,11 @@ class ValidatorTest extends TestCase
                 'when' => Validator::WHEN_UPDATE,
             ],
         ], 'create', 'Cannot be empty');
-        $this->assertEquals('create', $validator->field('title')->isEmptyAllowed());
-        $this->assertEquals('create', $validator->field('subject')->isEmptyAllowed());
+        $this->assertSame('create', $validator->field('title')->isEmptyAllowed());
+        $this->assertSame('create', $validator->field('subject')->isEmptyAllowed());
         $this->assertFalse($validator->field('posted_at')->isEmptyAllowed());
         $this->assertTrue($validator->field('updated_at')->isEmptyAllowed());
-        $this->assertEquals('update', $validator->field('show_at')->isEmptyAllowed());
+        $this->assertSame('update', $validator->field('show_at')->isEmptyAllowed());
 
         $errors = $validator->errors([
             'title' => '',
@@ -1877,7 +1877,7 @@ class ValidatorTest extends TestCase
             ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $context) use ($thing) {
-                $this->assertEquals('bar', $data);
+                $this->assertSame('bar', $data);
                 $expected = [
                     'default' => new \Cake\Validation\RulesProvider(),
                     'thing' => $thing,
@@ -1923,9 +1923,9 @@ class ValidatorTest extends TestCase
             ->getMock();
         $thing->expects($this->once())->method('isCool')
             ->will($this->returnCallback(function ($data, $a, $b, $context) use ($thing) {
-                $this->assertEquals('bar', $data);
-                $this->assertEquals('and', $a);
-                $this->assertEquals('awesome', $b);
+                $this->assertSame('bar', $data);
+                $this->assertSame('and', $a);
+                $this->assertSame('awesome', $b);
                 $expected = [
                     'default' => new \Cake\Validation\RulesProvider(),
                     'thing' => $thing,
@@ -1961,7 +1961,7 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('name', 'myRule', [
             'rule' => function ($data, $provider) {
-                $this->assertEquals('foo', $data);
+                $this->assertSame('foo', $data);
 
                 return 'You fail';
             },
@@ -2918,7 +2918,7 @@ class ValidatorTest extends TestCase
         $this->assertNull($rule->get('on'), 'On clause is present when it should not be');
         $this->assertEquals($name, $rule->get('rule'), 'Rule name does not match');
         $this->assertEquals($pass, $rule->get('pass'), 'Passed options are different');
-        $this->assertEquals('default', $rule->get('provider'), 'Provider does not match');
+        $this->assertSame('default', $rule->get('provider'), 'Provider does not match');
 
         if ($extra !== null) {
             $validator->{$method}('username', $extra, 'the message', 'create');
@@ -2927,8 +2927,8 @@ class ValidatorTest extends TestCase
         }
 
         $rule = $validator->field('username')->rule($method);
-        $this->assertEquals('the message', $rule->get('message'), 'Error messages are not the same');
-        $this->assertEquals('create', $rule->get('on'), 'On clause is wrong');
+        $this->assertSame('the message', $rule->get('message'), 'Error messages are not the same');
+        $this->assertSame('create', $rule->get('on'), 'On clause is wrong');
     }
 
     /**

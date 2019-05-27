@@ -54,7 +54,7 @@ class ConditionDecoratorTest extends TestCase
         $this->assertTrue($decorator->canTrigger($event));
 
         $result = $decorator($event);
-        $this->assertEquals('success', $result);
+        $this->assertSame('success', $result);
     }
 
     /**

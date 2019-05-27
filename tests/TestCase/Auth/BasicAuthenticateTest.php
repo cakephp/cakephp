@@ -68,7 +68,7 @@ class BasicAuthenticateTest extends TestCase
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'password'],
         ]);
-        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertSame('AuthUser', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 

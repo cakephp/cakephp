@@ -31,5 +31,9 @@ build:
           - vendor/bin/psalm.phar --show-info=false
 
 build_failure_conditions:
+  # Issues reported by any analyzer (which generates report in checkstyle format) like phpcs
   - 'issues.count > 0'
+  # Code Coverage decreased from previous inspection
   - 'project.metric_change("scrutinizer.test_coverage", < -0.01)'
+  # Code Coverage drops below 90%
+  - 'project.metric("scrutinizer.test_coverage", < 0.90)'

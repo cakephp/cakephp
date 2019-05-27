@@ -53,14 +53,14 @@ $this->layout = 'dev_error';
 $this->assign('title', sprintf('Missing Method in %s', h($class)));
 $this->assign(
     'subheading',
-    sprintf('The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($class))
+    sprintf('<strong>Error</strong> The action <em>%s</em> is not defined in <em>%s</em>', h($action), h($class))
 );
 $this->assign('templateName', 'missing_action.php');
 
 $this->start('file');
 ?>
 <p class="error">
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($class),  h($action), $path); ?>
 </p>
 

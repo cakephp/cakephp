@@ -51,7 +51,7 @@ class EntityRouteTest extends TestCase
             '_name' => 'articlesView',
         ]);
 
-        $this->assertEquals('/articles/2/other-slug', $result);
+        $this->assertSame('/articles/2/other-slug', $result);
     }
 
     /**
@@ -78,7 +78,7 @@ class EntityRouteTest extends TestCase
             '_name' => 'articlesView',
         ]);
 
-        $this->assertEquals('/articles/2/article-slug', $result);
+        $this->assertSame('/articles/2/article-slug', $result);
     }
 
     /**
@@ -105,7 +105,7 @@ class EntityRouteTest extends TestCase
             '_name' => 'articlesView',
         ]);
 
-        $this->assertEquals('/articles/2_article-slug', $result);
+        $this->assertSame('/articles/2_article-slug', $result);
     }
 
     /**
@@ -133,7 +133,7 @@ class EntityRouteTest extends TestCase
             '_name' => 'articlesView',
         ]);
 
-        $this->assertEquals('/articles/2/article-slug', $result);
+        $this->assertSame('/articles/2/article-slug', $result);
     }
 
     /**

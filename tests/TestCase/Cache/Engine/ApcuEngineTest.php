@@ -140,7 +140,7 @@ class ApcuEngineTest extends TestCase
         sleep(1);
 
         $result = Cache::read('zero', 'apcu');
-        $this->assertEquals('Should save', $result);
+        $this->assertSame('Should save', $result);
     }
 
     /**
@@ -278,7 +278,7 @@ class ApcuEngineTest extends TestCase
         $result = Cache::clear('apcu');
         $this->assertTrue($result);
         $this->assertNull(Cache::read('some_value', 'apcu'));
-        $this->assertEquals('survive', apcu_fetch('not_cake'));
+        $this->assertSame('survive', apcu_fetch('not_cake'));
         apcu_delete('not_cake');
     }
 
@@ -299,17 +299,17 @@ class ApcuEngineTest extends TestCase
             'warnOnWriteFailures' => true,
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'apcu_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'apcu_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'apcu_groups'));
 
         apcu_inc('test_group_a');
         $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value2', 'apcu_groups'));
-        $this->assertEquals('value2', Cache::read('test_groups', 'apcu_groups'));
+        $this->assertSame('value2', Cache::read('test_groups', 'apcu_groups'));
 
         apcu_inc('test_group_b');
         $this->assertNull(Cache::read('test_groups', 'apcu_groups'));
         $this->assertTrue(Cache::write('test_groups', 'value3', 'apcu_groups'));
-        $this->assertEquals('value3', Cache::read('test_groups', 'apcu_groups'));
+        $this->assertSame('value3', Cache::read('test_groups', 'apcu_groups'));
     }
 
     /**
@@ -327,7 +327,7 @@ class ApcuEngineTest extends TestCase
             'warnOnWriteFailures' => true,
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'apcu_groups'));
-        $this->assertEquals('value', Cache::read('test_groups', 'apcu_groups'));
+        $this->assertSame('value', Cache::read('test_groups', 'apcu_groups'));
         $this->assertTrue(Cache::delete('test_groups', 'apcu_groups'));
 
         $this->assertNull(Cache::read('test_groups', 'apcu_groups'));

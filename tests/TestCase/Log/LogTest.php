@@ -691,7 +691,7 @@ class LogTest extends TestCase
     {
         $instance = new FileLog();
         Log::setConfig('default', function ($alias) use ($instance) {
-            $this->assertEquals('default', $alias);
+            $this->assertSame('default', $alias);
 
             return $instance;
         });

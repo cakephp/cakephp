@@ -247,8 +247,8 @@ class PoFileParserTest extends TestCase
 
         // Check translated messages
         I18n::setLocale('de_DE');
-        $this->assertEquals('Standorte', __d('wa', 'Locations'));
+        $this->assertSame('Standorte', __d('wa', 'Locations'));
         I18n::setLocale('en_EN');
-        $this->assertEquals('Locations', __d('wa', 'Locations'));
+        $this->assertSame('Locations', __d('wa', 'Locations'));
     }
 }

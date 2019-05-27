@@ -138,7 +138,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertNull($this->RequestHandler->ext);
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'rss'));
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('rss', $this->RequestHandler->ext);
+        $this->assertSame('rss', $this->RequestHandler->ext);
     }
 
     /**
@@ -153,7 +153,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $this->RequestHandler->setExt(null);
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('json', $this->RequestHandler->getExt());
+        $this->assertSame('json', $this->RequestHandler->getExt());
     }
 
     /**
@@ -171,7 +171,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions('json', false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->ext);
     }
 
     /**
@@ -202,7 +202,7 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['rss', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->ext);
     }
 
     /**
@@ -238,13 +238,13 @@ class RequestHandlerComponentTest extends TestCase
         Router::extensions(['xml', 'json'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('xml', $this->RequestHandler->ext);
+        $this->assertSame('xml', $this->RequestHandler->ext);
 
         $this->RequestHandler->setExt(null);
         Router::extensions(['json', 'xml'], false);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->ext);
     }
 
     /**
@@ -262,7 +262,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->setExt(null);
 
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
-        $this->assertEquals('json', $this->RequestHandler->ext);
+        $this->assertSame('json', $this->RequestHandler->ext);
     }
 
     /**
@@ -350,7 +350,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->assertEquals($expected, $result);
 
         $this->RequestHandler->renderAs($this->Controller, 'json');
-        $this->assertEquals('TestApp\View\CustomJsonView', $this->Controller->viewBuilder()->getClassName());
+        $this->assertSame('TestApp\View\CustomJsonView', $this->Controller->viewBuilder()->getClassName());
     }
 
     /**
@@ -384,7 +384,7 @@ class RequestHandlerComponentTest extends TestCase
 
         $view = $this->Controller->createView();
         $this->assertInstanceOf(AjaxView::class, $view);
-        $this->assertEquals('ajax', $view->getLayout());
+        $this->assertSame('ajax', $view->getLayout());
 
         $this->_init();
         $this->Controller->setRequest($this->Controller->getRequest()->withParam('_ext', 'js'));
@@ -416,7 +416,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
 
         $this->assertEquals($extension, $this->RequestHandler->ext);
-        $this->assertEquals('text/html', $this->Controller->getResponse()->getType());
+        $this->assertSame('text/html', $this->Controller->getResponse()->getType());
 
         $view = $this->Controller->createView();
         $this->assertInstanceOf(AppView::class, $view);
@@ -443,13 +443,13 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->startup(new Event('Controller.startup', $this->Controller));
         $this->RequestHandler->beforeRender(new Event('Controller.beforeRender', $this->Controller));
 
-        $this->assertEquals('xml', $this->RequestHandler->ext);
-        $this->assertEquals('application/xml', $this->Controller->getResponse()->getType());
+        $this->assertSame('xml', $this->RequestHandler->ext);
+        $this->assertSame('application/xml', $this->Controller->getResponse()->getType());
 
         $view = $this->Controller->createView();
         $this->assertInstanceOf(XmlView::class, $view);
-        $this->assertEquals('xml', $view->getLayoutPath());
-        $this->assertEquals('xml', $view->getSubDir());
+        $this->assertSame('xml', $view->getLayoutPath());
+        $this->assertSame('xml', $view->getSubDir());
     }
 
     /**
@@ -468,8 +468,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender($event);
         $view = $this->Controller->createView();
         $this->assertInstanceOf(JsonView::class, $view);
-        $this->assertEquals('json', $view->getLayoutPath());
-        $this->assertEquals('json', $view->getSubDir());
+        $this->assertSame('json', $view->getLayoutPath());
+        $this->assertSame('json', $view->getSubDir());
     }
 
     /**
@@ -488,8 +488,8 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender($event);
         $view = $this->Controller->createView();
         $this->assertInstanceOf(XmlView::class, $view);
-        $this->assertEquals('xml', $view->getLayoutPath());
-        $this->assertEquals('xml', $view->getSubDir());
+        $this->assertSame('xml', $view->getLayoutPath());
+        $this->assertSame('xml', $view->getSubDir());
     }
 
     /**
@@ -508,7 +508,7 @@ class RequestHandlerComponentTest extends TestCase
         $this->RequestHandler->beforeRender($event);
         $view = $this->Controller->createView();
         $this->assertInstanceOf(AjaxView::class, $view);
-        $this->assertEquals('ajax', $view->getLayout());
+        $this->assertSame('ajax', $view->getLayout());
     }
 
     /**
@@ -527,8 +527,8 @@ class RequestHandlerComponentTest extends TestCase
             return $this->Controller->getResponse();
         });
         $this->Controller->render();
-        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
-        $this->assertEquals('csv', $this->Controller->viewBuilder()->getLayoutPath());
+        $this->assertSame('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('csv', $this->Controller->viewBuilder()->getLayoutPath());
     }
 
     /**
@@ -549,7 +549,7 @@ class RequestHandlerComponentTest extends TestCase
             return $this->Controller->getResponse();
         });
         $this->Controller->render();
-        $this->assertEquals('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('RequestHandlerTest' . DS . 'csv', $this->Controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -786,7 +786,7 @@ XML;
 
         $this->Controller->viewBuilder()->setTemplatePath('request_handler_test\\rss');
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('request_handler_test' . DS . 'js', $this->Controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -800,8 +800,8 @@ XML;
 
         $this->RequestHandler->renderAs($this->Controller, 'xml', ['attachment' => 'myfile.xml']);
         $this->assertEquals(XmlView::class, $this->Controller->viewBuilder()->getClassName());
-        $this->assertEquals('application/xml', $this->Controller->getResponse()->getType());
-        $this->assertEquals('UTF-8', $this->Controller->getResponse()->getCharset());
+        $this->assertSame('application/xml', $this->Controller->getResponse()->getType());
+        $this->assertSame('UTF-8', $this->Controller->getResponse()->getCharset());
         $this->assertStringContainsString('myfile.xml', $this->Controller->getResponse()->getHeaderLine('Content-Disposition'));
     }
 
@@ -814,11 +814,11 @@ XML;
     {
         $result = $this->RequestHandler->respondAs('json');
         $this->assertTrue($result);
-        $this->assertEquals('application/json', $this->Controller->getResponse()->getType());
+        $this->assertSame('application/json', $this->Controller->getResponse()->getType());
 
         $result = $this->RequestHandler->respondAs('text/xml');
         $this->assertTrue($result);
-        $this->assertEquals('text/xml', $this->Controller->getResponse()->getType());
+        $this->assertSame('text/xml', $this->Controller->getResponse()->getType());
     }
 
     /**
@@ -849,12 +849,12 @@ XML;
         $this->Controller->render();
 
         $this->RequestHandler->renderAs($this->Controller, 'print');
-        $this->assertEquals('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->getTemplatePath());
-        $this->assertEquals('print', $this->Controller->viewBuilder()->getLayoutPath());
+        $this->assertSame('RequestHandlerTest' . DS . 'print', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('print', $this->Controller->viewBuilder()->getLayoutPath());
 
         $this->RequestHandler->renderAs($this->Controller, 'js');
-        $this->assertEquals('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->getTemplatePath());
-        $this->assertEquals('js', $this->Controller->viewBuilder()->getLayoutPath());
+        $this->assertSame('RequestHandlerTest' . DS . 'js', $this->Controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('js', $this->Controller->viewBuilder()->getLayoutPath());
     }
 
     /**
@@ -869,10 +869,10 @@ XML;
 
         $this->Controller->setRequest($this->request->withEnv('REQUEST_METHOD', 'POST')
             ->withEnv('CONTENT_TYPE', 'application/json'));
-        $this->assertEquals('json', $this->RequestHandler->requestedWith());
+        $this->assertSame('json', $this->RequestHandler->requestedWith());
 
         $result = $this->RequestHandler->requestedWith(['json', 'xml']);
-        $this->assertEquals('json', $result);
+        $this->assertSame('json', $result);
 
         $result = $this->RequestHandler->requestedWith(['rss', 'atom']);
         $this->assertFalse($result);
@@ -880,18 +880,18 @@ XML;
         $this->Controller->setRequest($this->request
             ->withEnv('REQUEST_METHOD', 'PATCH')
             ->withEnv('CONTENT_TYPE', 'application/json'));
-        $this->assertEquals('json', $this->RequestHandler->requestedWith());
+        $this->assertSame('json', $this->RequestHandler->requestedWith());
 
         $this->Controller->setRequest($this->request
             ->withEnv('REQUEST_METHOD', 'DELETE')
             ->withEnv('CONTENT_TYPE', 'application/json'));
-        $this->assertEquals('json', $this->RequestHandler->requestedWith());
+        $this->assertSame('json', $this->RequestHandler->requestedWith());
 
         $this->Controller->setRequest($this->request
             ->withEnv('REQUEST_METHOD', 'POST')
             ->withEnv('CONTENT_TYPE', 'application/json'));
         $result = $this->RequestHandler->requestedWith(['json', 'xml']);
-        $this->assertEquals('json', $result);
+        $this->assertSame('json', $result);
 
         $result = $this->RequestHandler->requestedWith(['rss', 'atom']);
         $this->assertFalse($result);
@@ -927,13 +927,13 @@ XML;
     public function testMapAlias(): void
     {
         $result = $this->RequestHandler->mapAlias('xml');
-        $this->assertEquals('application/xml', $result);
+        $this->assertSame('application/xml', $result);
 
         $result = $this->RequestHandler->mapAlias('text/html');
         $this->assertNull($result);
 
         $result = $this->RequestHandler->mapAlias('wap');
-        $this->assertEquals('text/vnd.wap.wml', $result);
+        $this->assertSame('text/vnd.wap.wml', $result);
 
         $result = $this->RequestHandler->mapAlias(['xml', 'js', 'json']);
         $expected = ['application/xml', 'application/javascript', 'application/json'];
@@ -972,11 +972,11 @@ XML;
         $this->assertNotEquals('rss', $this->RequestHandler->prefers());
 
         $this->RequestHandler->setExt('rss');
-        $this->assertEquals('rss', $this->RequestHandler->prefers());
+        $this->assertSame('rss', $this->RequestHandler->prefers());
         $this->assertFalse($this->RequestHandler->prefers('xml'));
-        $this->assertEquals('xml', $this->RequestHandler->prefers(['js', 'xml', 'xhtml']));
+        $this->assertSame('xml', $this->RequestHandler->prefers(['js', 'xml', 'xhtml']));
         $this->assertFalse($this->RequestHandler->prefers(['red', 'blue']));
-        $this->assertEquals('xhtml', $this->RequestHandler->prefers(['js', 'json', 'xhtml']));
+        $this->assertSame('xhtml', $this->RequestHandler->prefers(['js', 'json', 'xhtml']));
         $this->assertTrue($this->RequestHandler->prefers(['rss']), 'Should return true if input matches ext.');
         $this->assertFalse($this->RequestHandler->prefers(['html']), 'No match with ext, return false.');
 
@@ -985,10 +985,10 @@ XML;
             'Accept',
             'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5'
         ));
-        $this->assertEquals('xml', $this->RequestHandler->prefers());
+        $this->assertSame('xml', $this->RequestHandler->prefers());
 
         $this->Controller->setRequest($this->request->withHeader('Accept', '*/*;q=0.5'));
-        $this->assertEquals('html', $this->RequestHandler->prefers());
+        $this->assertSame('html', $this->RequestHandler->prefers());
         $this->assertFalse($this->RequestHandler->prefers('rss'));
 
         $this->Controller->setRequest($this->request->withEnv('HTTP_ACCEPT', ''));
@@ -1016,7 +1016,7 @@ XML;
         $this->assertNull($requestHandler->beforeRender($event));
         $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
-        $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
+        $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'), 'header should not be removed.');
     }
 
@@ -1041,7 +1041,7 @@ XML;
         $this->assertNull($requestHandler->beforeRender($event));
         $this->assertTrue($event->isStopped());
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
-        $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
+        $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-Type'));
     }
 
@@ -1070,7 +1070,7 @@ XML;
         $this->assertTrue($event->isStopped());
 
         $this->assertEquals(304, $this->Controller->getResponse()->getStatusCode());
-        $this->assertEquals('', (string)$this->Controller->getResponse()->getBody());
+        $this->assertSame('', (string)$this->Controller->getResponse()->getBody());
         $this->assertFalse($this->Controller->getResponse()->hasHeader('Content-type'));
     }
 
@@ -1149,7 +1149,7 @@ XML;
         $this->Controller->set_response_type();
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
-        $this->assertEquals('text/plain', $this->Controller->getResponse()->getType());
+        $this->assertSame('text/plain', $this->Controller->getResponse()->getType());
     }
 
     /**
@@ -1164,6 +1164,6 @@ XML;
 
         $event = new Event('Controller.beforeRender', $this->Controller);
         $this->RequestHandler->beforeRender($event);
-        $this->assertEquals('text/csv', $this->Controller->getResponse()->getType());
+        $this->assertSame('text/csv', $this->Controller->getResponse()->getType());
     }
 }

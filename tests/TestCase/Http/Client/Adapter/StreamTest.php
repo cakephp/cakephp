@@ -341,26 +341,26 @@ class StreamTest extends TestCase
         /** @var \Cake\Http\Client\Response[] $responses */
         $responses = $this->stream->createResponses($headers, $content);
         $this->assertCount(3, $responses);
-        $this->assertEquals('close', $responses[0]->getHeaderLine('Connection'));
-        $this->assertEquals('', (string)$responses[0]->getBody());
-        $this->assertEquals('', (string)$responses[1]->getBody());
+        $this->assertSame('close', $responses[0]->getHeaderLine('Connection'));
+        $this->assertSame('', (string)$responses[0]->getBody());
+        $this->assertSame('', (string)$responses[1]->getBody());
         $this->assertEquals($content, (string)$responses[2]->getBody());
 
         $this->assertEquals(302, $responses[0]->getStatusCode());
         $this->assertEquals(302, $responses[1]->getStatusCode());
         $this->assertEquals(200, $responses[2]->getStatusCode());
 
-        $this->assertEquals('value', $responses[0]->getCookie('first'));
+        $this->assertSame('value', $responses[0]->getCookie('first'));
         $this->assertNull($responses[0]->getCookie('second'));
         $this->assertNull($responses[0]->getCookie('third'));
 
         $this->assertNull($responses[1]->getCookie('first'));
-        $this->assertEquals('val', $responses[1]->getCookie('second'));
+        $this->assertSame('val', $responses[1]->getCookie('second'));
         $this->assertNull($responses[1]->getCookie('third'));
 
         $this->assertNull($responses[2]->getCookie('first'));
         $this->assertNull($responses[2]->getCookie('second'));
-        $this->assertEquals('works', $responses[2]->getCookie('third'));
+        $this->assertSame('works', $responses[2]->getCookie('third'));
     }
 
     /**

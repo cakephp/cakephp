@@ -61,9 +61,9 @@ class DateTypeTest extends TestCase
 
         $result = $this->type->toPHP('2001-01-04', $this->driver);
         $this->assertInstanceOf(DateTimeImmutable::class, $result);
-        $this->assertEquals('2001', $result->format('Y'));
-        $this->assertEquals('01', $result->format('m'));
-        $this->assertEquals('04', $result->format('d'));
+        $this->assertSame('2001', $result->format('Y'));
+        $this->assertSame('01', $result->format('m'));
+        $this->assertSame('04', $result->format('d'));
     }
 
     /**
@@ -102,11 +102,11 @@ class DateTypeTest extends TestCase
 
         $date = new Time('2013-08-12');
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12', $result);
+        $this->assertSame('2013-08-12', $result);
 
         $date = new Time('2013-08-12 15:16:18');
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12', $result);
+        $this->assertSame('2013-08-12', $result);
     }
 
     /**

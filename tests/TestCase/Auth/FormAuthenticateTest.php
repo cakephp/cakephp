@@ -73,7 +73,7 @@ class FormAuthenticateTest extends TestCase
             'userModel' => 'AuthUsers',
             'fields' => ['username' => 'user', 'password' => 'password'],
         ]);
-        $this->assertEquals('AuthUsers', $object->getConfig('userModel'));
+        $this->assertSame('AuthUsers', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 

@@ -120,7 +120,7 @@ class FactoryLocatorTest extends TestCase
         $result = $stub->loadModel('Magic', 'Table');
         $this->assertInstanceOf('stdClass', $result);
         $this->assertInstanceOf('stdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
+        $this->assertSame('Magic', $stub->Magic->name);
     }
 
     /**
@@ -144,7 +144,7 @@ class FactoryLocatorTest extends TestCase
         $result = $stub->loadModel('Magic');
         $this->assertInstanceOf('stdClass', $result);
         $this->assertInstanceOf('stdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
+        $this->assertSame('Magic', $stub->Magic->name);
     }
 
     /**

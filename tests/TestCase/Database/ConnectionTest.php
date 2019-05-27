@@ -23,6 +23,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\LoggingStatement;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
@@ -65,7 +66,6 @@ class ConnectionTest extends TestCase
     {
         Log::reset();
         $this->connection->disableSavePoints();
-        $this->connection->setLogger(null);
         unset($this->connection);
         parent::tearDown();
     }
@@ -367,18 +367,18 @@ class ConnectionTest extends TestCase
 
         $result = $this->connection->execute('SELECT title, body  FROM things');
         $row = $result->fetch('assoc');
-        $this->assertEquals('a title', $row['title']);
-        $this->assertEquals('a body', $row['body']);
+        $this->assertSame('a title', $row['title']);
+        $this->assertSame('a body', $row['body']);
 
         $row = $result->fetch('assoc');
         $result->closeCursor();
-        $this->assertEquals('another title', $row['title']);
-        $this->assertEquals('another body', $row['body']);
+        $this->assertSame('another title', $row['title']);
+        $this->assertSame('another body', $row['body']);
 
         $result->execute();
         $row = $result->fetch('assoc');
         $result->closeCursor();
-        $this->assertEquals('a title', $row['title']);
+        $this->assertSame('a title', $row['title']);
     }
 
     /**
@@ -391,8 +391,8 @@ class ConnectionTest extends TestCase
     {
         $result = $this->connection->execute('SELECT title, body  FROM things');
         $row = $result->fetch(\PDO::FETCH_OBJ);
-        $this->assertEquals('a title', $row->title);
-        $this->assertEquals('a body', $row->body);
+        $this->assertSame('a title', $row->title);
+        $this->assertSame('a body', $row->body);
     }
 
     /**
@@ -454,9 +454,9 @@ class ConnectionTest extends TestCase
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $this->assertCount(2, $result);
         $row = $result->fetch('assoc');
-        $this->assertEquals('2012-01-01', $row['body']);
+        $this->assertSame('2012-01-01', $row['body']);
         $row = $result->fetch('assoc');
-        $this->assertEquals('2012-01-01', $row['body']);
+        $this->assertSame('2012-01-01', $row['body']);
         $result->closeCursor();
     }
 
@@ -474,7 +474,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $this->assertCount(1, $result);
         $row = $result->fetch('assoc');
-        $this->assertEquals('2012-01-01', $row['body']);
+        $this->assertSame('2012-01-01', $row['body']);
         $result->closeCursor();
     }
 
@@ -946,13 +946,20 @@ class ConnectionTest extends TestCase
      */
     public function testLogFunction()
     {
-        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->connection->setLogger($logger);
-        $logger->expects($this->once())->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'SELECT 1')
-            ));
+        $logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 SELECT 1',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 SELECT 1';
+                })
+            );
         $this->connection->log('SELECT 1');
     }
 
@@ -973,18 +980,31 @@ class ConnectionTest extends TestCase
         $driver = $this->getMockFormDriver();
         $connection->setDriver($driver);
 
-        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->setLogger($logger);
-        $logger->expects($this->at(0))->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'BEGIN')
-            ));
-        $logger->expects($this->at(1))->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'ROLLBACK')
-            ));
+
+        $logger
+            ->expects($this->at(0))
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 BEGIN',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 BEGIN';
+                })
+            );
+        $logger
+            ->expects($this->at(1))
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 ROLLBACK',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 ROLLBACK';
+                })
+            );
 
         $connection->begin();
         $connection->begin(); //This one will not be logged
@@ -1004,14 +1024,22 @@ class ConnectionTest extends TestCase
             ->setConstructorArgs([['driver' => $driver]])
             ->getMock();
 
-        $logger = $this->getMockBuilder(QueryLogger::class)->getMock();
+        $logger = $this->getMockBuilder(QueryLogger::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $connection->setLogger($logger);
 
-        $logger->expects($this->at(1))->method('log')
-            ->with($this->logicalAnd(
-                $this->isInstanceOf('Cake\Database\Log\LoggedQuery'),
-                $this->attributeEqualTo('query', 'COMMIT')
-            ));
+        $logger
+            ->expects($this->at(1))
+            ->method('debug')
+            ->with(
+                'duration=0 rows=0 COMMIT',
+                $this->callback(function ($context) {
+                    return $context['query'] instanceof LoggedQuery
+                        && (string)$context['query'] === 'duration=0 rows=0 COMMIT';
+                })
+            );
+
         $connection->enableQueryLogging(true);
         $connection->begin();
         $connection->commit();
@@ -1052,7 +1080,7 @@ class ConnectionTest extends TestCase
 
             return 'thing';
         });
-        $this->assertEquals('thing', $result);
+        $this->assertSame('thing', $result);
     }
 
     /**

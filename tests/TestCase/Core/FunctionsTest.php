@@ -33,19 +33,19 @@ class FunctionsTest extends TestCase
     {
         $_ENV['DOES_NOT_EXIST'] = null;
         $this->assertNull(env('DOES_NOT_EXIST'));
-        $this->assertEquals('default', env('DOES_NOT_EXIST', 'default'));
+        $this->assertSame('default', env('DOES_NOT_EXIST', 'default'));
 
         $_ENV['DOES_EXIST'] = 'some value';
-        $this->assertEquals('some value', env('DOES_EXIST'));
-        $this->assertEquals('some value', env('DOES_EXIST', 'default'));
+        $this->assertSame('some value', env('DOES_EXIST'));
+        $this->assertSame('some value', env('DOES_EXIST', 'default'));
 
         $_ENV['EMPTY_VALUE'] = '';
-        $this->assertEquals('', env('EMPTY_VALUE'));
-        $this->assertEquals('', env('EMPTY_VALUE', 'default'));
+        $this->assertSame('', env('EMPTY_VALUE'));
+        $this->assertSame('', env('EMPTY_VALUE', 'default'));
 
         $_ENV['ZERO'] = '0';
-        $this->assertEquals('0', env('ZERO'));
-        $this->assertEquals('0', env('ZERO', '1'));
+        $this->assertSame('0', env('ZERO'));
+        $this->assertSame('0', env('ZERO', '1'));
     }
 
     /**
@@ -146,8 +146,8 @@ class FunctionsTest extends TestCase
      */
     public function testgetTypeName()
     {
-        $this->assertEquals('stdClass', getTypeName(new \stdClass()));
-        $this->assertEquals('array', getTypeName([]));
-        $this->assertEquals('string', getTypeName(''));
+        $this->assertSame('stdClass', getTypeName(new \stdClass()));
+        $this->assertSame('array', getTypeName([]));
+        $this->assertSame('string', getTypeName(''));
     }
 }

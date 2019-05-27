@@ -716,7 +716,7 @@ SQL;
         $this->assertEquals($result, '"id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT');
 
         $result = $schema->constraintSql($table, 'primary');
-        $this->assertEquals('', $result, 'Integer primary keys are special in sqlite.');
+        $this->assertSame('', $result, 'Integer primary keys are special in sqlite.');
     }
 
     /**
@@ -742,7 +742,7 @@ SQL;
         $this->assertEquals($result, '"id" BIGINT NOT NULL');
 
         $result = $schema->constraintSql($table, 'primary');
-        $this->assertEquals('CONSTRAINT "primary" PRIMARY KEY ("id")', $result, 'Bigint primary keys are not special.');
+        $this->assertSame('CONSTRAINT "primary" PRIMARY KEY ("id")', $result, 'Bigint primary keys are not special.');
     }
 
     /**
@@ -1011,7 +1011,7 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('DROP TABLE "articles"', $result[0]);
+        $this->assertSame('DROP TABLE "articles"', $result[0]);
     }
 
     /**
@@ -1043,8 +1043,8 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
-        $this->assertEquals('DELETE FROM sqlite_sequence WHERE name="articles"', $result[0]);
-        $this->assertEquals('DELETE FROM "articles"', $result[1]);
+        $this->assertSame('DELETE FROM sqlite_sequence WHERE name="articles"', $result[0]);
+        $this->assertSame('DELETE FROM "articles"', $result[1]);
     }
 
     /**
@@ -1077,7 +1077,7 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('DELETE FROM "articles"', $result[0]);
+        $this->assertSame('DELETE FROM "articles"', $result[0]);
     }
 
     /**

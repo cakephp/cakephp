@@ -57,13 +57,13 @@ class MessagesFileLoaderTest extends TestCase
         $loader = new MessagesFileLoader('default', 'en');
         $package = $loader();
         $messages = $package->getMessages();
-        $this->assertEquals('Po (translated)', $messages['Plural Rule 1']['_context']['']);
+        $this->assertSame('Po (translated)', $messages['Plural Rule 1']['_context']['']);
 
         Configure::write('App.paths.locales', [TEST_APP . 'custom_locale' . DS]);
         $loader = new MessagesFileLoader('default', 'en');
         $package = $loader();
         $messages = $package->getMessages();
-        $this->assertEquals('Po (translated) from custom folder', $messages['Plural Rule 1']['_context']['']);
+        $this->assertSame('Po (translated) from custom folder', $messages['Plural Rule 1']['_context']['']);
     }
 
     /**
