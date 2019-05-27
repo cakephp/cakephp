@@ -27,8 +27,7 @@
         "php": ">=7.2.0",
         "cakephp/cache": "^4.0",
         "cakephp/core": "^4.0",
-        "cakephp/datasource": "^4.0",
-        "cakephp/log": "^4.0"
+        "cakephp/datasource": "^4.0"
     },
     "autoload": {
         "psr-4": {
