@@ -230,6 +230,7 @@ class SmtpTransport extends AbstractTransport
         if (isset($config['client'])) {
             $host = $config['client'];
         } else {
+            /** @var string $httpHost */
             $httpHost = env('HTTP_HOST');
             if ($httpHost) {
                 [$host] = explode(':', $httpHost);
@@ -362,6 +363,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareMessage(Message $message): string
     {
+        /** @var array $lines */
         $lines = $message->getBody();
         $messages = [];
         foreach ($lines as $line) {
