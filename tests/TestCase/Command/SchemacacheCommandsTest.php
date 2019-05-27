@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Datasource\ConnectionManager;
@@ -22,9 +22,9 @@ use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * SchemaCacheShell test.
+ * SchemacacheCommands test.
  */
-class SchemaCacheShellTest extends TestCase
+class SchemacacheCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
