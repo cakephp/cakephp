@@ -30,11 +30,8 @@ class ConsoleLogTest extends TestCase
     {
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
-        $output->expects($this->at(0))
-            ->method('outputAs');
-
         $message = ' Error: oh noes</error>';
-        $output->expects($this->at(1))
+        $output->expects($this->at(0))
             ->method('write')
             ->with($this->stringContains($message));
 
@@ -62,27 +59,20 @@ class ConsoleLogTest extends TestCase
     }
 
     /**
-     * test default value of stream 'outputAs'
+     * test value of stream 'outputAs'
      */
     public function testDefaultOutputAs()
     {
-        if ((DS === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty(null))
-        ) {
-            $expected = ConsoleOutput::PLAIN;
-        } else {
-            $expected = ConsoleOutput::COLOR;
-        }
-        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
+        $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
 
         $output->expects($this->at(0))
             ->method('setOutputAs')
-            ->with($expected);
+            ->with(ConsoleOutput::RAW);
 
         $log = new ConsoleLog([
             'stream' => $output,
+            'outputAs' => ConsoleOutput::RAW,
         ]);
-        $config = $log->getConfig();
-        $this->assertEquals($expected, $config['outputAs']);
+        $this->assertEquals(ConsoleOutput::RAW, $log->getConfig('outputAs'));
     }
 }
