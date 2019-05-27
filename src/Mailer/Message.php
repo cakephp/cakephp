@@ -922,11 +922,11 @@ class Message implements JsonSerializable, Serializable
         $headers['MIME-Version'] = '1.0';
         if ($this->attachments) {
             $headers['Content-Type'] = 'multipart/mixed; boundary="' . (string)$this->boundary . '"';
-        } elseif ($this->emailFormat === static::MESSAGE_BOTH) {
+        } elseif ($this->emailFormat === self::MESSAGE_BOTH) {
             $headers['Content-Type'] = 'multipart/alternative; boundary="' . (string)$this->boundary . '"';
-        } elseif ($this->emailFormat === static::MESSAGE_TEXT) {
+        } elseif ($this->emailFormat === self::MESSAGE_TEXT) {
             $headers['Content-Type'] = 'text/plain; charset=' . $this->getContentTypeCharset();
-        } elseif ($this->emailFormat === static::MESSAGE_HTML) {
+        } elseif ($this->emailFormat === self::MESSAGE_HTML) {
             $headers['Content-Type'] = 'text/html; charset=' . $this->getContentTypeCharset();
         }
         $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
@@ -1187,9 +1187,9 @@ class Message implements JsonSerializable, Serializable
     public function getBody(?string $type = null)
     {
         switch ($type) {
-            case static::MESSAGE_HTML:
+            case self::MESSAGE_HTML:
                 return $this->htmlMessage;
-            case static::MESSAGE_TEXT:
+            case self::MESSAGE_TEXT:
                 return $this->textMessage;
         }
 
@@ -1529,7 +1529,7 @@ class Message implements JsonSerializable, Serializable
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         $lines = explode("\n", $message);
         $formatted = [];
-        $cut = ($wrapLength === static::LINE_LENGTH_MUST);
+        $cut = ($wrapLength === self::LINE_LENGTH_MUST);
 
         foreach ($lines as $line) {
             if (empty($line) && $line !== '0') {
@@ -1644,7 +1644,7 @@ class Message implements JsonSerializable, Serializable
         $this->textMessage = '';
         $this->htmlMessage = '';
         $this->message = [];
-        $this->emailFormat = static::MESSAGE_TEXT;
+        $this->emailFormat = self::MESSAGE_TEXT;
         $this->priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
