@@ -35,6 +35,7 @@ use Cake\Log\Log;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
+use RuntimeException;
 
 /**
  * Represents a connection with a database server.
@@ -815,16 +816,23 @@ class Connection implements ConnectionInterface
      */
     public function getCacher(): CacheInterface
     {
-        if ($this->cacher === null) {
-            $configName = $this->_config['cacheMetadata'] ?? '_cake_model_';
-            if (!is_string($configName)) {
-                $configName = '_cake_model_';
-            }
-
-            $this->cacher = Cache::pool($configName);
+        if ($this->cacher !== null) {
+            return $this->cacher;
         }
 
-        return $this->cacher;
+        $configName = $this->_config['cacheMetadata'] ?? '_cake_model_';
+        if (!is_string($configName)) {
+            $configName = '_cake_model_';
+        }
+
+        if (!class_exists(Cache::class)) {
+            throw new RuntimeException(
+                'To use caching you must either set cacher using Connection::setCacher()'
+                . ' or require the cakephp/cache package in your composer config.'
+            );
+        }
+
+        return $this->cacher = Cache::pool($configName);
     }
 
     /**
