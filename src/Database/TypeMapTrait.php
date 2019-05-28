@@ -80,7 +80,11 @@ trait TypeMapTrait
      * Overwrite the default type mappings for fields
      * in the implementing object.
      *
-     * If you need to se
+     * This method is useful if you need to set type mappings that are shared across
+     * multiple functions/expressions in a query.
+     *
+     * To add a default without overwriting existing ones
+     * use `getTypeMap()->addDefaults()`
      *
      * @param array $types The array of types to set.
      * @return $this
