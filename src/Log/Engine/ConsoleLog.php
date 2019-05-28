@@ -85,13 +85,13 @@ class ConsoleLog extends BaseLog
      * @param string $level The severity level of log you are making.
      * @param string $message The message you want to log.
      * @param array $context Additional information about the logged message
-     * @return bool success of write.
+     * @return void success of write.
      */
-    public function log($level, $message, array $context = []): bool
+    public function log($level, $message, array $context = [])
     {
         $message = $this->_format($message, $context);
         $output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message;
 
-        return (bool)$this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level));
+        $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level));
     }
 }
