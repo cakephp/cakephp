@@ -922,11 +922,11 @@ class Message implements JsonSerializable, Serializable
         $headers['MIME-Version'] = '1.0';
         if ($this->attachments) {
             $headers['Content-Type'] = 'multipart/mixed; boundary="' . (string)$this->boundary . '"';
-        } elseif ($this->emailFormat === self::MESSAGE_BOTH) {
+        } elseif ($this->emailFormat === static::MESSAGE_BOTH) {
             $headers['Content-Type'] = 'multipart/alternative; boundary="' . (string)$this->boundary . '"';
-        } elseif ($this->emailFormat === self::MESSAGE_TEXT) {
+        } elseif ($this->emailFormat === static::MESSAGE_TEXT) {
             $headers['Content-Type'] = 'text/plain; charset=' . $this->getContentTypeCharset();
-        } elseif ($this->emailFormat === self::MESSAGE_HTML) {
+        } elseif ($this->emailFormat === static::MESSAGE_HTML) {
             $headers['Content-Type'] = 'text/html; charset=' . $this->getContentTypeCharset();
         }
         $headers['Content-Transfer-Encoding'] = $this->getContentTransferEncoding();
@@ -998,8 +998,8 @@ class Message implements JsonSerializable, Serializable
     {
         $format = $this->emailFormat;
 
-        if ($format === self::MESSAGE_BOTH) {
-            return [self::MESSAGE_HTML, self::MESSAGE_TEXT];
+        if ($format === static::MESSAGE_BOTH) {
+            return [static::MESSAGE_HTML, static::MESSAGE_TEXT];
         }
 
         return $types = [$format];
@@ -1187,9 +1187,9 @@ class Message implements JsonSerializable, Serializable
     public function getBody(?string $type = null)
     {
         switch ($type) {
-            case self::MESSAGE_HTML:
+            case static::MESSAGE_HTML:
                 return $this->htmlMessage;
-            case self::MESSAGE_TEXT:
+            case static::MESSAGE_TEXT:
                 return $this->textMessage;
         }
 
@@ -1220,7 +1220,7 @@ class Message implements JsonSerializable, Serializable
     protected function createBoundary(): void
     {
         if ($this->boundary === null &&
-            ($this->attachments || $this->emailFormat === self::MESSAGE_BOTH)
+            ($this->attachments || $this->emailFormat === static::MESSAGE_BOTH)
         ) {
             $this->boundary = md5(Security::randomBytes(16));
         }
@@ -1239,7 +1239,7 @@ class Message implements JsonSerializable, Serializable
         $contentIds = array_filter((array)Hash::extract($this->attachments, '{s}.contentId'));
         $hasInlineAttachments = count($contentIds) > 0;
         $hasAttachments = !empty($this->attachments);
-        $hasMultipleTypes = $this->emailFormat === self::MESSAGE_BOTH;
+        $hasMultipleTypes = $this->emailFormat === static::MESSAGE_BOTH;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
         /** @var string $boundary */
@@ -1260,8 +1260,8 @@ class Message implements JsonSerializable, Serializable
             $textBoundary = 'alt-' . $boundary;
         }
 
-        if ($this->emailFormat === self::MESSAGE_TEXT
-            || $this->emailFormat === self::MESSAGE_BOTH
+        if ($this->emailFormat === static::MESSAGE_TEXT
+            || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
@@ -1275,8 +1275,8 @@ class Message implements JsonSerializable, Serializable
             $msg[] = '';
         }
 
-        if ($this->emailFormat === self::MESSAGE_HTML
-            || $this->emailFormat === self::MESSAGE_BOTH
+        if ($this->emailFormat === static::MESSAGE_HTML
+            || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
@@ -1479,7 +1479,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function setBodyText(string $content)
     {
-        $this->setBody([self::MESSAGE_TEXT => $content]);
+        $this->setBody([static::MESSAGE_TEXT => $content]);
 
         return $this;
     }
@@ -1492,7 +1492,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function setBodyHtml(string $content)
     {
-        $this->setBody([self::MESSAGE_HTML => $content]);
+        $this->setBody([static::MESSAGE_HTML => $content]);
 
         return $this;
     }
@@ -1529,7 +1529,7 @@ class Message implements JsonSerializable, Serializable
         $message = str_replace(["\r\n", "\r"], "\n", $message);
         $lines = explode("\n", $message);
         $formatted = [];
-        $cut = ($wrapLength === self::LINE_LENGTH_MUST);
+        $cut = ($wrapLength === static::LINE_LENGTH_MUST);
 
         foreach ($lines as $line) {
             if (empty($line) && $line !== '0') {
@@ -1644,13 +1644,13 @@ class Message implements JsonSerializable, Serializable
         $this->textMessage = '';
         $this->htmlMessage = '';
         $this->message = [];
-        $this->emailFormat = self::MESSAGE_TEXT;
+        $this->emailFormat = static::MESSAGE_TEXT;
         $this->priority = null;
         $this->charset = 'utf-8';
         $this->headerCharset = null;
         $this->transferEncoding = null;
         $this->attachments = [];
-        $this->emailPattern = self::EMAIL_PATTERN;
+        $this->emailPattern = static::EMAIL_PATTERN;
 
         return $this;
     }
