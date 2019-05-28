@@ -77,10 +77,14 @@ trait TypeMapTrait
     }
 
     /**
-     * Allows setting default types when chaining query.
+     * Overwrite the default type mappings for fields
+     * in the implementing object.
+     *
+     * If you need to se
      *
      * @param array $types The array of types to set.
      * @return $this
+     * @see \Cake\Database\TypeMap::setDefaults()
      */
     public function setDefaultTypes(array $types)
     {

@@ -51,10 +51,13 @@ class TypeMap
     }
 
     /**
-     * Configures a map of default fields and their associated types to be
-     * used as the default list of types for every function in this class
-     * with a $types param. Useful to avoid repetition when calling the same
-     * functions using the same fields and types.
+     * Configures a map of fields and associated type.
+     *
+     * These values will be used as the default mapping of types for every function
+     * in this instance that supports a `$types` param.
+     *
+     * This method is useful when you want to avoid repeating type definitions
+     * as setting types overwrites the last set of types.
      *
      * ### Example
      *
