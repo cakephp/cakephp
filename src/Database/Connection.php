@@ -854,7 +854,7 @@ class Connection implements ConnectionInterface
 
         if (!class_exists(QueryLogger::class)) {
             throw new RuntimeException(
-                'For logging you must either set logger using Connection::setLogger()' .
+                'For logging you must either set a logger using Connection::setLogger()' .
                 ' or require the cakephp/log package in your composer config.'
             );
         }
