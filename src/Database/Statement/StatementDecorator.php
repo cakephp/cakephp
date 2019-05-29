@@ -338,12 +338,12 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      */
     public function lastInsertId(?string $table = null, ?string $column = null)
     {
-        $row = null;
         if ($column && $this->columnCount()) {
             $row = $this->fetch(static::FETCH_TYPE_ASSOC);
-        }
-        if (isset($row[$column])) {
-            return $row[$column];
+
+            if ($row && isset($row[$column])) {
+                return $row[$column];
+            }
         }
 
         return $this->_driver->lastInsertId($table, $column);

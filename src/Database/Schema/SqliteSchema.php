@@ -286,6 +286,7 @@ class SqliteSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getColumn($name);
         $typeMap = [
             TableSchema::TYPE_BINARY_UUID => ' BINARY(16)',
@@ -393,6 +394,7 @@ class SqliteSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getConstraint($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
@@ -460,6 +462,7 @@ class SqliteSchema extends BaseSchema
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getIndex($name);
         $columns = array_map(
             [$this->_driver, 'quoteIdentifier'],

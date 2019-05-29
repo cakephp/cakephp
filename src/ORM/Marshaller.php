@@ -628,6 +628,7 @@ class Marshaller
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      * @see \Cake\ORM\Entity::$_accessible
+     * @psalm-suppress NullArrayOffset
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
