@@ -40,12 +40,13 @@ class SchemacacheClearCommand extends Command
     {
         try {
             /** @var \Cake\Database\Connection $connection */
-            $connection = ConnectionManager::get($args->getOption('connection'));
+            $connection = ConnectionManager::get((string)$args->getOption('connection'));
 
             $cache = new SchemaCache($connection);
         } catch (RuntimeException $e) {
             $io->error($e->getMessage());
-            $this->abort();
+
+            return $this->abort();
         }
         $tables = $cache->clear($args->getArgument('name'));
 
