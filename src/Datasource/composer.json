@@ -25,7 +25,8 @@
     },
     "require": {
         "php": ">=7.2.0",
-        "cakephp/core": "^4.0"
+        "cakephp/core": "^4.0",
+        "psr/log": "^1.1"
     },
     "suggest": {
         "cakephp/utility": "If you decide to use EntityTrait.",
