@@ -291,11 +291,7 @@ class Email implements JsonSerializable, Serializable
      */
     public function message(?string $type = null)
     {
-        if ($type) {
-            return $this->message->getBody($type);
-        }
-
-        return $this->message->getBody();
+        return $this->message->getBody($type);
     }
 
     /**

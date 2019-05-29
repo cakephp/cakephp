@@ -891,11 +891,18 @@ class Connection implements ConnectionInterface
      */
     public function getLogger(): LoggerInterface
     {
-        if ($this->_logger === null) {
-            $this->_logger = new QueryLogger();
+        if ($this->_logger !== null) {
+            return $this->_logger;
         }
 
-        return $this->_logger;
+        if (!class_exists(QueryLogger::class)) {
+            throw new RuntimeException(
+                'For logging you must either set a logger using Connection::setLogger()' .
+                ' or require the cakephp/log package in your composer config.'
+            );
+        }
+
+        return $this->_logger = new QueryLogger();
     }
 
     /**
