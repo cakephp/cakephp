@@ -71,8 +71,10 @@ class SchemaCacheTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Cache::drop('orm_cache');
+
+        $this->connection->cacheMetadata('orm_cache');
         unset($this->connection);
+        Cache::drop('orm_cache');
     }
 
     /**

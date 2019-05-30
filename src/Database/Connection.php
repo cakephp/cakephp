@@ -799,6 +799,9 @@ class Connection implements ConnectionInterface
     {
         $this->_schemaCollection = null;
         $this->_config['cacheMetadata'] = $cache;
+        if (is_string($cache)) {
+            $this->cacher = null;
+        }
     }
 
     /**
