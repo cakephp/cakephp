@@ -355,6 +355,7 @@ class PostgresSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
@@ -506,6 +507,7 @@ class PostgresSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {

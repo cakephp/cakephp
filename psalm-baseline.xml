@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files>
+<files psalm-version="3.3.2@201030928de5001941a59eddce77b9d326bc1880">
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
@@ -773,79 +773,31 @@
       <code>$data</code>
       <code>$data</code>
     </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="16">
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
-      <code>$data['type']</code>
-      <code>$data['autoIncrement']</code>
+    <PossiblyNullArrayAccess occurrences="8">
       <code>$data['type']</code>
       <code>$data['columns']</code>
+      <code>$data['type']</code>
       <code>$data['type']</code>
       <code>$constraint['type']</code>
       <code>$constraint['type']</code>
       <code>$data['type']</code>
       <code>$data['type']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
   </file>
   <file src="src/Database/Schema/PostgresSchema.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$index['columns'][]</code>
     </PossiblyInvalidArrayOffset>
-    <PossiblyNullArgument occurrences="1">
-      <code>$data</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="16">
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['autoIncrement']</code>
-      <code>$data['null']</code>
-      <code>$data['default']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
+    <PossiblyNullArrayAccess occurrences="3">
       <code>$constraint['type']</code>
       <code>$constraint['type']</code>
       <code>$data['columns']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
   </file>
   <file src="src/Database/Schema/SqliteSchema.php">
-    <PossiblyNullArrayAccess occurrences="16">
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['columns']</code>
+    <PossiblyNullArrayAccess occurrences="1">
       <code>$schema-&gt;getColumn($data['columns'][0])['type']</code>
-      <code>$data['type']</code>
-      <code>$data['references']</code>
-      <code>$data['update']</code>
-      <code>$data['delete']</code>
-      <code>$data['columns']</code>
-      <code>$data['columns']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
     <PossiblyNullOperand occurrences="1">
       <code>$schema-&gt;getColumn($existingColumn)</code>
     </PossiblyNullOperand>
@@ -854,32 +806,12 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Schema/SqlserverSchema.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$data</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="18">
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['autoIncrement']</code>
-      <code>$data['null']</code>
-      <code>$data['default']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
+    <PossiblyNullArrayAccess occurrences="4">
       <code>$constraint['type']</code>
       <code>$constraint['type']</code>
       <code>$data['columns']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
       <code>$column['type']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
     <PossiblyUndefinedArrayOffset occurrences="2">
       <code>$row['default']</code>
       <code>$row['default']</code>
@@ -1010,9 +942,8 @@
       <code>$type</code>
       <code>$type</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayAccess occurrences="2">
+    <PossiblyInvalidArrayAccess occurrences="1">
       <code>$result[$position]</code>
-      <code>$row[$column]</code>
     </PossiblyInvalidArrayAccess>
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$this-&gt;_statement-&gt;queryString</code>
@@ -1143,11 +1074,6 @@
       <code>$end</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Event/Decorator/SubjectFilterDecorator.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_options['allowedSubject']</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Event/Event.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>object|null</code>
@@ -1198,15 +1124,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$nc</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Http/Client/Auth/Oauth.php">
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$credentials['privateKey']</code>
-      <code>$credentials['privateKeyPassphrase']</code>
-    </PossiblyInvalidArgument>
-    <TypeDoesNotContainType occurrences="1">
-      <code>is_resource($credentials['privateKeyPassphrase'])</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Http/Client/FormData.php">
     <MissingConstructor occurrences="1">
@@ -1335,9 +1252,6 @@
       <code>$data['secure']</code>
       <code>$data['httponly']</code>
     </PossiblyInvalidArgument>
-    <PossiblyUndefinedArrayOffset occurrences="1">
-      <code>$data['expires']</code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Http/Runner.php">
     <MissingConstructor occurrences="1">
@@ -1505,6 +1419,11 @@
       <code>static::$niceFormat</code>
     </PossiblyInvalidArgument>
   </file>
+  <file src="src/I18n/Translator.php">
+    <PossiblyInvalidArrayOffset occurrences="1">
+      <code>$message['_context']</code>
+    </PossiblyInvalidArrayOffset>
+  </file>
   <file src="src/I18n/TranslatorRegistry.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Aura\Intl\TranslatorInterface|null</code>
@@ -1549,11 +1468,6 @@
       <code>$level</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Log/Log.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$level</code>
-    </PossiblyFalseArgument>
-  </file>
   <file src="src/Log/LogEngineRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
@@ -1578,16 +1492,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;appCharset</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Mailer/Transport/MailTransport.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$params</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Mailer/TransportRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Network/Socket.php">
     <InvalidArgument occurrences="1">
@@ -1978,9 +1882,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$params</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$params['path']</code>
-    </PossiblyInvalidArrayAccess>
     <PossiblyInvalidIterator occurrences="1">
       <code>$options['map']</code>
     </PossiblyInvalidIterator>
@@ -2001,9 +1902,6 @@
       <code>$e-&gt;getCode()</code>
       <code>$params</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$options['_namePrefix']</code>
-    </PossiblyInvalidArrayAccess>
     <PossiblyNullOperand occurrences="1">
       <code>$frag</code>
     </PossiblyNullOperand>
@@ -2336,9 +2234,7 @@
     </RedundantCondition>
   </file>
   <file src="src/TestSuite/TestCase.php">
-    <PossiblyFalseArgument occurrences="3">
-      <code>$tag</code>
-      <code>$tag</code>
+    <PossiblyFalseArgument occurrences="1">
       <code>$tag</code>
     </PossiblyFalseArgument>
     <PossiblyInvalidArgument occurrences="2">
@@ -2576,10 +2472,9 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidArgument occurrences="3">
+    <InvalidArgument occurrences="2">
       <code>$modelName</code>
       <code>$modelName</code>
-      <code>$options['disabled']</code>
     </InvalidArgument>
     <PossiblyNullArgument occurrences="3">
       <code>$url</code>
@@ -2672,9 +2567,7 @@
     </UninitializedProperty>
   </file>
   <file src="src/View/View.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="4">
-      <code>$request ?: Router::getRequest(true)</code>
-      <code>$request ?: Router::getRequest(true)</code>
+    <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$request ?: Router::getRequest(true)</code>
       <code>$defaultLayout</code>
     </PossiblyNullPropertyAssignmentValue>

@@ -849,6 +849,7 @@ class RouteBuilder
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
      * @throws \InvalidArgumentException If a valid callback is not passed
+     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public function prefix(string $name, $params = [], ?callable $callback = null): void
     {
@@ -889,6 +890,7 @@ class RouteBuilder
      * @param callable|null $callback The callback to invoke that builds the plugin routes
      *   Only required when $options is defined.
      * @return void
+     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public function plugin(string $name, $options = [], ?callable $callback = null): void
     {
