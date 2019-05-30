@@ -162,26 +162,6 @@ class FixtureManagerTest extends TestCase
         ];
         $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->manager->unload($test);
-
-        $this->manager->load($test);
-        $table = $this->getTableLocator()->get('ArticlesTags');
-        $schema = $table->getSchema();
-        $expectedConstraint = [
-            'type' => 'foreign',
-            'columns' => [
-                'tag_id',
-            ],
-            'references' => [
-                'tags',
-                'id',
-            ],
-            'update' => 'cascade',
-            'delete' => 'cascade',
-            'length' => [],
-        ];
-        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
-
-        $this->manager->unload($test);
     }
 
     /**
@@ -338,11 +318,10 @@ class FixtureManagerTest extends TestCase
     {
         $test = $this->getMockBuilder('Cake\TestSuite\TestCase')->getMock();
         $test->autoFixtures = false;
-        $test->fixtures = ['core.Articles', 'core.ArticlesTags', 'core.Tags'];
+        $test->fixtures = ['core.Articles', 'core.Tags'];
         $this->manager->fixturize($test);
         $this->manager->loadSingle('Articles');
         $this->manager->loadSingle('Tags');
-        $this->manager->loadSingle('ArticlesTags');
 
         $table = $this->getTableLocator()->get('ArticlesTags');
         $results = $table->find('all')->toArray();
@@ -363,30 +342,6 @@ class FixtureManagerTest extends TestCase
         $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
         $this->assertCount(4, $results);
 
-        $this->manager->unload($test);
-
-        $this->manager->loadSingle('Articles');
-        $this->manager->loadSingle('Tags');
-        $this->manager->loadSingle('ArticlesTags');
-
-        $table = $this->getTableLocator()->get('ArticlesTags');
-        $results = $table->find('all')->toArray();
-        $schema = $table->getSchema();
-        $expectedConstraint = [
-            'type' => 'foreign',
-            'columns' => [
-                'tag_id',
-            ],
-            'references' => [
-                'tags',
-                'id',
-            ],
-            'update' => 'cascade',
-            'delete' => 'cascade',
-            'length' => [],
-        ];
-        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
-        $this->assertCount(4, $results);
         $this->manager->unload($test);
     }
 
