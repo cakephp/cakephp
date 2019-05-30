@@ -18,6 +18,7 @@ namespace Cake\View;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -74,6 +75,9 @@ class View implements EventDispatcherInterface
         cell as public;
     }
     use EventDispatcherTrait;
+    use InstanceConfigTrait {
+        getConfig as private _getConfig;
+    }
     use LogTrait;
     use ViewVarsTrait;
 
@@ -217,6 +221,13 @@ class View implements EventDispatcherInterface
     ];
 
     /**
+     * Default custom config options.
+     *
+     * @var array
+     */
+    protected $_defaultConfig = [];
+
+    /**
      * Holds an array of paths.
      *
      * @var string[]
@@ -321,6 +332,11 @@ class View implements EventDispatcherInterface
                 $this->{$var} = $viewOptions[$var];
             }
         }
+        $this->setConfig(array_diff_key(
+            $viewOptions,
+            array_flip($this->_passedVars)
+        ));
+
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
@@ -565,6 +581,38 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get config value.
+     *
+     * Currently if config is not set it fallbacks to checking corresponding
+     * view var with underscore prefix. Using underscore prefixed special view
+     * vars is deprecated and this fallback will be removed in CakePHP 4.1.0.
+     *
+     * @param string|null $key The key to get or null for the whole config.
+     * @param mixed $default The return value when the key does not exist.
+     * @return mixed Config value being read.
+     */
+    public function getConfig(?string $key = null, $default = null)
+    {
+        $value = $this->_getConfig($key);
+
+        if ($value !== null) {
+            return $value;
+        }
+
+        if (isset($this->viewVars["_{$key}"])) {
+            deprecationWarning(sprintf(
+                'Setting special view var "_%s" is deprecated. Use ViewBuilder::setOption(\'%s\', $value) instead.',
+                $key,
+                $key
+            ));
+
+            return $this->viewVars["_{$key}"];
+        }
+
+        return $default;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
@@ -799,7 +847,9 @@ class View implements EventDispatcherInterface
             if (is_array($value)) {
                 $data = array_combine($name, $value);
                 if ($data === false) {
-                    throw new RuntimeException('Invalid data provided for array_combine() to work: Both $name and $value require same count.');
+                    throw new RuntimeException(
+                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.'
+                    );
                 }
             } else {
                 $data = $name;

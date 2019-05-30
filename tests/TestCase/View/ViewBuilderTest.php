@@ -401,6 +401,19 @@ class ViewBuilderTest extends TestCase
         $this->assertEmpty($result);
     }
 
+    public function testOptionSetGet()
+    {
+        $builder = new ViewBuilder();
+        $result = $builder->setOption('foo', 'bar');
+        $this->assertSame($builder, $result);
+        $this->assertSame('bar', $builder->getOption('foo'));
+
+        $builder->setOption('foo', 'overwrite');
+        $this->assertSame('overwrite', $builder->getOption('foo'));
+
+        $this->assertNull($builder->getOption('non-existent'));
+    }
+
     /**
      * testDisableAutoLayout
      *

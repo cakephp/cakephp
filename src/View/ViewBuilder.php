@@ -402,6 +402,31 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Get view option.
+     *
+     * @param string $name The name of the option.
+     * @return mixed
+     */
+    public function getOption(string $name)
+    {
+        return $this->_options[$name] ?? null;
+    }
+
+    /**
+     * Set view option.
+     *
+     * @param string $name The name of the option.
+     * @param mixed $value Value to set.
+     * @return $this
+     */
+    public function setOption(string $name, $value)
+    {
+        $this->_options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * Sets additional options for the view.
      *
      * This lets you provide custom constructor arguments to application/plugin view classes.

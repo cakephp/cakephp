@@ -275,8 +275,8 @@ class ControllerTest extends TestCase
 
         $Controller->set([
             'test' => 'value',
-            '_serialize' => ['test'],
         ]);
+        $Controller->viewBuilder()->setOption('serialize', ['test']);
         $debug = Configure::read('debug');
         Configure::write('debug', false);
         $result = $Controller->render('index');
