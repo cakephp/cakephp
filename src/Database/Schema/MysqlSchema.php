@@ -309,6 +309,7 @@ class MysqlSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $nativeJson = $this->_driver->supportsNativeJson();

@@ -841,6 +841,7 @@ class Router
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
+     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public static function prefix(string $name, $params = [], ?callable $callback = null): void
     {
@@ -874,6 +875,7 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void
+     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public static function plugin(string $name, $options = [], ?callable $callback = null): void
     {

@@ -223,10 +223,23 @@ class JsonViewTest extends TestCase
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
 
+        $this->deprecated(function () use ($Controller, $data, $serialize, $jsonOptions, $expected) {
+            $Controller->set($data);
+            $Controller->set('_serialize', $serialize);
+            $Controller->set('_jsonOptions', $jsonOptions);
+            $Controller->viewBuilder()->setClassName('Json');
+            $View = $Controller->createView();
+            $output = $View->render();
+
+            $this->assertSame($expected, $output);
+        });
+
+        $Controller = new Controller($Request, $Response);
+
         $Controller->set($data);
-        $Controller->set('_serialize', $serialize);
-        $Controller->set('_jsonOptions', $jsonOptions);
-        $Controller->viewBuilder()->setClassName('Json');
+        $Controller->viewBuilder()
+            ->setOptions(compact('serialize', 'jsonOptions'))
+            ->setClassName('Json');
         $View = $Controller->createView();
         $output = $View->render();
 
@@ -246,9 +259,10 @@ class JsonViewTest extends TestCase
 
         $Controller->set([
             'tags' => ['cakephp', 'framework'],
-            '_serialize' => 'tags',
         ]);
-        $Controller->viewBuilder()->setClassName('Json');
+        $Controller->viewBuilder()
+            ->setClassName('Json')
+            ->setOption('serialize', 'tags');
         $View = $Controller->createView();
         $View->render();
 
@@ -269,10 +283,10 @@ class JsonViewTest extends TestCase
         $data = ['user' => 'fake', 'list' => ['item1', 'item2']];
         $Controller->set([
             'data' => $data,
-            '_serialize' => 'data',
-            '_jsonp' => true,
         ]);
-        $Controller->viewBuilder()->setClassName('Json');
+        $Controller->viewBuilder()
+            ->setClassName('Json')
+            ->setOptions(['serialize' => 'data', 'jsonp' => true]);
         $View = $Controller->createView();
         $output = $View->render();
 
@@ -285,8 +299,9 @@ class JsonViewTest extends TestCase
         $this->assertSame($expected, $output);
         $this->assertSame('application/javascript', $View->getResponse()->getType());
 
-        $View->setRequest($View->getRequest()->withQueryParams(['jsonCallback' => 'jfunc']));
-        $View->set('_jsonp', 'jsonCallback');
+        $Controller->viewBuilder()->setOption('jsonp', 'jsonCallback');
+        $Controller->setRequest($Controller->getRequest()->withQueryParams(['jsonCallback' => 'jfunc']));
+        $View = $Controller->createView();
         $output = $View->render();
         $expected = 'jfunc(' . json_encode($data) . ')';
         $this->assertSame($expected, $output);

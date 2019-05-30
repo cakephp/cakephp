@@ -27,7 +27,7 @@ use Cake\Core\Configure;
  *
  * ```
  * $this->set(['posts' => $posts]);
- * $this->set('_serialize', true);
+ * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
  * When the view is rendered, the `$posts` view variable will be serialized
@@ -38,20 +38,20 @@ use Cake\Core\Configure;
  *
  * ```
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('_serialize', true);
+ * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
  * The above would generate a JSON object that looks like:
  *
  * `{"posts": [...], "users": [...]}`
  *
- * You can also set `'_serialize'` to a string or array to serialize only the
+ * You can also set `'serialize'` to a string or array to serialize only the
  * specified view variables.
  *
- * If you don't use the `_serialize`, you will need a view template. You can use
- * extended views to provide layout-like functionality.
+ * If you don't set the `serialize` opton, you will need a view template.
+ * You can use extended views to provide layout-like functionality.
  *
- * You can also enable JSONP support by setting parameter `_jsonp` to true or a
+ * You can also enable JSONP support by setting `jsonp` option to true or a
  * string to specify custom query string parameter name which will contain the
  * callback function name.
  */
@@ -79,25 +79,30 @@ class JsonView extends SerializedView
     protected $_responseType = 'json';
 
     /**
-     * List of special view vars.
+     * Default config options.
      *
-     * @var array
-     */
-    protected $_specialVars = ['_serialize', '_jsonOptions', '_jsonp'];
-
-    /**
-     * Render a JSON view.
+     * Use ViewBuilder::setOption()/setOptions() in your controller to set these options.
      *
-     * ### Special parameters
-     * `_serialize` To convert a set of view variables into a JSON response.
+     * - `serialize`: Option to convert a set of view variables into a serialized response.
      *   Its value can be a string for single variable name or array for multiple
-     *   names. If true all view variables will be serialized. If unset normal
-     *   view template will be rendered.
-     * `_jsonp` Enables JSONP support and wraps response in callback function
-     *   provided in query string.
+     *   names. If true all view variables will be serialized. If null or false
+     *   normal view template will be rendered.
+     * - `jsonOptions`: Options for json_encode(). For e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
+     * - `jsonp`: Enables JSONP support and wraps response in callback function provided in query string.
      *   - Setting it to true enables the default query string parameter "callback".
      *   - Setting it to a string value, uses the provided query string parameter
      *     for finding the JSONP callback name.
+     *
+     * @var array{serialize:string|bool|null, jsonOptions: int|null, jsonp: bool|string|null}
+     */
+    protected $_defaultConfig = [
+        'serialize' => null,
+        'jsonOptions' => null,
+        'jsonp' => null,
+    ];
+
+    /**
+     * Render a JSON view.
      *
      * @param string|null $template The template being rendered.
      * @param string|null|false $layout The layout being rendered.
@@ -107,13 +112,13 @@ class JsonView extends SerializedView
     {
         $return = parent::render($template, $layout);
 
-        if (!empty($this->viewVars['_jsonp'])) {
-            $jsonpParam = $this->viewVars['_jsonp'];
-            if ($this->viewVars['_jsonp'] === true) {
-                $jsonpParam = 'callback';
+        $jsonp = $this->getConfig('jsonp');
+        if ($jsonp) {
+            if ($jsonp === true) {
+                $jsonp = 'callback';
             }
-            if ($this->request->getQuery($jsonpParam)) {
-                $return = sprintf('%s(%s)', h($this->request->getQuery($jsonpParam)), $return);
+            if ($this->request->getQuery($jsonp)) {
+                $return = sprintf('%s(%s)', h($this->request->getQuery($jsonp)), $return);
                 $this->response = $this->response->withType('js');
             }
         }
@@ -124,27 +129,18 @@ class JsonView extends SerializedView
     /**
      * Serialize view vars
      *
-     * ### Special parameters
-     * `_jsonOptions` You can set custom options for json_encode() this way,
-     *   e.g. `JSON_HEX_TAG | JSON_HEX_APOS`.
-     *
-     * @param array|string|bool $serialize The name(s) of the view variable(s)
-     *   that need(s) to be serialized. If true all available view variables.
+     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized.
      * @return string|false The serialized data, or boolean false if not serializable.
      */
     protected function _serialize($serialize)
     {
         $data = $this->_dataToSerialize($serialize);
 
-        $jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT |
-            JSON_PARTIAL_OUTPUT_ON_ERROR;
-
-        if (isset($this->viewVars['_jsonOptions'])) {
-            if ($this->viewVars['_jsonOptions'] === false) {
-                $jsonOptions = 0;
-            } else {
-                $jsonOptions = $this->viewVars['_jsonOptions'];
-            }
+        $jsonOptions = $this->getConfig('jsonOptions');
+        if ($jsonOptions === null) {
+            $jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_PARTIAL_OUTPUT_ON_ERROR;
+        } elseif ($jsonOptions === false) {
+            $jsonOptions = 0;
         }
 
         if (Configure::read('debug')) {
@@ -157,25 +153,11 @@ class JsonView extends SerializedView
     /**
      * Returns data to be serialized.
      *
-     * @param array|string|bool $serialize The name(s) of the view variable(s) that
-     *   need(s) to be serialized. If true all available view variables will be used.
+     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized.
      * @return mixed The data to serialize.
      */
-    protected function _dataToSerialize($serialize = true)
+    protected function _dataToSerialize($serialize)
     {
-        if ($serialize === true) {
-            $data = array_diff_key(
-                $this->viewVars,
-                array_flip($this->_specialVars)
-            );
-
-            if (empty($data)) {
-                return null;
-            }
-
-            return $data;
-        }
-
         if (is_array($serialize)) {
             $data = [];
             foreach ($serialize as $alias => $key) {

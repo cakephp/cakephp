@@ -113,6 +113,7 @@ class EventManager implements EventManagerInterface
             return $this;
         }
 
+        /** @var array $options */
         $priority = $options['priority'] ?? static::$defaultPriority;
         $this->_listeners[$eventKey][$priority][] = [
             'callable' => $callable,
