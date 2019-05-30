@@ -590,6 +590,7 @@ class View implements EventDispatcherInterface
      * @param string|null $key The key to get or null for the whole config.
      * @param mixed $default The return value when the key does not exist.
      * @return mixed Config value being read.
+     * @psalm-suppress PossiblyNullArgument
      */
     public function getConfig(?string $key = null, $default = null)
     {
