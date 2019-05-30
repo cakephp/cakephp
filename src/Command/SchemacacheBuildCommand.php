@@ -46,7 +46,7 @@ class SchemacacheBuildCommand extends Command
         } catch (RuntimeException $e) {
             $io->error($e->getMessage());
 
-            return $this->abort();
+            return static::CODE_ERROR;
         }
         $tables = $cache->build($args->getArgument('name'));
 
