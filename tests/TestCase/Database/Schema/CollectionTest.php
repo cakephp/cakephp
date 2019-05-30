@@ -46,7 +46,7 @@ class CollectionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = clone ConnectionManager::get('test');
+        $this->connection = ConnectionManager::get('test');
         Cache::clear('_cake_model_');
         Cache::enable();
     }
@@ -59,6 +59,7 @@ class CollectionTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
+        $this->connection->cacheMetadata('_cake_model_');
         unset($this->connection);
     }
 

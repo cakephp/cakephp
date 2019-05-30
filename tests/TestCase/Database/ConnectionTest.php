@@ -58,7 +58,7 @@ class ConnectionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->connection = clone ConnectionManager::get('test');
+        $this->connection = ConnectionManager::get('test');
         static::setAppNamespace();
     }
 

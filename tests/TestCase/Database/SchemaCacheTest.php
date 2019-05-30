@@ -59,7 +59,7 @@ class SchemaCacheTest extends TestCase
             ->will($this->returnValue(true));
         Cache::setConfig('orm_cache', $this->cache);
 
-        $this->connection = clone ConnectionManager::get('test');
+        $this->connection = ConnectionManager::get('test');
         $this->connection->cacheMetadata('orm_cache');
     }
 
@@ -72,7 +72,7 @@ class SchemaCacheTest extends TestCase
     {
         parent::tearDown();
 
-        $this->connection->cacheMetadata('orm_cache');
+        $this->connection->cacheMetadata('_cake_model_');
         unset($this->connection);
         Cache::drop('orm_cache');
     }
