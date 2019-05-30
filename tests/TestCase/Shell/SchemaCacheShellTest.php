@@ -188,7 +188,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->expectException(StopException::class);
 
-        $shell = new SchemaCacheShell(new ConsoleIo());
+        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
+        $shell = new SchemaCacheShell($io);
         $shell->params['connection'] = 'derpy-derp';
         $shell->build('articles');
     }
@@ -202,7 +203,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->expectException(StopException::class);
 
-        $shell = new SchemaCacheShell(new ConsoleIo());
+        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
+        $shell = new SchemaCacheShell($io);
         $shell->params['connection'] = 'derpy-derp';
         $shell->clear('articles');
     }
