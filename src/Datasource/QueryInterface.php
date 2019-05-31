@@ -20,8 +20,8 @@ namespace Cake\Datasource;
 /**
  * The basis for every query object
  *
- * @method $this andWhere($conditions, $types = [])
- * @method $this select($fields = [], $overwrite = false)
+ * @method $this andWhere($conditions, array $types = [])
+ * @method $this select($fields = [], bool $overwrite = false)
  */
 interface QueryInterface
 {

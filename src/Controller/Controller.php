@@ -81,7 +81,7 @@ use UnexpectedValueException;
  * @property \Cake\Controller\Component\PaginatorComponent $Paginator
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\SecurityComponent $Security
- * @method bool isAuthorized($user)
+ * @method bool isAuthorized(array|\ArrayAccess $user)
  * @link https://book.cakephp.org/3.0/en/controllers.html
  */
 class Controller implements EventListenerInterface, EventDispatcherInterface
