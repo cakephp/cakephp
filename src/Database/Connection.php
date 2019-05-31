@@ -830,8 +830,8 @@ class Connection implements ConnectionInterface
 
         if (!class_exists(Cache::class)) {
             throw new RuntimeException(
-                'To use caching you must either set cacher using Connection::setCacher()'
-                . ' or require the cakephp/cache package in your composer config.'
+                'To use caching you must either set a cacher using Connection::setCacher()' .
+                ' or require the cakephp/cache package in your composer config.'
             );
         }
 
