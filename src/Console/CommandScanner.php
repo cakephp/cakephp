@@ -67,6 +67,16 @@ class CommandScanner
             $command['name'] = str_replace('_', ' ', $command['name']);
             $command['fullName'] = str_replace('_', ' ', $command['fullName']);
             $commands[$i] = $command;
+
+            // Maintain backwards compatibility for schema_cache as it is likely
+            // hooked up to people's deploy tooling
+            if (strpos($command['name'], 'schemacache') === 0) {
+                $compat = [
+                    'name' => str_replace('schemacache', 'schema_cache', $command['name']),
+                    'fullName' => str_replace('schemacache', 'schema_cache', $command['fullName']),
+                ];
+                $commands[] = $compat + $command;
+            }
         }
 
         return $commands;
