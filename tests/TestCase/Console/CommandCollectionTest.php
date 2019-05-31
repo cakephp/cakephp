@@ -263,7 +263,8 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('version'));
         $this->assertTrue($collection->has('routes'));
         $this->assertTrue($collection->has('i18n'));
-        $this->assertTrue($collection->has('schema_cache'));
+        $this->assertTrue($collection->has('schema_cache build'));
+        $this->assertTrue($collection->has('schema_cache clear'));
         $this->assertTrue($collection->has('server'));
         $this->assertTrue($collection->has('cache clear'));
         $this->assertFalse($collection->has('command_list'), 'Hidden commands should stay hidden');

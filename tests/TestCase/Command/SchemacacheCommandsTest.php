@@ -14,21 +14,20 @@ declare(strict_types=1);
  * @since         3.6.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
-use Cake\Console\ConsoleIo;
-use Cake\Console\Exception\StopException;
-use Cake\Database\SchemaCache;
 use Cake\Datasource\ConnectionManager;
-use Cake\Shell\SchemaCacheShell;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * SchemaCacheShell test.
+ * SchemacacheCommands test.
  */
-class SchemaCacheShellTest extends TestCase
+class SchemacacheCommandsTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * Fixtures.
      *
@@ -46,6 +45,8 @@ class SchemaCacheShellTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->setAppNamespace();
+        $this->useCommandRunner();
 
         $this->cache = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
         $this->cache->expects($this->any())
@@ -96,9 +97,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->connection->cacheMetadata(false);
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->clear();
+        $this->exec('schema_cache clear --connection test');
+        $this->assertExitSuccess();
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
     }
 
@@ -111,9 +111,8 @@ class SchemaCacheShellTest extends TestCase
     {
         $this->connection->cacheMetadata(false);
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->build();
+        $this->exec('schema_cache build --connection test');
+        $this->assertExitSuccess();
         $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
     }
 
@@ -132,9 +131,8 @@ class SchemaCacheShellTest extends TestCase
             ->with('test_articles')
             ->will($this->returnValue(true));
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->build();
+        $this->exec('schema_cache build --connection test');
+        $this->assertExitSuccess();
     }
 
     /**
@@ -152,9 +150,8 @@ class SchemaCacheShellTest extends TestCase
             ->method('delete')
             ->will($this->returnValue(false));
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->build('articles');
+        $this->exec('schema_cache build --connection test articles');
+        $this->assertExitSuccess();
     }
 
     /**
@@ -174,9 +171,8 @@ class SchemaCacheShellTest extends TestCase
             ->method('delete')
             ->will($this->returnValue(false));
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->build('articles');
+        $this->exec('schema_cache build --connection test articles');
+        $this->assertExitSuccess();
     }
 
     /**
@@ -186,12 +182,8 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testBuildInvalidConnection()
     {
-        $this->expectException(StopException::class);
-
-        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
-        $shell = new SchemaCacheShell($io);
-        $shell->params['connection'] = 'derpy-derp';
-        $shell->build('articles');
+        $this->exec('schema_cache build --connection derpy-derp articles');
+        $this->assertExitError();
     }
 
     /**
@@ -201,12 +193,8 @@ class SchemaCacheShellTest extends TestCase
      */
     public function testClearInvalidConnection()
     {
-        $this->expectException(StopException::class);
-
-        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
-        $shell = new SchemaCacheShell($io);
-        $shell->params['connection'] = 'derpy-derp';
-        $shell->clear('articles');
+        $this->exec('schema_cache clear --connection derpy-derp articles');
+        $this->assertExitError();
     }
 
     /**
@@ -222,9 +210,8 @@ class SchemaCacheShellTest extends TestCase
             ->method('delete')
             ->with('test_articles');
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->clear();
+        $this->exec('schema_cache clear --connection test');
+        $this->assertExitSuccess();
     }
 
     /**
@@ -242,8 +229,7 @@ class SchemaCacheShellTest extends TestCase
             ->with('test_articles')
             ->will($this->returnValue(false));
 
-        $shell = $this->getShell();
-        $shell->params['connection'] = 'test';
-        $shell->clear('articles');
+        $this->exec('schema_cache clear --connection test articles');
+        $this->assertExitSuccess();
     }
 }
