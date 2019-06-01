@@ -51,10 +51,13 @@ class TypeMap
     }
 
     /**
-     * Configures a map of default fields and their associated types to be
-     * used as the default list of types for every function in this class
-     * with a $types param. Useful to avoid repetition when calling the same
-     * functions using the same fields and types.
+     * Configures a map of fields and associated type.
+     *
+     * These values will be used as the default mapping of types for every function
+     * in this instance that supports a `$types` param.
+     *
+     * This method is useful when you want to avoid repeating type definitions
+     * as setting types overwrites the last set of types.
      *
      * ### Example
      *
@@ -62,7 +65,8 @@ class TypeMap
      * $query->setDefaults(['created' => 'datetime', 'is_visible' => 'boolean']);
      * ```
      *
-     * This method will replace all the existing type maps with the ones provided.
+     * This method will replace all the existing default mappings with the ones provided.
+     * To add into the mappings use `addDefaults()`.
      *
      * @param array $defaults Associative array where keys are field names and values
      * are the correspondent type.
@@ -99,7 +103,8 @@ class TypeMap
      * $query->defaults(['created' => 'datetime', 'is_visible' => 'boolean']);
      * ```
      *
-     * This method will replace all the existing type maps with the ones provided.
+     * This method will replace all the existing default mappings with the ones provided.
+     * To add into the mappings use addDefaults()
      *
      * @deprecated 3.4.0 Use setDefaults()/getDefaults() instead.
      * @param array|null $defaults associative array where keys are field names and values
