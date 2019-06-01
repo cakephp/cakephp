@@ -95,7 +95,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 		unset($this->arguments['testFile']);
 
 		try {
-			$result = $runner->doRun($suite, $this->arguments);
+			$result = $runner->doRun($suite, $this->arguments, false);
 		} catch (PHPUnit_Framework_Exception $e) {
 			print $e->getMessage() . "\n";
 		}

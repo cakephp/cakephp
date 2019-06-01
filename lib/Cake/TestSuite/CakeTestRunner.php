@@ -53,6 +53,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  * @param PHPUnit_Framework_Test $suite The test suite to run
  * @param array $arguments The CLI arguments
  * @param bool $exit Exits by default or returns the results
+ * This argument is ignored if >PHPUnit5.2.0
  * @return void
  */
 	public function doRun(PHPUnit_Framework_Test $suite, array $arguments = array(), $exit = true) {
@@ -72,7 +73,7 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
 			}
 		}
 
-		$return = parent::doRun($suite, $arguments);
+		$return = parent::doRun($suite, $arguments, $exit);
 		$fixture->shutdown();
 		return $return;
 	}
