@@ -334,7 +334,9 @@ class CurlTest extends TestCase
     public function testNetworkException()
     {
         $this->expectException(NetworkException::class);
-        $this->expectExceptionMessage('cURL Error (6) Could not resolve host: dummy');
+        $this->expectExceptionMessage('cURL Error (6) Could not resolve');
+        $this->expectExceptionMessage('dummy');
+
         $request = new Request('http://dummy/?sleep');
         $options = [
             'timeout' => 2,
