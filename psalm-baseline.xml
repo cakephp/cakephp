@@ -1448,15 +1448,9 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Log/Engine/ConsoleLog.php">
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;_output</code>
-    </InvalidArgument>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$level</code>
     </MoreSpecificImplementedParamType>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;_output</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Log/Engine/FileLog.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -1926,15 +1920,6 @@
     </DeprecatedClass>
     <PropertyNotSetInConstructor occurrences="1">
       <code>PluginShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/SchemaCacheShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>SchemaCacheShell</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/ServerShell.php">
