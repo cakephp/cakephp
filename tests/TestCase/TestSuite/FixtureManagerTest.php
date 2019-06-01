@@ -323,24 +323,18 @@ class FixtureManagerTest extends TestCase
         $this->manager->loadSingle('Articles');
         $this->manager->loadSingle('Tags');
 
-        $table = $this->getTableLocator()->get('ArticlesTags');
+        $table = $this->getTableLocator()->get('Articles');
         $results = $table->find('all')->toArray();
         $schema = $table->getSchema();
         $expectedConstraint = [
-            'type' => 'foreign',
+            'type' => 'primary',
             'columns' => [
-                'tag_id',
-            ],
-            'references' => [
-                'tags',
                 'id',
             ],
-            'update' => 'cascade',
-            'delete' => 'cascade',
             'length' => [],
         ];
-        $this->assertSame($expectedConstraint, $schema->getConstraint('tag_id_fk'));
-        $this->assertCount(4, $results);
+        $this->assertSame($expectedConstraint, $schema->getConstraint('primary'));
+        $this->assertCount(3, $results);
 
         $this->manager->unload($test);
     }
