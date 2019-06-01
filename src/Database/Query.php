@@ -390,7 +390,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields = [], $overwrite = false)
+    public function select($fields = [], bool $overwrite = false)
     {
         if (!is_string($fields) && is_callable($fields)) {
             $fields = $fields($this);
@@ -1083,7 +1083,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @see \Cake\Database\Type
      * @return $this
      */
-    public function andWhere($conditions, $types = [])
+    public function andWhere($conditions, array $types = [])
     {
         $this->_conjugate('where', $conditions, 'AND', $types);
 
@@ -2103,7 +2103,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query
      * @return void
      */
-    protected function _conjugate(string $part, $append, $conjunction, $types): void
+    protected function _conjugate(string $part, $append, $conjunction, array $types): void
     {
         $expression = $this->_parts[$part] ?: $this->newExpr();
         if (empty($append)) {

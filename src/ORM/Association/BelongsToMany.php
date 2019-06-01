@@ -106,7 +106,7 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var string|array
+     * @var string|string[]
      */
     protected $_targetForeignKey;
 
@@ -161,7 +161,7 @@ class BelongsToMany extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param string|array $key the key to be used to link both tables together
+     * @param string|string[] $key the key to be used to link both tables together
      * @return $this
      */
     public function setTargetForeignKey($key)
@@ -174,7 +174,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getTargetForeignKey()
     {
@@ -200,7 +200,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the source table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getForeignKey()
     {

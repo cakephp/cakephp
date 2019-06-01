@@ -34,12 +34,11 @@ use RuntimeException;
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @method string text($fieldName, array $options = [])
- * @method string number($fieldName, array $options = [])
- * @method string email($fieldName, array $options = [])
- * @method string password($fieldName, array $options = [])
- * @method string search($fieldName, array $options = [])
- *
+ * @method string text(string $fieldName, array $options = [])
+ * @method string number(string $fieldName, array $options = [])
+ * @method string email(string $fieldName, array $options = [])
+ * @method string password(string $fieldName, array $options = [])
+ * @method string search(string $fieldName, array $options = [])
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/3.0/en/views/helpers/form.html
@@ -2530,7 +2529,7 @@ class FormHelper extends Helper
      * Valid values are `'context'`, `'data'` and `'query'`.
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
-     * @param string|array $sources A string or a list of strings identifying a source.
+     * @param string|string[] $sources A string or a list of strings identifying a source.
      * @return $this
      */
     public function setValueSources($sources)

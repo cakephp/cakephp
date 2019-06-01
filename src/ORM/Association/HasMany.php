@@ -575,7 +575,7 @@ class HasMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the source table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getForeignKey()
     {
