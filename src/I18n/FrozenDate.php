@@ -31,7 +31,7 @@ class FrozenDate extends ChronosDate implements JsonSerializable
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::i18nFormat()`
-     * and `__toString`
+     * and `__toString`. This format is also used by `parseDateTime()`.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
