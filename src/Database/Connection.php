@@ -729,12 +729,9 @@ class Connection implements ConnectionInterface
 
             try {
                 $result = $callback($this);
-            } catch (Exception $e) {
+            } finally {
                 $this->enableForeignKeys();
-                throw $e;
             }
-
-            $this->enableForeignKeys();
 
             return $result;
         });

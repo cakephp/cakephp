@@ -72,7 +72,7 @@ class SchemaCacheTest extends TestCase
     {
         parent::tearDown();
 
-        $this->connection->cacheMetadata('_cake_model_');
+        $this->connection->cacheMetadata(false);
         unset($this->connection);
         Cache::drop('orm_cache');
     }

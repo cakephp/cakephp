@@ -59,7 +59,7 @@ class CollectionTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->connection->cacheMetadata('_cake_model_');
+        $this->connection->cacheMetadata(false);
         unset($this->connection);
     }
 
@@ -85,6 +85,7 @@ class CollectionTest extends TestCase
      */
     public function testDescribeCache()
     {
+        $this->connection->cacheMetadata('_cake_model_');
         $schema = $this->connection->getSchemaCollection();
         $table = $schema->describe('users');
 
