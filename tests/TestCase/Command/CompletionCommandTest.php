@@ -227,9 +227,9 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
         //Methods overwritten from Shell class should not be included
         $notExpected = [
             'runCommand',
-            'getOptionParser'
+            'getOptionParser',
         ];
-        foreach($notExpected as $method) {
+        foreach ($notExpected as $method) {
             $this->assertOutputNotContains($method);
         }
     }

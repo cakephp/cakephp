@@ -29,7 +29,6 @@ class SampleShell extends Shell
 {
     public $tasks = ['Sample', 'Load'];
 
-
     /**
      * main method
      *
