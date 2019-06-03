@@ -125,7 +125,7 @@ trait DateFormatTrait
      * $time->i18nFormat(Time::UNIX_TIMESTAMP_FORMAT); // outputs '1398031800'
      * ```
      *
-     * You can control the default format used by setting through `Time::setToStringFormat()`.
+     * You can control the default format used through `Time::setToStringFormat()`.
      *
      * You can read about the available IntlDateFormatter constants at
      * https://secure.php.net/manual/en/class.intldateformatter.php
@@ -145,7 +145,7 @@ trait DateFormatTrait
      * $time->i18nFormat(\IntlDateFormatter::FULL, 'Europe/Berlin', 'de-DE');
      * ```
      *
-     * You can control the default locale used by setting through `Time::setDefaultLocale()`.
+     * You can control the default locale used through `Time::setDefaultLocale()`.
      * If empty, the default will be taken from the `intl.default_locale` ini config.
      *
      * @param string|int|null $format Format string.
