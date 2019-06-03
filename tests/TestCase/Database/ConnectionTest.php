@@ -1052,9 +1052,6 @@ class ConnectionTest extends TestCase
      */
     public function testGetAndSetCacher()
     {
-        $modelCacher = Cache::pool('_cake_model_');
-        $this->assertSame($modelCacher, $this->connection->getCacher());
-
         $cacher = new NullEngine();
         $this->connection->setCacher($cacher);
         $this->assertSame($cacher, $this->connection->getCacher());
