@@ -214,7 +214,6 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
     {
         $this->exec('completion subcommands sample');
         $this->assertExitCode(Shell::CODE_SUCCESS);
-
         $expected = [
             'derp',
             'load',
@@ -224,6 +223,14 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
         ];
         foreach ($expected as $value) {
             $this->assertOutputContains($value);
+        }
+        //Methods overwritten from Shell class should not be included
+        $notExpected = [
+            'runCommand',
+            'getOptionParser',
+        ];
+        foreach ($notExpected as $method) {
+            $this->assertOutputNotContains($method);
         }
     }
 

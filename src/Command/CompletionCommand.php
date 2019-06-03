@@ -201,9 +201,12 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         // If there are no formal subcommands all methods
         // on a shell are 'subcommands'
         if (count($subcommands) === 0) {
+            $coreShellReflection = new ReflectionClass(Shell::class);
             $reflection = new ReflectionClass($shell);
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-                if ($shell->hasMethod($method->getName())) {
+                if ($shell->hasMethod($method->getName())
+                    && !$coreShellReflection->hasMethod($method->getName())
+                ) {
                     $output[] = $method->getName();
                 }
             }

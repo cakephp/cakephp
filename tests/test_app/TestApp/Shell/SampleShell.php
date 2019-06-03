@@ -22,6 +22,7 @@ declare(strict_types=1);
  */
 namespace TestApp\Shell;
 
+use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Shell;
 
 class SampleShell extends Shell
@@ -56,5 +57,21 @@ class SampleShell extends Shell
     public function returnValue()
     {
         return 99;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function runCommand(array $argv, bool $autoMethod = false, array $extra = [])
+    {
+        return parent::runCommand($argv, $autoMethod, $extra);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOptionParser(): ConsoleOptionParser
+    {
+        return parent::getOptionParser();
     }
 }
