@@ -1312,6 +1312,62 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test error on nested validation
+     *
+     * @return void
+     */
+    public function testErrorNestedValidator()
+    {
+        $this->_setupTables();
+
+        $row = new Article([
+            'title' => 'My title',
+            'options' => ['subpages' => '']
+        ]);
+        $row->setError('options', ['subpages' => ['_empty' => 'required value']]);
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $expected = ['_empty' => 'required value'];
+        $this->assertEquals($expected, $context->error('options.subpages'));
+    }
+
+    /**
+     * Test error on nested validation
+     *
+     * @return void
+     */
+    public function testErrorAssociatedNestedValidator()
+    {
+        $this->_setupTables();
+
+        $tagOne = new Tag(['name' => 'first-post']);
+        $tagTwo = new Tag(['name' => 'second-post']);
+        $tagOne->setError(
+            'metadata',
+            ['description' => ['_empty' => 'required value']]
+        );
+        $row = new Article([
+            'title' => 'My title',
+            'tags' => [
+                $tagOne,
+                $tagTwo
+            ]
+        ]);
+
+        $context = new EntityContext($this->request, [
+            'entity' => $row,
+            'table' => 'Articles',
+        ]);
+        $expected = ['_empty' => 'required value'];
+        $this->assertSame([], $context->error('tags.0.notthere'));
+        $this->assertSame([], $context->error('tags.1.notthere'));
+        $this->assertEquals($expected, $context->error('tags.0.metadata.description'));
+    }
+
+    /**
      * Setup tables for tests.
      *
      * @return void
