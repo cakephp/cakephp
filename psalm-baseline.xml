@@ -1081,7 +1081,7 @@
   </file>
   <file src="src/Event/EventDispatcherTrait.php">
     <MoreSpecificReturnType occurrences="1">
-      <code>EventInterface</code>
+      <code>Cake\Event\EventInterface</code>
     </MoreSpecificReturnType>
   </file>
   <file src="src/Form/Form.php">
@@ -1751,6 +1751,9 @@
     <InvalidArgument occurrences="1">
       <code>$key</code>
     </InvalidArgument>
+    <InvalidScalarArgument occurrences="1">
+      <code>$key</code>
+    </InvalidScalarArgument>
     <MissingClosureParamType occurrences="11">
       <code>$value</code>
       <code>$entity</code>
