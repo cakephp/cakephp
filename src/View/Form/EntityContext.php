@@ -414,7 +414,7 @@ class EntityContext implements ContextInterface
             $next = $this->_getProp($entity, $prop);
 
             // Did not dig into an entity, return the current one.
-            if (is_array($entity) && !($next instanceof EntityInterface || $entity instanceof Traversable)) {
+            if (is_array($entity) && !($next instanceof EntityInterface || $next instanceof Traversable)) {
                 return [$leafEntity, array_slice($path, $i - 1)];
             }
 
