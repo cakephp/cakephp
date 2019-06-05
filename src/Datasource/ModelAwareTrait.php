@@ -66,7 +66,7 @@ trait ModelAwareTrait
      */
     protected function _setModelClass($name)
     {
-        if (empty($this->modelClass)) {
+        if ($this->modelClass === null) {
             $this->modelClass = $name;
         }
     }
