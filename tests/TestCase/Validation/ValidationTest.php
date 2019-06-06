@@ -2549,7 +2549,8 @@ class ValidationTest extends TestCase
 
         $this->skipIf(!$File->mime(), 'Cannot determine mimeType');
 
-        $this->assertTrue('text/x-Algol68', $File->mime());
+        $this->assertEquals('text/x-Algol68', $File->mime());
+
         $this->assertTrue(Validation::mimeType($algol68, ['text/x-Algol68']));
         $this->assertTrue(Validation::mimeType($algol68, ['text/x-algol68']));
         $this->assertTrue(Validation::mimeType($algol68, ['text/X-ALGOL68']));
