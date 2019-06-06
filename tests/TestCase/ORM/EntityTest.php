@@ -1178,21 +1178,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the deprecated visibleProperties() method
-     *
-     * @return void
-     */
-    public function testVisiblePropertiesDeprecated()
-    {
-        $entity = new Entity();
-        $entity->foo = 'foo';
-        $entity->bar = 'bar';
-
-        $expected = $entity->visibleProperties();
-        $this->assertSame(['foo', 'bar'], $expected);
-    }
-
-    /**
      * Tests setting virtual properties with merging.
      *
      * @return void
