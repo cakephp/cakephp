@@ -17,12 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell;
 
 use Cake\Shell\I18nShell;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * I18nShell test.
  */
-class I18nShellTest extends TestCase
+class I18nShellTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
@@ -79,16 +79,13 @@ class I18nShellTest extends TestCase
             unlink($deDir . 'cake.po');
         }
 
-        $this->shell->getIo()->expects($this->at(0))
-            ->method('ask')
-            ->will($this->returnValue('de_DE'));
-        $this->shell->getIo()->expects($this->at(1))
-            ->method('ask')
-            ->will($this->returnValue($this->localeDir));
+        $this->exec('i18n init --verbose', [
+            'de_DE',
+            $this->localeDir,
+        ]);
 
-        $this->shell->params['verbose'] = true;
-        $this->shell->init();
-
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Generated 2 PO files');
         $this->assertFileExists($deDir . 'default.po');
         $this->assertFileExists($deDir . 'cake.po');
     }
@@ -100,9 +97,49 @@ class I18nShellTest extends TestCase
      */
     public function testGetOptionParser()
     {
-        $this->shell->loadTasks();
-        $parser = $this->shell->getOptionParser();
-        $this->assertArrayHasKey('init', $parser->subcommands());
-        $this->assertArrayHasKey('extract', $parser->subcommands());
+        $this->exec('i18n -h');
+
+        $this->assertExitSuccess();
+        $this->assertOutputContains('init');
+        $this->assertOutputContains('extract');
+    }
+
+    /**
+     * Tests main interactive mode
+     *
+     * @return void
+     */
+    public function testInteractiveQuit()
+    {
+        $this->exec('i18n', ['q']);
+        $this->assertExitSuccess();
+    }
+
+    /**
+     * Tests main interactive mode
+     *
+     * @return void
+     */
+    public function testInteractiveHelp()
+    {
+        $this->exec('i18n', ['h', 'q']);
+        $this->assertExitSuccess();
+        $this->assertOutputContains('cake i18n');
+        $this->assertOutputContains('init');
+    }
+
+    /**
+     * Tests main interactive mode
+     *
+     * @return void
+     */
+    public function testInteractiveInit()
+    {
+        $this->exec('i18n', [
+            'i',
+            'q',
+        ]);
+        $this->assertExitError();
+        $this->assertErrorContains('Invalid language code');
     }
 }
