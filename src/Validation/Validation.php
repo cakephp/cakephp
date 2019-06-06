@@ -1186,7 +1186,7 @@ class Validation
             $mimeTypes[$key] = strtolower($val);
         }
 
-        return in_array($mime, $mimeTypes);
+        return in_array(strtolower($mime), $mimeTypes);
     }
 
     /**

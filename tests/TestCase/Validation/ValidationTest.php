@@ -2538,6 +2538,25 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testMimeTypeCaseInsensitive method
+     *
+     * @return void
+     */
+    public function testMimeTypeCaseInsensitive()
+    {
+        $algol68 = CORE_TESTS . 'Fixture/sample.a68';
+        $File = new File($algol68, false);
+
+        $this->skipIf($File->mime() != 'text/x-Algol68', 'Cannot determine text/x-Algol68 mimeType');
+
+        $this->assertTrue(Validation::mimeType($algol68, ['text/x-Algol68']));
+        $this->assertTrue(Validation::mimeType($algol68, ['text/x-algol68']));
+        $this->assertTrue(Validation::mimeType($algol68, ['text/X-ALGOL68']));
+
+        $this->assertFalse(Validation::mimeType($algol68, ['image/png']));
+    }
+
+    /**
      * Test mimetype with a PSR7 object
      *
      * @return void
