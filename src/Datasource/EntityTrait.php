@@ -556,7 +556,7 @@ trait EntityTrait
     }
 
     /**
-     * Get the list of visible properties.
+     * Gets the list of visible properties.
      *
      * The list of visible properties is all standard properties
      * plus virtual properties minus hidden properties.
@@ -564,12 +564,32 @@ trait EntityTrait
      * @return array A list of properties that are 'visible' in all
      *     representations.
      */
-    public function visibleProperties()
+    public function getVisible()
     {
         $properties = array_keys($this->_properties);
         $properties = array_merge($properties, $this->_virtual);
 
         return array_diff($properties, $this->_hidden);
+    }
+
+    /**
+     * Gets the list of visible properties.
+     *
+     * The list of visible properties is all standard properties
+     * plus virtual properties minus hidden properties.
+     *
+     * @return array A list of properties that are 'visible' in all
+     *     representations.
+     * @deprecated 3.8.0 Use getVisible() instead.
+     */
+    public function visibleProperties()
+    {
+        deprecationWarning(
+            get_called_class() . '::visibleProperties() is deprecated. ' .
+            'Use getVisible() instead.'
+        );
+
+        return $this->getVisible();
     }
 
     /**
@@ -584,7 +604,7 @@ trait EntityTrait
     public function toArray()
     {
         $result = [];
-        foreach ($this->visibleProperties() as $property) {
+        foreach ($this->getVisible() as $property) {
             $value = $this->get($property);
             if (is_array($value)) {
                 $result[$property] = [];
@@ -612,7 +632,7 @@ trait EntityTrait
      */
     public function jsonSerialize()
     {
-        return $this->extract($this->visibleProperties());
+        return $this->extract($this->getVisible());
     }
 
     /**
