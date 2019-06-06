@@ -1,0 +1,19 @@
+MODE ELEMENT = STRING;
+MODE NODE = 
+  STRUCT ( ELEMENT value, REF NODE next );
+MODE LIST = REF NODE;
+LIST empty = NIL;
+PROC append = ( REF LIST list, ELEMENT val ) VOID:
+BEGIN
+  IF list IS empty
+  THEN
+    list := HEAP NODE := ( val, empty )
+  ELSE
+    REF LIST tail := list;
+    WHILE next OF tail ISNT empty
+    DO
+      tail := next OF tail
+    OD;
+    next OF tail := HEAP NODE := ( val, empty )
+  FI
+END;

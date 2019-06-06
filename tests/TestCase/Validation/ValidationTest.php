@@ -2544,7 +2544,7 @@ class ValidationTest extends TestCase
      */
     public function testMimeTypeCaseInsensitive()
     {
-        $algol68 = CORE_TESTS . 'Fixture/sample.algol68';
+        $algol68 = CORE_TESTS . 'Fixture/sample.a68';
         $File = new File($algol68, false);
 
         $this->skipIf(!$File->mime(), 'Cannot determine mimeType');
