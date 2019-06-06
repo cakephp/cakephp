@@ -555,7 +555,6 @@ class TableSchemaTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = 'CONSTRAINT <tag_id_fk> FOREIGN KEY \(<tag_id>\) REFERENCES <tags> \(<id>\)';

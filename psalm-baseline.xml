@@ -1079,11 +1079,6 @@
       <code>object|null</code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/Event/EventDispatcherTrait.php">
-    <MoreSpecificReturnType occurrences="1">
-      <code>EventInterface</code>
-    </MoreSpecificReturnType>
-  </file>
   <file src="src/Form/Form.php">
     <PropertyNotSetInConstructor occurrences="3">
       <code>$_schema</code>
@@ -1745,6 +1740,9 @@
     <InvalidArgument occurrences="1">
       <code>$key</code>
     </InvalidArgument>
+    <InvalidScalarArgument occurrences="1">
+      <code>$key</code>
+    </InvalidScalarArgument>
     <MissingClosureParamType occurrences="11">
       <code>$value</code>
       <code>$entity</code>

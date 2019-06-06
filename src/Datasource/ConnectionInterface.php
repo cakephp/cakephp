@@ -18,6 +18,7 @@ namespace Cake\Datasource;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * This interface defines the methods you can depend on in
@@ -39,6 +40,21 @@ interface ConnectionInterface extends LoggerAwareInterface
      * @return \Psr\Log\LoggerInterface logger instance
      */
     public function getLogger(): LoggerInterface;
+
+    /**
+     * Set a cacher.
+     *
+     * @param \Psr\SimpleCache\CacheInterface $cacher Cacher object
+     * @return $this
+     */
+    public function setCacher(CacheInterface $cacher);
+
+    /**
+     * Get a cacher.
+     *
+     * @return \Psr\SimpleCache\CacheInterface $cacher Cacher object
+     */
+    public function getCacher(): CacheInterface;
 
     /**
      * Get the configuration name for this connection.

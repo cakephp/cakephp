@@ -134,7 +134,7 @@ interface RepositoryInterface
      * Returns true if there is any record in this repository matching the specified
      * conditions.
      *
-     * @param array|\ArrayAccess $conditions list of conditions to pass to the query
+     * @param array $conditions list of conditions to pass to the query
      * @return bool
      */
     public function exists($conditions): bool;

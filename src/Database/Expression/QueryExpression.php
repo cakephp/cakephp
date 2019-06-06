@@ -605,7 +605,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * as they often contain user input and arrays of strings
      * are easy to sneak in.
      *
-     * @param callable|string|array $c The callable to check.
+     * @param callable|string|array|\Cake\Database\ExpressionInterface $c The callable to check.
      * @return bool Valid callable.
      */
     public function isCallable($c): bool

@@ -35,6 +35,8 @@ class SchemacacheCommandsTest extends TestCase
      */
     public $fixtures = ['core.Articles', 'core.Tags'];
 
+    protected $connection;
+
     /**
      * setup method
      *
@@ -52,8 +54,8 @@ class SchemacacheCommandsTest extends TestCase
             ->will($this->returnValue(true));
         Cache::setConfig('orm_cache', $this->cache);
 
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata('orm_cache');
+        $this->connection = ConnectionManager::get('test');
+        $this->connection->cacheMetadata('orm_cache');
     }
 
     /**
@@ -64,10 +66,26 @@ class SchemacacheCommandsTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        Cache::drop('orm_cache');
 
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata(false);
+        $this->connection->cacheMetadata('_cake_model_');
+        unset($this->connection);
+        Cache::drop('orm_cache');
+    }
+
+    protected function getShell()
+    {
+        $io = $this->getMockBuilder(ConsoleIo::class)->getMock();
+        $shell = $this->getMockBuilder(SchemaCacheShell::class)
+            ->setConstructorArgs([$io])
+            ->setMethods(['_getSchemaCache'])
+            ->getMock();
+
+        $schemaCache = new SchemaCache($this->connection);
+        $shell->expects($this->once())
+            ->method('_getSchemaCache')
+            ->willReturn($schemaCache);
+
+        return $shell;
     }
 
     /**
@@ -77,12 +95,11 @@ class SchemacacheCommandsTest extends TestCase
      */
     public function testClearEnablesMetadataCache()
     {
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata(false);
+        $this->connection->cacheMetadata(false);
 
         $this->exec('schema_cache clear --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
     }
 
     /**
@@ -92,12 +109,11 @@ class SchemacacheCommandsTest extends TestCase
      */
     public function testBuildEnablesMetadataCache()
     {
-        $ds = ConnectionManager::get('test');
-        $ds->cacheMetadata(false);
+        $this->connection->cacheMetadata(false);
 
         $this->exec('schema_cache build --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $ds->getSchemaCollection());
+        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
     }
 
     /**
