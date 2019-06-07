@@ -89,7 +89,7 @@ trait ModelAwareTrait
      * @throws \UnexpectedValueException If $modelClass argument is not provided
      *   and ModelAwareTrait::$modelClass property value is empty.
      */
-    public function loadModel(?string $modelClass = null, ?string $modelType = null)
+    public function loadModel(?string $modelClass = null, ?string $modelType = null): RepositoryInterface
     {
         if ($modelClass === null) {
             $modelClass = $this->modelClass;
