@@ -15,16 +15,18 @@ declare(strict_types=1);
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
-namespace Cake\Shell;
+namespace Cake\Command;
 
+use Cake\Console\Arguments;
+use Cake\Console\Command;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
 use Cake\Core\Configure;
 
 /**
- * built-in Server Shell
+ * built-in Server command
  */
-class ServerShell extends Shell
+class ServerCommand extends Command
 {
     /**
      * Default ServerHost
@@ -69,28 +71,38 @@ class ServerShell extends Shell
     protected $_iniPath = '';
 
     /**
-     * Starts up the Shell and displays the welcome message.
+     * Arguments
+     *
+     * @var \Cake\Console\Arguments
+     */
+    protected $args;
+
+    /**
+     * Console IO
+     *
+     * @var \Cake\Console\ConsoleIo
+     */
+    protected $io;
+
+    /**
+     * Starts up the Command and displays the welcome message.
      * Allows for checking and configuring prior to command or main execution
      *
-     * Override this method if you want to remove the welcome information,
-     * or otherwise modify the pre-command flow.
-     *
      * @return void
-     * @link https://book.cakephp.org/3.0/en/console-and-shells.html#hook-methods
      */
-    public function startup(): void
+    protected function startup(): void
     {
-        if ($this->param('host')) {
-            $this->_host = (string)$this->param('host');
+        if ($this->args->getOption('host')) {
+            $this->_host = (string)$this->args->getOption('host');
         }
-        if ($this->param('port')) {
-            $this->_port = (int)$this->param('port');
+        if ($this->args->getOption('port')) {
+            $this->_port = (int)$this->args->getOption('port');
         }
-        if ($this->param('document_root')) {
-            $this->_documentRoot = (string)$this->param('document_root');
+        if ($this->args->getOption('document_root')) {
+            $this->_documentRoot = (string)$this->args->getOption('document_root');
         }
-        if ($this->param('ini_path')) {
-            $this->_iniPath = (string)$this->param('ini_path');
+        if ($this->args->getOption('ini_path')) {
+            $this->_iniPath = (string)$this->args->getOption('ini_path');
         }
 
         // For Windows
@@ -106,33 +118,38 @@ class ServerShell extends Shell
             $this->_iniPath = $m[1] . '\\' . $m[2];
         }
 
-        parent::startup();
+        $this->_welcome();
     }
 
     /**
-     * Displays a header for the shell
+     * Displays a header for the command
      *
      * @return void
      */
     protected function _welcome(): void
     {
-        $this->out();
-        $this->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
-        $this->hr();
-        $this->out(sprintf('App : %s', Configure::read('App.dir')));
-        $this->out(sprintf('Path: %s', APP));
-        $this->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
-        $this->out(sprintf('Ini Path: %s', $this->_iniPath));
-        $this->hr();
+        $this->io->out();
+        $this->io->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+        $this->io->hr();
+        $this->io->out(sprintf('App : %s', Configure::read('App.dir')));
+        $this->io->out(sprintf('Path: %s', APP));
+        $this->io->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
+        $this->io->out(sprintf('Ini Path: %s', $this->_iniPath));
+        $this->io->hr();
     }
 
     /**
-     * Override main() to handle action
+     * Execute.
      *
-     * @return void
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return null|int The exit code or null for success
      */
-    public function main(): void
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        $this->io = $io;
+        $this->args = $args;
+        $this->startup();
         $command = sprintf(
             'php -S %s:%d -t %s',
             $this->_host,
@@ -147,20 +164,21 @@ class ServerShell extends Shell
         $command = sprintf('%s %s', $command, escapeshellarg($this->_documentRoot . '/index.php'));
 
         $port = ':' . $this->_port;
-        $this->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
-        $this->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
+        $this->io->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
+        $this->io->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
         system($command);
+
+        return static::CODE_SUCCESS;
     }
 
     /**
-     * Gets the option parser instance and configures it.
+     * Hook method for defining this command's option parser.
      *
+     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser(): ConsoleOptionParser
+    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser = parent::getOptionParser();
-
         $parser->setDescription([
             'PHP Built-in Server for CakePHP',
             '<warning>[WARN] Don\'t use this in a production environment</warning>',
