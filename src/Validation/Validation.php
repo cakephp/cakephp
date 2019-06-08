@@ -852,6 +852,10 @@ class Validation
      */
     public static function minLength($check, $min)
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
         return mb_strlen($check) >= $min;
     }
 
@@ -864,6 +868,10 @@ class Validation
      */
     public static function maxLength($check, $max)
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
         return mb_strlen($check) <= $max;
     }
 
@@ -876,6 +884,10 @@ class Validation
      */
     public static function minLengthBytes($check, $min)
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
         return strlen($check) >= $min;
     }
 
@@ -888,6 +900,10 @@ class Validation
      */
     public static function maxLengthBytes($check, $max)
     {
+        if (!is_scalar($check)) {
+            return false;
+        }
+
         return strlen($check) <= $max;
     }
 
