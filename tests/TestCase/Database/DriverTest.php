@@ -48,7 +48,7 @@ class DriverTest extends TestCase
      */
     public function testConstructorException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Please pass "username" instead of "login" for connecting to the database');
         $arg = ['login' => 'Bear'];
         $this->getMockForAbstractClass(Driver::class, [$arg]);

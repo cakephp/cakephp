@@ -249,7 +249,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
             'i18n extract ' .
             '--extract-core=no ' .
             '--plugin=TestPlugin ' .
-            '--output=' . $this->path . DS,
+            '--output=' . $this->path . DS
         );
         $this->assertExitSuccess();
 
@@ -273,7 +273,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
             'i18n extract ' .
             '--extract-core=no ' .
             '--plugin=Company/TestPluginThree ' .
-            '--output=' . $this->path . DS,
+            '--output=' . $this->path . DS
         );
         $this->assertExitSuccess();
 
@@ -301,7 +301,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
             '--extract-core=no ' .
             '--overwrite ' .
             '--paths=' . TEST_APP . 'TestApp/ ' .
-            '--output=' . $this->path . DS,
+            '--output=' . $this->path . DS
         );
         $this->assertExitSuccess();
 
@@ -321,7 +321,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
             'i18n extract ' .
             '--extract-core=yes ' .
             '--paths=' . TEST_APP . 'TestApp/ ' .
-            '--output=' . $this->path . DS,
+            '--output=' . $this->path . DS
         );
         $this->assertExitSuccess();
 
@@ -348,7 +348,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
             '--merge=no ' .
             '--extract-core=no ' .
             '--paths=' . TEST_APP . 'templates/Pages ' .
-            '--output=' . $this->path . DS,
+            '--output=' . $this->path . DS
         );
         $this->assertExitSuccess();
         $this->assertErrorContains('Invalid marker content in');
@@ -367,7 +367,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
             '--relative-paths ' .
             '--extract-core=no ' .
             '--paths=' . TEST_APP . 'templates ' .
-            '--output=' . $this->path . DS,
+            '--output=' . $this->path . DS
         );
         $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
