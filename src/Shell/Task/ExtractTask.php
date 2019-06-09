@@ -184,12 +184,12 @@ class ExtractTask extends Shell
         if (!empty($this->params['exclude'])) {
             $this->_exclude = explode(',', $this->params['exclude']);
         }
-        if (isset($this->params['files']) && !is_array($this->params['files'])) {
+        if (!empty($this->params['files']) && !is_array($this->params['files'])) {
             $this->_files = explode(',', $this->params['files']);
         }
-        if (isset($this->params['paths'])) {
+        if (!empty($this->params['paths'])) {
             $this->_paths = explode(',', $this->params['paths']);
-        } elseif (isset($this->params['plugin'])) {
+        } elseif (!empty($this->params['plugin'])) {
             $plugin = Inflector::camelize($this->params['plugin']);
             if (!Plugin::isLoaded($plugin)) {
                 throw new MissingPluginException(['plugin' => $plugin]);
@@ -251,7 +251,7 @@ class ExtractTask extends Shell
             }
         }
 
-        if (isset($this->params['merge'])) {
+        if (!empty($this->params['merge'])) {
             $this->_merge = !(strtolower((string)$this->params['merge']) === 'no');
         } else {
             $this->out();

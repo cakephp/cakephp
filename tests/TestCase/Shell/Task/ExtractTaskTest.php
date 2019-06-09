@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Shell\Task;
 
 use Cake\Filesystem\Folder;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
  * ExtractTaskTest class
@@ -26,7 +26,7 @@ use Cake\TestSuite\TestCase;
  * @property \Cake\Console\ConsoleIo|MockObject $io
  * @property string $path
  */
-class ExtractTaskTest extends TestCase
+class ExtractTaskTest extends ConsoleIntegrationTestCase
 {
     /**
      * setUp method
@@ -36,19 +36,6 @@ class ExtractTaskTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $progress = $this->getMockBuilder('Cake\Shell\Helper\ProgressHelper')
-            ->setConstructorArgs([$this->io])
-            ->getMock();
-        $this->io->method('helper')
-            ->will($this->returnValue($progress));
-
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
-            ->setMethods(['in', 'out', 'err', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
         $this->path = TMP . 'tests/extract_task_test';
         new Folder($this->path . DS . 'locale', true);
     }
@@ -75,17 +62,14 @@ class ExtractTaskTest extends TestCase
      */
     public function testExecute()
     {
-        $this->Task->params['paths'] = TEST_APP . 'templates' . DS . 'Pages';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->params['merge'] = 'no';
-
-        $this->Task->expects($this->never())->method('err');
-        $this->Task->expects($this->any())->method('in')
-            ->will($this->returnValue('y'));
-        $this->Task->expects($this->never())->method('_stop');
-
-        $this->Task->main();
+        $this->exec(
+            'i18n extract ' .
+            '--merge=no ' .
+            '--extract-core=no ' .
+            '--paths=' . TEST_APP . 'templates' . DS . 'Pages ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -146,17 +130,14 @@ class ExtractTaskTest extends TestCase
      */
     public function testExecuteMerge()
     {
-        $this->Task->params['paths'] = TEST_APP . 'templates' . DS . 'Pages';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->params['merge'] = 'yes';
-
-        $this->Task->expects($this->never())->method('err');
-        $this->Task->expects($this->any())->method('in')
-            ->will($this->returnValue('y'));
-        $this->Task->expects($this->never())->method('_stop');
-
-        $this->Task->main();
+        $this->exec(
+            'i18n extract ' .
+            '--merge=yes ' .
+            '--extract-core=no ' .
+            '--paths=' . TEST_APP . 'templates' . DS . 'Pages ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
         $this->assertFileNotExists($this->path . DS . 'cake.pot');
         $this->assertFileNotExists($this->path . DS . 'domain.pot');
@@ -169,17 +150,14 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractWithExclude()
     {
-        $this->Task->interactive = false;
-
-        $this->Task->params['paths'] = TEST_APP . 'templates';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['exclude'] = 'Pages,Layout';
-        $this->Task->params['extract-core'] = 'no';
-
-        $this->Task->expects($this->any())->method('in')
-            ->will($this->returnValue('y'));
-
-        $this->Task->main();
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--exclude=Pages,Layout ' .
+            '--paths=' . TEST_APP . 'templates' . DS . ' ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -197,17 +175,15 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractWithoutLocations()
     {
-        $this->Task->params['paths'] = TEST_APP . 'templates';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['exclude'] = 'Pages,Layout';
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->params['no-location'] = true;
-
-        $this->Task->expects($this->never())->method('err');
-        $this->Task->expects($this->any())->method('in')
-            ->will($this->returnValue('y'));
-
-        $this->Task->main();
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--no-location=true ' .
+            '--exclude=Pages,Layout ' .
+            '--paths=' . TEST_APP . 'templates' . DS . ' ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
 
         $result = file_get_contents($this->path . DS . 'default.pot');
@@ -223,18 +199,15 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractMultiplePaths()
     {
-        $this->Task->interactive = false;
-
-        $this->Task->params['paths'] =
-            TEST_APP . 'templates/Pages,' .
-            TEST_APP . 'templates/Posts';
-
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->expects($this->never())->method('err');
-        $this->Task->expects($this->never())->method('_stop');
-        $this->Task->main();
-
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--exclude=Pages,Layout ' .
+            '--paths=' . TEST_APP . 'templates/Pages,' .
+                TEST_APP . 'templates/Posts ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $pattern = '/msgid "Add User"/';
@@ -249,19 +222,15 @@ class ExtractTaskTest extends TestCase
     public function testExtractExcludePlugins()
     {
         static::setAppNamespace();
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
-            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
-        $this->Task->expects($this->exactly(1))
-            ->method('_isExtractingApp')
-            ->will($this->returnValue(true));
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--exclude-plugins=true ' .
+            '--paths=' . TEST_APP . 'TestApp/ ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
 
-        $this->Task->params['paths'] = TEST_APP . 'TestApp/';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['exclude-plugins'] = true;
-
-        $this->Task->main();
         $result = file_get_contents($this->path . DS . 'default.pot');
         $this->assertNotRegExp('#TestPlugin#', $result);
     }
@@ -276,15 +245,14 @@ class ExtractTaskTest extends TestCase
         static::setAppNamespace();
         $this->loadPlugins(['TestPlugin']);
 
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
-            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--plugin=TestPlugin ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
 
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['plugin'] = 'TestPlugin';
-
-        $this->Task->main();
         $result = file_get_contents($this->path . DS . 'default.pot');
         $this->assertNotRegExp('#Pages#', $result);
         $this->assertRegExp('/translate\.php:\d+/', $result);
@@ -301,15 +269,14 @@ class ExtractTaskTest extends TestCase
         static::setAppNamespace();
         $this->loadPlugins(['Company/TestPluginThree']);
 
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
-            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--plugin=Company/TestPluginThree ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
 
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['plugin'] = 'Company/TestPluginThree';
-
-        $this->Task->main();
         $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
         $this->assertNotRegExp('#Pages#', $result);
         $this->assertRegExp('/default\.php:\d+/', $result);
@@ -317,25 +284,27 @@ class ExtractTaskTest extends TestCase
     }
 
     /**
-     *  Test that the extract shell overwrites existing files with the overwrite parameter
+     * Test that the extract shell overwrites existing files with the overwrite parameter
      *
      * @return void
      */
     public function testExtractOverwrite()
     {
         static::setAppNamespace();
-        $this->Task->interactive = false;
-
-        $this->Task->params['paths'] = TEST_APP . 'TestApp/';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->params['overwrite'] = true;
 
         file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
         $this->assertFileExists($this->path . DS . 'default.pot');
         $original = file_get_contents($this->path . DS . 'default.pot');
 
-        $this->Task->main();
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=no ' .
+            '--overwrite ' .
+            '--paths=' . TEST_APP . 'TestApp/ ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
+
         $result = file_get_contents($this->path . DS . 'default.pot');
         $this->assertNotEquals($original, $result);
     }
@@ -348,13 +317,14 @@ class ExtractTaskTest extends TestCase
     public function testExtractCore()
     {
         static::setAppNamespace();
-        $this->Task->interactive = false;
+        $this->exec(
+            'i18n extract ' .
+            '--extract-core=yes ' .
+            '--paths=' . TEST_APP . 'TestApp/ ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
 
-        $this->Task->params['paths'] = TEST_APP . 'TestApp/';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'yes';
-
-        $this->Task->main();
         $this->assertFileExists($this->path . DS . 'cake.pot');
         $result = file_get_contents($this->path . DS . 'cake.pot');
 
@@ -372,27 +342,17 @@ class ExtractTaskTest extends TestCase
      */
     public function testMarkerErrorSets()
     {
-        $this->Task->method('err')
-            ->will($this->returnCallback([$this, 'echoTest']));
-
-        $this->Task->params['paths'] = TEST_APP . 'templates' . DS . 'Pages';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->params['merge'] = 'no';
-        $this->Task->params['marker-error'] = true;
-
-        $this->expectOutputRegex('/.*Invalid marker content in .*extract\.php.*/');
-        $this->Task->main();
-    }
-
-    /**
-     * A useful function to mock/replace err or out function that allows to use expectOutput
-     * @param string $val
-     * @param int $nbLines
-     */
-    public function echoTest($val = '', $nbLines = 1)
-    {
-        echo $val . str_repeat(PHP_EOL, $nbLines);
+        $this->exec(
+            'i18n extract ' .
+            '--marker-error ' .
+            '--merge=no ' .
+            '--extract-core=no ' .
+            '--paths=' . TEST_APP . 'templates/Pages ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
+        $this->assertErrorContains('Invalid marker content in');
+        $this->assertErrorContains('extract.php');
     }
 
     /**
@@ -402,17 +362,14 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractWithRelativePaths()
     {
-        $this->Task->interactive = false;
-
-        $this->Task->params['paths'] = TEST_APP . 'templates';
-        $this->Task->params['output'] = $this->path . DS;
-        $this->Task->params['extract-core'] = 'no';
-        $this->Task->params['relative-paths'] = true;
-
-        $this->Task->method('in')
-            ->will($this->returnValue('y'));
-
-        $this->Task->main();
+        $this->exec(
+            'i18n extract ' .
+            '--relative-paths ' .
+            '--extract-core=no ' .
+            '--paths=' . TEST_APP . 'templates ' .
+            '--output=' . $this->path . DS
+        );
+        $this->assertExitSuccess();
         $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
