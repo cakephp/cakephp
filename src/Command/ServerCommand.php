@@ -71,38 +71,26 @@ class ServerCommand extends Command
     protected $_iniPath = '';
 
     /**
-     * Arguments
-     *
-     * @var \Cake\Console\Arguments
-     */
-    protected $args;
-
-    /**
-     * Console IO
-     *
-     * @var \Cake\Console\ConsoleIo
-     */
-    protected $io;
-
-    /**
      * Starts up the Command and displays the welcome message.
      * Allows for checking and configuring prior to command or main execution
      *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
      * @return void
      */
-    protected function startup(): void
+    protected function startup(Arguments $args, ConsoleIo $io): void
     {
-        if ($this->args->getOption('host')) {
-            $this->_host = (string)$this->args->getOption('host');
+        if ($args->getOption('host')) {
+            $this->_host = (string)$args->getOption('host');
         }
-        if ($this->args->getOption('port')) {
-            $this->_port = (int)$this->args->getOption('port');
+        if ($args->getOption('port')) {
+            $this->_port = (int)$args->getOption('port');
         }
-        if ($this->args->getOption('document_root')) {
-            $this->_documentRoot = (string)$this->args->getOption('document_root');
+        if ($args->getOption('document_root')) {
+            $this->_documentRoot = (string)$args->getOption('document_root');
         }
-        if ($this->args->getOption('ini_path')) {
-            $this->_iniPath = (string)$this->args->getOption('ini_path');
+        if ($args->getOption('ini_path')) {
+            $this->_iniPath = (string)$args->getOption('ini_path');
         }
 
         // For Windows
@@ -118,24 +106,14 @@ class ServerCommand extends Command
             $this->_iniPath = $m[1] . '\\' . $m[2];
         }
 
-        $this->_welcome();
-    }
-
-    /**
-     * Displays a header for the command
-     *
-     * @return void
-     */
-    protected function _welcome(): void
-    {
-        $this->io->out();
-        $this->io->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
-        $this->io->hr();
-        $this->io->out(sprintf('App : %s', Configure::read('App.dir')));
-        $this->io->out(sprintf('Path: %s', APP));
-        $this->io->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
-        $this->io->out(sprintf('Ini Path: %s', $this->_iniPath));
-        $this->io->hr();
+        $io->out();
+        $io->out(sprintf('<info>Welcome to CakePHP %s Console</info>', 'v' . Configure::version()));
+        $io->hr();
+        $io->out(sprintf('App : %s', Configure::read('App.dir')));
+        $io->out(sprintf('Path: %s', APP));
+        $io->out(sprintf('DocumentRoot: %s', $this->_documentRoot));
+        $io->out(sprintf('Ini Path: %s', $this->_iniPath));
+        $io->hr();
     }
 
     /**
@@ -147,9 +125,7 @@ class ServerCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $this->io = $io;
-        $this->args = $args;
-        $this->startup();
+        $this->startup($args, $io);
         $command = sprintf(
             'php -S %s:%d -t %s',
             $this->_host,
@@ -164,8 +140,8 @@ class ServerCommand extends Command
         $command = sprintf('%s %s', $command, escapeshellarg($this->_documentRoot . '/index.php'));
 
         $port = ':' . $this->_port;
-        $this->io->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
-        $this->io->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
+        $io->out(sprintf('built-in server is running in http://%s%s/', $this->_host, $port));
+        $io->out(sprintf('You can exit with <info>`CTRL-C`</info>'));
         system($command);
 
         return static::CODE_SUCCESS;
