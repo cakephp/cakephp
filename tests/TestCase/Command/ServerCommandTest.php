@@ -14,15 +14,15 @@ declare(strict_types=1);
  * @since         3.1.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
-use Cake\Shell\ServerShell;
+use Cake\Command\ServerCommand;
 use Cake\TestSuite\TestCase;
 
 /**
  * ServerShell test.
  */
-class ServerShellTest extends TestCase
+class ServerCommandTest extends TestCase
 {
     /**
      * setup method
@@ -33,7 +33,7 @@ class ServerShellTest extends TestCase
     {
         parent::setUp();
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new ServerShell($this->io);
+        $this->command = new ServerCommand($this->io);
     }
 
     /**
@@ -43,7 +43,7 @@ class ServerShellTest extends TestCase
      */
     public function testGetOptionParser()
     {
-        $parser = $this->shell->getOptionParser();
+        $parser = $this->command->getOptionParser();
         $options = $parser->options();
         $this->assertArrayHasKey('host', $options);
         $this->assertArrayHasKey('port', $options);
