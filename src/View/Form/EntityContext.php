@@ -313,11 +313,12 @@ class EntityContext implements ContextInterface
     }
 
     /**
-     * Fetch the leaf entity for the given path.
+     * Fetch the entity or data value for a given path
      *
-     * This method will traverse the given path and find the leaf
-     * entity. If the path does not contain a leaf entity false
-     * will be returned.
+     * This method will traverse the given path and find the entity
+     * or array value for a given path.
+     *
+     * If you only want the terminal Entity for a path use `leafEntity` instead.
      *
      * @param array|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
@@ -349,7 +350,6 @@ class EntityContext implements ContextInterface
             $prop = $path[$i];
             $next = $this->_getProp($entity, $prop);
             $isLast = ($i === $last);
-
             if (!$isLast && $next === null && $prop !== '_ids') {
                 $table = $this->_getTable($path);
 
@@ -363,6 +363,74 @@ class EntityContext implements ContextInterface
             );
             if ($isLast || !$isTraversable) {
                 return $entity;
+            }
+            $entity = $next;
+        }
+        throw new RuntimeException(sprintf(
+            'Unable to fetch property "%s"',
+            implode('.', $path)
+        ));
+    }
+
+    /**
+     * Fetch the terminal or leaf entity for the given path.
+     *
+     * Traverse the path until an entity cannot be found. Lists containing
+     * entities will be traversed if the first element contains an entity.
+     * Otherwise the containing Entity will be assumed to be the terminal one.
+     *
+     * @param array|null $path Each one of the parts in a path for a field name
+     *  or null to get the entity passed in constructor context.
+     * @return array Containing the found entity, and remaining un-matched path.
+     * @throws \RuntimeException When properties cannot be read.
+     */
+    protected function leafEntity($path = null)
+    {
+        if ($path === null) {
+            return $this->_context['entity'];
+        }
+
+        $oneElement = count($path) === 1;
+        if ($oneElement && $this->_isCollection) {
+            throw new RuntimeException(sprintf(
+                'Unable to fetch property "%s"',
+                implode('.', $path)
+            ));
+        }
+        $entity = $this->_context['entity'];
+        if ($oneElement) {
+            return [$entity, $path];
+        }
+
+        if ($path[0] === $this->_rootName) {
+            $path = array_slice($path, 1);
+        }
+
+        $len = count($path);
+        $last = $len - 1;
+        $leafEntity = $entity;
+        for ($i = 0; $i < $len; $i++) {
+            $prop = $path[$i];
+            $next = $this->_getProp($entity, $prop);
+
+            // Did not dig into an entity, return the current one.
+            if (is_array($entity) && !($next instanceof EntityInterface || $next instanceof Traversable)) {
+                return [$leafEntity, array_slice($path, $i - 1)];
+            }
+
+            if ($next instanceof EntityInterface) {
+                $leafEntity = $next;
+            }
+
+            // If we are at the end of traversable elements
+            // return the last entity found.
+            $isTraversable = (
+                is_array($next) ||
+                $next instanceof Traversable ||
+                $next instanceof EntityInterface
+            );
+            if (!$isTraversable) {
+                return [$leafEntity, array_slice($path, $i)];
             }
             $entity = $next;
         }
@@ -632,9 +700,21 @@ class EntityContext implements ContextInterface
     public function error($field)
     {
         $parts = explode('.', $field);
-        $entity = $this->entity($parts);
+        try {
+            list($entity, $remainingParts) = $this->leafEntity($parts);
+        } catch (RuntimeException $e) {
+            return [];
+        }
+        if (count($remainingParts) === 0) {
+            return $entity->getErrors();
+        }
 
         if ($entity instanceof EntityInterface) {
+            $error = $entity->getError(implode('.', $remainingParts));
+            if ($error) {
+                return $error;
+            }
+
             return $entity->getError(array_pop($parts));
         }
 
