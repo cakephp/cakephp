@@ -102,8 +102,12 @@
         "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml",
-        "stan": "phpstan.phar analyse src/ && psalm.phar --show-info=false",
+        "phpstan": "phpstan.phar analyse src/",
         "psalm": "psalm.phar --show-info=false",
+        "stan": [
+            "@phpstan",
+            "@psalm"
+        ],
         "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan-shim:^0.11 psalm/phar:^3.3 && mv composer.backup composer.json"
     },
     "config": {
