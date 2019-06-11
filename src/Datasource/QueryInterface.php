@@ -21,13 +21,27 @@ namespace Cake\Datasource;
  * The basis for every query object
  *
  * @method $this andWhere($conditions, array $types = [])
- * @method $this select($fields = [], bool $overwrite = false)
  */
 interface QueryInterface
 {
     public const JOIN_TYPE_INNER = 'INNER';
     public const JOIN_TYPE_LEFT = 'LEFT';
     public const JOIN_TYPE_RIGHT = 'RIGHT';
+
+    /**
+     * Adds fields to be selected from datasource.
+     *
+     * Calling this function multiple times will append more fields to the list
+     * of fields to be selected.
+     *
+     * If `true` is passed in the second argument, any previous selections will
+     * be overwritten with the list passed in the first argument.
+     *
+     * @param mixed $fields Fields to be added to the list.
+     * @param bool $overwrite whether to reset fields with passed list or not
+     * @return $this
+     */
+    public function select($fields, bool $overwrite = false);
 
     /**
      * Returns a key => value array representing a single aliased field

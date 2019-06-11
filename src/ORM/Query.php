@@ -214,6 +214,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function select($fields = [], bool $overwrite = false)
     {
