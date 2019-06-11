@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.3.2@201030928de5001941a59eddce77b9d326bc1880">
+<files psalm-version="3.4.4@c21e9917fa05ba4d97da464725471f53ab4fe0d8">
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
@@ -1737,9 +1737,6 @@
     </PossiblyUndefinedMethod>
   </file>
   <file src="src/ORM/Marshaller.php">
-    <InvalidArgument occurrences="1">
-      <code>$key</code>
-    </InvalidArgument>
     <InvalidScalarArgument occurrences="1">
       <code>$key</code>
     </InvalidScalarArgument>
@@ -1920,16 +1917,6 @@
       <code>PluginShell</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Shell/ServerShell.php">
-    <DeprecatedClass occurrences="3">
-      <code>Shell</code>
-      <code>parent::startup()</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>ServerShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Shell/Task/AssetsTask.php">
     <DeprecatedClass occurrences="2">
       <code>Shell</code>
@@ -2028,11 +2015,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$other</code>
     </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/TestSuite/Constraint/Email/MailConstraintBase.php">
-    <MissingPropertyType occurrences="1">
-      <code>$at</code>
-    </MissingPropertyType>
   </file>
   <file src="src/TestSuite/Constraint/Email/MailContains.php">
     <PropertyNotSetInConstructor occurrences="1">
