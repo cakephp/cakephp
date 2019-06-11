@@ -83,9 +83,9 @@ trait SqlserverDialectTrait
     /**
      * Get the version of SQLserver we are connected to.
      *
-     * @return int
+     * @return string
      */
-    protected function version(): int
+    protected function version(): string
     {
         $this->connect();
 
