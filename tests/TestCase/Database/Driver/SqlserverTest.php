@@ -259,7 +259,7 @@ class SqlserverTest extends TestCase
             ->setConstructorArgs([[]])
             ->getMock();
         $driver->method('version')
-            ->will($this->returnValue(12));
+            ->will($this->returnValue('12'));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
@@ -309,7 +309,7 @@ class SqlserverTest extends TestCase
             ->getMock();
         $driver->expects($this->any())
             ->method('version')
-            ->will($this->returnValue(8));
+            ->will($this->returnValue('8'));
 
         $connection = $this->getMockBuilder('Cake\Database\Connection')
             ->setMethods(['connect', 'getDriver', 'setDriver'])
