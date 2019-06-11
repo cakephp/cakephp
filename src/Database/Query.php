@@ -22,7 +22,6 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\Datasource\QueryInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
@@ -36,6 +35,10 @@ use RuntimeException;
 class Query implements ExpressionInterface, IteratorAggregate
 {
     use TypeMapTrait;
+
+    public const JOIN_TYPE_INNER = 'INNER';
+    public const JOIN_TYPE_LEFT = 'LEFT';
+    public const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
      * Connection instance to be used to execute this query.
@@ -647,7 +650,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;
-            $joins[$alias ?: $i++] = $t + ['type' => QueryInterface::JOIN_TYPE_INNER, 'alias' => $alias];
+            $joins[$alias ?: $i++] = $t + ['type' => static::JOIN_TYPE_INNER, 'alias' => $alias];
         }
 
         if ($overwrite) {
@@ -717,7 +720,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function leftJoin($table, $conditions = [], $types = [])
     {
-        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_LEFT), $types);
+        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
         return $this;
     }
@@ -739,7 +742,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function rightJoin($table, $conditions = [], $types = [])
     {
-        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_RIGHT), $types);
+        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
         return $this;
     }
@@ -761,7 +764,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function innerJoin($table, $conditions = [], $types = [])
     {
-        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_INNER), $types);
+        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
         return $this;
     }

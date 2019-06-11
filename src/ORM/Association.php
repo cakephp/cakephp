@@ -21,7 +21,6 @@ use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -161,7 +160,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_joinType = QueryInterface::JOIN_TYPE_LEFT;
+    protected $_joinType = Query::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
