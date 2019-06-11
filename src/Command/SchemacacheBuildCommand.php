@@ -30,6 +30,16 @@ use RuntimeException;
 class SchemacacheBuildCommand extends Command
 {
     /**
+     * Get the command name.
+     *
+     * @return string
+     */
+    public static function getDefaultName(): string
+    {
+        return 'schema_cache build';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
