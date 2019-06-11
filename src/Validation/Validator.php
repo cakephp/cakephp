@@ -633,13 +633,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->allowEmpty('email');
      *
      * // Email can be empty on create
-     * $validator->allowEmpty('email', 'create');
+     * $validator->allowEmpty('email', Validator::WHEN_CREATE);
      *
      * // Email can be empty on update
-     * $validator->allowEmpty('email', 'update');
+     * $validator->allowEmpty('email', Validator::WHEN_UPDATE);
      *
      * // Email and subject can be empty on update
-     * $validator->allowEmpty(['email', 'subject'], 'update');
+     * $validator->allowEmpty(['email', 'subject'], Validator::WHEN_UPDATE;
      *
      * // Email can be always empty, subject and content can be empty on update.
      * $validator->allowEmpty(
@@ -652,7 +652,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          ],
      *          'subject'
      *      ],
-     *      'update'
+     *      Validator::WHEN_UPDATE
      * );
      * ```
      *
@@ -724,10 +724,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->allowEmptyFor('email', Validator::EMPTY_STRING);
      *
      * // Email can be empty on create
-     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, 'create');
+     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, Validator::WHEN_CREATE);
      *
      * // Email can be empty on update
-     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, 'update');
+     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, Validator::WHEN_UPDATE);
      * ```
      *
      * It is possible to conditionally allow emptiness on a field by passing a callback
@@ -1083,10 +1083,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->notEmpty('email', $message, 'create');
      *
      * // Email can be empty on create, but required on update.
-     * $validator->notEmpty('email', $message, 'update');
+     * $validator->notEmpty('email', $message, Validator::WHEN_UPDATE);
      *
      * // Email and title can be empty on create, but are required on update.
-     * $validator->notEmpty(['email', 'title'], $message, 'update');
+     * $validator->notEmpty(['email', 'title'], $message, Validator::WHEN_UPDATE);
      *
      * // Email can be empty on create, title must always be not empty
      * $validator->notEmpty(
@@ -1098,7 +1098,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          ]
      *      ],
      *      $message,
-     *      'update'
+     *      Validator::WHEN_UPDATE
      * );
      * ```
      *
@@ -1162,8 +1162,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function invertWhenClause($when)
     {
-        if ($when === 'create' || $when === 'update') {
-            return $when === 'create' ? 'update' : 'create';
+        if ($when === static::WHEN_CREATE || $when === static::WHEN_UPDATE) {
+            return $when === static::WHEN_CREATE ? static::WHEN_UPDATE : static::WHEN_CREATE;
         }
         if (is_callable($when)) {
             return function ($context) use ($when) {

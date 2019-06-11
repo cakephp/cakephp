@@ -170,9 +170,8 @@ class ValidationRule
 
         $newRecord = $context['newRecord'];
         if (!empty($this->_on)) {
-            if (($this->_on === 'create' && !$newRecord) || ($this->_on === 'update' && $newRecord)) {
-                return true;
-            }
+            return ($this->_on === Validator::WHEN_CREATE && !$newRecord)
+                || ($this->_on === Validator::WHEN_UPDATE && $newRecord);
         }
 
         return false;
