@@ -78,6 +78,10 @@ Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The [README](https://github.com/cakephp/cakephp-codesniffer/blob/master/README.md) contains installation info
 for the sniff and phpcs.
 
+## Issue triage [![Open Source Helpers](https://www.codetriage.com/cakephp/cakephp/badges/users.svg)](https://www.codetriage.com/cakephp/cakephp)
+
+You can contribute by triaging issues which may include reproducing bug reports or asking for vital information, such as version numbers or reproduction instructions. If you would like to start triaging issues, one easy way to get started is to [subscribe to cakephp on CodeTriage](https://www.codetriage.com/cakephp/cakephp).
+
 ## Reporting a Security Issue
 
 If you've found a security related issue in CakePHP, please don't open an issue in github. Instead contact us at security@cakephp.org. For more information on how we handle security issues, [see the CakePHP Security Issue Process](https://book.cakephp.org/3.0/en/contributing/tickets.html#reporting-security-issues).
