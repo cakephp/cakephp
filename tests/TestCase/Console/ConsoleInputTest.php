@@ -48,6 +48,13 @@ class ConsoleInputTest extends TestCase
             'Skip ConsoleInput tests on Windows as they fail on AppVeyor.'
         );
 
-        $this->assertFalse($this->in->dataAvailable());
+        try {
+            $this->assertFalse($this->in->dataAvailable());
+        } catch (ConsoleException $e) {
+            $this->markTestSkipped(
+                'stream_select raised an exception. ' .
+                'This can happen when FD_SETSIZE is too small.'
+            );
+        }
     }
 }
