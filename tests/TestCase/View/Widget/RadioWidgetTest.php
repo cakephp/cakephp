@@ -797,6 +797,7 @@ class RadioWidgetTest extends TestCase
             'name' => 'field',
             'options' => ['value1', 'value2'],
             'id' => 'alternative-id',
+            'idPrefix' => 'willBeIgnored',
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -809,6 +810,28 @@ class RadioWidgetTest extends TestCase
             [
                 'label' => ['for' => 'alternative-id-1'],
                 'input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'alternative-id-1'],
+            ],
+            'value2',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $data = [
+            'name' => 'field',
+            'options' => ['value1', 'value2'],
+            'idPrefix' => 'formprefix',
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            [
+                'label' => ['for' => 'formprefix-field-0'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'formprefix-field-0'],
+            ],
+            'value1',
+            '/label',
+            [
+                'label' => ['for' => 'formprefix-field-1'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'formprefix-field-1'],
             ],
             'value2',
             '/label',

@@ -665,6 +665,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'name' => 'field',
             'options' => ['value1', 'value2'],
             'id' => 'alternative-id',
+            'idPrefix' => 'willBeIgnored',
         ];
         $result = $input->render($data, $this->context);
         $expected = [
@@ -680,6 +681,32 @@ class MultiCheckboxWidgetTest extends TestCase
                 'div' => ['class' => 'checkbox'],
                 'input' => ['type' => 'checkbox', 'name' => 'field[]', 'value' => '1', 'id' => 'alternative-id-1'],
                 'label' => ['for' => 'alternative-id-1'],
+            ],
+            'value2',
+            '/label',
+            '/div',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $data = [
+            'name' => 'field',
+            'options' => ['value1', 'value2'],
+            'idPrefix' => 'formprefix',
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            [
+                'div' => ['class' => 'checkbox'],
+                'input' => ['type' => 'checkbox', 'name' => 'field[]', 'value' => '0', 'id' => 'formprefix-field-0'],
+                'label' => ['for' => 'formprefix-field-0'],
+            ],
+            'value1',
+            '/label',
+            '/div',
+            [
+                'div' => ['class' => 'checkbox'],
+                'input' => ['type' => 'checkbox', 'name' => 'field[]', 'value' => '1', 'id' => 'formprefix-field-1'],
+                'label' => ['for' => 'formprefix-field-1'],
             ],
             'value2',
             '/label',
