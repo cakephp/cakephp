@@ -780,4 +780,39 @@ class RadioWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
     }
+
+    /**
+     * testRenderExplicitId method
+     *
+     * Test that the id passed is actually used
+     * Issue: https://github.com/cakephp/cakephp/issues/13342
+     *
+     * @return void
+     */
+    public function testRenderExplicitId()
+    {
+        $label = new NestingLabelWidget($this->templates);
+        $input = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'field',
+            'options' => ['value1', 'value2'],
+            'id' => 'alternative-id',
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            [
+                'label' => ['for' => 'alternative-id-0'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'alternative-id-0'],
+            ],
+            'value1',
+            '/label',
+            [
+                'label' => ['for' => 'alternative-id-1'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'alternative-id-1'],
+            ],
+            'value2',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
 }
