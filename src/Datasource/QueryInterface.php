@@ -24,10 +24,6 @@ namespace Cake\Datasource;
  */
 interface QueryInterface
 {
-    public const JOIN_TYPE_INNER = 'INNER';
-    public const JOIN_TYPE_LEFT = 'LEFT';
-    public const JOIN_TYPE_RIGHT = 'RIGHT';
-
     /**
      * Adds fields to be selected from datasource.
      *

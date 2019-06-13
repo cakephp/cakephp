@@ -21,9 +21,9 @@ use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
@@ -48,7 +48,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected $_joinType = QueryInterface::JOIN_TYPE_INNER;
+    protected $_joinType = Query::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
