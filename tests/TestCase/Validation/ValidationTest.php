@@ -2080,6 +2080,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::maxLength('abcd', 3));
         $this->assertFalse(Validation::maxLength('ÆΔΩЖÇ', 3));
+        $this->assertFalse(Validation::maxLength(['abc'], 10));
     }
 
     /**
@@ -2096,6 +2097,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::maxLengthBytes('abcd', 3));
         $this->assertFalse(Validation::maxLengthBytes('ÆΔΩЖÇ', 9));
+        $this->assertFalse(Validation::maxLengthBytes(['abc'], 10));
     }
 
     /**
@@ -2111,6 +2113,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLength('abc', 3));
         $this->assertTrue(Validation::minLength('abcd', 3));
         $this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
+
+        $this->assertFalse(Validation::minLength(['abc'], 1));
     }
 
     /**
@@ -2127,6 +2131,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLengthBytes('abcd', 3));
         $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 10));
         $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 9));
+
+        $this->assertFalse(Validation::minLengthBytes(['abc'], 1));
     }
 
     /**
