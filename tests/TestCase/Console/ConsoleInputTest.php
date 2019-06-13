@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleInput;
+use Cake\Console\Exception\ConsoleException;
 use Cake\TestSuite\TestCase;
 
 /**
