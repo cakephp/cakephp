@@ -14,19 +14,17 @@ declare(strict_types=1);
  * @since         1.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell\Task;
+namespace Cake\Test\TestCase\Command;
 
+use Cake\Core\Configure;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * ExtractTaskTest class
+ * I18nExtractCommandTest
  *
- * @property \Cake\Shell\Task\ExtractTask|MockObject $Task
- * @property \Cake\Console\ConsoleIo|MockObject $io
- * @property string $path
  */
-class ExtractTaskTest extends ConsoleIntegrationTestCase
+class I18nExtractCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setUp method
@@ -36,6 +34,9 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->useCommandRunner();
+        $this->setAppNamespace();
+
         $this->path = TMP . 'tests/extract_task_test';
         new Folder($this->path . DS . 'locale', true);
     }
@@ -48,7 +49,6 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        unset($this->Task);
 
         $Folder = new Folder($this->path);
         $Folder->delete();
@@ -242,8 +242,7 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
      */
     public function testExtractPlugin()
     {
-        static::setAppNamespace();
-        $this->loadPlugins(['TestPlugin']);
+        Configure::write('Plugins.autoload', ['TestPlugin']);
 
         $this->exec(
             'i18n extract ' .
@@ -266,7 +265,6 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
      */
     public function testExtractVendoredPlugin()
     {
-        static::setAppNamespace();
         $this->loadPlugins(['Company/TestPluginThree']);
 
         $this->exec(
@@ -290,8 +288,6 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
      */
     public function testExtractOverwrite()
     {
-        static::setAppNamespace();
-
         file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
         $this->assertFileExists($this->path . DS . 'default.pot');
         $original = file_get_contents($this->path . DS . 'default.pot');
@@ -316,7 +312,6 @@ class ExtractTaskTest extends ConsoleIntegrationTestCase
      */
     public function testExtractCore()
     {
-        static::setAppNamespace();
         $this->exec(
             'i18n extract ' .
             '--extract-core=yes ' .

@@ -104,7 +104,7 @@ class ShellTest extends TestCase
         static::setAppNamespace();
 
         $this->loadPlugins(['TestPlugin']);
-        $this->Shell->tasks = ['Extract' => ['one', 'two']];
+        $this->Shell->tasks = ['Sample' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
         $this->Shell->initialize();
         // TestApp\Shell\ShellTestShell has $modelClass property set to 'TestPlugin.TestPluginComments'
@@ -664,11 +664,12 @@ class ShellTest extends TestCase
      */
     public function testHasTask()
     {
-        $this->Shell->tasks = ['Extract', 'Assets'];
+        $this->setAppNamespace();
+        $this->Shell->tasks = ['Sample', 'Assets'];
         $this->Shell->loadTasks();
 
-        $this->assertTrue($this->Shell->hasTask('extract'));
-        $this->assertTrue($this->Shell->hasTask('Extract'));
+        $this->assertTrue($this->Shell->hasTask('sample'));
+        $this->assertTrue($this->Shell->hasTask('Sample'));
         $this->assertFalse($this->Shell->hasTask('random'));
 
         $this->assertTrue($this->Shell->hasTask('assets'));

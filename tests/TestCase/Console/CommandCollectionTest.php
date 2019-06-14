@@ -20,11 +20,11 @@ use Cake\Command\RoutesCommand;
 use Cake\Command\VersionCommand;
 use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
-use Cake\Shell\I18nShell;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use stdClass;
 use TestApp\Command\DemoCommand;
+use TestApp\Shell\SampleShell;
 
 /**
  * Test case for the CommandCollection
@@ -45,11 +45,11 @@ class CommandCollectionTest extends TestCase
     public function testConstructor()
     {
         $collection = new CommandCollection([
-            'i18n' => I18nShell::class,
+            'sample' => SampleShell::class,
             'routes' => RoutesCommand::class,
         ]);
         $this->assertTrue($collection->has('routes'));
-        $this->assertTrue($collection->has('i18n'));
+        $this->assertTrue($collection->has('sample'));
         $this->assertCount(2, $collection);
     }
 
@@ -63,7 +63,7 @@ class CommandCollectionTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot use \'stdClass\' for command \'nope\' it is not a subclass of Cake\Console\Shell');
         new CommandCollection([
-            'i18n' => I18nShell::class,
+            'sample' => SampleShell::class,
             'nope' => stdClass::class,
         ]);
     }
@@ -103,9 +103,9 @@ class CommandCollectionTest extends TestCase
     {
         $collection = new CommandCollection();
         $this->assertSame($collection, $collection->add('routes', RoutesCommand::class));
-        $this->assertSame($collection, $collection->add('routes', I18nShell::class));
+        $this->assertSame($collection, $collection->add('routes', SampleShell::class));
         $this->assertTrue($collection->has('routes'));
-        $this->assertSame(I18nShell::class, $collection->get('routes'));
+        $this->assertSame(SampleShell::class, $collection->get('routes'));
     }
 
     /**
@@ -217,7 +217,7 @@ class CommandCollectionTest extends TestCase
     public function testGetIterator()
     {
         $in = [
-            'i18n' => I18nShell::class,
+            'sample' => SampleShell::class,
             'routes' => RoutesCommand::class,
         ];
         $collection = new CommandCollection($in);
@@ -262,7 +262,7 @@ class CommandCollectionTest extends TestCase
 
         $this->assertTrue($collection->has('version'));
         $this->assertTrue($collection->has('routes'));
-        $this->assertTrue($collection->has('i18n'));
+        $this->assertTrue($collection->has('sample'));
         $this->assertTrue($collection->has('schema_cache build'));
         $this->assertTrue($collection->has('schema_cache clear'));
         $this->assertTrue($collection->has('server'));
@@ -271,7 +271,7 @@ class CommandCollectionTest extends TestCase
 
         // These have to be strings as ::class uses the local namespace.
         $this->assertSame(RoutesCommand::class, $collection->get('routes'));
-        $this->assertSame(I18nShell::class, $collection->get('i18n'));
+        $this->assertSame(SampleShell::class, $collection->get('sample'));
         $this->assertSame(VersionCommand::class, $collection->get('version'));
     }
 
