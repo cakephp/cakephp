@@ -62,9 +62,9 @@ class I18nExtractCommand extends Command
     /**
      * Current file being processed
      *
-     * @var string|null
+     * @var string
      */
-    protected $_file;
+    protected $_file = '';
 
     /**
      * Contains all content waiting to be write
@@ -90,9 +90,9 @@ class I18nExtractCommand extends Command
     /**
      * Destination path
      *
-     * @var string|null
+     * @var string
      */
-    protected $_output;
+    protected $_output = '';
 
     /**
      * An array of directories to exclude.
@@ -136,9 +136,9 @@ class I18nExtractCommand extends Command
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths)
             );
-            $response = $io->ask($message, null, $defaultPath);
+            $response = $io->ask($message, $defaultPath);
             if (strtoupper($response) === 'Q') {
-                $this->err('Extract Aborted');
+                $io->err('Extract Aborted');
                 $this->abort();
 
                 return;
@@ -170,15 +170,15 @@ class I18nExtractCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         if ($args->getOption('exclude')) {
-            $this->_exclude = explode(',', $args->getOption('exclude'));
+            $this->_exclude = explode(',', (string)$args->getOption('exclude'));
         }
         if ($args->getOption('files')) {
-            $this->_files = explode(',', $args->getOption('files'));
+            $this->_files = explode(',', (string)$args->getOption('files'));
         }
         if ($args->getOption('paths')) {
-            $this->_paths = explode(',', $args->getOption('paths'));
+            $this->_paths = explode(',', (string)$args->getOption('paths'));
         } elseif ($args->getOption('plugin')) {
-            $plugin = Inflector::camelize($args->getOption('plugin'));
+            $plugin = Inflector::camelize((string)$args->getOption('plugin'));
             if (!Plugin::isLoaded($plugin)) {
                 throw new MissingPluginException(['plugin' => $plugin]);
             }
@@ -207,7 +207,7 @@ class I18nExtractCommand extends Command
         }
 
         if ($args->hasOption('output')) {
-            $this->_output = $args->getOption('output');
+            $this->_output = (string)$args->getOption('output');
         } elseif ($args->hasOption('plugin')) {
             $this->_output = $this->_paths[0] . 'Locale';
         } else {
@@ -215,13 +215,12 @@ class I18nExtractCommand extends Command
             while (true) {
                 $response = $io->ask(
                     $message,
-                    null,
                     rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Locale'
                 );
                 if (strtoupper($response) === 'Q') {
                     $io->err('Extract Aborted');
 
-                    return static::CODE_ERR0R;
+                    return static::CODE_ERROR;
                 }
                 if ($this->_isPathUsable($response)) {
                     $this->_output = $response . DIRECTORY_SEPARATOR;
@@ -485,12 +484,8 @@ class I18nExtractCommand extends Command
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
-                    $singular = $plural = $context = null;
-                    /**
-                     * @var string $singular
-                     * @var string|null $plural
-                     * @var string|null $context
-                     */
+                    $singular = '';
+                    $plural = $context = null;
                     extract(array_combine($map, $strings));
                     $domain = $domain ?? 'default';
                     $details = [
@@ -526,7 +521,7 @@ class I18nExtractCommand extends Command
         $paths = $this->_paths;
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
-        usort($paths, function ($a, $b) {
+        usort($paths, function (string $a, string $b) {
             return strlen($a) - strlen($b);
         });
 
@@ -628,7 +623,7 @@ class I18nExtractCommand extends Command
                 && strtoupper($response) !== 'Y'
             ) {
                 $io->out();
-                $response = $this->askChoice(
+                $response = $io->askChoice(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
                     ['y', 'n', 'a'],
                     'y'
@@ -636,7 +631,7 @@ class I18nExtractCommand extends Command
                 if (strtoupper($response) === 'N') {
                     $response = '';
                     while (!$response) {
-                        $response = $io->ask('What would you like to name this file?', null, 'new_' . $filename);
+                        $response = $io->ask('What would you like to name this file?', 'new_' . $filename);
                         $filename = $response;
                     }
                 } elseif (strtoupper($response) === 'A') {

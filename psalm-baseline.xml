@@ -182,6 +182,13 @@
       <code>$commands</code>
     </PropertyNotSetInConstructor>
   </file>
+  <file src="src/Command/I18nExtractCommand.php">
+    <UndefinedConstant occurrences="3">
+      <code>APP</code>
+      <code>APP</code>
+      <code>APP</code>
+    </UndefinedConstant>
+  </file>
   <file src="src/Command/UpgradeCommand.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$path</code>
@@ -1895,19 +1902,6 @@
       <code>$frag</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Shell/I18nShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;param('plugin')</code>
-    </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_paths</code>
-      <code>I18nShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Shell/PluginShell.php">
     <DeprecatedClass occurrences="2">
       <code>Shell</code>
@@ -1933,31 +1927,6 @@
     <PropertyNotSetInConstructor occurrences="1">
       <code>CommandTask</code>
     </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/Task/ExtractTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <MissingClosureParamType occurrences="2">
-      <code>$a</code>
-      <code>$b</code>
-    </MissingClosureParamType>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;_file</code>
-      <code>$this-&gt;_file</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$this-&gt;_output</code>
-    </PossiblyNullOperand>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>ExtractTask</code>
-    </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="3">
-      <code>APP</code>
-      <code>APP</code>
-      <code>APP</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Shell/Task/LoadTask.php">
     <DeprecatedClass occurrences="2">
@@ -2175,9 +2144,6 @@
       <code>$this-&gt;_viewName</code>
       <code>$this-&gt;_layoutName</code>
     </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>getBody</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/LegacyCommandRunner.php">
     <MissingConstructor occurrences="1">

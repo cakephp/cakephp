@@ -58,8 +58,11 @@ parameters:
             message: '#Call to an undefined method Cake\\ORM\\Association::junction\(\).#'
             path: 'src/View/Form/EntityContext.php'
         -
+            message: '#Parameter \#1 \$var_array of function extract is passed by reference, so it expects variables only#'
+            path: 'src/Command/I18nExtractCommand.php'
+        -
             message: '#Result of || is always true#'
-            path: 'src/Shell/Task/ExtractTask.php'
+            path: 'src/Command/I18nExtractCommand.php'
         -
             message: '#Result of || is always true#'
             path: 'src/Utility/Hash.php'
