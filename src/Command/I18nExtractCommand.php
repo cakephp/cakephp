@@ -220,7 +220,7 @@ class I18nExtractCommand extends Command
                 if (strtoupper($response) === 'Q') {
                     $io->err('Extract Aborted');
 
-                    return static::CODE_ERR0R;
+                    return static::CODE_ERROR;
                 }
                 if ($this->_isPathUsable($response)) {
                     $this->_output = $response . DIRECTORY_SEPARATOR;
@@ -484,12 +484,8 @@ class I18nExtractCommand extends Command
                 $strings = $this->_getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
-                    $singular = $plural = $context = null;
-                    /**
-                     * @var string $singular
-                     * @var string|null $plural
-                     * @var string|null $context
-                     */
+                    $singular = '';
+                    $plural = $context = null;
                     extract(array_combine($map, $strings));
                     $domain = $domain ?? 'default';
                     $details = [
