@@ -83,13 +83,13 @@ class ConsoleInput
         $writeFds = null;
         $errorFds = null;
 
+        /** @var string|null $error */
         $error = null;
         set_error_handler(function (int $code, string $message) use (&$error) {
             $error = "stream_select failed with code={$code} message={$message}.";
         });
         $readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
         restore_error_handler();
-        /** @psalm-suppress TypeDoesNotContainType */
         if ($error !== null) {
             throw new ConsoleException($error);
         }

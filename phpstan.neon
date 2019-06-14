@@ -61,9 +61,6 @@ parameters:
             message: '#Parameter \#1 \$var_array of function extract is passed by reference, so it expects variables only#'
             path: 'src/Command/I18nExtractCommand.php'
         -
-            message: '#Strict comparison using !== between null and null will always evaluate to false#'
-            path: 'src/Command/I18nExtractCommand.php'
-        -
             message: '#Result of || is always true#'
             path: 'src/Command/I18nExtractCommand.php'
         -
