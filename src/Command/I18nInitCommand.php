@@ -50,11 +50,11 @@ class I18nInitCommand extends Command
 
         $paths = App::path('Locale');
         if ($args->hasOption('plugin')) {
-            $plugin = Inflector::camelize($args->getOption('plugin'));
+            $plugin = Inflector::camelize((string)$args->getOption('plugin'));
             $paths = App::path('Locale', $plugin);
         }
 
-        $response = $io->ask('What folder?', null, rtrim($paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
+        $response = $io->ask('What folder?', rtrim($paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
         $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {

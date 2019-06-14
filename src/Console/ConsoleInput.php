@@ -89,6 +89,7 @@ class ConsoleInput
         });
         $readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
         restore_error_handler();
+        /** @psalm-suppress TypeDoesNotContainType */
         if ($error !== null) {
             throw new ConsoleException($error);
         }
