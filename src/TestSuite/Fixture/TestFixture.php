@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
+use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -31,7 +32,7 @@ use Exception;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface, TableSchemaAwareInterface
+class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchemaAwareInterface
 {
     use LocatorAwareTrait;
 

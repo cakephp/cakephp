@@ -18,6 +18,7 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
+use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
 use Cake\Datasource\ConnectionInterface;
@@ -294,6 +295,10 @@ class FixtureManager
 
                 /** @var \Cake\TestSuite\Fixture\TestFixture[] $fixtures */
                 foreach ($fixtures as $fixture) {
+                    if (!$fixture instanceof ConstraintsInterface) {
+                        continue;
+                    }
+
                     if (in_array($fixture->table, $tables, true)) {
                         try {
                             $fixture->dropConstraints($db);
@@ -318,6 +323,10 @@ class FixtureManager
                 }
 
                 foreach ($fixtures as $fixture) {
+                    if (!$fixture instanceof ConstraintsInterface) {
+                        continue;
+                    }
+
                     try {
                         $fixture->createConstraints($db);
                     } catch (PDOException $e) {
@@ -422,7 +431,9 @@ class FixtureManager
             $configName = $db->configName();
 
             foreach ($fixtures as $name => $fixture) {
-                if ($this->isFixtureSetup($configName, $fixture)) {
+                if ($this->isFixtureSetup($configName, $fixture)
+                    && $fixture instanceof ConstraintsInterface
+                ) {
                     $fixture->dropConstraints($db);
                 }
             }
@@ -463,11 +474,15 @@ class FixtureManager
         }
 
         if (!$dropTables) {
-            $fixture->dropConstraints($db);
+            if ($fixture instanceof ConstraintsInterface) {
+                $fixture->dropConstraints($db);
+            }
             $fixture->truncate($db);
         }
 
-        $fixture->createConstraints($db);
+        if ($fixture instanceof ConstraintsInterface) {
+            $fixture->createConstraints($db);
+        }
         $fixture->insert($db);
     }
 
