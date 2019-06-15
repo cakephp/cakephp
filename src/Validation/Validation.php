@@ -1552,7 +1552,7 @@ class Validation
      */
     public static function isInteger($value)
     {
-        if (!is_scalar($value) || is_float($value)) {
+        if (!is_scalar($value) || is_float($value) || is_bool($value)) {
             return false;
         }
         if (is_int($value)) {
