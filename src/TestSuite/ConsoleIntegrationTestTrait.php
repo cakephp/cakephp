@@ -15,7 +15,6 @@ namespace Cake\TestSuite;
 
 use Cake\Console\Command;
 use Cake\Console\CommandRunner;
-use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
@@ -25,6 +24,7 @@ use Cake\TestSuite\Constraint\Console\ContentsEmpty;
 use Cake\TestSuite\Constraint\Console\ContentsNotContain;
 use Cake\TestSuite\Constraint\Console\ContentsRegExp;
 use Cake\TestSuite\Constraint\Console\ExitCode;
+use Cake\TestSuite\Stub\ConsoleInput;
 use Cake\TestSuite\Stub\ConsoleOutput;
 
 /**
@@ -81,18 +81,7 @@ trait ConsoleIntegrationTestTrait
 
         $this->_out = new ConsoleOutput();
         $this->_err = new ConsoleOutput();
-        $this->_in = $this->getMockBuilder(ConsoleInput::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['read'])
-            ->getMock();
-
-        $i = 0;
-        foreach ($input as $in) {
-            $this->_in
-                ->expects($this->at($i++))
-                ->method('read')
-                ->will($this->returnValue($in));
-        }
+        $this->_in = new ConsoleInput($input);
 
         $args = $this->commandStringToArgs("cake $command");
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
