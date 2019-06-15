@@ -211,6 +211,7 @@ class FixtureManager
                 $className = implode('\\', array_filter($nameSegments));
             } else {
                 $className = $fixture;
+                /** @psalm-suppress PossiblyFalseArgument */
                 $name = preg_replace('/Fixture\z/', '', substr(strrchr($fixture, '\\'), 1));
             }
 
@@ -255,7 +256,7 @@ class FixtureManager
 
         $hasSchema = $fixture instanceof TableSchemaAwareInterface && $fixture->getTableSchema() instanceof TableSchema;
 
-        if (($drop && $exists) || ($exists && !$isFixtureSetup && $hasSchema)) {
+        if (($drop && $exists) || ($exists && $hasSchema)) {
             $fixture->drop($db);
             $fixture->create($db);
         } elseif (!$exists) {
@@ -286,20 +287,20 @@ class FixtureManager
         }
 
         try {
-            $createTables = function (ConnectionInterface $db, $fixtures) use ($test): void {
+            $createTables = function (ConnectionInterface $db, array $fixtures) use ($test): void {
                 $tables = $db->getSchemaCollection()->listTables();
                 $configName = $db->configName();
                 if (!isset($this->_insertionMap[$configName])) {
                     $this->_insertionMap[$configName] = [];
                 }
 
-                /** @var \Cake\TestSuite\Fixture\TestFixture[] $fixtures */
+                /** @var \Cake\Datasource\FixtureInterface[] $fixtures */
                 foreach ($fixtures as $fixture) {
                     if (!$fixture instanceof ConstraintsInterface) {
                         continue;
                     }
 
-                    if (in_array($fixture->table, $tables, true)) {
+                    if (in_array($fixture->sourceName(), $tables, true)) {
                         try {
                             $fixture->dropConstraints($db);
                         } catch (PDOException $e) {
@@ -343,7 +344,7 @@ class FixtureManager
             $this->_runOperation($fixtures, $createTables);
 
             // Use a separate transaction because of postgres.
-            $insert = function ($db, $fixtures) use ($test): void {
+            $insert = function (ConnectionInterface $db, array $fixtures) use ($test): void {
                 foreach ($fixtures as $fixture) {
                     try {
                         $fixture->insert($db);
@@ -387,7 +388,7 @@ class FixtureManager
                 $db->disableQueryLogging();
             }
             $db->transactional(function (ConnectionInterface $db) use ($fixtures, $operation): void {
-                $db->disableConstraints(function ($db) use ($fixtures, $operation): void {
+                $db->disableConstraints(function (ConnectionInterface $db) use ($fixtures, $operation): void {
                     $operation($db, $fixtures);
                 });
             });
@@ -427,7 +428,7 @@ class FixtureManager
         if (empty($test->fixtures)) {
             return;
         }
-        $truncate = function ($db, $fixtures): void {
+        $truncate = function (ConnectionInterface $db, array $fixtures): void {
             $configName = $db->configName();
 
             foreach ($fixtures as $name => $fixture) {
@@ -493,7 +494,7 @@ class FixtureManager
      */
     public function shutDown(): void
     {
-        $shutdown = function (ConnectionInterface $db, $fixtures): void {
+        $shutdown = function (ConnectionInterface $db, array $fixtures): void {
             $connection = $db->configName();
             /** @var \Cake\Datasource\FixtureInterface $fixture */
             foreach ($fixtures as $fixture) {

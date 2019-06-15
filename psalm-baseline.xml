@@ -2072,29 +2072,6 @@
     <NoInterfaceProperties occurrences="1">
       <code>$test-&gt;fixtureManager</code>
     </NoInterfaceProperties>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_first</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/TestSuite/Fixture/FixtureManager.php">
-    <MissingClosureParamType occurrences="7">
-      <code>$fixtures</code>
-      <code>$db</code>
-      <code>$fixtures</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$fixtures</code>
-      <code>$fixtures</code>
-    </MissingClosureParamType>
-    <PossiblyFalseArgument occurrences="1">
-      <code>strrchr($fixture, '\\')</code>
-    </PossiblyFalseArgument>
-    <RedundantCondition occurrences="1">
-      <code>$exists &amp;&amp; !$isFixtureSetup &amp;&amp; $hasSchema</code>
-    </RedundantCondition>
-    <UndefinedPropertyAssignment occurrences="1">
-      <code>$test-&gt;fixtures</code>
-    </UndefinedPropertyAssignment>
   </file>
   <file src="src/TestSuite/Fixture/TestFixture.php">
     <InvalidPropertyAssignmentValue occurrences="1">
@@ -2103,19 +2080,9 @@
     <MismatchingDocblockReturnType occurrences="1">
       <code>TableSchemaInterface</code>
     </MismatchingDocblockReturnType>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;table</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$this-&gt;_schema-&gt;getColumn($field)['type']</code>
-    </PossiblyNullArrayAccess>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$table</code>
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$_schema</code>
     </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;table</code>
-    </UninitializedProperty>
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
     <InvalidCatch occurrences="1"/>

@@ -47,6 +47,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * Full Table Name
      *
      * @var string
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     public $table;
 
@@ -106,7 +107,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
                 $message = sprintf(
                     'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
                     $connection,
-                    $this->table
+                    static::class
                 );
                 throw new CakeException($message);
             }
@@ -333,7 +334,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
             [$fields, $values, $types] = $this->_getRecords();
             $query = $db->newQuery()
                 ->insert($fields, $types)
-                ->into($this->table);
+                ->into($this->sourceName());
 
             foreach ($values as $row) {
                 $query->values($row);
@@ -413,7 +414,9 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
         }
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
-            $types[$field] = $this->_schema->getColumn($field)['type'];
+            /** @var array $column */
+            $column = $this->_schema->getColumn($field);
+            $types[$field] = $column['type'];
         }
         $default = array_fill_keys($fields, null);
         foreach ($this->records as $record) {
