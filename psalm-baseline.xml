@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.4@c21e9917fa05ba4d97da464725471f53ab4fe0d8">
+<files psalm-version="3.x-dev@56e66af6a2233a65378c16b1d5329a5aa8facbec">
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
@@ -66,24 +66,11 @@
     <MissingConstructor occurrences="1">
       <code>$_Memcached</code>
     </MissingConstructor>
-    <UndefinedConstant occurrences="3">
-      <code>DAY</code>
-      <code>DAY</code>
-      <code>DAY</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Cache/Engine/RedisEngine.php">
-    <InvalidArgument occurrences="1">
-      <code>$value</code>
-    </InvalidArgument>
     <MissingConstructor occurrences="1">
       <code>$_Redis</code>
     </MissingConstructor>
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$value</code>
-      <code>$value</code>
-      <code>$value</code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/Cache/Engine/WincacheEngine.php">
     <NullArgument occurrences="1">
@@ -419,11 +406,6 @@
       <code>$name</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Core/Configure.php">
-    <UnresolvableInclude occurrences="1">
-      <code>require CORE_PATH . 'config/config.php'</code>
-    </UnresolvableInclude>
-  </file>
   <file src="src/Core/Configure/Engine/IniConfig.php">
     <LoopInvalidation occurrences="1">
       <code>$values</code>
@@ -746,6 +728,10 @@
       <code>$num</code>
       <code>$num</code>
     </MoreSpecificImplementedParamType>
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$key</code>
+      <code>$types</code>
+    </PossiblyInvalidArgument>
     <PossiblyInvalidFunctionCall occurrences="2">
       <code>$key($exp)</code>
       <code>$append($this-&gt;newExpr(), $this)</code>
@@ -1744,9 +1730,6 @@
     </PossiblyUndefinedMethod>
   </file>
   <file src="src/ORM/Marshaller.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$key</code>
-    </InvalidScalarArgument>
     <MissingClosureParamType occurrences="11">
       <code>$value</code>
       <code>$entity</code>
@@ -2172,9 +2155,10 @@
       <code>$mock</code>
       <code>$mock</code>
     </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="2">
+    <PossiblyNullArgument occurrences="3">
       <code>$prefix[0]</code>
       <code>$prefix[1]</code>
+      <code>$expression</code>
     </PossiblyNullArgument>
     <PossiblyUndefinedMethod occurrences="4">
       <code>getEntityClass</code>
@@ -2182,13 +2166,6 @@
       <code>getTable</code>
       <code>setTable</code>
     </PossiblyUndefinedMethod>
-    <UndefinedFunction occurrences="2">
-      <code>debug($string, true)</code>
-      <code>debug($string)</code>
-    </UndefinedFunction>
-    <UndefinedVariable occurrences="1">
-      <code>$len</code>
-    </UndefinedVariable>
   </file>
   <file src="src/TestSuite/TestSuite.php">
     <InternalClass occurrences="1">

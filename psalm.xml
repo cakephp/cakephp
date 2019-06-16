@@ -7,6 +7,7 @@
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     errorBaseline="psalm-baseline.xml"
+    autoloader="tests/bootstrap.php"
 >
     <projectFiles>
         <directory name="src" />
@@ -16,14 +17,22 @@
         </ignoreFiles>
     </projectFiles>
 
-    <stubs>
-        <file name="tests/bootstrap.php" />
-    </stubs>
-
     <issueHandlers>
         <LessSpecificReturnType errorLevel="info" />
         <RedundantConditionGivenDocblockType errorLevel="info" />
         <TypeCoercion errorLevel="info" />
         <DocblockTypeContradiction errorLevel="info" />
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Memcached" />
+                <referencedClass name="Redis" />
+            </errorLevel>
+        </UndefinedClass>
+        <UndefinedDocblockClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Memcached" />
+                <referencedClass name="Redis" />
+            </errorLevel>
+        </UndefinedDocblockClass>
     </issueHandlers>
 </psalm>

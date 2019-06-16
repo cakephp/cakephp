@@ -598,6 +598,11 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
 
+            /**
+             * If 'attrs' is not present then the array is just a regular int-offset one
+             *
+             * @var array<int, string> $assertion
+             */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = null;
             foreach ((array)$expressions as $expression) {
