@@ -24,7 +24,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
- * Log errors.
+ * Log errors and unhandled exceptions to `Cake\Log\Log`
  */
 class ErrorLogger
 {
