@@ -32,7 +32,7 @@ class CacheClearallCommand extends Command
      *
      * @return string
      */
-    public static function getDefaultName(): string
+    public static function defaultName(): string
     {
         return 'cache clear_all';
     }

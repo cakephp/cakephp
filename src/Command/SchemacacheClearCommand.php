@@ -34,7 +34,7 @@ class SchemacacheClearCommand extends Command
      *
      * @return string
      */
-    public static function getDefaultName(): string
+    public static function defaultName(): string
     {
         return 'schema_cache clear';
     }

@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Console;
 
-use BadMethodCallException;
 use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Datasource\ModelAwareTrait;
@@ -107,23 +106,17 @@ class Command
     }
 
     /**
-     * Proxy for static calls.
+     * Get the command name.
      *
-     * @param string $name Method name.
-     * @param array $arguments Method arguments.
-     * @return mixed
+     * @return string
      */
-    public static function __callStatic($name, $arguments)
+    public static function defaultName(): string
     {
-        if ($name === 'getDefaultName') {
-            $class = static::class;
-            $class = preg_replace('/(Shell|Command)$/', '', $class);
-            $class = Inflector::underscore(substr($class, strripos($class, '\\') + 1));
+        $class = static::class;
+        $class = preg_replace('/(Shell|Command)$/', '', $class);
+        $class = Inflector::underscore(substr($class, strripos($class, '\\') + 1));
 
-            return str_replace('_', ' ', $class);
-        }
-
-        throw new BadMethodCallException('No such method: ' . $name);
+        return str_replace('_', ' ', $class);
     }
 
     /**

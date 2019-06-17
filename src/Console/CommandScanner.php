@@ -49,30 +49,8 @@ class CommandScanner
             '',
             ['command_list']
         );
-        $coreCommands = $this->inflectCommandNames($coreCommands);
 
         return array_merge($coreShells, $coreCommands);
-    }
-
-    /**
-     * Inflect multi-word command names based on conventions
-     *
-     * @param array $commands The array of command metadata to mutate
-     * @return array The updated command metadata
-     * @see \Cake\Console\CommandScanner::scanDir()
-     */
-    protected function inflectCommandNames(array $commands): array
-    {
-        foreach ($commands as $i => $command) {
-            $name = $command['class']::getDefaultName();
-            if ($name) {
-                $command['name'] = $name;
-                $command['fullName'] = $name;
-                $commands[$i] = $command;
-            }
-        }
-
-        return $commands;
     }
 
     /**
@@ -155,7 +133,9 @@ class CommandScanner
             ) {
                 continue;
             }
-
+            if (is_subclass_of($class, Command::class)) {
+                $name = $class::defaultName();
+            }
             $shells[$path . $file] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,
