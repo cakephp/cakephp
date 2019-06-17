@@ -143,34 +143,6 @@ class ErrorHandler extends BaseErrorHandler
     }
 
     /**
-     * Handles exception logging
-     *
-     * @param \Throwable $exception Exception instance.
-     * @return bool
-     */
-    protected function _logException(Throwable $exception): bool
-    {
-        return $this->logException($exception);
-    }
-
-    /**
-     * Log an error for the exception if applicable.
-     *
-     * @param \Throwable $exception The exception to log a message for.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
-     * @return bool
-     */
-    public function logException(Throwable $exception, ?ServerRequestInterface $request = null): bool
-    {
-        $config = $this->_options;
-        if (empty($config['log'])) {
-            return false;
-        }
-
-        return $this->getLogger()->log($exception, $request ?? Router::getRequest());
-    }
-
-    /**
      * Get a renderer instance.
      *
      * @param \Throwable $exception The exception being rendered.

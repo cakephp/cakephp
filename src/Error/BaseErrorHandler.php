@@ -19,6 +19,7 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Routing\Router;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -203,7 +204,7 @@ abstract class BaseErrorHandler
     public function handleException(Throwable $exception): void
     {
         $this->_displayException($exception);
-        $this->_logException($exception);
+        $this->logException($exception);
         $code = $exception->getCode() ?: 1;
         $this->_stop((int)$code);
     }
@@ -311,19 +312,20 @@ abstract class BaseErrorHandler
     }
 
     /**
-     * Handles exception logging
+     * Log an error for the exception if applicable.
      *
-     * @param \Throwable $exception Exception instance.
+     * @param \Throwable $exception The exception to log a message for.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
      * @return bool
      */
-    protected function _logException(Throwable $exception): bool
+    public function logException(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
         $config = $this->_options;
         if (empty($config['log'])) {
             return false;
         }
 
-        return $this->getLogger()->log($exception, Router::getRequest());
+        return $this->getLogger()->log($exception, $request ?? Router::getRequest());
     }
 
     /**
