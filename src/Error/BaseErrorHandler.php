@@ -331,7 +331,7 @@ abstract class BaseErrorHandler
      *
      * @return \Cake\Error\ErrorLogger
      */
-    protected function getLogger()
+    public function getLogger()
     {
         if ($this->logger === null) {
             /** @var \Cake\Error\ErrorLogger $logger */

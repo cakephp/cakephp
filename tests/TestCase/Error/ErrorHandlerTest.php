@@ -104,6 +104,20 @@ class ErrorHandlerTest extends TestCase
     }
 
     /**
+     * Test an invalid rendering class.
+     *
+     * @return void
+     */
+    public function testInvalidRenderer()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
+
+        $errorHandler = new ErrorHandler(['exceptionRenderer' => 'TotallyInvalid']);
+        $errorHandler->getRenderer(new \Exception('Something bad'));
+    }
+
+    /**
      * test error handling when debug is on, an error should be printed from Debugger.
      *
      * @return void
