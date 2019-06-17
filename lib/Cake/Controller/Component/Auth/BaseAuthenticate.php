@@ -102,7 +102,8 @@ abstract class BaseAuthenticate implements CakeEventListener {
  */
 	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];
-		$alias = 'User';
+		list(, $model) = pluginSplit($userModel);
+		$alias = stripslashes($model);
 		$fields = $this->settings['fields'];
 
 		if (is_array($username)) {
