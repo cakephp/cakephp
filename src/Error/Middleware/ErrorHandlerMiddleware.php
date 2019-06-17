@@ -17,13 +17,11 @@ declare(strict_types=1);
 namespace Cake\Error\Middleware;
 
 use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\ErrorLogger;
 use Cake\Error\ExceptionRenderer;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Http\Response;
-use Cake\Log\Log;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -53,6 +51,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *   ```
      *
      * - `trace` Should error logs include stack traces?
+     * - `errorLogger` The error logger class. Defaults to \Cake\Error\ErrorLogger
      *
      * @var array
      */
@@ -60,6 +59,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         'skipLog' => [],
         'log' => true,
         'trace' => false,
+        'errorLogger' => ErrorLogger::class,
     ];
 
     /**
@@ -182,69 +182,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             return;
         }
 
-        foreach ((array)$this->getConfig('skipLog') as $class) {
-            if ($exception instanceof $class) {
-                return;
-            }
-        }
-
-        Log::error($this->getMessage($request, $exception));
-    }
-
-    /**
-     * Generate the error log message.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
-     * @param \Throwable $exception The exception to log a message for.
-     * @return string Error message
-     */
-    protected function getMessage(ServerRequestInterface $request, Throwable $exception): string
-    {
-        $message = $this->getMessageForException($exception);
-
-        $message .= "\nRequest URL: " . $request->getRequestTarget();
-        $referer = $request->getHeaderLine('Referer');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
-        $message .= "\n\n";
-
-        return $message;
-    }
-
-    /**
-     * Generate the message for the exception
-     *
-     * @param \Throwable $exception The exception to log a message for.
-     * @param bool $isPrevious False for original exception, true for previous
-     * @return string Error message
-     */
-    protected function getMessageForException(Throwable $exception, bool $isPrevious = false): string
-    {
-        $message = sprintf(
-            '%s[%s] %s',
-            $isPrevious ? "\nCaused by: " : '',
-            get_class($exception),
-            $exception->getMessage()
-        );
-        $debug = Configure::read('debug');
-
-        if ($debug && $exception instanceof CakeException) {
-            $attributes = $exception->getAttributes();
-            if ($attributes) {
-                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
-            }
-        }
-
-        if ($this->getConfig('trace')) {
-            $message .= "\n" . $exception->getTraceAsString();
-        }
-
-        $previous = $exception->getPrevious();
-        if ($previous) {
-            $message .= $this->getMessageForException($previous, true);
-        }
-
-        return $message;
+        $loggerClass = $this->getConfig('errorLogger');
+        $logger = new $loggerClass($this->getConfig());
+        $logger->log($exception, $request);
     }
 }

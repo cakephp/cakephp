@@ -96,11 +96,9 @@ class ErrorHandler extends BaseErrorHandler
     public function __construct(array $options = [])
     {
         $defaults = [
-            'log' => true,
-            'trace' => false,
             'exceptionRenderer' => ExceptionRenderer::class,
         ];
-        $this->_options = $options + $defaults;
+        $this->_options = $options + $defaults + $this->_options;
     }
 
     /**

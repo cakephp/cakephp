@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception as CoreException;
-use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Throwable;
@@ -37,12 +35,23 @@ abstract class BaseErrorHandler
      *
      * @var array
      */
-    protected $_options = [];
+    protected $_options = [
+        'log' => true,
+        'trace' => false,
+        'errorLogger' => ErrorLogger::class,
+    ];
 
     /**
      * @var bool
      */
     protected $_handled = false;
+
+    /**
+     * Exception logger instance.
+     *
+     * @var \Cake\Error\ErrorLogger|null
+     */
+    protected $logger;
 
     /**
      * Display an error message in an environment specific way.
@@ -292,7 +301,7 @@ abstract class BaseErrorHandler
 
             $request = Router::getRequest();
             if ($request) {
-                $message .= $this->_requestContext($request);
+                $message .= $this->getLogger()->getRequestContext($request);
             }
             $message .= "\nTrace:\n" . $trace . "\n";
         }
@@ -314,95 +323,23 @@ abstract class BaseErrorHandler
             return false;
         }
 
-        if (!empty($config['skipLog'])) {
-            foreach ((array)$config['skipLog'] as $class) {
-                if ($exception instanceof $class) {
-                    return false;
-                }
-            }
-        }
-
-        return Log::error($this->_getMessage($exception));
+        return $this->getLogger()->log($exception, Router::getRequest());
     }
 
     /**
-     * Get the request context for an error/exception trace.
+     * Get exception logger.
      *
-     * @param \Cake\Http\ServerRequest $request The request to read from.
-     * @return string
+     * @return \Cake\Error\ErrorLogger
      */
-    protected function _requestContext(ServerRequest $request): string
+    protected function getLogger()
     {
-        $message = "\nRequest URL: " . $request->getRequestTarget();
-
-        $referer = $request->getEnv('HTTP_REFERER');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
-        $clientIp = $request->clientIp();
-        if ($clientIp && $clientIp !== '::1') {
-            $message .= "\nClient IP: " . $clientIp;
+        if ($this->logger === null) {
+            /** @var \Cake\Error\ErrorLogger $logger */
+            $logger = new $this->_options['errorLogger']($this->_options);
+            $this->logger = $logger;
         }
 
-        return $message;
-    }
-
-    /**
-     * Generates a formatted error message
-     *
-     * @param \Throwable $exception Exception instance
-     * @return string Formatted message
-     */
-    protected function _getMessage(Throwable $exception): string
-    {
-        $message = $this->getMessageForException($exception);
-
-        $request = Router::getRequest();
-        if ($request) {
-            $message .= $this->_requestContext($request);
-        }
-
-        return $message;
-    }
-
-    /**
-     * Generate the message for the exception
-     *
-     * @param \Throwable $exception The exception to log a message for.
-     * @param bool $isPrevious False for original exception, true for previous
-     * @return string Error message
-     */
-    protected function getMessageForException(Throwable $exception, bool $isPrevious = false): string
-    {
-        $config = $this->_options;
-
-        $message = sprintf(
-            '%s[%s] %s in %s on line %s',
-            $isPrevious ? "\nCaused by: " : '',
-            get_class($exception),
-            $exception->getMessage(),
-            $exception->getFile(),
-            $exception->getLine()
-        );
-        $debug = Configure::read('debug');
-
-        if ($debug && $exception instanceof CoreException) {
-            $attributes = $exception->getAttributes();
-            if ($attributes) {
-                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
-            }
-        }
-
-        if (!empty($config['trace'])) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
-        }
-
-        $previous = $exception->getPrevious();
-        if ($previous) {
-            $message .= $this->getMessageForException($previous, true);
-        }
-
-        return $message;
+        return $this->logger;
     }
 
     /**
