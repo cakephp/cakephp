@@ -36,16 +36,17 @@ class ConsoleErrorHandler extends BaseErrorHandler
     /**
      * Constructor
      *
-     * @param array $options Options for the error handler.
+     * @param array $config Config options for the error handler.
      */
-    public function __construct(array $options = [])
+    public function __construct(array $config = [])
     {
-        $options += [
+        $config += [
             'stderr' => new ConsoleOutput('php://stderr'),
             'log' => false,
         ];
-        $this->_stderr = $options['stderr'];
-        $this->_options = $options + $this->_options;
+
+        $this->setConfig($config);
+        $this->_stderr = $this->_config['stderr'];
     }
 
     /**

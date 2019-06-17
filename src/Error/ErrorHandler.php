@@ -93,14 +93,15 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Constructor
      *
-     * @param array $options The options for error handling.
+     * @param array $config The options for error handling.
      */
-    public function __construct(array $options = [])
+    public function __construct(array $config = [])
     {
-        $defaults = [
+        $config += [
             'exceptionRenderer' => ExceptionRenderer::class,
         ];
-        $this->_options = $options + $defaults + $this->_options;
+
+        $this->setConfig($config);
     }
 
     /**
@@ -154,7 +155,7 @@ class ErrorHandler extends BaseErrorHandler
         Throwable $exception,
         ?ServerRequestInterface $request = null
     ): ExceptionRendererInterface {
-        $renderer = $this->_options['exceptionRenderer'];
+        $renderer = $this->_config['exceptionRenderer'];
 
         if (is_string($renderer)) {
             $class = App::className($renderer, 'Error');
@@ -198,7 +199,7 @@ class ErrorHandler extends BaseErrorHandler
     protected function _logInternalError(Throwable $exception): void
     {
         // Disable trace for internal errors.
-        $this->_options['trace'] = false;
+        $this->_config['trace'] = false;
         $message = sprintf(
             "[%s] %s\n%s", // Keeping same message format
             get_class($exception),

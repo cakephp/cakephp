@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\Configure;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Log\Log;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,14 +32,17 @@ use Throwable;
  */
 abstract class BaseErrorHandler
 {
+    use InstanceConfigTrait;
+
     /**
      * Options to use for the Error handling.
      *
      * @var array
      */
-    protected $_options = [
+    protected $_defaultConfig = [
         'log' => true,
         'trace' => false,
+        'skipLog' => [],
         'errorLogger' => ErrorLogger::class,
     ];
 
@@ -85,8 +89,8 @@ abstract class BaseErrorHandler
     public function register(): void
     {
         $level = -1;
-        if (isset($this->_options['errorLevel'])) {
-            $level = $this->_options['errorLevel'];
+        if (isset($this->_config['errorLevel'])) {
+            $level = $this->_config['errorLevel'];
         }
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
@@ -95,7 +99,7 @@ abstract class BaseErrorHandler
             if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
-            $megabytes = $this->_options['extraFatalErrorMemory'] ?? 4;
+            $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
             if ($megabytes > 0) {
                 $this->increaseMemoryLimit($megabytes * 1024);
             }
@@ -294,7 +298,7 @@ abstract class BaseErrorHandler
             $data['file'],
             $data['line']
         );
-        if (!empty($this->_options['trace'])) {
+        if (!empty($this->_config['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',
@@ -320,8 +324,7 @@ abstract class BaseErrorHandler
      */
     public function logException(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
-        $config = $this->_options;
-        if (empty($config['log'])) {
+        if (empty($this->_config['log'])) {
             return false;
         }
 
@@ -337,7 +340,7 @@ abstract class BaseErrorHandler
     {
         if ($this->logger === null) {
             /** @var \Cake\Error\ErrorLogger $logger */
-            $logger = new $this->_options['errorLogger']($this->_options);
+            $logger = new $this->_config['errorLogger']($this->_config);
             $this->logger = $logger;
         }
 
