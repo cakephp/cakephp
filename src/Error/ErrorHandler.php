@@ -20,7 +20,9 @@ namespace Cake\Error;
 
 use Cake\Core\App;
 use Cake\Http\ResponseEmitter;
+use Cake\Routing\Router;
 use Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -127,19 +129,52 @@ class ErrorHandler extends BaseErrorHandler
      */
     protected function _displayException(Throwable $exception): void
     {
-        $rendererClassName = App::className($this->_options['exceptionRenderer'], 'Error');
         try {
-            if (!$rendererClassName) {
-                throw new Exception("$rendererClassName is an invalid class.");
-            }
-            /** @var \Cake\Error\ExceptionRendererInterface $renderer */
-            $renderer = new $rendererClassName($exception);
+            $renderer = $this->getRenderer(
+                $this->_options['exceptionRenderer'],
+                $exception,
+                Router::getRequest()
+            );
             $response = $renderer->render();
             $this->_clearOutput();
             $this->_sendResponse($response);
         } catch (Throwable $exception) {
             $this->_logInternalError($exception);
         }
+    }
+
+    /**
+     * Get a renderer instance.
+     *
+     * @param string|callable $renderer The renderer or class name
+     *   to use or a callable factory.
+     * @param \Throwable $exception The exception being rendered.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request.
+     * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
+     * @throws \Exception When the renderer class cannot be found.
+     */
+    public function getRenderer(
+        $renderer,
+        Throwable $exception,
+        ?ServerRequestInterface $request = null
+    ): ExceptionRendererInterface {
+        if (is_string($renderer)) {
+            $class = App::className($renderer, 'Error');
+            if (!$class) {
+                throw new Exception(sprintf(
+                    "The '%s' renderer class could not be found.",
+                    $renderer
+                ));
+            }
+
+            /** @var \Cake\Error\ExceptionRendererInterface */
+            return new $class($exception, $request);
+        }
+
+        /** @var callable $factory */
+        $factory = $renderer;
+
+        return $factory($exception, $request);
     }
 
     /**
