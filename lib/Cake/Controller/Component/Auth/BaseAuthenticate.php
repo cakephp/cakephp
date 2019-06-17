@@ -102,14 +102,14 @@ abstract class BaseAuthenticate implements CakeEventListener {
  */
 	protected function _findUser($username, $password = null) {
 		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
+		$alias = 'User';
 		$fields = $this->settings['fields'];
 
 		if (is_array($username)) {
 			$conditions = $username;
 		} else {
 			$conditions = array(
-				$model . '.' . $fields['username'] => $username
+				$alias . '.' . $fields['username'] => $username
 			);
 		}
 
@@ -119,21 +119,25 @@ abstract class BaseAuthenticate implements CakeEventListener {
 
 		$userFields = $this->settings['userFields'];
 		if ($password !== null && $userFields !== null) {
-			$userFields[] = $model . '.' . $fields['password'];
+			$userFields[] = $alias . '.' . $fields['password'];
 		}
 
-		$result = ClassRegistry::init($userModel)->find('first', array(
+		$User = ClassRegistry::init([
+			'class' => $userModel,
+			'alias' => $alias,
+		]);
+		$result = $User->find('first', array(
 			'conditions' => $conditions,
 			'recursive' => $this->settings['recursive'],
 			'fields' => $userFields,
 			'contain' => $this->settings['contain'],
 		));
-		if (empty($result[$model])) {
+		if (empty($result[$alias])) {
 			$this->passwordHasher()->hash($password);
 			return false;
 		}
 
-		$user = $result[$model];
+		$user = $result[$alias];
 		if ($password !== null) {
 			if (!$this->passwordHasher()->check($password, $user[$fields['password']])) {
 				return false;
@@ -141,7 +145,7 @@ abstract class BaseAuthenticate implements CakeEventListener {
 			unset($user[$fields['password']]);
 		}
 
-		unset($result[$model]);
+		unset($result[$alias]);
 		return array_merge($user, $result);
 	}
 

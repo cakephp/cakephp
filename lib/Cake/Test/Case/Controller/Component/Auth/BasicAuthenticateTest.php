@@ -198,14 +198,14 @@ class BasicAuthenticateTest extends CakeTestCase {
 	public function testAuthenticateSuccessCustomModel() {
 		$this->Collection = $this->getMock('ComponentCollection');
 		$this->auth = new BasicAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'user', 'password' => 'password'),
+			'fields' => array('username' => 'username', 'password' => 'password'),
 			'userModel' => 'AuthUser',
 			'realm' => 'localhost',
 			'recursive' => 0
 		));
 
 		$password = Security::hash('password', null, true);
-		$User = ClassRegistry::init('User');
+		$User = ClassRegistry::init('AuthUser');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 		$this->response = $this->getMock('CakeResponse');
 
@@ -217,10 +217,10 @@ class BasicAuthenticateTest extends CakeTestCase {
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
-			'id' => 1,
-			'user' => 'mariano',
+			'id' => '1',
+			'username' => 'mariano',
 			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'updated' => '2007-03-17 01:18:31',
 		);
 		$this->assertEquals($expected, $result);
 	}
