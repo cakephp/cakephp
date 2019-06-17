@@ -195,6 +195,36 @@ class BasicAuthenticateTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+	public function testAuthenticateSuccessCustomModel() {
+		$this->Collection = $this->getMock('ComponentCollection');
+		$this->auth = new BasicAuthenticate($this->Collection, array(
+			'fields' => array('username' => 'user', 'password' => 'password'),
+			'userModel' => 'AuthUser',
+			'realm' => 'localhost',
+			'recursive' => 0
+		));
+
+		$password = Security::hash('password', null, true);
+		$User = ClassRegistry::init('User');
+		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
+		$this->response = $this->getMock('CakeResponse');
+
+		$request = new CakeRequest('posts/index', false);
+		$request->addParams(array('pass' => array(), 'named' => array()));
+
+		$_SERVER['PHP_AUTH_USER'] = 'mariano';
+		$_SERVER['PHP_AUTH_PW'] = 'password';
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'user' => 'mariano',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		);
+		$this->assertEquals($expected, $result);
+	}
+
 /**
  * test authenticate success with header values
  *
