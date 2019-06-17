@@ -19,8 +19,8 @@ namespace Cake\Error;
 use Cake\Core\Configure;
 use Cake\Core\Exception\Exception;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Http\ServerRequest;
 use Cake\Log\Log;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -58,10 +58,10 @@ class ErrorLogger
      * Generate the error log message.
      *
      * @param \Throwable $exception The exception to log a message for.
-     * @param \Cake\Http\ServerRequest|null $request The current request if available.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The current request if available.
      * @return bool
      */
-    public function log(Throwable $exception, ?ServerRequest $request = null): bool
+    public function log(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
         foreach ($this->getConfig('skipLog') as $class) {
             if ($exception instanceof $class) {
@@ -121,10 +121,10 @@ class ErrorLogger
     /**
      * Get the request context for an error/exception trace.
      *
-     * @param \Cake\Http\ServerRequest $request The request to read from.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The request to read from.
      * @return string
      */
-    public function getRequestContext(ServerRequest $request): string
+    public function getRequestContext(ServerRequestInterface $request): string
     {
         $message = "\nRequest URL: " . $request->getRequestTarget();
 
@@ -133,9 +133,11 @@ class ErrorLogger
             $message .= "\nReferer URL: " . $referer;
         }
 
-        $clientIp = $request->clientIp();
-        if ($clientIp && $clientIp !== '::1') {
-            $message .= "\nClient IP: " . $clientIp;
+        if (method_exists($request, 'clientIp')) {
+            $clientIp = $request->clientIp();
+            if ($clientIp && $clientIp !== '::1') {
+                $message .= "\nClient IP: " . $clientIp;
+            }
         }
 
         return $message;
