@@ -45,6 +45,8 @@ class ConsoleInput extends ConsoleInputBase
      */
     public function __construct(array $replies)
     {
+        parent::__construct();
+
         $this->replies = $replies;
     }
 
