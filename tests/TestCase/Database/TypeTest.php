@@ -147,6 +147,21 @@ class TypeTest extends TestCase
     }
 
     /**
+     * Tests new types set with set() are returned by buildAll()
+     *
+     * @return void
+     */
+    public function testSetAndBuild()
+    {
+        $types = Type::buildAll();
+        $this->assertFalse(isset($types['foo']));
+
+        Type::set('foo', new FooType());
+        $types = Type::buildAll();
+        $this->assertTrue(isset($types['foo']));
+    }
+
+    /**
      * Tests overwriting type map works for building
      *
      * @return void
