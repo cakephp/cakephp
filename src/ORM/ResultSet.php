@@ -155,6 +155,7 @@ class ResultSet implements ResultSetInterface
      * Converters are indexed by alias and column name.
      *
      * @var array
+     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
      */
     protected $_types = [];
 
@@ -443,6 +444,7 @@ class ResultSet implements ResultSetInterface
      * @param \Cake\ORM\Table $table The table from which to get the schema
      * @param array $fields The fields whitelist to use for fields in the schema.
      * @return array
+     * @deprecated 3.2.0 Not used anymore. Type casting is done at the statement level
      */
     protected function _getTypes($table, $fields)
     {
