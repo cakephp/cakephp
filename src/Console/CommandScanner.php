@@ -21,7 +21,6 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
-use SplFileInfo;
 
 /**
  * Used by CommandCollection and CommandTask to scan the filesystem
@@ -65,9 +64,8 @@ class CommandScanner
     protected function inflectCommandNames(array $commands): array
     {
         foreach ($commands as $i => $command) {
-            $file = new SplFileInfo($command['file']);
-            $file = $file->getFilename();
-            $name = Inflector::underscore(preg_replace('/(Shell|Command)\.php$/', '', $file));
+            $file = basename($command['file'], '.php');
+            $name = Inflector::underscore(preg_replace('/(Shell|Command)$/', '', $file));
             //if names are equal, we did not use the defaultName()
             if ($name === $command['name']) {
                 $command['name'] = str_replace('_', ' ', $command['name']);
