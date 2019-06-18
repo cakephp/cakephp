@@ -113,10 +113,10 @@ class Command
     public static function defaultName(): string
     {
         $class = static::class;
-        $class = preg_replace('/(Shell|Command)$/', '', $class);
-        $class = Inflector::underscore(substr($class, strripos($class, '\\') + 1));
+        $class = preg_replace('/Command$/', '', $class);
+        $class = Inflector::underscore(substr($class, (int)strripos($class, '\\') + 1));
 
-        return str_replace('_', ' ', $class);
+        return $class;
     }
 
     /**
