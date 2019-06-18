@@ -34,24 +34,19 @@ class ConsoleErrorHandler extends BaseErrorHandler
     protected $_stderr;
 
     /**
-     * Options for this instance.
-     *
-     * @var array
-     */
-    protected $_options;
-
-    /**
      * Constructor
      *
-     * @param array $options Options for the error handler.
+     * @param array $config Config options for the error handler.
      */
-    public function __construct(array $options = [])
+    public function __construct(array $config = [])
     {
-        if (empty($options['stderr'])) {
-            $options['stderr'] = new ConsoleOutput('php://stderr');
-        }
-        $this->_stderr = $options['stderr'];
-        $this->_options = $options;
+        $config += [
+            'stderr' => new ConsoleOutput('php://stderr'),
+            'log' => false,
+        ];
+
+        $this->setConfig($config);
+        $this->_stderr = $this->_config['stderr'];
     }
 
     /**
@@ -66,7 +61,7 @@ class ConsoleErrorHandler extends BaseErrorHandler
     public function handleException(Throwable $exception): void
     {
         $this->_displayException($exception);
-        $this->_logException($exception);
+        $this->logException($exception);
         $code = $exception->getCode();
         $code = $code && is_int($code) ? $code : 1;
         $this->_stop($code);

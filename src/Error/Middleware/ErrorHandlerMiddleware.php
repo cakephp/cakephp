@@ -17,14 +17,10 @@ declare(strict_types=1);
 namespace Cake\Error\Middleware;
 
 use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Core\Exception\Exception as CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRenderer;
-use Cake\Error\ExceptionRendererInterface;
 use Cake\Http\Response;
-use Cake\Log\Log;
-use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -53,6 +49,9 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      *   ```
      *
      * - `trace` Should error logs include stack traces?
+     * - `exceptionRenderer` The renderer instance or class name to use or a callable factory
+     *   which returns a \Cake\Error\ExceptionRendererInterface instance.
+     *   Defaults to \Cake\Error\ExceptionRenderer
      *
      * @var array
      */
@@ -60,35 +59,31 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         'skipLog' => [],
         'log' => true,
         'trace' => false,
+        'exceptionRenderer' => ExceptionRenderer::class,
     ];
 
     /**
-     * Exception render.
+     * Error handler instance.
      *
-     * @var \Cake\Error\ExceptionRendererInterface|callable|string
+     * @var \Cake\Error\ErrorHandler|null
      */
-    protected $exceptionRenderer;
+    protected $errorHandler;
 
     /**
      * Constructor
      *
-     * @param string|callable|null $exceptionRenderer The renderer or class name
-     *   to use or a callable factory. If null, value of 'exceptionRenderer' key
-     *   from $config will be used with fallback to Cake\Error\ExceptionRenderer::class.
-     * @param array $config Configuration options to use.
-     *   will be used.
+     * @param \Cake\Error\ErrorHandler|null $errorHandler The error handler.
+     * @param array $config Configuration options for error handler.
+     *   These options will be ignored if an ErrorHandler instance is passed as
+     *   first argument.
      */
-    public function __construct($exceptionRenderer = null, array $config = [])
+    public function __construct($errorHandler = null, array $config = [])
     {
         $this->setConfig($config);
 
-        if ($exceptionRenderer) {
-            $this->exceptionRenderer = $exceptionRenderer;
-
-            return;
+        if ($errorHandler !== null) {
+            $this->errorHandler = $errorHandler;
         }
-
-        $this->exceptionRenderer = $this->getConfig('exceptionRenderer', ExceptionRenderer::class);
     }
 
     /**
@@ -116,12 +111,13 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
      */
     public function handleException(Throwable $exception, ServerRequestInterface $request): ResponseInterface
     {
-        $renderer = $this->getRenderer($exception, $request);
+        $errorHandler = $this->getErrorHandler();
+
         try {
-            $response = $renderer->render();
-            $this->logException($request, $exception);
+            $response = $errorHandler->getRenderer($exception, $request)->render();
+            $errorHandler->logException($exception, $request);
         } catch (Throwable $internalException) {
-            $this->logException($request, $internalException);
+            $errorHandler->logException($internalException, $request);
             $response = $this->handleInternalError();
         }
 
@@ -141,110 +137,19 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     }
 
     /**
-     * Get a renderer instance
+     * Get a error handler instance
      *
-     * @param \Throwable $exception The exception being rendered.
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request.
-     * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
-     * @throws \Exception When the renderer class cannot be found.
+     * @return \Cake\Error\ErrorHandler The error handler.
      */
-    protected function getRenderer(Throwable $exception, ServerRequestInterface $request): ExceptionRendererInterface
+    protected function getErrorHandler(): ErrorHandler
     {
-        if (is_string($this->exceptionRenderer)) {
-            $class = App::className($this->exceptionRenderer, 'Error');
-            if (!$class) {
-                throw new Exception(sprintf(
-                    "The '%s' renderer class could not be found.",
-                    $this->exceptionRenderer
-                ));
-            }
-
-            /** @var \Cake\Error\ExceptionRendererInterface */
-            return new $class($exception, $request);
+        if ($this->errorHandler === null) {
+            /** @var string $className */
+            $className = App::className('ErrorHandler', 'Error');
+            /** @var \Cake\Error\ErrorHandler $this->errorHandler */
+            $this->errorHandler = new $className($this->getConfig());
         }
 
-        /** @var callable $factory */
-        $factory = $this->exceptionRenderer;
-
-        return $factory($exception, $request);
-    }
-
-    /**
-     * Log an error for the exception if applicable.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
-     * @param \Throwable $exception The exception to log a message for.
-     * @return void
-     */
-    protected function logException(ServerRequestInterface $request, Throwable $exception): void
-    {
-        if (!$this->getConfig('log')) {
-            return;
-        }
-
-        foreach ((array)$this->getConfig('skipLog') as $class) {
-            if ($exception instanceof $class) {
-                return;
-            }
-        }
-
-        Log::error($this->getMessage($request, $exception));
-    }
-
-    /**
-     * Generate the error log message.
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
-     * @param \Throwable $exception The exception to log a message for.
-     * @return string Error message
-     */
-    protected function getMessage(ServerRequestInterface $request, Throwable $exception): string
-    {
-        $message = $this->getMessageForException($exception);
-
-        $message .= "\nRequest URL: " . $request->getRequestTarget();
-        $referer = $request->getHeaderLine('Referer');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
-        $message .= "\n\n";
-
-        return $message;
-    }
-
-    /**
-     * Generate the message for the exception
-     *
-     * @param \Throwable $exception The exception to log a message for.
-     * @param bool $isPrevious False for original exception, true for previous
-     * @return string Error message
-     */
-    protected function getMessageForException(Throwable $exception, bool $isPrevious = false): string
-    {
-        $message = sprintf(
-            '%s[%s] %s',
-            $isPrevious ? "\nCaused by: " : '',
-            get_class($exception),
-            $exception->getMessage()
-        );
-        $debug = Configure::read('debug');
-
-        if ($debug && $exception instanceof CakeException) {
-            $attributes = $exception->getAttributes();
-            if ($attributes) {
-                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
-            }
-        }
-
-        if ($this->getConfig('trace')) {
-            $message .= "\n" . $exception->getTraceAsString();
-        }
-
-        $previous = $exception->getPrevious();
-        if ($previous) {
-            $message .= $this->getMessageForException($previous, true);
-        }
-
-        return $message;
+        return $this->errorHandler;
     }
 }

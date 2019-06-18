@@ -20,7 +20,9 @@ namespace Cake\Error;
 
 use Cake\Core\App;
 use Cake\Http\ResponseEmitter;
+use Cake\Routing\Router;
 use Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -91,16 +93,15 @@ class ErrorHandler extends BaseErrorHandler
     /**
      * Constructor
      *
-     * @param array $options The options for error handling.
+     * @param array $config The options for error handling.
      */
-    public function __construct(array $options = [])
+    public function __construct(array $config = [])
     {
-        $defaults = [
-            'log' => true,
-            'trace' => false,
+        $config += [
             'exceptionRenderer' => ExceptionRenderer::class,
         ];
-        $this->_options = $options + $defaults;
+
+        $this->setConfig($config);
     }
 
     /**
@@ -129,19 +130,50 @@ class ErrorHandler extends BaseErrorHandler
      */
     protected function _displayException(Throwable $exception): void
     {
-        $rendererClassName = App::className($this->_options['exceptionRenderer'], 'Error');
         try {
-            if (!$rendererClassName) {
-                throw new Exception("$rendererClassName is an invalid class.");
-            }
-            /** @var \Cake\Error\ExceptionRendererInterface $renderer */
-            $renderer = new $rendererClassName($exception);
+            $renderer = $this->getRenderer(
+                $exception,
+                Router::getRequest()
+            );
             $response = $renderer->render();
             $this->_clearOutput();
             $this->_sendResponse($response);
         } catch (Throwable $exception) {
             $this->_logInternalError($exception);
         }
+    }
+
+    /**
+     * Get a renderer instance.
+     *
+     * @param \Throwable $exception The exception being rendered.
+     * @param \Psr\Http\Message\ServerRequestInterface|null $request The request.
+     * @return \Cake\Error\ExceptionRendererInterface The exception renderer.
+     * @throws \Exception When the renderer class cannot be found.
+     */
+    public function getRenderer(
+        Throwable $exception,
+        ?ServerRequestInterface $request = null
+    ): ExceptionRendererInterface {
+        $renderer = $this->_config['exceptionRenderer'];
+
+        if (is_string($renderer)) {
+            $class = App::className($renderer, 'Error');
+            if (!$class) {
+                throw new Exception(sprintf(
+                    "The '%s' renderer class could not be found.",
+                    $renderer
+                ));
+            }
+
+            /** @var \Cake\Error\ExceptionRendererInterface */
+            return new $class($exception, $request);
+        }
+
+        /** @var callable $factory */
+        $factory = $renderer;
+
+        return $factory($exception, $request);
     }
 
     /**
@@ -167,7 +199,7 @@ class ErrorHandler extends BaseErrorHandler
     protected function _logInternalError(Throwable $exception): void
     {
         // Disable trace for internal errors.
-        $this->_options['trace'] = false;
+        $this->_config['trace'] = false;
         $message = sprintf(
             "[%s] %s\n%s", // Keeping same message format
             get_class($exception),
