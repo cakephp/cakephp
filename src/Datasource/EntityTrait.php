@@ -531,17 +531,6 @@ trait EntityTrait
     }
 
     /**
-     * Gets the list of visible fields.
-     *
-     * @deprecated 4.0.0 Use getVisible() instead. Will be removed in 5.0.
-     * @return string[]
-     */
-    public function visibleProperties(): array
-    {
-        return $this->getVisible();
-    }
-
-    /**
      * Returns an array with all the fields that have been set
      * to this entity
      *
