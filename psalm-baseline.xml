@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.x-dev@56e66af6a2233a65378c16b1d5329a5aa8facbec">
+<files psalm-version="3.4.5@a0866da88e605adaa648e9f1ad37f4990650f55c">
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
