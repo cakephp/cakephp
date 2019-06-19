@@ -20,9 +20,11 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Query;
 use Cake\Database\StatementInterface;
 use Cake\Database\Statement\StatementDecorator;
+use Cake\Database\Type;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use TestApp\Database\Type\BarType;
 
 /**
  * Tests Query class
@@ -4481,16 +4483,25 @@ class QueryTest extends TestCase
      */
     public function testSelectTypeConversion()
     {
+        Type::set('custom_datetime', new BarType('custom_datetime'));
         $this->loadFixtures('Comments');
+
         $query = new Query($this->connection);
         $query
-            ->select(['id', 'comment', 'the_date' => 'created'])
+            ->select(['id', 'comment', 'the_date' => 'created', 'updated'])
             ->from('comments')
             ->limit(1)
-            ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
+            ->getSelectTypeMap()
+                ->setTypes([
+                    'id' => 'integer',
+                    'the_date' => 'datetime',
+                    'updated' => 'custom_datetime'
+                ]);
+
         $result = $query->execute()->fetchAll('assoc');
         $this->assertInternalType('integer', $result[0]['id']);
         $this->assertInstanceOf('DateTime', $result[0]['the_date']);
+        $this->assertInstanceOf('DateTime', $result[0]['updated']);
     }
 
     /**
