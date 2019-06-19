@@ -14,12 +14,12 @@
  */
 namespace TestApp\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Database\Type\DateTimeType;
 
-class BarType extends Type
+class BarType extends DateTimeType
 {
     public function getBaseType()
     {
-        return 'text';
+        return 'datetimetype';
     }
 }

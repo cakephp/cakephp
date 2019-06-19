@@ -2987,9 +2987,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::isInteger('-012'));
 
         $this->assertFalse(Validation::isInteger('2.5'));
+        $this->assertFalse(Validation::isInteger(2.5));
         $this->assertFalse(Validation::isInteger([]));
         $this->assertFalse(Validation::isInteger(new \StdClass));
         $this->assertFalse(Validation::isInteger('2 bears'));
+        $this->assertFalse(Validation::isInteger(true));
+        $this->assertFalse(Validation::isInteger(false));
     }
 
     /**
