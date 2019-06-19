@@ -139,6 +139,21 @@ class TypeFactoryTest extends TestCase
     }
 
     /**
+     * Tests new types set with set() are returned by buildAll()
+     *
+     * @return void
+     */
+    public function testSetAndBuild()
+    {
+        $types = TypeFactory::buildAll();
+        $this->assertFalse(isset($types['foo']));
+
+        TypeFactory::set('foo', new FooType());
+        $types = TypeFactory::buildAll();
+        $this->assertTrue(isset($types['foo']));
+    }
+
+    /**
      * Tests overwriting type map works for building
      *
      * @return void
