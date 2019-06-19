@@ -108,6 +108,10 @@ class Command
     /**
      * Get the command name.
      *
+     * Returns the command name based on class name.
+     * For class name `ShellCommand` the command name returned would be `'shell'`,
+     * For `CacheClearCommand` the command name would be `'cache clear'`.
+     *
      * @return string
      */
     public static function defaultName(): string
