@@ -1312,7 +1312,7 @@ class EntityContextTest extends TestCase
 
         $row = new Article([
             'title' => 'My title',
-            'options' => ['subpages' => '']
+            'options' => ['subpages' => ''],
         ]);
         $row->setError('options', ['subpages' => ['_empty' => 'required value']]);
 
@@ -1343,8 +1343,8 @@ class EntityContextTest extends TestCase
             'title' => 'My title',
             'tags' => [
                 $tagOne,
-                $tagTwo
-            ]
+                $tagTwo,
+            ],
         ]);
 
         $context = new EntityContext($this->request, [

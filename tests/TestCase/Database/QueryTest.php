@@ -4318,7 +4318,7 @@ class QueryTest extends TestCase
                 ->setTypes([
                     'id' => 'integer',
                     'the_date' => 'datetime',
-                    'updated' => 'custom_datetime'
+                    'updated' => 'custom_datetime',
                 ]);
 
         $result = $query->execute()->fetchAll('assoc');

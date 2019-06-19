@@ -1242,7 +1242,7 @@ class EntityTest extends TestCase
         $entity->setError('options', ['subpages' => ['_empty' => 'required']]);
 
         $expected = [
-            'subpages' => ['_empty' => 'required']
+            'subpages' => ['_empty' => 'required'],
         ];
         $this->assertEquals($expected, $entity->getError('options'));
 

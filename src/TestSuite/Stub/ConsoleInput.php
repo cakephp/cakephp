@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -53,9 +55,9 @@ class ConsoleInput extends ConsoleInputBase
     /**
      * Read a reply
      *
-     * @return mixed The value of the reply
+     * @return string The value of the reply
      */
-    public function read()
+    public function read(): string
     {
         $this->currentIndex += 1;
 
@@ -76,7 +78,7 @@ class ConsoleInput extends ConsoleInputBase
      * @param int $timeout An optional time to wait for data
      * @return bool True for data available, false otherwise
      */
-    public function dataAvailable($timeout = 0)
+    public function dataAvailable($timeout = 0): bool
     {
         return true;
     }
