@@ -8,4 +8,9 @@ use Cake\Console\Command;
 class AutoLoadModelCommand extends Command
 {
     public $modelClass = 'Posts';
+
+    public static function defaultName(): string
+    {
+        return 'auto_load_model';
+    }
 }
