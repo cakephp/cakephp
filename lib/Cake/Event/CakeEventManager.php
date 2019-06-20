@@ -15,6 +15,7 @@
  */
 
 App::uses('CakeEventListener', 'Event');
+App::uses('CakeEvent', 'Event');
 
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
