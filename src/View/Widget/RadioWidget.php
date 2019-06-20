@@ -165,7 +165,7 @@ class RadioWidget implements WidgetInterface
         }
 
         if (empty($radio['id'])) {
-            if(isset($data['id'])) {
+            if (isset($data['id'])) {
                 $radio['id'] = $data['id'] . '-' . trim(
                     $this->_idSuffix($radio['value']),
                     '-'
