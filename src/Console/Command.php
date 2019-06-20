@@ -109,9 +109,8 @@ class Command
      * Get the command name.
      *
      * Returns the command name based on class name.
-     * For app / plugin command with class name `UpdateTableCommand` the command
+     * For e.g. for a command with class name `UpdateTableCommand` the default
      * name returned would be `'update_table'`.
-     * If same command class is under `Cake` namespace then it will return `'update table'`.
      *
      * @return string
      */
@@ -120,10 +119,6 @@ class Command
         $pos = strrpos(static::class, '\\');
         $name = substr(static::class, $pos + 1, -7);
         $name = Inflector::underscore($name);
-
-        if (substr(static::class, 0, 4) === 'Cake') {
-            $name = str_replace('_', ' ', $name);
-        }
 
         return $name;
     }
