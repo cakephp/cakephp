@@ -33,7 +33,7 @@ class PluginAssetsCopyCommand extends Command
      *
      * Copying plugin assets to app's webroot. For vendor namespaced plugin,
      * parent folder for vendor name are created if required.
-     * 
+     *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return null|int The exit code or null for success
@@ -46,6 +46,7 @@ class PluginAssetsCopyCommand extends Command
         $name = $args->getArgument('name');
         $overwrite = $args->getOption('overwrite');
         $this->_process($this->_list($name), true, $overwrite);
+
         return static::CODE_SUCCESS;
     }
 
@@ -60,7 +61,7 @@ class PluginAssetsCopyCommand extends Command
         $parser->setDescription([
             'Copy plugin assets to app\'s webroot.',
         ])->addArgument('name', [
-            'help' => 'A specific plugin you want to symlink assets for.',
+            'help' => 'A specific plugin you want to copy assets for.',
             'optional' => true,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',

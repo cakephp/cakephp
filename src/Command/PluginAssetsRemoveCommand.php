@@ -32,7 +32,7 @@ class PluginAssetsRemoveCommand extends Command
      * Execute the command
      *
      * Remove plugin assets from app's webroot.
-     * 
+     *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return null|int The exit code or null for success
@@ -55,6 +55,7 @@ class PluginAssetsRemoveCommand extends Command
 
         $this->io->out();
         $this->io->out('Done');
+
         return static::CODE_SUCCESS;
     }
 
@@ -69,7 +70,7 @@ class PluginAssetsRemoveCommand extends Command
         $parser->setDescription([
             'Remove plugin assets from app\'s webroot.',
         ])->addArgument('name', [
-            'help' => 'A specific plugin you want to symlink assets for.',
+            'help' => 'A specific plugin you want to remove.',
             'optional' => true,
         ]);
 

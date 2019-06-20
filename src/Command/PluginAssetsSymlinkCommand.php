@@ -34,7 +34,7 @@ class PluginAssetsSymlinkCommand extends Command
      * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
      * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
      * for vendor name are created if required.
-     * 
+     *
      * @param \Cake\Console\Arguments $args The command arguments.
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return null|int The exit code or null for success
@@ -47,6 +47,7 @@ class PluginAssetsSymlinkCommand extends Command
         $name = $args->getArgument('name');
         $overwrite = $args->getOption('overwrite');
         $this->_process($this->_list($name), false, $overwrite);
+
         return static::CODE_SUCCESS;
     }
 
