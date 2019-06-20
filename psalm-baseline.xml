@@ -1944,13 +1944,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
-    <InternalMethod occurrences="2">
-      <code>method</code>
-      <code>will</code>
-    </InternalMethod>
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;_in</code>
-    </InvalidArgument>
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
       <code>$exception-&gt;getCode()</code>
     </PossiblyInvalidPropertyAssignmentValue>
