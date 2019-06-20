@@ -1002,7 +1002,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
      * using the `options` key. This is useful when you want to check
      * if a request parameter is in a list of options.
      *
-     * `addDetector('extension', ['param' => 'ext', 'options' => ['pdf', 'csv']]`
+     * `addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'csv']]`
      *
      * @param string $name The name of the detector.
      * @param callable|array $callable A callable or options array for the detector definition.
