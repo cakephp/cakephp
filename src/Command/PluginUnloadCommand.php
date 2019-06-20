@@ -14,57 +14,48 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Task;
+namespace Cake\Command;
 
+use Cake\Console\Arguments;
+use Cake\Console\Command;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
 
 /**
- * Task for unloading plugins.
+ * Command for unloading plugins.
  */
-class UnloadTask extends Shell
+class PluginUnloadCommand extends Command
 {
     /**
-     * Path to the bootstrap file.
+     * Execute the command
      *
-     * @var string
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return null|int The exit code or null for success
      */
-    public $bootstrap;
-
-    /**
-     * Execution method always used for tasks.
-     *
-     * @param string|null $plugin The plugin name.
-     * @return bool if action passed.
-     */
-    public function main(?string $plugin = null): bool
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $filename = 'bootstrap';
-        if ($this->params['cli']) {
-            $filename .= '_cli';
-        }
-
-        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $filename . '.php';
-
+        $plugin = $args->getArgument('plugin');
         if (!$plugin) {
-            $this->err('You must provide a plugin name in CamelCase format.');
-            $this->err('To unload an "Example" plugin, run `cake plugin unload Example`.');
+            $io->err('You must provide a plugin name in CamelCase format.');
+            $io->err('To unload an "Example" plugin, run `cake plugin unload Example`.');
 
-            return false;
+            return static::CODE_ERROR;
         }
 
         $app = APP . 'Application.php';
-        if (file_exists($app) && !$this->param('no_app')) {
-            $this->modifyApplication($app, $plugin);
+        if (file_exists($app) && $this->modifyApplication($app, $plugin)) {
+            $io->out('');
+            $io->out(sprintf('%s modified', $app));
 
-            return true;
+            return static::CODE_SUCCESS;
         }
 
-        return (bool)$this->_modifyBootstrap($plugin);
+        return static::CODE_ERROR;
     }
 
     /**
-     * Update the applications bootstrap.php file.
+     * Modify the application class.
      *
      * @param string $app Path to the application to update.
      * @param string $plugin Name of plugin.
@@ -83,63 +74,19 @@ class UnloadTask extends Shell
 
         file_put_contents($app, $newContent);
 
-        $this->out('');
-        $this->out(sprintf('%s modified', $app));
-
         return true;
     }
 
     /**
-     * Update the applications bootstrap.php file.
+     * Get the option parser.
      *
-     * @param string $plugin Name of plugin.
-     * @return bool If modify passed.
-     */
-    protected function _modifyBootstrap(string $plugin): bool
-    {
-        $finder = "@\nPlugin::load\((.|.\n|\n\s\s|\n\t|)+'$plugin'(.|.\n|)+\);\n@";
-
-        $content = file_get_contents($this->bootstrap);
-
-        if (!preg_match("@\n\s*Plugin::loadAll@", $content)) {
-            $newContent = preg_replace($finder, '', $content);
-
-            if ($newContent === $content) {
-                return false;
-            }
-
-            file_put_contents($this->bootstrap, $newContent);
-
-            $this->out('');
-            $this->out(sprintf('%s modified', $this->bootstrap));
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * GetOptionParser method.
-     *
+     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser(): ConsoleOptionParser
+    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser = parent::getOptionParser();
-
-        $parser->addOption('cli', [
-                'help' => 'Use the bootstrap_cli file.',
-                'boolean' => true,
-                'default' => false,
-            ])
-            ->addOption('no_app', [
-                'help' => 'Do not update the Application if it exist. Forces config/bootstrap.php to be updated.',
-                'boolean' => true,
-                'default' => false,
-            ])
-            ->addArgument('plugin', [
-                'help' => 'Name of the plugin to load.',
+        $parser->addArgument('plugin', [
+                'help' => 'Name of the plugin to unload.',
             ]);
 
         return $parser;

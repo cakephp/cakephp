@@ -14,69 +14,76 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Task;
+namespace Cake\Command;
 
+use Cake\Console\Arguments;
+use Cake\Console\Command;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
 
 /**
- * Task for loading plugins.
+ * Command for loading plugins.
  */
-class LoadTask extends Shell
+class PluginLoadCommand extends Command
 {
     /**
-     * Path to the bootstrap file.
+     * Arguments
      *
-     * @var string
+     * @var \Cake\Console\Arguments
      */
-    public $bootstrap;
+    protected $args;
 
     /**
-     * Execution method always used for tasks.
+     * Console IO
      *
-     * @param string|null $plugin The plugin name.
-     * @return bool
+     * @var \Cake\Console\ConsoleIo
      */
-    public function main($plugin = null): bool
+    protected $io;
+
+    /**
+     * Execute the command
+     *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return null|int The exit code or null for success
+     */
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $filename = 'bootstrap';
-        if ($this->params['cli']) {
-            $filename .= '_cli';
-        }
+        $this->io = $io;
+        $this->args = $args;
 
-        $this->bootstrap = ROOT . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . $filename . '.php';
-
+        $plugin = $args->getArgument('plugin');
         if (!$plugin) {
-            $this->err('You must provide a plugin name in CamelCase format.');
-            $this->err('To load an "Example" plugin, run `cake plugin load Example`.');
+            $this->io->err('You must provide a plugin name in CamelCase format.');
+            $this->io->err('To load an "Example" plugin, run `cake plugin load Example`.');
 
-            return false;
+            return static::CODE_ERROR;
         }
 
-        $options = $this->makeOptions();
+        $options = $this->makeOptions($args);
 
         $app = APP . 'Application.php';
-        if (file_exists($app) && !$this->param('no_app')) {
+        if (file_exists($app)) {
             $this->modifyApplication($app, $plugin, $options);
 
-            return true;
+            return static::CODE_SUCCESS;
         }
 
-        return $this->_modifyBootstrap($plugin, $options);
+        return static::CODE_ERROR;
     }
 
     /**
      * Create options string for the load call.
      *
+     * @param \Cake\Console\Arguments $args The command arguments.
      * @return string
      */
-    protected function makeOptions(): string
+    protected function makeOptions(Arguments $args): string
     {
-        $autoloadString = $this->param('autoload') ? "'autoload' => true" : '';
-        $bootstrapString = $this->param('bootstrap') ? "'bootstrap' => true" : '';
-        $routesString = $this->param('routes') ? "'routes' => true" : '';
+        $bootstrapString = $args->getOption('bootstrap') ? "'bootstrap' => true" : '';
+        $routesString = $args->getOption('routes') ? "'routes' => true" : '';
 
-        return implode(', ', array_filter([$autoloadString, $bootstrapString, $routesString]));
+        return implode(', ', array_filter([$bootstrapString, $routesString]));
     }
 
     /**
@@ -95,7 +102,8 @@ class LoadTask extends Shell
         $insert = str_replace(', []', '', sprintf($append, $plugin, $options));
 
         if (!preg_match('/function bootstrap\(\)(?:\s*)\:(?:\s*)void/m', $contents)) {
-            $this->abort('Your Application class does not have a bootstrap() method. Please add one.');
+            $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
+            $this->abort();
         } else {
             $contents = preg_replace(
                 '/(function bootstrap\(\)(?:\s*)\:(?:\s*)void(?:\s+)\{)/m',
@@ -105,45 +113,18 @@ class LoadTask extends Shell
         }
         file_put_contents($app, $contents);
 
-        $this->out('');
-        $this->out(sprintf('%s modified', $app));
+        $this->io->out('');
+        $this->io->out(sprintf('%s modified', $app));
     }
 
     /**
-     * Update the applications bootstrap.php file.
+     * Get the option parser.
      *
-     * @param string $plugin Name of plugin.
-     * @param string $options The options string
-     * @return bool If modify passed.
-     */
-    protected function _modifyBootstrap(string $plugin, string $options): bool
-    {
-        $contents = file_get_contents($this->bootstrap);
-        if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-            $append = "\nPlugin::load('%s', [%s]);\n";
-
-            file_put_contents(
-                $this->bootstrap,
-                str_replace(', []', '', sprintf($append, $plugin, $options))
-            );
-            $this->out('');
-            $this->out(sprintf('%s modified', $this->bootstrap));
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * GetOptionParser method.
-     *
+     * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser(): ConsoleOptionParser
+    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser = parent::getOptionParser();
-
         $parser->addOption('bootstrap', [
                     'short' => 'b',
                     'help' => 'Will load bootstrap.php from plugin.',
@@ -153,22 +134,6 @@ class LoadTask extends Shell
                 ->addOption('routes', [
                     'short' => 'r',
                     'help' => 'Will load routes.php from plugin.',
-                    'boolean' => true,
-                    'default' => false,
-                ])
-                ->addOption('autoload', [
-                    'help' => 'Will autoload the plugin using CakePHP.' .
-                        'Set to true if you are not using composer to autoload your plugin.',
-                    'boolean' => true,
-                    'default' => false,
-                ])
-                ->addOption('cli', [
-                    'help' => 'Use the bootstrap_cli file.',
-                    'boolean' => true,
-                    'default' => false,
-                ])
-                ->addOption('no_app', [
-                    'help' => 'Do not update the Application if it exist. Forces config/bootstrap.php to be updated.',
                     'boolean' => true,
                     'default' => false,
                 ])
