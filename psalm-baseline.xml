@@ -2061,17 +2061,6 @@
       <code>$test-&gt;fixtureManager</code>
     </NoInterfaceProperties>
   </file>
-  <file src="src/TestSuite/Fixture/TestFixture.php">
-    <InvalidPropertyAssignmentValue occurrences="1">
-      <code>$schema</code>
-    </InvalidPropertyAssignmentValue>
-    <MismatchingDocblockReturnType occurrences="1">
-      <code>TableSchemaInterface</code>
-    </MismatchingDocblockReturnType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_schema</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
     <InvalidCatch occurrences="1"/>
     <MissingClosureParamType occurrences="4">
