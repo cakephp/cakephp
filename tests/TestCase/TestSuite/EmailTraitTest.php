@@ -160,6 +160,21 @@ class EmailTraitTest extends TestCase
     }
 
     /**
+     * Tests asserting using RegExp characters doesn't break the assertion
+     *
+     * @return void
+     */
+    public function testAssertUsingRegExpCharacters()
+    {
+        (new Email())
+            ->setTo('to3@example.com')
+            ->setCc('cc3@example.com')
+            ->send('email with regexp chars $/[]');
+
+        $this->assertMailContains('$/[]');
+    }
+
+    /**
      * tests constraint failure messages
      *
      * @param string $assertion Assertion method
