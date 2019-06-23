@@ -19,7 +19,6 @@ use Cake\Core\Exception\Exception as CakeException;
 use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -84,6 +83,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
      * The schema for this fixture.
      *
      * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     protected $_schema;
 
@@ -442,7 +442,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function getTableSchema(): TableSchemaInterface
+    public function getTableSchema()
     {
         return $this->_schema;
     }
@@ -450,7 +450,7 @@ class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchema
     /**
      * @inheritDoc
      */
-    public function setTableSchema(TableSchemaInterface $schema)
+    public function setTableSchema($schema)
     {
         $this->_schema = $schema;
 
