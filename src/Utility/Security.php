@@ -271,11 +271,7 @@ class Security
      */
     public static function constantEquals($original, $compare): bool
     {
-        if (!is_string($original) || !is_string($compare)) {
-            return false;
-        }
-
-        return hash_equals($original, $compare);
+        return is_string($original) && is_string($compare) && hash_equals($original, $compare);
     }
 
     /**
