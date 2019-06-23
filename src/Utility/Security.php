@@ -298,6 +298,6 @@ class Security
      */
     public static function setSalt(string $salt): void
     {
-        static::$_salt = (string)$salt;
+        static::$_salt = $salt;
     }
 }
