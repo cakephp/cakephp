@@ -72,6 +72,9 @@ parameters:
         -
             message: '#Method Cake\\Http\\Middleware\\CspMiddleware::process\(\) should return Psr\\Http\\Message\\ResponseInterface but returns Psr\\Http\\Message\\MessageInterface#'
             path: 'src/Http/Middleware/CspMiddleware.php'
+        -
+            message: '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
+            path: 'src/TestSuite/Fixture/TestFixture.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort
