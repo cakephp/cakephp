@@ -125,21 +125,24 @@ class PluginLoadCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->addOption('bootstrap', [
-                    'short' => 'b',
-                    'help' => 'Will load bootstrap.php from plugin.',
-                    'boolean' => true,
-                    'default' => false,
-                ])
-                ->addOption('routes', [
-                    'short' => 'r',
-                    'help' => 'Will load routes.php from plugin.',
-                    'boolean' => true,
-                    'default' => false,
-                ])
-                ->addArgument('plugin', [
-                    'help' => 'Name of the plugin to load.',
-                ]);
+        $parser->setDescription([
+            'Command for loading plugins.',
+        ])
+        ->addOption('bootstrap', [
+            'short' => 'b',
+            'help' => 'Will load bootstrap.php from plugin.',
+            'boolean' => true,
+            'default' => false,
+        ])
+        ->addOption('routes', [
+            'short' => 'r',
+            'help' => 'Will load routes.php from plugin.',
+            'boolean' => true,
+            'default' => false,
+        ])
+        ->addArgument('plugin', [
+            'help' => 'Name of the plugin to load.',
+        ]);
 
         return $parser;
     }

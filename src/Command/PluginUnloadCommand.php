@@ -85,9 +85,12 @@ class PluginUnloadCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->addArgument('plugin', [
-                'help' => 'Name of the plugin to unload.',
-            ]);
+        $parser->setDescription([
+            'Command for unloading plugins.',
+        ])
+        ->addArgument('plugin', [
+            'help' => 'Name of the plugin to unload.',
+        ]);
 
         return $parser;
     }
