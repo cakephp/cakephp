@@ -19,9 +19,6 @@ namespace Cake\Utility\Crypto;
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
  *
- * OpenSSL should be favored over mcrypt as it is actively maintained and
- * more widely available.
- *
  * This class is not intended to be used directly and should only
  * be used in the context of Cake\Utility\Security.
  *

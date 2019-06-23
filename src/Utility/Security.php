@@ -54,8 +54,8 @@ class Security
      * @param string|null $algorithm Hashing algo to use (i.e. sha1, sha256 etc.).
      *   Can be any valid algo included in list returned by hash_algos().
      *   If no value is passed the type specified by `Security::$hashType` is used.
-     * @param mixed $salt If true, automatically prepends the application's salt
-     *   value to $string (Security.salt).
+     * @param mixed $salt If true, automatically prepends the value returned by
+     *   Security::getSalt() to $string.
      * @return string Hash
      * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
      */
@@ -152,7 +152,7 @@ class Security
     /**
      * Get the crypto implementation based on the loaded extensions.
      *
-     * You can use this method to forcibly decide between mcrypt/openssl/custom implementations.
+     * You can use this method to forcibly decide between openssl/custom implementations.
      *
      * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
      * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
@@ -173,7 +173,7 @@ class Security
         }
         throw new InvalidArgumentException(
             'No compatible crypto engine available. ' .
-            'Load either the openssl or mcrypt extensions'
+            'Load the openssl extension.'
         );
     }
 
@@ -186,7 +186,8 @@ class Security
      *
      * @param string $plain The value to encrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
-     * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+     * @param string|null $hmacSalt The salt to use for the HMAC process.
+     *   Leave null to use value of Security::getSalt().
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
@@ -229,7 +230,8 @@ class Security
      *
      * @param string $cipher The ciphertext to decrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
-     * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+     * @param string|null $hmacSalt The salt to use for the HMAC process.
+     *   Leave null to use value of Security::getSalt().
      * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
