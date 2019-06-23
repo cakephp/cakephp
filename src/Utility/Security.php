@@ -36,7 +36,7 @@ class Security
     /**
      * The HMAC salt to use for encryption and decryption routines
      *
-     * @var string
+     * @var string|null
      */
     protected static $_salt;
 
@@ -77,7 +77,7 @@ class Security
 
         if ($salt) {
             if (!is_string($salt)) {
-                $salt = static::$_salt;
+                $salt = static::getSalt();
             }
             $string = $salt . $string;
         }
@@ -195,7 +195,7 @@ class Security
         self::_checkKey($key, 'encrypt()');
 
         if ($hmacSalt === null) {
-            $hmacSalt = static::$_salt;
+            $hmacSalt = static::getSalt();
         }
         // Generate the encryption and hmac key.
         $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
@@ -240,7 +240,7 @@ class Security
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
         if ($hmacSalt === null) {
-            $hmacSalt = static::$_salt;
+            $hmacSalt = static::getSalt();
         }
 
         // Generate the encryption and hmac key.
@@ -286,6 +286,10 @@ class Security
      */
     public static function getSalt(): string
     {
+        if (static::$_salt === null) {
+            throw new RuntimeException('Salt not set.');
+        }
+
         return static::$_salt;
     }
 
