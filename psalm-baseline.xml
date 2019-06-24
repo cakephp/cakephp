@@ -212,10 +212,7 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Console/ConsoleInputOption.php">
-    <PossiblyFalseOperand occurrences="1">
-      <code>$this-&gt;_default</code>
-    </PossiblyFalseOperand>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;_default</code>
       <code>$this-&gt;_default</code>
     </PossiblyInvalidArgument>
