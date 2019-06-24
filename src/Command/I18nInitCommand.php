@@ -30,6 +30,14 @@ use DirectoryIterator;
 class I18nInitCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'i18n init';
+    }
+
+    /**
      * Execute the command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
