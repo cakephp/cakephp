@@ -28,6 +28,16 @@ use Cake\Console\ConsoleOptionParser;
 class CacheClearallCommand extends Command
 {
     /**
+     * Get the command name.
+     *
+     * @return string
+     */
+    public static function defaultName(): string
+    {
+        return 'cache clear_all';
+    }
+
+    /**
      * Hook method for defining this command's option parser.
      *
      * @see https://book.cakephp.org/3.0/en/console-and-shells/commands.html#defining-arguments-and-options
