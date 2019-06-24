@@ -14,15 +14,14 @@ declare(strict_types=1);
  * @since         3.0.8
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
-use Cake\Shell\I18nShell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * I18nShell test.
+ * I18nCommand test.
  */
-class I18nShellTest extends ConsoleIntegrationTestCase
+class I18nCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
@@ -32,10 +31,10 @@ class I18nShellTest extends ConsoleIntegrationTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new I18nShell($this->io);
 
         $this->localeDir = TMP . 'Locale' . DS;
+        $this->useCommandRunner();
+        $this->setAppNamespace();
     }
 
     /**
@@ -100,8 +99,7 @@ class I18nShellTest extends ConsoleIntegrationTestCase
         $this->exec('i18n -h');
 
         $this->assertExitSuccess();
-        $this->assertOutputContains('init');
-        $this->assertOutputContains('extract');
+        $this->assertOutputContains('cake i18n');
     }
 
     /**
@@ -125,7 +123,6 @@ class I18nShellTest extends ConsoleIntegrationTestCase
         $this->exec('i18n', ['h', 'q']);
         $this->assertExitSuccess();
         $this->assertOutputContains('cake i18n');
-        $this->assertOutputContains('init');
     }
 
     /**
@@ -137,7 +134,7 @@ class I18nShellTest extends ConsoleIntegrationTestCase
     {
         $this->exec('i18n', [
             'i',
-            'q',
+            'x',
         ]);
         $this->assertExitError();
         $this->assertErrorContains('Invalid language code');

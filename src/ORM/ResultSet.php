@@ -143,15 +143,6 @@ class ResultSet implements ResultSetInterface
     protected $_count;
 
     /**
-     * Type cache for type converters.
-     *
-     * Converters are indexed by alias and column name.
-     *
-     * @var array
-     */
-    protected $_types = [];
-
-    /**
      * The Database driver object.
      *
      * Cached in a property to avoid multiple calls to the same function.

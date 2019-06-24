@@ -1118,7 +1118,7 @@ class Validation
             $mimeTypes[$key] = strtolower($val);
         }
 
-        return in_array($mime, $mimeTypes, true);
+        return in_array(strtolower($mime), $mimeTypes, true);
     }
 
     /**
@@ -1481,7 +1481,7 @@ class Validation
      */
     public static function isInteger($value): bool
     {
-        if (!is_scalar($value) || is_float($value)) {
+        if (!is_numeric($value) || is_float($value)) {
             return false;
         }
         if (is_int($value)) {

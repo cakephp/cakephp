@@ -2064,6 +2064,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::maxLength('abcd', 3));
         $this->assertFalse(Validation::maxLength('ÆΔΩЖÇ', 3));
+        $this->assertFalse(Validation::maxLength(['abc'], 10));
     }
 
     /**
@@ -2080,6 +2081,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::maxLengthBytes('abcd', 3));
         $this->assertFalse(Validation::maxLengthBytes('ÆΔΩЖÇ', 9));
+        $this->assertFalse(Validation::maxLengthBytes(['abc'], 10));
     }
 
     /**
@@ -2095,6 +2097,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLength('abc', 3));
         $this->assertTrue(Validation::minLength('abcd', 3));
         $this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
+
+        $this->assertFalse(Validation::minLength(['abc'], 1));
     }
 
     /**
@@ -2111,6 +2115,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLengthBytes('abcd', 3));
         $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 10));
         $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 9));
+
+        $this->assertFalse(Validation::minLengthBytes(['abc'], 1));
     }
 
     /**
@@ -2519,6 +2525,25 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::mimeType($image, ['image/png']));
         $this->assertFalse(Validation::mimeType(['tmp_name' => $image], ['image/png']));
         $this->assertFalse(Validation::mimeType([], ['image/png']));
+    }
+
+    /**
+     * testMimeTypeCaseInsensitive method
+     *
+     * @return void
+     */
+    public function testMimeTypeCaseInsensitive()
+    {
+        $algol68 = CORE_TESTS . 'Fixture/sample.a68';
+        $File = new File($algol68, false);
+
+        $this->skipIf($File->mime() != 'text/x-Algol68', 'Cannot determine text/x-Algol68 mimeType');
+
+        $this->assertTrue(Validation::mimeType($algol68, ['text/x-Algol68']));
+        $this->assertTrue(Validation::mimeType($algol68, ['text/x-algol68']));
+        $this->assertTrue(Validation::mimeType($algol68, ['text/X-ALGOL68']));
+
+        $this->assertFalse(Validation::mimeType($algol68, ['image/png']));
     }
 
     /**
@@ -2947,9 +2972,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::isInteger('-012'));
 
         $this->assertFalse(Validation::isInteger('2.5'));
+        $this->assertFalse(Validation::isInteger(2.5));
         $this->assertFalse(Validation::isInteger([]));
         $this->assertFalse(Validation::isInteger(new \StdClass()));
         $this->assertFalse(Validation::isInteger('2 bears'));
+        $this->assertFalse(Validation::isInteger(true));
+        $this->assertFalse(Validation::isInteger(false));
     }
 
     /**

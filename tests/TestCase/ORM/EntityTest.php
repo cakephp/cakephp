@@ -1178,21 +1178,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the deprecated visibleProperties() method
-     *
-     * @return void
-     */
-    public function testVisiblePropertiesDeprecated()
-    {
-        $entity = new Entity();
-        $entity->foo = 'foo';
-        $entity->bar = 'bar';
-
-        $expected = $entity->visibleProperties();
-        $this->assertSame(['foo', 'bar'], $expected);
-    }
-
-    /**
      * Tests setting virtual properties with merging.
      *
      * @return void
@@ -1221,7 +1206,7 @@ class EntityTest extends TestCase
      *
      * @return void
      */
-    public function testGetAndSetErrors()
+    public function testGetErrorAndSetError()
     {
         $entity = new Entity();
         $this->assertEmpty($entity->getErrors());
@@ -1244,6 +1229,25 @@ class EntityTest extends TestCase
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expectedIndexed, $result);
+    }
+
+    /**
+     * Tests reading errors from nested validator
+     *
+     * @return void
+     */
+    public function testGetErrorNested()
+    {
+        $entity = new Entity();
+        $entity->setError('options', ['subpages' => ['_empty' => 'required']]);
+
+        $expected = [
+            'subpages' => ['_empty' => 'required'],
+        ];
+        $this->assertEquals($expected, $entity->getError('options'));
+
+        $expected = ['_empty' => 'required'];
+        $this->assertEquals($expected, $entity->getError('options.subpages'));
     }
 
     /**

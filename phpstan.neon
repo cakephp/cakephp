@@ -23,10 +23,8 @@ parameters:
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::dateAgoInWords\(\)#'
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::timeAgoInWords\(\)#'
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
-        - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
-        - '#Parameter \#3 \$in of class Cake\\Console\\ConsoleIo constructor expects Cake\\Console\\ConsoleInput|null, PHPUnit\\Framework\\MockObject\\MockObject given.#'
         - '#Parameter \#1 \$filename of function fopen expects string, resource given.#'
         - '#Parameter \#1 \$it of method AppendIterator::append\(\) expects Iterator, Traversable given.#'
         - '#Parameter \#1 \$it of class .+Iterator constructor expects Iterator, Traversable given.#'
@@ -34,7 +32,6 @@ parameters:
         - '#Parameter \#2 \$assoc of method Cake\\ORM\\Marshaller::_mergeBelongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
         - '#Parameter \#1 \$table of method Cake\\ORM\\Query::addDefaultTypes\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
         - '#Parameter \#1 \$table of method Cake\\ORM\\Query::_addAssociationsToTypeMap\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
-        - '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
         - '#Property Cake\\Controller\\Controller::\$response \(Cake\\Http\\Response\) does not accept Psr\\Http\\Message\\ResponseInterface#'
         -
             message: '#Right side of && is always false#'
@@ -58,8 +55,11 @@ parameters:
             message: '#Call to an undefined method Cake\\ORM\\Association::junction\(\).#'
             path: 'src/View/Form/EntityContext.php'
         -
+            message: '#Parameter \#1 \$var_array of function extract is passed by reference, so it expects variables only#'
+            path: 'src/Command/I18nExtractCommand.php'
+        -
             message: '#Result of || is always true#'
-            path: 'src/Shell/Task/ExtractTask.php'
+            path: 'src/Command/I18nExtractCommand.php'
         -
             message: '#Result of || is always true#'
             path: 'src/Utility/Hash.php'
@@ -72,6 +72,9 @@ parameters:
         -
             message: '#Method Cake\\Http\\Middleware\\CspMiddleware::process\(\) should return Psr\\Http\\Message\\ResponseInterface but returns Psr\\Http\\Message\\MessageInterface#'
             path: 'src/Http/Middleware/CspMiddleware.php'
+        -
+            message: '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
+            path: 'src/TestSuite/Fixture/TestFixture.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

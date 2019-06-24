@@ -46,6 +46,13 @@ abstract class TestCase extends BaseTestCase
     public $fixtureManager;
 
     /**
+     * Fixtures used by this test case.
+     *
+     * @var string[]
+     */
+    public $fixtures = [];
+
+    /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
      *
@@ -598,6 +605,11 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
 
+            /**
+             * If 'attrs' is not present then the array is just a regular int-offset one
+             *
+             * @var array<int, string> $assertion
+             */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = null;
             foreach ((array)$expressions as $expression) {

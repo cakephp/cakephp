@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
@@ -116,15 +117,15 @@ class ModelAwareTraitTest extends TestCase
         $stub->setProps('Articles');
 
         $stub->modelFactory('Table', function ($name) {
-            $mock = new \StdClass();
+            $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
             $mock->name = $name;
 
             return $mock;
         });
 
         $result = $stub->loadModel('Magic', 'Table');
-        $this->assertInstanceOf('stdClass', $result);
-        $this->assertInstanceOf('stdClass', $stub->Magic);
+        $this->assertInstanceOf(RepositoryInterface::class, $result);
+        $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
         $this->assertSame('Magic', $stub->Magic->name);
     }
 

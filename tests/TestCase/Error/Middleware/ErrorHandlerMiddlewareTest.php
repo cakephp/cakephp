@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Error\Middleware;
 
+use Cake\Error\ErrorHandler;
 use Cake\Error\ExceptionRendererInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Http\Response;
@@ -80,23 +81,6 @@ class ErrorHandlerMiddlewareTest extends TestCase
     }
 
     /**
-     * Test an invalid rendering class.
-     *
-     */
-    public function testInvalidRenderer()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
-        $request = ServerRequestFactory::fromGlobals();
-
-        $middleware = new ErrorHandlerMiddleware('TotallyInvalid');
-        $handler = new TestRequestHandler(function ($req) {
-            throw new \Exception('Something bad');
-        });
-        $middleware->process($request, $handler);
-    }
-
-    /**
      * Test using a factory method to make a renderer.
      *
      * @return void
@@ -117,7 +101,9 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
             return $mock;
         };
-        $middleware = new ErrorHandlerMiddleware($factory);
+        $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
+            'exceptionRenderer' => $factory,
+        ]));
         $handler = new TestRequestHandler(function ($req) {
             throw new LogicException('Something bad');
         });
@@ -310,7 +296,9 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
             return $mock;
         };
-        $middleware = new ErrorHandlerMiddleware($factory);
+        $middleware = new ErrorHandlerMiddleware(new ErrorHandler([
+            'exceptionRenderer' => $factory,
+        ]));
         $handler = new TestRequestHandler(function ($req) {
             throw new \Cake\Http\Exception\ServiceUnavailableException('whoops');
         });
