@@ -94,6 +94,7 @@ class ViewVarsTraitTest extends TestCase
         $expected = ['one' => 'two', 'key' => 'val'];
         $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
     }
+
     /**
      * test that createView() updates viewVars of View instance on each call.
      *

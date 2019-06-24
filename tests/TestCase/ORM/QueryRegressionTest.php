@@ -1720,6 +1720,7 @@ class QueryRegressionTest extends TestCase
 
         $this->assertEquals($expected, $result);
     }
+
     /**
      * Tests deep formatters get the right object type when applied in a beforeFind
      *

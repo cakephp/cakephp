@@ -450,6 +450,7 @@ class ClientTest extends TestCase
             [Request::METHOD_TRACE],
         ];
     }
+
     /**
      * test simple POST request.
      *
