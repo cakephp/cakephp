@@ -214,7 +214,7 @@ class RedisEngine extends CacheEngine
     {
         $key = $this->_key($key);
 
-        return $this->_Redis->delete($key) > 0;
+        return $this->_Redis->del($key) > 0;
     }
 
     /**
@@ -232,7 +232,7 @@ class RedisEngine extends CacheEngine
 
         $result = [];
         foreach ($keys as $key) {
-            $result[] = $this->_Redis->delete($key) > 0;
+            $result[] = $this->_Redis->del($key) > 0;
         }
 
         return !in_array(false, $result);
