@@ -591,7 +591,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     public function join($tables = null, $types = [], $overwrite = false)
     {
         if ($tables === null) {
-            deprecationWarning('Using Query::join() to read state is deprecated. Use clause("join") instead.');
+            deprecationWarning('Using Query::join() to read state is deprecated. Use Query::clause("join") instead.');
 
             return $this->_parts['join'];
         }
