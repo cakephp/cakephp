@@ -814,6 +814,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 is_callable($second)
             ) && (
                 is_string($first) || $first === null
+            ) && (
+                $first !== 'create' && $first !== 'update'
             )
         ) {
             return [$first, $second];
@@ -823,6 +825,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             "You should reverse the order of your `when` and `message` arguments " .
             "so that they are `message, when`."
         );
+
+        // Called without the second argument.
+        if (is_bool($second)) {
+            $second = null;
+        }
 
         // Called with `$when, $message`. Reverse the
         // order to match the expected return value.
