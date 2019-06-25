@@ -822,6 +822,30 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Same as testAllowEmptyDateUpdateDeprecatedArguments but without message
+     *
+     * @return void
+     */
+    public function testAllowEmptyStringDeprecatedArgumentsWithoutMessage()
+    {
+        $validator = new Validator();
+        $this->deprecated(function () use ($validator) {
+            $validator->allowEmptyString('title', 'update');
+        });
+        $this->assertFalse($validator->isEmptyAllowed('title', true));
+        $this->assertTrue($validator->isEmptyAllowed('title', false));
+
+        $data = [
+            'title' => null,
+        ];
+        $expected = [
+            'title' => ['_empty' => 'This field cannot be left empty'],
+        ];
+        $this->assertSame($expected, $validator->errors($data, true));
+        $this->assertEmpty($validator->errors($data, false));
+    }
+
+    /**
      * Tests the notEmptyString method
      *
      * @return void
