@@ -167,7 +167,14 @@ class RadioWidget implements WidgetInterface
         }
 
         if (empty($radio['id'])) {
-            $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
+            if (isset($data['id'])) {
+                $radio['id'] = $data['id'] . '-' . trim(
+                    $this->_idSuffix($radio['value']),
+                    '-'
+                );
+            } else {
+                $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
+            }
         }
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;

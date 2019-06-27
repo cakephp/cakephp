@@ -60,7 +60,21 @@ trait IdGeneratorTrait
     protected function _id(string $name, string $val): string
     {
         $name = $this->_domId($name);
+        $suffix = $this->_idSuffix($val);
 
+        return trim($name . '-' . $suffix, '-');
+    }
+
+    /**
+     * Generate an ID suffix.
+     *
+     * Ensures that id's for a given set of fields are unique.
+     *
+     * @param string $val The ID attribute value.
+     * @return string Generated id suffix.
+     */
+    protected function _idSuffix($val)
+    {
         $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
         $count = 1;
         $check = $idSuffix;
@@ -69,7 +83,7 @@ trait IdGeneratorTrait
         }
         $this->_idSuffixes[] = $check;
 
-        return trim($name . '-' . $check, '-');
+        return $check;
     }
 
     /**
