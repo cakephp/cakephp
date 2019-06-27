@@ -168,7 +168,7 @@ class MultiCheckboxWidget implements WidgetInterface
             if (empty($checkbox['id'])) {
                 if (isset($data['id'])) {
                     $checkbox['id'] = $data['id'] . '-' . trim(
-                        $this->_idSuffix($checkbox['value']),
+                        $this->_idSuffix((string)$checkbox['value']),
                         '-'
                     );
                 } else {
