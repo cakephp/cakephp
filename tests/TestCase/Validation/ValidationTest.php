@@ -141,17 +141,6 @@ class ValidationTest extends TestCase
      */
     public function testAlphaNumericPassedAsArray()
     {
-        $this->assertTrue(Validation::alphaNumeric('frferrf'));
-        $this->assertTrue(Validation::alphaNumeric('12234'));
-        $this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
-        $this->assertTrue(Validation::alphaNumeric('0'));
-        $this->assertFalse(Validation::alphaNumeric('12 234'));
-        $this->assertFalse(Validation::alphaNumeric('dfd 234'));
-        $this->assertFalse(Validation::alphaNumeric("\n"));
-        $this->assertFalse(Validation::alphaNumeric("\t"));
-        $this->assertFalse(Validation::alphaNumeric("\r"));
-        $this->assertFalse(Validation::alphaNumeric(' '));
-        $this->assertFalse(Validation::alphaNumeric(''));
         $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
