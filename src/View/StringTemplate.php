@@ -369,4 +369,46 @@ class StringTemplate
 
         return $input;
     }
+
+    /**
+     * Removes a class and returns a unique list either in array or space separated
+     *
+     * @param array|string $input The array or string to remove the class from
+     * @param array|string $removeClass the new class or classes to remove
+     * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
+     * @return array|string
+     */
+    public function removeClass($input, $removeClass, $useIndex = 'class')
+    {
+        // NOOP
+        if (empty($removeClass)) {
+            return $input;
+        }
+
+        if (is_array($input)) {
+            $class = Hash::get($input, $useIndex, []);
+        } else {
+            $class = $input;
+            $input = [];
+        }
+
+        // Convert and sanitise the inputs
+        if (!is_array($class)) {
+            if (is_string($class) && !empty($class)) {
+                $class = explode(' ', $class);
+            } else {
+                $class = [];
+            }
+        }
+
+        if (is_string($removeClass)) {
+            $removeClass = explode(' ', $removeClass);
+        }
+
+        $class = array_unique(array_diff($class, $removeClass));
+
+        $input = Hash::insert($input, $useIndex, $class);
+
+        return $input;
+    }
 }
