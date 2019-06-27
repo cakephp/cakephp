@@ -73,7 +73,7 @@ trait IdGeneratorTrait
      * @param string $val The ID attribute value.
      * @return string Generated id suffix.
      */
-    protected function _idSuffix($val)
+    protected function _idSuffix(string $val): string
     {
         $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
         $count = 1;
