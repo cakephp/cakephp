@@ -181,12 +181,6 @@ abstract class Cell
 
             $builder = $this->viewBuilder()->setLayout(false);
 
-            if ($template !== null &&
-                strpos($template, '/') === false &&
-                strpos($template, '.') === false
-            ) {
-                $template = Inflector::underscore($template);
-            }
             if ($template !== null) {
                 $builder->setTemplate($template);
             }
@@ -204,7 +198,10 @@ abstract class Cell
             try {
                 return $this->View->render($template);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellViewException(['file' => $template, 'name' => $name], null, $e);
+                $attributes = $e->getAttributes();
+                $attributes = ['file' => basename($attributes['file']), 'name' => $name];
+
+                throw new MissingCellViewException($attributes, null, $e);
             }
         };
 

@@ -1727,14 +1727,21 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $entity = $this->newEntity();
         if ($options['defaults'] && is_array($search)) {
-            $entity->set($search, ['guard' => false]);
+            $accessibleFields = array_combine(array_keys($search), array_fill(0, count($search), true));
+            $entity = $this->patchEntity($entity, $search, ['accessibleFields' => $accessibleFields]);
         }
         if ($callback !== null) {
             $entity = $callback($entity) ?: $entity;
         }
         unset($options['defaults']);
 
-        return $this->save($entity, $options) ?: $entity;
+        $result = $this->save($entity, $options);
+
+        if ($result === false) {
+            throw new PersistenceFailedException($entity, ['findOrCreate']);
+        }
+
+        return $entity;
     }
 
     /**

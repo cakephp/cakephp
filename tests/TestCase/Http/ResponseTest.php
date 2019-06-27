@@ -1859,6 +1859,22 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withCookieCollection()
+     *
+     * @return void
+     */
+    public function testWithCookieCollection()
+    {
+        $response = new Response();
+        $collection = new CookieCollection([new Cookie('foo', 'bar')]);
+        $newResponse = $response->withCookieCollection($collection);
+
+        $this->assertNotSame($response, $newResponse);
+        $this->assertNotSame($response->getCookieCollection(), $newResponse->getCookieCollection());
+        $this->assertSame($newResponse->getCookie('foo')['value'], 'bar');
+    }
+
+    /**
      * Test that cors() returns a builder.
      *
      * @return void

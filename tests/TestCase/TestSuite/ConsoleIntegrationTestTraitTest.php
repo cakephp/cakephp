@@ -13,6 +13,7 @@
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
@@ -45,6 +46,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
         $this->exec('routes');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertExitSuccess();
     }
 
     /**
@@ -58,6 +60,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 
         $this->assertOutputContains('Welcome to CakePHP');
         $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitError();
     }
 
     /**
@@ -138,6 +141,18 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 
         $this->assertErrorContains('No!');
         $this->assertExitCode(Shell::CODE_ERROR);
+    }
+
+    /**
+     * tests exec with fewer inputs than questions
+     *
+     * @return void
+     */
+    public function testExecWithMissingInput()
+    {
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('no more input');
+        $this->exec('integration bridge', ['cake']);
     }
 
     /**

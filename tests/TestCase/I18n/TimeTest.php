@@ -49,11 +49,11 @@ class TimeTest extends TestCase
         Time::setTestNow($this->now);
         Time::setDefaultLocale($this->locale);
         Time::resetToStringFormat();
-        Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
+        Time::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
         FrozenTime::setDefaultLocale($this->locale);
         FrozenTime::resetToStringFormat();
-        FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH:mm:ssxxx");
+        FrozenTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 
         date_default_timezone_set('UTC');
         I18n::setLocale(I18n::DEFAULT_LOCALE);

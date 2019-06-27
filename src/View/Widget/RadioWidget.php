@@ -165,7 +165,14 @@ class RadioWidget implements WidgetInterface
         }
 
         if (empty($radio['id'])) {
-            $radio['id'] = $this->_id($radio['name'], $radio['value']);
+            if (isset($data['id'])) {
+                $radio['id'] = $data['id'] . '-' . trim(
+                    $this->_idSuffix($radio['value']),
+                    '-'
+                );
+            } else {
+                $radio['id'] = $this->_id($radio['name'], $radio['value']);
+            }
         }
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
@@ -230,7 +237,9 @@ class RadioWidget implements WidgetInterface
      */
     protected function _renderLabel($radio, $label, $input, $context, $escape)
     {
-        if ($label === false) {
+        if (isset($radio['label'])) {
+            $label = $radio['label'];
+        } elseif ($label === false) {
             return false;
         }
         $labelAttrs = is_array($label) ? $label : [];
