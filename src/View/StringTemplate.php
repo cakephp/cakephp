@@ -331,10 +331,10 @@ class StringTemplate
     /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * @param array|string $input The array or string to add the class to
-     * @param array|string $newClass the new class or classes to add
+     * @param string[]|string $input The array or string to add the class to
+     * @param string[]|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array|string
+     * @return string[]|string
      */
     public function addClass($input, $newClass, $useIndex = 'class')
     {
@@ -373,10 +373,10 @@ class StringTemplate
     /**
      * Removes a class and returns a unique list either in array or space separated
      *
-     * @param array|string $input The array or string to remove the class from
-     * @param array|string $removeClass the new class or classes to remove
+     * @param string[]|string $input The array or string to remove the class from
+     * @param string[]|string $removeClass the new class or classes to remove
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array|string
+     * @return string[]|string
      */
     public function removeClass($input, $removeClass, $useIndex = 'class')
     {
