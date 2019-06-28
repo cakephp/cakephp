@@ -27,6 +27,14 @@ use Cake\Console\ConsoleOptionParser;
 class PluginLoadCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'plugin load';
+    }
+
+    /**
      * Arguments
      *
      * @var \Cake\Console\Arguments

@@ -29,6 +29,14 @@ class PluginAssetsCopyCommand extends Command
     use PluginAssetsTrait;
 
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'plugin assets copy';
+    }
+
+    /**
      * Execute the command
      *
      * Copying plugin assets to app's webroot. For vendor namespaced plugin,

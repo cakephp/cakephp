@@ -29,6 +29,14 @@ class PluginAssetsSymlinkCommand extends Command
     use PluginAssetsTrait;
 
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'plugin assets symlink';
+    }
+
+    /**
      * Execute the command
      *
      * Attempt to symlink plugin assets to app's webroot. If symlinking fails it

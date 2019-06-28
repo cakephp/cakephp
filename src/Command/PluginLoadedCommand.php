@@ -29,6 +29,14 @@ use Cake\Core\Plugin;
 class PluginLoadedCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'plugin loaded';
+    }
+
+    /**
      * Displays all currently loaded plugins.
      *
      * @param \Cake\Console\Arguments $args The command arguments.

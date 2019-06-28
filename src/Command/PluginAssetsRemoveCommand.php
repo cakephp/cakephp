@@ -29,6 +29,14 @@ class PluginAssetsRemoveCommand extends Command
     use PluginAssetsTrait;
 
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'plugin assets remove';
+    }
+
+    /**
      * Execute the command
      *
      * Remove plugin assets from app's webroot.

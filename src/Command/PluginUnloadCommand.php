@@ -27,6 +27,14 @@ use Cake\Console\ConsoleOptionParser;
 class PluginUnloadCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'plugin unload';
+    }
+
+    /**
      * Execute the command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
