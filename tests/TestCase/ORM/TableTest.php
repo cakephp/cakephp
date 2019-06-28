@@ -2998,28 +2998,22 @@ class TableTest extends TestCase
         $mock->expects($this->at(2))
             ->method('dispatch')
             ->with($this->callback(function (EventInterface $event) use ($entity, $options) {
-                return (
-                    $event->getName() === 'Model.beforeDelete' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options]
-                );
+                return $event->getName() === 'Model.beforeDelete' &&
+                    $event->getData() == ['entity' => $entity, 'options' => $options];
             }));
 
         $mock->expects($this->at(3))
             ->method('dispatch')
             ->with($this->callback(function (EventInterface $event) use ($entity, $options) {
-                return (
-                    $event->getName() === 'Model.afterDelete' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options]
-                );
+                return $event->getName() === 'Model.afterDelete' &&
+                    $event->getData() == ['entity' => $entity, 'options' => $options];
             }));
 
         $mock->expects($this->at(4))
             ->method('dispatch')
             ->with($this->callback(function (EventInterface $event) use ($entity, $options) {
-                return (
-                    $event->getName() === 'Model.afterDeleteCommit' &&
-                    $event->getData() == ['entity' => $entity, 'options' => $options]
-                );
+                return $event->getName() === 'Model.afterDeleteCommit' &&
+                    $event->getData() == ['entity' => $entity, 'options' => $options];
             }));
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);

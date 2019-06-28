@@ -2325,10 +2325,10 @@ class QueryTest extends TestCase
 
         $reflect = new ReflectionProperty($query, '_dirty');
         $reflect->setAccessible(true);
-        $this->assertFalse($reflect->getvalue($query));
+        $this->assertFalse($reflect->getValue($query));
 
         $query->offset(2);
-        $this->assertTrue($reflect->getvalue($query));
+        $this->assertTrue($reflect->getValue($query));
     }
 
     /**
