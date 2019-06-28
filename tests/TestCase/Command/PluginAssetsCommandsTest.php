@@ -63,6 +63,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->useCommandRunner();
         $this->setAppNamespace();
+        $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', []);
     }
 
     /**
@@ -168,7 +169,7 @@ class PluginAssetsCommandsTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
-        $this->exec('plugin assets symlink', ['TestPlugin']);
+        $this->exec('plugin assets symlink TestPlugin');
 
         $path = $this->wwwRoot . 'test_plugin';
         $link = new \SplFileInfo($path);
@@ -224,7 +225,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->assertFileNotEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
 
-        $this->exec('plugin assets copy', ['--overwrite']);
+        $this->exec('plugin assets copy --overwrite');
 
         $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
     }
@@ -301,7 +302,7 @@ class PluginAssetsCommandsTest extends TestCase
         $filectime = filectime($path);
 
         sleep(1);
-        $this->exec('plugin assets symlink', ['TestPlugin', '--overwrite']);
+        $this->exec('plugin assets symlink TestPlugin --overwrite');
         if (DS === '\\') {
             $this->assertDirectoryExists($path);
         } else {
@@ -322,7 +323,7 @@ class PluginAssetsCommandsTest extends TestCase
         $filectime = filectime($path);
 
         sleep(1);
-        $this->exec('plugin assets copy', ['Company/TestPluginThree', '--overwrite']);
+        $this->exec('plugin assets copy Company/TestPluginThree --overwrite');
 
         $newfilectime = filectime($path);
         $this->assertTrue($newfilectime > $filectime);
