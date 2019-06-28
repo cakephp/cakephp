@@ -17,9 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\Command;
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Filesystem\Filesystem;
 use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -135,16 +138,25 @@ class PluginAssetsCommandsTest extends TestCase
     {
         $this->loadPlugins(['TestTheme']);
 
-        $shell = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
-            ->setMethods(['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'])
-            ->setConstructorArgs([$this->io])
+        $output = new ConsoleOutput();
+        $io = $this->getMockBuilder(ConsoleIo::class)
+            ->setConstructorArgs([$output, $output, null, null])
+            ->setMethods(['in'])
             ->getMock();
+        $parser = new ConsoleOptionParser('cake example');
+        $parser->addArgument('name', ['optional' => true]);
+        $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
+
+        $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
+            ->setMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
+            ->getMock();
+        $command->method('getOptionParser')->will($this->returnValue($parser));
 
         $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
 
-        $shell->expects($this->never())->method('_createSymlink');
-        $shell->expects($this->never())->method('_copyDirectory');
-        $shell->symlink();
+        $command->expects($this->never())->method('_createSymlink');
+        $command->expects($this->never())->method('_copyDirectory');
+        $command->run([], $io);
     }
 
     /**
