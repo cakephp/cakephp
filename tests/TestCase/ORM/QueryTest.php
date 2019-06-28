@@ -31,6 +31,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 
 /**
  * Tests Query class
@@ -2858,9 +2859,12 @@ class QueryTest extends TestCase
         $loader = $query->getEagerLoader();
         $this->assertEquals($copyLoader, $loader, 'should be equal');
         $this->assertNotSame($copyLoader, $loader, 'should be clones');
+
+        $reflect = new ReflectionProperty($loader, '_matching');
+        $reflect->setAccessible(true);
         $this->assertNotSame(
-            $this->readAttribute($copyLoader, '_matching'),
-            $this->readAttribute($loader, '_matching'),
+            $reflect->getValue($copyLoader),
+            $reflect->getValue($loader),
             'should be clones'
         );
         $this->assertNull($copy->clause('offset'));

@@ -21,6 +21,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 
 /**
  * Test case for the ActionDispatcher.
@@ -50,7 +51,9 @@ class ActionDispatcherTest extends TestCase
         $factory = $this->getMockBuilder('Cake\Http\ControllerFactory')->getMock();
         $dispatcher = new ActionDispatcher($factory);
 
-        $this->assertAttributeSame($factory, 'factory', $dispatcher);
+        $reflect = new ReflectionProperty($dispatcher, 'factory');
+        $reflect->setAccessible(true);
+        $this->assertSame($factory, $reflect->getValue($dispatcher));
     }
 
     /**

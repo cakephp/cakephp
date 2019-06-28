@@ -28,6 +28,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use ReflectionProperty;
 use TestApp\Database\Type\BarType;
 
 /**
@@ -2321,11 +2322,13 @@ class QueryTest extends TestCase
             ->limit(1)
             ->offset(1)
             ->execute();
-        $dirty = $this->readAttribute($query, '_dirty');
-        $this->assertFalse($dirty);
+
+        $reflect = new ReflectionProperty($query, '_dirty');
+        $reflect->setAccessible(true);
+        $this->assertFalse($reflect->getvalue($query));
+
         $query->offset(2);
-        $dirty = $this->readAttribute($query, '_dirty');
-        $this->assertTrue($dirty);
+        $this->assertTrue($reflect->getvalue($query));
     }
 
     /**

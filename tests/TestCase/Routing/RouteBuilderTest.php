@@ -954,7 +954,7 @@ class RouteBuilderTest extends TestCase
             ['middleware' => ['auth']]
         );
         $routes->scope('/v1', function (RouteBuilder $routes) {
-            $this->assertAttributeEquals(['auth'], 'middleware', $routes, 'Should inherit middleware');
+            $this->assertSame(['auth'], $routes->getMiddleware(), 'Should inherit middleware');
             $this->assertSame('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'api'], $routes->params());
         });
@@ -1078,7 +1078,7 @@ class RouteBuilderTest extends TestCase
         $routes->applyMiddleware('test');
         $routes->applyMiddleware('test2');
 
-        $this->assertAttributeEquals(['test', 'test2'], 'middleware', $routes);
+        $this->assertSame(['test', 'test2'], $routes->getMiddleware());
     }
 
     /**
@@ -1097,7 +1097,7 @@ class RouteBuilderTest extends TestCase
         $routes->applyMiddleware('test', 'test2');
         $routes->applyMiddleware('test2', 'test');
 
-        $this->assertAttributeEquals(['test', 'test2'], 'middleware', $routes);
+        $this->assertEquals(['test', 'test2'], $routes->getMiddleware());
     }
 
     /**

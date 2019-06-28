@@ -63,7 +63,7 @@ class BodyParserMiddlewareTest extends TestCase
     public function testConstructorMethodsOption()
     {
         $parser = new BodyParserMiddleware(['methods' => ['PUT']]);
-        $this->assertAttributeEquals(['PUT'], 'methods', $parser);
+        $this->assertEquals(['PUT'], $parser->getMethods());
     }
 
     /**
@@ -74,17 +74,17 @@ class BodyParserMiddlewareTest extends TestCase
     public function testConstructorXmlOption()
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $this->assertAttributeEquals([], 'parsers', $parser, 'Xml off by default');
+        $this->assertEquals([], $parser->getParsers(), 'Xml off by default');
 
         $parser = new BodyParserMiddleware(['json' => false, 'xml' => false]);
-        $this->assertAttributeEquals([], 'parsers', $parser, 'No Xml types set.');
+        $this->assertEquals([], $parser->getParsers(), 'No Xml types set.');
 
         $parser = new BodyParserMiddleware(['json' => false, 'xml' => true]);
         $expected = [
             'application/xml' => [$parser, 'decodeXml'],
             'text/xml' => [$parser, 'decodeXml'],
         ];
-        $this->assertAttributeEquals($expected, 'parsers', $parser, 'Xml types are incorrect.');
+        $this->assertEquals($expected, $parser->getParsers(), 'Xml types are incorrect.');
     }
 
     /**
@@ -95,14 +95,14 @@ class BodyParserMiddlewareTest extends TestCase
     public function testConstructorJsonOption()
     {
         $parser = new BodyParserMiddleware(['json' => false]);
-        $this->assertAttributeEquals([], 'parsers', $parser, 'No JSON types set.');
+        $this->assertEquals([], $parser->getParsers(), 'No JSON types set.');
 
         $parser = new BodyParserMiddleware([]);
         $expected = [
             'application/json' => [$parser, 'decodeJson'],
             'text/json' => [$parser, 'decodeJson'],
         ];
-        $this->assertAttributeEquals($expected, 'parsers', $parser, 'JSON types are incorrect.');
+        $this->assertEquals($expected, $parser->getParsers(), 'JSON types are incorrect.');
     }
 
     /**
@@ -114,7 +114,7 @@ class BodyParserMiddlewareTest extends TestCase
     {
         $parser = new BodyParserMiddleware();
         $this->assertSame($parser, $parser->setMethods(['PUT']));
-        $this->assertAttributeEquals(['PUT'], 'methods', $parser);
+        $this->assertEquals(['PUT'], $parser->getMethods());
     }
 
     /**
@@ -139,7 +139,7 @@ class BodyParserMiddlewareTest extends TestCase
         $parser->addParser(['application/json'], 'json_decode');
         $parser->addParser(['application/json'], 'strpos');
 
-        $this->assertAttributeEquals(['application/json' => 'strpos'], 'parsers', $parser);
+        $this->assertEquals(['application/json' => 'strpos'], $parser->getParsers());
     }
 
     /**

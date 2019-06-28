@@ -951,77 +951,53 @@ class ViewTest extends TestCase
         $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
         $View->setEventManager($manager);
 
-        $manager->expects($this->at(0))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.beforeRender'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(0))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.beforeRender';
+            }));
 
-        $manager->expects($this->at(1))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.beforeRenderFile'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.beforeRenderFile';
+            }));
 
-        $manager->expects($this->at(2))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.afterRenderFile'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(2))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.afterRenderFile';
+            }));
 
-        $manager->expects($this->at(3))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.afterRender'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(3))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.afterRender';
+            }));
 
-        $manager->expects($this->at(4))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.beforeLayout'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(4))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.beforeLayout';
+            }));
 
-        $manager->expects($this->at(5))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.beforeRenderFile'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(5))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.beforeRenderFile';
+            }));
 
-        $manager->expects($this->at(6))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.afterRenderFile'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(6))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.afterRenderFile';
+            }));
 
-        $manager->expects($this->at(7))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'View.afterLayout'),
-                    $this->attributeEqualTo('_subject', $View)
-                )
-            );
+        $manager->expects($this->at(7))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'View.afterLayout';
+            }));
 
         $View->render('index');
     }

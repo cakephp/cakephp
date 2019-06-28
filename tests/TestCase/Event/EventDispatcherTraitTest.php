@@ -43,16 +43,6 @@ class EventDispatcherTraitTest extends TestCase
     }
 
     /**
-     * testIsInitiallyEmpty
-     *
-     * @return void
-     */
-    public function testIsInitiallyEmpty()
-    {
-        $this->assertAttributeEmpty('_eventManager', $this->subject);
-    }
-
-    /**
      * testGetEventManager
      *
      * @return void
