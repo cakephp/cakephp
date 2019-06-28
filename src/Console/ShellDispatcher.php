@@ -189,12 +189,14 @@ class ShellDispatcher
             return $code === null ? $code : (int)$code;
         }
         if ($result === null || $result === true) {
+            /** @psalm-suppress DeprecatedClass */
             return Shell::CODE_SUCCESS;
         }
         if (is_int($result)) {
             return $result;
         }
 
+        /** @psalm-suppress DeprecatedClass */
         return Shell::CODE_ERROR;
     }
 
