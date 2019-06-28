@@ -49,37 +49,8 @@ class CommandScanner
             '',
             ['command_list']
         );
-        $coreCommands = $this->inflectCommandNames($coreCommands);
 
         return array_merge($coreShells, $coreCommands);
-    }
-
-    /**
-     * Inflect multi-word command names based on conventions
-     *
-     * @param array $commands The array of command metadata to mutate
-     * @return array The updated command metadata
-     * @see \Cake\Console\CommandScanner::scanDir()
-     */
-    protected function inflectCommandNames(array $commands): array
-    {
-        foreach ($commands as $i => $command) {
-            $command['name'] = str_replace('_', ' ', $command['name']);
-            $command['fullName'] = str_replace('_', ' ', $command['fullName']);
-            $commands[$i] = $command;
-
-            // Maintain backwards compatibility for schema_cache as it is likely
-            // hooked up to people's deploy tooling
-            if (strpos($command['name'], 'schemacache') === 0) {
-                $compat = [
-                    'name' => str_replace('schemacache', 'schema_cache', $command['name']),
-                    'fullName' => str_replace('schemacache', 'schema_cache', $command['fullName']),
-                ];
-                $commands[] = $compat + $command;
-            }
-        }
-
-        return $commands;
     }
 
     /**
@@ -157,12 +128,15 @@ class CommandScanner
             }
 
             $class = $namespace . $fileInfo->getBasename('.php');
+            /** @psalm-suppress DeprecatedClass */
             if (!is_subclass_of($class, Shell::class)
                 && !is_subclass_of($class, Command::class)
             ) {
                 continue;
             }
-
+            if (is_subclass_of($class, Command::class)) {
+                $name = $class::defaultName();
+            }
             $shells[$path . $file] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,

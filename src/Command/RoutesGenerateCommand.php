@@ -29,6 +29,14 @@ use Cake\Routing\Router;
 class RoutesGenerateCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'routes generate';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.

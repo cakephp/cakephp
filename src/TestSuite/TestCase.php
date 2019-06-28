@@ -46,6 +46,13 @@ abstract class TestCase extends BaseTestCase
     public $fixtureManager;
 
     /**
+     * Fixtures used by this test case.
+     *
+     * @var string[]
+     */
+    public $fixtures = [];
+
+    /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
      * Set this to false to handle manually
      *

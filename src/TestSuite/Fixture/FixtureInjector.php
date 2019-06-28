@@ -40,7 +40,7 @@ class FixtureInjector implements TestListener
     /**
      * Holds a reference to the container test suite
      *
-     * @var \PHPUnit\Framework\TestSuite
+     * @var \PHPUnit\Framework\TestSuite|null
      */
     protected $_first;
 

@@ -22,11 +22,13 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
+use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
 use InvalidArgumentException;
+use TestApp\Database\Type\BarType;
 
 /**
  * Tests Query class
@@ -4304,16 +4306,25 @@ class QueryTest extends TestCase
      */
     public function testSelectTypeConversion()
     {
+        TypeFactory::set('custom_datetime', new BarType('custom_datetime'));
         $this->loadFixtures('Comments');
+
         $query = new Query($this->connection);
         $query
-            ->select(['id', 'comment', 'the_date' => 'created'])
+            ->select(['id', 'comment', 'the_date' => 'created', 'updated'])
             ->from('comments')
             ->limit(1)
-            ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
+            ->getSelectTypeMap()
+                ->setTypes([
+                    'id' => 'integer',
+                    'the_date' => 'datetime',
+                    'updated' => 'custom_datetime',
+                ]);
+
         $result = $query->execute()->fetchAll('assoc');
         $this->assertIsInt($result[0]['id']);
         $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['updated']);
     }
 
     /**

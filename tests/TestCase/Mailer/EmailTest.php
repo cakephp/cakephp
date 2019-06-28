@@ -906,6 +906,7 @@ class EmailTest extends TestCase
         $this->expectExceptionMessage('The value passed for the "$name" argument must be either a string, or an object, integer given.');
         $this->Email->setTransport(123);
     }
+
     /**
      * Test reading/writing configuration profiles.
      *
@@ -1385,6 +1386,7 @@ class EmailTest extends TestCase
         $this->assertStringContainsString($expected, $result['message']);
         $this->assertStringContainsString('--' . $boundary . '--', $result['message']);
     }
+
     /**
      * testSendWithLog method
      *

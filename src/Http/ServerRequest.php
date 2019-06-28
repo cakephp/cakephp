@@ -795,16 +795,15 @@ class ServerRequest implements ServerRequestInterface
 
     /**
      * Add a new detector to the list of detectors that a request can use.
-     * There are several different formats and types of detectors that can be set.
+     * There are several different types of detectors that can be set.
      *
-     * ### Callback detectors
+     * ### Callback comparison
      *
      * Callback detectors allow you to provide a callable to handle the check.
      * The callback will receive the request object as its only parameter.
      *
      * ```
      * addDetector('custom', function ($request) { //Return a boolean });
-     * addDetector('custom', ['SomeClass', 'somemethod']);
      * ```
      *
      * ### Environment value comparison
@@ -812,7 +811,36 @@ class ServerRequest implements ServerRequestInterface
      * An environment value comparison, compares a value fetched from `env()` to a known value
      * the environment value is equality checked against the provided value.
      *
-     * e.g `addDetector('post', ['env' => 'REQUEST_METHOD', 'value' => 'POST'])`
+     * ```
+     * addDetector('post', ['env' => 'REQUEST_METHOD', 'value' => 'POST']);
+     * ```
+     *
+     * ### Request parameter comparison
+     *
+     * Allows for custom detectors on the request parameters.
+     *
+     * ```
+     * addDetector('requested', ['param' => 'requested', 'value' => 1]);
+     * ```
+     *
+     * ### Accept comparison
+     *
+     * Allows for detector to compare against Accept header value.
+     *
+     * ```
+     * addDetector('csv', ['accept' => 'text/csv']);
+     * ```
+     *
+     * ### Header comparison
+     *
+     * Allows for one or more headers to be compared.
+     *
+     * ```
+     * addDetector('fancy', ['header' => ['X-Fancy' => 1]);
+     * ```
+     *
+     * The `param`, `env` and comparison types allow the following
+     * value comparison options:
      *
      * ### Pattern value comparison
      *
@@ -831,17 +859,11 @@ class ServerRequest implements ServerRequestInterface
      * addDetector('mobile', ['env' => 'HTTP_USER_AGENT', 'options' => ['Fennec']]);
      * ```
      *
-     * ### Request parameter detectors
-     *
-     * Allows for custom detectors on the request parameters.
-     *
-     * e.g `addDetector('requested', ['param' => 'requested', 'value' => 1]`
-     *
-     * You can also make parameter detectors that accept multiple values
+     * You can also make compare against multiple values
      * using the `options` key. This is useful when you want to check
-     * if a request parameter is in a list of options.
+     * if a request value is in a list of options.
      *
-     * `addDetector('extension', ['param' => 'ext', 'options' => ['pdf', 'csv']]`
+     * `addDetector('extension', ['param' => '_ext', 'options' => ['pdf', 'csv']]`
      *
      * @param string $name The name of the detector.
      * @param callable|array $callable A callable or options array for the detector definition.

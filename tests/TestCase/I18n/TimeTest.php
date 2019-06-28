@@ -194,6 +194,7 @@ class TimeTest extends TestCase
             ],
         ];
     }
+
     /**
      * test the timezone option for timeAgoInWords
      *

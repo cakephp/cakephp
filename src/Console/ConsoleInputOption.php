@@ -167,7 +167,7 @@ class ConsoleInputOption
     {
         $name = strlen($this->_short) > 0 ? ('-' . $this->_short) : ('--' . $this->_name);
         $default = '';
-        if (strlen($this->_default) > 0 && $this->_default !== true) {
+        if (!is_bool($this->_default) && strlen($this->_default) > 0) {
             $default = ' ' . $this->_default;
         }
         if ($this->_choices) {

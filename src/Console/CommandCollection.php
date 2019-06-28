@@ -60,6 +60,7 @@ class CommandCollection implements IteratorAggregate, Countable
     {
         // Once we have a new Command class this should check
         // against that interface.
+        /** @psalm-suppress DeprecatedClass */
         if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, Command::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(sprintf(

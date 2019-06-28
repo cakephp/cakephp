@@ -22,6 +22,8 @@
         <RedundantConditionGivenDocblockType errorLevel="info" />
         <TypeCoercion errorLevel="info" />
         <DocblockTypeContradiction errorLevel="info" />
+        <MissingClosureParamType errorLevel="info" />
+        <MissingClosureReturnType errorLevel="info" />
         <UndefinedClass>
             <errorLevel type="suppress">
                 <referencedClass name="Memcached" />

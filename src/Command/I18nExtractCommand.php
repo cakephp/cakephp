@@ -32,6 +32,14 @@ use Cake\Utility\Inflector;
 class I18nExtractCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'i18n extract';
+    }
+
+    /**
      * Paths to use when looking for strings
      *
      * @var array

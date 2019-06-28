@@ -21,6 +21,7 @@ use Cake\Console\Exception\StopException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -102,6 +103,25 @@ class Command
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * Get the command name.
+     *
+     * Returns the command name based on class name.
+     * For e.g. for a command with class name `UpdateTableCommand` the default
+     * name returned would be `'update_table'`.
+     *
+     * @return string
+     */
+    public static function defaultName(): string
+    {
+        $pos = strrpos(static::class, '\\');
+        /** @psalm-suppress PossiblyFalseOperand */
+        $name = substr(static::class, $pos + 1, -7);
+        $name = Inflector::underscore($name);
+
+        return $name;
     }
 
     /**

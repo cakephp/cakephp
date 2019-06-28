@@ -16,12 +16,12 @@ declare(strict_types=1);
  */
 namespace TestApp\Database\Type;
 
-use Cake\Database\Type\StringType;
+use Cake\Database\Type\DateTimeType;
 
-class BarType extends StringType
+class BarType extends DateTimeType
 {
     public function getBaseType(): string
     {
-        return 'text';
+        return 'datetimetype';
     }
 }

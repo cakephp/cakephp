@@ -42,6 +42,7 @@ class MailContains extends MailConstraintBase
         foreach ($messages as $message) {
             $message = implode("\r\n", (array)$message->getBody($this->type));
 
+            $other = preg_quote($other, '/');
             if (preg_match("/$other/", $message) > 0) {
                 return true;
             }

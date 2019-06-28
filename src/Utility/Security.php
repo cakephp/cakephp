@@ -36,7 +36,7 @@ class Security
     /**
      * The HMAC salt to use for encryption and decryption routines
      *
-     * @var string
+     * @var string|null
      */
     protected static $_salt;
 
@@ -54,8 +54,8 @@ class Security
      * @param string|null $algorithm Hashing algo to use (i.e. sha1, sha256 etc.).
      *   Can be any valid algo included in list returned by hash_algos().
      *   If no value is passed the type specified by `Security::$hashType` is used.
-     * @param mixed $salt If true, automatically prepends the application's salt
-     *   value to $string (Security.salt).
+     * @param mixed $salt If true, automatically prepends the value returned by
+     *   Security::getSalt() to $string.
      * @return string Hash
      * @link https://book.cakephp.org/3.0/en/core-libraries/security.html#hashing-data
      */
@@ -77,7 +77,7 @@ class Security
 
         if ($salt) {
             if (!is_string($salt)) {
-                $salt = static::$_salt;
+                $salt = static::getSalt();
             }
             $string = $salt . $string;
         }
@@ -152,7 +152,7 @@ class Security
     /**
      * Get the crypto implementation based on the loaded extensions.
      *
-     * You can use this method to forcibly decide between mcrypt/openssl/custom implementations.
+     * You can use this method to forcibly decide between openssl/custom implementations.
      *
      * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
      * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
@@ -173,7 +173,7 @@ class Security
         }
         throw new InvalidArgumentException(
             'No compatible crypto engine available. ' .
-            'Load either the openssl or mcrypt extensions'
+            'Load the openssl extension.'
         );
     }
 
@@ -186,7 +186,8 @@ class Security
      *
      * @param string $plain The value to encrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
-     * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+     * @param string|null $hmacSalt The salt to use for the HMAC process.
+     *   Leave null to use value of Security::getSalt().
      * @return string Encrypted data.
      * @throws \InvalidArgumentException On invalid data or key.
      */
@@ -195,7 +196,7 @@ class Security
         self::_checkKey($key, 'encrypt()');
 
         if ($hmacSalt === null) {
-            $hmacSalt = static::$_salt;
+            $hmacSalt = static::getSalt();
         }
         // Generate the encryption and hmac key.
         $key = mb_substr(hash('sha256', $key . $hmacSalt), 0, 32, '8bit');
@@ -229,7 +230,8 @@ class Security
      *
      * @param string $cipher The ciphertext to decrypt.
      * @param string $key The 256 bit/32 byte key to use as a cipher key.
-     * @param string|null $hmacSalt The salt to use for the HMAC process. Leave null to use Security.salt.
+     * @param string|null $hmacSalt The salt to use for the HMAC process.
+     *   Leave null to use value of Security::getSalt().
      * @return string|null Decrypted data. Any trailing null bytes will be removed.
      * @throws \InvalidArgumentException On invalid data or key.
      */
@@ -240,7 +242,7 @@ class Security
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
         if ($hmacSalt === null) {
-            $hmacSalt = static::$_salt;
+            $hmacSalt = static::getSalt();
         }
 
         // Generate the encryption and hmac key.
@@ -271,11 +273,7 @@ class Security
      */
     public static function constantEquals($original, $compare): bool
     {
-        if (!is_string($original) || !is_string($compare)) {
-            return false;
-        }
-
-        return hash_equals($original, $compare);
+        return is_string($original) && is_string($compare) && hash_equals($original, $compare);
     }
 
     /**
@@ -286,6 +284,10 @@ class Security
      */
     public static function getSalt(): string
     {
+        if (static::$_salt === null) {
+            throw new RuntimeException('Salt not set.');
+        }
+
         return static::$_salt;
     }
 
@@ -298,6 +300,6 @@ class Security
      */
     public static function setSalt(string $salt): void
     {
-        static::$_salt = (string)$salt;
+        static::$_salt = $salt;
     }
 }

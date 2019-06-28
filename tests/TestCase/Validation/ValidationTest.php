@@ -142,17 +142,6 @@ class ValidationTest extends TestCase
      */
     public function testAlphaNumericPassedAsArray()
     {
-        $this->assertTrue(Validation::alphaNumeric('frferrf'));
-        $this->assertTrue(Validation::alphaNumeric('12234'));
-        $this->assertTrue(Validation::alphaNumeric('1w2e2r3t4y'));
-        $this->assertTrue(Validation::alphaNumeric('0'));
-        $this->assertFalse(Validation::alphaNumeric('12 234'));
-        $this->assertFalse(Validation::alphaNumeric('dfd 234'));
-        $this->assertFalse(Validation::alphaNumeric("\n"));
-        $this->assertFalse(Validation::alphaNumeric("\t"));
-        $this->assertFalse(Validation::alphaNumeric("\r"));
-        $this->assertFalse(Validation::alphaNumeric(' '));
-        $this->assertFalse(Validation::alphaNumeric(''));
         $this->assertFalse(Validation::alphaNumeric(['foo']));
     }
 
@@ -1574,6 +1563,56 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to pass a date with a T separator
+     *
+     * @return void
+     */
+    public function testDateTimeISO()
+    {
+        $this->assertTrue(Validation::dateTime('2007/10/04T01:50'));
+        $this->assertTrue(Validation::dateTime('2017/12/04T15:38'));
+        $this->assertTrue(Validation::dateTime('04.12.2017T15:38', ['dmy']));
+        $this->assertTrue(Validation::dateTime('24-02-2019T2:38am', ['dmy']));
+        $this->assertFalse(Validation::dateTime('2007/10/04T1:50'));
+        $this->assertFalse(Validation::dateTime('2007/10/04T58:38'));
+    }
+
+    /**
+     * Tests that it is possible to pass an ISO8601 value
+     *
+     * @return void
+     *
+     * @see Validation tests values credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+     */
+    public function testDateTimeISO8601()
+    {
+        // Valid ISO8601
+        $this->assertTrue(Validation::iso8601('2007'));
+        $this->assertTrue(Validation::iso8601('2007-12'));
+        $this->assertTrue(Validation::iso8601('2009W511'));
+        $this->assertTrue(Validation::iso8601('2007-12-26'));
+        $this->assertTrue(Validation::iso8601('2007-12-26T15:20+02:00'));
+        $this->assertTrue(Validation::iso8601('2007-12-26T15:20:39+02:00'));
+        $this->assertTrue(Validation::iso8601('2007-12-26T15:20:39.59+02:00'));
+        // Invalid ISO8601
+        $this->assertFalse(Validation::iso8601('2009-'));
+        $this->assertFalse(Validation::iso8601('2009M511'));
+        $this->assertFalse(Validation::iso8601('2009-05-19T14a39r'));
+        $this->assertFalse(Validation::iso8601('2010-02-18T16:23.33.600'));
+        // Valid ISO8601 but incomplete date
+        $this->assertFalse(Validation::datetime('2007', 'iso8601'));
+        $this->assertFalse(Validation::datetime('2007-12', 'iso8601'));
+        $this->assertFalse(Validation::datetime('2009W511', 'iso8601'));
+        $this->assertFalse(Validation::datetime('2007-12-26', 'iso8601'));
+        // Valid ISO8601 and complete date and time
+        $this->assertTrue(Validation::datetime('2007-12-26T15:20+02:00', 'iso8601'));
+        $this->assertTrue(Validation::datetime('2007-12-26T15:20:39+02:00', 'iso8601'));
+        $this->assertTrue(Validation::datetime('2007-12-26T15:20:39.59+02:00', 'iso8601'));
+        // Valid ISO8601 and complete date and time BUT Weekdays are not validated by Validation::date()
+        $this->assertFalse(Validation::datetime('2009-W21-2T01:22', 'iso8601'));
+    }
+
+    /**
      * Test localizedTime
      *
      * @return void
@@ -2064,6 +2103,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::maxLength('abcd', 3));
         $this->assertFalse(Validation::maxLength('ÆΔΩЖÇ', 3));
+        $this->assertFalse(Validation::maxLength(['abc'], 10));
     }
 
     /**
@@ -2080,6 +2120,7 @@ class ValidationTest extends TestCase
 
         $this->assertFalse(Validation::maxLengthBytes('abcd', 3));
         $this->assertFalse(Validation::maxLengthBytes('ÆΔΩЖÇ', 9));
+        $this->assertFalse(Validation::maxLengthBytes(['abc'], 10));
     }
 
     /**
@@ -2095,6 +2136,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLength('abc', 3));
         $this->assertTrue(Validation::minLength('abcd', 3));
         $this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
+
+        $this->assertFalse(Validation::minLength(['abc'], 1));
     }
 
     /**
@@ -2111,6 +2154,8 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::minLengthBytes('abcd', 3));
         $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 10));
         $this->assertTrue(Validation::minLengthBytes('ÆΔΩЖÇ', 9));
+
+        $this->assertFalse(Validation::minLengthBytes(['abc'], 1));
     }
 
     /**
@@ -2519,6 +2564,25 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::mimeType($image, ['image/png']));
         $this->assertFalse(Validation::mimeType(['tmp_name' => $image], ['image/png']));
         $this->assertFalse(Validation::mimeType([], ['image/png']));
+    }
+
+    /**
+     * testMimeTypeCaseInsensitive method
+     *
+     * @return void
+     */
+    public function testMimeTypeCaseInsensitive()
+    {
+        $algol68 = CORE_TESTS . 'Fixture/sample.a68';
+        $File = new File($algol68, false);
+
+        $this->skipIf($File->mime() != 'text/x-Algol68', 'Cannot determine text/x-Algol68 mimeType');
+
+        $this->assertTrue(Validation::mimeType($algol68, ['text/x-Algol68']));
+        $this->assertTrue(Validation::mimeType($algol68, ['text/x-algol68']));
+        $this->assertTrue(Validation::mimeType($algol68, ['text/X-ALGOL68']));
+
+        $this->assertFalse(Validation::mimeType($algol68, ['image/png']));
     }
 
     /**
@@ -2947,9 +3011,12 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::isInteger('-012'));
 
         $this->assertFalse(Validation::isInteger('2.5'));
+        $this->assertFalse(Validation::isInteger(2.5));
         $this->assertFalse(Validation::isInteger([]));
         $this->assertFalse(Validation::isInteger(new \StdClass()));
         $this->assertFalse(Validation::isInteger('2 bears'));
+        $this->assertFalse(Validation::isInteger(true));
+        $this->assertFalse(Validation::isInteger(false));
     }
 
     /**
