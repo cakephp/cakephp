@@ -43,6 +43,20 @@ trait ConsoleIntegrationTestTrait
     protected $_useCommandRunner = false;
 
     /**
+     * The customized application class name.
+     *
+     * @var string|null
+     */
+    protected $_appClass;
+
+    /**
+     * The customized application constructor arguments.
+     *
+     * @var array|null
+     */
+    protected $_appArgs;
+
+    /**
      * Last exit code
      *
      * @var int|null
@@ -108,6 +122,8 @@ trait ConsoleIntegrationTestTrait
         $this->_err = null;
         $this->_in = null;
         $this->_useCommandRunner = false;
+        $this->_appClass = null;
+        $this->_appArgs = null;
     }
 
     /**
@@ -119,6 +135,19 @@ trait ConsoleIntegrationTestTrait
     public function useCommandRunner(): void
     {
         $this->_useCommandRunner = true;
+    }
+
+    /**
+     * Configure the application class to use in console integration tests.
+     *
+     * @param string $class The application class name.
+     * @param array|null $constructorArgs The constructor arguments for your application class.
+     * @return void
+     */
+    public function configApplication(string $class, ?array $constructorArgs): void
+    {
+        $this->_appClass = $class;
+        $this->_appArgs = $constructorArgs;
     }
 
     /**
@@ -257,9 +286,10 @@ trait ConsoleIntegrationTestTrait
     protected function makeRunner()
     {
         if ($this->_useCommandRunner) {
-            $applicationClassName = Configure::read('App.namespace') . '\Application';
+            $appClass = $this->_appClass ?: Configure::read('App.namespace') . '\Application';
+            $appArgs = $this->_appArgs ?: [CONFIG];
 
-            return new CommandRunner(new $applicationClassName(CONFIG));
+            return new CommandRunner(new $appClass(...$appArgs));
         }
 
         return new LegacyCommandRunner();
