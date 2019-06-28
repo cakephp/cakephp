@@ -665,15 +665,15 @@ class ShellTest extends TestCase
     public function testHasTask()
     {
         $this->setAppNamespace();
-        $this->Shell->tasks = ['Sample', 'Assets'];
+        $this->Shell->tasks = ['Sample', 'TestApple'];
         $this->Shell->loadTasks();
 
         $this->assertTrue($this->Shell->hasTask('sample'));
         $this->assertTrue($this->Shell->hasTask('Sample'));
         $this->assertFalse($this->Shell->hasTask('random'));
 
-        $this->assertTrue($this->Shell->hasTask('assets'));
-        $this->assertTrue($this->Shell->hasTask('Assets'));
+        $this->assertTrue($this->Shell->hasTask('testApple'));
+        $this->assertTrue($this->Shell->hasTask('TestApple'));
     }
 
     /**
