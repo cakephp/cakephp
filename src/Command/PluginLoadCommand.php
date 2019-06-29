@@ -23,6 +23,8 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for loading plugins.
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginLoadCommand extends Command
 {

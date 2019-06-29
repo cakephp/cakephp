@@ -23,6 +23,8 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for copying plugin assets to app's webroot.
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginAssetsCopyCommand extends Command
 {
@@ -52,7 +54,7 @@ class PluginAssetsCopyCommand extends Command
         $this->args = $args;
 
         $name = $args->getArgument('name');
-        $overwrite = $args->getOption('overwrite');
+        $overwrite = (bool)$args->getOption('overwrite');
         $this->_process($this->_list($name), true, $overwrite);
 
         return static::CODE_SUCCESS;

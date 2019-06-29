@@ -23,6 +23,8 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for symlinking / copying plugin assets to app's webroot.
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginAssetsSymlinkCommand extends Command
 {
@@ -53,7 +55,7 @@ class PluginAssetsSymlinkCommand extends Command
         $this->args = $args;
 
         $name = $args->getArgument('name');
-        $overwrite = $args->getOption('overwrite');
+        $overwrite = (bool)$args->getOption('overwrite');
         $this->_process($this->_list($name), false, $overwrite);
 
         return static::CODE_SUCCESS;
