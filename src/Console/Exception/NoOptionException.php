@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Console\Exception;
 
+use Throwable;
+
 /**
  * Exception raised with suggestions
  */
@@ -31,8 +33,8 @@ class NoOptionException extends ConsoleException
      * Constructor.
      *
      * @param string $message The string message.
-     * @param null $suggestions The code of the error, is also the HTTP status code for the error.
-     * @param array $code Either the string of the error message, or an array of attributes
+     * @param array $suggestions The code of the error, is also the HTTP status code for the error.
+     * @param int|null $code Either the string of the error message, or an array of attributes
      * @param \Throwable|null $previous the previous exception.
      */
     public function __construct(
