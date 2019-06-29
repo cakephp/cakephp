@@ -335,4 +335,25 @@ class CommandCollectionTest extends TestCase
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
         $this->clearPlugins();
     }
+
+    /**
+     * Test suggest
+     *
+     * @return void
+     */
+    public function testSuggest()
+    {
+        $collection = new CommandCollection();
+        $collection->add('demo', DemoCommand::class);
+        $collection->add('demo sample', DemoCommand::class);
+        $collection->add('dang', DemoCommand::class);
+        $collection->add('woot', DemoCommand::class);
+        $collection->add('wonder', DemoCommand::class);
+
+        $this->assertEmpty($collection->suggest('nope'));
+        $this->assertEquals(['demo', 'demo sample'], $collection->suggest('dem'));
+        $this->assertEquals(['dang'], $collection->suggest('dan'));
+        $this->assertEquals(['woot', 'wonder'], $collection->suggest('wo'));
+        $this->assertEquals(['wonder'], $collection->suggest('wander'), 'typos should be found');
+    }
 }

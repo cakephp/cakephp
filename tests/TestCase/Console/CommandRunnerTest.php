@@ -126,15 +126,43 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunInvalidCommand()
     {
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Unknown command `cake nope`. Run `cake --help` to get the list of valid commands.');
         $app = $this->getMockBuilder(BaseApplication::class)
             ->setMethods(['middleware', 'bootstrap', 'routes'])
             ->setConstructorArgs([$this->config])
             ->getMock();
 
+        $output = new ConsoleOutput();
         $runner = new CommandRunner($app);
-        $runner->run(['cake', 'nope', 'nope', 'nope']);
+        $runner->run(['cake', 'nope', 'nope', 'nope'], $this->getMockIo($output));
+
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString(
+            'Unknown command `cake nope`. Run `cake --help` to get the list of commands.',
+            $messages
+        );
+    }
+
+    /**
+     * Test that running an unknown command gives suggestions.
+     *
+     * @return void
+     */
+    public function testRunInvalidCommandSuggestion()
+    {
+        $app = $this->getMockBuilder(BaseApplication::class)
+            ->setMethods(['middleware', 'bootstrap', 'routes'])
+            ->setConstructorArgs([$this->config])
+            ->getMock();
+
+        $output = new ConsoleOutput();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'cache'], $this->getMockIo($output));
+
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString(
+            'Did you mean: `cache clear`, `cache clear_all`, `cache list`?',
+            $messages
+        );
     }
 
     /**
