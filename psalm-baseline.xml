@@ -1511,50 +1511,12 @@
       <code>$frag</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Shell/PluginShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>PluginShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/Task/AssetsTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AssetsTask</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
       <code>Shell</code>
     </DeprecatedClass>
     <PropertyNotSetInConstructor occurrences="1">
       <code>CommandTask</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/Task/LoadTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$bootstrap</code>
-      <code>LoadTask</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/Task/UnloadTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$bootstrap</code>
-      <code>UnloadTask</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
