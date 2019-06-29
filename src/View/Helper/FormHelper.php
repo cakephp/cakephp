@@ -105,8 +105,6 @@ class FormHelper extends Helper
             'button' => '<button{{attrs}}>{{text}}</button>',
             // Used for checkboxes in checkbox() and multiCheckbox().
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
-            // Input group wrapper for checkboxes created via control().
-            'checkboxFormGroup' => '{{label}}',
             // Wrapper container for checkboxes.
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Widget ordering for date/time/datetime pickers.
