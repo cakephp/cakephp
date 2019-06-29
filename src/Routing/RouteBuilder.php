@@ -1007,6 +1007,16 @@ class RouteBuilder
     }
 
     /**
+     * Get the middleware that this builder will apply to routes.
+     *
+     * @return array
+     */
+    public function getMiddleware(): array
+    {
+        return $this->middleware;
+    }
+
+    /**
      * Apply a set of middleware to a group
      *
      * @param string $name Name of the middleware group

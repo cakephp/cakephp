@@ -94,6 +94,16 @@ class BodyParserMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Get the HTTP methods to parse request bodies on.
+     *
+     * @return array
+     */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+    /**
      * Add a parser.
      *
      * Map a set of content-type header values to be parsed by the $parser.
@@ -121,6 +131,16 @@ class BodyParserMiddleware implements MiddlewareInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Get the current parsers
+     *
+     * @return array
+     */
+    public function getParsers(): array
+    {
+        return $this->parsers;
     }
 
     /**

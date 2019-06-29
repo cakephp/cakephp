@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Mailer\Transport;
 use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 use TestApp\Mailer\Transport\SmtpTestTransport;
 
 /**
@@ -701,7 +702,10 @@ class SmtpTransportTest extends TestCase
         $smtpTransport->connect();
 
         $result = unserialize(serialize($smtpTransport));
-        $this->assertAttributeEquals(null, '_socket', $result);
+
+        $reflect = new ReflectionProperty($result, '_socket');
+        $reflect->setAccessible(true);
+        $this->assertNull($reflect->getValue($result));
         $this->assertFalse($result->connected());
     }
 }

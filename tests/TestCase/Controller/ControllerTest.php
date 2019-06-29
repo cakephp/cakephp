@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -493,25 +494,21 @@ class ControllerTest extends TestCase
         $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
         $controller = new Controller(null, null, null, $eventManager);
 
-        $eventManager->expects($this->at(0))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'Controller.initialize'),
-                    $this->attributeEqualTo('_subject', $controller)
-                )
-            )
-            ->will($this->returnValue($this->getMockBuilder('Cake\Event\Event')->disableOriginalConstructor()->getMock()));
+        $eventManager
+            ->expects($this->at(0))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'Controller.initialize';
+            }))
+            ->will($this->returnValue(new Event('stub')));
 
-        $eventManager->expects($this->at(1))->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'Controller.startup'),
-                    $this->attributeEqualTo('_subject', $controller)
-                )
-            )
-            ->will($this->returnValue($this->getMockBuilder('Cake\Event\Event')->disableOriginalConstructor()->getMock()));
+        $eventManager
+            ->expects($this->at(1))
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'Controller.startup';
+            }))
+            ->will($this->returnValue(new Event('stub')));
 
         $controller->startupProcess();
     }
@@ -526,15 +523,12 @@ class ControllerTest extends TestCase
         $eventManager = $this->getMockBuilder('Cake\Event\EventManagerInterface')->getMock();
         $controller = new Controller(null, null, null, $eventManager);
 
-        $eventManager->expects($this->once())->method('dispatch')
-            ->with(
-                $this->logicalAnd(
-                    $this->isInstanceOf('Cake\Event\Event'),
-                    $this->attributeEqualTo('_name', 'Controller.shutdown'),
-                    $this->attributeEqualTo('_subject', $controller)
-                )
-            )
-            ->will($this->returnValue($this->getMockBuilder('Cake\Event\Event')->disableOriginalConstructor()->getMock()));
+        $eventManager->expects($this->once())
+            ->method('dispatch')
+            ->with($this->callback(function (EventInterface $event) {
+                return $event->getName() === 'Controller.shutdown';
+            }))
+            ->will($this->returnValue(new Event('stub')));
 
         $controller->shutdownProcess();
     }

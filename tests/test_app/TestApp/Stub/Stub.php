@@ -20,4 +20,9 @@ class Stub
     {
         $this->_setModelClass($name);
     }
+
+    public function getModelClass(): ?string
+    {
+        return $this->modelClass;
+    }
 }

@@ -31,6 +31,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
@@ -6960,7 +6961,9 @@ class FormHelperTest extends TestCase
 
         $this->assertEquals(['title'], $this->Form->fields);
         $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
-        $this->assertAttributeEquals('/articles/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+        $reflect = new ReflectionProperty($this->Form, '_lastAction');
+        $reflect->setAccessible(true);
+        $this->assertEquals('/articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
     }
 
     /**
