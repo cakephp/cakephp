@@ -160,7 +160,11 @@ class CommandRunnerTest extends TestCase
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(
-            'Did you mean: `cache clear`, `cache clear_all`, `cache list`?',
+            "Did you mean: `cache clear`?\n" .
+            "\n" .
+            "Other valid choices:\n" .
+            "\n" .
+            "- version",
             $messages
         );
     }

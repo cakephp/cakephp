@@ -20,6 +20,7 @@ use Cake\Console\ConsoleInputArgument;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\ConsoleInputSubcommand;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\InvalidOptionException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -363,15 +364,22 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testOptionThatDoesNotExist()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
-        $this->expectExceptionMessageRegExp(
-            '/Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n - help\n - no-commit/'
-        );
-
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true]);
 
-        $parser->parse(['--fail', 'other']);
+        try {
+            $parser->parse(['--he', 'other']);
+        } catch (InvalidOptionException $e) {
+            $this->assertStringContainsString(
+                "Unknown option `he`. Did you mean: `help`?\n" .
+                "\n" .
+                "Other valid choices:\n" .
+                "\n" .
+                "- help\n" .
+                "- no-commit",
+                $e->getFullMessage()
+            );
+        }
     }
 
     /**
@@ -381,17 +389,25 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testShortOptionThatDoesNotExist()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
-        $this->expectExceptionMessageRegExp(
-            '/Unknown short option `f`\n\nAvailable short options are :\n\n - `c` \(short for `--clear`\)\n - `h` \(short for `--help`\)\n - `n` \(short for `--no-commit`\)/'
-        );
-
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true, 'short' => 'n']);
         $parser->addOption('construct', ['boolean' => true]);
         $parser->addOption('clear', ['boolean' => true, 'short' => 'c']);
 
-        $parser->parse(['-f']);
+        try {
+            $parser->parse(['-f']);
+        } catch (InvalidOptionException $e) {
+            $this->assertStringContainsString(
+                "Unknown short option `f`.\n" .
+                "\n" .
+                "Other valid choices:\n" .
+                "\n" .
+                "- c (short for `--clear`)\n" .
+                "- h (short for `--help`)\n" .
+                "- n (short for `--no-commit`)",
+                $e->getFullMessage()
+            );
+        }
     }
 
     /**

@@ -231,25 +231,12 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
-     * Find suggested command names based on $needle
+     * Get the list of available command names.
      *
-     * Used to generate suggested commands when a
-     * command cannot be found in the collection.
-     *
-     * @param string $needle The missing command to find suggestions for.
-     * @return string[]
+     * @return string[] Command names
      */
-    public function suggest(string $needle): array
+    public function keys(): array
     {
-        $found = [];
-        foreach (array_keys($this->commands) as $candidate) {
-            if (levenshtein($candidate, $needle) < 3) {
-                $found[] = $candidate;
-            } elseif (strpos($candidate, $needle) === 0) {
-                $found[] = $candidate;
-            }
-        }
-
-        return $found;
+        return array_keys($this->commands);
     }
 }

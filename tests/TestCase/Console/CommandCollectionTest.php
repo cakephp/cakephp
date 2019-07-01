@@ -337,23 +337,18 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
-     * Test suggest
+     * Test keys
      *
      * @return void
      */
-    public function testSuggest()
+    public function testKeys()
     {
         $collection = new CommandCollection();
         $collection->add('demo', DemoCommand::class);
         $collection->add('demo sample', DemoCommand::class);
         $collection->add('dang', DemoCommand::class);
-        $collection->add('woot', DemoCommand::class);
-        $collection->add('wonder', DemoCommand::class);
 
-        $this->assertEmpty($collection->suggest('nope'));
-        $this->assertEquals(['demo', 'demo sample'], $collection->suggest('dem'));
-        $this->assertEquals(['dang'], $collection->suggest('dan'));
-        $this->assertEquals(['woot', 'wonder'], $collection->suggest('wo'));
-        $this->assertEquals(['wonder'], $collection->suggest('wander'), 'typos should be found');
+        $result = $collection->keys();
+        $this->assertSame(['demo', 'demo sample', 'dang'], $result);
     }
 }
