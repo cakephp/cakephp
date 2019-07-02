@@ -958,7 +958,7 @@ TEXT;
                 "Other valid choices:\n" .
                 "\n" .
                 "- method",
-                $result,
+                $result
             );
         }
     }
