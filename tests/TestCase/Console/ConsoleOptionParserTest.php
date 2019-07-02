@@ -948,18 +948,19 @@ TEXT;
             ->addOption('test', ['help' => 'A test option.'])
             ->addSubcommand('unstash');
 
-        $result = $parser->help('unknown');
-        $expected = <<<TEXT
-Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.
-
-Did you mean : `mycommand unstash` ?
-
-Available subcommands for the `mycommand` command are : 
-
- - method
- - unstash
-TEXT;
-        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+        try {
+            $result = $parser->help('unknown');
+        } catch (InvalidOptionException $e) {
+            $result = $e->getFullMessage();
+            $this->assertStringContainsString(
+                "Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.\n" .
+                "\n" .
+                "Other valid choices:\n" .
+                "\n" .
+                "- method",
+                $result,
+            );
+        }
     }
 
     /**

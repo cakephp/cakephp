@@ -777,14 +777,14 @@ class ConsoleOptionParser
         $message = sprintf(
             'Unable to find the `%s %s` subcommand. See `bin/%s %s --help`.',
             $rootCommand,
-            $command,
+            $subcommand,
             $this->rootName,
             $rootCommand
         );
         throw new InvalidOptionException(
             $message,
-            $command,
-            array_keys((array)$this->subcommands()),
+            $subcommand,
+            array_keys((array)$this->subcommands())
         );
     }
 
