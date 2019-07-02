@@ -375,8 +375,7 @@ class ConsoleOptionParserTest extends TestCase
                 "\n" .
                 "Other valid choices:\n" .
                 "\n" .
-                "- help\n" .
-                "- no-commit",
+                "- help",
                 $e->getFullMessage()
             );
         }
@@ -397,16 +396,7 @@ class ConsoleOptionParserTest extends TestCase
         try {
             $parser->parse(['-f']);
         } catch (InvalidOptionException $e) {
-            $this->assertStringContainsString(
-                "Unknown short option `f`.\n" .
-                "\n" .
-                "Other valid choices:\n" .
-                "\n" .
-                "- c (short for `--clear`)\n" .
-                "- h (short for `--help`)\n" .
-                "- n (short for `--no-commit`)",
-                $e->getFullMessage()
-            );
+            $this->assertStringContainsString("Unknown short option `f`.", $e->getFullMessage());
         }
     }
 

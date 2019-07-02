@@ -69,12 +69,15 @@ class InvalidOptionException extends ConsoleException
         if ($bestGuess) {
             $out .= " Did you mean: `{$bestGuess}`?";
         }
-        if ($this->suggestions) {
-            $suggestions = array_map(function ($item) {
-                return '- ' . $item;
-            }, $this->suggestions);
+        $good = [];
+        foreach ($this->suggestions as $option) {
+            if (levenshtein($option, $this->requested) < 8) {
+                $good[] = '- ' . $option;
+            }
+        }
 
-            $out .= "\n\nOther valid choices:\n\n" . implode("\n", $suggestions);
+        if ($good) {
+            $out .= "\n\nOther valid choices:\n\n" . implode("\n", $good);
         }
 
         return $out;
