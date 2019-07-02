@@ -285,7 +285,7 @@ class Security
     public static function getSalt(): string
     {
         if (static::$_salt === null) {
-            throw new RuntimeException('Salt not set.');
+            throw new RuntimeException('Salt not set. Use Security::setSalt() to set one, ideally in bootstrap.php.');
         }
 
         return static::$_salt;
