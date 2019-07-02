@@ -14,42 +14,31 @@ declare(strict_types=1);
  * @since         3.1.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
+use Cake\Console\Command;
 use Cake\Core\Plugin;
-use Cake\Shell\PluginShell;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * PluginShell test.
+ * PluginLoadedCommand test.
  */
-class PluginShellTest extends TestCase
+class PluginLoadedCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
-     * setup method
+     * setUp method
      *
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new PluginShell($this->io);
-    }
 
-    /**
-     * Test that the option parser is shaped right.
-     *
-     * @return void
-     */
-    public function testGetOptionParser()
-    {
-        $this->shell->loadTasks();
-        $parser = $this->shell->getOptionParser();
-        $commands = $parser->subcommands();
-        $this->assertArrayHasKey('unload', $commands);
-        $this->assertArrayHasKey('load', $commands);
-        $this->assertArrayHasKey('assets', $commands);
+        $this->useCommandRunner();
+        $this->setAppNamespace();
     }
 
     /**
@@ -59,12 +48,13 @@ class PluginShellTest extends TestCase
      */
     public function testLoaded()
     {
-        $array = Plugin::loaded();
+        $expected = Plugin::loaded();
 
-        $this->io->expects($this->at(0))
-            ->method('out')
-            ->with($array);
+        $this->exec('plugin loaded');
+        $this->assertExitCode(Command::CODE_SUCCESS);
 
-        $this->shell->loaded();
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 }

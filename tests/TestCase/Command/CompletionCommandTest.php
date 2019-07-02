@@ -216,7 +216,6 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $expected = [
             'derp',
-            'load',
             'returnValue',
             'sample',
             'withAbort',
@@ -308,7 +307,6 @@ class CompletionCommandTest extends ConsoleIntegrationTestCase
 
         $expected = [
             'derp',
-            'load',
             'returnValue',
             'sample',
             'withAbort',
