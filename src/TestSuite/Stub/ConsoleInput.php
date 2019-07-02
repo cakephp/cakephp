@@ -15,6 +15,7 @@ namespace Cake\TestSuite\Stub;
 
 use Cake\Console\ConsoleInput as ConsoleInputBase;
 use Cake\Console\Exception\ConsoleException;
+use NumberFormatter;
 
 /**
  * Stub class used by the console integration harness.
@@ -61,9 +62,12 @@ class ConsoleInput extends ConsoleInputBase
 
         if (!isset($this->replies[$this->currentIndex])) {
             $total = count($this->replies);
+            $formatter = new NumberFormatter('en', NumberFormatter::ORDINAL);
+            $nth = $formatter->format($this->currentIndex + 1);
+
             $replies = implode(', ', $this->replies);
-            $message = "There are no more input replies available. Only {$total} replies were set, " .
-                "this is the {$this->currentIndex} read operation. The provided replies are: {$replies}";
+            $message = "There are no more input replies available. This is the {$nth} read operation, " .
+                "only {$total} replies were set. The provided replies are: {$replies}";
             throw new ConsoleException($message);
         }
 
