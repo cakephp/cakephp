@@ -4,7 +4,6 @@ clone_folder: C:\projects\cakephp
 clone_depth: 10
 
 cache:
-  - '%LOCALAPPDATA%\Composer\files -> composer.lock'
   - C:\ProgramData\chocolatey\bin -> .appveyor.yml
   - C:\ProgramData\chocolatey\lib -> .appveyor.yml
   - C:\php -> .appveyor.yml
