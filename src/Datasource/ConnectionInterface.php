@@ -29,8 +29,6 @@ use Psr\SimpleCache\CacheInterface;
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
- * @method string quote($value, $type = null)
- * @method \Cake\Database\DriverInterface getDriver()
  */
 interface ConnectionInterface extends LoggerAwareInterface
 {
