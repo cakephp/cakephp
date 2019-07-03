@@ -4,6 +4,7 @@ clone_folder: C:\projects\cakephp
 clone_depth: 10
 
 cache:
+  - '%LOCALAPPDATA%\Composer\files -> composer.lock'
   - C:\ProgramData\chocolatey\bin -> .appveyor.yml
   - C:\ProgramData\chocolatey\lib -> .appveyor.yml
   - C:\php -> .appveyor.yml
@@ -59,6 +60,7 @@ install:
 
   - cd C:\projects\cakephp
   - appveyor-retry appveyor DownloadFile https://getcomposer.org/composer.phar
+  - del composer.lock
   - php composer.phar install --no-progress
   - php -i | grep "ICU version"
 
