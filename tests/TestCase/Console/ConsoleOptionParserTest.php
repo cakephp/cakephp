@@ -371,7 +371,8 @@ class ConsoleOptionParserTest extends TestCase
             $parser->parse(['--he', 'other']);
         } catch (MissingOptionException $e) {
             $this->assertStringContainsString(
-                "Unknown option `he`. Did you mean: `help`?\n" .
+                "Unknown option `he`.\n" .
+                "Did you mean: `help`?\n" .
                 "\n" .
                 "Other valid choices:\n" .
                 "\n" .

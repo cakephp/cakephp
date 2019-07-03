@@ -67,7 +67,7 @@ class MissingOptionException extends ConsoleException
         $out = $this->getMessage();
         $bestGuess = $this->findClosestItem($this->requested, $this->suggestions);
         if ($bestGuess) {
-            $out .= " Did you mean: `{$bestGuess}`?";
+            $out .= "\nDid you mean: `{$bestGuess}`?";
         }
         $good = [];
         foreach ($this->suggestions as $option) {
