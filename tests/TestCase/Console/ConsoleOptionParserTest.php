@@ -20,7 +20,7 @@ use Cake\Console\ConsoleInputArgument;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\ConsoleInputSubcommand;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Exception\InvalidOptionException;
+use Cake\Console\Exception\MissingOptionException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -369,7 +369,7 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['--he', 'other']);
-        } catch (InvalidOptionException $e) {
+        } catch (MissingOptionException $e) {
             $this->assertStringContainsString(
                 "Unknown option `he`. Did you mean: `help`?\n" .
                 "\n" .
@@ -395,7 +395,7 @@ class ConsoleOptionParserTest extends TestCase
 
         try {
             $parser->parse(['-f']);
-        } catch (InvalidOptionException $e) {
+        } catch (MissingOptionException $e) {
             $this->assertStringContainsString("Unknown short option `f`.", $e->getFullMessage());
         }
     }
@@ -940,7 +940,7 @@ TEXT;
 
         try {
             $result = $parser->help('unknown');
-        } catch (InvalidOptionException $e) {
+        } catch (MissingOptionException $e) {
             $result = $e->getFullMessage();
             $this->assertStringContainsString(
                 "Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.\n" .

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
-use Cake\Console\Exception\InvalidOptionException;
+use Cake\Console\Exception\MissingOptionException;
 use Cake\Utility\Inflector;
 use LogicException;
 
@@ -782,7 +782,7 @@ class ConsoleOptionParser
             $this->rootName,
             $rootCommand
         );
-        throw new InvalidOptionException(
+        throw new MissingOptionException(
             $message,
             $subcommand,
             array_keys((array)$this->subcommands())
@@ -846,7 +846,7 @@ class ConsoleOptionParser
             foreach ($this->_shortOptions as $short => $long) {
                 $options[] = "{$short} (short for `--{$long}`)";
             }
-            throw new InvalidOptionException(
+            throw new MissingOptionException(
                 "Unknown short option `{$key}`.",
                 $key,
                 $options
@@ -868,7 +868,7 @@ class ConsoleOptionParser
     protected function _parseOption(string $name, array $params): array
     {
         if (!isset($this->_options[$name])) {
-            throw new InvalidOptionException(
+            throw new MissingOptionException(
                 "Unknown option `{$name}`.",
                 $name,
                 array_keys($this->_options)

@@ -18,7 +18,7 @@ namespace Cake\Console;
 
 use Cake\Command\HelpCommand;
 use Cake\Command\VersionCommand;
-use Cake\Console\Exception\InvalidOptionException;
+use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
@@ -154,7 +154,7 @@ class CommandRunner implements EventDispatcherInterface
         try {
             [$name, $argv] = $this->longestCommandName($commands, $argv);
             $name = $this->resolveName($commands, $io, $name);
-        } catch (InvalidOptionException $e) {
+        } catch (MissingOptionException $e) {
             $io->error($e->getFullMessage());
 
             return Command::CODE_ERROR;
@@ -308,7 +308,7 @@ class CommandRunner implements EventDispatcherInterface
             $name = Inflector::underscore($name);
         }
         if (!$commands->has($name)) {
-            throw new InvalidOptionException(
+            throw new MissingOptionException(
                 "Unknown command `{$this->root} {$name}`. " .
                 "Run `{$this->root} --help` to get the list of commands.",
                 $name,
