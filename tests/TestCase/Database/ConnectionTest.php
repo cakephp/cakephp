@@ -1118,6 +1118,23 @@ class ConnectionTest extends TestCase
         });
     }
 
+    public function testTransactionalAndCatchTypeError()
+    {
+        $this->expectException(\TypeError::class);
+        $driver = $this->getMockFormDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->setMethods(['connect', 'commit', 'begin', 'rollback'])
+            ->setConstructorArgs([['driver' => $driver]])
+            ->getMock();
+        $connection->expects($this->at(0))->method('begin');
+        $connection->expects($this->at(1))->method('rollback');
+        $connection->expects($this->never())->method('commit');
+        $connection->transactional(function ($conn) use ($connection) {
+            $this->assertSame($connection, $conn);
+            throw new \TypeError;
+        });
+    }
+
     /**
      * Tests it is possible to set a schema collection object
      *

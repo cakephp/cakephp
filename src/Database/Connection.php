@@ -28,7 +28,7 @@ use Cake\Database\Schema\CachedCollection;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
-use Exception;
+use Throwable;
 
 /**
  * Represents a connection with a database server.
@@ -238,7 +238,7 @@ class Connection implements ConnectionInterface
     {
         try {
             return $this->_driver->connect();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()], null, $e);
         }
     }
@@ -736,7 +736,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->rollback(false);
             throw $e;
         }
@@ -785,7 +785,7 @@ class Connection implements ConnectionInterface
 
             try {
                 $result = $callback($this);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->enableForeignKeys();
                 throw $e;
             }
