@@ -750,6 +750,7 @@ class ConsoleOptionParser
                 return (string)$formatter->xml();
             }
         }
+        $subcommand = (string)$subcommand;
 
         if (isset($this->_subcommands[$subcommand])) {
             $command = $this->_subcommands[$subcommand];

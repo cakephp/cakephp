@@ -103,7 +103,7 @@ class InvalidOptionException extends ConsoleException
         foreach ($haystack as $item) {
             $score = levenshtein($needle, $item);
 
-            if (!isset($bestScore) || $score < $bestScore) {
+            if ($score < $bestScore) {
                 $bestScore = $score;
                 $bestGuess = $item;
             }
