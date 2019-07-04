@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,6 +42,7 @@ if (!function_exists('debug')) {
      * @return mixed The same $var that was passed
      * @link https://book.cakephp.org/3.0/en/development/debugging.html#basic-debugging
      * @link https://book.cakephp.org/3.0/en/core-libraries/global-constants-and-functions.html#debug
+     * @psalm-suppress MissingReturnType
      */
     function debug($var, $showHtml = null, $showFrom = true)
     {

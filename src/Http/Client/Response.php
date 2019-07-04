@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -255,9 +256,9 @@ class Response extends Message implements ResponseInterface
      *
      * @param int $code The status code to set.
      * @param string $reasonPhrase The status reason phrase.
-     * @return $this A copy of the current object with an updated status code.
+     * @return static A copy of the current object with an updated status code.
      */
-    public function withStatus($code, $reasonPhrase = ''): self
+    public function withStatus($code, $reasonPhrase = '')
     {
         $new = clone $this;
         $new->code = $code;
@@ -329,6 +330,7 @@ class Response extends Message implements ResponseInterface
     public function getCookie(string $name)
     {
         $this->buildCookieCollection();
+
         if (!$this->cookies->has($name)) {
             return null;
         }
@@ -399,12 +401,14 @@ class Response extends Message implements ResponseInterface
     {
         $this->buildCookieCollection();
 
-        $cookies = [];
-        foreach ($this->cookies as $cookie) {
-            $cookies[$cookie->getName()] = $this->convertCookieToArray($cookie);
+        $out = [];
+        /** @var \Cake\Http\Cookie\Cookie[] $cookies */
+        $cookies = $this->cookies;
+        foreach ($cookies as $cookie) {
+            $out[$cookie->getName()] = $this->convertCookieToArray($cookie);
         }
 
-        return $cookies;
+        return $out;
     }
 
     /**
@@ -420,7 +424,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Get the response body as JSON decoded data.
      *
-     * @return array|null
+     * @return mixed
      */
     public function getJson()
     {

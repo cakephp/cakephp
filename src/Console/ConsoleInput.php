@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,8 @@ declare(strict_types=1);
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Console;
+
+use Cake\Console\Exception\ConsoleException;
 
 /**
  * Object wrapper for interacting with stdin
@@ -79,7 +82,17 @@ class ConsoleInput
         $readFds = [$this->_input];
         $writeFds = null;
         $errorFds = null;
+
+        /** @var string|null $error */
+        $error = null;
+        set_error_handler(function (int $code, string $message) use (&$error) {
+            $error = "stream_select failed with code={$code} message={$message}.";
+        });
         $readyFds = stream_select($readFds, $writeFds, $errorFds, $timeout);
+        restore_error_handler();
+        if ($error !== null) {
+            throw new ConsoleException($error);
+        }
 
         return $readyFds > 0;
     }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -48,7 +49,7 @@ class DateTimeTypeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->type = new DateTimeType();
@@ -88,22 +89,22 @@ class DateTimeTypeTest extends TestCase
     {
         $result = $this->type->toPHP('2001-01-04 12:13:14', $this->driver);
         $this->assertInstanceOf(FrozenTime::class, $result);
-        $this->assertEquals('2001', $result->format('Y'));
-        $this->assertEquals('01', $result->format('m'));
-        $this->assertEquals('04', $result->format('d'));
-        $this->assertEquals('12', $result->format('H'));
-        $this->assertEquals('13', $result->format('i'));
-        $this->assertEquals('14', $result->format('s'));
+        $this->assertSame('2001', $result->format('Y'));
+        $this->assertSame('01', $result->format('m'));
+        $this->assertSame('04', $result->format('d'));
+        $this->assertSame('12', $result->format('H'));
+        $this->assertSame('13', $result->format('i'));
+        $this->assertSame('14', $result->format('s'));
 
         $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toPHP('2001-01-04 12:00:00', $this->driver);
         $this->assertInstanceOf(FrozenTime::class, $result);
-        $this->assertEquals('2001', $result->format('Y'));
-        $this->assertEquals('01', $result->format('m'));
-        $this->assertEquals('04', $result->format('d'));
-        $this->assertEquals('06', $result->format('H'));
-        $this->assertEquals('30', $result->format('i'));
-        $this->assertEquals('00', $result->format('s'));
+        $this->assertSame('2001', $result->format('Y'));
+        $this->assertSame('01', $result->format('m'));
+        $this->assertSame('04', $result->format('d'));
+        $this->assertSame('06', $result->format('H'));
+        $this->assertSame('30', $result->format('i'));
+        $this->assertSame('00', $result->format('s'));
     }
 
     /**
@@ -169,31 +170,31 @@ class DateTimeTypeTest extends TestCase
 
         $date = new Time('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12 15:16:17', $result);
+        $this->assertSame('2013-08-12 15:16:17', $result);
 
         $tz = $date->getTimezone();
         $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->assertSame('2013-08-12 20:46:17', $result);
         $this->assertEquals($tz, $date->getTimezone());
 
         $this->type->setTimezone(new DateTimeZone('Asia/Kolkata'));
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->assertSame('2013-08-12 20:46:17', $result);
         $this->type->setTimezone(null);
 
         $date = new FrozenTime('2013-08-12 15:16:17');
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12 15:16:17', $result);
+        $this->assertSame('2013-08-12 15:16:17', $result);
 
         $this->type->setTimezone('Asia/Kolkata'); // UTC+5:30
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2013-08-12 20:46:17', $result);
+        $this->assertSame('2013-08-12 20:46:17', $result);
         $this->type->setTimezone(null);
 
         $date = 1401906995;
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('2014-06-04 18:36:35', $result);
+        $this->assertSame('2014-06-04 18:36:35', $result);
     }
 
     /**

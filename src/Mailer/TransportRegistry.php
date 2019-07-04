@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,15 +31,11 @@ class TransportRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|\Cake\Mailer\AbstractTransport $class Partial classname to resolve or transport instance.
-     * @return string|\Cake\Mailer\AbstractTransport|null Either the correct classname or null.
+     * @param string $class Partial classname to resolve or transport instance.
+     * @return string|null Either the correct classname or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
-        if (is_object($class)) {
-            return $class;
-        }
-
         return App::className($class, 'Mailer/Transport', 'Transport');
     }
 
@@ -62,7 +59,7 @@ class TransportRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|\Cake\Mailer\AbstractTransport $class The classname or object to make.
+     * @param string|object $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array $config An array of settings to use for the cache engine.
      * @return \Cake\Mailer\AbstractTransport The constructed transport class.

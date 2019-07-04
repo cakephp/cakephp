@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -215,12 +216,12 @@ class ViewBuilderTest extends TestCase
             $events
         );
         $this->assertInstanceOf('Cake\View\AjaxView', $view);
-        $this->assertEquals('edit', $view->getTemplate());
-        $this->assertEquals('default', $view->getLayout());
-        $this->assertEquals('Articles/', $view->getTemplatePath());
-        $this->assertEquals('Admin/', $view->getLayoutPath());
-        $this->assertEquals('TestPlugin', $view->getPlugin());
-        $this->assertEquals('TestTheme', $view->getTheme());
+        $this->assertSame('edit', $view->getTemplate());
+        $this->assertSame('default', $view->getLayout());
+        $this->assertSame('Articles/', $view->getTemplatePath());
+        $this->assertSame('Admin/', $view->getLayoutPath());
+        $this->assertSame('TestPlugin', $view->getPlugin());
+        $this->assertSame('TestTheme', $view->getTheme());
         $this->assertSame($request, $view->getRequest());
         $this->assertInstanceOf(Response::class, $view->getResponse());
         $this->assertSame($events, $view->getEventManager());
@@ -321,10 +322,10 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $builder->createFromArray(json_decode($result, true));
 
-        $this->assertEquals('default', $builder->getTemplate());
-        $this->assertEquals('test', $builder->getLayout());
+        $this->assertSame('default', $builder->getTemplate());
+        $this->assertSame('test', $builder->getLayout());
         $this->assertEquals(['Html'], $builder->getHelpers());
-        $this->assertEquals('JsonView', $builder->getClassName());
+        $this->assertSame('JsonView', $builder->getClassName());
     }
 
     /**
@@ -396,8 +397,21 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $builder->setOptions([], false);
         $result = $builder->getOptions();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEmpty($result);
+    }
+
+    public function testOptionSetGet()
+    {
+        $builder = new ViewBuilder();
+        $result = $builder->setOption('foo', 'bar');
+        $this->assertSame($builder, $result);
+        $this->assertSame('bar', $builder->getOption('foo'));
+
+        $builder->setOption('foo', 'overwrite');
+        $this->assertSame('overwrite', $builder->getOption('foo'));
+
+        $this->assertNull($builder->getOption('non-existent'));
     }
 
     /**

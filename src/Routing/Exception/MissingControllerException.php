@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -14,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Routing\Exception;
 
 use Cake\Core\Exception\Exception;
+use Throwable;
 
 /**
  * Missing Controller exception - used when a controller
@@ -29,7 +31,7 @@ class MissingControllerException extends Exception
     /**
      * @inheritDoc
      */
-    public function __construct($message, $code = 404, $previous = null)
+    public function __construct($message, ?int $code = 404, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

@@ -35,7 +35,7 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 
-$this->assign('templateName', 'missing_behavior.ctp');
+$this->assign('templateName', 'missing_behavior.php');
 
 $this->assign('title', 'Missing Behavior');
 
@@ -47,7 +47,7 @@ $this->end();
 $this->start('file');
 ?>
 <p class="error">
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Model' . DIRECTORY_SEPARATOR . 'Behavior' . DIRECTORY_SEPARATOR . h($class) . '.php'); ?>
 </p>
 

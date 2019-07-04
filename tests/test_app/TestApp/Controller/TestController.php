@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Controller;
 
 use Cake\Event\EventInterface;
@@ -65,7 +66,12 @@ class TestController extends ControllerTestAppController
 
     public function returner()
     {
-        return 'I am from the controller.';
+        return $this->response->withStringBody('I am from the controller.');
+    }
+
+    public function willCauseException()
+    {
+        return '';
     }
 
     // phpcs:disable

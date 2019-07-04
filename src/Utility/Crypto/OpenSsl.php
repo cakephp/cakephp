@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,9 +18,6 @@ namespace Cake\Utility\Crypto;
 
 /**
  * OpenSSL implementation of crypto features for Cake\Utility\Security
- *
- * OpenSSL should be favored over mcrypt as it is actively maintained and
- * more widely available.
  *
  * This class is not intended to be used directly and should only
  * be used in the context of Cake\Utility\Security.

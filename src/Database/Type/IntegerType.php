@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -33,7 +34,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * @param mixed $value Value to check
      * @return void
      */
-    protected function checkNumeric($value)
+    protected function checkNumeric($value): void
     {
         if (!is_numeric($value)) {
             throw new InvalidArgumentException(sprintf(
@@ -47,10 +48,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toDatabase($value, Driver $driver): ?int
+    public function toDatabase($value, DriverInterface $driver): ?int
     {
         if ($value === null || $value === '') {
             return null;
@@ -65,10 +66,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * Convert integer values to PHP integers
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return int|null
      */
-    public function toPHP($value, Driver $driver): ?int
+    public function toPHP($value, DriverInterface $driver): ?int
     {
         if ($value === null) {
             return $value;
@@ -82,7 +83,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver): array
+    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -101,10 +102,10 @@ class IntegerType extends BaseType implements BatchCastingInterface
      * Get the correct PDO binding type for integer data.
      *
      * @param mixed $value The value being bound.
-     * @param \Cake\Database\Driver $driver The driver.
+     * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver): int
+    public function toStatement($value, DriverInterface $driver): int
     {
         return PDO::PARAM_INT;
     }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,7 +25,7 @@ use Cake\TestSuite\TestCase;
  */
 class TransportFactoryTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->transports = [
@@ -43,7 +44,7 @@ class TransportFactoryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         TransportFactory::drop('debug');
@@ -149,7 +150,7 @@ class TransportFactoryTest extends TestCase
     public function testConfigured()
     {
         $result = TransportFactory::configured();
-        $this->assertInternalType('array', $result, 'Should have config keys');
+        $this->assertIsArray($result, 'Should have config keys');
         foreach (array_keys($this->transports) as $key) {
             $this->assertContains($key, $result, 'Loaded transports should be present.');
         }
@@ -163,7 +164,7 @@ class TransportFactoryTest extends TestCase
     public function testDrop()
     {
         $result = TransportFactory::getConfig('debug');
-        $this->assertInternalType('array', $result, 'Should have config data');
+        $this->assertIsArray($result, 'Should have config data');
         TransportFactory::drop('debug');
         $this->assertNull(TransportFactory::getConfig('debug'), 'Should not exist.');
     }

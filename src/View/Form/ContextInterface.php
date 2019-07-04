@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -88,7 +89,7 @@ interface ContextInterface
     public function getMaxLength(string $field): ?int;
 
     /**
-     * Get the fieldnames of the top level object in this context.
+     * Get the field names of the top level object in this context.
      *
      * @return string[] A list of the field names in the context.
      */

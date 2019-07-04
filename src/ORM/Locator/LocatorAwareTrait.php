@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,7 @@ trait LocatorAwareTrait
     /**
      * Table locator instance
      *
-     * @var \Cake\ORM\Locator\LocatorInterface
+     * @var \Cake\ORM\Locator\LocatorInterface|null
      */
     protected $_tableLocator;
 

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -342,7 +343,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return bool
      */
-    public function offsetExists($field)
+    public function offsetExists($field): bool
     {
         return isset($this->_fields[$field]);
     }
@@ -353,7 +354,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return \Cake\Validation\ValidationSet
      */
-    public function offsetGet($field)
+    public function offsetGet($field): ValidationSet
     {
         return $this->field($field);
     }
@@ -365,7 +366,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array|\Cake\Validation\ValidationSet $rules set of rules to apply to field
      * @return void
      */
-    public function offsetSet($field, $rules)
+    public function offsetSet($field, $rules): void
     {
         if (!$rules instanceof ValidationSet) {
             $set = new ValidationSet();
@@ -382,7 +383,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to unset
      * @return void
      */
-    public function offsetUnset($field)
+    public function offsetUnset($field): void
     {
         unset($this->_fields[$field]);
     }
@@ -632,13 +633,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->allowEmpty('email');
      *
      * // Email can be empty on create
-     * $validator->allowEmpty('email', 'create');
+     * $validator->allowEmpty('email', Validator::WHEN_CREATE);
      *
      * // Email can be empty on update
-     * $validator->allowEmpty('email', 'update');
+     * $validator->allowEmpty('email', Validator::WHEN_UPDATE);
      *
      * // Email and subject can be empty on update
-     * $validator->allowEmpty(['email', 'subject'], 'update');
+     * $validator->allowEmpty(['email', 'subject'], Validator::WHEN_UPDATE;
      *
      * // Email can be always empty, subject and content can be empty on update.
      * $validator->allowEmpty(
@@ -651,7 +652,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          ],
      *          'subject'
      *      ],
-     *      'update'
+     *      Validator::WHEN_UPDATE
      * );
      * ```
      *
@@ -723,10 +724,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->allowEmptyFor('email', Validator::EMPTY_STRING);
      *
      * // Email can be empty on create
-     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, 'create');
+     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, Validator::WHEN_CREATE);
      *
      * // Email can be empty on update
-     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, 'update');
+     * $validator->allowEmptyFor('email', Validator::EMPTY_STRING, Validator::WHEN_UPDATE);
      * ```
      *
      * It is possible to conditionally allow emptiness on a field by passing a callback
@@ -792,7 +793,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Validation\Validator::allowEmptyFor() For detail usage
      */
-    public function allowEmptyString($field, ?string $message = null, $when = true)
+    public function allowEmptyString(string $field, ?string $message = null, $when = true)
     {
         return $this->allowEmptyFor($field, self::EMPTY_STRING, $when, $message);
     }
@@ -812,7 +813,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @see \Cake\Validation\Validator::allowEmptyString()
      * @since 3.8.0
      */
-    public function notEmptyString($field, $message = null, $when = false)
+    public function notEmptyString(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
@@ -853,7 +854,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @return $this
      * @see \Cake\Validation\Validator::allowEmptyArray()
      */
-    public function notEmptyArray($field, $message = null, $when = false)
+    public function notEmptyArray(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
@@ -896,7 +897,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyFile()
      */
-    public function notEmptyFile($field, $message = null, $when = false)
+    public function notEmptyFile(string $field, ?string $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
@@ -1082,10 +1083,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * $validator->notEmpty('email', $message, 'create');
      *
      * // Email can be empty on create, but required on update.
-     * $validator->notEmpty('email', $message, 'update');
+     * $validator->notEmpty('email', $message, Validator::WHEN_UPDATE);
      *
      * // Email and title can be empty on create, but are required on update.
-     * $validator->notEmpty(['email', 'title'], $message, 'update');
+     * $validator->notEmpty(['email', 'title'], $message, Validator::WHEN_UPDATE);
      *
      * // Email can be empty on create, title must always be not empty
      * $validator->notEmpty(
@@ -1097,7 +1098,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *          ]
      *      ],
      *      $message,
-     *      'update'
+     *      Validator::WHEN_UPDATE
      * );
      * ```
      *
@@ -1161,9 +1162,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function invertWhenClause($when)
     {
-        if ($when === 'create' || $when === 'update') {
-            return $when === 'create' ? 'update' : 'create';
-        } elseif (is_callable($when)) {
+        if ($when === static::WHEN_CREATE || $when === static::WHEN_UPDATE) {
+            return $when === static::WHEN_CREATE ? static::WHEN_UPDATE : static::WHEN_CREATE;
+        }
+        if (is_callable($when)) {
             return function ($context) use ($when) {
                 return !$when($context);
             };

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -67,7 +68,7 @@ class BasicAuthenticateTest extends TestCase
             'userModel' => 'AuthUser',
             'fields' => ['username' => 'user', 'password' => 'password'],
         ]);
-        $this->assertEquals('AuthUser', $object->getConfig('userModel'));
+        $this->assertSame('AuthUser', $object->getConfig('userModel'));
         $this->assertEquals(['username' => 'user', 'password' => 'password'], $object->getConfig('fields'));
     }
 

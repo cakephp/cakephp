@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -53,7 +54,7 @@ class App
     public static function className(string $class, string $type = '', string $suffix = ''): ?string
     {
         if (strpos($class, '\\') !== false) {
-            return $class;
+            return class_exists($class) ? $class : null;
         }
 
         [$plugin, $name] = pluginSplit($class);
@@ -120,6 +121,10 @@ class App
         $type = '/' . $type . '/';
 
         $pos = strrpos($class, $type);
+        if ($pos === false) {
+            return $class;
+        }
+
         $pluginName = substr($class, 0, $pos);
         $name = substr($class, $pos + strlen($type));
 

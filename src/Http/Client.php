@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -419,7 +420,7 @@ class Client implements ClientInterface
      * @param array $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
-    public function send(RequestInterface $request, array $options = [])
+    public function send(RequestInterface $request, array $options = []): Response
     {
         $redirects = 0;
         if (isset($options['redirect'])) {
@@ -457,7 +458,7 @@ class Client implements ClientInterface
      * @param array $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
-    protected function _sendRequest(RequestInterface $request, array $options)
+    protected function _sendRequest(RequestInterface $request, array $options): Response
     {
         $responses = $this->_adapter->send($request, $options);
         foreach ($responses as $response) {

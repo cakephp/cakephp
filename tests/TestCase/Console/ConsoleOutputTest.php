@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * ConsoleOutputTest file
  *
@@ -30,7 +31,7 @@ class ConsoleOutputTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->output = $this->getMockBuilder('Cake\Console\ConsoleOutput')
@@ -44,7 +45,7 @@ class ConsoleOutputTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->output);

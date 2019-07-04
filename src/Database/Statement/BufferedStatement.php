@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Iterator;
@@ -76,9 +77,9 @@ class BufferedStatement implements Iterator, StatementInterface
      * Constructor
      *
      * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
-     * @param \Cake\Database\Driver $driver Driver instance
+     * @param \Cake\Database\DriverInterface $driver Driver instance
      */
-    public function __construct(StatementInterface $statement, Driver $driver)
+    public function __construct(StatementInterface $statement, DriverInterface $driver)
     {
         $this->statement = $statement;
         $this->_driver = $driver;

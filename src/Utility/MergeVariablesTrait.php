@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ trait MergeVariablesTrait
      * @param array $options The options to use when merging properties.
      * @return void
      */
-    protected function _mergeVars($properties, $options = [])
+    protected function _mergeVars(array $properties, array $options = []): void
     {
         $class = static::class;
         $parents = [];
@@ -64,7 +65,7 @@ trait MergeVariablesTrait
      * @param array $options Options for merging the property, see _mergeVars()
      * @return void
      */
-    protected function _mergeProperty($property, $parentClasses, $options)
+    protected function _mergeProperty(string $property, array $parentClasses, array $options): void
     {
         $thisValue = $this->{$property};
         $isAssoc = false;
@@ -99,7 +100,7 @@ trait MergeVariablesTrait
      * @param bool $isAssoc Whether or not the merging should be done in associative mode.
      * @return mixed The updated value.
      */
-    protected function _mergePropertyData($current, $parent, $isAssoc)
+    protected function _mergePropertyData(array $current, array $parent, bool $isAssoc)
     {
         if (!$isAssoc) {
             return array_merge($parent, $current);

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -226,6 +227,6 @@ class FormContext implements ContextInterface
      */
     public function error(string $field): array
     {
-        return array_values((array)Hash::get($this->_form->getErrors(), $field, []));
+        return (array)Hash::get($this->_form->getErrors(), $field, []);
     }
 }

@@ -34,18 +34,18 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 $this->assign('title', 'Missing Helper');
-$this->assign('templateName', 'missing_helper.ctp');
+$this->assign('templateName', 'missing_helper.php');
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <em><?= h($pluginDot . $class) ?></em> could not be found.
     <?= $this->element('plugin_class_error', ['pluginPath' => $pluginPath]) ?>
 <?php $this->end() ?>
 
 <?php $this->start('file') ?>
 <p class="error">
-    <strong>Error: </strong>
+    <strong>Suggestion</strong>
     <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DIRECTORY_SEPARATOR . 'Helper' . DIRECTORY_SEPARATOR . h($class) . '.php'); ?>
 </p>
 <?php

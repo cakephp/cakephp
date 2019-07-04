@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,7 +42,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->table = $this->getTableLocator()->get('NumberTrees');
@@ -52,7 +53,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -178,7 +179,7 @@ class TreeBehaviorTest extends TestCase
 
         // count leaf children
         $count = $this->table->childCount($table->get(10), false);
-        $this->assertEquals(0, $count);
+        $this->assertSame(0, $count);
 
         // test scoping
         $table = $this->getTableLocator()->get('MenuLinkTrees');
@@ -218,6 +219,7 @@ class TreeBehaviorTest extends TestCase
         $count = $table->childCount($table->get(1), false);
         $this->assertEquals(4, $count);
     }
+
     /**
      * Tests the find('children') method
      *
@@ -286,7 +288,7 @@ class TreeBehaviorTest extends TestCase
         $query->clause('order')->iterateParts(function ($dir, $field) use (&$result) {
             $result = $field;
         });
-        $this->assertEquals('MenuLinkTrees.lft', $result);
+        $this->assertSame('MenuLinkTrees.lft', $result);
 
         $result = $query->toArray();
         $expected = [
@@ -1447,7 +1449,7 @@ class TreeBehaviorTest extends TestCase
         $entity = new Entity(['parent_id' => null, 'name' => 'Depth 0']);
         $this->table->save($entity);
         $entity = $this->table->get(12);
-        $this->assertEquals(0, $entity->depth);
+        $this->assertSame(0, $entity->depth);
 
         $entity = new Entity(['parent_id' => 1, 'name' => 'Depth 1']);
         $this->table->save($entity);
@@ -1483,7 +1485,7 @@ class TreeBehaviorTest extends TestCase
         $entity->parent_id = null;
         $this->table->save($entity);
         $entity = $this->table->get(6);
-        $this->assertEquals(0, $entity->depth);
+        $this->assertSame(0, $entity->depth);
 
         $entity = $this->table->get(7);
         $this->assertEquals(1, $entity->depth);

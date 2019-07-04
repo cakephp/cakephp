@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ namespace Cake\Test\TestCase\Mailer\Transport;
 use Cake\Mailer\Message;
 use Cake\Network\Exception\SocketException;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 use TestApp\Mailer\Transport\SmtpTestTransport;
 
 /**
@@ -40,7 +42,7 @@ class SmtpTransportTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->socket = $this->getMockBuilder('Cake\Network\Socket')
@@ -110,9 +112,9 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertContains('500 5.3.3 Unrecognized command', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('500 5.3.3 Unrecognized command', $e->getPrevious()->getMessage());
     }
 
     /**
@@ -172,9 +174,9 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the connection.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the connection.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertContains('200 Not Accepted', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('200 Not Accepted', $e->getPrevious()->getMessage());
     }
 
     /**
@@ -263,9 +265,9 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the username.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the username.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertContains('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
     }
 
     /**
@@ -290,9 +292,9 @@ class SmtpTransportTest extends TestCase
         }
 
         $this->assertNotNull($e);
-        $this->assertEquals('SMTP server did not accept the password.', $e->getMessage());
+        $this->assertSame('SMTP server did not accept the password.', $e->getMessage());
         $this->assertInstanceOf(SocketException::class, $e->getPrevious());
-        $this->assertContains('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
+        $this->assertStringContainsString('535 5.7.8 Authentication failed', $e->getPrevious()->getMessage());
     }
 
     /**
@@ -700,7 +702,10 @@ class SmtpTransportTest extends TestCase
         $smtpTransport->connect();
 
         $result = unserialize(serialize($smtpTransport));
-        $this->assertAttributeEquals(null, '_socket', $result);
+
+        $reflect = new ReflectionProperty($result, '_socket');
+        $reflect->setAccessible(true);
+        $this->assertNull($reflect->getValue($result));
         $this->assertFalse($result->connected());
     }
 }

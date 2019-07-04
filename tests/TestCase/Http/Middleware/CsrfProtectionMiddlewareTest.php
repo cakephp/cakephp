@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -20,6 +21,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -57,7 +59,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Provides the request handler
      *
-     * @return \Psr\Server\RequestHandlerInterface
+     * @return \Psr\Http\Server\RequestHandlerInterface
      */
     protected function _getRequestHandler()
     {
@@ -91,8 +93,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $cookie = $response->getCookie('csrfToken');
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
-        $this->assertEquals(0, $cookie['expire'], 'session duration.');
-        $this->assertEquals('/dir/', $cookie['path'], 'session path.');
+        $this->assertSame(0, $cookie['expire'], 'session duration.');
+        $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertEquals($cookie['value'], $updatedRequest->getParam('_csrfToken'));
     }
 
@@ -283,7 +285,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $this->assertNotEmpty($cookie, 'Should set a token.');
         $this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
         $this->assertWithinRange((new Time('+1 hour'))->format('U'), $cookie['expire'], 1, 'session duration.');
-        $this->assertEquals('/dir/', $cookie['path'], 'session path.');
+        $this->assertSame('/dir/', $cookie['path'], 'session path.');
         $this->assertTrue($cookie['secure'], 'cookie security flag missing');
         $this->assertTrue($cookie['httpOnly'], 'cookie httpOnly flag missing');
     }
@@ -309,6 +311,28 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'field' => 'token',
             'expiry' => 90,
         ]);
+        $response = $middleware->process($request, $this->_getRequestHandler());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSkippingTokenCheckUsingWhitelistCallback()
+    {
+        $request = new ServerRequest([
+            'environment' => [
+                'REQUEST_METHOD' => 'POST',
+            ],
+        ]);
+        $response = new Response();
+
+        $middleware = new CsrfProtectionMiddleware();
+        $middleware->whitelistCallback(function (ServerRequestInterface $request) {
+            $this->assertSame('POST', $request->getServerParams()['REQUEST_METHOD']);
+
+            return true;
+        });
         $response = $middleware->process($request, $this->_getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }

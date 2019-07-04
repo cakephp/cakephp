@@ -43,11 +43,11 @@ if (empty($plugin)) {
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Controller');
-$this->assign('templateName', 'missing_controller.ctp');
+$this->assign('templateName', 'missing_controller.php');
 
 ?>
 <?php $this->start('subheading');?>
-<strong>Error: </strong>
+<strong>Error</strong>
 <?php if ($incompleteInflection): ?>
     Your routing resulted in <em><?= h($originalClass) ?></em> as a controller name.
 <?php else: ?>
@@ -69,7 +69,7 @@ $this->assign('templateName', 'missing_controller.ctp');
         In the case you tried to access a plugin controller make sure you added it to your composer file or you use the autoload option for the plugin.
     </p>
     <p class="error">
-        <strong>Error: </strong>
+        <strong>Suggestion</strong>
         Create the class <em><?= h($class) ?>Controller</em> below in file: <?= h($path) ?>
     </p>
 

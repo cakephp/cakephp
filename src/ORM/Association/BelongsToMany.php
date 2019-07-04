@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,7 +20,6 @@ use Cake\Core\App;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectWithPivotLoader;
 use Cake\ORM\Query;
@@ -56,7 +56,7 @@ class BelongsToMany extends Association
      *
      * @var string
      */
-    protected $_joinType = QueryInterface::JOIN_TYPE_INNER;
+    protected $_joinType = Query::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
@@ -105,7 +105,7 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var string|array
+     * @var string|string[]
      */
     protected $_targetForeignKey;
 
@@ -119,7 +119,7 @@ class BelongsToMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var array
+     * @var string[]
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
@@ -160,7 +160,7 @@ class BelongsToMany extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param string|array $key the key to be used to link both tables together
+     * @param string|string[] $key the key to be used to link both tables together
      * @return $this
      */
     public function setTargetForeignKey($key)
@@ -173,7 +173,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getTargetForeignKey()
     {
@@ -199,7 +199,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the source table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getForeignKey()
     {
@@ -635,7 +635,7 @@ class BelongsToMany extends Association
      * @param array $options options to be passed to the save method in the target table
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
@@ -675,7 +675,7 @@ class BelongsToMany extends Association
      * @param array $options list of options accepted by `Table::save()`
      * @throws \InvalidArgumentException if the property representing the association
      * in the parent entity cannot be traversed
-     * @return \Cake\Datasource\EntityInterface|bool The parent entity after all links have been
+     * @return \Cake\Datasource\EntityInterface|false The parent entity after all links have been
      * created if no errors happened, false otherwise
      */
     protected function _saveTarget(EntityInterface $parentEntity, array $entities, $options)
@@ -1062,7 +1062,7 @@ class BelongsToMany extends Association
             $name => [
                 'table' => $this->junction()->getTable(),
                 'conditions' => $conditions,
-                'type' => QueryInterface::JOIN_TYPE_INNER,
+                'type' => Query::JOIN_TYPE_INNER,
             ],
         ];
 
@@ -1168,7 +1168,7 @@ class BelongsToMany extends Association
                     $inserted = array_combine(
                         array_keys($inserts),
                         (array)$sourceEntity->get($property)
-                    );
+                    ) ?: [];
                     $targetEntities = $inserted + $targetEntities;
                 }
 

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,21 +35,11 @@ class EventDispatcherTraitTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->subject = $this->getObjectForTrait(EventDispatcherTrait::class);
-    }
-
-    /**
-     * testIsInitiallyEmpty
-     *
-     * @return void
-     */
-    public function testIsInitiallyEmpty()
-    {
-        $this->assertAttributeEmpty('_eventManager', $this->subject);
     }
 
     /**
@@ -72,7 +63,7 @@ class EventDispatcherTraitTest extends TestCase
 
         $this->assertInstanceOf(Event::class, $event);
         $this->assertSame($this->subject, $event->getSubject());
-        $this->assertEquals('some.event', $event->getName());
+        $this->assertSame('some.event', $event->getName());
         $this->assertEquals(['foo' => 'bar'], $event->getData());
     }
 }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -61,7 +62,7 @@ class WincacheEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
@@ -93,7 +94,7 @@ class WincacheEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     public function increment(string $key, int $offset = 1)
     {
@@ -107,7 +108,7 @@ class WincacheEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New decremented value, false otherwise
+     * @return int|false New decremented value, false otherwise
      */
     public function decrement(string $key, int $offset = 1)
     {
@@ -122,7 +123,7 @@ class WincacheEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         $key = $this->_key($key);
 
@@ -135,7 +136,7 @@ class WincacheEngine extends CacheEngine
      *
      * @return bool True Returns true.
      */
-    public function clear()
+    public function clear(): bool
     {
         $info = wincache_ucache_info();
         $cacheKeys = $info['ucache_entries'];

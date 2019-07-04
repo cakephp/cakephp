@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,10 +22,14 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
 use Cake\Database\Statement\StatementDecorator;
 use Cake\Database\StatementInterface;
+use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use DateTimeImmutable;
+use InvalidArgumentException;
+use ReflectionProperty;
+use TestApp\Database\Type\BarType;
 
 /**
  * Tests Query class
@@ -55,14 +60,14 @@ class QueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -78,8 +83,8 @@ class QueryTest extends TestCase
     public function testDefaultType()
     {
         $query = new Query($this->connection);
-        $this->assertEquals('', $query->sql());
-        $this->assertEquals('select', $query->type());
+        $this->assertSame('', $query->sql());
+        $this->assertSame('select', $query->type());
     }
 
     /**
@@ -149,8 +154,8 @@ class QueryTest extends TestCase
 
         // Overwrite tables and only fetch from authors
         $result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
-        $this->assertEquals(['nate'], $result->fetch());
-        $this->assertEquals(['mariano'], $result->fetch());
+        $this->assertSame(['nate'], $result->fetch());
+        $this->assertSame(['mariano'], $result->fetch());
         $this->assertCount(4, $result);
         $result->closeCursor();
     }
@@ -1357,9 +1362,9 @@ class QueryTest extends TestCase
             ->sql();
         $bindings = $query->getValueBinder()->bindings();
         $this->assertArrayHasKey(':c0', $bindings);
-        $this->assertEquals('c0', $bindings[':c0']['placeholder']);
+        $this->assertSame('c0', $bindings[':c0']['placeholder']);
         $this->assertArrayHasKey(':c1', $bindings);
-        $this->assertEquals('c1', $bindings[':c1']['placeholder']);
+        $this->assertSame('c1', $bindings[':c1']['placeholder']);
     }
 
     /**
@@ -2317,22 +2322,25 @@ class QueryTest extends TestCase
             ->limit(1)
             ->offset(1)
             ->execute();
-        $dirty = $this->readAttribute($query, '_dirty');
-        $this->assertFalse($dirty);
+
+        $reflect = new ReflectionProperty($query, '_dirty');
+        $reflect->setAccessible(true);
+        $this->assertFalse($reflect->getValue($query));
+
         $query->offset(2);
-        $dirty = $this->readAttribute($query, '_dirty');
-        $this->assertTrue($dirty);
+        $this->assertTrue($reflect->getValue($query));
     }
 
     /**
      * Test Pages number.
      *
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Pages must start at 1.
      * @return void
      */
     public function testPageShouldStartAtOne()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Pages must start at 1.');
+
         $this->loadFixtures('Comments');
         $query = new Query($this->connection);
         $result = $query->from('comments')->page(0);
@@ -2752,7 +2760,7 @@ class QueryTest extends TestCase
             ->execute();
 
         while ($row = $result->fetch('assoc')) {
-            $this->assertEquals('bar', $row['foo']);
+            $this->assertSame('bar', $row['foo']);
             $this->assertArrayNotHasKey('modified_id', $row);
         }
 
@@ -2870,7 +2878,7 @@ class QueryTest extends TestCase
         $result = $query->sql();
 
         $this->assertQuotedQuery('DELETE FROM <authors>', $result, !$this->autoQuote);
-        $this->assertContains(' WHERE 1 = 1', $result);
+        $this->assertStringContainsString(' WHERE 1 = 1', $result);
     }
 
     /**
@@ -3480,11 +3488,11 @@ class QueryTest extends TestCase
     public function testIdentifierExpression()
     {
         $query = new Query($this->connection);
-        /* @var \Cake\Database\Expression\IdentifierExpression $identifier */
+        /** @var \Cake\Database\Expression\IdentifierExpression $identifier */
         $identifier = $query->identifier('foo');
 
         $this->assertInstanceOf(IdentifierExpression::class, $identifier);
-        $this->assertEquals('foo', $identifier->getIdentifier());
+        $this->assertSame('foo', $identifier->getIdentifier());
     }
 
     /**
@@ -3498,10 +3506,10 @@ class QueryTest extends TestCase
         $identifier = $query->identifier('description');
 
         $this->assertInstanceOf(ExpressionInterface::class, $identifier);
-        $this->assertEquals('description', $identifier->getIdentifier());
+        $this->assertSame('description', $identifier->getIdentifier());
 
         $identifier->setIdentifier('title');
-        $this->assertEquals('title', $identifier->getIdentifier());
+        $this->assertSame('title', $identifier->getIdentifier());
     }
 
     /**
@@ -3680,10 +3688,10 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('FOR UPDATE')
             ->sql();
-        $this->assertContains('SELECT', $sql);
-        $this->assertContains('FROM', $sql);
-        $this->assertContains('WHERE', $sql);
-        $this->assertEquals(' FOR UPDATE', substr($sql, -11));
+        $this->assertStringContainsString('SELECT', $sql);
+        $this->assertStringContainsString('FROM', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
+        $this->assertSame(' FOR UPDATE', substr($sql, -11));
     }
 
     /**
@@ -3700,10 +3708,10 @@ class QueryTest extends TestCase
             ->values([1, 'a title'])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('INSERT', $sql);
-        $this->assertContains('INTO', $sql);
-        $this->assertContains('VALUES', $sql);
-        $this->assertEquals(' RETURNING id', substr($sql, -13));
+        $this->assertStringContainsString('INSERT', $sql);
+        $this->assertStringContainsString('INTO', $sql);
+        $this->assertStringContainsString('VALUES', $sql);
+        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -3720,10 +3728,10 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('UPDATE', $sql);
-        $this->assertContains('SET', $sql);
-        $this->assertContains('WHERE', $sql);
-        $this->assertEquals(' RETURNING id', substr($sql, -13));
+        $this->assertStringContainsString('UPDATE', $sql);
+        $this->assertStringContainsString('SET', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
+        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -3739,9 +3747,9 @@ class QueryTest extends TestCase
             ->where(['id' => 1])
             ->epilog('RETURNING id')
             ->sql();
-        $this->assertContains('DELETE FROM', $sql);
-        $this->assertContains('WHERE', $sql);
-        $this->assertEquals(' RETURNING id', substr($sql, -13));
+        $this->assertStringContainsString('DELETE FROM', $sql);
+        $this->assertStringContainsString('WHERE', $sql);
+        $this->assertSame(' RETURNING id', substr($sql, -13));
     }
 
     /**
@@ -3966,7 +3974,7 @@ class QueryTest extends TestCase
         $query = (new Query($this->connection))
             ->insert(['title']);
         $result = $query->__debugInfo();
-        $this->assertContains('incomplete', $result['sql']);
+        $this->assertStringContainsString('incomplete', $result['sql']);
         $this->assertSame([], $result['params']);
     }
 
@@ -4095,7 +4103,7 @@ class QueryTest extends TestCase
         $statementMock->expects($this->once())
             ->method('closeCursor');
 
-        /* @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $queryMock */
+        /** @var \Cake\ORM\Query|\PHPUnit_Framework_MockObject_MockObject $queryMock */
         $queryMock = $this->getMockBuilder(Query::class)
             ->setMethods(['execute'])
             ->setConstructorArgs([$this->connection])
@@ -4200,9 +4208,9 @@ class QueryTest extends TestCase
             ->execute()
             ->fetchAll('assoc');
 
-        $this->assertEquals('Published', $results[2]['status']);
-        $this->assertEquals('Not published', $results[3]['status']);
-        $this->assertEquals('None', $results[6]['status']);
+        $this->assertSame('Published', $results[2]['status']);
+        $this->assertSame('Not published', $results[3]['status']);
+        $this->assertSame('None', $results[6]['status']);
     }
 
     /**
@@ -4301,16 +4309,25 @@ class QueryTest extends TestCase
      */
     public function testSelectTypeConversion()
     {
+        TypeFactory::set('custom_datetime', new BarType('custom_datetime'));
         $this->loadFixtures('Comments');
+
         $query = new Query($this->connection);
         $query
-            ->select(['id', 'comment', 'the_date' => 'created'])
+            ->select(['id', 'comment', 'the_date' => 'created', 'updated'])
             ->from('comments')
             ->limit(1)
-            ->getSelectTypeMap()->setTypes(['id' => 'integer', 'the_date' => 'datetime']);
+            ->getSelectTypeMap()
+                ->setTypes([
+                    'id' => 'integer',
+                    'the_date' => 'datetime',
+                    'updated' => 'custom_datetime',
+                ]);
+
         $result = $query->execute()->fetchAll('assoc');
-        $this->assertInternalType('integer', $result[0]['id']);
+        $this->assertIsInt($result[0]['id']);
         $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['the_date']);
+        $this->assertInstanceOf(DateTimeImmutable::class, $result[0]['updated']);
     }
 
     /**

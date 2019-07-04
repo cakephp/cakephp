@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ class FixtureInjector implements TestListener
     /**
      * Holds a reference to the container test suite
      *
-     * @var \PHPUnit\Framework\TestSuite
+     * @var \PHPUnit\Framework\TestSuite|null
      */
     protected $_first;
 

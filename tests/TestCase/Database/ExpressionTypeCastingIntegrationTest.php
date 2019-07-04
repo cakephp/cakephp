@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
      */
     protected $connection;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -97,7 +98,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(1, $result);
-        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+        $this->assertSame('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 
     /**
@@ -116,7 +117,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(1, $result);
-        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+        $this->assertSame('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 
     /**
@@ -139,8 +140,8 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(2, $result);
-        $this->assertEquals('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
-        $this->assertEquals('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
+        $this->assertSame('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
+        $this->assertSame('419a8da0482b7756b21f27da40cf8569', $result[0]['id']);
     }
 
     /**
@@ -190,6 +191,6 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
             ->fetchAll('assoc');
 
         $this->assertCount(1, $result);
-        $this->assertEquals('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
+        $this->assertSame('4c2681c048298a29a7fb413140cf8569', $result[0]['id']);
     }
 }

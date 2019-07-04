@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,7 @@ class ShellDispatcherTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -45,7 +46,7 @@ class ShellDispatcherTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         ShellDispatcher::resetAliases();
@@ -86,8 +87,8 @@ class ShellDispatcherTest extends TestCase
 
         $result = $this->dispatcher->findShell('test_plugin.example');
         $this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
-        $this->assertEquals('TestPlugin', $result->plugin);
-        $this->assertEquals('Example', $result->name);
+        $this->assertSame('TestPlugin', $result->plugin);
+        $this->assertSame('Example', $result->name);
 
         $result = $this->dispatcher->findShell('TestPlugin.example');
         $this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
@@ -130,8 +131,8 @@ class ShellDispatcherTest extends TestCase
 
         $result = $this->dispatcher->findShell('short');
         $this->assertInstanceOf('TestPlugin\Shell\ExampleShell', $result);
-        $this->assertEquals('TestPlugin', $result->plugin);
-        $this->assertEquals('Example', $result->name);
+        $this->assertSame('TestPlugin', $result->plugin);
+        $this->assertSame('Example', $result->name);
     }
 
     /**
@@ -148,7 +149,7 @@ class ShellDispatcherTest extends TestCase
         $result = $this->dispatcher->findShell('sample');
         $this->assertInstanceOf('TestApp\Shell\SampleShell', $result);
         $this->assertEmpty($result->plugin);
-        $this->assertEquals('Sample', $result->name);
+        $this->assertSame('Sample', $result->name);
     }
 
     /**
@@ -402,19 +403,19 @@ class ShellDispatcherTest extends TestCase
     public function testShiftArgs()
     {
         $this->dispatcher->args = ['a', 'b', 'c'];
-        $this->assertEquals('a', $this->dispatcher->shiftArgs());
+        $this->assertSame('a', $this->dispatcher->shiftArgs());
         $this->assertSame($this->dispatcher->args, ['b', 'c']);
 
         $this->dispatcher->args = ['a' => 'b', 'c', 'd'];
-        $this->assertEquals('b', $this->dispatcher->shiftArgs());
+        $this->assertSame('b', $this->dispatcher->shiftArgs());
         $this->assertSame($this->dispatcher->args, ['c', 'd']);
 
         $this->dispatcher->args = ['a', 'b' => 'c', 'd'];
-        $this->assertEquals('a', $this->dispatcher->shiftArgs());
+        $this->assertSame('a', $this->dispatcher->shiftArgs());
         $this->assertSame($this->dispatcher->args, ['b' => 'c', 'd']);
 
         $this->dispatcher->args = [0 => 'a', 2 => 'b', 30 => 'c'];
-        $this->assertEquals('a', $this->dispatcher->shiftArgs());
+        $this->assertSame('a', $this->dispatcher->shiftArgs());
         $this->assertSame($this->dispatcher->args, [0 => 'b', 1 => 'c']);
 
         $this->dispatcher->args = [];

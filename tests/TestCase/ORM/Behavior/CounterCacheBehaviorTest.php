@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -52,7 +53,7 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -91,7 +92,7 @@ class CounterCacheBehaviorTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -262,7 +263,7 @@ class CounterCacheBehaviorTest extends TestCase
         $category2 = $this->_getCategory(2);
         $this->assertEquals(1, $user1->get('post_count'));
         $this->assertEquals(2, $user2->get('post_count'));
-        $this->assertEquals(0, $category1->get('post_count'));
+        $this->assertSame(0, $category1->get('post_count'));
         $this->assertEquals(3, $category2->get('post_count'));
     }
 

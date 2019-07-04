@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -299,7 +300,7 @@ SQL;
         $schema = new SchemaCollection($connection);
         $result = $schema->listTables();
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertContains('schema_articles', $result);
         $this->assertContains('schema_authors', $result);
     }
@@ -485,8 +486,8 @@ SQL;
         $this->assertFalse($column['unsigned'], 'should not be unsigned');
 
         $output = $table->createSql($connection);
-        $this->assertContains('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
-        $this->assertContains('`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,', $output[0]);
+        $this->assertStringContainsString('`id` BIGINT UNSIGNED NOT NULL,', $output[0]);
+        $this->assertStringContainsString('`other_field` INTEGER(11) NOT NULL AUTO_INCREMENT,', $output[0]);
     }
 
     /**
@@ -1175,7 +1176,7 @@ SQL;
         ]);
         $table->setTemporary(true);
         $sql = $table->createSql($connection);
-        $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
+        $this->assertStringContainsString('CREATE TEMPORARY TABLE', $sql[0]);
     }
 
     /**
@@ -1261,7 +1262,7 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('DROP TABLE `articles`', $result[0]);
+        $this->assertSame('DROP TABLE `articles`', $result[0]);
     }
 
     /**
@@ -1281,7 +1282,7 @@ SQL;
         $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
-        $this->assertEquals('TRUNCATE TABLE `articles`', $result[0]);
+        $this->assertSame('TRUNCATE TABLE `articles`', $result[0]);
     }
 
     /**

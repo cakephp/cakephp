@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -401,6 +402,31 @@ class ViewBuilder implements JsonSerializable, Serializable
     }
 
     /**
+     * Get view option.
+     *
+     * @param string $name The name of the option.
+     * @return mixed
+     */
+    public function getOption(string $name)
+    {
+        return $this->_options[$name] ?? null;
+    }
+
+    /**
+     * Set view option.
+     *
+     * @param string $name The name of the option.
+     * @param mixed $value Value to set.
+     * @return $this
+     */
+    public function setOption(string $name, $value)
+    {
+        $this->_options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * Sets additional options for the view.
      *
      * This lets you provide custom constructor arguments to application/plugin view classes.
@@ -500,7 +526,7 @@ class ViewBuilder implements JsonSerializable, Serializable
     ): View {
         $className = $this->_className;
         if ($className === null) {
-            $className = App::className('App', 'View', 'View') ?: 'Cake\View\View';
+            $className = App::className('App', 'View', 'View') ?: View::class;
         }
         if ($className === 'View') {
             $className = App::className($className, 'View');
@@ -525,6 +551,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         ];
         $data += $this->_options;
 
+        /** @var \Cake\View\View */
         return new $className($request, $response, $events, $data);
     }
 
@@ -569,7 +596,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @return void
      * @throws \RuntimeException
      */
-    protected function _checkViewVars(&$item, $key)
+    protected function _checkViewVars(&$item, string $key): void
     {
         if ($item instanceof Exception) {
             $item = (string)$item;
@@ -594,7 +621,7 @@ class ViewBuilder implements JsonSerializable, Serializable
      * @param array $config View builder configuration array.
      * @return $this Configured view builder instance.
      */
-    public function createFromArray(array $config): self
+    public function createFromArray(array $config)
     {
         foreach ($config as $property => $value) {
             $this->{$property} = $value;
@@ -619,10 +646,10 @@ class ViewBuilder implements JsonSerializable, Serializable
      * Unserializes the view builder object.
      *
      * @param string $data Serialized string.
-     * @return $this Configured view builder instance.
+     * @return void
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
-        return $this->createFromArray(unserialize($data));
+        $this->createFromArray(unserialize($data));
     }
 }

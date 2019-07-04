@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ class QueryCacherTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->engine = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
@@ -46,7 +47,7 @@ class QueryCacherTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('queryCache');
@@ -69,7 +70,7 @@ class QueryCacherTest extends TestCase
         }, 'queryCache');
 
         $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
+        $this->assertSame('A winner', $result);
     }
 
     /**
@@ -102,7 +103,7 @@ class QueryCacherTest extends TestCase
         $cacher = new QueryCacher('my_key', 'queryCache');
         $query = $this->getMockBuilder('stdClass')->getMock();
         $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
+        $this->assertSame('A winner', $result);
     }
 
     /**
@@ -116,7 +117,7 @@ class QueryCacherTest extends TestCase
         $cacher = new QueryCacher('my_key', $this->engine);
         $query = $this->getMockBuilder('stdClass')->getMock();
         $result = $cacher->fetch($query);
-        $this->assertEquals('A winner', $result);
+        $this->assertSame('A winner', $result);
     }
 
     /**

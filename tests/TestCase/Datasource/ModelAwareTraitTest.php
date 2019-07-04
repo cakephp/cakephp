@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
@@ -32,10 +34,10 @@ class ModelAwareTraitTest extends TestCase
     public function testSetModelClass()
     {
         $stub = new Stub();
-        $this->assertNull($stub->modelClass);
+        $this->assertNull($stub->getModelClass());
 
         $stub->setProps('StubArticles');
-        $this->assertEquals('StubArticles', $stub->modelClass);
+        $this->assertEquals('StubArticles', $stub->getModelClass());
     }
 
     /**
@@ -61,6 +63,24 @@ class ModelAwareTraitTest extends TestCase
         $this->assertInstanceOf(PaginatorPostsTable::class, $result);
         $this->assertInstanceOf(PaginatorPostsTable::class, $stub->PaginatorPosts);
         $this->assertSame('PaginatorPosts', $result->getAlias());
+    }
+
+    /**
+     * Test that calling loadModel() without $modelClass argument when default
+     * $modelClass property is empty generates exception.
+     *
+     * @return void
+     */
+    public function testLoadModelException()
+    {
+        $this->expectException(\UnexpectedValueException::class);
+        $this->expectExceptionMessage('Default modelClass is empty');
+
+        $stub = new Stub();
+        $stub->setProps('');
+        $stub->setModelType('Table');
+
+        $stub->loadModel();
     }
 
     /**
@@ -97,16 +117,16 @@ class ModelAwareTraitTest extends TestCase
         $stub->setProps('Articles');
 
         $stub->modelFactory('Table', function ($name) {
-            $mock = new \StdClass();
+            $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
             $mock->name = $name;
 
             return $mock;
         });
 
         $result = $stub->loadModel('Magic', 'Table');
-        $this->assertInstanceOf('stdClass', $result);
-        $this->assertInstanceOf('stdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
+        $this->assertInstanceOf(RepositoryInterface::class, $result);
+        $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
+        $this->assertSame('Magic', $stub->Magic->name);
     }
 
     /**
@@ -147,7 +167,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->loadModel('Magic', 'Test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         FactoryLocator::drop('Test');
 

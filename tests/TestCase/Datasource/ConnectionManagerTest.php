@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
@@ -26,7 +27,7 @@ class ConnectionManagerTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -122,7 +123,7 @@ class ConnectionManagerTest extends TestCase
         $ds = ConnectionManager::get('test');
         $this->assertSame($ds, ConnectionManager::get('test'));
         $this->assertInstanceOf('Cake\Database\Connection', $ds);
-        $this->assertEquals('test', $ds->configName());
+        $this->assertSame('test', $ds->configName());
     }
 
     /**
@@ -440,7 +441,7 @@ class ConnectionManagerTest extends TestCase
     {
         $connection = new FakeConnection();
         $callable = function ($alias) use ($connection) {
-            $this->assertEquals('test_variant', $alias);
+            $this->assertSame('test_variant', $alias);
 
             return $connection;
         };

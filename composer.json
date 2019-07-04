@@ -45,12 +45,14 @@
     "suggest": {
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
-        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()"
+        "lib-ICU": "The intl PHP library, to use Text::transliterate() or Text::slug()",
+        "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "dev-next",
         "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^7.0"
+        "paragonie/csp-builder": "^2.3",
+        "phpunit/phpunit": "^8.0"
     },
     "autoload": {
         "psr-4": {
@@ -100,8 +102,13 @@
         "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml",
-        "stan": "phpstan analyse src/ && psalm --show-info=false",
-        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^0.11 vimeo/psalm:^3.0 && mv composer.backup composer.json"
+        "phpstan": "phpstan.phar analyse src/",
+        "psalm": "psalm.phar --show-info=false",
+        "stan": [
+            "@phpstan",
+            "@psalm"
+        ],
+        "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan-shim:^0.11 psalm/phar:^3.3 && mv composer.backup composer.json"
     },
     "config": {
         "sort-packages": true,

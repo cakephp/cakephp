@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -36,11 +37,16 @@ require_once __DIR__ . '/server_mocks.php';
 class ServerTest extends TestCase
 {
     /**
+     * @var string
+     */
+    protected $config;
+
+    /**
      * Setup
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -54,7 +60,7 @@ class ServerTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -68,7 +74,8 @@ class ServerTest extends TestCase
      */
     public function testAppGetSet()
     {
-        $app = $this->getMockBuilder('Cake\Http\BaseApplication')
+        /** @var \Cake\Http\BaseApplication|\PHPUnit\Framework\MockObject\MockObject $app */
+        $app = $this->getMockBuilder(BaseApplication::class)
             ->setConstructorArgs([$this->config])
             ->getMock();
 
@@ -77,7 +84,7 @@ class ServerTest extends TestCase
             ->willReturn($manager);
 
         $server = new Server($app);
-        $this->assertSame($app, $server->getApp($app));
+        $this->assertSame($app, $server->getApp());
         $this->assertSame($app->getEventManager(), $server->getEventManager());
     }
 
@@ -117,6 +124,7 @@ class ServerTest extends TestCase
         $request = new ServerRequest();
         $request = $request->withHeader('X-pass', 'request header');
 
+        /** @var \TestApp\Http\MiddlewareApplication|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->getMockBuilder(MiddlewareApplication::class)
             ->setMethods(['pluginBootstrap', 'pluginEvents', 'pluginMiddleware'])
             ->setConstructorArgs([$this->config])
@@ -131,7 +139,7 @@ class ServerTest extends TestCase
             }));
 
         $server = new Server($app);
-        $res = $server->run($request, $response);
+        $res = $server->run($request);
         $this->assertEquals(
             'source header',
             $res->getHeaderLine('X-testing'),
@@ -218,7 +226,7 @@ class ServerTest extends TestCase
         ob_start();
         $server->emit($response);
         $result = ob_get_clean();
-        $this->assertEquals('body content', $result);
+        $this->assertSame('body content', $result);
     }
 
     /**
@@ -232,8 +240,7 @@ class ServerTest extends TestCase
         $server = new Server($app);
         $this->called = false;
 
-        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, $middleware) {
-            $this->assertInstanceOf('Cake\Http\MiddlewareQueue', $middleware);
+        $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middleware) {
             $middleware->add(function ($req, $res, $next) {
                 $this->called = true;
 
@@ -254,6 +261,7 @@ class ServerTest extends TestCase
      */
     public function testEventManagerProxies()
     {
+        /** @var \Cake\Http\BaseApplication|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->getMockForAbstractClass(
             BaseApplication::class,
             [$this->config]
@@ -270,6 +278,7 @@ class ServerTest extends TestCase
      */
     public function testGetEventManagerNonEventedApplication()
     {
+        /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->createMock(HttpApplicationInterface::class);
 
         $server = new Server($app);
@@ -283,11 +292,14 @@ class ServerTest extends TestCase
      */
     public function testSetEventManagerNonEventedApplication()
     {
-        $this->expectException(InvalidArgumentException::class);
+        /** @var \Cake\Core\HttpApplicationInterface|\PHPUnit\Framework\MockObject\MockObject $app */
         $app = $this->createMock(HttpApplicationInterface::class);
 
         $events = new EventManager();
         $server = new Server($app);
+
+        $this->expectException(InvalidArgumentException::class);
+
         $server->setEventManager($events);
     }
 }

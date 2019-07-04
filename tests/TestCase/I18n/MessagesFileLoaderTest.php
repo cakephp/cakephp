@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ class MessagesFileLoaderTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->localePaths = Configure::read('App.paths.locales');
@@ -40,7 +41,7 @@ class MessagesFileLoaderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Configure::write('App.paths.locales', $this->localePaths);
@@ -56,13 +57,13 @@ class MessagesFileLoaderTest extends TestCase
         $loader = new MessagesFileLoader('default', 'en');
         $package = $loader();
         $messages = $package->getMessages();
-        $this->assertEquals('Po (translated)', $messages['Plural Rule 1']['_context']['']);
+        $this->assertSame('Po (translated)', $messages['Plural Rule 1']['_context']['']);
 
         Configure::write('App.paths.locales', [TEST_APP . 'custom_locale' . DS]);
         $loader = new MessagesFileLoader('default', 'en');
         $package = $loader();
         $messages = $package->getMessages();
-        $this->assertEquals('Po (translated) from custom folder', $messages['Plural Rule 1']['_context']['']);
+        $this->assertSame('Po (translated) from custom folder', $messages['Plural Rule 1']['_context']['']);
     }
 
     /**

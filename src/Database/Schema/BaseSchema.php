@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 
 /**
@@ -29,7 +30,7 @@ abstract class BaseSchema
     /**
      * The driver instance being used.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -39,9 +40,9 @@ abstract class BaseSchema
      * This constructor will connect the driver so that methods like columnSql() and others
      * will fail when the driver has not been connected.
      *
-     * @param \Cake\Database\Driver $driver The driver to use.
+     * @param \Cake\Database\DriverInterface $driver The driver to use.
      */
-    public function __construct(Driver $driver)
+    public function __construct(DriverInterface $driver)
     {
         $driver->connect();
         $this->_driver = $driver;

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -47,26 +48,6 @@ interface FixtureInterface
      *  or false on failure.
      */
     public function insert(ConnectionInterface $db);
-
-    /**
-     * Build and execute SQL queries necessary to create the constraints for the
-     * fixture
-     *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database
-     *  into which the constraints will be created.
-     * @return bool on success or if there are no constraints to create, or false on failure
-     */
-    public function createConstraints(ConnectionInterface $db): bool;
-
-    /**
-     * Build and execute SQL queries necessary to drop the constraints for the
-     * fixture
-     *
-     * @param \Cake\Datasource\ConnectionInterface $db An instance of the database
-     *  into which the constraints will be dropped.
-     * @return bool on success or if there are no constraints to drop, or false on failure
-     */
-    public function dropConstraints(ConnectionInterface $db): bool;
 
     /**
      * Truncates the current fixture.

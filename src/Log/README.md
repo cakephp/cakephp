@@ -30,7 +30,7 @@ Log::config('local', [
 
 // Fully namespaced name.
 Log::config('production', [
-    'className' => 'Cake\Log\Engine\SyslogLog',
+    'className' => \Cake\Log\Engine\SyslogLog::class,
     'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 ]);
 ```

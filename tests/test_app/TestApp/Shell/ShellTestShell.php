@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * ShellTestShell file
  *
@@ -31,6 +32,13 @@ class ShellTestShell extends Shell
      * @var string
      */
     public $name = 'ShellTestShell';
+
+    /**
+     * modelClass
+     *
+     * @var string
+     */
+    protected $modelClass = 'TestPlugin.TestPluginComments';
 
     /**
      * stopped property

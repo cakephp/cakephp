@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * MailTransportTest file
  *
@@ -30,7 +31,7 @@ class MailTransportTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
@@ -92,7 +93,7 @@ class MailTransportTest extends TestCase
 
         $result = $this->MailTransport->send($message);
 
-        $this->assertContains('Subject: ', $result['headers']);
-        $this->assertContains('To: ', $result['headers']);
+        $this->assertStringContainsString('Subject: ', $result['headers']);
+        $this->assertStringContainsString('To: ', $result['headers']);
     }
 }

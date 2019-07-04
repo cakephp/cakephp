@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -71,7 +72,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      *
      * @param string|\Cake\Database\ExpressionInterface $field the field name to compare to a value
      * @param mixed $value The value to be used in comparison
-     * @param string $type the type name used to cast the value
+     * @param string|array $type the type name used to cast the value
      * @param string $operator the operator used for comparing field and value
      */
     public function __construct($field, $value, $type, $operator)
@@ -264,7 +265,7 @@ class Comparison implements ExpressionInterface, FieldInterface
      * @param string|array|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue(iterable $value, $generator, $type = 'string'): string
+    protected function _flattenValue(iterable $value, ValueBinder $generator, $type = 'string'): string
     {
         $parts = [];
         if (is_array($value)) {

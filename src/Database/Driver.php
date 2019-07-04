@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -89,8 +90,8 @@ abstract class Driver implements DriverInterface
     {
         $connection = new PDO(
             $dsn,
-            $config['username'],
-            $config['password'],
+            $config['username'] ?: null,
+            $config['password'] ?: null,
             $config['flags']
         );
         $this->setConnection($connection);
@@ -347,9 +348,7 @@ abstract class Driver implements DriverInterface
     }
 
     /**
-     * Disable auto quoting of identifiers in queries.
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function disableAutoQuoting()
     {

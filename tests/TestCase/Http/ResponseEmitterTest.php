@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,7 +36,7 @@ class ResponseEmitterTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $GLOBALS['mockedHeadersSent'] = false;
@@ -48,7 +49,7 @@ class ResponseEmitterTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($GLOBALS['mockedHeadersSent']);
@@ -71,7 +72,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('It worked', $out);
+        $this->assertSame('It worked', $out);
         $expected = [
             'HTTP/1.1 201 Created',
             'Content-Type: text/html',
@@ -96,7 +97,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('', $out);
+        $this->assertSame('', $out);
         $expected = [
             'HTTP/1.1 204 No Content',
             'X-testing: value',
@@ -121,7 +122,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('ok', $out);
+        $this->assertSame('ok', $out);
         $expected = [
             'HTTP/1.1 200 OK',
             'Content-Type: text/plain',
@@ -170,7 +171,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('ok', $out);
+        $this->assertSame('ok', $out);
         $expected = [
             'HTTP/1.1 200 OK',
             'Content-Type: text/plain',
@@ -247,7 +248,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('It worked', $out);
+        $this->assertSame('It worked', $out);
         $expected = [
             'HTTP/1.1 201 Created',
             'Content-Type: text/plain',
@@ -271,7 +272,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('t wo', $out);
+        $this->assertSame('t wo', $out);
         $expected = [
             'HTTP/1.1 200 OK',
             'Content-Type: text/plain',
@@ -296,7 +297,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response, 2);
         $out = ob_get_clean();
 
-        $this->assertEquals('It worked', $out);
+        $this->assertSame('It worked', $out);
     }
 
     /**
@@ -315,7 +316,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('rked', $out);
+        $this->assertSame('rked', $out);
     }
 
     /**
@@ -334,7 +335,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('It worked', $out);
+        $this->assertSame('It worked', $out);
     }
 
     /**
@@ -357,7 +358,7 @@ class ResponseEmitterTest extends TestCase
         $this->emitter->emit($response);
         $out = ob_get_clean();
 
-        $this->assertEquals('t wo', $out);
+        $this->assertSame('t wo', $out);
         $expected = [
             'HTTP/1.1 201 Created',
             'Content-Range: bytes 1-4/9',

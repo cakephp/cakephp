@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,7 +35,7 @@ class CurlTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
@@ -90,7 +91,7 @@ class CurlTest extends TestCase
         $this->assertInstanceOf(Response::class, $response);
         $this->assertTrue($response->hasHeader('Date'));
         $this->assertTrue($response->hasHeader('Content-type'));
-        $this->assertContains('<html', $response->getBody()->getContents());
+        $this->assertStringContainsString('<html', $response->getBody()->getContents());
     }
 
     /**
@@ -333,7 +334,9 @@ class CurlTest extends TestCase
     public function testNetworkException()
     {
         $this->expectException(NetworkException::class);
-        $this->expectExceptionMessage('cURL Error (6) Could not resolve host: dummy');
+        $this->expectExceptionMessage('cURL Error (6) Could not resolve');
+        $this->expectExceptionMessage('dummy');
+
         $request = new Request('http://dummy/?sleep');
         $options = [
             'timeout' => 2,

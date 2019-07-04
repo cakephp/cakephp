@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,6 +31,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
 use Cake\View\Widget\WidgetLocator;
+use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
@@ -66,7 +68,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -121,7 +123,7 @@ class FormHelperTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->Form, $this->Controller, $this->View);
@@ -139,7 +141,7 @@ class FormHelperTest extends TestCase
             'templates' => 'htmlhelper_tags',
         ]);
         $result = $helper->control('name');
-        $this->assertContains('<input', $result);
+        $this->assertStringContainsString('<input', $result);
     }
 
     /**
@@ -200,7 +202,7 @@ class FormHelperTest extends TestCase
         ]);
 
         $result = $helper->control('when', ['type' => 'datetime-local']);
-        $this->assertContains('<label for="when">When</label>', $result);
+        $this->assertStringContainsString('<label for="when">When</label>', $result);
     }
 
     /**
@@ -220,7 +222,7 @@ class FormHelperTest extends TestCase
             ->with($data)
             ->will($this->returnValue('HTML'));
         $result = $this->Form->widget('test', $data);
-        $this->assertEquals('HTML', $result);
+        $this->assertSame('HTML', $result);
     }
 
     /**
@@ -249,7 +251,7 @@ class FormHelperTest extends TestCase
             ->will($this->returnValue(['test']));
 
         $result = $this->Form->widget('test', $data + ['secure' => true]);
-        $this->assertEquals('HTML', $result);
+        $this->assertSame('HTML', $result);
     }
 
     /**
@@ -263,11 +265,11 @@ class FormHelperTest extends TestCase
         $this->assertEquals([], $this->Form->fields);
 
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '']);
-        $this->assertEquals('<select name=""></select>', $result);
+        $this->assertSame('<select name=""></select>', $result);
         $this->assertEquals([], $this->Form->fields);
 
         $result = $this->Form->widget('select', ['secure' => true, 'name' => '0']);
-        $this->assertEquals('<select name="0"></select>', $result);
+        $this->assertSame('<select name="0"></select>', $result);
         $this->assertEquals(['0'], $this->Form->fields);
     }
 
@@ -1068,10 +1070,10 @@ class FormHelperTest extends TestCase
             'type' => 'get',
             'url' => '/contacts/add',
         ]);
-        $this->assertNotContains('testKey', $result);
+        $this->assertStringNotContainsString('testKey', $result);
 
         $result = $this->Form->end();
-        $this->assertNotContains('testKey', $result);
+        $this->assertStringNotContainsString('testKey', $result);
     }
 
     /**
@@ -1099,7 +1101,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->secure($fields);
 
         $hash = hash_hmac('sha1', serialize($fields) . session_id(), Security::getSalt());
-        $this->assertContains($hash, $result);
+        $this->assertStringContainsString($hash, $result);
     }
 
     /**
@@ -1218,8 +1220,8 @@ class FormHelperTest extends TestCase
 
         $this->Form->create($this->article);
         $result = $this->Form->control('foo');
-        $this->assertContains('class="input number"', $result);
-        $this->assertContains('type="number"', $result);
+        $this->assertStringContainsString('class="input number"', $result);
+        $this->assertStringContainsString('type="number"', $result);
     }
 
     /**
@@ -1240,8 +1242,8 @@ class FormHelperTest extends TestCase
 
         $this->Form->create($this->article);
         $result = $this->Form->control('foo');
-        $this->assertContains('class="input number"', $result);
-        $this->assertContains('type="number"', $result);
+        $this->assertStringContainsString('class="input number"', $result);
+        $this->assertStringContainsString('type="number"', $result);
     }
 
     /**
@@ -1632,10 +1634,10 @@ class FormHelperTest extends TestCase
 
         $this->Form->create();
         $this->Form->text('Address.primary.1');
-        $this->assertEquals('Address.primary', $this->Form->fields[0]);
+        $this->assertSame('Address.primary', $this->Form->fields[0]);
 
         $this->Form->text('Address.secondary.1.0');
-        $this->assertEquals('Address.secondary', $this->Form->fields[1]);
+        $this->assertSame('Address.secondary', $this->Form->fields[1]);
     }
 
     /**
@@ -1987,10 +1989,10 @@ class FormHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withParam('_Token', 'testKey'));
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom]']);
-        $this->assertEquals('User.custom', $this->Form->fields[0]);
+        $this->assertSame('User.custom', $this->Form->fields[0]);
 
         $this->Form->text('UserForm.published', ['name' => 'User[custom][another][value]']);
-        $this->assertEquals('User.custom.another.value', $this->Form->fields[1]);
+        $this->assertSame('User.custom.another.value', $this->Form->fields[1]);
     }
 
     /**
@@ -2451,19 +2453,19 @@ class FormHelperTest extends TestCase
             'url' => ['controller' => 'articles', 'action' => 'view', 1, '?' => ['page' => 1]],
         ]);
         $result = $this->Form->secure();
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
 
         $this->Form->create($this->article, ['url' => 'http://localhost/articles/view/1?page=1']);
         $result = $this->Form->secure();
-        $this->assertContains($expected, $result, 'Full URL should only use path and query.');
+        $this->assertStringContainsString($expected, $result, 'Full URL should only use path and query.');
 
         $this->Form->create($this->article, ['url' => '/articles/view/1?page=1']);
         $result = $this->Form->secure();
-        $this->assertContains($expected, $result, 'URL path + query should work.');
+        $this->assertStringContainsString($expected, $result, 'URL path + query should work.');
 
         $this->Form->create($this->article, ['url' => '/articles/view/1']);
         $result = $this->Form->secure();
-        $this->assertNotContains($expected, $result, 'URL is different');
+        $this->assertStringNotContainsString($expected, $result, 'URL is different');
     }
 
     /**
@@ -2491,19 +2493,19 @@ class FormHelperTest extends TestCase
             ],
         ]);
         $result = $this->Form->secure();
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
 
         $this->Form->create($this->article, [
             'url' => 'http://localhost/articles/view?page=1&limit=10&html=%3C%3E%22#result',
         ]);
         $result = $this->Form->secure();
-        $this->assertContains($expected, $result, 'Full URL should only use path and query.');
+        $this->assertStringContainsString($expected, $result, 'Full URL should only use path and query.');
 
         $this->Form->create($this->article, [
             'url' => '/articles/view?page=1&limit=10&html=%3C%3E%22#result',
         ]);
         $result = $this->Form->secure();
-        $this->assertContains($expected, $result, 'URL path + query should work.');
+        $this->assertStringContainsString($expected, $result, 'URL path + query should work.');
     }
 
     /**
@@ -2751,7 +2753,7 @@ class FormHelperTest extends TestCase
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
         $result = $this->Form->error('nested.foo');
-        $this->assertEquals('<div class="error-message">not a valid bar</div>', $result);
+        $this->assertSame('<div class="error-message">not a valid bar</div>', $result);
     }
 
     /**
@@ -2769,7 +2771,7 @@ class FormHelperTest extends TestCase
         $inner->setError('bar', ['not a valid one']);
         $this->Form->create($entity, ['context' => ['table' => 'Articles']]);
         $result = $this->Form->error('nested.foo.bar');
-        $this->assertEquals('<div class="error-message">not a valid one</div>', $result);
+        $this->assertSame('<div class="error-message">not a valid one</div>', $result);
     }
 
     /**
@@ -3930,7 +3932,7 @@ class FormHelperTest extends TestCase
     {
         $this->View->set('users', ['value' => 'good', 'other' => 'bad']);
         $result = $this->Form->control('Model.user_id', ['type' => 'radio']);
-        $this->assertContains('input type="radio"', $result);
+        $this->assertStringContainsString('input type="radio"', $result);
     }
 
     /**
@@ -3972,16 +3974,16 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->allControls([], ['fieldset' => true, 'legend' => 'Field of Dreams']);
-        $this->assertContains('<legend>Field of Dreams</legend>', $result);
-        $this->assertContains('<fieldset>', $result);
+        $this->assertStringContainsString('<legend>Field of Dreams</legend>', $result);
+        $this->assertStringContainsString('<fieldset>', $result);
 
         $result = $this->Form->allControls([], ['fieldset' => false, 'legend' => false]);
-        $this->assertNotContains('<legend>', $result);
-        $this->assertNotContains('<fieldset>', $result);
+        $this->assertStringNotContainsString('<legend>', $result);
+        $this->assertStringNotContainsString('<fieldset>', $result);
 
         $result = $this->Form->allControls([], ['fieldset' => false, 'legend' => 'Hello']);
-        $this->assertNotContains('<legend>', $result);
-        $this->assertNotContains('<fieldset>', $result);
+        $this->assertStringNotContainsString('<legend>', $result);
+        $this->assertStringNotContainsString('<fieldset>', $result);
 
         $this->Form->create($this->article);
         $this->View->setRequest($this->View->getRequest()
@@ -4685,7 +4687,7 @@ class FormHelperTest extends TestCase
 
         $attrs = ['disabled' => ['r']];
         $result = $this->Form->radio('Model.field', $options, $attrs);
-        $this->assertContains('disabled="disabled"', $result);
+        $this->assertStringContainsString('disabled="disabled"', $result);
     }
 
     /**
@@ -5188,7 +5190,7 @@ class FormHelperTest extends TestCase
             $options,
             ['form' => 'my-form', 'multiple' => false]
         );
-        $this->assertNotContains('multiple', $result);
+        $this->assertStringNotContainsString('multiple', $result);
     }
 
     /**
@@ -5573,7 +5575,7 @@ class FormHelperTest extends TestCase
 
         $result = $this->Form->secure($this->Form->fields);
         $key = '8af36fb34e6f2ef8ba0eb473bb4365ec232f3fe5%3A';
-        $this->assertContains('"' . $key . '"', $result);
+        $this->assertStringContainsString('"' . $key . '"', $result);
     }
 
     /**
@@ -5711,7 +5713,7 @@ class FormHelperTest extends TestCase
             ['first', 'second'],
             ['multiple' => 'checkbox', 'hiddenField' => false, 'value' => null]
         );
-        $this->assertNotContains('type="hidden"', $result);
+        $this->assertStringNotContainsString('type="hidden"', $result);
     }
 
     /**
@@ -6227,7 +6229,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->year('published', [
             'empty' => 'Published on',
         ]);
-        $this->assertContains('Published on', $result);
+        $this->assertStringContainsString('Published on', $result);
     }
 
     /**
@@ -6247,9 +6249,9 @@ class FormHelperTest extends TestCase
             'min' => $start,
             'max' => $end,
         ]);
-        $this->assertContains('value="' . $start . '">' . $start, $result);
-        $this->assertContains('value="' . $end . '">' . $end, $result);
-        $this->assertNotContains('value="00">00', $result);
+        $this->assertStringContainsString('value="' . $start . '">' . $start, $result);
+        $this->assertStringContainsString('value="' . $end . '">' . $end, $result);
+        $this->assertStringNotContainsString('value="00">00', $result);
     }
 
     /**
@@ -6263,7 +6265,7 @@ class FormHelperTest extends TestCase
             'type' => 'date',
             'required' => true,
         ]);
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<input type="date" name="birthday" required="required"',
             $result
         );
@@ -6607,7 +6609,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->postButton('Send', '/', ['data' => ['extra' => 'value']]);
-        $this->assertContains('<input type="hidden" name="extra" value="value"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="extra" value="value"', $result);
     }
 
     /**
@@ -6669,9 +6671,9 @@ class FormHelperTest extends TestCase
             ],
         ];
         $result = $this->Form->postButton('Send', '/', ['data' => $data]);
-        $this->assertContains('<input type="hidden" name="one[two][0]" value="3"', $result);
-        $this->assertContains('<input type="hidden" name="one[two][1]" value="4"', $result);
-        $this->assertContains('<input type="hidden" name="one[two][2]" value="5"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="one[two][0]" value="3"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="one[two][1]" value="4"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="one[two][2]" value="5"', $result);
     }
 
     /**
@@ -6873,13 +6875,13 @@ class FormHelperTest extends TestCase
     public function testPostLinkWithData()
     {
         $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['id' => 1]]);
-        $this->assertContains('<input type="hidden" name="id" value="1"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="id" value="1"', $result);
 
         $entity = new Entity(['name' => 'no show'], ['source' => 'Articles']);
         $this->Form->create($entity);
         $this->Form->end();
         $result = $this->Form->postLink('Delete', '/posts/delete', ['data' => ['name' => 'show']]);
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<input type="hidden" name="name" value="show"',
             $result,
             'should not contain entity data.'
@@ -6958,8 +6960,10 @@ class FormHelperTest extends TestCase
         $result = $this->View->fetch('postLink');
 
         $this->assertEquals(['title'], $this->Form->fields);
-        $this->assertContains($hash, $result, 'Should contain the correct hash.');
-        $this->assertAttributeEquals('/articles/add', '_lastAction', $this->Form, 'lastAction was should be restored.');
+        $this->assertStringContainsString($hash, $result, 'Should contain the correct hash.');
+        $reflect = new ReflectionProperty($this->Form, '_lastAction');
+        $reflect->setAccessible(true);
+        $this->assertEquals('/articles/add', $reflect->getValue($this->Form), 'lastAction was should be restored.');
     }
 
     /**
@@ -7018,9 +7022,9 @@ class FormHelperTest extends TestCase
             ],
         ];
         $result = $this->Form->postLink('Send', '/', ['data' => $data]);
-        $this->assertContains('<input type="hidden" name="one[two][0]" value="3"', $result);
-        $this->assertContains('<input type="hidden" name="one[two][1]" value="4"', $result);
-        $this->assertContains('<input type="hidden" name="one[two][2]" value="5"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="one[two][0]" value="3"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="one[two][1]" value="4"', $result);
+        $this->assertStringContainsString('<input type="hidden" name="one[two][2]" value="5"', $result);
     }
 
     /**
@@ -7456,7 +7460,7 @@ class FormHelperTest extends TestCase
      */
     public function testFormEnd()
     {
-        $this->assertEquals('</form>', $this->Form->end());
+        $this->assertSame('</form>', $this->Form->end());
     }
 
     /**
@@ -7826,7 +7830,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->control('title', ['required' => false]);
-        $this->assertNotContains('required', $result);
+        $this->assertStringNotContainsString('required', $result);
 
         $result = $this->Form->control('body');
         $expected = [
@@ -7844,7 +7848,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->control('body', ['required' => true]);
-        $this->assertContains('required', $result);
+        $this->assertStringContainsString('required', $result);
     }
 
     /**
@@ -7963,13 +7967,13 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['Y', 'N'],
         ]);
-        $this->assertContains('<div class="rad">', $result);
+        $this->assertStringContainsString('<div class="rad">', $result);
 
         $result = $this->Form->control('Article.published', [
             'type' => 'radio',
             'options' => ['Y', 'N'],
         ]);
-        $this->assertContains('<div class="rad err">', $result);
+        $this->assertStringContainsString('<div class="rad err">', $result);
     }
 
     /**
@@ -7991,7 +7995,7 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['Y', 'N'],
         ]);
-        $this->assertContains('<div class="radio">', $result);
+        $this->assertStringContainsString('<div class="radio">', $result);
     }
 
     /**
@@ -8004,7 +8008,7 @@ class FormHelperTest extends TestCase
     public function testResetTemplates()
     {
         $this->Form->setTemplates(['input' => '<input/>']);
-        $this->assertEquals('<input/>', $this->Form->templater()->get('input'));
+        $this->assertSame('<input/>', $this->Form->templater()->get('input'));
 
         $this->Form->resetTemplates();
         $this->assertNotEquals('<input/>', $this->Form->templater()->get('input'));
@@ -8247,7 +8251,7 @@ class FormHelperTest extends TestCase
         $articles->patchEntity($article, ['id' => '3']);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('id', 4)->withQueryParams(['id' => 5])
+            $this->View->getRequest()->withData('id', '4')->withQueryParams(['id' => '5'])
         );
 
         $this->Form->create($article, ['valueSources' => 'query']);
@@ -8257,7 +8261,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('5', $result);
+        $this->assertSame('5', $result);
 
         $this->Form->setValueSources(['context']);
         $this->Form->create($article, ['valueSources' => 'query']);
@@ -8267,7 +8271,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('5', $result);
+        $this->assertSame('5', $result);
 
         $this->Form->setValueSources(['query']);
         $this->Form->create($article, ['valueSources' => 'data']);
@@ -8278,7 +8282,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('4', $result);
+        $this->assertSame('4', $result);
 
         $this->Form->setValueSources(['query']);
         $this->Form->create($article, ['valueSources' => ['context', 'data']]);
@@ -8288,7 +8292,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('4', $result);
+        $this->assertSame('4', $result);
     }
 
     /**
@@ -8304,7 +8308,7 @@ class FormHelperTest extends TestCase
         $articles->patchEntity($article, ['id' => '3']);
 
         $this->View->setRequest(
-            $this->View->getRequest()->withData('id', 10)->withQueryParams(['id' => 11])
+            $this->View->getRequest()->withData('id', '10')->withQueryParams(['id' => '11'])
         );
 
         $this->Form->setValueSources(['context'])
@@ -8315,7 +8319,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('11', $result);
+        $this->assertSame('11', $result);
 
         $this->View->setRequest($this->View->getRequest()->withQueryParams([]));
         $this->Form->setValueSources(['context'])
@@ -8326,7 +8330,7 @@ class FormHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
         $result = $this->Form->getSourceValue('id');
-        $this->assertEquals('10', $result);
+        $this->assertSame('10', $result);
     }
 
     /**
@@ -8401,11 +8405,11 @@ class FormHelperTest extends TestCase
 
         $this->Form->setValueSources(['query', 'context']);
         $result = $this->Form->getSourceValue('category');
-        $this->assertEquals('sesame-cookies', $result);
+        $this->assertSame('sesame-cookies', $result);
 
         $this->Form->setValueSources(['context', 'query']);
         $result = $this->Form->getSourceValue('category');
-        $this->assertEquals('sesame-cookies', $result);
+        $this->assertSame('sesame-cookies', $result);
     }
 
     /**

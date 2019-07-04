@@ -15,18 +15,19 @@
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Fatal Error');
-$this->assign('templateName', 'fatal_error.ctp');
+$this->assign('templateName', 'fatal_error.php');
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= h($error->getMessage()) ?>
-    <br/>
+    <br>
+    <br>
 
     <strong>File</strong>
     <?= h($error->getFile()) ?>
-    <br/>
-    <strong>Line: </strong>
+    <br><br>
+    <strong>Line</strong>
     <?= h($error->getLine()) ?>
 <?php $this->end() ?>
 

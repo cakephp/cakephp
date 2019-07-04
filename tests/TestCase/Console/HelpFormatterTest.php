@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * HelpFormatterTest file
  *
@@ -190,21 +191,28 @@ txt;
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser->addOption('test', ['help' => 'A test option.'])
-            ->addOption('connection', [
-                'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default',
-            ]);
+               ->addOption('number', [
+                   'help' => 'The number',
+                   'default' => 2,
+               ])
+                ->addOption('connection', [
+                    'short' => 'c',
+                    'help' => 'The connection to use.',
+                    'default' => 'default',
+                ]);
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = <<<txt
 <info>Usage:</info>
-cake mycommand [-c default] [-h] [--test]
+cake mycommand [-c default] [-h] [--number 2] [--test]
 
 <info>Options:</info>
 
 --connection, -c  The connection to use. <comment>(default:
                   default)</comment>
 --help, -h        Display this help.
+--number          The number <comment>(default: 2)</comment>
 --test            A test option.
 
 txt;
@@ -265,7 +273,7 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = 'cake mycommand [options] <model> [<other_longer>]';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**
@@ -290,7 +298,7 @@ xml;
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = 'cake mycommand [-h] [arguments]';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**
@@ -305,7 +313,7 @@ xml;
         $formatter->setAlias('foo');
         $result = $formatter->text();
         $expected = 'foo mycommand [-h]';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**

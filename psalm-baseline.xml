@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files>
+<files psalm-version="3.4.6@6b32565a9bf199049d070a5197c77f266170844d">
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
@@ -11,9 +11,8 @@
       <code>setHidden</code>
       <code>toArray</code>
     </PossiblyInvalidMethodCall>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$_passwordHasher</code>
-      <code>BaseAuthenticate</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/BasicAuthenticate.php">
@@ -27,18 +26,9 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Auth/DigestAuthenticate.php">
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$user[$field]</code>
-    </PossiblyInvalidArrayAccess>
-    <PossiblyNullArgument occurrences="1">
-      <code>$request-&gt;getEnv('ORIGINAL_REQUEST_METHOD')</code>
-    </PossiblyNullArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>DigestAuthenticate</code>
     </PropertyNotSetInConstructor>
-    <TypeDoesNotContainType occurrences="1">
-      <code>empty($req)</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Auth/FormAuthenticate.php">
     <PossiblyInvalidArgument occurrences="2">
@@ -53,9 +43,6 @@
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$user</code>
     </MoreSpecificImplementedParamType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_user</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Cache/CacheRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
@@ -63,13 +50,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Cache/Engine/FileEngine.php">
-    <ImplementedReturnTypeMismatch occurrences="2">
-      <code>void</code>
-      <code>void</code>
-    </ImplementedReturnTypeMismatch>
-    <MissingClosureReturnType occurrences="1">
-      <code>function (SplFileInfo $current) use ($group, $prefix) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidOperand occurrences="1">
       <code>$this-&gt;_File-&gt;current()</code>
     </PossiblyInvalidOperand>
@@ -86,19 +66,6 @@
     <MissingConstructor occurrences="1">
       <code>$_Memcached</code>
     </MissingConstructor>
-    <MoreSpecificImplementedParamType occurrences="3">
-      <code>$keys</code>
-      <code>$data</code>
-      <code>$keys</code>
-    </MoreSpecificImplementedParamType>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$name</code>
-    </PossiblyInvalidArgument>
-    <UndefinedConstant occurrences="3">
-      <code>DAY</code>
-      <code>DAY</code>
-      <code>DAY</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidArgument occurrences="1">
@@ -119,149 +86,41 @@
     </NullArgument>
   </file>
   <file src="src/Collection/CollectionTrait.php">
-    <MissingClosureParamType occurrences="38">
-      <code>$v</code>
-      <code>$key</code>
-      <code>$value</code>
-      <code>$items</code>
-      <code>$data</code>
-      <code>$acc</code>
-      <code>$current</code>
-      <code>$value</code>
-      <code>$key</code>
-      <code>$mr</code>
-      <code>$values</code>
-      <code>$key</code>
-      <code>$mr</code>
-      <code>$iterator</code>
-      <code>$howMany</code>
-      <code>$value</code>
-      <code>$key</code>
-      <code>$mapReduce</code>
-      <code>$values</code>
-      <code>$key</code>
-      <code>$mapReduce</code>
-      <code>$row</code>
-      <code>$key</code>
-      <code>$mapReduce</code>
-      <code>$values</code>
-      <code>$key</code>
-      <code>$mapReduce</code>
-      <code>$value</code>
-      <code>$item</code>
-      <code>$v</code>
-      <code>$k</code>
-      <code>$iterator</code>
-      <code>$v</code>
-      <code>$k</code>
-      <code>$iterator</code>
-      <code>$value</code>
-      <code>$keys</code>
-      <code>$index</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="17">
-      <code>function ($v) {</code>
-      <code>function ($key, $value, $items) use ($c) {</code>
-      <code>function ($data) {</code>
-      <code>function ($acc, $current) {</code>
-      <code>function ($value, $key, $mr) use ($callback) {</code>
-      <code>function ($values, $key, $mr) {</code>
-      <code>function ($iterator, $howMany) {</code>
-      <code>function ($value, $key, $mapReduce) use ($options) {</code>
-      <code>function ($values, $key, $mapReduce) {</code>
-      <code>function ($row, $key, $mapReduce) use (&amp;$parents, $idPath, $parentPath, $nestingKey) {</code>
-      <code>function ($values, $key, $mapReduce) use (&amp;$parents, &amp;$isObject, $nestingKey) {</code>
-      <code>function ($value) use (&amp;$isObject) {</code>
-      <code>function () {</code>
-      <code>function ($item) {</code>
-      <code>function ($v, $k, $iterator) use ($chunkSize) {</code>
-      <code>function ($v, $k, $iterator) use ($chunkSize, $preserveKeys) {</code>
-      <code>function ($value, $keys, $index) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$dir</code>
       <code>$modes[$dir] ?? $dir</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Collection/ExtractTrait.php">
-    <MissingClosureParamType occurrences="3">
-      <code>$element</code>
-      <code>$element</code>
-      <code>$value</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="4">
-      <code>function ($element) use ($path) {</code>
-      <code>function ($element) use ($path) {</code>
-      <code>function ($v) use ($extractor, $value) {</code>
-      <code>function ($value) use ($matchers) {</code>
-    </MissingClosureReturnType>
   </file>
   <file src="src/Collection/Iterator/NoChildrenIterator.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>null</code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/Collection/Iterator/TreeIterator.php">
-    <MissingClosureReturnType occurrences="1">
-      <code>function () use (&amp;$counter) {</code>
-    </MissingClosureReturnType>
-  </file>
-  <file src="src/Collection/Iterator/ZipIterator.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$items</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($items) {</code>
-    </MissingClosureReturnType>
+  <file src="src/Command/CompletionCommand.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>$commands</code>
+    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Command/HelpCommand.php">
-    <MissingClosureParamType occurrences="2">
-      <code>$a</code>
-      <code>$b</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($a, $b) {</code>
-    </MissingClosureReturnType>
-    <PropertyNotSetInConstructor occurrences="2">
+    <PropertyNotSetInConstructor occurrences="1">
       <code>$commands</code>
-      <code>HelpCommand</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>ROOT</code>
-      <code>CORE_PATH</code>
+  </file>
+  <file src="src/Command/I18nExtractCommand.php">
+    <UndefinedConstant occurrences="3">
+      <code>APP</code>
+      <code>APP</code>
+      <code>APP</code>
     </UndefinedConstant>
   </file>
   <file src="src/Command/UpgradeCommand.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$path</code>
     </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="3">
+    <PropertyNotSetInConstructor occurrences="2">
       <code>$args</code>
       <code>$io</code>
-      <code>UpgradeCommand</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="1">
-      <code>APP</code>
-    </UndefinedConstant>
-  </file>
-  <file src="src/Command/VersionCommand.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>VersionCommand</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Console/Command.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$alias</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($alias) {</code>
-    </MissingClosureReturnType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Command</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;modelClass</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Console/CommandRunner.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -277,45 +136,18 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Console/ConsoleInputOption.php">
-    <PossiblyFalseOperand occurrences="1">
-      <code>$this-&gt;_default</code>
-    </PossiblyFalseOperand>
-    <PossiblyInvalidArgument occurrences="2">
+    <PossiblyInvalidArgument occurrences="1">
       <code>$this-&gt;_default</code>
       <code>$this-&gt;_default</code>
     </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;_short</code>
-      <code>$this-&gt;_short</code>
-    </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="7">
-      <code>$_name</code>
-      <code>$_short</code>
-      <code>$_help</code>
-      <code>$_boolean</code>
-      <code>$_default</code>
-      <code>$_multiple</code>
-      <code>$_choices</code>
-    </PropertyNotSetInConstructor>
-    <UninitializedProperty occurrences="2">
-      <code>$this-&gt;_short</code>
-      <code>$this-&gt;_short</code>
-    </UninitializedProperty>
   </file>
   <file src="src/Console/ConsoleIo.php">
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyInvalidArgument occurrences="4">
       <code>$options</code>
       <code>$options</code>
       <code>$options</code>
       <code>$options</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidOperand occurrences="2">
-      <code>$newBytes</code>
-      <code>$newBytes</code>
-    </PossiblyInvalidOperand>
     <PossiblyNullArgument occurrences="4">
       <code>$message</code>
       <code>$message</code>
@@ -324,9 +156,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Console/ConsoleOptionParser.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$value</code>
-    </InvalidScalarArgument>
     <PossiblyNullArgument occurrences="3">
       <code>$command</code>
       <code>$subcommand</code>
@@ -346,104 +175,43 @@
     </PossiblyNullArrayOffset>
   </file>
   <file src="src/Console/HelperRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($this-&gt;_io, $settings)</code>
-    </LessSpecificReturnStatement>
     <MissingConstructor occurrences="1">
       <code>$_io</code>
     </MissingConstructor>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$class</code>
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Helper</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Console/Shell.php">
     <DeprecatedClass occurrences="1">
       <code>new ShellDispatcher($args, false)</code>
     </DeprecatedClass>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$command</code>
       <code>$message</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="14">
-      <code>$locator</code>
+    <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$command</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
-      <code>$locator</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="5">
+    <PropertyNotSetInConstructor occurrences="4">
       <code>$OptionParser</code>
       <code>$command</code>
       <code>$name</code>
       <code>$plugin</code>
-      <code>Shell</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="1">
-      <code>ROOT</code>
-    </UndefinedConstant>
-    <UndefinedMethod occurrences="1">
-      <code>main</code>
-    </UndefinedMethod>
-    <UninitializedProperty occurrences="2">
+    <UninitializedProperty occurrences="1">
       <code>$this-&gt;name</code>
-      <code>$this-&gt;modelClass</code>
     </UninitializedProperty>
   </file>
-  <file src="src/Console/ShellDispatcher.php">
-    <DeprecatedClass occurrences="4">
-      <code>new ShellDispatcher($argv)</code>
-      <code>static::alias($shell)</code>
-      <code>static::alias($shell, "$plugin.$shell")</code>
-      <code>static::alias($shell)</code>
-    </DeprecatedClass>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
-    <UndefinedConstant occurrences="1">
-      <code>CAKE_CORE_INCLUDE_PATH</code>
-    </UndefinedConstant>
-  </file>
   <file src="src/Console/TaskRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($this-&gt;_Shell-&gt;getIo())</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$class</code>
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Controller/Component/AuthComponent.php">
     <InvalidScalarArgument occurrences="1">
       <code>$message</code>
     </InvalidScalarArgument>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$this-&gt;_storage</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\Auth\Storage\StorageInterface|null</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$redirectUrl</code>
       <code>$redirectUrl</code>
@@ -482,9 +250,6 @@
     <PossiblyNullArgument occurrences="1">
       <code>$builder-&gt;getTemplatePath()</code>
     </PossiblyNullArgument>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$cType</code>
-    </PossiblyNullArrayOffset>
     <PossiblyNullOperand occurrences="1">
       <code>$builder-&gt;getTemplatePath()</code>
     </PossiblyNullOperand>
@@ -520,16 +285,9 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Controller/ComponentRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$class</code>
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Component</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>ComponentRegistry</code>
     </PropertyNotSetInConstructor>
@@ -557,32 +315,6 @@
       <code>ErrorController</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Controller/Exception/AuthSecurityException.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AuthSecurityException</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Controller/Exception/SecurityException.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>$reason</code>
-    </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_reason</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Core/App.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$pos</code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand occurrences="1">
-      <code>$pos</code>
-    </PossiblyFalseOperand>
-    <UndefinedConstant occurrences="3">
-      <code>APP</code>
-      <code>CORE_PATH</code>
-      <code>CAKE</code>
-    </UndefinedConstant>
-  </file>
   <file src="src/Core/BasePlugin.php">
     <PropertyNotSetInConstructor occurrences="5">
       <code>$path</code>
@@ -592,52 +324,22 @@
       <code>$name</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Core/Configure.php">
-    <UndefinedConstant occurrences="1">
-      <code>CORE_PATH</code>
-    </UndefinedConstant>
-    <UnresolvableInclude occurrences="1">
-      <code>require CORE_PATH . 'config/config.php'</code>
-    </UnresolvableInclude>
-  </file>
   <file src="src/Core/Configure/Engine/IniConfig.php">
     <LoopInvalidation occurrences="1">
       <code>$values</code>
     </LoopInvalidation>
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
-  </file>
-  <file src="src/Core/Configure/Engine/JsonConfig.php">
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Core/Configure/Engine/PhpConfig.php">
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
     <UnresolvableInclude occurrences="1">
       <code>include $file</code>
     </UnresolvableInclude>
-  </file>
-  <file src="src/Core/ObjectRegistry.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$className</code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Core/StaticConfigTrait.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$key</code>
     </PossiblyInvalidArgument>
-    <UndefinedPropertyAssignment occurrences="1">
-      <code>static::$_dsnClassMap</code>
-    </UndefinedPropertyAssignment>
-    <UndefinedPropertyFetch occurrences="4">
+    <UndefinedPropertyFetch occurrences="1">
       <code>static::$_registry</code>
-      <code>static::$_dsnClassMap</code>
-      <code>static::$_dsnClassMap</code>
-      <code>static::$_dsnClassMap</code>
     </UndefinedPropertyFetch>
   </file>
   <file src="src/Core/functions.php">
@@ -650,69 +352,15 @@
     </InvalidScalarArgument>
   </file>
   <file src="src/Database/Connection.php">
-    <MissingClosureReturnType occurrences="8">
-      <code>function () use ($sql) {</code>
-      <code>function () use ($query, $params, $types) {</code>
-      <code>function () use ($query) {</code>
-      <code>function () use ($sql) {</code>
-      <code>function () use ($table, $data, $types) {</code>
-      <code>function () use ($table, $data, $conditions, $types) {</code>
-      <code>function () use ($table, $conditions, $types) {</code>
-      <code>function () use ($callback) {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="1">
       <code>$type</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Database/Dialect/PostgresDialectTrait.php">
-    <MissingClosureParamType occurrences="3">
-      <code>$p</code>
-      <code>$p</code>
-      <code>$key</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($p) {</code>
-      <code>function ($p, $key) {</code>
-    </MissingClosureReturnType>
-  </file>
-  <file src="src/Database/Dialect/SqliteDialectTrait.php">
-    <MissingClosureParamType occurrences="5">
-      <code>$p</code>
-      <code>$p</code>
-      <code>$key</code>
-      <code>$p</code>
-      <code>$key</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($p) {</code>
-      <code>function ($p, $key) {</code>
-      <code>function ($p, $key) {</code>
-    </MissingClosureReturnType>
   </file>
   <file src="src/Database/Dialect/SqlserverDialectTrait.php">
     <EmptyArrayAccess occurrences="2">
       <code>$params[2]</code>
       <code>$params[0]</code>
     </EmptyArrayAccess>
-    <MissingClosureParamType occurrences="9">
-      <code>$direction</code>
-      <code>$orderBy</code>
-      <code>$q</code>
-      <code>$value</code>
-      <code>$p</code>
-      <code>$key</code>
-      <code>$p</code>
-      <code>$key</code>
-      <code>$p</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="6">
-      <code>function ($direction, $orderBy) use ($select, $order) {</code>
-      <code>function ($q) use ($distinct, $order) {</code>
-      <code>function ($value) use (&amp;$hasDay) {</code>
-      <code>function ($p, $key) use (&amp;$params) {</code>
-      <code>function ($p, $key) use (&amp;$params) {</code>
-      <code>function ($p) use (&amp;$params) {</code>
-    </MissingClosureReturnType>
     <NullArgument occurrences="2">
       <code>null</code>
       <code>null</code>
@@ -757,9 +405,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$isObject ? $query-&gt;sql() : $query</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayOffset occurrences="1">
-      <code>$config['init'][]</code>
-    </PossiblyInvalidArrayOffset>
     <PossiblyInvalidMethodCall occurrences="2">
       <code>sql</code>
       <code>isBufferedResultsEnabled</code>
@@ -768,9 +413,6 @@
       <code>prepare</code>
       <code>getAttribute</code>
     </PossiblyNullReference>
-    <PossiblyUndefinedArrayOffset occurrences="1">
-      <code>$config['encoding']</code>
-    </PossiblyUndefinedArrayOffset>
     <PropertyNotSetInConstructor occurrences="3">
       <code>$_version</code>
       <code>$_supportsNativeJson</code>
@@ -859,12 +501,6 @@
     </PossiblyInvalidArgument>
   </file>
   <file src="src/Database/Expression/QueryExpression.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$field</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($field) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$conditions</code>
       <code>$conditions</code>
@@ -889,9 +525,6 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Database/Expression/TupleComparison.php">
-    <InvalidArgument occurrences="1">
-      <code>$types</code>
-    </InvalidArgument>
     <PossiblyInvalidArgument occurrences="1">
       <code>$fields</code>
     </PossiblyInvalidArgument>
@@ -914,52 +547,31 @@
       <code>sql</code>
     </PossiblyNullReference>
   </file>
-  <file src="src/Database/IdentifierQuoter.php">
-    <MissingClosureParamType occurrences="2">
-      <code>$part</code>
-      <code>$field</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($part, &amp;$field) {</code>
-    </MissingClosureReturnType>
-  </file>
   <file src="src/Database/Log/LoggingStatement.php">
     <InvalidScalarArgument occurrences="2">
       <code>$type</code>
       <code>$type</code>
     </InvalidScalarArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>log</code>
-    </PossiblyNullReference>
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>$_logger</code>
+    </PropertyNotSetInConstructor>
     <UndefinedPropertyAssignment occurrences="1">
       <code>$e-&gt;queryString</code>
     </UndefinedPropertyAssignment>
-  </file>
-  <file src="src/Database/Log/QueryLogger.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$p</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($p) {</code>
-    </MissingClosureReturnType>
   </file>
   <file src="src/Database/Query.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Cake\Database\StatementInterface|null</code>
     </ImplementedReturnTypeMismatch>
     <InvalidArgument occurrences="1"/>
-    <MissingClosureParamType occurrences="3">
-      <code>$expression</code>
-      <code>$errno</code>
-      <code>$errstr</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($expression) use (&amp;$visitor, $callback) {</code>
-    </MissingClosureReturnType>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$num</code>
       <code>$num</code>
     </MoreSpecificImplementedParamType>
+    <PossiblyInvalidArgument occurrences="2">
+      <code>$key</code>
+      <code>$types</code>
+    </PossiblyInvalidArgument>
     <PossiblyInvalidFunctionCall occurrences="2">
       <code>$key($exp)</code>
       <code>$append($this-&gt;newExpr(), $this)</code>
@@ -969,29 +581,10 @@
       <code>Query</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Database/QueryCompiler.php">
-    <MissingClosureParamType occurrences="3">
-      <code>$parts</code>
-      <code>$name</code>
-      <code>$p</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($parts, $name) use (&amp;$sql, $query, $generator) {</code>
-      <code>function ($p) use ($generator) {</code>
-    </MissingClosureReturnType>
-  </file>
   <file src="src/Database/Schema/BaseSchema.php">
     <PossiblyNullOperand occurrences="1">
       <code>$on</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Database/Schema/CachedCollection.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$cacheConfig</code>
-    </InvalidScalarArgument>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$cacheConfig</code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/Database/Schema/Collection.php">
     <LessSpecificImplementedReturnType occurrences="1">
@@ -1007,79 +600,28 @@
       <code>$data</code>
       <code>$data</code>
     </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="16">
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
-      <code>$data['type']</code>
-      <code>$data['autoIncrement']</code>
+    <PossiblyNullArrayAccess occurrences="8">
       <code>$data['type']</code>
       <code>$data['columns']</code>
+      <code>$data['type']</code>
       <code>$data['type']</code>
       <code>$constraint['type']</code>
       <code>$constraint['type']</code>
       <code>$data['type']</code>
       <code>$data['type']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
   </file>
   <file src="src/Database/Schema/PostgresSchema.php">
-    <PossiblyInvalidArrayOffset occurrences="1">
-      <code>$index['columns'][]</code>
-    </PossiblyInvalidArrayOffset>
-    <PossiblyNullArgument occurrences="1">
-      <code>$data</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="16">
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['autoIncrement']</code>
-      <code>$data['null']</code>
-      <code>$data['default']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
+    <PossiblyNullArrayAccess occurrences="3">
       <code>$constraint['type']</code>
       <code>$constraint['type']</code>
       <code>$data['columns']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
   </file>
   <file src="src/Database/Schema/SqliteSchema.php">
-    <PossiblyNullArrayAccess occurrences="16">
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['columns']</code>
+    <PossiblyNullArrayAccess occurrences="1">
       <code>$schema-&gt;getColumn($data['columns'][0])['type']</code>
-      <code>$data['type']</code>
-      <code>$data['references']</code>
-      <code>$data['update']</code>
-      <code>$data['delete']</code>
-      <code>$data['columns']</code>
-      <code>$data['columns']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
     <PossiblyNullOperand occurrences="1">
       <code>$schema-&gt;getColumn($existingColumn)</code>
     </PossiblyNullOperand>
@@ -1088,33 +630,13 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Schema/SqlserverSchema.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$data</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="18">
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['autoIncrement']</code>
-      <code>$data['null']</code>
-      <code>$data['default']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
-      <code>$data['length']</code>
-      <code>$data['length']</code>
-      <code>$data['precision']</code>
+    <PossiblyNullArrayAccess occurrences="4">
       <code>$constraint['type']</code>
       <code>$constraint['type']</code>
       <code>$data['columns']</code>
-      <code>$data['type']</code>
-      <code>$data['type']</code>
       <code>$column['type']</code>
     </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$typeMap</code>
-    </PossiblyNullArrayOffset>
-    <PossiblyUndefinedArrayOffset occurrences="2">
+    <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$row['default']</code>
       <code>$row['default']</code>
     </PossiblyUndefinedArrayOffset>
@@ -1131,16 +653,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Database/SqlDialectTrait.php">
-    <MissingClosureParamType occurrences="3">
-      <code>$expression</code>
-      <code>$query</code>
-      <code>$condition</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($expression) use ($translators, $query) {</code>
-      <code>function ($query) use ($type) {</code>
-      <code>function ($condition) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$field</code>
       <code>$field</code>
@@ -1218,9 +730,13 @@
     <InvalidScalarArgument occurrences="1">
       <code>$type</code>
     </InvalidScalarArgument>
-    <PossiblyNullReference occurrences="1">
+    <PossiblyNullReference occurrences="2">
       <code>bindParam</code>
+      <code>bindValue</code>
     </PossiblyNullReference>
+    <PossiblyUndefinedMethod occurrences="1">
+      <code>bindParam</code>
+    </PossiblyUndefinedMethod>
     <UndefinedConstant occurrences="1">
       <code>PDO::SQLSRV_ENCODING_BINARY</code>
     </UndefinedConstant>
@@ -1245,9 +761,8 @@
       <code>$type</code>
       <code>$type</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayAccess occurrences="2">
+    <PossiblyInvalidArrayAccess occurrences="1">
       <code>$result[$position]</code>
-      <code>$row[$column]</code>
     </PossiblyInvalidArrayAccess>
     <PossiblyNullPropertyFetch occurrences="1">
       <code>$this-&gt;_statement-&gt;queryString</code>
@@ -1278,13 +793,6 @@
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Database/Type/DateTimeType.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$this-&gt;_localeFormat</code>
-    </InvalidScalarArgument>
-    <LessSpecificReturnStatement occurrences="2">
-      <code>$date</code>
-      <code>new $class($format, $tz)</code>
-    </LessSpecificReturnStatement>
     <MissingParamType occurrences="1">
       <code>$name</code>
     </MissingParamType>
@@ -1292,9 +800,6 @@
       <code>$value</code>
       <code>$value</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>?DateTimeInterface</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$value</code>
       <code>$value</code>
@@ -1304,9 +809,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Database/Type/DateType.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_localeFormat</code>
-    </PossiblyInvalidArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>DateType</code>
     </PropertyNotSetInConstructor>
@@ -1334,37 +836,12 @@
       <code>$this-&gt;_driver</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Database/TypeFactory.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>static::$_builtTypes[$name] = new static::$_types[$name]($name)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>TypeInterface</code>
-    </MoreSpecificReturnType>
-  </file>
-  <file src="src/Database/TypedResultTrait.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/Datasource/ConnectionManager.php">
     <PossiblyNullArgument occurrences="1">
       <code>$config</code>
     </PossiblyNullArgument>
   </file>
   <file src="src/Datasource/EntityTrait.php">
-    <MissingClosureParamType occurrences="4">
-      <code>$value</code>
-      <code>$value</code>
-      <code>$val</code>
-      <code>$p</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="4">
-      <code>function ($value) {</code>
-      <code>function ($value) {</code>
-      <code>function ($val) {</code>
-      <code>function ($p) use ($set) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>$entity</code>
     </PossiblyInvalidArgument>
@@ -1396,12 +873,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Error/BaseErrorHandler.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$exception-&gt;getCode() ?: 1</code>
-    </InvalidScalarArgument>
-    <MissingClosureReturnType occurrences="1">
-      <code>function () {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="3">
       <code>$file</code>
       <code>$line</code>
@@ -1418,30 +889,10 @@
       <code>$end</code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Error/ErrorHandler.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$exception</code>
-    </MoreSpecificImplementedParamType>
-  </file>
-  <file src="src/Error/Middleware/ErrorHandlerMiddleware.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($exception, $request)</code>
-    </LessSpecificReturnStatement>
-  </file>
-  <file src="src/Event/Decorator/SubjectFilterDecorator.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;_options['allowedSubject']</code>
-    </PossiblyInvalidArgument>
-  </file>
   <file src="src/Event/Event.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>object|null</code>
     </ImplementedReturnTypeMismatch>
-  </file>
-  <file src="src/Event/EventDispatcherTrait.php">
-    <MoreSpecificReturnType occurrences="1">
-      <code>EventInterface</code>
-    </MoreSpecificReturnType>
   </file>
   <file src="src/Form/Form.php">
     <PropertyNotSetInConstructor occurrences="3">
@@ -1456,11 +907,6 @@
       <code>require $this-&gt;configDir . '/routes.php'</code>
     </UnresolvableInclude>
   </file>
-  <file src="src/Http/Client.php">
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$defaultPorts</code>
-    </PossiblyNullArrayOffset>
-  </file>
   <file src="src/Http/Client/Adapter/Curl.php">
     <InvalidScalarArgument occurrences="1">
       <code>$body</code>
@@ -1470,13 +916,6 @@
     <InvalidOperand occurrences="1">
       <code>$indexes[$i + 1]</code>
     </InvalidOperand>
-    <MissingClosureParamType occurrences="2">
-      <code>$code</code>
-      <code>$message</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($code, $message) {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="2">
       <code>$this-&gt;_stream</code>
       <code>$this-&gt;_context</code>
@@ -1486,15 +925,6 @@
     <PossiblyNullOperand occurrences="1">
       <code>$nc</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Http/Client/Auth/Oauth.php">
-    <PossiblyInvalidArgument occurrences="2">
-      <code>$credentials['privateKey']</code>
-      <code>$credentials['privateKeyPassphrase']</code>
-    </PossiblyInvalidArgument>
-    <TypeDoesNotContainType occurrences="1">
-      <code>is_resource($credentials['privateKeyPassphrase'])</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Http/Client/FormData.php">
     <MissingConstructor occurrences="1">
@@ -1515,12 +945,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/Client/Response.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$cookie</code>
-    </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>getValue</code>
-    </PossiblyNullReference>
     <PropertyNotSetInConstructor occurrences="5">
       <code>$code</code>
       <code>$cookies</code>
@@ -1572,15 +996,6 @@
       <code>$request-&gt;getParsedBody()</code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Http/Middleware/DoublePassDecoratorMiddleware.php">
-    <MissingClosureParamType occurrences="2">
-      <code>$request</code>
-      <code>$res</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($request, $res) use ($handler) {</code>
-    </MissingClosureReturnType>
-  </file>
   <file src="src/Http/MiddlewareQueue.php">
     <InvalidOperand occurrences="1">
       <code>$i</code>
@@ -1608,13 +1023,9 @@
       <code>$end</code>
       <code>$start</code>
     </PossiblyInvalidOperand>
-    <PossiblyNullArgument occurrences="2">
+    <PossiblyNullArgument occurrences="1">
       <code>$weak ? 'W/' : null</code>
-      <code>$cookie</code>
     </PossiblyNullArgument>
-    <PossiblyNullPropertyAssignmentValue occurrences="1">
-      <code>null</code>
-    </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="src/Http/ResponseEmitter.php">
     <MissingParamType occurrences="1">
@@ -1633,9 +1044,6 @@
       <code>$data['secure']</code>
       <code>$data['httponly']</code>
     </PossiblyInvalidArgument>
-    <PossiblyUndefinedArrayOffset occurrences="1">
-      <code>$data['expires']</code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Http/Runner.php">
     <MissingConstructor occurrences="1">
@@ -1686,9 +1094,6 @@
     </NoInterfaceProperties>
   </file>
   <file src="src/Http/Session.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$defaults</code>
-    </PossiblyInvalidArgument>
     <PossiblyInvalidIterator occurrences="1">
       <code>$write</code>
     </PossiblyInvalidIterator>
@@ -1696,23 +1101,14 @@
       <code>$_engine</code>
       <code>$_started</code>
     </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="1">
-      <code>TMP</code>
-    </UndefinedConstant>
   </file>
   <file src="src/Http/Session/DatabaseSession.php">
     <InvalidArgument occurrences="2">
       <code>$record</code>
       <code>[$this-&gt;_table-&gt;getPrimaryKey() =&gt; $id]</code>
     </InvalidArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>DatabaseSession</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/I18n/DateFormatTrait.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$format</code>
-    </InvalidScalarArgument>
     <PossiblyInvalidArgument occurrences="2">
       <code>static::$niceFormat</code>
       <code>static::$_jsonEncodeFormat</code>
@@ -1737,12 +1133,6 @@
       <code>$time</code>
       <code>$tz</code>
     </MissingParamType>
-  </file>
-  <file src="src/I18n/I18n.php">
-    <MissingClosureReturnType occurrences="2">
-      <code>function () {</code>
-      <code>function () {</code>
-    </MissingClosureReturnType>
   </file>
   <file src="src/I18n/Number.php">
     <InvalidArgument occurrences="5">
@@ -1821,146 +1211,49 @@
       <code>static::$niceFormat</code>
     </PossiblyInvalidArgument>
   </file>
-  <file src="src/I18n/TranslatorFactory.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class($locale, $package, $formatter, $fallback)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\I18n\Translator</code>
-    </MoreSpecificReturnType>
+  <file src="src/I18n/Translator.php">
+    <PossiblyInvalidArrayOffset occurrences="1">
+      <code>$message['_context']</code>
+    </PossiblyInvalidArrayOffset>
   </file>
   <file src="src/I18n/TranslatorRegistry.php">
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Aura\Intl\TranslatorInterface|null</code>
     </ImplementedReturnTypeMismatch>
-    <MissingClosureParamType occurrences="4">
-      <code>$name</code>
-      <code>$locale</code>
-      <code>$name</code>
-      <code>$locale</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="5">
-      <code>function () use ($formatter, $chain) {</code>
-      <code>function ($name, $locale) {</code>
-      <code>function ($name, $locale) {</code>
-      <code>function () use ($package) {</code>
-      <code>function () use ($loader, $fallbackDomain) {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="1">
       <code>$locale</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_cacher</code>
+    <PropertyNotSetInConstructor occurrences="1">
       <code>TranslatorRegistry</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Log/Engine/ConsoleLog.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool</code>
-    </ImplementedReturnTypeMismatch>
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;_output</code>
-    </InvalidArgument>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;_output</code>
-    </UninitializedProperty>
+    <MoreSpecificImplementedParamType occurrences="1">
+      <code>$level</code>
+    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Log/Engine/FileLog.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$level</code>
     </MoreSpecificImplementedParamType>
-    <PossiblyNullOperand occurrences="2">
-      <code>$this-&gt;_path</code>
-      <code>$this-&gt;_path</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Log/Engine/SyslogLog.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$level</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Log/Log.php">
-    <PossiblyFalseArgument occurrences="1">
-      <code>$level</code>
-    </PossiblyFalseArgument>
-    <PossiblyNullPropertyFetch occurrences="2">
-      <code>static::$_registry-&gt;{$name}</code>
-      <code>static::$_registry-&gt;{$name}</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="2">
-      <code>has</code>
-      <code>loaded</code>
-    </PossiblyNullReference>
-  </file>
   <file src="src/Log/LogEngineRegistry.php">
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/Mailer/Email.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>self</code>
-    </ImplementedReturnTypeMismatch>
-    <MissingClosureParamType occurrences="2">
-      <code>$item</code>
-      <code>$key</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function (&amp;$item, $key) {</code>
-    </MissingClosureReturnType>
-  </file>
-  <file src="src/Mailer/Mailer.php">
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>Mailer</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/Mailer/Message.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>static</code>
-    </ImplementedReturnTypeMismatch>
-    <MissingClosureParamType occurrences="5">
-      <code>$item</code>
-      <code>$key</code>
-      <code>$i</code>
-      <code>$item</code>
-      <code>$key</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function (&amp;$item, $key) {</code>
-      <code>function ($i) {</code>
-      <code>function (&amp;$item, $key) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>env('HTTP_HOST')</code>
     </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;appCharset</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Mailer/Transport/MailTransport.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$message-&gt;getBody()</code>
-    </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="1">
-      <code>$params</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="src/Mailer/Transport/SmtpTransport.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$httpHost</code>
-    </PossiblyInvalidArgument>
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$lines</code>
-    </PossiblyInvalidIterator>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_socket</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Mailer/TransportRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$class</code>
-      <code>$class</code>
-    </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Network/Socket.php">
     <InvalidArgument occurrences="1">
@@ -1973,22 +1266,13 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/ORM/Association.php">
-    <MissingClosureParamType occurrences="2">
-      <code>$exp</code>
-      <code>$results</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($exp) use ($primaryKey) {</code>
-      <code>function ($results) use ($formatters, $property, $propertyPath) {</code>
-    </MissingClosureReturnType>
-    <PropertyNotSetInConstructor occurrences="7">
+    <PropertyNotSetInConstructor occurrences="6">
       <code>$_className</code>
       <code>$_bindingKey</code>
       <code>$_foreignKey</code>
       <code>$_sourceTable</code>
       <code>$_targetTable</code>
       <code>$_propertyName</code>
-      <code>Association</code>
     </PropertyNotSetInConstructor>
     <UninitializedProperty occurrences="1">
       <code>$this-&gt;_className</code>
@@ -2000,15 +1284,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/BelongsToMany.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$exp</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="4">
-      <code>function ($exp) use ($subquery, $conds) {</code>
-      <code>function () {</code>
-      <code>function () use ($sourceEntity, $targetEntities, $options) {</code>
-      <code>function () use ($sourceEntity, $targetEntities, $primaryValue, $options) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>$hasMany-&gt;getConditions()</code>
     </PossiblyInvalidArgument>
@@ -2031,22 +1306,6 @@
       <code>$targetEntities</code>
       <code>$targetEntities</code>
     </InvalidArgument>
-    <MissingClosureParamType occurrences="6">
-      <code>$entity</code>
-      <code>$assoc</code>
-      <code>$ent</code>
-      <code>$v</code>
-      <code>$entry</code>
-      <code>$prop</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="6">
-      <code>function () use ($sourceEntity, $options) {</code>
-      <code>function ($entity) use ($targetPrimaryKey) {</code>
-      <code>function ($assoc) use ($targetEntities) {</code>
-      <code>function ($ent) use ($primaryKey) {</code>
-      <code>function ($v) {</code>
-      <code>function ($prop) use ($table) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>$entry-&gt;getField()</code>
     </PossiblyInvalidArgument>
@@ -2060,39 +1319,12 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/Loader/SelectLoader.php">
-    <MissingClosureParamType occurrences="6">
-      <code>$fieldList</code>
-      <code>$key</code>
-      <code>$direction</code>
-      <code>$field</code>
-      <code>$row</code>
-      <code>$row</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($fieldList, $key) {</code>
-      <code>function ($row) use ($resultMap, $sourceKey, $nestKey) {</code>
-      <code>function ($row) use ($resultMap, $sourceKeys, $nestKey) {</code>
-    </MissingClosureReturnType>
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>select</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="src/ORM/AssociationCollection.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$assoc</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($assoc) use ($class) {</code>
-    </MissingClosureReturnType>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AssociationCollection</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Behavior/TimestampBehavior.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -2100,48 +1332,11 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Behavior/Translate/EavStrategy.php">
-    <MissingClosureParamType occurrences="8">
-      <code>$q</code>
-      <code>$field</code>
-      <code>$locale</code>
-      <code>$query</code>
-      <code>$select</code>
-      <code>$results</code>
-      <code>$row</code>
-      <code>$row</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="5">
-      <code>function ($q) use ($field, $locale, $query, $select) {</code>
-      <code>function ($field, $locale, $query, $select) {</code>
-      <code>function ($results) use ($locale) {</code>
-      <code>function ($row) use ($locale) {</code>
-      <code>function ($row) {</code>
-    </MissingClosureReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>has</code>
-    </PossiblyInvalidMethodCall>
     <UndefinedClass occurrences="1">
       <code>['id', 'field']</code>
     </UndefinedClass>
   </file>
   <file src="src/ORM/Behavior/Translate/ShadowTableStrategy.php">
-    <MissingClosureParamType occurrences="7">
-      <code>$results</code>
-      <code>$field</code>
-      <code>$c</code>
-      <code>$field</code>
-      <code>$expression</code>
-      <code>$row</code>
-      <code>$row</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="6">
-      <code>function ($results) use ($locale) {</code>
-      <code>function ($field) {</code>
-      <code>function ($c, &amp;$field) use ($fields, $alias, $mainTableAlias, $mainTableFields, &amp;$joinRequired) {</code>
-      <code>function ($expression) use ($fields, $alias, $mainTableAlias, $mainTableFields, &amp;$joinRequired) {</code>
-      <code>function ($row) use ($allowEmpty) {</code>
-      <code>function ($row) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>$translation</code>
     </PossiblyInvalidArgument>
@@ -2150,64 +1345,7 @@
       <code>getVisible</code>
     </PossiblyInvalidMethodCall>
   </file>
-  <file src="src/ORM/Behavior/Translate/TranslateStrategyTrait.php">
-    <MissingClosureParamType occurrences="2">
-      <code>$value</code>
-      <code>$entity</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($value, $entity) use ($marshaller, $options) {</code>
-    </MissingClosureReturnType>
-  </file>
-  <file src="src/ORM/Behavior/TranslateBehavior.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $className($this-&gt;_table, $config)</code>
-    </LessSpecificReturnStatement>
-    <MissingClosureParamType occurrences="1">
-      <code>$query</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($query) use ($locales, $targetAlias) {</code>
-    </MissingClosureReturnType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Cake\ORM\Behavior\Translate\TranslateStrategyInterface</code>
-    </MoreSpecificReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>getTableLocator</code>
-    </PossiblyInvalidMethodCall>
-  </file>
   <file src="src/ORM/Behavior/TreeBehavior.php">
-    <MissingClosureParamType occurrences="10">
-      <code>$exp</code>
-      <code>$exp</code>
-      <code>$exp</code>
-      <code>$field</code>
-      <code>$field</code>
-      <code>$results</code>
-      <code>$exp</code>
-      <code>$exp</code>
-      <code>$exp</code>
-      <code>$exp</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="13">
-      <code>function ($exp) use ($config, $left, $right) {</code>
-      <code>function ($exp) use ($config) {</code>
-      <code>function ($exp) use ($config) {</code>
-      <code>function ($field) {</code>
-      <code>function ($field) {</code>
-      <code>function ($results) use ($options) {</code>
-      <code>function () use ($node) {</code>
-      <code>function () use ($node, $number) {</code>
-      <code>function ($exp) use ($config, $nodeLeft) {</code>
-      <code>function ($exp) use ($config, $nodeLeft) {</code>
-      <code>function () use ($node, $number) {</code>
-      <code>function ($exp) use ($config, $nodeRight) {</code>
-      <code>function ($exp) use ($config, $nodeRight) {</code>
-    </MissingClosureReturnType>
-    <PossiblyFalseOperand occurrences="2">
-      <code>$number</code>
-      <code>$number</code>
-    </PossiblyFalseOperand>
     <PossiblyInvalidMethodCall occurrences="2">
       <code>extract</code>
       <code>extract</code>
@@ -2220,24 +1358,16 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/BehaviorRegistry.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$class</code>
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Behavior</code>
-    </MoreSpecificReturnType>
     <PropertyNotSetInConstructor occurrences="2">
       <code>$_table</code>
       <code>BehaviorRegistry</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/EagerLoadable.php">
-    <PropertyNotSetInConstructor occurrences="5">
-      <code>$_instance</code>
+    <PropertyNotSetInConstructor occurrences="4">
       <code>$_aliasPath</code>
       <code>$_propertyPath</code>
       <code>$_forMatching</code>
@@ -2248,40 +1378,17 @@
     <InvalidArgument occurrences="1">
       <code>$collectKeys</code>
     </InvalidArgument>
-    <MissingClosureParamType occurrences="1">
-      <code>$query</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($query) use ($first, $second) {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="1">
       <code>$loadable-&gt;aliasPath()</code>
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset occurrences="1">
       <code>$collectKeys</code>
     </PossiblyNullArrayOffset>
-    <PossiblyNullReference occurrences="4">
-      <code>getSource</code>
+    <PossiblyNullReference occurrences="1">
       <code>normalized</code>
-      <code>getTarget</code>
-      <code>requiresKeys</code>
     </PossiblyNullReference>
   </file>
   <file src="src/ORM/LazyEagerLoader.php">
-    <MissingClosureParamType occurrences="4">
-      <code>$entity</code>
-      <code>$exp</code>
-      <code>$q</code>
-      <code>$e</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($entity) use ($primaryKey, $method) {</code>
-      <code>function ($exp, $q) use ($primaryKey, $keys, $source) {</code>
-      <code>function ($e) use ($primaryKey) {</code>
-    </MissingClosureReturnType>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>get</code>
-    </PossiblyInvalidMethodCall>
     <PossiblyNullReference occurrences="1">
       <code>getProperty</code>
     </PossiblyNullReference>
@@ -2289,42 +1396,7 @@
       <code>indexBy</code>
     </PossiblyUndefinedMethod>
   </file>
-  <file src="src/ORM/Locator/TableLocator.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $options['className']($options)</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Table</code>
-    </MoreSpecificReturnType>
-  </file>
   <file src="src/ORM/Marshaller.php">
-    <InvalidArgument occurrences="1">
-      <code>$key</code>
-    </InvalidArgument>
-    <MissingClosureParamType occurrences="11">
-      <code>$value</code>
-      <code>$entity</code>
-      <code>$exp</code>
-      <code>$el</code>
-      <code>$element</code>
-      <code>$key</code>
-      <code>$data</code>
-      <code>$key</code>
-      <code>$keys</code>
-      <code>$conditions</code>
-      <code>$keys</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="9">
-      <code>function ($value, $entity) use ($columnType) {</code>
-      <code>function ($value, $entity) use ($assoc, $nested) {</code>
-      <code>function ($value, $entity) use ($assoc, $nested) {</code>
-      <code>function ($exp) use ($conditions) {</code>
-      <code>function ($el) use ($primary) {</code>
-      <code>function ($element, $key) {</code>
-      <code>function ($data, $key) {</code>
-      <code>function ($keys) use ($primary) {</code>
-      <code>function ($conditions, $keys) use ($primary) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="3">
       <code>$original</code>
       <code>$original</code>
@@ -2335,22 +1407,11 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>$this</code>
     </ImplementedReturnTypeMismatch>
-    <LessSpecificReturnStatement occurrences="2">
-      <code>new $decorator($this-&gt;_results)</code>
-      <code>$result</code>
-    </LessSpecificReturnStatement>
     <MissingParamType occurrences="3">
       <code>$config</code>
       <code>$method</code>
       <code>$arguments</code>
     </MissingParamType>
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$table</code>
-    </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="2">
-      <code>\Cake\Datasource\ResultSetInterface</code>
-      <code>ResultSetInterface</code>
-    </MoreSpecificReturnType>
     <NullArgument occurrences="1">
       <code>null</code>
     </NullArgument>
@@ -2375,43 +1436,10 @@
       <code>$_count</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/ORM/SaveOptionsBuilder.php">
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>has</code>
-    </PossiblyInvalidMethodCall>
-  </file>
   <file src="src/ORM/Table.php">
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $class([], ['source' =&gt; $this-&gt;getRegistryAlias()])</code>
-    </LessSpecificReturnStatement>
-    <MissingClosureParamType occurrences="7">
-      <code>$results</code>
-      <code>$results</code>
-      <code>$key</code>
-      <code>$v</code>
-      <code>$entities</code>
-      <code>$fields</code>
-      <code>$args</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="11">
-      <code>function ($results) use ($options) {</code>
-      <code>function ($results) use ($options) {</code>
-      <code>function ($row) use ($fields) {</code>
-      <code>function ($key) {</code>
-      <code>function () use ($worker) {</code>
-      <code>function () use ($search, $callback, $options) {</code>
-      <code>function () use ($entity, $options) {</code>
-      <code>function ($v) {</code>
-      <code>function () use ($entities, $options, &amp;$isNew) {</code>
-      <code>function () use ($entity, $options) {</code>
-      <code>function ($fields, $args) {</code>
-    </MissingClosureReturnType>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$options</code>
     </MoreSpecificImplementedParamType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>EntityInterface</code>
-    </MoreSpecificReturnType>
     <PossiblyInvalidArgument occurrences="3">
       <code>$options</code>
       <code>$options</code>
@@ -2421,45 +1449,31 @@
       <code>$type</code>
       <code>$typeName</code>
     </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="8">
+    <PropertyNotSetInConstructor occurrences="6">
       <code>$_table</code>
       <code>$_alias</code>
-      <code>$_schema</code>
       <code>$_primaryKey</code>
       <code>$_displayField</code>
       <code>$_entityClass</code>
-      <code>$_registryAlias</code>
       <code>Table</code>
     </PropertyNotSetInConstructor>
-    <TypeDoesNotContainType occurrences="1">
-      <code>$self === self::class || count($parts) &lt; 3</code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Routing/Exception/DuplicateNamedRouteException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Exception/MissingControllerException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Exception/MissingRouteException.php">
-    <MissingParamType occurrences="3">
+    <MissingParamType occurrences="1">
       <code>$message</code>
-      <code>$code</code>
-      <code>$previous</code>
     </MissingParamType>
   </file>
   <file src="src/Routing/Middleware/RoutingMiddleware.php">
-    <MissingClosureReturnType occurrences="1">
-      <code>function () {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>$e-&gt;getCode()</code>
     </PossiblyInvalidArgument>
@@ -2479,12 +1493,6 @@
     <PossiblyInvalidArgument occurrences="1">
       <code>$params</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$params['path']</code>
-    </PossiblyInvalidArrayAccess>
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$options['map']</code>
-    </PossiblyInvalidIterator>
   </file>
   <file src="src/Routing/RouteCollection.php">
     <InvalidArgument occurrences="1">
@@ -2495,106 +1503,13 @@
     <InvalidArgument occurrences="1">
       <code>$filter</code>
     </InvalidArgument>
-    <MissingClosureParamType occurrences="1">
-      <code>$routes</code>
-    </MissingClosureParamType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$e-&gt;getCode()</code>
       <code>$params</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidArrayAccess occurrences="1">
-      <code>$options['_namePrefix']</code>
-    </PossiblyInvalidArrayAccess>
     <PossiblyNullOperand occurrences="1">
       <code>$frag</code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Shell/CacheShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PossiblyNullArgument occurrences="1">
-      <code>$prefix</code>
-    </PossiblyNullArgument>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CacheShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/CompletionShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>CompletionShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/I18nShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$this-&gt;param('plugin')</code>
-    </PossiblyInvalidArgument>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_paths</code>
-      <code>I18nShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/PluginShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>PluginShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/RoutesShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>RoutesShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/SchemaCacheShell.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>bool</code>
-    </ImplementedReturnTypeMismatch>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>SchemaCacheShell</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/Shell/ServerShell.php">
-    <DeprecatedClass occurrences="3">
-      <code>Shell</code>
-      <code>parent::startup()</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>ServerShell</code>
-    </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>APP</code>
-      <code>WWW_ROOT</code>
-    </UndefinedConstant>
-  </file>
-  <file src="src/Shell/Task/AssetsTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>AssetsTask</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Shell/Task/CommandTask.php">
     <DeprecatedClass occurrences="1">
@@ -2604,75 +1519,10 @@
       <code>CommandTask</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/Shell/Task/ExtractTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <MissingClosureParamType occurrences="2">
-      <code>$a</code>
-      <code>$b</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($a, $b) {</code>
-    </MissingClosureReturnType>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;_file</code>
-      <code>$this-&gt;_file</code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$this-&gt;_output</code>
-    </PossiblyNullOperand>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>ExtractTask</code>
-    </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="6">
-      <code>APP</code>
-      <code>CAKE</code>
-      <code>ROOT</code>
-      <code>APP</code>
-      <code>CAKE_CORE_INCLUDE_PATH</code>
-      <code>APP</code>
-    </UndefinedConstant>
-  </file>
-  <file src="src/Shell/Task/LoadTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$bootstrap</code>
-      <code>LoadTask</code>
-    </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>ROOT</code>
-      <code>APP</code>
-    </UndefinedConstant>
-  </file>
-  <file src="src/Shell/Task/UnloadTask.php">
-    <DeprecatedClass occurrences="2">
-      <code>Shell</code>
-      <code>parent::getOptionParser()</code>
-    </DeprecatedClass>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$bootstrap</code>
-      <code>UnloadTask</code>
-    </PropertyNotSetInConstructor>
-    <UndefinedConstant occurrences="2">
-      <code>ROOT</code>
-      <code>APP</code>
-    </UndefinedConstant>
-  </file>
   <file src="src/TestSuite/ConsoleIntegrationTestTrait.php">
-    <InvalidArgument occurrences="1">
-      <code>$this-&gt;_in</code>
-    </InvalidArgument>
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
       <code>$exception-&gt;getCode()</code>
     </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;_exitCode</code>
-    </PossiblyNullArgument>
     <PossiblyNullReference occurrences="8">
       <code>messages</code>
       <code>messages</code>
@@ -2693,29 +1543,20 @@
       <code>messages</code>
       <code>messages</code>
     </PossiblyUndefinedMethod>
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
   </file>
   <file src="src/TestSuite/Constraint/Console/ContentsContainRow.php">
-    <MissingClosureParamType occurrences="1">
-      <code>$cell</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($cell) {</code>
-    </MissingClosureReturnType>
     <MoreSpecificImplementedParamType occurrences="1">
       <code>$other</code>
     </MoreSpecificImplementedParamType>
   </file>
-  <file src="src/TestSuite/Constraint/Email/MailConstraintBase.php">
-    <MissingPropertyType occurrences="1">
-      <code>$at</code>
-    </MissingPropertyType>
-  </file>
   <file src="src/TestSuite/Constraint/Email/MailContains.php">
     <PropertyNotSetInConstructor occurrences="1">
       <code>$type</code>
+    </PropertyNotSetInConstructor>
+  </file>
+  <file src="src/TestSuite/Constraint/Email/MailContainsAttachment.php">
+    <PropertyNotSetInConstructor occurrences="1">
+      <code>MailContainsAttachment</code>
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/TestSuite/Constraint/Email/MailContainsHtml.php">
@@ -2744,14 +1585,13 @@
     </MissingPropertyType>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
+    <InternalClass occurrences="1"/>
     <PossiblyNullReference occurrences="1">
       <code>hasEvent</code>
     </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
-    <MissingClosureReturnType occurrences="1">
-      <code>function (EventInterface $event) {</code>
-    </MissingClosureReturnType>
+    <InternalClass occurrences="2"/>
     <PossiblyNullArgument occurrences="1">
       <code>$list</code>
     </PossiblyNullArgument>
@@ -2759,20 +1599,15 @@
       <code>$dataValue</code>
     </PossiblyNullPropertyAssignmentValue>
   </file>
-  <file src="src/TestSuite/Constraint/Response/CookieEncryptedEquals.php">
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$cookie['value']</code>
-    </PossiblyNullArrayAccess>
-  </file>
-  <file src="src/TestSuite/Constraint/Response/CookieEquals.php">
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$cookie['value']</code>
-    </PossiblyNullArrayAccess>
-  </file>
   <file src="src/TestSuite/Constraint/Response/FileSentAs.php">
     <PossiblyNullReference occurrences="1">
       <code>getPathName</code>
     </PossiblyNullReference>
+  </file>
+  <file src="src/TestSuite/Constraint/Response/ResponseBase.php">
+    <InternalClass occurrences="1">
+      <code>new AssertionFailedError('No response set, cannot assert content.')</code>
+    </InternalClass>
   </file>
   <file src="src/TestSuite/Constraint/Response/StatusCode.php">
     <PropertyNotSetInConstructor occurrences="1">
@@ -2784,86 +1619,26 @@
       <code>$other</code>
     </MoreSpecificImplementedParamType>
   </file>
+  <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
+    <InternalClass occurrences="1">
+      <code>new AssertionFailedError($message)</code>
+    </InternalClass>
+  </file>
+  <file src="src/TestSuite/Constraint/Session/SessionEquals.php">
+    <InternalClass occurrences="1">
+      <code>new AssertionFailedError('There is no stored session data. Perhaps you need to run a request?')</code>
+    </InternalClass>
+  </file>
   <file src="src/TestSuite/Fixture/FixtureInjector.php">
+    <DeprecatedInterface occurrences="1">
+      <code>FixtureInjector</code>
+    </DeprecatedInterface>
     <NoInterfaceProperties occurrences="1">
       <code>$test-&gt;fixtureManager</code>
     </NoInterfaceProperties>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>$_first</code>
-    </PropertyNotSetInConstructor>
-  </file>
-  <file src="src/TestSuite/Fixture/FixtureManager.php">
-    <MissingClosureParamType occurrences="9">
-      <code>$db</code>
-      <code>$fixtures</code>
-      <code>$db</code>
-      <code>$fixtures</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$db</code>
-      <code>$fixtures</code>
-      <code>$fixtures</code>
-    </MissingClosureParamType>
-    <PossiblyFalseArgument occurrences="1">
-      <code>strrchr($fixture, '\\')</code>
-    </PossiblyFalseArgument>
-    <RedundantCondition occurrences="1">
-      <code>$exists &amp;&amp; !$isFixtureSetup &amp;&amp; $hasSchema</code>
-    </RedundantCondition>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>getSchemaCollection</code>
-    </UndefinedInterfaceMethod>
-    <UndefinedPropertyAssignment occurrences="1">
-      <code>$test-&gt;fixtures</code>
-    </UndefinedPropertyAssignment>
-  </file>
-  <file src="src/TestSuite/Fixture/TestFixture.php">
-    <InvalidPropertyAssignmentValue occurrences="1">
-      <code>$schema</code>
-    </InvalidPropertyAssignmentValue>
-    <MismatchingDocblockReturnType occurrences="1">
-      <code>TableSchemaInterface</code>
-    </MismatchingDocblockReturnType>
-    <PossiblyNullArgument occurrences="1">
-      <code>$this-&gt;table</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$this-&gt;_schema-&gt;getColumn($field)['type']</code>
-    </PossiblyNullArrayAccess>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$table</code>
-      <code>TestFixture</code>
-    </PropertyNotSetInConstructor>
-    <UndefinedInterfaceMethod occurrences="9">
-      <code>supportsDynamicConstraints</code>
-      <code>getSchemaCollection</code>
-      <code>getSchemaCollection</code>
-      <code>prepare</code>
-      <code>execute</code>
-      <code>newQuery</code>
-      <code>execute</code>
-      <code>execute</code>
-      <code>execute</code>
-    </UndefinedInterfaceMethod>
-    <UninitializedProperty occurrences="1">
-      <code>$this-&gt;table</code>
-    </UninitializedProperty>
   </file>
   <file src="src/TestSuite/IntegrationTestTrait.php">
-    <InvalidArgument occurrences="1">
-      <code>['_full' =&gt; true]</code>
-    </InvalidArgument>
     <InvalidCatch occurrences="1"/>
-    <MissingClosureParamType occurrences="5">
-      <code>$event</code>
-      <code>$viewFile</code>
-      <code>$event</code>
-      <code>$viewFile</code>
-      <code>$field</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($field) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="2">
       <code>$data</code>
       <code>$encrypt</code>
@@ -2871,14 +1646,7 @@
     <PossiblyInvalidPropertyAssignmentValue occurrences="1">
       <code>$controller-&gt;getRequest()-&gt;getSession()-&gt;read('Flash')</code>
     </PossiblyInvalidPropertyAssignmentValue>
-    <PossiblyNullArgument occurrences="19">
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
+    <PossiblyNullArgument occurrences="10">
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_response</code>
@@ -2889,12 +1657,7 @@
       <code>$this-&gt;_response</code>
       <code>$this-&gt;_viewName</code>
       <code>$this-&gt;_layoutName</code>
-      <code>$this-&gt;_response</code>
-      <code>$this-&gt;_response</code>
     </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
-      <code>getBody</code>
-    </PossiblyNullReference>
   </file>
   <file src="src/TestSuite/LegacyCommandRunner.php">
     <MissingConstructor occurrences="1">
@@ -2906,12 +1669,6 @@
       <code>ShellDispatcher</code>
       <code>parent::__construct($args, $bootstrap)</code>
     </DeprecatedClass>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>$instance</code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType occurrences="1">
-      <code>Shell</code>
-    </MoreSpecificReturnType>
     <PossiblyNullPropertyAssignmentValue occurrences="1">
       <code>$io</code>
     </PossiblyNullPropertyAssignmentValue>
@@ -2920,27 +1677,19 @@
     <RedundantCondition occurrences="1">
       <code>$this-&gt;app instanceof HttpApplicationInterface</code>
     </RedundantCondition>
-    <UndefinedConstant occurrences="1">
-      <code>CONFIG</code>
-    </UndefinedConstant>
   </file>
   <file src="src/TestSuite/TestCase.php">
-    <InvalidArgument occurrences="2">
-      <code>$className</code>
-      <code>$className</code>
-    </InvalidArgument>
-    <PossiblyFalseArgument occurrences="3">
-      <code>$tag</code>
-      <code>$tag</code>
+    <PossiblyFalseArgument occurrences="1">
       <code>$tag</code>
     </PossiblyFalseArgument>
     <PossiblyInvalidArgument occurrences="2">
       <code>$mock</code>
       <code>$mock</code>
     </PossiblyInvalidArgument>
-    <PossiblyNullArgument occurrences="2">
+    <PossiblyNullArgument occurrences="3">
       <code>$prefix[0]</code>
       <code>$prefix[1]</code>
+      <code>$expression</code>
     </PossiblyNullArgument>
     <PossiblyUndefinedMethod occurrences="4">
       <code>getEntityClass</code>
@@ -2948,18 +1697,16 @@
       <code>getTable</code>
       <code>setTable</code>
     </PossiblyUndefinedMethod>
-    <UndefinedFunction occurrences="2">
-      <code>debug($string, true)</code>
-      <code>debug($string)</code>
-    </UndefinedFunction>
-    <UndefinedVariable occurrences="1">
-      <code>$len</code>
-    </UndefinedVariable>
   </file>
   <file src="src/TestSuite/TestSuite.php">
-    <MissingClosureReturnType occurrences="1">
-      <code>function (SplFileInfo $current) {</code>
-    </MissingClosureReturnType>
+    <InternalClass occurrences="1">
+      <code>BaseTestSuite</code>
+    </InternalClass>
+    <InternalMethod occurrences="3">
+      <code>addTestFile</code>
+      <code>addTestFile</code>
+      <code>BaseTestSuite</code>
+    </InternalMethod>
     <PropertyNotSetInConstructor occurrences="1">
       <code>TestSuite</code>
     </PropertyNotSetInConstructor>
@@ -3023,9 +1770,6 @@
       <code>static::$_cache['singularize'][$word]</code>
       <code>static::$_cache['singularize'][$word]</code>
     </NullableReturnStatement>
-    <PossiblyFalseArgument occurrences="1">
-      <code>array_search(strtolower($regs[2]), static::$_irregular, true)</code>
-    </PossiblyFalseArgument>
   </file>
   <file src="src/Utility/Security.php">
     <LessSpecificReturnStatement occurrences="1">
@@ -3040,27 +1784,17 @@
       <code>$hashVal</code>
       <code>$tmpHash</code>
     </InvalidArgument>
-    <MissingClosureParamType occurrences="1">
-      <code>$match</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($match) use ($strlen) {</code>
-    </MissingClosureReturnType>
     <PossiblyInvalidArgument occurrences="1">
       <code>mb_internal_encoding()</code>
     </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="1">
       <code>transliterator_create($transliteratorId)</code>
     </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="2">
-      <code>$options['width']</code>
-      <code>$options['width']</code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Utility/Xml.php">
-    <InvalidArgument occurrences="1">
-      <code>$dom</code>
-    </InvalidArgument>
+    <PossiblyUndefinedMethod occurrences="1">
+      <code>setAttributeNS</code>
+    </PossiblyUndefinedMethod>
   </file>
   <file src="src/Validation/Validation.php">
     <InvalidArgument occurrences="1">
@@ -3069,18 +1803,6 @@
     <InvalidOperand occurrences="1">
       <code>$check[$position]</code>
     </InvalidOperand>
-    <MissingClosureParamType occurrences="1">
-      <code>$value</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($value) {</code>
-    </MissingClosureReturnType>
-    <PossiblyInvalidArgument occurrences="4">
-      <code>$file</code>
-      <code>$file</code>
-      <code>$file</code>
-      <code>$file</code>
-    </PossiblyInvalidArgument>
     <PossiblyNullArgument occurrences="2">
       <code>$check-&gt;getClientFilename()</code>
       <code>$operator</code>
@@ -3097,22 +1819,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/Validation/Validator.php">
-    <MissingClosureParamType occurrences="7">
-      <code>$value</code>
-      <code>$context</code>
-      <code>$value</code>
-      <code>$context</code>
-      <code>$context</code>
-      <code>$value</code>
-      <code>$value</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="5">
-      <code>function ($value, $context) use ($validator, $message) {</code>
-      <code>function ($value, $context) use ($validator, $message) {</code>
-      <code>function ($context) use ($when) {</code>
-      <code>function ($value) use ($count) {</code>
-      <code>function ($value) use ($count) {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="2">
       <code>$this-&gt;getProvider($provider)</code>
       <code>$this-&gt;getProvider($provider)</code>
@@ -3124,16 +1830,10 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Cell.php">
-    <MissingClosureReturnType occurrences="1">
-      <code>function () use ($template) {</code>
-    </MissingClosureReturnType>
     <PossiblyFalseOperand occurrences="2">
       <code>strpos($className, $namePrefix)</code>
       <code>$this-&gt;_cache</code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument occurrences="1">
-      <code>$template</code>
-    </PossiblyNullArgument>
     <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$request</code>
       <code>$response</code>
@@ -3144,21 +1844,6 @@
       <code>Cell</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/View/Form/ContextFactory.php">
-    <MissingClosureParamType occurrences="6">
-      <code>$request</code>
-      <code>$data</code>
-      <code>$request</code>
-      <code>$data</code>
-      <code>$request</code>
-      <code>$data</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="3">
-      <code>function ($request, $data) {</code>
-      <code>function ($request, $data) {</code>
-      <code>function ($request, $data) {</code>
-    </MissingClosureReturnType>
-  </file>
   <file src="src/View/Form/EntityContext.php">
     <LessSpecificImplementedReturnType occurrences="1">
       <code>array</code>
@@ -3167,36 +1852,13 @@
       <code>$entity</code>
       <code>$entity</code>
     </LoopInvalidation>
-    <MissingClosureParamType occurrences="2">
-      <code>$part</code>
-      <code>$part</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($part) {</code>
-      <code>function ($part) {</code>
-    </MissingClosureReturnType>
-    <PossiblyInvalidArgument occurrences="3">
-      <code>$entity</code>
+    <PossiblyInvalidArgument occurrences="2">
       <code>$entity</code>
       <code>$entity</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidMethodCall occurrences="9">
-      <code>getPrimaryKey</code>
-      <code>getSchema</code>
-      <code>getPrimaryKey</code>
-      <code>newEmptyEntity</code>
-      <code>getSchema</code>
-      <code>getAlias</code>
-      <code>getValidator</code>
-      <code>getSchema</code>
-      <code>getSchema</code>
-    </PossiblyInvalidMethodCall>
     <PossiblyNullReference occurrences="1">
       <code>getTarget</code>
     </PossiblyNullReference>
-    <PropertyNotSetInConstructor occurrences="1">
-      <code>EntityContext</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper.php">
     <PossiblyNullOperand occurrences="1">
@@ -3212,19 +1874,10 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>string</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidArgument occurrences="3">
+    <InvalidArgument occurrences="2">
       <code>$modelName</code>
       <code>$modelName</code>
-      <code>$options['disabled']</code>
     </InvalidArgument>
-    <MissingClosureParamType occurrences="2">
-      <code>$i</code>
-      <code>$el</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="2">
-      <code>function ($i) use ($options) {</code>
-      <code>function ($el) {</code>
-    </MissingClosureReturnType>
     <PossiblyNullArgument occurrences="3">
       <code>$url</code>
       <code>$options</code>
@@ -3249,9 +1902,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/View/Helper/NumberHelper.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$currency</code>
-    </InvalidScalarArgument>
     <LessSpecificImplementedReturnType occurrences="1">
       <code>mixed</code>
     </LessSpecificImplementedReturnType>
@@ -3271,8 +1921,7 @@
     <PossiblyUndefinedArrayOffset occurrences="1">
       <code>$options['templates']</code>
     </PossiblyUndefinedArrayOffset>
-    <PropertyNotSetInConstructor occurrences="2">
-      <code>$_defaultModel</code>
+    <PropertyNotSetInConstructor occurrences="1">
       <code>PaginatorHelper</code>
     </PropertyNotSetInConstructor>
   </file>
@@ -3282,9 +1931,6 @@
     </LessSpecificImplementedReturnType>
   </file>
   <file src="src/View/Helper/TimeHelper.php">
-    <InvalidScalarArgument occurrences="1">
-      <code>$format</code>
-    </InvalidScalarArgument>
     <PropertyNotSetInConstructor occurrences="1">
       <code>TimeHelper</code>
     </PropertyNotSetInConstructor>
@@ -3301,15 +1947,11 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/View/HelperRegistry.php">
-    <MoreSpecificImplementedParamType occurrences="2">
-      <code>$class</code>
+    <MoreSpecificImplementedParamType occurrences="1">
       <code>$class</code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/View/JsonView.php">
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$view</code>
-    </MoreSpecificImplementedParamType>
     <PropertyNotSetInConstructor occurrences="1">
       <code>JsonView</code>
     </PropertyNotSetInConstructor>
@@ -3327,9 +1969,7 @@
     </UninitializedProperty>
   </file>
   <file src="src/View/View.php">
-    <PossiblyNullPropertyAssignmentValue occurrences="4">
-      <code>$request ?: Router::getRequest(true)</code>
-      <code>$request ?: Router::getRequest(true)</code>
+    <PossiblyNullPropertyAssignmentValue occurrences="2">
       <code>$request ?: Router::getRequest(true)</code>
       <code>$defaultLayout</code>
     </PossiblyNullPropertyAssignmentValue>
@@ -3344,28 +1984,6 @@
     <UnresolvableInclude occurrences="1">
       <code>include func_get_arg(0)</code>
     </UnresolvableInclude>
-  </file>
-  <file src="src/View/ViewBuilder.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>$this</code>
-    </ImplementedReturnTypeMismatch>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>new $className($request, $response, $events, $data)</code>
-    </LessSpecificReturnStatement>
-    <MissingClosureParamType occurrences="1">
-      <code>$i</code>
-    </MissingClosureParamType>
-    <MissingClosureReturnType occurrences="1">
-      <code>function ($i) {</code>
-    </MissingClosureReturnType>
-    <MoreSpecificReturnType occurrences="1">
-      <code>View</code>
-    </MoreSpecificReturnType>
-  </file>
-  <file src="src/View/Widget/MultiCheckboxWidget.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$labelAttrs</code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/View/XmlView.php">
     <PossiblyUndefinedMethod occurrences="1">

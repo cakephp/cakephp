@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -88,7 +89,7 @@ class PostsController extends AppController
         $data = [];
 
         $this->set(compact('data'));
-        $this->set('_serialize', ['data']);
+        $this->viewBuilder()->setOption('serialize', ['data']);
     }
 
     /**
@@ -109,6 +110,16 @@ class PostsController extends AppController
     public function header()
     {
         return $this->getResponse()->withHeader('X-Cake', 'custom header');
+    }
+
+    public function hostData()
+    {
+        $data = [
+            'host' => $this->request->host(),
+            'isSsl' => $this->request->is('ssl'),
+        ];
+
+        return $this->getResponse()->withStringBody(json_encode($data));
     }
 
     public function empty_response()

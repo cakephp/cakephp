@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,9 +17,10 @@ declare(strict_types=1);
 namespace Cake\Error;
 
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception as CoreException;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Log\Log;
 use Cake\Routing\Router;
+use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 
 /**
@@ -30,17 +32,31 @@ use Throwable;
  */
 abstract class BaseErrorHandler
 {
+    use InstanceConfigTrait;
+
     /**
      * Options to use for the Error handling.
      *
      * @var array
      */
-    protected $_options = [];
+    protected $_defaultConfig = [
+        'log' => true,
+        'trace' => false,
+        'skipLog' => [],
+        'errorLogger' => ErrorLogger::class,
+    ];
 
     /**
      * @var bool
      */
     protected $_handled = false;
+
+    /**
+     * Exception logger instance.
+     *
+     * @var \Cake\Error\ErrorLogger|null
+     */
+    protected $logger;
 
     /**
      * Display an error message in an environment specific way.
@@ -73,17 +89,17 @@ abstract class BaseErrorHandler
     public function register(): void
     {
         $level = -1;
-        if (isset($this->_options['errorLevel'])) {
-            $level = $this->_options['errorLevel'];
+        if (isset($this->_config['errorLevel'])) {
+            $level = $this->_config['errorLevel'];
         }
         error_reporting($level);
         set_error_handler([$this, 'handleError'], $level);
         set_exception_handler([$this, 'handleException']);
-        register_shutdown_function(function () {
+        register_shutdown_function(function (): void {
             if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && $this->_handled) {
                 return;
             }
-            $megabytes = $this->_options['extraFatalErrorMemory'] ?? 4;
+            $megabytes = $this->_config['extraFatalErrorMemory'] ?? 4;
             if ($megabytes > 0) {
                 $this->increaseMemoryLimit($megabytes * 1024);
             }
@@ -192,8 +208,9 @@ abstract class BaseErrorHandler
     public function handleException(Throwable $exception): void
     {
         $this->_displayException($exception);
-        $this->_logException($exception);
-        $this->_stop($exception->getCode() ?: 1);
+        $this->logException($exception);
+        $code = $exception->getCode() ?: 1;
+        $this->_stop((int)$code);
     }
 
     /**
@@ -204,7 +221,7 @@ abstract class BaseErrorHandler
      * @param int $code Exit code.
      * @return void
      */
-    protected function _stop($code)
+    protected function _stop(int $code): void
     {
         // Do nothing.
     }
@@ -281,7 +298,7 @@ abstract class BaseErrorHandler
             $data['file'],
             $data['line']
         );
-        if (!empty($this->_options['trace'])) {
+        if (!empty($this->_config['trace'])) {
             $trace = Debugger::trace([
                 'start' => 1,
                 'format' => 'log',
@@ -289,7 +306,7 @@ abstract class BaseErrorHandler
 
             $request = Router::getRequest();
             if ($request) {
-                $message .= $this->_requestContext($request);
+                $message .= $this->getLogger()->getRequestContext($request);
             }
             $message .= "\nTrace:\n" . $trace . "\n";
         }
@@ -299,107 +316,35 @@ abstract class BaseErrorHandler
     }
 
     /**
-     * Handles exception logging
+     * Log an error for the exception if applicable.
      *
-     * @param \Throwable $exception Exception instance.
+     * @param \Throwable $exception The exception to log a message for.
+     * @param \Psr\Http\Message\ServerRequestInterface $request The current request.
      * @return bool
      */
-    protected function _logException(Throwable $exception): bool
+    public function logException(Throwable $exception, ?ServerRequestInterface $request = null): bool
     {
-        $config = $this->_options;
-        if (empty($config['log'])) {
+        if (empty($this->_config['log'])) {
             return false;
         }
 
-        if (!empty($config['skipLog'])) {
-            foreach ((array)$config['skipLog'] as $class) {
-                if ($exception instanceof $class) {
-                    return false;
-                }
-            }
-        }
-
-        return Log::error($this->_getMessage($exception));
+        return $this->getLogger()->log($exception, $request ?? Router::getRequest());
     }
 
     /**
-     * Get the request context for an error/exception trace.
+     * Get exception logger.
      *
-     * @param \Cake\Http\ServerRequest $request The request to read from.
-     * @return string
+     * @return \Cake\Error\ErrorLogger
      */
-    protected function _requestContext($request): string
+    public function getLogger()
     {
-        $message = "\nRequest URL: " . $request->getRequestTarget();
-
-        $referer = $request->getEnv('HTTP_REFERER');
-        if ($referer) {
-            $message .= "\nReferer URL: " . $referer;
-        }
-        $clientIp = $request->clientIp();
-        if ($clientIp && $clientIp !== '::1') {
-            $message .= "\nClient IP: " . $clientIp;
+        if ($this->logger === null) {
+            /** @var \Cake\Error\ErrorLogger $logger */
+            $logger = new $this->_config['errorLogger']($this->_config);
+            $this->logger = $logger;
         }
 
-        return $message;
-    }
-
-    /**
-     * Generates a formatted error message
-     *
-     * @param \Throwable $exception Exception instance
-     * @return string Formatted message
-     */
-    protected function _getMessage(Throwable $exception): string
-    {
-        $message = $this->getMessageForException($exception);
-
-        $request = Router::getRequest();
-        if ($request) {
-            $message .= $this->_requestContext($request);
-        }
-
-        return $message;
-    }
-
-    /**
-     * Generate the message for the exception
-     *
-     * @param \Exception $exception The exception to log a message for.
-     * @param bool $isPrevious False for original exception, true for previous
-     * @return string Error message
-     */
-    protected function getMessageForException(Throwable $exception, bool $isPrevious = false): string
-    {
-        $config = $this->_options;
-
-        $message = sprintf(
-            '%s[%s] %s in %s on line %s',
-            $isPrevious ? "\nCaused by: " : '',
-            get_class($exception),
-            $exception->getMessage(),
-            $exception->getFile(),
-            $exception->getLine()
-        );
-        $debug = Configure::read('debug');
-
-        if ($debug && $exception instanceof CoreException) {
-            $attributes = $exception->getAttributes();
-            if ($attributes) {
-                $message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
-            }
-        }
-
-        if (!empty($config['trace'])) {
-            $message .= "\nStack Trace:\n" . $exception->getTraceAsString() . "\n\n";
-        }
-
-        $previous = $exception->getPrevious();
-        if ($previous) {
-            $message .= $this->getMessageForException($previous, true);
-        }
-
-        return $message;
+        return $this->logger;
     }
 
     /**

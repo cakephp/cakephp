@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -794,7 +795,7 @@ interface CollectionInterface extends Iterator, JsonSerializable
      *
      * @return array The data to convert to JSON
      */
-    public function jsonSerialize();
+    public function jsonSerialize(): array;
 
     /**
      * Iterates once all elements in this collection and executes all stacked

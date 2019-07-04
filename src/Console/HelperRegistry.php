@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -54,14 +55,14 @@ class HelperRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
         $name = App::className($class, 'Command/Helper', 'Helper');
-        if ($name) {
-            return $name;
+        if ($name === null) {
+            return App::className($class, 'Shell/Helper', 'Helper');
         }
 
-        return App::className($class, 'Shell/Helper', 'Helper');
+        return $name;
     }
 
     /**
@@ -95,6 +96,7 @@ class HelperRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $settings): Helper
     {
+        /** @var \Cake\Console\Helper */
         return new $class($this->_io, $settings);
     }
 }

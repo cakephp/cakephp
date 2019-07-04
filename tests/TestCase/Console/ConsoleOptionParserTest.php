@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->setDescription('A test');
 
         $this->assertEquals($parser, $result, 'Setting description is not chainable');
-        $this->assertEquals('A test', $parser->getDescription(), 'getting value is wrong.');
+        $this->assertSame('A test', $parser->getDescription(), 'getting value is wrong.');
 
         $result = $parser->setDescription(['A test', 'something']);
         $this->assertEquals("A test\nsomething", $parser->getDescription(), 'getting value is wrong.');
@@ -54,7 +55,7 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->setEpilog('A test');
 
         $this->assertEquals($parser, $result, 'Setting epilog is not chainable');
-        $this->assertEquals('A test', $parser->getEpilog(), 'getting value is wrong.');
+        $this->assertSame('A test', $parser->getEpilog(), 'getting value is wrong.');
 
         $result = $parser->setEpilog(['A test', 'something']);
         $this->assertEquals("A test\nsomething", $parser->getEpilog(), 'getting value is wrong.');
@@ -358,13 +359,15 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test parsing options that do not exist.
      *
-     * @expectedExceptionMessageRegexp /Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n
-     * - help\n - no-commit/
      * @return void
      */
     public function testOptionThatDoesNotExist()
     {
         $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessageRegExp(
+            '/Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n - help\n - no-commit/'
+        );
+
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true]);
 
@@ -374,13 +377,15 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test parsing short options that do not exist.
      *
-     * @expectedExceptionMessageRegexp /Unknown short option `f`.\n\nAvailable short options are :\n\n
-     * - `n` (short for `--no-commit`)\n - `c` (short for `--clear`)/
      * @return void
      */
     public function testShortOptionThatDoesNotExist()
     {
         $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessageRegExp(
+            '/Unknown short option `f`\n\nAvailable short options are :\n\n - `c` \(short for `--clear`\)\n - `h` \(short for `--help`\)\n - `n` \(short for `--no-commit`\)/'
+        );
+
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true, 'short' => 'n']);
         $parser->addOption('construct', ['boolean' => true]);
@@ -446,7 +451,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addArgument(new ConsoleInputArgument('test'));
         $result = $parser->arguments();
         $this->assertCount(1, $result);
-        $this->assertEquals('test', $result[0]->name());
+        $this->assertSame('test', $result[0]->name());
     }
 
     /**
@@ -463,9 +468,9 @@ class ConsoleOptionParserTest extends TestCase
 
         $result = $parser->arguments();
         $this->assertCount(3, $result);
-        $this->assertEquals('other', $result[0]->name());
-        $this->assertEquals('name', $result[1]->name());
-        $this->assertEquals('bag', $result[2]->name());
+        $this->assertSame('other', $result[0]->name());
+        $this->assertSame('name', $result[1]->name());
+        $this->assertSame('bag', $result[2]->name());
         $this->assertSame([0, 1, 2], array_keys($result));
         $this->assertEquals(
             ['other', 'name', 'bag'],
@@ -634,7 +639,7 @@ class ConsoleOptionParserTest extends TestCase
         ])->addArgument('name', ['required' => false]);
 
         $result = $parser->parse(['build']);
-        $this->assertEquals('default', $result[0]['connection']);
+        $this->assertSame('default', $result[0]['connection']);
 
         $result = $parser->subcommands();
         $this->assertArrayHasKey('build', $result);
@@ -652,7 +657,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser->addSubcommand(new ConsoleInputSubcommand('test'));
         $result = $parser->subcommands();
         $this->assertCount(1, $result);
-        $this->assertEquals('test', $result['test']->name());
+        $this->assertSame('test', $result['test']->name());
     }
 
     /**
@@ -661,15 +666,15 @@ class ConsoleOptionParserTest extends TestCase
     public function testAddSubcommandSort()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $this->assertEquals(true, $parser->isSubcommandSortEnabled());
+        $this->assertTrue($parser->isSubcommandSortEnabled());
         $parser->enableSubcommandSort(false);
-        $this->assertEquals(false, $parser->isSubcommandSortEnabled());
+        $this->assertFalse($parser->isSubcommandSortEnabled());
         $parser->addSubcommand(new ConsoleInputSubcommand('betaTest'), []);
         $parser->addSubcommand(new ConsoleInputSubcommand('alphaTest'), []);
         $result = $parser->subcommands();
         $this->assertCount(2, $result);
         $firstResult = key($result);
-        $this->assertEquals('betaTest', $firstResult);
+        $this->assertSame('betaTest', $firstResult);
     }
 
     /**
@@ -989,7 +994,7 @@ TEXT;
     {
         $parser = ConsoleOptionParser::create('factory', false);
         $this->assertInstanceOf('Cake\Console\ConsoleOptionParser', $parser);
-        $this->assertEquals('factory', $parser->getCommand());
+        $this->assertSame('factory', $parser->getCommand());
     }
 
     /**
@@ -1000,7 +1005,7 @@ TEXT;
     public function testCommandInflection()
     {
         $parser = new ConsoleOptionParser('CommandLine');
-        $this->assertEquals('command_line', $parser->getCommand());
+        $this->assertSame('command_line', $parser->getCommand());
     }
 
     /**

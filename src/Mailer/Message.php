@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -997,8 +998,8 @@ class Message implements JsonSerializable, Serializable
     {
         $format = $this->emailFormat;
 
-        if ($format === self::MESSAGE_BOTH) {
-            return [self::MESSAGE_HTML, self::MESSAGE_TEXT];
+        if ($format === static::MESSAGE_BOTH) {
+            return [static::MESSAGE_HTML, static::MESSAGE_TEXT];
         }
 
         return $types = [$format];
@@ -1219,7 +1220,7 @@ class Message implements JsonSerializable, Serializable
     protected function createBoundary(): void
     {
         if ($this->boundary === null &&
-            ($this->attachments || $this->emailFormat === self::MESSAGE_BOTH)
+            ($this->attachments || $this->emailFormat === static::MESSAGE_BOTH)
         ) {
             $this->boundary = md5(Security::randomBytes(16));
         }
@@ -1238,7 +1239,7 @@ class Message implements JsonSerializable, Serializable
         $contentIds = array_filter((array)Hash::extract($this->attachments, '{s}.contentId'));
         $hasInlineAttachments = count($contentIds) > 0;
         $hasAttachments = !empty($this->attachments);
-        $hasMultipleTypes = $this->emailFormat === self::MESSAGE_BOTH;
+        $hasMultipleTypes = $this->emailFormat === static::MESSAGE_BOTH;
         $multiPart = ($hasAttachments || $hasMultipleTypes);
 
         /** @var string $boundary */
@@ -1259,8 +1260,8 @@ class Message implements JsonSerializable, Serializable
             $textBoundary = 'alt-' . $boundary;
         }
 
-        if ($this->emailFormat === self::MESSAGE_TEXT
-            || $this->emailFormat === self::MESSAGE_BOTH
+        if ($this->emailFormat === static::MESSAGE_TEXT
+            || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
@@ -1274,8 +1275,8 @@ class Message implements JsonSerializable, Serializable
             $msg[] = '';
         }
 
-        if ($this->emailFormat === self::MESSAGE_HTML
-            || $this->emailFormat === self::MESSAGE_BOTH
+        if ($this->emailFormat === static::MESSAGE_HTML
+            || $this->emailFormat === static::MESSAGE_BOTH
         ) {
             if ($multiPart) {
                 $msg[] = '--' . $textBoundary;
@@ -1478,7 +1479,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function setBodyText(string $content)
     {
-        $this->setBody([self::MESSAGE_TEXT => $content]);
+        $this->setBody([static::MESSAGE_TEXT => $content]);
 
         return $this;
     }
@@ -1491,7 +1492,7 @@ class Message implements JsonSerializable, Serializable
      */
     public function setBodyHtml(string $content)
     {
-        $this->setBody([self::MESSAGE_HTML => $content]);
+        $this->setBody([static::MESSAGE_HTML => $content]);
 
         return $this;
     }
@@ -1649,7 +1650,7 @@ class Message implements JsonSerializable, Serializable
         $this->headerCharset = null;
         $this->transferEncoding = null;
         $this->attachments = [];
-        $this->emailPattern = self::EMAIL_PATTERN;
+        $this->emailPattern = static::EMAIL_PATTERN;
 
         return $this;
     }
@@ -1765,7 +1766,7 @@ class Message implements JsonSerializable, Serializable
             $array[$property] = $this->{$property};
         }
 
-        array_walk($array['attachments'], function (&$item, $key) {
+        array_walk($array['attachments'], function (&$item, $key): void {
             if (!empty($item['file'])) {
                 $item['data'] = $this->readFile($item['file']);
                 unset($item['file']);
@@ -1800,7 +1801,7 @@ class Message implements JsonSerializable, Serializable
     public function serialize(): string
     {
         $array = $this->jsonSerialize();
-        array_walk_recursive($array, function (&$item, $key) {
+        array_walk_recursive($array, function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
                 $item = json_decode(json_encode((array)$item), true);
             }
@@ -1813,7 +1814,7 @@ class Message implements JsonSerializable, Serializable
      * Unserializes the Email object.
      *
      * @param string $data Serialized string.
-     * @return static Configured message instance.
+     * @return void
      */
     public function unserialize($data)
     {
@@ -1822,6 +1823,6 @@ class Message implements JsonSerializable, Serializable
             throw new Exception('Unable to unserialize message.');
         }
 
-        return $this->createFromArray($array);
+        $this->createFromArray($array);
     }
 }

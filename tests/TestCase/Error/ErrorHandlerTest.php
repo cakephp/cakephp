@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -51,7 +52,7 @@ class ErrorHandlerTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Router::reload();
@@ -79,7 +80,7 @@ class ErrorHandlerTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Log::reset();
@@ -96,10 +97,24 @@ class ErrorHandlerTest extends TestCase
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$errorLevel = error_reporting();
+    }
+
+    /**
+     * Test an invalid rendering class.
+     *
+     * @return void
+     */
+    public function testInvalidRenderer()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('The \'TotallyInvalid\' renderer class could not be found');
+
+        $errorHandler = new ErrorHandler(['exceptionRenderer' => 'TotallyInvalid']);
+        $errorHandler->getRenderer(new \Exception('Something bad'));
     }
 
     /**
@@ -151,7 +166,7 @@ class ErrorHandlerTest extends TestCase
         trigger_error('Test error', $error);
         $result = ob_get_clean();
 
-        $this->assertContains('<b>' . $expected . '</b>', $result);
+        $this->assertStringContainsString('<b>' . $expected . '</b>', $result);
     }
 
     /**
@@ -234,7 +249,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler = new TestErrorHandler();
 
         $errorHandler->handleException($error);
-        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
+        $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**
@@ -266,7 +281,7 @@ class ErrorHandlerTest extends TestCase
             ));
 
         $errorHandler->handleException($error);
-        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
+        $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $errorHandler = new TestErrorHandler([
             'log' => true,
@@ -365,10 +380,10 @@ class ErrorHandlerTest extends TestCase
         ]);
 
         $errorHandler->handleException($notFound);
-        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
+        $this->assertStringContainsString('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $errorHandler->handleException($forbidden);
-        $this->assertContains('Fooled you!', (string)$errorHandler->response->getBody(), 'message missing.');
+        $this->assertStringContainsString('Fooled you!', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**
@@ -387,7 +402,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler->handleException($error);
 
         $result = $errorHandler->response;
-        $this->assertEquals('Rendered by test plugin', $result);
+        $this->assertSame('Rendered by test plugin', (string)$result);
     }
 
     /**
@@ -405,16 +420,16 @@ class ErrorHandlerTest extends TestCase
 
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
         $result = (string)$errorHandler->response->getBody();
-        $this->assertContains('Something wrong', $result, 'message missing.');
-        $this->assertContains(__FILE__, $result, 'filename missing.');
-        $this->assertContains((string)$line, $result, 'line missing.');
+        $this->assertStringContainsString('Something wrong', $result, 'message missing.');
+        $this->assertStringContainsString(__FILE__, $result, 'filename missing.');
+        $this->assertStringContainsString((string)$line, $result, 'line missing.');
 
         Configure::write('debug', false);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
         $result = (string)$errorHandler->response->getBody();
-        $this->assertNotContains('Something wrong', $result, 'message must not appear.');
-        $this->assertNotContains(__FILE__, $result, 'filename must not appear.');
-        $this->assertContains('An Internal Error Has Occurred.', $result);
+        $this->assertStringNotContainsString('Something wrong', $result, 'message must not appear.');
+        $this->assertStringNotContainsString(__FILE__, $result, 'filename must not appear.');
+        $this->assertStringContainsString('An Internal Error Has Occurred.', $result);
     }
 
     /**

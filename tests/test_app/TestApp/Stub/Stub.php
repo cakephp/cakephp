@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Stub;
 
 use Cake\Datasource\ModelAwareTrait;
@@ -11,8 +12,17 @@ class Stub
 {
     use ModelAwareTrait;
 
-    public function setProps($name)
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function setProps(string $name): void
     {
         $this->_setModelClass($name);
+    }
+
+    public function getModelClass(): ?string
+    {
+        return $this->modelClass;
     }
 }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -138,7 +139,7 @@ class Session
      * Get one of the prebaked default session configurations.
      *
      * @param string $name Config name.
-     * @return bool|array
+     * @return array|false
      */
     protected static function _defaultConfig(string $name)
     {
@@ -368,7 +369,7 @@ class Session
      *
      * @return bool True if session was started
      */
-    public function close()
+    public function close(): bool
     {
         if (!$this->_started) {
             return true;

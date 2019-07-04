@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * FolderTest file
  *
@@ -31,7 +32,7 @@ class FolderTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         clearstatcache();
@@ -42,7 +43,7 @@ class FolderTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $cleaner = function ($dir) use (&$cleaner) {
@@ -360,15 +361,15 @@ class FolderTest extends TestCase
 
         $this->assertTrue($Folder->chmod($new, 0755, true));
         $perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
-        $this->assertEquals('0755', $perms);
+        $this->assertSame('0755', $perms);
 
         $this->assertTrue($Folder->chmod($new, 0744, true, ['skip_me.php', 'test2']));
 
         $perms = substr(sprintf('%o', fileperms($new . DS . 'test2')), -4);
-        $this->assertEquals('0755', $perms);
+        $this->assertSame('0755', $perms);
 
         $perms = substr(sprintf('%o', fileperms($new . DS . 'test1')), -4);
-        $this->assertEquals('0744', $perms);
+        $this->assertSame('0744', $perms);
     }
 
     /**
@@ -678,7 +679,7 @@ class FolderTest extends TestCase
     public function testSlashTerm()
     {
         $result = Folder::slashTerm('/path/to/file');
-        $this->assertEquals('/path/to/file/', $result);
+        $this->assertSame('/path/to/file/', $result);
     }
 
     /**
@@ -713,15 +714,15 @@ class FolderTest extends TestCase
     {
         $path = '/path/to/file';
         $result = Folder::correctSlashFor($path);
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
 
         $path = '\\path\\to\\file';
         $result = Folder::correctSlashFor($path);
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
 
         $path = 'C:\\path\to\\file';
         $result = Folder::correctSlashFor($path);
-        $this->assertEquals('\\', $result);
+        $this->assertSame('\\', $result);
     }
 
     /**
@@ -851,7 +852,7 @@ class FolderTest extends TestCase
     {
         $path = TMP . 'tests' . DS;
         $Folder = new Folder($path . 'config_non_existent', true);
-        $this->assertEquals(0, $Folder->dirSize());
+        $this->assertSame(0, $Folder->dirSize());
 
         $File = new File($Folder->pwd() . DS . 'my.php', true, 0777);
         $File->create();

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use Cake\Cache\Cache;
+use Cake\Database\Schema\CachedCollection;
 
 /**
  * Schema Cache.
@@ -76,12 +77,12 @@ class SchemaCache
         if (empty($name)) {
             $tables = $this->_schema->listTables();
         }
-        /** @var string $configName */
-        $configName = $this->_schema->getCacheMetadata();
+
+        $cacher = $this->_schema->getCacher();
 
         foreach ($tables as $table) {
             $key = $this->_schema->cacheKey($table);
-            Cache::delete($key, $configName);
+            $cacher->delete($key);
         }
 
         return $tables;
@@ -94,7 +95,7 @@ class SchemaCache
      * @return \Cake\Database\Schema\CachedCollection
      * @throws \RuntimeException If given connection object is not compatible with schema caching
      */
-    public function getSchema(Connection $connection)
+    public function getSchema(Connection $connection): CachedCollection
     {
         $config = $connection->config();
         if (empty($config['cacheMetadata'])) {

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 use PDO;
 use RuntimeException;
@@ -46,11 +47,11 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * Convert integer data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return mixed
      * @throws \InvalidArgumentException
      */
-    public function toDatabase($value, Driver $driver)
+    public function toDatabase($value, DriverInterface $driver)
     {
         if ($value === null || $value === '') {
             return null;
@@ -77,11 +78,11 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * Convert float values to PHP floats
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      * @throws \Cake\Core\Exception\Exception
      */
-    public function toPHP($value, Driver $driver): ?string
+    public function toPHP($value, DriverInterface $driver): ?string
     {
         if ($value === null) {
             return null;
@@ -95,7 +96,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      *
      * @return string[]
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver): array
+    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -112,10 +113,10 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * Get the correct PDO binding type for integer data.
      *
      * @param mixed $value The value being bound.
-     * @param \Cake\Database\Driver $driver The driver.
+     * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver): int
+    public function toStatement($value, DriverInterface $driver): int
     {
         return PDO::PARAM_STR;
     }

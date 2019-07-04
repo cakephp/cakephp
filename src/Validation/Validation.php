@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -76,6 +77,11 @@ class Validation
      * Less than or equal to comparison operator.
      */
     public const COMPARE_LESS_OR_EQUAL = '<=';
+
+    /**
+     * Datetime ISO8601 format
+     */
+    public const DATETIME_ISO8601 = 'iso8601';
 
     /**
      * Some complex patterns needed in multiple places
@@ -155,7 +161,7 @@ class Validation
      * Returns true if $check is in the proper credit card format.
      *
      * @param mixed $check credit card number to validate
-     * @param string|array $type 'all' may be passed as a string, defaults to fast which checks format of
+     * @param string|string[] $type 'all' may be passed as a string, defaults to fast which checks format of
      *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -372,7 +378,7 @@ class Validation
      * @param string|null $regex If $check is passed as a string, $regex must also be set to valid regular expression
      * @return bool Success
      */
-    public static function custom($check, ?string $regex = null): bool
+    public static function custom(string $check, ?string $regex = null): bool
     {
         if ($regex === null) {
             static::$errors[] = 'You must define a regular expression for Validation::custom()';
@@ -472,6 +478,7 @@ class Validation
      *
      * @param mixed $check Value to check
      * @param string|array $dateFormat Format of the date part. See Validation::date() for more information.
+     *   Or `Validation::DATETIME_ISO8601` to valid an ISO8601 datetime value.
      * @param string|null $regex Regex for the date part. If a custom regular expression is used
      *   this is the only validation that will occur.
      * @return bool True if the value is valid, false otherwise
@@ -486,19 +493,51 @@ class Validation
         if (is_object($check)) {
             return false;
         }
+        if ($dateFormat === static::DATETIME_ISO8601 && !static::iso8601($check)) {
+            return false;
+        }
+
         $valid = false;
         if (is_array($check)) {
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
         }
-        $parts = explode(' ', $check);
-        if (count($parts) > 1) {
+        $parts = preg_split('/[\sT]+/', $check);
+        if (!empty($parts) && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
             $time = implode(' ', $parts);
+            if ($dateFormat === static::DATETIME_ISO8601) {
+                $dateFormat = 'ymd';
+                $time = preg_split("/[TZ\-\+\.]/", $time);
+                $time = array_shift($time);
+            }
             $valid = static::date($date, $dateFormat, $regex) && static::time($time);
         }
 
         return $valid;
+    }
+
+    /**
+     * Validates an iso8601 datetime format
+     * ISO8601 recognize datetime like 2019 as a valid date. To validate and check date integrity, use @see \Cake\Validation\Validation::datetime()
+     *
+     * @param mixed $check Value to check
+     * @return bool True if the value is valid, false otherwise
+     * @see Regex credits: https://www.myintervals.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
+     */
+    public static function iso8601($check): bool
+    {
+        if ($check instanceof DateTimeInterface) {
+            return true;
+        }
+        if (is_object($check)) {
+            return false;
+        }
+
+        // phpcs:ignore Generic.Files.LineLength
+        $regex = '/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/';
+
+        return static::_check($check, $regex);
     }
 
     /**
@@ -624,7 +663,7 @@ class Validation
      * - 1..N => Exactly that many number of decimal places. The '.' is required.
      *
      * @param mixed $check The value the test for decimal.
-     * @param int|bool|null $places Decimal places.
+     * @param int|true|null $places Decimal places.
      * @param string|null $regex If a custom regular expression is used, this is the only validation that will occur.
      * @return bool Success
      */
@@ -723,7 +762,7 @@ class Validation
      * Checks that value has a valid file extension.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check Value to check
-     * @param array $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param string[] $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension($check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
@@ -1064,7 +1103,7 @@ class Validation
             $sum += $check[$position];
         }
 
-        for ($position = ($length % 2); $position < $length; $position += 2) {
+        for ($position = $length % 2; $position < $length; $position += 2) {
             $number = (int)$check[$position] * 2;
             $sum += $number < 10 ? $number : $number - 9;
         }
@@ -1117,7 +1156,7 @@ class Validation
             $mimeTypes[$key] = strtolower($val);
         }
 
-        return in_array($mime, $mimeTypes, true);
+        return in_array(strtolower($mime), $mimeTypes, true);
     }
 
     /**
@@ -1125,7 +1164,7 @@ class Validation
      * we accept.
      *
      * @param string|array|\Psr\Http\Message\UploadedFileInterface $check The data to read a filename out of.
-     * @return string|bool Either the filename or false on failure.
+     * @return string|false Either the filename or false on failure.
      */
     protected static function getFilename($check)
     {
@@ -1285,6 +1324,9 @@ class Validation
         }
 
         $file = static::getFilename($file);
+        if ($file === false) {
+            return false;
+        }
 
         [$width, $height] = getimagesize($file);
         $validHeight = null;
@@ -1477,7 +1519,7 @@ class Validation
      */
     public static function isInteger($value): bool
     {
-        if (!is_scalar($value) || is_float($value)) {
+        if (!is_numeric($value) || is_float($value)) {
             return false;
         }
         if (is_int($value)) {

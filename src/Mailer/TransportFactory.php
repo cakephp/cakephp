@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,7 @@ class TransportFactory
     /**
      * Transport Registry used for creating and using transport instances.
      *
-     * @var \Cake\Mailer\TransportRegistry
+     * @var \Cake\Mailer\TransportRegistry|null
      */
     protected static $_registry;
 
@@ -38,9 +39,9 @@ class TransportFactory
      * @var array
      */
     protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
+        'debug' => Transport\DebugTransport::class,
+        'mail' => Transport\MailTransport::class,
+        'smtp' => Transport\SmtpTransport::class,
     ];
 
     /**
@@ -65,7 +66,7 @@ class TransportFactory
      * @param \Cake\Mailer\TransportRegistry $registry Injectable registry object.
      * @return void
      */
-    public static function setRegistry(TransportRegistry $registry)
+    public static function setRegistry(TransportRegistry $registry): void
     {
         static::$_registry = $registry;
     }
@@ -77,7 +78,7 @@ class TransportFactory
      * @return void
      * @throws \InvalidArgumentException When a tranport cannot be created.
      */
-    protected static function _buildTransport($name): void
+    protected static function _buildTransport(string $name): void
     {
         if (!isset(static::$_config[$name])) {
             throw new InvalidArgumentException(
@@ -100,7 +101,7 @@ class TransportFactory
      * @param string $name Config name.
      * @return \Cake\Mailer\AbstractTransport
      */
-    public static function get($name): AbstractTransport
+    public static function get(string $name): AbstractTransport
     {
         $registry = static::getRegistry();
 

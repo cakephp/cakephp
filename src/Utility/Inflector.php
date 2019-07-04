@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -420,7 +421,7 @@ class Inflector
      * @param string|false $value Inflected value
      * @return string|false Inflected value on cache hit or false on cache miss.
      */
-    protected static function _cache($type, $key, $value = false)
+    protected static function _cache(string $type, string $key, $value = false)
     {
         $key = '_' . $key;
         $type = '_' . $type;
@@ -442,7 +443,7 @@ class Inflector
      *
      * @return void
      */
-    public static function reset()
+    public static function reset(): void
     {
         if (empty(static::$_initialState)) {
             static::$_initialState = get_class_vars(self::class);
@@ -476,7 +477,7 @@ class Inflector
      *        new rules that are being defined in $rules.
      * @return void
      */
-    public static function rules(string $type, array $rules, bool $reset = false)
+    public static function rules(string $type, array $rules, bool $reset = false): void
     {
         $var = '_' . $type;
 
@@ -557,8 +558,9 @@ class Inflector
         }
 
         if (preg_match('/(.*?(?:\\b|_))(' . static::$_cache['irregular']['singular'] . ')$/i', $word, $regs)) {
-            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) .
-                substr(array_search(strtolower($regs[2]), static::$_irregular, true), 1);
+            $suffix = array_search(strtolower($regs[2]), static::$_irregular, true);
+            $suffix = $suffix ? substr($suffix, 1) : '';
+            static::$_cache['singularize'][$word] = $regs[1] . substr($regs[2], 0, 1) . $suffix;
 
             return static::$_cache['singularize'][$word];
         }

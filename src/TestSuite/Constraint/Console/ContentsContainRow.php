@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -54,6 +55,6 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function failureDescription($other): string
     {
-        return $this->exporter->shortenedExport($other) . ' ' . $this->toString();
+        return $this->exporter()->shortenedExport($other) . ' ' . $this->toString();
     }
 }

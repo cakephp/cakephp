@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,7 @@ class HelpCommandTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace();
@@ -52,7 +53,7 @@ class HelpCommandTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -120,7 +121,8 @@ class HelpCommandTest extends TestCase
         $find = '<shell name="sample" call_as="sample" provider="TestApp\Shell\SampleShell" help="sample -h"';
         $this->assertOutputContains($find);
 
-        $find = '<shell name="schema_cache" call_as="schema_cache" provider="Cake\Shell\SchemaCacheShell" help="schema_cache -h"';
+        $find = '<shell name="schema_cache build" call_as="schema_cache build" ' .
+            'provider="Cake\Command\SchemacacheBuildCommand" help="schema_cache build -h"';
         $this->assertOutputContains($find);
 
         $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Shell\SampleShell" help="test_plugin.sample -h"';

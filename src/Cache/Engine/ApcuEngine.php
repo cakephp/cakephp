@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -59,7 +60,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True on success and false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
@@ -91,7 +92,7 @@ class ApcuEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to increment
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
     public function increment(string $key, int $offset = 1)
@@ -106,7 +107,7 @@ class ApcuEngine extends CacheEngine
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New decremented value, false otherwise
+     * @return int|false New decremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-dec.php
      */
     public function decrement(string $key, int $offset = 1)
@@ -123,7 +124,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         $key = $this->_key($key);
 
@@ -138,7 +139,7 @@ class ApcuEngine extends CacheEngine
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
-    public function clear()
+    public function clear(): bool
     {
         if (class_exists('APCuIterator', false)) {
             $iterator = new APCuIterator(

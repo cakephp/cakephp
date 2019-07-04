@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,11 +20,13 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\IdentifierQuoter;
+use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -49,7 +52,7 @@ class HasManyTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace('TestApp');
@@ -96,7 +99,7 @@ class HasManyTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -112,9 +115,9 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author,
         ]);
-        $this->assertEquals('author_id', $assoc->getForeignKey());
+        $this->assertSame('author_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->getForeignKey());
+        $this->assertSame('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -128,7 +131,7 @@ class HasManyTest extends TestCase
         $assoc = new HasMany('Articles', [
             'sourceTable' => $this->author,
         ]);
-        $this->assertEquals('author_id', $assoc->getForeignKey());
+        $this->assertSame('author_id', $assoc->getForeignKey());
     }
 
     /**
@@ -414,24 +417,29 @@ class HasManyTest extends TestCase
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMockBuilder('Cake\ORM\Query')
-            ->setMethods(['all', 'andWhere'])
-            ->disableOriginalConstructor()
+            ->setMethods(['all', 'andWhere', 'getRepository'])
+            ->setConstructorArgs([ConnectionManager::get('test'), $this->article])
             ->getMock();
+        $query->method('getRepository')
+            ->will($this->returnValue($this->article));
         $this->article->method('find')
             ->with('all')
             ->will($this->returnValue($query));
 
-        $results = [
+        $stmt = $this->getMockBuilder(StatementInterface::class)->getMock();
+        $results = new ResultSet($query, $stmt);
+
+        $results->unserialize(serialize([
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
-        ];
+        ]));
         $query->method('all')
             ->will($this->returnValue($results));
 
         $tuple = new TupleComparison(
             ['Articles.author_id', 'Articles.site_id'],
             $keys,
-            [],
+            ['integer'],
             'IN'
         );
         $query->expects($this->once())->method('andWhere')
@@ -534,7 +542,7 @@ class HasManyTest extends TestCase
         $this->assertTrue($association->cascadeDelete($author));
 
         $query = $articles->query()->where(['author_id' => 1]);
-        $this->assertEquals(0, $query->count(), 'Cleared related rows');
+        $this->assertSame(0, $query->count(), 'Cleared related rows');
 
         $query = $articles->query()->where(['author_id' => 3]);
         $this->assertEquals(1, $query->count(), 'other records left behind');
@@ -581,7 +589,7 @@ class HasManyTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new HasMany('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->getProperty());
+        $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -599,7 +607,7 @@ class HasManyTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
-        $this->assertEquals('addresses', $association->getProperty());
+        $this->assertSame('addresses', $association->getProperty());
     }
 
     /**

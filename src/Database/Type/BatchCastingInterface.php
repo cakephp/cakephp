@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 
 /**
  * Denotes type objects capable of converting many values from their original
@@ -29,8 +30,8 @@ interface BatchCastingInterface
      *
      * @param array $values The original array of values containing the fields to be casted
      * @param array $fields The field keys to cast
-     * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted.
+     * @param \Cake\Database\DriverInterface $driver Object from which database preferences and configuration will be extracted.
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver): array;
+    public function manyToPHP(array $values, array $fields, DriverInterface $driver): array;
 }

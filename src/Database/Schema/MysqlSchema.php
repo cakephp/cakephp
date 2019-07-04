@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -308,6 +309,7 @@ class MysqlSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $nativeJson = $this->_driver->supportsNativeJson();

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,9 +16,9 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\Exception as CakeException;
+use Cake\Database\ConstraintsInterface;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaAwareInterface;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FixtureInterface;
@@ -30,7 +31,7 @@ use Exception;
  * Cake TestFixture is responsible for building and destroying tables to be used
  * during testing.
  */
-class TestFixture implements FixtureInterface, TableSchemaAwareInterface
+class TestFixture implements ConstraintsInterface, FixtureInterface, TableSchemaAwareInterface
 {
     use LocatorAwareTrait;
 
@@ -45,6 +46,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * Full Table Name
      *
      * @var string
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     public $table;
 
@@ -81,6 +83,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
      * The schema for this fixture.
      *
      * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
+     * @psalm-suppress PropertyNotSetInConstructor
      */
     protected $_schema;
 
@@ -104,7 +107,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
                 $message = sprintf(
                     'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
                     $connection,
-                    $this->table
+                    static::class
                 );
                 throw new CakeException($message);
             }
@@ -331,7 +334,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
             [$fields, $values, $types] = $this->_getRecords();
             $query = $db->newQuery()
                 ->insert($fields, $types)
-                ->into($this->table);
+                ->into($this->sourceName());
 
             foreach ($values as $row) {
                 $query->values($row);
@@ -411,7 +414,9 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
         }
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
-            $types[$field] = $this->_schema->getColumn($field)['type'];
+            /** @var array $column */
+            $column = $this->_schema->getColumn($field);
+            $types[$field] = $column['type'];
         }
         $default = array_fill_keys($fields, null);
         foreach ($this->records as $record) {
@@ -437,7 +442,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * @inheritDoc
      */
-    public function getTableSchema(): TableSchemaInterface
+    public function getTableSchema()
     {
         return $this->_schema;
     }
@@ -445,7 +450,7 @@ class TestFixture implements FixtureInterface, TableSchemaAwareInterface
     /**
      * @inheritDoc
      */
-    public function setTableSchema(TableSchemaInterface $schema)
+    public function setTableSchema($schema)
     {
         $this->_schema = $schema;
 

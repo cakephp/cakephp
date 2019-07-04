@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,7 +42,7 @@ class CellTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -56,7 +57,7 @@ class CellTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -73,11 +74,11 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles::teaserList');
         $render = "{$cell}";
 
-        $this->assertEquals('teaser_list', $cell->viewBuilder()->getTemplate());
-        $this->assertContains('<h2>Lorem ipsum</h2>', $render);
-        $this->assertContains('<h2>Usectetur adipiscing eli</h2>', $render);
-        $this->assertContains('<h2>Topis semper blandit eu non</h2>', $render);
-        $this->assertContains('<h2>Suspendisse gravida neque</h2>', $render);
+        $this->assertSame('teaser_list', $cell->viewBuilder()->getTemplate());
+        $this->assertStringContainsString('<h2>Lorem ipsum</h2>', $render);
+        $this->assertStringContainsString('<h2>Usectetur adipiscing eli</h2>', $render);
+        $this->assertStringContainsString('<h2>Topis semper blandit eu non</h2>', $render);
+        $this->assertStringContainsString('<h2>Suspendisse gravida neque</h2>', $render);
 
         $cell = $this->View->cell('Cello');
         $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
@@ -95,7 +96,7 @@ class CellTest extends TestCase
         $data = $cell->__debugInfo();
         $this->assertArrayHasKey('request', $data);
         $this->assertArrayHasKey('response', $data);
-        $this->assertEquals('teaserList', $data['action']);
+        $this->assertSame('teaserList', $data['action']);
         $this->assertEquals([], $data['args']);
     }
 
@@ -109,7 +110,7 @@ class CellTest extends TestCase
         $capture = function ($errno, $msg) {
             restore_error_handler();
             $this->assertEquals(E_USER_WARNING, $errno);
-            $this->assertContains('Could not render cell - Cell template file', $msg);
+            $this->assertStringContainsString('Could not render cell - Cell template file', $msg);
         };
         set_error_handler($capture);
 
@@ -130,7 +131,7 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
         $render = "{$cell}";
-        $this->assertContains('dummy message', $render);
+        $this->assertStringContainsString('dummy message', $render);
     }
 
     /**
@@ -142,12 +143,12 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles');
 
-        $this->assertEquals('display', $appCell->viewBuilder()->getTemplate());
-        $this->assertContains('dummy', "{$appCell}");
+        $this->assertSame('display', $appCell->viewBuilder()->getTemplate());
+        $this->assertStringContainsString('dummy', "{$appCell}");
 
         $pluginCell = $this->View->cell('TestPlugin.Dummy');
-        $this->assertContains('dummy', "{$pluginCell}");
-        $this->assertEquals('display', $pluginCell->viewBuilder()->getTemplate());
+        $this->assertStringContainsString('dummy', "{$pluginCell}");
+        $this->assertSame('display', $pluginCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -159,8 +160,8 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles::customTemplatePath');
 
-        $this->assertContains('Articles subdir custom_template_path template', "{$appCell}");
-        $this->assertEquals('custom_template_path', $appCell->viewBuilder()->getTemplate());
+        $this->assertStringContainsString('Articles subdir custom_template_path template', "{$appCell}");
+        $this->assertSame('custom_template_path', $appCell->viewBuilder()->getTemplate());
         $this->assertEquals(Cell::TEMPLATE_FOLDER . '/Articles/Subdir', $appCell->viewBuilder()->getTemplatePath());
     }
 
@@ -173,8 +174,8 @@ class CellTest extends TestCase
     {
         $appCell = $this->View->cell('Articles::customTemplateViewBuilder');
 
-        $this->assertContains('This is the alternate template', "{$appCell}");
-        $this->assertEquals('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
+        $this->assertStringContainsString('This is the alternate template', "{$appCell}");
+        $this->assertSame('alternate_teaser_list', $appCell->viewBuilder()->getTemplate());
     }
 
     /**
@@ -185,10 +186,10 @@ class CellTest extends TestCase
     public function testCellManualRender()
     {
         $cell = $this->View->cell('Articles::doEcho', ['msg1' => 'dummy', 'msg2' => ' message']);
-        $this->assertContains('dummy message', $cell->render());
+        $this->assertStringContainsString('dummy message', $cell->render());
 
         $cell->teaserList();
-        $this->assertContains('<h2>Lorem ipsum</h2>', $cell->render('teaser_list'));
+        $this->assertStringContainsString('<h2>Lorem ipsum</h2>', $cell->render('teaser_list'));
     }
 
     /**
@@ -202,15 +203,15 @@ class CellTest extends TestCase
 
         $e = null;
         try {
-            $cell->render('derp');
+            $cell->render('fooBar');
         } catch (MissingCellTemplateException $e) {
         }
 
         $this->assertNotNull($e);
         $message = $e->getMessage();
-        $this->assertContains("Cell template file 'derp' could not be found.", $message);
-        $this->assertContains('The following paths', $message);
-        $this->assertContains(ROOT . DS . 'templates', $message);
+        $this->assertStringContainsString("Cell template file 'foo_bar.php' could not be found.", $message);
+        $this->assertStringContainsString('The following paths', $message);
+        $this->assertStringContainsString(ROOT . DS . 'templates', $message);
         $this->assertInstanceOf(MissingTemplateException::class, $e->getPrevious());
     }
 
@@ -225,7 +226,7 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles', ['msg' => 'hello world!']);
 
         $this->assertEquals($this->View->getTheme(), $cell->viewBuilder()->getTheme());
-        $this->assertContains('Themed cell content.', $cell->render());
+        $this->assertStringContainsString('Themed cell content.', $cell->render());
     }
 
     /**
@@ -236,14 +237,14 @@ class CellTest extends TestCase
     public function testCellRenderPluginTemplate()
     {
         $cell = $this->View->cell('Articles');
-        $this->assertContains(
+        $this->assertStringContainsString(
             'TestPlugin Articles/display',
             $cell->render('TestPlugin.display')
         );
 
         $cell = $this->View->cell('Articles');
         $cell->viewBuilder()->setPlugin('TestPlugin');
-        $this->assertContains(
+        $this->assertStringContainsString(
             'TestPlugin Articles/display',
             $cell->render('display')
         );
@@ -257,7 +258,7 @@ class CellTest extends TestCase
     public function testPluginCell()
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
-        $this->assertContains('hello world!', "{$cell}");
+        $this->assertStringContainsString('hello world!', "{$cell}");
     }
 
     /**
@@ -268,7 +269,7 @@ class CellTest extends TestCase
     public function testNamespacedCell()
     {
         $cell = $this->View->cell('Admin/Menu');
-        $this->assertContains('Admin Menu Cell', $cell->render());
+        $this->assertStringContainsString('Admin Menu Cell', $cell->render());
     }
 
     /**
@@ -279,7 +280,7 @@ class CellTest extends TestCase
     public function testPluginNamespacedCell()
     {
         $cell = $this->View->cell('TestPlugin.Admin/Menu');
-        $this->assertContains('Test Plugin Admin Menu Cell', $cell->render());
+        $this->assertStringContainsString('Test Plugin Admin Menu Cell', $cell->render());
     }
 
     /**
@@ -291,7 +292,7 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
         $cell->viewBuilder()->setTemplate('../../element/translate');
-        $this->assertContains('This is a translatable string', "{$cell}");
+        $this->assertStringContainsString('This is a translatable string', "{$cell}");
     }
 
     /**
@@ -303,7 +304,7 @@ class CellTest extends TestCase
     {
         $cell = $this->View->cell('TestPlugin.Dummy::echoThis', ['msg' => 'hello world!']);
         $result = $cell->render('../../element/translate');
-        $this->assertContains('This is a translatable string', $result);
+        $this->assertStringContainsString('This is a translatable string', $result);
     }
 
     /**
@@ -485,7 +486,7 @@ class CellTest extends TestCase
 
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render();
-        $this->assertContains('This is the alternate template', $result);
+        $this->assertStringContainsString('This is the alternate template', $result);
 
         Cache::drop('default');
     }
@@ -507,7 +508,7 @@ class CellTest extends TestCase
         $this->assertEquals(1, $cell->counter);
         $cell->render();
         $this->assertEquals(1, $cell->counter);
-        $this->assertContains('This is the alternate template', $result);
+        $this->assertStringContainsString('This is the alternate template', $result);
         Cache::delete('celltest');
         Cache::drop('default');
     }
@@ -527,8 +528,8 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles::customTemplateViewBuilder', [], ['cache' => true]);
         $result = $cell->render('alternate_teaser_list');
         $result2 = $cell->render('not_the_alternate_teaser_list');
-        $this->assertContains('This is the alternate template', $result);
-        $this->assertContains('This is NOT the alternate template', $result2);
+        $this->assertStringContainsString('This is the alternate template', $result);
+        $this->assertStringContainsString('This is NOT the alternate template', $result2);
         Cache::delete('celltest');
         Cache::drop('default');
     }

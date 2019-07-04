@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,13 +31,8 @@ class ConsoleLogTest extends TestCase
     {
         $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
 
-        if (DIRECTORY_SEPARATOR !== '\\') { //skip if test is on windows
-            $output->expects($this->at(0))
-                ->method('setOutputAs')
-                ->with($this->stringContains((string)ConsoleOutput::COLOR));
-        }
         $message = ' Error: oh noes</error>';
-        $output->expects($this->at(1))
+        $output->expects($this->at(0))
             ->method('write')
             ->with($this->stringContains($message));
 
@@ -60,31 +56,24 @@ class ConsoleLogTest extends TestCase
         $log->log('error', 'oh noes');
         $fh = fopen($filename, 'r');
         $line = fgets($fh);
-        $this->assertContains('Error: oh noes', $line);
+        $this->assertStringContainsString('Error: oh noes', $line);
     }
 
     /**
-     * test default value of stream 'outputAs'
+     * test value of stream 'outputAs'
      */
     public function testDefaultOutputAs()
     {
-        if ((DS === '\\' && !(bool)env('ANSICON') && env('ConEmuANSI') !== 'ON') ||
-            (function_exists('posix_isatty') && !posix_isatty(null))
-        ) {
-            $expected = ConsoleOutput::PLAIN;
-        } else {
-            $expected = ConsoleOutput::COLOR;
-        }
-        $output = $this->getMockBuilder('Cake\Console\ConsoleOutput')->getMock();
+        $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
 
         $output->expects($this->at(0))
             ->method('setOutputAs')
-            ->with($expected);
+            ->with(ConsoleOutput::RAW);
 
         $log = new ConsoleLog([
             'stream' => $output,
+            'outputAs' => ConsoleOutput::RAW,
         ]);
-        $config = $log->getConfig();
-        $this->assertEquals($expected, $config['outputAs']);
+        $this->assertEquals(ConsoleOutput::RAW, $log->getConfig('outputAs'));
     }
 }

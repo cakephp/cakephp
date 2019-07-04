@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,15 +23,16 @@ use Cake\Utility\Xml;
 /**
  * A view class that is used for creating XML responses.
  *
- * By setting the '_serialize' key in your controller, you can specify a view variable
- * that should be serialized to XML and used as the response for the request.
+ * By setting the 'serialize' option in view builder of your controller, you can specify
+ * a view variable that should be serialized to XML and used as the response for the request.
  * This allows you to omit views + layouts, if your just need to emit a single view
  * variable as the XML response.
  *
  * In your controller, you could do the following:
  *
  * ```
- * $this->set(['posts' => $posts, '_serialize' => true]);
+ * $this->set(['posts' => $posts]);
+ * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
  * When the view is rendered, the `$posts` view variable will be serialized
@@ -38,22 +40,22 @@ use Cake\Utility\Xml;
  *
  * **Note** The view variable you specify must be compatible with Xml::fromArray().
  *
- * You can also define `'_serialize'` as an array. This will create an additional
+ * You can also set `'serialize'` as an array. This will create an additional
  * top level element named `<response>` containing all the named view variables:
  *
  * ```
  * $this->set(compact('posts', 'users', 'stuff'));
- * $this->set('_serialize', true);
+ * $this->viewBuilder()->setOption('serialize', true);
  * ```
  *
  * The above would generate a XML object that looks like:
  *
  * `<response><posts>...</posts><users>...</users></response>`
  *
- * You can also set `'_serialize'` to a string or array to serialize only the
+ * You can also set `'serialize'` to a string or array to serialize only the
  * specified view variables.
  *
- * If you don't use the `_serialize` key, you will need a view. You can use extended
+ * If you don't set the `serialize` option, you will need a view. You can use extended
  * views to provide layout like functionality.
  */
 class XmlView extends SerializedView
@@ -80,34 +82,48 @@ class XmlView extends SerializedView
     protected $_responseType = 'xml';
 
     /**
-     * List of special view vars.
+     * Option to allow setting an array of custom options for Xml::fromArray()
      *
-     * @var array
+     * For e.g. 'format' as 'attributes' instead of 'tags'.
+     *
+     * @var array|null
      */
-    protected $_specialVars = ['_serialize', '_rootNode', '_xmlOptions'];
+    protected $xmlOptions;
+
+    /**
+     * Default config options.
+     *
+     * Use ViewBuilder::setOption()/setOptions() in your controller to set these options.
+     *
+     * - `serialize`: Option to convert a set of view variables into a serialized response.
+     *   Its value can be a string for single variable name or array for multiple
+     *   names. If true all view variables will be serialized. If null or false
+     *   normal view template will be rendered.
+     * - `xmlOptions`: Option to allow setting an array of custom options for Xml::fromArray().
+     *   For e.g. 'format' as 'attributes' instead of 'tags'.
+     * - `rootNode`: Root node name. Defaults to "response".
+     *
+     * @var array{serialize:string|bool|null, xmlOptions: int|null, rootNode: string|null}
+     */
+    protected $_defaultConfig = [
+        'serialize' => null,
+        'xmlOptions' => null,
+        'rootNode' => null,
+    ];
 
     /**
      * Serialize view vars.
      *
-     * ### Special parameters
-     * `_xmlOptions` You can set an array of custom options for Xml::fromArray() this way, e.g.
-     *   'format' as 'attributes' instead of 'tags'.
-     *
-     * @param array|string|true $serialize The name(s) of the view variable(s) that need(s) to be serialized
-     * @return string The serialized data
+     * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
+     * @return string|false The serialized data
      */
-    protected function _serialize($serialize): string
+    protected function _serialize($serialize)
     {
-        $rootNode = $this->viewVars['_rootNode'] ?? 'response';
+        $rootNode = $this->getConfig('rootNode', 'response');
 
-        if ($serialize === true) {
-            $serialize = array_diff(
-                array_keys($this->viewVars),
-                $this->_specialVars
-            );
-
+        if (is_array($serialize)) {
             if (empty($serialize)) {
-                $serialize = null;
+                $serialize = '';
             } elseif (count($serialize) === 1) {
                 $serialize = current($serialize);
             }
@@ -130,10 +146,7 @@ class XmlView extends SerializedView
             }
         }
 
-        $options = [];
-        if (isset($this->viewVars['_xmlOptions'])) {
-            $options = $this->viewVars['_xmlOptions'];
-        }
+        $options = $this->getConfig('xmlOptions', []);
         if (Configure::read('debug')) {
             $options['pretty'] = true;
         }

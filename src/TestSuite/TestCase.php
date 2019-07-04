@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -43,6 +44,13 @@ abstract class TestCase extends BaseTestCase
      * @var \Cake\TestSuite\Fixture\FixtureManager|null
      */
     public $fixtureManager;
+
+    /**
+     * Fixtures used by this test case.
+     *
+     * @var string[]
+     */
+    public $fixtures = [];
 
     /**
      * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -134,7 +142,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -153,7 +161,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if ($this->_configure) {
@@ -405,7 +413,12 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
-        $this->assertContains($needle, $haystack, $message, $ignoreCase);
+
+        if ($ignoreCase) {
+            $this->assertStringContainsStringIgnoringCase($needle, $haystack, $message);
+        } else {
+            $this->assertStringContainsString($needle, $haystack, $message);
+        }
     }
 
     /**
@@ -426,7 +439,12 @@ abstract class TestCase extends BaseTestCase
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
-        $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
+
+        if ($ignoreCase) {
+            $this->assertStringNotContainsStringIgnoringCase($needle, $haystack, $message);
+        } else {
+            $this->assertStringNotContainsString($needle, $haystack, $message);
+        }
     }
 
     /**
@@ -587,6 +605,11 @@ abstract class TestCase extends BaseTestCase
                 continue;
             }
 
+            /**
+             * If 'attrs' is not present then the array is just a regular int-offset one
+             *
+             * @var array<int, string> $assertion
+             */
             [$description, $expressions, $itemNum] = $assertion;
             $expression = null;
             foreach ((array)$expressions as $expression) {
@@ -624,7 +647,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The HTML string to check.
      * @param bool $fullDebug Whether or not more verbose output should be used.
      * @param array|string $regex Full regexp from `assertHtml`
-     * @return string|bool
+     * @return string|false
      */
     protected function _assertAttributes(array $assertions, string $string, bool $fullDebug = false, $regex = '')
     {
@@ -740,11 +763,10 @@ abstract class TestCase extends BaseTestCase
      * @param array|null $methods The list of methods to mock
      * @param array $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
-     * @return \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
      */
     public function getMockForModel(string $alias, ?array $methods = [], array $options = [])
     {
-        /** @var \Cake\ORM\Table $className */
         $className = $this->_getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();
         $connection = ConnectionManager::get($connectionName);
@@ -755,7 +777,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
 
-        /** @var \Cake\ORM\Table|\PHPUnit_Framework_MockObject_MockObject $mock */
+        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $mock */
         $mock = $this->getMockBuilder($className)
             ->setMethods($methods)
             ->setConstructorArgs([$options])

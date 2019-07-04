@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -98,13 +99,13 @@ abstract class BaseAuthenticate implements EventListenerInterface
      * @param string $username The username/identifier.
      * @param string|null $password The password, if not provided password checking is skipped
      *   and result of find is returned.
-     * @return bool|array Either false on failure, or an array of user data.
+     * @return array|false Either false on failure, or an array of user data.
      */
     protected function _findUser(string $username, ?string $password = null)
     {
         $result = $this->_query($username)->first();
 
-        if (empty($result)) {
+        if ($result === null) {
             // Waste time hashing the password, to prevent
             // timing side-channels. However, don't hash
             // null passwords as authentication systems

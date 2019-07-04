@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -22,6 +23,7 @@ use Cake\Controller\Exception\SecurityException;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\Utility\Hash;
@@ -90,7 +92,7 @@ class SecurityComponent extends Component
      * @param \Cake\Event\EventInterface $event An Event instance
      * @return \Cake\Http\Response|null
      */
-    public function startup(EventInterface $event)
+    public function startup(EventInterface $event): ?Response
     {
         /** @var \Cake\Controller\Controller $controller */
         $controller = $event->getSubject();
@@ -125,6 +127,8 @@ class SecurityComponent extends Component
             $request = $request->withoutData('_Token');
         }
         $controller->setRequest($request);
+
+        return null;
     }
 
     /**
@@ -142,7 +146,7 @@ class SecurityComponent extends Component
     /**
      * Sets the actions that require a request that is SSL-secured, or empty for all actions
      *
-     * @param string|array|null $actions Actions list
+     * @param string|string[]|null $actions Actions list
      * @return void
      */
     public function requireSecure($actions = null): void

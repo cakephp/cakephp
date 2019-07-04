@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -130,8 +131,8 @@ class FormTest extends TestCase
         $form->validate($data);
         $errors = $form->getErrors();
         $this->assertCount(2, $errors);
-        $this->assertEquals('Must be a valid email', $errors['email']['format']);
-        $this->assertEquals('Must be so long', $errors['body']['length']);
+        $this->assertSame('Must be a valid email', $errors['email']['format']);
+        $this->assertSame('Must be so long', $errors['body']['length']);
     }
 
     /**
@@ -206,7 +207,7 @@ class FormTest extends TestCase
         $form->setData(['title' => 'title', 'is_published' => true]);
 
         $this->assertSame($expected, $form->getData());
-        $this->assertEquals('title', $form->getData('title'));
+        $this->assertSame('title', $form->getData('title'));
         $this->assertNull($form->getData('non-existent'));
     }
 

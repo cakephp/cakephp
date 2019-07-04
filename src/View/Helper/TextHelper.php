@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ namespace Cake\View\Helper;
 use Cake\Core\App;
 use Cake\Core\Exception\Exception;
 use Cake\Utility\Security;
+use Cake\Utility\Text;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -45,7 +47,7 @@ class TextHelper extends Helper
      * @var array
      */
     protected $_defaultConfig = [
-        'engine' => 'Cake\Utility\Text',
+        'engine' => Text::class,
     ];
 
     /**
@@ -95,7 +97,7 @@ class TextHelper extends Helper
      * @param array $params Array of params for the method.
      * @return mixed Whatever is returned by called method, or false on failure
      */
-    public function __call($method, $params)
+    public function __call(string $method, array $params)
     {
         return call_user_func_array([$this->_engine, $method], $params);
     }

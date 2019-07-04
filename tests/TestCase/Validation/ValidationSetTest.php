@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * ValidationSetTest file
  *
@@ -153,13 +154,13 @@ class ValidationSetTest extends TestCase
         $i = 0;
         foreach ($set as $name => $rule) {
             if ($i === 0) {
-                $this->assertEquals('notBlank', $name);
+                $this->assertSame('notBlank', $name);
             }
             if ($i === 1) {
-                $this->assertEquals('numeric', $name);
+                $this->assertSame('numeric', $name);
             }
             if ($i === 2) {
-                $this->assertEquals('other', $name);
+                $this->assertSame('other', $name);
             }
             $this->assertInstanceOf('Cake\Validation\ValidationRule', $rule);
             $i++;

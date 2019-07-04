@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,6 +40,9 @@ use Cake\Utility\Hash;
  * @property \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
  * @property \Cake\Controller\Component\FlashComponent $Flash
  * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html
+ * @deprecated 4.0.0 Use the cakephp/authentication and cakephp/authorization plugins instead.
+ * @see https://github.com/cakephp/authentication
+ * @see https://github.com/cakephp/authorization
  */
 class AuthComponent extends Component implements EventDispatcherInterface
 {
@@ -196,7 +200,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
     /**
      * Controller actions for which user validation is not required.
      *
-     * @var array
+     * @var string[]
      * @see \Cake\Controller\Component\AuthComponent::allow()
      */
     public $allowedActions = [];
@@ -528,7 +532,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authorize');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new Exception(sprintf('Authorization adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authorize')) {
@@ -571,7 +575,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * $this->Auth->allow();
      * ```
      *
-     * @param string|array|null $actions Controller action name or array of actions
+     * @param string|string[]|null $actions Controller action name or array of actions
      * @return void
      * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-public
      */
@@ -601,7 +605,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      * ```
      * to remove all items from the allowed list
      *
-     * @param string|array|null $actions Controller action name or array of actions
+     * @param string|string[]|null $actions Controller action name or array of actions
      * @return void
      * @see \Cake\Controller\Component\AuthComponent::allow()
      * @link https://book.cakephp.org/3.0/en/controllers/components/authentication.html#making-actions-require-authorization
@@ -822,7 +826,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
                 $class = $alias;
             }
             $className = App::className($class, 'Auth', 'Authenticate');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new Exception(sprintf('Authentication adapter "%s" was not found.', $class));
             }
             if (!method_exists($className, 'authenticate')) {
@@ -843,7 +847,7 @@ class AuthComponent extends Component implements EventDispatcherInterface
      *   object as storage or if null returns configured storage object.
      * @return \Cake\Auth\Storage\StorageInterface|null
      */
-    public function storage(?StorageInterface $storage = null)
+    public function storage(?StorageInterface $storage = null): ?StorageInterface
     {
         if ($storage !== null) {
             $this->_storage = $storage;
@@ -864,14 +868,15 @@ class AuthComponent extends Component implements EventDispatcherInterface
             unset($config['className']);
         }
         $className = App::className($class, 'Auth/Storage', 'Storage');
-        if ($className === null || !class_exists($className)) {
+        if ($className === null) {
             throw new Exception(sprintf('Auth storage adapter "%s" was not found.', $class));
         }
         $request = $this->getController()->getRequest();
         $response = $this->getController()->getResponse();
-        $this->_storage = new $className($request, $response, $config);
+        /** @var \Cake\Auth\Storage\StorageInterface $storage */
+        $storage = new $className($request, $response, $config);
 
-        return $this->_storage;
+        return $this->_storage = $storage;
     }
 
     /**

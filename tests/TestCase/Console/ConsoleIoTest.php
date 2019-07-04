@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
+use Cake\Console\Exception\StopException;
 use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
@@ -30,7 +32,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -52,7 +54,7 @@ class ConsoleIoTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         if (is_dir(TMP . 'shell_test')) {
@@ -89,7 +91,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('y'));
 
         $result = $this->io->askChoice('Just a test?', $choices);
-        $this->assertEquals('y', $result);
+        $this->assertSame('y', $result);
     }
 
     /**
@@ -105,7 +107,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('Y'));
 
         $result = $this->io->askChoice('Just a test?', $choices);
-        $this->assertEquals('Y', $result);
+        $this->assertSame('Y', $result);
     }
 
     /**
@@ -124,7 +126,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue('y'));
 
         $result = $this->io->ask('Just a test?');
-        $this->assertEquals('y', $result);
+        $this->assertSame('y', $result);
     }
 
     /**
@@ -143,7 +145,7 @@ class ConsoleIoTest extends TestCase
             ->will($this->returnValue(''));
 
         $result = $this->io->ask('Just a test?', 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
     }
 
     /**
@@ -631,7 +633,6 @@ class ConsoleIoTest extends TestCase
     /**
      * Test that `q` raises an error.
      *
-     * @expectedException \Cake\Console\Exception\StopException
      * @return void
      */
     public function testCreateFileOverwriteQuit()
@@ -641,6 +642,8 @@ class ConsoleIoTest extends TestCase
 
         $file = $path . DS . 'file1.php';
         touch($file);
+
+        $this->expectException(StopException::class);
 
         $this->in->expects($this->once())
             ->method('read')

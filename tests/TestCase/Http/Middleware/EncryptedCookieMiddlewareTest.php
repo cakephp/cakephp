@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -41,7 +42,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     /**
      * Setup
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
@@ -130,8 +131,8 @@ class EncryptedCookieMiddlewareTest extends TestCase
                 ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
         });
         $response = $this->middleware->process($request, $handler);
-        $this->assertNotContains('ninja=shuriken', $response->getHeaderLine('Set-Cookie'));
-        $this->assertContains('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
+        $this->assertStringNotContainsString('ninja=shuriken', $response->getHeaderLine('Set-Cookie'));
+        $this->assertStringContainsString('plain=in%20clear', $response->getHeaderLine('Set-Cookie'));
 
         $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
         $this->assertTrue($cookies->has('ninja'));

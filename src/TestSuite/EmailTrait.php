@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite;
 
 use Cake\TestSuite\Constraint\Email\MailContains;
+use Cake\TestSuite\Constraint\Email\MailContainsAttachment;
 use Cake\TestSuite\Constraint\Email\MailContainsHtml;
 use Cake\TestSuite\Constraint\Email\MailContainsText;
 use Cake\TestSuite\Constraint\Email\MailCount;
@@ -39,7 +41,7 @@ trait EmailTrait
      * @before
      * @return void
      */
-    public function setupTransports()
+    public function setupTransports(): void
     {
         TestEmailTransport::replaceAllTransports();
     }
@@ -50,7 +52,7 @@ trait EmailTrait
      * @after
      * @return void
      */
-    public function cleanupEmailTrait()
+    public function cleanupEmailTrait(): void
     {
         TestEmailTransport::clearMessages();
     }
@@ -66,6 +68,7 @@ trait EmailTrait
     {
         $this->assertThat($count, new MailCount(), $message);
     }
+
     /**
      *
      * Asserts that no emails were sent
@@ -191,6 +194,19 @@ trait EmailTrait
     public function assertMailContains(string $contents, string $message = ''): void
     {
         $this->assertThat($contents, new MailContains(), $message);
+    }
+
+    /**
+     * Asserts an email contains expected attachment
+     *
+     * @param string $filename Filename
+     * @param array $file Additional file properties
+     * @param string $message Message
+     * @return void
+     */
+    public function assertMailContainsAttachment(string $filename, array $file = [], string $message = ''): void
+    {
+        $this->assertThat([$filename, $file], new MailContainsAttachment(), $message);
     }
 
     /**

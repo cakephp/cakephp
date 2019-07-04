@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class DriverTest extends TestCase
     /**
      * Setup.
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -47,10 +48,15 @@ class DriverTest extends TestCase
      */
     public function testConstructorException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Please pass "username" instead of "login" for connecting to the database');
         $arg = ['login' => 'Bear'];
-        $this->getMockForAbstractClass(Driver::class, [$arg]);
+        try {
+            $this->getMockForAbstractClass(Driver::class, [$arg]);
+        } catch (\Exception $e) {
+            $this->assertStringContainsString(
+                'Please pass "username" instead of "login" for connecting to the database',
+                $e->getMessage()
+            );
+        }
     }
 
     /**
@@ -243,7 +249,7 @@ class DriverTest extends TestCase
 
         $result = $driver->compileQuery($query, new ValueBinder());
 
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertSame($query, $result[0]);
         $this->assertSame('1', $result[1]);
     }

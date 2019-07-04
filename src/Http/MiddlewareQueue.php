@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -68,7 +69,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
     {
         if (is_string($middleware)) {
             $className = App::className($middleware, 'Middleware', 'Middleware');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new RuntimeException(sprintf(
                     'Middleware "%s" was not found.',
                     $middleware
@@ -236,7 +237,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \SeekableIterator::seek()
      */
-    public function seek($position)
+    public function seek($position): void
     {
         if (!isset($this->queue[$position])) {
             throw new OutOfBoundsException("Invalid seek position ($position)");
@@ -251,7 +252,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \Iterator::rewind()
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }
@@ -262,7 +263,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return \Psr\Http\Server\MiddlewareInterface|null
      * @see \Iterator::current()
      */
-    public function current()
+    public function current(): ?MiddlewareInterface
     {
         if (!isset($this->queue[$this->position])) {
             return null;
@@ -281,7 +282,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return int
      * @see \Iterator::key()
      */
-    public function key()
+    public function key(): int
     {
         return $this->position;
     }
@@ -292,7 +293,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \Iterator::next()
      */
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
@@ -303,7 +304,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return bool
      * @see \Iterator::valid()
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->queue[$this->position]);
     }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -90,7 +91,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return void
      * @throws \Cake\Cache\InvalidArgumentException When the key is not valid.
      */
-    protected function ensureValidKey($key)
+    protected function ensureValidKey($key): void
     {
         if (!is_string($key) || strlen($key) === 0) {
             throw new InvalidArgumentException('A cache key must be a non-empty string.');
@@ -105,7 +106,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return void
      * @throws \Cake\Cache\InvalidArgumentException
      */
-    protected function ensureValidType($iterable, string $check = self::CHECK_VALUE)
+    protected function ensureValidType($iterable, string $check = self::CHECK_VALUE): void
     {
         if (!is_iterable($iterable)) {
             throw new InvalidArgumentException(sprintf(
@@ -128,11 +129,11 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param iterable $keys A list of keys that can obtained in a single operation.
      * @param mixed $default Default value to return for keys that do not exist.
-     * @return array A list of key value pairs. Cache keys that do not exist or are stale will have $default as value.
+     * @return iterable A list of key value pairs. Cache keys that do not exist or are stale will have $default as value.
      * @throws \Cake\Cache\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
-    public function getMultiple($keys, $default = null): array
+    public function getMultiple($keys, $default = null): iterable
     {
         $this->ensureValidType($keys);
 
@@ -216,7 +217,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return bool
      * @throws \Cake\Cache\InvalidArgumentException If the $key string is not a legal value.
      */
-    public function has($key)
+    public function has($key): bool
     {
         return $this->get($key) !== null;
     }
@@ -243,14 +244,14 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\InvalidArgumentException
      *   MUST be thrown if the $key string is not a legal value.
      */
-    abstract public function set($key, $value, $ttl = null);
+    abstract public function set($key, $value, $ttl = null): bool;
 
     /**
      * Increment a number under the key and return incremented value
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to add
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     abstract public function increment(string $key, int $offset = 1);
 
@@ -259,7 +260,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @param string $key Identifier for the data
      * @param int $offset How much to subtract
-     * @return bool|int New incremented value, false otherwise
+     * @return int|false New incremented value, false otherwise
      */
     abstract public function decrement(string $key, int $offset = 1);
 
@@ -269,14 +270,14 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
-    abstract public function delete($key);
+    abstract public function delete($key): bool;
 
     /**
      * Delete all keys from the cache
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
-    abstract public function clear();
+    abstract public function clear(): bool;
 
     /**
      * Add a key to the cache if it does not already exist.
@@ -333,7 +334,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return string Prefixed key with potentially unsafe characters replaced.
      * @throws \Cake\Cache\InvalidArgumentException If key's value is invalid.
      */
-    protected function _key($key)
+    protected function _key($key): string
     {
         $this->ensureValidKey($key);
 

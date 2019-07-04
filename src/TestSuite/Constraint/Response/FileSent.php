@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -21,6 +22,11 @@ namespace Cake\TestSuite\Constraint\Response;
  */
 class FileSent extends ResponseBase
 {
+    /**
+     * @var \Cake\Http\Response
+     */
+    protected $response;
+
     /**
      * Checks assertion
      *

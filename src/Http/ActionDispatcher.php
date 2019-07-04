@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,7 +18,6 @@ namespace Cake\Http;
 
 use Cake\Controller\Controller;
 use Cake\Routing\Router;
-use LogicException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -46,10 +46,10 @@ class ActionDispatcher
      * Dispatches a Request & Response
      *
      * @param \Cake\Http\ServerRequest $request The request to dispatch.
-     * @param \Psr\Http\Message\ResponseInterface $response The response to dispatch.
+     * @param \Cake\Http\Response $response The response to dispatch.
      * @return \Psr\Http\Message\ResponseInterface A modified/replaced response.
      */
-    public function dispatch(ServerRequest $request, ?ResponseInterface $response = null): ResponseInterface
+    public function dispatch(ServerRequest $request, ?Response $response = null): ResponseInterface
     {
         if ($response === null) {
             $response = new Response();
@@ -68,7 +68,6 @@ class ActionDispatcher
      *
      * @param \Cake\Controller\Controller $controller The controller to invoke.
      * @return \Psr\Http\Message\ResponseInterface The response
-     * @throws \LogicException If the controller action returns a non-response value.
      */
     protected function _invoke(Controller $controller): ResponseInterface
     {
@@ -78,11 +77,7 @@ class ActionDispatcher
         }
 
         $response = $controller->invokeAction();
-        if ($response !== null && !($response instanceof ResponseInterface)) {
-            throw new LogicException('Controller actions can only return Cake\Http\Response or null.');
-        }
-
-        if (!$response && $controller->isAutoRenderEnabled()) {
+        if ($response === null && $controller->isAutoRenderEnabled()) {
             $controller->render();
         }
 
@@ -90,10 +85,7 @@ class ActionDispatcher
         if ($result instanceof ResponseInterface) {
             return $result;
         }
-        if (!$response) {
-            $response = $controller->getResponse();
-        }
 
-        return $response;
+        return $controller->getResponse();
     }
 }

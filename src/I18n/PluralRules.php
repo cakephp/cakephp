@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -118,7 +119,7 @@ class PluralRules
         'th' => 0,
         'ti' => 2,
         'tk' => 1,
-        'tr' => 0,
+        'tr' => 1,
         'uk' => 3,
         'ur' => 1,
         'vi' => 0,

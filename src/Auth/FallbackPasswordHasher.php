@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,7 +35,7 @@ class FallbackPasswordHasher extends AbstractPasswordHasher
     /**
      * Holds the list of password hasher objects that will be used
      *
-     * @var array
+     * @var \Cake\Auth\AbstractPasswordHasher[]
      */
     protected $_hashers = [];
 

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,7 @@ namespace Cake\View;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Core\Plugin;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -73,6 +75,9 @@ class View implements EventDispatcherInterface
         cell as public;
     }
     use EventDispatcherTrait;
+    use InstanceConfigTrait {
+        getConfig as private _getConfig;
+    }
     use LogTrait;
     use ViewVarsTrait;
 
@@ -216,23 +221,30 @@ class View implements EventDispatcherInterface
     ];
 
     /**
-     * Holds an array of paths.
+     * Default custom config options.
      *
      * @var array
+     */
+    protected $_defaultConfig = [];
+
+    /**
+     * Holds an array of paths.
+     *
+     * @var string[]
      */
     protected $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var array
+     * @var string[][]
      */
     protected $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
-     * @var array
+     * @var string[]
      */
     protected $_parents = [];
 
@@ -320,6 +332,11 @@ class View implements EventDispatcherInterface
                 $this->{$var} = $viewOptions[$var];
             }
         }
+        $this->setConfig(array_diff_key(
+            $viewOptions,
+            array_flip($this->_passedVars)
+        ));
+
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
         }
@@ -564,6 +581,39 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Get config value.
+     *
+     * Currently if config is not set it fallbacks to checking corresponding
+     * view var with underscore prefix. Using underscore prefixed special view
+     * vars is deprecated and this fallback will be removed in CakePHP 4.1.0.
+     *
+     * @param string|null $key The key to get or null for the whole config.
+     * @param mixed $default The return value when the key does not exist.
+     * @return mixed Config value being read.
+     * @psalm-suppress PossiblyNullArgument
+     */
+    public function getConfig(?string $key = null, $default = null)
+    {
+        $value = $this->_getConfig($key);
+
+        if ($value !== null) {
+            return $value;
+        }
+
+        if (isset($this->viewVars["_{$key}"])) {
+            deprecationWarning(sprintf(
+                'Setting special view var "_%s" is deprecated. Use ViewBuilder::setOption(\'%s\', $value) instead.',
+                $key,
+                $key
+            ));
+
+            return $this->viewVars["_{$key}"];
+        }
+
+        return $default;
+    }
+
+    /**
      * Renders a piece of PHP with provided parameters and returns HTML, XML, or any other string.
      *
      * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
@@ -702,6 +752,13 @@ class View implements EventDispatcherInterface
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
+            if (empty($this->layout)) {
+                throw new RuntimeException(
+                    'View::$layout must be a non-empty string.' .
+                    'To disable layout rendering use method View::disableAutoLayout() instead.'
+                );
+            }
+
             $this->Blocks->set('content', $this->renderLayout('', $this->layout));
         }
         if ($layout !== null) {
@@ -726,7 +783,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeLayout $this, [$layoutFileName]
      * @triggers View.afterLayout $this, [$layoutFileName]
      */
-    public function renderLayout(string $content, ?string $layout = null)
+    public function renderLayout(string $content, ?string $layout = null): string
     {
         $layoutFileName = $this->_getLayoutFileName($layout);
 
@@ -783,12 +840,18 @@ class View implements EventDispatcherInterface
      * @param mixed $value Value in case $name is a string (which then works as the key).
      *   Unused if $name is an associative array, otherwise serves as the values to $name's keys.
      * @return $this
+     * @throws \RuntimeException If the array combine operation failed.
      */
     public function set($name, $value = null)
     {
         if (is_array($name)) {
             if (is_array($value)) {
                 $data = array_combine($name, $value);
+                if ($data === false) {
+                    throw new RuntimeException(
+                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.'
+                    );
+                }
             } else {
                 $data = $name;
             }
@@ -803,7 +866,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return array An array containing the blocks.
+     * @return string[] An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks(): array
@@ -1011,7 +1074,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of the attribute to get.
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         $registry = $this->helpers();
         if (isset($registry->{$name})) {
@@ -1185,11 +1248,11 @@ class View implements EventDispatcherInterface
     /**
      * Sets the plugin name.
      *
-     * @param string $name Plugin name.
+     * @param string|null $name Plugin name.
      * @return $this
      * @since 3.7.0
      */
-    public function setPlugin(string $name)
+    public function setPlugin(?string $name)
     {
         $this->plugin = $name;
 
@@ -1221,6 +1284,7 @@ class View implements EventDispatcherInterface
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
      * @throws \Cake\View\Exception\MissingTemplateException when a template file could not be found.
+     * @throws \RuntimeException When template name not provided.
      */
     protected function _getTemplateFileName(?string $name = null): string
     {
@@ -1260,7 +1324,7 @@ class View implements EventDispatcherInterface
             }
         }
 
-        $name = $name . $this->_ext;
+        $name .= $this->_ext;
         $paths = $this->_paths($plugin);
         foreach ($paths as $path) {
             if (file_exists($path . $name)) {
@@ -1344,10 +1408,10 @@ class View implements EventDispatcherInterface
     protected function _getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
-            if ($this->layout === false) {
+            if (empty($this->layout)) {
                 throw new RuntimeException(
-                    'Setting View::$layout to false is no longer supported.' .
-                    ' Set View::$autoLayout to false instead.'
+                    'View::$layout must be a non-empty string.' .
+                    'To disable layout rendering use method View::disableAutoLayout() instead.'
                 );
             }
             $name = $this->layout;
@@ -1360,7 +1424,7 @@ class View implements EventDispatcherInterface
         [$plugin, $name] = $this->pluginSplit($name);
 
         $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
-        $name = $name . $this->_ext;
+        $name .= $this->_ext;
 
         foreach ($this->_paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
@@ -1441,7 +1505,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return array paths
+     * @return string[] paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {

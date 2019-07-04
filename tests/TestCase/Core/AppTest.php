@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,7 @@ class AppTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -64,6 +65,12 @@ class AppTest extends TestCase
         };
         $return = TestApp::classname($class, $type, $suffix);
         $this->assertSame($expected === false ? null : $expected, $return);
+    }
+
+    public function testClassnameWithFqcn()
+    {
+        $this->assertSame(TestCase::class, App::className(TestCase::class));
+        $this->assertNull(App::className('\Foo'));
     }
 
     /**

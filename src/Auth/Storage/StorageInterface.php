@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,8 @@ namespace Cake\Auth\Storage;
 /**
  * Describes the methods that any class representing an Auth data storage should
  * comply with.
+ *
+ * @mixin \Cake\Core\InstanceConfigTrait
  */
 interface StorageInterface
 {

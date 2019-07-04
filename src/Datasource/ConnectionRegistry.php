@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,15 +32,11 @@ class ConnectionRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param string|object $class Partial classname to resolve.
-     * @return string|null|object Either the correct class name or null.
+     * @param string $class Partial classname to resolve.
+     * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
-        if (is_object($class)) {
-            return $class;
-        }
-
         return App::className($class, 'Datasource');
     }
 
@@ -74,7 +71,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param array $settings An array of settings to use for the datasource.
      * @return object A connection with the correct settings.
      */
-    protected function _create($class, string $alias, array $settings)
+    protected function _create($class, string $alias, array $settings): object
     {
         if (is_callable($class)) {
             return $class($alias);

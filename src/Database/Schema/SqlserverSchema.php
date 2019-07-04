@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -342,6 +343,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function columnSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getColumn($name);
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
@@ -506,6 +508,7 @@ class SqlserverSchema extends BaseSchema
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
+        /** @var array $data */
         $data = $schema->getConstraint($name);
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {

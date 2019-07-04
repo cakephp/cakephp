@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -61,7 +62,7 @@ class HtmlHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -88,7 +89,7 @@ class HtmlHelperTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -577,7 +578,7 @@ class HtmlHelperTest extends TestCase
     public function testStyle()
     {
         $result = $this->Html->style(['display' => 'none', 'margin' => '10px']);
-        $this->assertEquals('display:none; margin:10px;', $result);
+        $this->assertSame('display:none; margin:10px;', $result);
 
         $result = $this->Html->style(['display' => 'none', 'margin' => '10px'], false);
         $this->assertEquals("display:none;\nmargin:10px;", $result);
@@ -679,7 +680,7 @@ class HtmlHelperTest extends TestCase
 
         // Default is once=true
         $result = $this->Html->css('screen');
-        $this->assertEquals('', $result);
+        $this->assertNull($result);
 
         $result = $this->Html->css('screen', ['once' => false]);
         $expected = [

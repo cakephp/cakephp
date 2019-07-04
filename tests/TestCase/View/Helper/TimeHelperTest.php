@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,7 +42,7 @@ class TimeHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -55,7 +56,7 @@ class TimeHelperTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Time::setDefaultLocale('en_US');
@@ -523,8 +524,8 @@ class TimeHelperTest extends TestCase
         Time::setDefaultLocale('fr_FR');
         $time = new \Cake\I18n\FrozenTime('Thu Jan 14 13:59:28 2010');
         $result = $this->Time->format($time, \IntlDateFormatter::FULL);
-        $this->assertContains('jeudi 14 janvier 2010', $result);
-        $this->assertContains('13:59:28', $result);
+        $this->assertStringContainsString('jeudi 14 janvier 2010', $result);
+        $this->assertStringContainsString('13:59:28', $result);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -157,6 +158,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         );
         $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
 
+        /** @var \Cake\ORM\Behavior\Translate\TranslateStrategyInterface */
         return new $className($this->_table, $config);
     }
 

@@ -1,5 +1,5 @@
 parameters:
-    level: 4
+    level: 5
     autoload_files:
         - tests/bootstrap.php
     ignoreErrors:
@@ -19,16 +19,20 @@ parameters:
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::getConfig\(\)#'
         - '#Call to an undefined method Cake\\Auth\\Storage\\StorageInterface::setConfig\(\)#'
         - '#Variable \$_SESSION in isset\(\) always exists and is not nullable#'
-        - '#Access to an undefined static property Cake\\Mailer\\Email::\$_dsnClassMap#'
         - '#PHPDoc tag @throws with type PHPUnit\\Exception|Throwable is not subtype of Throwable#'
-        - '#Binary operation "\+" between array|false and array results in an error#'
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::dateAgoInWords\(\)#'
         - '#Call to an undefined method Cake\\Chronos\\DifferenceFormatterInterface::timeAgoInWords\(\)#'
         - '#Return type \(void\) of method Cake\\Shell\\[A-Za-z]+Shell::main\(\) should be compatible with return type \(bool|int|null\) of method Cake\\Console\\Shell::main\(\)#'
-        - '#Property Cake\\TestSuite\\Fixture\\TestFixture::\$_schema \(Cake\\Database\\Schema\\SqlGeneratorInterface&Cake\\Database\\Schema\\TableSchemaInterface\) does not accept Cake\\Database\\Schema\\TableSchemaInterface#'
         - '#Return type \(null\) of method Cake\\Collection\\Iterator\\NoChildrenIterator::getChildren\(\) should be compatible with return type \(RecursiveIterator\) of method RecursiveIterator::getChildren\(\)#'
         - '#Call to an undefined method DateTimeInterface::setTimezone\(\)#'
-        - '#Call to an undefined method Cake\\Datasource\\QueryInterface::eagerLoaded\(\)#'
+        - '#Parameter \#1 \$filename of function fopen expects string, resource given.#'
+        - '#Parameter \#1 \$it of method AppendIterator::append\(\) expects Iterator, Traversable given.#'
+        - '#Parameter \#1 \$it of class .+Iterator constructor expects Iterator, Traversable given.#'
+        - '#Parameter \#1 \$assoc of method Cake\\ORM\\Marshaller::_belongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
+        - '#Parameter \#2 \$assoc of method Cake\\ORM\\Marshaller::_mergeBelongsToMany\(\) expects .+BelongsToMany, Cake\\ORM\\Association given.#'
+        - '#Parameter \#1 \$table of method Cake\\ORM\\Query::addDefaultTypes\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
+        - '#Parameter \#1 \$table of method Cake\\ORM\\Query::_addAssociationsToTypeMap\(\) expects Cake\\ORM\\Table, .+RepositoryInterface given.#'
+        - '#Property Cake\\Controller\\Controller::\$response \(Cake\\Http\\Response\) does not accept Psr\\Http\\Message\\ResponseInterface#'
         -
             message: '#Right side of && is always false#'
             path: 'src/Cache/Engine/MemcachedEngine.php'
@@ -45,14 +49,17 @@ parameters:
             message: '#Result of && is always false#'
             path: 'src/Datasource/QueryCacher.php'
         -
-            message: '#Strict comparison using === between IntlDateFormatter and false will always evaluate to false#'
-            path: 'src/I18n/DateFormatTrait.php'
-        -
             message: '#Result of && is always false#'
             path: 'src/Routing/Route/EntityRoute.php'
         -
+            message: '#Call to an undefined method Cake\\ORM\\Association::junction\(\).#'
+            path: 'src/View/Form/EntityContext.php'
+        -
+            message: '#Parameter \#1 \$var_array of function extract is passed by reference, so it expects variables only#'
+            path: 'src/Command/I18nExtractCommand.php'
+        -
             message: '#Result of || is always true#'
-            path: 'src/Shell/Task/ExtractTask.php'
+            path: 'src/Command/I18nExtractCommand.php'
         -
             message: '#Result of || is always true#'
             path: 'src/Utility/Hash.php'
@@ -63,8 +70,11 @@ parameters:
             message: '#Method Cake\\Utility\\Security::engine\(\) should return Cake\\Utility\\Crypto\\OpenSsl but returns object#'
             path: 'src/Utility/Security.php'
         -
-            message: '#Strict comparison using === between string and false will always evaluate to false#'
-            path: 'src/View/View.php'
+            message: '#Method Cake\\Http\\Middleware\\CspMiddleware::process\(\) should return Psr\\Http\\Message\\ResponseInterface but returns Psr\\Http\\Message\\MessageInterface#'
+            path: 'src/Http/Middleware/CspMiddleware.php'
+        -
+            message: '#Parameter \#1 \$connection of method Cake\\Database\\Schema\\SqlGeneratorInterface::(create|drop|truncate)Sql\(\) expects Cake\\Database\\Connection, Cake\\Datasource\\ConnectionInterface given#'
+            path: 'src/TestSuite/Fixture/TestFixture.php'
     earlyTerminatingMethodCalls:
         Cake\Console\Shell:
             - abort

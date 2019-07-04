@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -134,7 +135,7 @@ class SelectWithPivotLoader extends SelectLoader
      * which the filter should be applied
      *
      * @param array $options the options to use for getting the link field.
-     * @return array|string
+     * @return string|string[]
      */
     protected function _linkField(array $options)
     {

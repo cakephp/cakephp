@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -177,9 +178,9 @@ class ConsoleOutput
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to output.
+     * @return int The number of bytes returned from writing to output.
      */
-    public function write($message, int $newlines = 1)
+    public function write($message, int $newlines = 1): int
     {
         if (is_array($message)) {
             $message = implode(static::LF, $message);
@@ -246,11 +247,11 @@ class ConsoleOutput
      * Writes a message to the output stream.
      *
      * @param string $message Message to write.
-     * @return int|bool The number of bytes returned from writing to output.
+     * @return int The number of bytes returned from writing to output.
      */
-    protected function _write(string $message)
+    protected function _write(string $message): int
     {
-        return fwrite($this->_output, $message);
+        return (int)fwrite($this->_output, $message);
     }
 
     /**
@@ -286,12 +287,12 @@ class ConsoleOutput
      * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
      *   styles true will be returned.
      */
-    public function styles($style = null, $definition = null)
+    public function styles(?string $style = null, $definition = null)
     {
         if ($style === null && $definition === null) {
             return static::$_styles;
         }
-        if (is_string($style) && $definition === null) {
+        if ($definition === null) {
             return static::$_styles[$style] ?? null;
         }
         if ($definition === false) {

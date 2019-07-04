@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\BaseType;
@@ -13,7 +14,7 @@ use Cake\Database\Type\ExpressionTypeInterface;
  */
 class OrderedUuidType extends BaseType implements ExpressionTypeInterface
 {
-    public function toPHP($value, Driver $d)
+    public function toPHP($value, DriverInterface $d)
     {
         return new UuidValue($value);
     }
@@ -42,7 +43,7 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
         return $value;
     }
 
-    public function toDatabase($value, Driver $d)
+    public function toDatabase($value, DriverInterface $d)
     {
         return $value;
     }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -29,7 +30,7 @@ interface PaginatorInterface
      * @param array $settings The settings/configuration used for pagination.
      * @return \Cake\Datasource\ResultSetInterface Query results
      */
-    public function paginate($object, array $params = [], array $settings = []);
+    public function paginate(object $object, array $params = [], array $settings = []): ResultSetInterface;
 
     /**
      * Get paging params after pagination operation.

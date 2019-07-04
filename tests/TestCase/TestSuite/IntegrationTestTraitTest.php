@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -50,7 +51,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -121,16 +122,16 @@ class IntegrationTestTraitTest extends TestCase
             'upload' => new UploadedFile(__FILE__, 42, 0),
         ];
         $request = $this->_buildRequest('/posts/add', 'POST', $data);
-        $this->assertInternalType('string', $request['post']['status']);
-        $this->assertInternalType('string', $request['post']['published']);
+        $this->assertIsString($request['post']['status']);
+        $this->assertIsString($request['post']['published']);
         $this->assertSame('0', $request['post']['not_published']);
-        $this->assertInternalType('string', $request['post']['comments'][0]['status']);
-        $this->assertInternalType('integer', $request['post']['file']['error']);
-        $this->assertInternalType('integer', $request['post']['file']['size']);
-        $this->assertInternalType('integer', $request['post']['pictures']['error'][0]['file']);
-        $this->assertInternalType('integer', $request['post']['pictures']['error'][1]['file']);
-        $this->assertInternalType('integer', $request['post']['pictures']['size'][0]['file']);
-        $this->assertInternalType('integer', $request['post']['pictures']['size'][1]['file']);
+        $this->assertIsString($request['post']['comments'][0]['status']);
+        $this->assertIsInt($request['post']['file']['error']);
+        $this->assertIsInt($request['post']['file']['size']);
+        $this->assertIsInt($request['post']['pictures']['error'][0]['file']);
+        $this->assertIsInt($request['post']['pictures']['error'][1]['file']);
+        $this->assertIsInt($request['post']['pictures']['size'][0]['file']);
+        $this->assertIsInt($request['post']['pictures']['size'][1]['file']);
         $this->assertInstanceOf(UploadedFile::class, $request['post']['upload']);
     }
 
@@ -155,17 +156,17 @@ class IntegrationTestTraitTest extends TestCase
             ],
         ]);
         $this->cookie('split_token', 'def345');
-        $this->session(['User' => ['id' => 1, 'username' => 'mark']]);
+        $this->session(['User' => ['id' => '1', 'username' => 'mark']]);
         $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
-        $this->assertEquals('abc123', $request['environment']['HTTP_X_CSRF_TOKEN']);
-        $this->assertEquals('application/json', $request['environment']['CONTENT_TYPE']);
-        $this->assertEquals('/tasks/add', $request['url']);
+        $this->assertSame('abc123', $request['environment']['HTTP_X_CSRF_TOKEN']);
+        $this->assertSame('application/json', $request['environment']['CONTENT_TYPE']);
+        $this->assertSame('/tasks/add', $request['url']);
         $this->assertArrayHasKey('split_token', $request['cookies']);
-        $this->assertEquals('def345', $request['cookies']['split_token']);
-        $this->assertEquals(['id' => '1', 'username' => 'mark'], $request['session']->read('User'));
-        $this->assertEquals('foo', $request['environment']['PHP_AUTH_USER']);
-        $this->assertEquals('bar', $request['environment']['PHP_AUTH_PW']);
+        $this->assertSame('def345', $request['cookies']['split_token']);
+        $this->assertSame(['id' => '1', 'username' => 'mark'], $request['session']->read('User'));
+        $this->assertSame('foo', $request['environment']['PHP_AUTH_USER']);
+        $this->assertSame('bar', $request['environment']['PHP_AUTH_PW']);
     }
 
     /**
@@ -280,14 +281,14 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testGetUsingApplicationWithDefaultRoutes()
     {
-        // first clean routes to have Router::$initailized === false
+        // first clean routes to have Router::$initialized === false
         Router::reload();
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', null);
 
         $this->get('/some_alias');
         $this->assertResponseOk();
-        $this->assertEquals('5', $this->_getBodyAsString());
+        $this->assertSame('5', $this->_getBodyAsString());
     }
 
     public function testExceptionsInMiddlewareJsonView()
@@ -321,8 +322,15 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertResponseSuccess();
+    }
 
-        $this->_response = null;
+    /**
+     * Test sending head requests.
+     *
+     * @return void
+     */
+    public function testHeadMethodRoute()
+    {
         $this->head('/head/request_action/test_request_action');
         $this->assertResponseSuccess();
     }
@@ -340,8 +348,15 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
         $this->assertResponseSuccess();
+    }
 
-        $this->_response = null;
+    /**
+     * Test sending options requests.
+     *
+     * @return void
+     */
+    public function testOptionsMethodRoute()
+    {
         $this->options('/options/request_action/test_request_action');
         $this->assertResponseSuccess();
     }
@@ -355,7 +370,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/get/request_action/test_request_action');
         $this->assertResponseOk();
-        $this->assertEquals('This is a test', $this->_response->getBody());
+        $this->assertSame('This is a test', (string)$this->_response->getBody());
     }
 
     /**
@@ -383,7 +398,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
         $this->assertInstanceOf('Cake\Http\Response', $this->_response);
-        $this->assertEquals('This is a test', $this->_response->getBody());
+        $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -402,7 +417,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertHeader('X-Middleware', 'true');
 
         $request = $this->_controller->getRequest();
-        $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
+        $this->assertStringContainsString('/request_action/params_pass?q=query', $request->getRequestTarget());
     }
 
     /**
@@ -420,8 +435,8 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertHeader('X-Middleware', 'true');
 
         $request = $this->_controller->getRequest();
-        $this->assertContains('/request_action/params_pass?q=query', $request->getRequestTarget());
-        $this->assertContains('/request_action/params_pass', $request->getAttribute('here'));
+        $this->assertStringContainsString('/request_action/params_pass?q=query', $request->getRequestTarget());
+        $this->assertStringContainsString('/request_action/params_pass', $request->getAttribute('here'));
     }
 
     /**
@@ -447,7 +462,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->post('/request_action/post_pass', ['title' => 'value']);
         $data = json_decode('' . $this->_response->getBody());
-        $this->assertEquals('value', $data->title);
+        $this->assertSame('value', $data->title);
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -496,7 +511,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertHeader('X-Middleware', 'true');
         $data = json_decode((string)$this->_response->getBody(), true);
 
-        $this->assertEquals([
+        $this->assertSame([
             'file' => 'Uploaded file',
             'pictures.0.file' => 'a-file.png',
             'pictures.1.file' => 'a-moose.png',
@@ -557,13 +572,13 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
-        $this->assertEquals('value', $this->viewVariable('test'));
+        $this->assertSame('value', $this->viewVariable('test'));
     }
 
     /**
@@ -576,13 +591,13 @@ class IntegrationTestTraitTest extends TestCase
         $this->post('/posts/index');
         $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertContains('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertContains('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
-        $this->assertEquals('value', $this->viewVariable('test'));
+        $this->assertSame('value', $this->viewVariable('test'));
     }
 
     /**
@@ -605,7 +620,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertTemplateAfterCellRender()
     {
         $this->get('/posts/get');
-        $this->assertContains('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
         $this->assertTemplate('get');
         $this->assertResponseContains('cellcontent');
     }
@@ -619,7 +634,25 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->post(['controller' => 'Posts', 'action' => 'index', '_method' => 'POST']);
         $this->assertResponseOk();
-        $this->assertEquals('value', $this->viewVariable('test'));
+        $this->assertSame('value', $this->viewVariable('test'));
+    }
+
+    /**
+     * Test array URL with host
+     *
+     * @return void
+     */
+    public function testArrayUrlWithHost()
+    {
+        $this->get([
+            'controller' => 'Posts',
+            'action' => 'hostData',
+            '_host' => 'app.example.org',
+            '_ssl' => true,
+        ]);
+        $this->assertResponseOk();
+        $this->assertResponseContains('"isSsl":true');
+        $this->assertResponseContains('"host":"app.example.org"');
     }
 
     /**
@@ -634,7 +667,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get(['controller' => 'Posts', 'action' => 'index']);
         $this->assertResponseOk();
-        $this->assertEquals('value', $this->viewVariable('test'));
+        $this->assertSame('value', $this->viewVariable('test'));
     }
 
     /**
@@ -994,7 +1027,7 @@ class IntegrationTestTraitTest extends TestCase
         $result = $test->run();
 
         $this->assertFalse($result->wasSuccessful());
-        $this->assertEquals(1, $result->failureCount());
+        $this->assertSame(1, $result->failureCount());
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -50,7 +51,7 @@ class TaskRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
         return App::className($class, 'Shell/Task', 'Task');
     }
@@ -86,6 +87,7 @@ class TaskRegistry extends ObjectRegistry
      */
     protected function _create($class, string $alias, array $settings): Shell
     {
+        /** @var \Cake\Console\Shell */
         return new $class($this->_Shell->getIo());
     }
 }

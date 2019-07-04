@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,7 @@ class StreamTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->stream = $this->getMockBuilder(Stream::class)
@@ -46,7 +47,7 @@ class StreamTest extends TestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         stream_wrapper_restore('http');
@@ -202,8 +203,8 @@ class StreamTest extends TestCase
             'User-Agent: CakePHP',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
-        $this->assertContains('a=my+value', $result['content']);
-        $this->assertContains('my+value', $result['content']);
+        $this->assertStringContainsString('a=my+value', $result['content']);
+        $this->assertStringContainsString('my+value', $result['content']);
     }
 
     /**
@@ -222,11 +223,11 @@ class StreamTest extends TestCase
 
         $this->stream->send($request, []);
         $result = $this->stream->contextOptions();
-        $this->assertContains("Content-Type: multipart/form-data", $result['header']);
-        $this->assertContains("Connection: close\r\n", $result['header']);
-        $this->assertContains("User-Agent: CakePHP", $result['header']);
-        $this->assertContains('name="upload"', $result['content']);
-        $this->assertContains('filename="VERSION.txt"', $result['content']);
+        $this->assertStringContainsString("Content-Type: multipart/form-data", $result['header']);
+        $this->assertStringContainsString("Connection: close\r\n", $result['header']);
+        $this->assertStringContainsString("User-Agent: CakePHP", $result['header']);
+        $this->assertStringContainsString('name="upload"', $result['content']);
+        $this->assertStringContainsString('filename="VERSION.txt"', $result['content']);
     }
 
     /**
@@ -340,26 +341,26 @@ class StreamTest extends TestCase
         /** @var \Cake\Http\Client\Response[] $responses */
         $responses = $this->stream->createResponses($headers, $content);
         $this->assertCount(3, $responses);
-        $this->assertEquals('close', $responses[0]->getHeaderLine('Connection'));
-        $this->assertEquals('', (string)$responses[0]->getBody());
-        $this->assertEquals('', (string)$responses[1]->getBody());
+        $this->assertSame('close', $responses[0]->getHeaderLine('Connection'));
+        $this->assertSame('', (string)$responses[0]->getBody());
+        $this->assertSame('', (string)$responses[1]->getBody());
         $this->assertEquals($content, (string)$responses[2]->getBody());
 
         $this->assertEquals(302, $responses[0]->getStatusCode());
         $this->assertEquals(302, $responses[1]->getStatusCode());
         $this->assertEquals(200, $responses[2]->getStatusCode());
 
-        $this->assertEquals('value', $responses[0]->getCookie('first'));
+        $this->assertSame('value', $responses[0]->getCookie('first'));
         $this->assertNull($responses[0]->getCookie('second'));
         $this->assertNull($responses[0]->getCookie('third'));
 
         $this->assertNull($responses[1]->getCookie('first'));
-        $this->assertEquals('val', $responses[1]->getCookie('second'));
+        $this->assertSame('val', $responses[1]->getCookie('second'));
         $this->assertNull($responses[1]->getCookie('third'));
 
         $this->assertNull($responses[2]->getCookie('first'));
         $this->assertNull($responses[2]->getCookie('second'));
-        $this->assertEquals('works', $responses[2]->getCookie('third'));
+        $this->assertSame('works', $responses[2]->getCookie('third'));
     }
 
     /**

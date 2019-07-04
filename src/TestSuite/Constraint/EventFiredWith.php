@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Cake\TestSuite\Constraint;
 
 use Cake\Event\EventInterface;
@@ -44,7 +45,6 @@ class EventFiredWith extends Constraint
      */
     public function __construct(EventManager $eventManager, string $dataKey, ?string $dataValue)
     {
-        parent::__construct();
         $this->_eventManager = $eventManager;
         $this->_dataKey = $dataKey;
         $this->_dataValue = $dataValue;
@@ -61,6 +61,7 @@ class EventFiredWith extends Constraint
      *
      * @param mixed $other Constraint check
      * @return bool
+     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function matches($other): bool
     {
@@ -72,7 +73,7 @@ class EventFiredWith extends Constraint
         }
 
         $eventGroup = collection($firedEvents)
-            ->groupBy(function (EventInterface $event) {
+            ->groupBy(function (EventInterface $event): string {
                 return $event->getName();
             })
             ->toArray();

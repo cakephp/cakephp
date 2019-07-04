@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * TestPluginController used by Dispatcher test to test plugin shortcut URLs.
  *

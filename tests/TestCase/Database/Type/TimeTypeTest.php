@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -46,7 +47,7 @@ class TimeTypeTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->type = new TimeType();
@@ -59,7 +60,7 @@ class TimeTypeTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale($this->locale);
@@ -75,16 +76,16 @@ class TimeTypeTest extends TestCase
         $this->assertNull($this->type->toPHP(null, $this->driver));
 
         $result = $this->type->toPHP('00:00:00', $this->driver);
-        $this->assertEquals('00', $result->format('s'));
+        $this->assertSame('00', $result->format('s'));
 
         $result = $this->type->toPHP('00:00:15', $this->driver);
-        $this->assertEquals('15', $result->format('s'));
+        $this->assertSame('15', $result->format('s'));
 
         $result = $this->type->toPHP('16:30:15', $this->driver);
         $this->assertInstanceOf(DateTimeImmutable::class, $result);
-        $this->assertEquals('16', $result->format('H'));
-        $this->assertEquals('30', $result->format('i'));
-        $this->assertEquals('15', $result->format('s'));
+        $this->assertSame('16', $result->format('H'));
+        $this->assertSame('30', $result->format('i'));
+        $this->assertSame('15', $result->format('s'));
     }
 
     /**
@@ -121,11 +122,11 @@ class TimeTypeTest extends TestCase
 
         $date = new Time('16:30:15');
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('16:30:15', $result);
+        $this->assertSame('16:30:15', $result);
 
         $date = new Time('2013-08-12 15:16:18');
         $result = $this->type->toDatabase($date, $this->driver);
-        $this->assertEquals('15:16:18', $result);
+        $this->assertSame('15:16:18', $result);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http;
 
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Utility\Inflector;
@@ -33,7 +35,7 @@ class ControllerFactory
      * @return \Cake\Controller\Controller
      * @throws \ReflectionException
      */
-    public function create(ServerRequest $request, Response $response)
+    public function create(ServerRequest $request, Response $response): Controller
     {
         $className = $this->getControllerClass($request);
         if (!$className) {

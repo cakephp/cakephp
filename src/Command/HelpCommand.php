@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
+use ArrayIterator;
 use Cake\Console\Arguments;
 use Cake\Console\Command;
 use Cake\Console\CommandCollection;
@@ -53,7 +55,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         if (!$args->getOption('xml')) {
             $io->out('<info>Current Paths:</info>', 2);
@@ -86,7 +88,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \ArrayIterator $commands The command collection to output.
      * @return void
      */
-    protected function asText($io, $commands): void
+    protected function asText(ConsoleIo $io, ArrayIterator $commands): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
@@ -102,7 +104,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
         $appNamespace = Configure::read('App.namespace');
         $plugins = Plugin::loaded();
         foreach ($invert as $class => $names) {
-            preg_match('/^(.+)\\\\(Command|Shell)/', $class, $matches);
+            preg_match('/^(.+)\\\\(Command|Shell)\\\\/', $class, $matches);
             // Probably not a useful class
             if (empty($matches)) {
                 continue;
@@ -141,7 +143,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param string[] $names Names
      * @return string
      */
-    protected function getShortestName(array $names)
+    protected function getShortestName(array $names): string
     {
         if (count($names) <= 1) {
             return array_shift($names);
@@ -161,7 +163,7 @@ class HelpCommand extends Command implements CommandCollectionAwareInterface
      * @param \ArrayIterator $commands The command collection to output
      * @return void
      */
-    protected function asXml($io, $commands): void
+    protected function asXml(ConsoleIo $io, ArrayIterator $commands): void
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {

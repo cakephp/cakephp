@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -271,12 +272,13 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
-     * @return array
+     * @return string[]
      */
     public static function configured(): array
     {
         return array_keys(static::$_engines);
     }
+
     /**
      * Remove a configured engine. This will unset the engine
      * and make any future attempts to use it cause an Exception.

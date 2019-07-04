@@ -14,13 +14,13 @@
  */
 $this->layout = 'dev_error';
 
-$this->assign('templateName', 'missing_connection.ctp');
+$this->assign('templateName', 'missing_connection.php');
 $this->assign('title', 'Missing Database Connection');
 
 
 $this->start('subheading'); ?>
 A Database connection using was missing or unable to connect.
-<br/>
+<br>
 <?php
 if (isset($reason)):
     echo sprintf('The database server returned this error: %s', h($reason));

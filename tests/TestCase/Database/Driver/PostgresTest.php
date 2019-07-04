@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -162,7 +163,7 @@ class PostgresTest extends TestCase
             ->values([1, 'foo']);
         $translator = $driver->queryTranslator('insert');
         $query = $translator($query);
-        $this->assertEquals('RETURNING *', $query->clause('epilog'));
+        $this->assertSame('RETURNING *', $query->clause('epilog'));
 
         $query = new Query($connection);
         $query->insert(['id', 'title'])
@@ -170,6 +171,6 @@ class PostgresTest extends TestCase
             ->values([1, 'foo'])
             ->epilog('FOO');
         $query = $translator($query);
-        $this->assertEquals('FOO', $query->clause('epilog'));
+        $this->assertSame('FOO', $query->clause('epilog'));
     }
 }

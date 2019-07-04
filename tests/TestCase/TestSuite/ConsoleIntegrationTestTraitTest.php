@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -14,8 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\TestSuite;
 
+use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Shell;
-use Cake\Core\Configure;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 use PHPUnit\Framework\AssertionFailedError;
 
@@ -26,11 +27,11 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
-        Configure::write('App.namespace', 'TestApp');
+        $this->setAppNamespace();
     }
 
     /**
@@ -45,6 +46,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
         $this->assertOutputContains('Current Paths');
+        $this->assertExitSuccess();
     }
 
     /**
@@ -54,9 +56,9 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExec()
     {
-        $this->exec('routes');
+        $this->exec('sample');
 
-        $this->assertOutputContains('Route name');
+        $this->assertOutputContains('SampleShell');
         $this->assertExitCode(Shell::CODE_SUCCESS);
     }
 
@@ -69,6 +71,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     {
         $this->exec('integration abort_shell');
         $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertExitError();
         $this->assertErrorContains('Shell aborted');
     }
 
@@ -92,6 +95,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testExecCoreCommand()
     {
+        $this->useCommandRunner();
         $this->exec('routes');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
@@ -141,6 +145,18 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
     }
 
     /**
+     * tests exec with fewer inputs than questions
+     *
+     * @return void
+     */
+    public function testExecWithMissingInput()
+    {
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('no more input');
+        $this->exec('integration bridge', ['cake']);
+    }
+
+    /**
      * tests exec with multiple inputs
      *
      * @return void
@@ -160,9 +176,9 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
      */
     public function testAssertOutputRegExp()
     {
-        $this->exec('routes');
+        $this->exec('sample');
 
-        $this->assertOutputRegExp('/^\+[\-\+]+\+$/m');
+        $this->assertOutputRegExp('/^[A-Z]+/mi');
     }
 
     /**
@@ -215,6 +231,7 @@ class ConsoleIntegrationTestTraitTest extends ConsoleIntegrationTestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage($message);
 
+        $this->useCommandRunner();
         $this->exec($command);
 
         call_user_func_array([$this, $assertion], $rest);

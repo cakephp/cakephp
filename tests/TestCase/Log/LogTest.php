@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) <https://book.cakephp.org/3.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -23,13 +24,13 @@ use Cake\TestSuite\TestCase;
  */
 class LogTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Log::reset();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Log::reset();
@@ -300,9 +301,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -348,9 +349,9 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'spam.log');
 
         $contents = file_get_contents(LOGS . 'spam.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
         $contents = file_get_contents(LOGS . 'eggs.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
 
         if (file_exists(LOGS . 'spam.log')) {
             unlink(LOGS . 'spam.log');
@@ -627,21 +628,21 @@ class LogTest extends TestCase
         $testMessage = 'critical message';
         Log::critical($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertContains('Critical: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Critical: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'error message';
         Log::error($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertContains('Error: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Error: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->_deleteLogs();
 
         $testMessage = 'warning message';
         Log::warning($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
-        $this->assertContains('Warning: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Warning: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'debug.log');
         $this->_deleteLogs();
 
@@ -662,7 +663,7 @@ class LogTest extends TestCase
         $testMessage = 'debug message';
         Log::debug($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
-        $this->assertContains('Debug: ' . $testMessage, $contents);
+        $this->assertStringContainsString('Debug: ' . $testMessage, $contents);
         $this->assertFileNotExists(LOGS . 'error.log');
         $this->_deleteLogs();
     }
@@ -690,7 +691,7 @@ class LogTest extends TestCase
     {
         $instance = new FileLog();
         Log::setConfig('default', function ($alias) use ($instance) {
-            $this->assertEquals('default', $alias);
+            $this->assertSame('default', $alias);
 
             return $instance;
         });

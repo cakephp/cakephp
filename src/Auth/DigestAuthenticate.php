@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -122,7 +123,7 @@ class DigestAuthenticate extends BasicAuthenticate
         $password = $user[$field];
         unset($user[$field]);
 
-        $hash = $this->generateResponseHash($digest, $password, $request->getEnv('ORIGINAL_REQUEST_METHOD'));
+        $hash = $this->generateResponseHash($digest, $password, (string)$request->getEnv('ORIGINAL_REQUEST_METHOD'));
         if (hash_equals($hash, $digest['response'])) {
             return $user;
         }

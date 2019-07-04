@@ -32,11 +32,11 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 $this->assign('title', 'Missing View');
-$this->assign('templateName', 'missing_view.ctp');
+$this->assign('templateName', 'missing_view.php');
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <em><?= h($pluginDot . $class) ?></em> could not be found.
     <?php if (!empty($plugin) && !Plugin::isLoaded($plugin)): ?>
     Make sure your plugin <em><?= h($plugin) ?></em> is in the <?= h($pluginPath) ?> directory and was loaded.
@@ -47,7 +47,7 @@ $this->start('subheading');
 
 <?php $this->start('file') ?>
 <p class="error">
-    <strong>Error: </strong>
+    <strong>Suggestion</strong>
     <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'View' . DIRECTORY_SEPARATOR . h($class) . '.php'); ?>
 </p>
 <?php

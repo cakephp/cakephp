@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class SessionStorage implements StorageInterface
      * Stores user record array if fetched from session or false if session
      * does not have user record.
      *
-     * @var \ArrayAccess|array|false
+     * @var \ArrayAccess|array|false|null
      */
     protected $_user;
 

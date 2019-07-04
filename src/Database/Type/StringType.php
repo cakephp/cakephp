@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use InvalidArgumentException;
 use PDO;
 
@@ -30,10 +31,10 @@ class StringType extends BaseType implements OptionalConvertInterface
      * Convert string data into the database format.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver): ?string
+    public function toDatabase($value, DriverInterface $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -57,10 +58,10 @@ class StringType extends BaseType implements OptionalConvertInterface
      * Convert string values to PHP strings.
      *
      * @param mixed $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toPHP($value, Driver $driver): ?string
+    public function toPHP($value, DriverInterface $driver): ?string
     {
         if ($value === null) {
             return null;
@@ -73,10 +74,10 @@ class StringType extends BaseType implements OptionalConvertInterface
      * Get the correct PDO binding type for string data.
      *
      * @param mixed $value The value being bound.
-     * @param \Cake\Database\Driver $driver The driver.
+     * @param \Cake\Database\DriverInterface $driver The driver.
      * @return int
      */
-    public function toStatement($value, Driver $driver): int
+    public function toStatement($value, DriverInterface $driver): int
     {
         return PDO::PARAM_STR;
     }

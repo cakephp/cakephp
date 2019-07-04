@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ class TypeFactoryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->_originalMap = TypeFactory::getMap();
         parent::setUp();
@@ -50,7 +51,7 @@ class TypeFactoryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -135,6 +136,21 @@ class TypeFactoryTest extends TestCase
 
         $type = TypeFactory::build('foo2');
         $this->assertInstanceOf($fooType, $type);
+    }
+
+    /**
+     * Tests new types set with set() are returned by buildAll()
+     *
+     * @return void
+     */
+    public function testSetAndBuild()
+    {
+        $types = TypeFactory::buildAll();
+        $this->assertFalse(isset($types['foo']));
+
+        TypeFactory::set('foo', new FooType());
+        $types = TypeFactory::buildAll();
+        $this->assertTrue(isset($types['foo']));
     }
 
     /**

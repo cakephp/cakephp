@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -36,7 +37,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Registered Parsers
      *
-     * @var array
+     * @var callable[]
      */
     protected $parsers = [];
 
@@ -93,6 +94,16 @@ class BodyParserMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Get the HTTP methods to parse request bodies on.
+     *
+     * @return array
+     */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+    /**
      * Add a parser.
      *
      * Map a set of content-type header values to be parsed by the $parser.
@@ -120,6 +131,16 @@ class BodyParserMiddleware implements MiddlewareInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Get the current parsers
+     *
+     * @return array
+     */
+    public function getParsers(): array
+    {
+        return $this->parsers;
     }
 
     /**

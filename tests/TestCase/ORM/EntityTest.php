@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,17 +36,17 @@ class EntityTest extends TestCase
         $entity = new Entity();
         $this->assertNull($entity->getOriginal('foo'));
         $entity->set('foo', 'bar');
-        $this->assertEquals('bar', $entity->foo);
-        $this->assertEquals('bar', $entity->getOriginal('foo'));
+        $this->assertSame('bar', $entity->foo);
+        $this->assertSame('bar', $entity->getOriginal('foo'));
 
         $entity->set('foo', 'baz');
-        $this->assertEquals('baz', $entity->foo);
-        $this->assertEquals('bar', $entity->getOriginal('foo'));
+        $this->assertSame('baz', $entity->foo);
+        $this->assertSame('bar', $entity->getOriginal('foo'));
 
         $entity->set('id', 1);
         $this->assertSame(1, $entity->id);
         $this->assertEquals(1, $entity->getOriginal('id'));
-        $this->assertEquals('bar', $entity->getOriginal('foo'));
+        $this->assertSame('bar', $entity->getOriginal('foo'));
     }
 
     /**
@@ -59,14 +60,14 @@ class EntityTest extends TestCase
         $entity->setAccess('*', true);
 
         $entity->set(['foo' => 'bar', 'id' => 1]);
-        $this->assertEquals('bar', $entity->foo);
+        $this->assertSame('bar', $entity->foo);
         $this->assertSame(1, $entity->id);
 
         $entity->set(['foo' => 'baz', 'id' => 2, 'thing' => 3]);
-        $this->assertEquals('baz', $entity->foo);
+        $this->assertSame('baz', $entity->foo);
         $this->assertSame(2, $entity->id);
         $this->assertSame(3, $entity->thing);
-        $this->assertEquals('bar', $entity->getOriginal('foo'));
+        $this->assertSame('bar', $entity->getOriginal('foo'));
         $this->assertEquals(1, $entity->getOriginal('id'));
     }
 
@@ -168,12 +169,12 @@ class EntityTest extends TestCase
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
-                $this->assertEquals('Jones', $name);
+                $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
-        $this->assertEquals('Dr. Jones', $entity->name);
+        $this->assertSame('Dr. Jones', $entity->name);
     }
 
     /**
@@ -190,7 +191,7 @@ class EntityTest extends TestCase
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
-                $this->assertEquals('Jones', $name);
+                $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
             }));
@@ -202,7 +203,7 @@ class EntityTest extends TestCase
                 return ['c', 'd'];
             }));
         $entity->set(['name' => 'Jones', 'stuff' => ['a', 'b']]);
-        $this->assertEquals('Dr. Jones', $entity->name);
+        $this->assertSame('Dr. Jones', $entity->name);
         $this->assertEquals(['c', 'd'], $entity->stuff);
     }
 
@@ -222,13 +223,13 @@ class EntityTest extends TestCase
         $entity->expects($this->never())->method('_setStuff');
 
         $entity->set('name', 'Jones', ['setter' => false]);
-        $this->assertEquals('Jones', $entity->name);
+        $this->assertSame('Jones', $entity->name);
 
         $entity->set('stuff', 'Thing', ['setter' => false]);
-        $this->assertEquals('Thing', $entity->stuff);
+        $this->assertSame('Thing', $entity->stuff);
 
         $entity->set(['name' => 'foo', 'stuff' => 'bar'], ['setter' => false]);
-        $this->assertEquals('bar', $entity->stuff);
+        $this->assertSame('bar', $entity->stuff);
     }
 
     /**
@@ -301,8 +302,8 @@ class EntityTest extends TestCase
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
-        $this->assertEquals('Dr. Jones', $entity->get('name'));
-        $this->assertEquals('Dr. Jones', $entity->get('name'));
+        $this->assertSame('Dr. Jones', $entity->get('name'));
+        $this->assertSame('Dr. Jones', $entity->get('name'));
     }
 
     /**
@@ -321,12 +322,12 @@ class EntityTest extends TestCase
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
-        $this->assertEquals('Dr. Jones', $entity->get('name'));
-        $this->assertEquals('Dr. Jones', $entity->get('name'));
+        $this->assertSame('Dr. Jones', $entity->get('name'));
+        $this->assertSame('Dr. Jones', $entity->get('name'));
 
         $entity->set('name', 'Mark');
-        $this->assertEquals('Dr. Mark', $entity->get('name'));
-        $this->assertEquals('Dr. Mark', $entity->get('name'));
+        $this->assertSame('Dr. Mark', $entity->get('name'));
+        $this->assertSame('Dr. Mark', $entity->get('name'));
     }
 
     /**
@@ -345,10 +346,10 @@ class EntityTest extends TestCase
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
-        $this->assertEquals('Dr. Jones', $entity->get('name'));
+        $this->assertSame('Dr. Jones', $entity->get('name'));
 
         $entity->unset('name');
-        $this->assertEquals('Dr. ', $entity->get('name'));
+        $this->assertSame('Dr. ', $entity->get('name'));
     }
 
     /**
@@ -379,9 +380,9 @@ class EntityTest extends TestCase
     {
         $entity = new Entity();
         $entity->name = 'Jones';
-        $this->assertEquals('Jones', $entity->name);
+        $this->assertSame('Jones', $entity->name);
         $entity->name = 'George';
-        $this->assertEquals('George', $entity->name);
+        $this->assertSame('George', $entity->name);
     }
 
     /**
@@ -397,12 +398,12 @@ class EntityTest extends TestCase
         $entity->expects($this->once())->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
-                $this->assertEquals('Jones', $name);
+                $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
             }));
         $entity->name = 'Jones';
-        $this->assertEquals('Dr. Jones', $entity->name);
+        $this->assertSame('Dr. Jones', $entity->name);
     }
 
     /**
@@ -419,12 +420,12 @@ class EntityTest extends TestCase
             ->method('_setName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
-                $this->assertEquals('Jones', $name);
+                $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
             }));
         $entity->Name = 'Jones';
-        $this->assertEquals('Dr. Jones', $entity->Name);
+        $this->assertSame('Dr. Jones', $entity->Name);
     }
 
     /**
@@ -445,7 +446,7 @@ class EntityTest extends TestCase
                 return 'Dr. ' . $name;
             }));
         $entity->set('name', 'Jones');
-        $this->assertEquals('Dr. Jones', $entity->name);
+        $this->assertSame('Dr. Jones', $entity->name);
     }
 
     /**
@@ -462,12 +463,12 @@ class EntityTest extends TestCase
             ->method('_getName')
             ->with('Jones')
             ->will($this->returnCallback(function ($name) {
-                $this->assertEquals('Jones', $name);
+                $this->assertSame('Jones', $name);
 
                 return 'Dr. ' . $name;
             }));
         $entity->set('Name', 'Jones');
-        $this->assertEquals('Dr. Jones', $entity->Name);
+        $this->assertSame('Dr. Jones', $entity->Name);
     }
 
     /**
@@ -629,8 +630,8 @@ class EntityTest extends TestCase
             ->with('bar')
             ->will($this->returnValue('worked too'));
 
-        $this->assertEquals('worked', $entity['foo']);
-        $this->assertEquals('worked too', $entity['bar']);
+        $this->assertSame('worked', $entity['foo']);
+        $this->assertSame('worked too', $entity['bar']);
     }
 
     /**
@@ -1177,21 +1178,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the deprecated visibleProperties() method
-     *
-     * @return void
-     */
-    public function testVisiblePropertiesDeprecated()
-    {
-        $entity = new Entity();
-        $entity->foo = 'foo';
-        $entity->bar = 'bar';
-
-        $expected = $entity->visibleProperties();
-        $this->assertSame(['foo', 'bar'], $expected);
-    }
-
-    /**
      * Tests setting virtual properties with merging.
      *
      * @return void
@@ -1220,7 +1206,7 @@ class EntityTest extends TestCase
      *
      * @return void
      */
-    public function testGetAndSetErrors()
+    public function testGetErrorAndSetError()
     {
         $entity = new Entity();
         $this->assertEmpty($entity->getErrors());
@@ -1243,6 +1229,25 @@ class EntityTest extends TestCase
         ];
         $result = $entity->getErrors();
         $this->assertEquals($expectedIndexed, $result);
+    }
+
+    /**
+     * Tests reading errors from nested validator
+     *
+     * @return void
+     */
+    public function testGetErrorNested()
+    {
+        $entity = new Entity();
+        $entity->setError('options', ['subpages' => ['_empty' => 'required']]);
+
+        $expected = [
+            'subpages' => ['_empty' => 'required'],
+        ];
+        $this->assertEquals($expected, $entity->getError('options'));
+
+        $expected = ['_empty' => 'required'];
+        $this->assertEquals($expected, $entity->getError('options.subpages'));
     }
 
     /**
@@ -1520,14 +1525,14 @@ class EntityTest extends TestCase
         $entity->setAccess('title', true);
 
         $entity->set(['title' => 'test', 'body' => 'Nope']);
-        $this->assertEquals('test', $entity->title);
+        $this->assertSame('test', $entity->title);
         $this->assertNull($entity->body);
 
         $entity->body = 'Yep';
-        $this->assertEquals('Yep', $entity->body, 'Single set should bypass guards.');
+        $this->assertSame('Yep', $entity->body, 'Single set should bypass guards.');
 
         $entity->set('body', 'Yes');
-        $this->assertEquals('Yes', $entity->body, 'Single set should bypass guards.');
+        $this->assertSame('Yes', $entity->body, 'Single set should bypass guards.');
     }
 
     /**
@@ -1583,7 +1588,7 @@ class EntityTest extends TestCase
         $entity = new Entity();
         $this->assertSame('', $entity->getSource());
         $entity->setSource('foos');
-        $this->assertEquals('foos', $entity->getSource());
+        $this->assertSame('foos', $entity->getSource());
     }
 
     /**
@@ -1593,19 +1598,19 @@ class EntityTest extends TestCase
      */
     public function emptyNamesProvider()
     {
-        return [[''], [null], [false]];
+        return [[''], [null]];
     }
+
     /**
      * Tests that trying to get an empty property name throws exception
      *
-     * @dataProvider emptyNamesProvider
      * @return void
      */
-    public function testEmptyProperties($property)
+    public function testEmptyProperties()
     {
         $this->expectException(\InvalidArgumentException::class);
         $entity = new Entity();
-        $entity->get($property);
+        $entity->get('');
     }
 
     /**

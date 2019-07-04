@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -21,7 +22,6 @@ use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\ValuesExpression;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\Datasource\QueryInterface;
 use InvalidArgumentException;
 use IteratorAggregate;
 use RuntimeException;
@@ -35,6 +35,10 @@ use RuntimeException;
 class Query implements ExpressionInterface, IteratorAggregate
 {
     use TypeMapTrait;
+
+    public const JOIN_TYPE_INNER = 'INNER';
+    public const JOIN_TYPE_LEFT = 'LEFT';
+    public const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
      * Connection instance to be used to execute this query.
@@ -79,7 +83,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_selectParts = [
         'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
@@ -89,21 +93,21 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_updateParts = ['update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_deleteParts = ['delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var array
+     * @var string[]
      */
     protected $_insertParts = ['insert', 'values', 'epilog'];
 
@@ -121,7 +125,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var array
+     * @var callable[]
      */
     protected $_resultDecorators = [];
 
@@ -389,7 +393,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
-    public function select($fields = [], $overwrite = false)
+    public function select($fields = [], bool $overwrite = false)
     {
         if (!is_string($fields) && is_callable($fields)) {
             $fields = $fields($this);
@@ -646,7 +650,7 @@ class Query implements ExpressionInterface, IteratorAggregate
                 $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;
-            $joins[$alias ?: $i++] = $t + ['type' => QueryInterface::JOIN_TYPE_INNER, 'alias' => $alias];
+            $joins[$alias ?: $i++] = $t + ['type' => static::JOIN_TYPE_INNER, 'alias' => $alias];
         }
 
         if ($overwrite) {
@@ -707,7 +711,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -716,7 +720,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function leftJoin($table, $conditions = [], $types = [])
     {
-        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_LEFT), $types);
+        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
         return $this;
     }
@@ -729,7 +733,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -738,7 +742,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function rightJoin($table, $conditions = [], $types = [])
     {
-        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_RIGHT), $types);
+        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
         return $this;
     }
@@ -760,7 +764,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function innerJoin($table, $conditions = [], $types = [])
     {
-        $this->join($this->_makeJoin($table, $conditions, QueryInterface::JOIN_TYPE_INNER), $types);
+        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
         return $this;
     }
@@ -768,7 +772,7 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param string|array $table The table to join with
+     * @param string|string[] $table The table to join with
      * @param string|array|\Cake\Database\ExpressionInterface $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
@@ -1082,7 +1086,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @see \Cake\Database\Type
      * @return $this
      */
-    public function andWhere($conditions, $types = [])
+    public function andWhere($conditions, array $types = [])
     {
         $this->_conjugate('where', $conditions, 'AND', $types);
 
@@ -1486,7 +1490,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * with Query::values().
      *
      * @param array $columns The columns to insert into.
-     * @param array $types A map between columns & their datatypes.
+     * @param string[] $types A map between columns & their datatypes.
      * @return $this
      * @throws \RuntimeException When there are 0 columns.
      */
@@ -1908,16 +1912,9 @@ class Query implements ExpressionInterface, IteratorAggregate
     /**
      * Associates a query placeholder to a value and a type.
      *
-     * If type is expressed as "atype[]" (note braces) then it will cause the
-     * placeholder to be re-written dynamically so if the value is an array, it
-     * will create as many placeholders as values are in it. For example:
-     *
      * ```
-     * $query->bind(':id', [1, 2, 3], 'int[]');
+     * $query->bind(':id', 1, 'integer');
      * ```
-     *
-     * Will create 3 int placeholders. When using named placeholders, this method
-     * requires that the placeholders include `:` e.g. `:value`.
      *
      * @param string|int $param placeholder to be replaced with quoted version
      *   of $value
@@ -2109,7 +2106,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * @param array $types associative array of type names used to bind values to query
      * @return void
      */
-    protected function _conjugate(string $part, $append, $conjunction, $types): void
+    protected function _conjugate(string $part, $append, $conjunction, array $types): void
     {
         $expression = $this->_parts[$part] ?: $this->newExpr();
         if (empty($append)) {
@@ -2188,7 +2185,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->sql();
     }
@@ -2199,7 +2196,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         try {
             set_error_handler(function ($errno, $errstr): void {

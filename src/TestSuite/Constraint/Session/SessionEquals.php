@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -48,8 +49,6 @@ class SessionEquals extends Constraint
      */
     public function __construct(?Session $session, string $path)
     {
-        parent::__construct();
-
         if (!$session) {
             throw new AssertionFailedError('There is no stored session data. Perhaps you need to run a request?');
         }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -213,8 +214,9 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * to be added to the list.
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
+     * @psalm-suppress MoreSpecificImplementedParamType
      */
-    public function select($fields = [], $overwrite = false)
+    public function select($fields = [], bool $overwrite = false)
     {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
@@ -242,7 +244,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * @return $this
      * @throws \InvalidArgumentException If Association|Table is not passed in first argument
      */
-    public function selectAllExcept($table, array $excludedFields, $overwrite = false)
+    public function selectAllExcept($table, array $excludedFields, bool $overwrite = false)
     {
         if ($table instanceof Association) {
             $table = $table->getTarget();
@@ -625,7 +627,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => QueryInterface::JOIN_TYPE_LEFT,
+                'joinType' => Query::JOIN_TYPE_LEFT,
                 'fields' => false,
             ])
             ->getMatching();
@@ -674,7 +676,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => QueryInterface::JOIN_TYPE_INNER,
+                'joinType' => Query::JOIN_TYPE_INNER,
                 'fields' => false,
             ])
             ->getMatching();
@@ -738,7 +740,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     {
         $result = $this->getEagerLoader()
             ->setMatching($assoc, $builder, [
-                'joinType' => QueryInterface::JOIN_TYPE_LEFT,
+                'joinType' => Query::JOIN_TYPE_LEFT,
                 'fields' => false,
                 'negateMatch' => true,
             ])
@@ -832,7 +834,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return static
      */
-    public function cleanCopy(): self
+    public function cleanCopy()
     {
         $clone = clone $this;
         $clone->setEagerLoader(clone $this->getEagerLoader());
@@ -1025,7 +1027,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @throws \RuntimeException if this method is called on a non-select Query.
      */
-    public function all()
+    public function all(): ResultSetInterface
     {
         if ($this->_type !== 'select' && $this->_type !== null) {
             throw new RuntimeException(
@@ -1077,12 +1079,13 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _execute()
+    protected function _execute(): ResultSetInterface
     {
         $this->triggerBeforeFind();
         if ($this->_results) {
             $decorator = $this->_decoratorClass();
 
+            /** @var \Cake\Datasource\ResultSetInterface */
             return new $decorator($this->_results);
         }
 
@@ -1175,7 +1178,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      *
      * @see \Cake\ORM\Table::find()
      */
-    public function find($finder, ...$args)
+    public function find(string $finder, ...$args)
     {
         /** @var \Cake\ORM\Table $table */
         $table = $this->getRepository();
@@ -1205,7 +1208,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
      * This changes the query type to be 'update'.
      * Can be combined with set() and where() methods to create update queries.
      *
-     * @param string|null $table Unused parameter.
+     * @param string|\Cake\Database\ExpressionInterface|null $table Unused parameter.
      * @return $this
      */
     public function update($table = null)
@@ -1280,7 +1283,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
     /**
      * @inheritDoc
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $eagerLoader = $this->getEagerLoader();
 
@@ -1361,6 +1364,7 @@ class Query extends DatabaseQuery implements JsonSerializable, QueryInterface
 
         if (!($result instanceof ResultSet) && $this->isBufferedResultsEnabled()) {
             $class = $this->_decoratorClass();
+            /** @var \Cake\Datasource\ResultSetInterface $result */
             $result = new $class($result->buffered());
         }
 

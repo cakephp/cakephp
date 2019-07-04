@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -48,7 +49,7 @@ class JsonConfigTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->path = CONFIG;
@@ -63,8 +64,8 @@ class JsonConfigTest extends TestCase
     {
         $engine = new JsonConfig($this->path);
         $values = $engine->read('json_test');
-        $this->assertEquals('value', $values['Json']);
-        $this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
+        $this->assertSame('value', $values['Json']);
+        $this->assertSame('buried', $values['Deep']['Deeper']['Deepest']);
     }
 
     /**

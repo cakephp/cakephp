@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,7 +21,9 @@ use Cake\Console\Exception\StopException;
 use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Utility\Inflector;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Base class for console commands.
@@ -103,6 +106,25 @@ class Command
     }
 
     /**
+     * Get the command name.
+     *
+     * Returns the command name based on class name.
+     * For e.g. for a command with class name `UpdateTableCommand` the default
+     * name returned would be `'update_table'`.
+     *
+     * @return string
+     */
+    public static function defaultName(): string
+    {
+        $pos = strrpos(static::class, '\\');
+        /** @psalm-suppress PossiblyFalseOperand */
+        $name = substr(static::class, $pos + 1, -7);
+        $name = Inflector::underscore($name);
+
+        return $name;
+    }
+
+    /**
      * Get the option parser.
      *
      * You can override buildOptionParser() to define your options & arguments.
@@ -116,7 +138,14 @@ class Command
         $parser = new ConsoleOptionParser($name);
         $parser->setRootName($root);
 
-        return $this->buildOptionParser($parser);
+        $parser = $this->buildOptionParser($parser);
+        if ($parser->subcommands()) {
+            throw new RuntimeException(
+                'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
+            );
+        }
+
+        return $parser;
     }
 
     /**
@@ -224,7 +253,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return null|int The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         return null;
     }
@@ -236,7 +265,7 @@ class Command
      * @throws \Cake\Console\Exception\StopException
      * @return void
      */
-    public function abort($code = self::CODE_ERROR): void
+    public function abort(int $code = self::CODE_ERROR): void
     {
         throw new StopException('Command aborted', $code);
     }
@@ -249,7 +278,7 @@ class Command
      * @param \Cake\Console\ConsoleIo $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
-    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null)
+    public function executeCommand($command, array $args = [], ?ConsoleIo $io = null): ?int
     {
         if (is_string($command)) {
             if (!class_exists($command)) {

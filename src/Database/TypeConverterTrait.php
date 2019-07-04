@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,7 @@ trait TypeConverterTrait
      * and return relevant internal statement type
      *
      * @param mixed $value The value to cast
-     * @param \Cake\Database\Type\BaseType|string $type The type name or type instance to use.
+     * @param \Cake\Database\TypeInterface|string $type The type name or type instance to use.
      * @return array list containing converted value and internal type
      */
     public function cast($value, $type): array

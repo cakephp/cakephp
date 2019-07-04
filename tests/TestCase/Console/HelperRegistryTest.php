@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,7 @@ class HelperRegistryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -46,7 +47,7 @@ class HelperRegistryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($this->helpers);
         parent::tearDown();
@@ -90,7 +91,7 @@ class HelperRegistryTest extends TestCase
     public function testLoadWithConfig()
     {
         $result = $this->helpers->load('Simple', ['key' => 'value']);
-        $this->assertEquals('value', $result->getConfig('key'));
+        $this->assertSame('value', $result->getConfig('key'));
     }
 
     /**

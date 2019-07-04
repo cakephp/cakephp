@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,12 +26,15 @@ use Cake\ORM\Locator\LocatorInterface;
  *
  * ### Configuring instances
  *
- * You may need to configure your table objects, using TableRegistry you can
+ * You may need to configure your table objects. Using the `TableLocator` you can
  * centralize configuration. Any configuration set before instances are created
  * will be used when creating instances. If you modify configuration after
  * an instance is made, the instances *will not* be updated.
  *
  * ```
+ * TableRegistry::getTableLocator()->setConfig('Users', ['table' => 'my_users']);
+ *
+ * // Prior to 3.6.0
  * TableRegistry::config('Users', ['table' => 'my_users']);
  * ```
  *
@@ -39,12 +43,15 @@ use Cake\ORM\Locator\LocatorInterface;
  *
  * ### Getting instances
  *
- * You can fetch instances out of the registry using get(). One instance is stored
- * per alias. Once an alias is populated the same instance will always be returned.
- * This is used to make the ORM use less memory and help make cyclic references easier
- * to solve.
+ * You can fetch instances out of the registry through `TableLocator::get()`.
+ * One instance is stored per alias. Once an alias is populated the same
+ * instance will always be returned. This reduces the ORM memory cost and
+ * helps make cyclic references easier to solve.
  *
  * ```
+ * $table = TableRegistry::getTableLocator()->get('Users', $config);
+ *
+ * // Prior to 3.6.0
  * $table = TableRegistry::get('Users', $config);
  * ```
  */
@@ -62,7 +69,7 @@ class TableRegistry
      *
      * @var string
      */
-    protected static $_defaultLocatorClass = 'Cake\ORM\Locator\TableLocator';
+    protected static $_defaultLocatorClass = Locator\TableLocator::class;
 
     /**
      * Returns a singleton instance of LocatorInterface implementation.

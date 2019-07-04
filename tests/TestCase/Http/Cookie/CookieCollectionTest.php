@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -21,6 +22,8 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use DateTime;
+use InvalidArgumentException;
+use PHPUnit\Framework\Error\Warning;
 
 /**
  * Cookie collection test.
@@ -154,7 +157,9 @@ class CookieCollectionTest extends TestCase
 
         $this->assertNotSame($new, $collection);
         $this->assertFalse($new->has('remember_me'), 'should be removed');
-        $this->assertNull($new->get('remember_me'), 'should be removed');
+
+        $this->expectException(InvalidArgumentException::class);
+        $new->get('remember_me');
     }
 
     /**
@@ -170,7 +175,7 @@ class CookieCollectionTest extends TestCase
         ];
 
         $collection = new CookieCollection($cookies);
-        $this->assertNull($collection->get('nope'));
+        $this->assertFalse($collection->has('nope'));
         $this->assertInstanceOf(Cookie::class, $collection->get('REMEMBER_me'), 'case insensitive cookie names');
         $this->assertInstanceOf(Cookie::class, $collection->get('remember_me'));
         $this->assertSame($cookies[0], $collection->get('remember_me'));
@@ -414,13 +419,13 @@ class CookieCollectionTest extends TestCase
 
     /**
      * Testing the cookie size limit warning
-     *
-     * @expectedException \PHPUnit\Framework\Error\Warning
-     * @expectedExceptionMessage The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.
      * @return void
      */
     public function testCookieSizeWarning()
     {
+        $this->expectException(Warning::class);
+        $this->expectExceptionMessage('The cookie `default` exceeds the recommended maximum cookie length of 4096 bytes.');
+
         $string = Security::insecureRandomBytes(9000);
         $collection = new CookieCollection();
         $collection = $collection

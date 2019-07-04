@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,7 +42,7 @@ class PoFileParserTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->locale = I18n::getLocale();
@@ -53,7 +54,7 @@ class PoFileParserTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         I18n::clear();
@@ -189,7 +190,7 @@ class PoFileParserTest extends TestCase
         $this->assertSame('En resolved - context', $messages['Resolved']['_context']['Pay status']);
 
         $key = '{0,plural,=0{Je suis}=1{Je suis}=2{Nous sommes} other{Nous sommes}}';
-        $this->assertContains("I've", $messages[$key]['_context']['origin']);
+        $this->assertStringContainsString("I've", $messages[$key]['_context']['origin']);
 
         // Confirm actual behavior
         I18n::setLocale('en_CA');
@@ -246,8 +247,8 @@ class PoFileParserTest extends TestCase
 
         // Check translated messages
         I18n::setLocale('de_DE');
-        $this->assertEquals('Standorte', __d('wa', 'Locations'));
+        $this->assertSame('Standorte', __d('wa', 'Locations'));
         I18n::setLocale('en_EN');
-        $this->assertEquals('Locations', __d('wa', 'Locations'));
+        $this->assertSame('Locations', __d('wa', 'Locations'));
     }
 }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -53,7 +54,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         TranslateBehavior::setDefaultStrategyClass(ShadowTableStrategy::class);
 
@@ -65,7 +66,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
      *
      * @return void
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         TranslateBehavior::setDefaultStrategyClass(EavStrategy::class);
 
@@ -262,7 +263,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->addBehavior('Translate');
 
         $query = $table->find();
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'The default locale doesn\'t need a join'
@@ -271,14 +272,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id']);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'No translated fields, nothing to do'
         );
 
         $query = $table->find()->select(['Other.title']);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
             'Other isn\'t the table class with the translate behavior, nothing to do'
@@ -297,21 +298,21 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find();
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'No fields specified, means select all fields - translated included'
         );
 
         $query = $table->find()->select(['title']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'Selecting a translated field should join the translations table'
         );
 
         $query = $table->find()->select(['Articles.title']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'Selecting an aliased translated field should join the translations table'
@@ -330,7 +331,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id'])->where(['title' => 'First Article']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'If the where clause includes a translated field - a join is required'
@@ -352,7 +353,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             return $exp->lt(new QueryExpression('1'), 50);
         });
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'Do not try to use non string fields when traversing "where" clause'
@@ -371,14 +372,14 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $table->setLocale('eng');
 
         $query = $table->find()->select(['id'])->order(['title' => 'desc']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'If the order clause includes a translated field - a join is required'
         );
 
         $query = $table->find();
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'No fields means auto-fields - a join is required'
@@ -470,7 +471,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $translations = $this->getTableLocator()->get('ArticlesTranslations')->find()
             ->where(['id' => $article->id])
             ->count();
-        $this->assertEquals(0, $translations);
+        $this->assertSame(0, $translations);
     }
 
     /**
@@ -582,7 +583,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             ->find('translations')
             ->where(['Articles.id' => 1])
             ->contain(['Authors']);
-        $this->assertContains(
+        $this->assertStringContainsString(
             'articles_translations',
             $query->sql(),
             'There should be a join to the translations table'
@@ -862,10 +863,10 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
             $table->find('translations')->where(['id' => 1])
         )->first();
 
-        $this->assertEquals('Mi nuevo titulo', $results['spa']['title']);
-        $this->assertEquals('Contenido Actualizado', $results['spa']['body']);
+        $this->assertSame('Mi nuevo titulo', $results['spa']['title']);
+        $this->assertSame('Contenido Actualizado', $results['spa']['body']);
 
-        $this->assertEquals('First Article1', $results['eng']['title']);
+        $this->assertSame('First Article1', $results['eng']['title']);
     }
 
     /**
@@ -1057,8 +1058,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorTest
         $this->assertCount(2, $result);
         $this->assertArrayHasKey('en', $result);
         $this->assertArrayHasKey('es', $result);
-        $this->assertEquals('English Title', $result['en']->title);
-        $this->assertEquals('Titulo Español', $result['es']->title);
+        $this->assertSame('English Title', $result['en']->title);
+        $this->assertSame('Titulo Español', $result['es']->title);
     }
 
     /**

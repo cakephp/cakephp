@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,34 +31,44 @@ use Iterator;
  * This class implements the Iterator interface to allow plugins
  * to be iterated, handling the situation where a plugin's hook
  * method (usually bootstrap) loads another plugin during iteration.
+ *
+ * While its implementation supported nested iteration it does not
+ * support using `continue` or `break` inside loops.
  */
 class PluginCollection implements Iterator, Countable
 {
     /**
      * Plugin list
      *
-     * @var array
+     * @var \Cake\Core\PluginInterface[]
      */
     protected $plugins = [];
 
     /**
      * Names of plugins
      *
-     * @var array
+     * @var string[]
      */
     protected $names = [];
 
     /**
-     * Iterator position.
+     * Iterator position stack.
+     *
+     * @var int[]
+     */
+    protected $positions = [];
+
+    /**
+     * Loop depth
      *
      * @var int
      */
-    protected $position = 0;
+    protected $loopDepth = -1;
 
     /**
      * Constructor
      *
-     * @param array $plugins The map of plugins to add to the collection.
+     * @param \Cake\Core\PluginInterface[] $plugins The map of plugins to add to the collection.
      */
     public function __construct(array $plugins = [])
     {
@@ -168,6 +179,9 @@ class PluginCollection implements Iterator, Countable
     public function clear()
     {
         $this->plugins = [];
+        $this->names = [];
+        $this->positions = [];
+        $this->loopDepth = -1;
 
         return $this;
     }
@@ -200,13 +214,25 @@ class PluginCollection implements Iterator, Countable
     }
 
     /**
+     * Implementation of Countable.
+     *
+     * Get the number of plugins in the collection.
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        return count($this->plugins);
+    }
+
+    /**
      * Part of Iterator Interface
      *
      * @return void
      */
     public function next(): void
     {
-        $this->position++;
+        $this->positions[$this->loopDepth]++;
     }
 
     /**
@@ -216,7 +242,7 @@ class PluginCollection implements Iterator, Countable
      */
     public function key(): string
     {
-        return $this->names[$this->position];
+        return $this->names[$this->positions[$this->loopDepth]];
     }
 
     /**
@@ -226,7 +252,8 @@ class PluginCollection implements Iterator, Countable
      */
     public function current(): PluginInterface
     {
-        $name = $this->names[$this->position];
+        $position = $this->positions[$this->loopDepth];
+        $name = $this->names[$position];
 
         return $this->plugins[$name];
     }
@@ -238,7 +265,8 @@ class PluginCollection implements Iterator, Countable
      */
     public function rewind(): void
     {
-        $this->position = 0;
+        $this->positions[] = 0;
+        $this->loopDepth += 1;
     }
 
     /**
@@ -248,19 +276,13 @@ class PluginCollection implements Iterator, Countable
      */
     public function valid(): bool
     {
-        return $this->position < count($this->plugins);
-    }
+        $valid = isset($this->names[$this->positions[$this->loopDepth]]);
+        if (!$valid) {
+            array_pop($this->positions);
+            $this->loopDepth -= 1;
+        }
 
-    /**
-     * Implementation of Countable.
-     *
-     * Get the number of plugins in the collection.
-     *
-     * @return int
-     */
-    public function count(): int
-    {
-        return count($this->plugins);
+        return $valid;
     }
 
     /**

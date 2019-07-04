@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -43,22 +44,6 @@ trait DateFormatTrait
      * @var \IntlDateFormatter[]
      */
     protected static $_formatters = [];
-
-    /**
-     * The format to use when when converting this object to json
-     *
-     * The format should be either the formatting constants from IntlDateFormatter as
-     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
-     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
-     *
-     * It is possible to provide an array of 2 constants. In this case, the first position
-     * will be used for formatting the date part of the object and the second position
-     * will be used to format the time part.
-     *
-     * @var string|array|int
-     * @see \Cake\I18n\Time::i18nFormat()
-     */
-    protected static $_jsonEncodeFormat = "yyyy-MM-dd'T'HH:mm:ssxxx";
 
     /**
      * Caches whether or not this class is a subclass of a Date or MutableDate
@@ -127,9 +112,7 @@ trait DateFormatTrait
      * $time->i18nFormat(Time::UNIX_TIMESTAMP_FORMAT); // outputs '1398031800'
      * ```
      *
-     * If you wish to control the default format to be used for this method, you can alter
-     * the value of the static `Time::$defaultLocale` variable and set it to one of the
-     * possible formats accepted by this function.
+     * You can control the default format used through `Time::setToStringFormat()`.
      *
      * You can read about the available IntlDateFormatter constants at
      * https://secure.php.net/manual/en/class.intldateformatter.php
@@ -149,9 +132,8 @@ trait DateFormatTrait
      * $time->i18nFormat(\IntlDateFormatter::FULL, 'Europe/Berlin', 'de-DE');
      * ```
      *
-     * You can control the default locale to be used by setting the static variable
-     * `Time::$defaultLocale` to a valid locale string. If empty, the default will be
-     * taken from the `intl.default_locale` ini config.
+     * You can control the default locale used through `Time::setDefaultLocale()`.
+     * If empty, the default will be taken from the `intl.default_locale` ini config.
      *
      * @param string|int|null $format Format string.
      * @param string|\DateTimeZone|null $timezone Timezone string or DateTimeZone object
@@ -186,13 +168,12 @@ trait DateFormatTrait
      *
      * @param \DateTime|\DateTimeImmutable $date Date.
      * @param string|int|array $format Format.
-     * @param string $locale The locale name in which the date should be displayed.
+     * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
     protected function _formatObject($date, $format, ?string $locale): string
     {
         $pattern = $dateFormat = $timeFormat = $calendar = null;
-        $locale = (string)$locale;
 
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
@@ -201,6 +182,10 @@ trait DateFormatTrait
         } else {
             $dateFormat = $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
+        }
+
+        if ($locale === null) {
+            $locale = I18n::getLocale();
         }
 
         // phpcs:ignore Generic.Files.LineLength
@@ -261,6 +246,14 @@ trait DateFormatTrait
     /**
      * Sets the default format used when type converting instances of this type to string
      *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
      * @param string|array|int $format Format.
      * @return void
      */
@@ -272,6 +265,15 @@ trait DateFormatTrait
     /**
      * Sets the default format used when converting this object to json
      *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * @see \Cake\I18n\Time::i18nFormat()
      * @param string|array|int $format Format.
      * @return void
      */
@@ -299,7 +301,7 @@ trait DateFormatTrait
      * ```
      *
      * @param string $time The time string to parse.
-     * @param string|array|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDateTime(string $time, $format = null)
@@ -359,7 +361,7 @@ trait DateFormatTrait
      * ```
      *
      * @param string $date The date string to parse.
-     * @param string|int|null $format Any format accepted by IntlDateFormatter.
+     * @param string|int|array|null $format Any format accepted by IntlDateFormatter.
      * @return static|null
      */
     public static function parseDate(string $date, $format = null)

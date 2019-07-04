@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -267,7 +268,7 @@ class TimestampBehaviorTest extends TestCase
         $entity = new Entity();
         $event = new Event('Model.beforeSave');
         $this->Behavior->handleEvent($event, $entity);
-        $this->assertInternalType('string', $entity->timestamp_str);
+        $this->assertIsString($entity->timestamp_str);
     }
 
     /**

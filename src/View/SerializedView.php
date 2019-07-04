@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,6 +34,22 @@ abstract class SerializedView extends View
     protected $_responseType;
 
     /**
+     * Default config options.
+     *
+     * Use ViewBuilder::setOption()/setOptions() in your controlle to set these options.
+     *
+     * - `serialize`: Option to convert a set of view variables into a serialized response.
+     *   Its value can be a string for single variable name or array for multiple
+     *   names. If true all view variables will be serialized. If null or false
+     *   normal view template will be rendered.
+     *
+     * @var array{serialize:string|bool|null}
+     */
+    protected $_defaultConfig = [
+        'serialize' => null,
+    ];
+
+    /**
      * Constructor
      *
      * @param \Cake\Http\ServerRequest|null $request Request instance.
@@ -49,6 +66,7 @@ abstract class SerializedView extends View
         if ($response) {
             $response = $response->withType($this->_responseType);
         }
+
         parent::__construct($request, $response, $eventManager, $viewOptions);
     }
 
@@ -59,7 +77,7 @@ abstract class SerializedView extends View
      */
     public function loadHelpers()
     {
-        if (empty($this->viewVars['_serialize'])) {
+        if (!$this->getConfig('serialize')) {
             parent::loadHelpers();
         }
 
@@ -78,23 +96,27 @@ abstract class SerializedView extends View
     /**
      * Render view template or return serialized data.
      *
-     * ### Special parameters
-     * `_serialize` To convert a set of view variables into a serialized form.
-     *   Its value can be a string for single variable name or array for multiple
-     *   names. If true all view variables will be serialized. If unset normal
-     *   view template will be rendered.
-     *
      * @param string|null $template The template being rendered.
      * @param string|null|false $layout The layout being rendered.
      * @return string The rendered view.
      */
     public function render(?string $template = null, $layout = null): string
     {
-        $serialize = false;
-        if (isset($this->viewVars['_serialize'])) {
-            $serialize = $this->viewVars['_serialize'];
-        }
+        $serialize = $this->getConfig('serialize', false);
 
+        if ($serialize === true) {
+            $options = array_map(
+                function ($v) {
+                    return '_' . $v;
+                },
+                array_keys($this->_defaultConfig)
+            );
+
+            $serialize = array_diff(
+                array_keys($this->viewVars),
+                $options
+            );
+        }
         if ($serialize !== false) {
             $result = $this->_serialize($serialize);
             if ($result === false) {

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class RouteTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('Routing', ['admin' => null, 'prefixes' => []]);
@@ -47,7 +48,7 @@ class RouteTest extends TestCase
     {
         $route = new Route('/:controller/:action/:id', [], ['id' => '[0-9]+']);
 
-        $this->assertEquals('/:controller/:action/:id', $route->template);
+        $this->assertSame('/:controller/:action/:id', $route->template);
         $this->assertEquals([], $route->defaults);
         $this->assertEquals(['id' => '[0-9]+', '_ext' => []], $route->options);
         $this->assertFalse($route->compiled());
@@ -125,7 +126,7 @@ class RouteTest extends TestCase
             'x' => '8',
             'y' => '42',
         ]);
-        $this->assertEquals('/fighters/123/move/8/42', $result);
+        $this->assertSame('/fighters/123/move/8/42', $result);
     }
 
     /**
@@ -149,7 +150,7 @@ class RouteTest extends TestCase
             'x' => '8',
             'y' => '42',
         ]);
-        $this->assertEquals('/fighters/123/move/8/42', $result);
+        $this->assertSame('/fighters/123/move/8/42', $result);
 
         $route = new Route(
             '/images/{id}/{x}x{y}',
@@ -164,7 +165,7 @@ class RouteTest extends TestCase
             'x' => '8',
             'y' => '42',
         ]);
-        $this->assertEquals('/images/123/8x42', $result);
+        $this->assertSame('/images/123/8x42', $result);
     }
 
     /**
@@ -229,7 +230,7 @@ class RouteTest extends TestCase
             'action' => 'open',
             'id' => 123,
         ]);
-        $this->assertEquals('/images/{open/123', $result);
+        $this->assertSame('/images/{open/123', $result);
 
         $route = new Route(
             '/fighters/{id}/move/{x}/:y',
@@ -246,7 +247,7 @@ class RouteTest extends TestCase
             'x' => '8',
             '?' => ['y' => '9'],
         ]);
-        $this->assertEquals('/fighters/123/move/8/:y?y=9', $result);
+        $this->assertSame('/fighters/123/move/8/:y?y=9', $result);
     }
 
     /**
@@ -269,16 +270,16 @@ class RouteTest extends TestCase
         $this->assertArrayNotHasKey('_ext', $result);
 
         $result = $route->setExtensions(['pdf', 'json', 'xml', 'xml.gz'])->parse('/posts/index.pdf', 'GET');
-        $this->assertEquals('pdf', $result['_ext']);
+        $this->assertSame('pdf', $result['_ext']);
 
         $result = $route->parse('/posts/index.json', 'GET');
-        $this->assertEquals('json', $result['_ext']);
+        $this->assertSame('json', $result['_ext']);
 
         $result = $route->parse('/posts/index.xml', 'GET');
-        $this->assertEquals('xml', $result['_ext']);
+        $this->assertSame('xml', $result['_ext']);
 
         $result = $route->parse('/posts/index.xml.gz', 'GET');
-        $this->assertEquals('xml.gz', $result['_ext']);
+        $this->assertSame('xml.gz', $result['_ext']);
     }
 
     /**
@@ -569,28 +570,28 @@ class RouteTest extends TestCase
         $this->assertNull($result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 1]);
-        $this->assertEquals('/posts/view/1', $result);
+        $this->assertSame('/posts/view/1', $result);
 
         $route = new Route('/', ['controller' => 'pages', 'action' => 'display', 'home']);
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 'home']);
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 'about']);
         $this->assertNull($result);
 
         $route = new Route('/pages/*', ['controller' => 'pages', 'action' => 'display']);
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 'home']);
-        $this->assertEquals('/pages/home', $result);
+        $this->assertSame('/pages/home', $result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 'about']);
-        $this->assertEquals('/pages/about', $result);
+        $this->assertSame('/pages/about', $result);
 
         $route = new Route('/blog/:action', ['controller' => 'posts']);
         $result = $route->match(['controller' => 'posts', 'action' => 'view']);
-        $this->assertEquals('/blog/view', $result);
+        $this->assertSame('/blog/view', $result);
 
         $result = $route->match(['controller' => 'posts', 'action' => 'view', '?' => ['id' => 2]]);
-        $this->assertEquals('/blog/view?id=2', $result);
+        $this->assertSame('/blog/view?id=2', $result);
 
         $result = $route->match(['controller' => 'nodes', 'action' => 'view']);
         $this->assertNull($result);
@@ -600,14 +601,14 @@ class RouteTest extends TestCase
 
         $route = new Route('/foo/:controller/:action', ['action' => 'index']);
         $result = $route->match(['controller' => 'posts', 'action' => 'view']);
-        $this->assertEquals('/foo/posts/view', $result);
+        $this->assertSame('/foo/posts/view', $result);
 
         $route = new Route('/:plugin/:id/*', ['controller' => 'posts', 'action' => 'view']);
         $result = $route->match(['plugin' => 'test', 'controller' => 'posts', 'action' => 'view', 'id' => '1']);
-        $this->assertEquals('/test/1/', $result);
+        $this->assertSame('/test/1/', $result);
 
         $result = $route->match(['plugin' => 'fo', 'controller' => 'posts', 'action' => 'view', 'id' => '1', '0']);
-        $this->assertEquals('/fo/1/0', $result);
+        $this->assertSame('/fo/1/0', $result);
 
         $result = $route->match(['plugin' => 'fo', 'controller' => 'nodes', 'action' => 'view', 'id' => 1]);
         $this->assertNull($result);
@@ -650,7 +651,7 @@ class RouteTest extends TestCase
             ['controller' => 'tasks', 'action' => 'add'],
             $context
         );
-        $this->assertEquals('/en/tasks/add', $result);
+        $this->assertSame('/en/tasks/add', $result);
     }
 
     /**
@@ -672,26 +673,26 @@ class RouteTest extends TestCase
             $context
         );
         // Http has port 80 as default, do not include it in the url
-        $this->assertEquals('http://example.com/posts/index', $result);
+        $this->assertSame('http://example.com/posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'posts', 'action' => 'index', '_scheme' => 'webcal'],
             $context
         );
         // Webcal is not on port 80 by default, include it in url
-        $this->assertEquals('webcal://foo.com:80/posts/index', $result);
+        $this->assertSame('webcal://foo.com:80/posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'posts', 'action' => 'index', '_port' => '8080'],
             $context
         );
-        $this->assertEquals('http://foo.com:8080/posts/index', $result);
+        $this->assertSame('http://foo.com:8080/posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'posts', 'action' => 'index', '_base' => '/dir'],
             $context
         );
-        $this->assertEquals('/dir/posts/index', $result);
+        $this->assertSame('/dir/posts/index', $result);
 
         $result = $route->match(
             [
@@ -704,7 +705,7 @@ class RouteTest extends TestCase
             ],
             $context
         );
-        $this->assertEquals('https://example.com:8080/dir/posts/index', $result);
+        $this->assertSame('https://example.com:8080/dir/posts/index', $result);
 
         $context = [
             '_host' => 'foo.com',
@@ -724,7 +725,7 @@ class RouteTest extends TestCase
             $context
         );
         // Https scheme is not on port 8080 by default, include the port
-        $this->assertEquals('https://example.com:8080/dir/posts/index', $result);
+        $this->assertSame('https://example.com:8080/dir/posts/index', $result);
     }
 
     /**
@@ -831,7 +832,7 @@ class RouteTest extends TestCase
         $result = $route->match([
             'controller' => 'posts', 'action' => 'index', 'plugin' => null, 'admin' => false,
         ]);
-        $this->assertEquals('/posts/index/', $result);
+        $this->assertSame('/posts/index/', $result);
     }
 
     /**
@@ -844,23 +845,23 @@ class RouteTest extends TestCase
         $route = new Route('/:controller/:action/*', ['plugin' => null]);
 
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'plugin' => null, 5]);
-        $this->assertEquals('/posts/view/5', $result);
+        $this->assertSame('/posts/view/5', $result);
 
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'plugin' => null, 0]);
-        $this->assertEquals('/posts/view/0', $result);
+        $this->assertSame('/posts/view/0', $result);
 
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'plugin' => null, '0']);
-        $this->assertEquals('/posts/view/0', $result);
+        $this->assertSame('/posts/view/0', $result);
 
         $result = $route->match(['controller' => 'posts', 'action' => 'view', 'plugin' => null, 'word space']);
-        $this->assertEquals('/posts/view/word%20space', $result);
+        $this->assertSame('/posts/view/word%20space', $result);
 
         $route = new Route('/test2/*', ['controller' => 'pages', 'action' => 'display', 2]);
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 1]);
         $this->assertNull($result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 2, 'something']);
-        $this->assertEquals('/test2/something', $result);
+        $this->assertSame('/test2/something', $result);
 
         $result = $route->match(['controller' => 'pages', 'action' => 'display', 5, 'something']);
         $this->assertNull($result);
@@ -885,7 +886,7 @@ class RouteTest extends TestCase
             'id' => 1,
             'slug' => 'second',
         ]);
-        $this->assertEquals('/blog/1-second', $result);
+        $this->assertSame('/blog/1-second', $result);
 
         $result = $route->match([
             'controller' => 'Blog',
@@ -893,7 +894,7 @@ class RouteTest extends TestCase
             1,
             'second',
         ]);
-        $this->assertEquals('/blog/1-second', $result);
+        $this->assertSame('/blog/1-second', $result);
 
         $result = $route->match([
             'controller' => 'Blog',
@@ -902,7 +903,7 @@ class RouteTest extends TestCase
             'second',
             '?' => ['query' => 'string'],
         ]);
-        $this->assertEquals('/blog/1-second?query=string', $result);
+        $this->assertSame('/blog/1-second?query=string', $result);
 
         $result = $route->match([
             'controller' => 'Blog',
@@ -934,7 +935,7 @@ class RouteTest extends TestCase
             'fourth',
             '?' => ['query' => 'string'],
         ]);
-        $this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
+        $this->assertSame('/blog/1-second/third/fourth?query=string', $result);
 
         $result = $route->match([
             'controller' => 'Blog',
@@ -945,7 +946,7 @@ class RouteTest extends TestCase
             'fourth',
             '?' => ['query' => 'string'],
         ]);
-        $this->assertEquals('/blog/1-second/third/fourth?query=string', $result);
+        $this->assertSame('/blog/1-second/third/fourth?query=string', $result);
     }
 
     /**
@@ -961,7 +962,7 @@ class RouteTest extends TestCase
             'action' => 'index',
             '_ext' => 'json',
         ]);
-        $this->assertEquals('/posts/index.json', $result);
+        $this->assertSame('/posts/index.json', $result);
 
         $route = new Route('/:controller/:action/*');
         $result = $route->match([
@@ -969,7 +970,7 @@ class RouteTest extends TestCase
             'action' => 'index',
             '_ext' => 'json',
         ]);
-        $this->assertEquals('/posts/index.json', $result);
+        $this->assertSame('/posts/index.json', $result);
 
         $result = $route->match([
             'controller' => 'posts',
@@ -977,7 +978,7 @@ class RouteTest extends TestCase
             1,
             '_ext' => 'json',
         ]);
-        $this->assertEquals('/posts/view/1.json', $result);
+        $this->assertSame('/posts/view/1.json', $result);
 
         $result = $route->match([
             'controller' => 'posts',
@@ -986,14 +987,14 @@ class RouteTest extends TestCase
             '_ext' => 'json',
             '?' => ['id' => 'b', 'c' => 'd', ],
         ]);
-        $this->assertEquals('/posts/view/1.json?id=b&c=d', $result);
+        $this->assertSame('/posts/view/1.json?id=b&c=d', $result);
 
         $result = $route->match([
             'controller' => 'posts',
             'action' => 'index',
             '_ext' => 'json.gz',
         ]);
-        $this->assertEquals('/posts/index.json.gz', $result);
+        $this->assertSame('/posts/index.json.gz', $result);
     }
 
     /**
@@ -1008,10 +1009,10 @@ class RouteTest extends TestCase
         $this->assertNull($result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '9']);
-        $this->assertEquals('/posts/view/9', $result);
+        $this->assertSame('/posts/view/9', $result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '922']);
-        $this->assertEquals('/posts/view/922', $result);
+        $this->assertSame('/posts/view/922', $result);
 
         $result = $route->match(['plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 'a99']);
         $this->assertNull($result);
@@ -1171,9 +1172,9 @@ class RouteTest extends TestCase
         );
         $route->compile();
         $result = $route->parse('/posts/view/1', 'GET');
-        $this->assertEquals('posts', $result['controller']);
-        $this->assertEquals('view', $result['action']);
-        $this->assertEquals('1', $result['id']);
+        $this->assertSame('posts', $result['controller']);
+        $this->assertSame('view', $result['action']);
+        $this->assertSame('1', $result['id']);
 
         $route = new Route(
             '/admin/:controller',
@@ -1184,21 +1185,21 @@ class RouteTest extends TestCase
         $this->assertNull($result);
 
         $result = $route->parse('/admin/posts', 'GET');
-        $this->assertEquals('posts', $result['controller']);
-        $this->assertEquals('index', $result['action']);
+        $this->assertSame('posts', $result['controller']);
+        $this->assertSame('index', $result['action']);
 
         $route = new Route(
             '/media/search/*',
             ['controller' => 'Media', 'action' => 'search']
         );
         $result = $route->parse('/media/search', 'GET');
-        $this->assertEquals('Media', $result['controller']);
-        $this->assertEquals('search', $result['action']);
+        $this->assertSame('Media', $result['controller']);
+        $this->assertSame('search', $result['action']);
         $this->assertEquals([], $result['pass']);
 
         $result = $route->parse('/media/search/tv/shows', 'GET');
-        $this->assertEquals('Media', $result['controller']);
-        $this->assertEquals('search', $result['action']);
+        $this->assertSame('Media', $result['controller']);
+        $this->assertSame('search', $result['action']);
         $this->assertEquals(['tv', 'shows'], $result['pass']);
     }
 
@@ -1215,14 +1216,14 @@ class RouteTest extends TestCase
         );
         $route->compile();
         $result = $route->parse('/posts/%E2%88%82%E2%88%82', 'GET');
-        $this->assertEquals('posts', $result['controller']);
-        $this->assertEquals('view', $result['action']);
-        $this->assertEquals('∂∂', $result['slug']);
+        $this->assertSame('posts', $result['controller']);
+        $this->assertSame('view', $result['action']);
+        $this->assertSame('∂∂', $result['slug']);
 
         $result = $route->parse('/posts/∂∂', 'GET');
-        $this->assertEquals('posts', $result['controller']);
-        $this->assertEquals('view', $result['action']);
-        $this->assertEquals('∂∂', $result['slug']);
+        $this->assertSame('posts', $result['controller']);
+        $this->assertSame('view', $result['action']);
+        $this->assertSame('∂∂', $result['slug']);
     }
 
     /**
@@ -1337,21 +1338,21 @@ class RouteTest extends TestCase
             'action' => 'index',
             '_method' => 'PUT',
         ];
-        $this->assertEquals('/sample', $route->match($url));
+        $this->assertSame('/sample', $route->match($url));
 
         $url = [
             'controller' => 'posts',
             'action' => 'index',
             '_method' => 'POST',
         ];
-        $this->assertEquals('/sample', $route->match($url));
+        $this->assertSame('/sample', $route->match($url));
 
         $url = [
             'controller' => 'posts',
             'action' => 'index',
             '_method' => ['PUT', 'POST'],
         ];
-        $this->assertEquals('/sample', $route->match($url));
+        $this->assertSame('/sample', $route->match($url));
     }
 
     /**
@@ -1514,19 +1515,19 @@ class RouteTest extends TestCase
     public function testGetName()
     {
         $route = new Route('/foo/bar', [], ['_name' => 'testing']);
-        $this->assertEquals('', $route->getName());
+        $this->assertSame('', $route->getName());
 
         $route = new Route('/:controller/:action');
-        $this->assertEquals('_controller:_action', $route->getName());
+        $this->assertSame('_controller:_action', $route->getName());
 
         $route = new Route('/articles/:action', ['controller' => 'posts']);
-        $this->assertEquals('posts:_action', $route->getName());
+        $this->assertSame('posts:_action', $route->getName());
 
         $route = new Route('/articles/list', ['controller' => 'posts', 'action' => 'index']);
-        $this->assertEquals('posts:index', $route->getName());
+        $this->assertSame('posts:index', $route->getName());
 
         $route = new Route('/:controller/:action', ['action' => 'index']);
-        $this->assertEquals('_controller:_action', $route->getName());
+        $this->assertSame('_controller:_action', $route->getName());
     }
 
     /**
@@ -1540,19 +1541,19 @@ class RouteTest extends TestCase
             '/a/:controller/:action',
             ['plugin' => 'asset']
         );
-        $this->assertEquals('asset._controller:_action', $route->getName());
+        $this->assertSame('asset._controller:_action', $route->getName());
 
         $route = new Route(
             '/a/assets/:action',
             ['plugin' => 'asset', 'controller' => 'assets']
         );
-        $this->assertEquals('asset.assets:_action', $route->getName());
+        $this->assertSame('asset.assets:_action', $route->getName());
 
         $route = new Route(
             '/assets/get',
             ['plugin' => 'asset', 'controller' => 'assets', 'action' => 'get']
         );
-        $this->assertEquals('asset.assets:get', $route->getName());
+        $this->assertSame('asset.assets:get', $route->getName());
     }
 
     /**
@@ -1566,25 +1567,25 @@ class RouteTest extends TestCase
             '/admin/:controller/:action',
             ['prefix' => 'admin']
         );
-        $this->assertEquals('admin:_controller:_action', $route->getName());
+        $this->assertSame('admin:_controller:_action', $route->getName());
 
         $route = new Route(
             '/:prefix/assets/:action',
             ['controller' => 'assets']
         );
-        $this->assertEquals('_prefix:assets:_action', $route->getName());
+        $this->assertSame('_prefix:assets:_action', $route->getName());
 
         $route = new Route(
             '/admin/assets/get',
             ['prefix' => 'admin', 'plugin' => 'asset', 'controller' => 'assets', 'action' => 'get']
         );
-        $this->assertEquals('admin:asset.assets:get', $route->getName());
+        $this->assertSame('admin:asset.assets:get', $route->getName());
 
         $route = new Route(
             '/:prefix/:plugin/:controller/:action/*',
             []
         );
-        $this->assertEquals('_prefix:_plugin._controller:_action', $route->getName());
+        $this->assertSame('_prefix:_plugin._controller:_action', $route->getName());
     }
 
     /**
@@ -1634,22 +1635,22 @@ class RouteTest extends TestCase
     public function testStaticPath()
     {
         $route = new Route('/*', ['controller' => 'Pages', 'action' => 'display']);
-        $this->assertEquals('/', $route->staticPath());
+        $this->assertSame('/', $route->staticPath());
 
         $route = new Route('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
-        $this->assertEquals('/pages', $route->staticPath());
+        $this->assertSame('/pages', $route->staticPath());
 
         $route = new Route('/pages/:id/*', ['controller' => 'Pages', 'action' => 'display']);
-        $this->assertEquals('/pages/', $route->staticPath());
+        $this->assertSame('/pages/', $route->staticPath());
 
         $route = new Route('/:controller/:action/*');
-        $this->assertEquals('/', $route->staticPath());
+        $this->assertSame('/', $route->staticPath());
 
         $route = new Route('/api/{/:action/*');
-        $this->assertEquals('/api/{/', $route->staticPath());
+        $this->assertSame('/api/{/', $route->staticPath());
 
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
-        $this->assertEquals('/books/reviews', $route->staticPath());
+        $this->assertSame('/books/reviews', $route->staticPath());
     }
 
     /**
@@ -1660,13 +1661,13 @@ class RouteTest extends TestCase
     public function testStaticPathBrace()
     {
         $route = new Route('/pages/{id}/*', ['controller' => 'Pages', 'action' => 'display']);
-        $this->assertEquals('/pages/', $route->staticPath());
+        $this->assertSame('/pages/', $route->staticPath());
 
         $route = new Route('/{controller}/{action}/*');
-        $this->assertEquals('/', $route->staticPath());
+        $this->assertSame('/', $route->staticPath());
 
         $route = new Route('/books/reviews', ['controller' => 'Reviews', 'action' => 'index']);
-        $this->assertEquals('/books/reviews', $route->staticPath());
+        $this->assertSame('/books/reviews', $route->staticPath());
     }
 
     /**

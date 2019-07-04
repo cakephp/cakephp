@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace TestApp\Http;
 
 use Cake\Http\BaseApplication;

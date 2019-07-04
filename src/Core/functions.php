@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -100,7 +101,7 @@ if (!function_exists('namespaceSplit')) {
      * Commonly used like `list($namespace, $className) = namespaceSplit($class);`.
      *
      * @param string $class The full class name, ie `Cake\Core\App`.
-     * @return array Array with 2 indexes. 0 => namespace, 1 => classname.
+     * @return string[] Array with 2 indexes. 0 => namespace, 1 => classname.
      */
     function namespaceSplit(string $class): array
     {

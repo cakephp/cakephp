@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * DebugTransportTest file
  *
@@ -31,7 +32,7 @@ class DebugTransportTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->DebugTransport = new DebugTransport();

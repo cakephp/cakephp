@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -186,7 +187,7 @@ class ConsoleOptionParser
      * @param bool $defaultOptions Whether you want the verbose and quiet options set.
      * @return static
      */
-    public static function create($command, $defaultOptions = true)
+    public static function create(?string $command, bool $defaultOptions = true)
     {
         return new static($command, $defaultOptions);
     }
@@ -417,15 +418,23 @@ class ConsoleOptionParser
             $name = $option->name();
         } else {
             $defaults = [
-                'name' => $name,
                 'short' => '',
                 'help' => '',
                 'default' => '',
                 'boolean' => false,
+                'multiple' => false,
                 'choices' => [],
             ];
             $options += $defaults;
-            $option = new ConsoleInputOption($options);
+            $option = new ConsoleInputOption(
+                $name,
+                $options['short'],
+                $options['help'],
+                $options['boolean'],
+                $options['default'],
+                $options['choices'],
+                $options['multiple']
+            );
         }
         $this->_options[$name] = $option;
         asort($this->_options);
@@ -588,7 +597,7 @@ class ConsoleOptionParser
      * @param string $name The subcommand name to remove.
      * @return $this
      */
-    public function removeSubcommand($name)
+    public function removeSubcommand(string $name)
     {
         unset($this->_subcommands[$name]);
 

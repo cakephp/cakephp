@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use Cake\Utility\Text;
 
 /**
@@ -27,10 +28,10 @@ class UuidType extends StringType
      * Casts given value from a PHP type to one acceptable by database
      *
      * @param mixed $value value to be converted to database equivalent
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\DriverInterface $driver object from which database preferences and configuration will be extracted
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver): ?string
+    public function toDatabase($value, DriverInterface $driver): ?string
     {
         if ($value === null || $value === '') {
             return null;

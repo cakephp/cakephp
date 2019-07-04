@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,23 +31,23 @@ class TypeFactory
      * @var string[]
      */
     protected static $_types = [
-        'tinyinteger' => 'Cake\Database\Type\IntegerType',
-        'smallinteger' => 'Cake\Database\Type\IntegerType',
-        'integer' => 'Cake\Database\Type\IntegerType',
-        'biginteger' => 'Cake\Database\Type\IntegerType',
-        'binary' => 'Cake\Database\Type\BinaryType',
-        'binaryuuid' => 'Cake\Database\Type\BinaryUuidType',
-        'boolean' => 'Cake\Database\Type\BoolType',
-        'date' => 'Cake\Database\Type\DateType',
-        'datetime' => 'Cake\Database\Type\DateTimeType',
-        'decimal' => 'Cake\Database\Type\DecimalType',
-        'float' => 'Cake\Database\Type\FloatType',
-        'json' => 'Cake\Database\Type\JsonType',
-        'string' => 'Cake\Database\Type\StringType',
-        'text' => 'Cake\Database\Type\StringType',
-        'time' => 'Cake\Database\Type\TimeType',
-        'timestamp' => 'Cake\Database\Type\DateTimeType',
-        'uuid' => 'Cake\Database\Type\UuidType',
+        'tinyinteger' => Type\IntegerType::class,
+        'smallinteger' => Type\IntegerType::class,
+        'integer' => Type\IntegerType::class,
+        'biginteger' => Type\IntegerType::class,
+        'binary' => Type\BinaryType::class,
+        'binaryuuid' => Type\BinaryUuidType::class,
+        'boolean' => Type\BoolType::class,
+        'date' => Type\DateType::class,
+        'datetime' => Type\DateTimeType::class,
+        'decimal' => Type\DecimalType::class,
+        'float' => Type\FloatType::class,
+        'json' => Type\JsonType::class,
+        'string' => Type\StringType::class,
+        'text' => Type\StringType::class,
+        'time' => Type\TimeType::class,
+        'timestamp' => Type\DateTimeType::class,
+        'uuid' => Type\UuidType::class,
     ];
 
     /**
@@ -72,13 +73,14 @@ class TypeFactory
             throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
         }
 
+        /** @var \Cake\Database\TypeInterface */
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
     }
 
     /**
      * Returns an arrays with all the mapped type objects, indexed by name.
      *
-     * @return array
+     * @return \Cake\Database\TypeInterface[]
      */
     public static function buildAll(): array
     {
@@ -100,6 +102,7 @@ class TypeFactory
     public static function set(string $name, TypeInterface $instance): void
     {
         static::$_builtTypes[$name] = $instance;
+        static::$_types[$name] = get_class($instance);
     }
 
     /**
@@ -131,7 +134,7 @@ class TypeFactory
      * Get mapped class name for given type or map array.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array|string|null Configured class name for given $type or map array.
+     * @return string[]|string|null Configured class name for given $type or map array.
      */
     public static function getMap(?string $type = null)
     {

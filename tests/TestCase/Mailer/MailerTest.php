@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -215,7 +216,7 @@ class MailerTest extends TestCase
             ->with('foo', 'bar');
 
         $mailer->send('test', ['foo', 'bar']);
-        $this->assertEquals('cakephp', $mailer->viewBuilder()->getTemplate());
+        $this->assertSame('cakephp', $mailer->viewBuilder()->getTemplate());
     }
 
     /**

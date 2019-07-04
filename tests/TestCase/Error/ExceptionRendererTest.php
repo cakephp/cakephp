@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -58,7 +59,7 @@ class ExceptionRendererTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -74,7 +75,7 @@ class ExceptionRendererTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -119,8 +120,8 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
 
         $request = $request->withParam('prefix', 'admin');
         $exception = new MissingActionException(['controller' => 'Foo', 'action' => 'bar']);
@@ -129,15 +130,15 @@ class ExceptionRendererTest extends TestCase
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertEquals('missingAction', $controller->viewBuilder()->getTemplate());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('missingAction', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
 
         Configure::write('debug', false);
         $ExceptionRenderer = new ExceptionRenderer($exception, $request);
 
         $ExceptionRenderer->render();
         $controller = $ExceptionRenderer->__debugInfo()['controller'];
-        $this->assertEquals('error400', $controller->viewBuilder()->getTemplate());
+        $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertEquals(
             'Admin' . DIRECTORY_SEPARATOR . 'Error',
             $controller->viewBuilder()->getTemplatePath()
@@ -157,7 +158,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = $ExceptionRenderer->render();
 
-        $this->assertEquals('widget thing is missing', (string)$result->getBody());
+        $this->assertSame('widget thing is missing', (string)$result->getBody());
     }
 
     /**
@@ -241,9 +242,9 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$ExceptionRenderer->render()->getBody();
 
-        $this->assertEquals('error400', $ExceptionRenderer->__debugInfo()['template']);
-        $this->assertContains('Not Found', $result);
-        $this->assertNotContains('Secret info not to be leaked', $result);
+        $this->assertSame('error400', $ExceptionRenderer->__debugInfo()['template']);
+        $this->assertStringContainsString('Not Found', $result);
+        $this->assertStringNotContainsString('Secret info not to be leaked', $result);
     }
 
     /**
@@ -258,7 +259,7 @@ class ExceptionRendererTest extends TestCase
         $renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
 
         $result = $renderer->render();
-        $this->assertContains('<b>peeled</b>', (string)$result->getBody());
+        $this->assertStringContainsString('<b>peeled</b>', (string)$result->getBody());
     }
 
     /**
@@ -274,7 +275,7 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertFalse(method_exists($ExceptionRenderer, 'missingWidgetThing'), 'no method should exist.');
-        $this->assertContains('coding fail', (string)$response->getBody(), 'Text should show up.');
+        $this->assertStringContainsString('coding fail', (string)$response->getBody(), 'Text should show up.');
     }
 
     /**
@@ -289,7 +290,7 @@ class ExceptionRendererTest extends TestCase
         $result = $ExceptionRenderer->render();
 
         $this->assertEquals(500, $result->getStatusCode());
-        $this->assertContains('foul ball.', (string)$result->getBody(), 'Text should show up as its debug mode.');
+        $this->assertStringContainsString('foul ball.', (string)$result->getBody(), 'Text should show up as its debug mode.');
     }
 
     /**
@@ -308,8 +309,8 @@ class ExceptionRendererTest extends TestCase
         $result = (string)$response->getBody();
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertNotContains('foul ball.', $result, 'Text should no show up.');
-        $this->assertContains('Internal Error', $result, 'Generic message only.');
+        $this->assertStringNotContainsString('foul ball.', $result, 'Text should no show up.');
+        $this->assertStringContainsString('Internal Error', $result, 'Generic message only.');
     }
 
     /**
@@ -325,7 +326,7 @@ class ExceptionRendererTest extends TestCase
         $result = (string)$response->getBody();
 
         $this->assertEquals(501, $response->getStatusCode());
-        $this->assertContains('foul ball.', $result, 'Text should show up as its debug mode.');
+        $this->assertStringContainsString('foul ball.', $result, 'Text should show up as its debug mode.');
     }
 
     /**
@@ -347,7 +348,7 @@ class ExceptionRendererTest extends TestCase
         $result = (string)$response->getBody();
 
         $this->assertEquals(404, $response->getStatusCode());
-        $this->assertContains('<h2>Custom message</h2>', $result);
+        $this->assertStringContainsString('<h2>Custom message</h2>', $result);
         $this->assertRegExp("/<strong>'.*?\/posts\/view\/1000'<\/strong>/", $result);
     }
 
@@ -395,13 +396,13 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
-        $this->assertContains('Custom message', (string)$result->getBody());
+        $this->assertStringContainsString('Custom message', (string)$result->getBody());
 
         $exception = new MissingActionException(['controller' => 'PostsController', 'action' => 'index']);
         $ExceptionRenderer = new ExceptionRenderer($exception);
 
         $result = $ExceptionRenderer->render();
-        $this->assertContains('Not Found', (string)$result->getBody());
+        $this->assertStringContainsString('Not Found', (string)$result->getBody());
     }
 
     /**
@@ -421,8 +422,8 @@ class ExceptionRendererTest extends TestCase
 
         $result = (string)$ExceptionRenderer->render()->getBody();
 
-        $this->assertNotContains('<script>document', $result);
-        $this->assertNotContains('alert(t);</script>', $result);
+        $this->assertStringNotContainsString('<script>document', $result);
+        $this->assertStringNotContainsString('alert(t);</script>', $result);
     }
 
     /**
@@ -438,8 +439,8 @@ class ExceptionRendererTest extends TestCase
         $response = $ExceptionRenderer->render();
         $result = (string)$response->getBody();
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertContains('<h2>An Internal Error Has Occurred.</h2>', $result);
-        $this->assertContains('An Internal Error Has Occurred.</p>', $result);
+        $this->assertStringContainsString('<h2>An Internal Error Has Occurred.</h2>', $result);
+        $this->assertStringContainsString('An Internal Error Has Occurred.</p>', $result);
     }
 
     /**
@@ -455,7 +456,7 @@ class ExceptionRendererTest extends TestCase
 
         $result = $ExceptionRenderer->render();
         $this->assertTrue($result->hasHeader('Allow'));
-        $this->assertEquals('POST, DELETE', $result->getHeaderLine('Allow'));
+        $this->assertSame('POST, DELETE', $result->getHeaderLine('Allow'));
     }
 
     /**
@@ -478,8 +479,8 @@ class ExceptionRendererTest extends TestCase
             'missingController',
             $ExceptionRenderer->__debugInfo()['template']
         );
-        $this->assertContains('Missing Controller', $result);
-        $this->assertContains('<em>PostsController</em>', $result);
+        $this->assertStringContainsString('Missing Controller', $result);
+        $this->assertStringContainsString('<em>PostsController</em>', $result);
     }
 
     /**
@@ -502,8 +503,8 @@ class ExceptionRendererTest extends TestCase
             'missingController',
             $ExceptionRenderer->__debugInfo()['template']
         );
-        $this->assertContains('Missing Controller', $result);
-        $this->assertContains('<em>PostsController</em>', $result);
+        $this->assertStringContainsString('Missing Controller', $result);
+        $this->assertStringContainsString('<em>PostsController</em>', $result);
     }
 
     /**
@@ -667,14 +668,14 @@ class ExceptionRendererTest extends TestCase
         $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
         $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertContains('widget thing is missing', $result);
+        $this->assertStringContainsString('widget thing is missing', $result);
 
         // Custom method should be called even when debug is off.
         Configure::write('debug', false);
         $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
         $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertContains('widget thing is missing', $result);
+        $this->assertStringContainsString('widget thing is missing', $result);
     }
 
     /**
@@ -704,7 +705,7 @@ class ExceptionRendererTest extends TestCase
         $helpers = $controller->viewBuilder()->getHelpers();
         sort($helpers);
         $this->assertEquals(['Form', 'Html'], $helpers);
-        $this->assertContains('Helper class Fail', (string)$response->getBody());
+        $this->assertStringContainsString('Helper class Fail', (string)$response->getBody());
     }
 
     /**
@@ -729,7 +730,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
-        $this->assertContains('Not there, sorry', (string)$response->getBody());
+        $this->assertStringContainsString('Not there, sorry', (string)$response->getBody());
     }
 
     /**
@@ -756,11 +757,11 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
-        $this->assertEquals('text/html', $response->getType());
-        $this->assertContains('Not Found', (string)$response->getBody());
+        $this->assertSame('text/html', $response->getType());
+        $this->assertStringContainsString('Not Found', (string)$response->getBody());
         $this->assertTrue($this->called, 'Listener added was not triggered.');
-        $this->assertEquals('', $controller->viewBuilder()->getLayoutPath());
-        $this->assertEquals('Error', $controller->viewBuilder()->getTemplatePath());
+        $this->assertSame('', $controller->viewBuilder()->getLayoutPath());
+        $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
     }
 
     /**
@@ -787,8 +788,8 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
-        $this->assertEquals('text/html', $response->getType());
-        $this->assertContains('Not Found', (string)$response->getBody());
+        $this->assertSame('text/html', $response->getType());
+        $this->assertStringContainsString('Not Found', (string)$response->getBody());
         $this->assertTrue($this->called, 'Listener added was not triggered.');
         $this->assertSame('', $controller->viewBuilder()->getLayoutPath());
         $this->assertSame('Error', $controller->viewBuilder()->getTemplatePath());
@@ -821,8 +822,8 @@ class ExceptionRendererTest extends TestCase
 
         $response = $ExceptionRenderer->render();
         $body = (string)$response->getBody();
-        $this->assertNotContains('test plugin error500', $body);
-        $this->assertContains('Not Found', $body);
+        $this->assertStringNotContainsString('test plugin error500', $body);
+        $this->assertStringContainsString('Not Found', $body);
     }
 
     /**
@@ -853,8 +854,8 @@ class ExceptionRendererTest extends TestCase
 
         $response = $ExceptionRenderer->render();
         $body = (string)$response->getBody();
-        $this->assertContains('test plugin error500', $body);
-        $this->assertContains('Not Found', $body);
+        $this->assertStringContainsString('test plugin error500', $body);
+        $this->assertStringContainsString('Not Found', $body);
     }
 
     /**
@@ -872,7 +873,7 @@ class ExceptionRendererTest extends TestCase
         $ExceptionRenderer = new ExceptionRenderer($exception);
         $result = $ExceptionRenderer->render();
 
-        $this->assertContains('Internal Error', (string)$result->getBody());
+        $this->assertStringContainsString('Internal Error', (string)$result->getBody());
         $this->assertEquals(500, $result->getStatusCode());
     }
 
@@ -966,9 +967,9 @@ class ExceptionRendererTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
         $result = (string)$response->getBody();
-        $this->assertContains('Database Error', $result);
-        $this->assertContains('There was an error in the SQL query', $result);
-        $this->assertContains(h('SELECT * from poo_query < 5 and :seven'), $result);
-        $this->assertContains("'seven' => (int) 7", $result);
+        $this->assertStringContainsString('Database Error', $result);
+        $this->assertStringContainsString('There was an error in the SQL query', $result);
+        $this->assertStringContainsString(h('SELECT * from poo_query < 5 and :seven'), $result);
+        $this->assertStringContainsString("'seven' => (int) 7", $result);
     }
 }

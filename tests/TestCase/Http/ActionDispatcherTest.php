@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,6 +21,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 
 /**
  * Test case for the ActionDispatcher.
@@ -31,7 +33,7 @@ class ActionDispatcherTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Router::reload();
@@ -49,7 +51,9 @@ class ActionDispatcherTest extends TestCase
         $factory = $this->getMockBuilder('Cake\Http\ControllerFactory')->getMock();
         $dispatcher = new ActionDispatcher($factory);
 
-        $this->assertAttributeSame($factory, 'factory', $dispatcher);
+        $reflect = new ReflectionProperty($dispatcher, 'factory');
+        $reflect->setAccessible(true);
+        $this->assertSame($factory, $reflect->getValue($dispatcher));
     }
 
     /**
@@ -76,28 +80,6 @@ class ActionDispatcherTest extends TestCase
     }
 
     /**
-     * test invalid response from dispatch process.
-     *
-     * @return void
-     */
-    public function testDispatchInvalidResponse()
-    {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Controller actions can only return Cake\Http\Response or null');
-        $req = new ServerRequest([
-            'url' => '/cakes',
-            'params' => [
-                'plugin' => null,
-                'controller' => 'Cakes',
-                'action' => 'invalid',
-                'pass' => [],
-            ],
-        ]);
-        $res = new Response();
-        $result = $this->dispatcher->dispatch($req, $res);
-    }
-
-    /**
      * Test dispatch with autorender
      *
      * @return void
@@ -115,7 +97,7 @@ class ActionDispatcherTest extends TestCase
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertContains('posts index', (string)$result->getBody());
+        $this->assertStringContainsString('posts index', (string)$result->getBody());
     }
 
     /**
@@ -136,7 +118,7 @@ class ActionDispatcherTest extends TestCase
         $response = new Response();
         $result = $this->dispatcher->dispatch($request, $response);
         $this->assertInstanceOf('Cake\Http\Response', $result);
-        $this->assertContains('autoRender false body', (string)$result->getBody());
+        $this->assertStringContainsString('autoRender false body', (string)$result->getBody());
     }
 
     /**

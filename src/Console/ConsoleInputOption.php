@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -78,38 +79,32 @@ class ConsoleInputOption
     /**
      * Make a new Input Option
      *
-     * @param string|array $name The long name of the option, or an array with all the properties.
+     * @param string $name The long name of the option, or an array with all the properties.
      * @param string $short The short alias for this option
      * @param string $help The help text for this option
      * @param bool $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
-     * @param string $default The default value for this option.
+     * @param string|bool $default The default value for this option.
      * @param array $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function __construct(
-        $name,
-        $short = '',
-        $help = '',
-        $boolean = false,
+        string $name,
+        string $short = '',
+        string $help = '',
+        bool $boolean = false,
         $default = '',
-        $choices = [],
-        $multiple = false
+        array $choices = [],
+        bool $multiple = false
     ) {
-        if (is_array($name) && isset($name['name'])) {
-            foreach ($name as $key => $value) {
-                $this->{'_' . $key} = $value;
-            }
-        } else {
-            /** @psalm-suppress PossiblyInvalidPropertyAssignmentValue */
-            $this->_name = $name;
-            $this->_short = $short;
-            $this->_help = $help;
-            $this->_boolean = $boolean;
-            $this->_default = $default;
-            $this->_choices = $choices;
-            $this->_multiple = $multiple;
-        }
+        $this->_name = $name;
+        $this->_short = $short;
+        $this->_help = $help;
+        $this->_boolean = $boolean;
+        $this->_default = is_bool($default) ? $default : (string)$default;
+        $this->_choices = $choices;
+        $this->_multiple = $multiple;
+
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
                 sprintf('Short option "%s" is invalid, short options must be one letter.', $this->_short)
@@ -172,7 +167,7 @@ class ConsoleInputOption
     {
         $name = strlen($this->_short) > 0 ? ('-' . $this->_short) : ('--' . $this->_name);
         $default = '';
-        if (strlen($this->_default) > 0 && $this->_default !== true) {
+        if (!is_bool($this->_default) && strlen($this->_default) > 0) {
             $default = ' ' . $this->_default;
         }
         if ($this->_choices) {
@@ -215,7 +210,7 @@ class ConsoleInputOption
     /**
      * Check that a value is a valid choice for this option.
      *
-     * @param string $value The choice to validate.
+     * @param string|bool $value The choice to validate.
      * @return bool
      * @throws \Cake\Console\Exception\ConsoleException
      */
@@ -228,7 +223,7 @@ class ConsoleInputOption
             throw new ConsoleException(
                 sprintf(
                     '"%s" is not a valid value for --%s. Please use one of "%s"',
-                    $value,
+                    (string)$value,
                     $this->_name,
                     implode(', ', $this->_choices)
                 )

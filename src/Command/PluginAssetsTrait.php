@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,70 +14,32 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Shell\Task;
+namespace Cake\Command;
 
-use Cake\Console\ConsoleOptionParser;
-use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
- * Task for symlinking / copying plugin assets to app's webroot.
+ * trait for symlinking / copying plugin assets to app's webroot.
+ * @internal
  */
-class AssetsTask extends Shell
+trait PluginAssetsTrait
 {
     /**
-     * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
-     * fallbacks to copying the assets. For vendor namespaced plugin, parent folder
-     * for vendor name are created if required.
+     * Arguments
      *
-     * @param string|null $name Name of plugin for which to symlink assets.
-     *   If null all plugins will be processed.
-     * @return void
+     * @var \Cake\Console\Arguments
      */
-    public function symlink(?string $name = null): void
-    {
-        $this->_process($this->_list($name));
-    }
+    protected $args;
 
     /**
-     * Copying plugin assets to app's webroot. For vendor namespaced plugin,
-     * parent folder for vendor name are created if required.
+     * Console IO
      *
-     * @param string|null $name Name of plugin for which to symlink assets.
-     *   If null all plugins will be processed.
-     * @return void
+     * @var \Cake\Console\ConsoleIo
      */
-    public function copy(?string $name = null): void
-    {
-        $this->_process($this->_list($name), true, (bool)$this->param('overwrite'));
-    }
-
-    /**
-     * Remove plugin assets from app's webroot.
-     *
-     * @param string|null $name Name of plugin for which to remove assets.
-     *   If null all plugins will be processed.
-     * @return void
-     * @since 3.5.12
-     */
-    public function remove(?string $name = null): void
-    {
-        $plugins = $this->_list($name);
-
-        foreach ($plugins as $plugin => $config) {
-            $this->out();
-            $this->out('For plugin: ' . $plugin);
-            $this->hr();
-
-            $this->_remove($config);
-        }
-
-        $this->out();
-        $this->out('Done');
-    }
+    protected $io;
 
     /**
      * Get list of plugins to process. Plugins without a webroot directory are skipped.
@@ -91,7 +54,7 @@ class AssetsTask extends Shell
             $pluginsList = Plugin::loaded();
         } else {
             if (!Plugin::isLoaded($name)) {
-                $this->err(sprintf('Plugin %s is not loaded.', $name));
+                $this->io->err(sprintf('Plugin %s is not loaded.', $name));
 
                 return [];
             }
@@ -103,8 +66,8 @@ class AssetsTask extends Shell
         foreach ($pluginsList as $plugin) {
             $path = Plugin::path($plugin) . 'webroot';
             if (!is_dir($path)) {
-                $this->verbose('', 1);
-                $this->verbose(
+                $this->io->verbose('', 1);
+                $this->io->verbose(
                     sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
                     2
                 );
@@ -143,12 +106,10 @@ class AssetsTask extends Shell
      */
     protected function _process(array $plugins, bool $copy = false, bool $overwrite = false): void
     {
-        $overwrite = (bool)$this->param('overwrite');
-
         foreach ($plugins as $plugin => $config) {
-            $this->out();
-            $this->out('For plugin: ' . $plugin);
-            $this->hr();
+            $this->io->out();
+            $this->io->out('For plugin: ' . $plugin);
+            $this->io->hr();
 
             if ($config['namespaced'] &&
                 !is_dir($config['destDir']) &&
@@ -163,7 +124,7 @@ class AssetsTask extends Shell
                 if ($overwrite && !$this->_remove($config)) {
                     continue;
                 } elseif (!$overwrite) {
-                    $this->verbose(
+                    $this->io->verbose(
                         $dest . ' already exists',
                         1
                     );
@@ -188,8 +149,8 @@ class AssetsTask extends Shell
             );
         }
 
-        $this->out();
-        $this->out('Done');
+        $this->io->out();
+        $this->io->out('Done');
     }
 
     /**
@@ -201,7 +162,7 @@ class AssetsTask extends Shell
     protected function _remove(array $config): bool
     {
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
-            $this->verbose(
+            $this->io->verbose(
                 $config['destDir'] . $config['link'] . ' does not exist',
                 1
             );
@@ -212,7 +173,7 @@ class AssetsTask extends Shell
         $dest = $config['destDir'] . $config['link'];
 
         if (!file_exists($dest)) {
-            $this->verbose(
+            $this->io->verbose(
                 $dest . ' does not exist',
                 1
             );
@@ -223,11 +184,11 @@ class AssetsTask extends Shell
         if (is_link($dest)) {
             // phpcs:ignore
             if (@unlink($dest)) {
-                $this->out('Unlinked ' . $dest);
+                $this->io->out('Unlinked ' . $dest);
 
                 return true;
             } else {
-                $this->err('Failed to unlink  ' . $dest);
+                $this->io->err('Failed to unlink  ' . $dest);
 
                 return false;
             }
@@ -235,11 +196,11 @@ class AssetsTask extends Shell
 
         $fs = new Filesystem();
         if ($fs->deleteDir($dest)) {
-            $this->out('Deleted ' . $dest);
+            $this->io->out('Deleted ' . $dest);
 
             return true;
         } else {
-            $this->err('Failed to delete ' . $dest);
+            $this->io->err('Failed to delete ' . $dest);
 
             return false;
         }
@@ -260,12 +221,12 @@ class AssetsTask extends Shell
         umask($old);
 
         if ($result) {
-            $this->out('Created directory ' . $dir);
+            $this->io->out('Created directory ' . $dir);
 
             return true;
         }
 
-        $this->err('Failed creating directory ' . $dir);
+        $this->io->err('Failed creating directory ' . $dir);
 
         return false;
     }
@@ -284,7 +245,7 @@ class AssetsTask extends Shell
         // phpcs:enable
 
         if ($result) {
-            $this->out('Created symlink ' . $link);
+            $this->io->out('Created symlink ' . $link);
 
             return true;
         }
@@ -303,40 +264,13 @@ class AssetsTask extends Shell
     {
         $fs = new Filesystem();
         if ($fs->copyDir($source, $destination)) {
-            $this->out('Copied assets to directory ' . $destination);
+            $this->io->out('Copied assets to directory ' . $destination);
 
             return true;
         }
 
-        $this->err('Error copying assets to directory ' . $destination);
+        $this->io->err('Error copying assets to directory ' . $destination);
 
         return false;
-    }
-
-    /**
-     * Gets the option parser instance and configures it.
-     *
-     * @return \Cake\Console\ConsoleOptionParser
-     */
-    public function getOptionParser(): ConsoleOptionParser
-    {
-        $parser = parent::getOptionParser();
-
-        $parser->addSubcommand('symlink', [
-            'help' => 'Symlink (copy as fallback) plugin assets to app\'s webroot.',
-        ])->addSubcommand('copy', [
-            'help' => 'Copy plugin assets to app\'s webroot.',
-        ])->addSubcommand('remove', [
-            'help' => 'Remove plugin assets from app\'s webroot.',
-        ])->addArgument('name', [
-            'help' => 'A specific plugin you want to symlink assets for.',
-            'optional' => true,
-        ])->addOption('overwrite', [
-            'help' => 'Overwrite existing symlink / folder / files.',
-            'default' => false,
-            'boolean' => true,
-        ]);
-
-        return $parser;
     }
 }

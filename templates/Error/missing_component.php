@@ -34,7 +34,7 @@ if (!empty($plugin) && !Plugin::isLoaded($plugin)) {
 
 $this->layout = 'dev_error';
 $this->assign('title', 'Missing Component');
-$this->assign('templateName', 'missing_component.ctp');
+$this->assign('templateName', 'missing_component.php');
 
 $this->start('subheading');
 printf('<em>%s</em> could not be found.', h($pluginDot . $class));
@@ -44,7 +44,7 @@ $this->end();
 $this->start('file');
 ?>
 <p class="error">
-    <strong>Error: </strong>
+    <strong>Error</strong>
     <?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), $filePath . 'Controller' . DIRECTORY_SEPARATOR . 'Component' . DIRECTORY_SEPARATOR . h($class) . '.php'); ?>
 </p>
 <?php

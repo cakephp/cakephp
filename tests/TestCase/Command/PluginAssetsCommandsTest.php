@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,17 +14,24 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell\Task;
+namespace Cake\Test\TestCase\Command;
 
+use Cake\Console\Command;
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Filesystem\Filesystem;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\TestSuite\Stub\ConsoleOutput;
 use Cake\TestSuite\TestCase;
 
 /**
- * AssetsTaskTest class
+ * PluginAssetsCommandsTest class
  */
-class AssetsTaskTest extends TestCase
+class PluginAssetsCommandsTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     protected $wwwRoot;
 
     /**
@@ -36,7 +44,7 @@ class AssetsTaskTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -49,17 +57,16 @@ class AssetsTaskTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->Task = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
-            ->setMethods(['in', 'out', 'err', '_stop'])
-            ->setConstructorArgs([$this->io])
-            ->getMock();
-
         $this->wwwRoot = TMP . 'assets_task_webroot' . DS;
         Configure::write('App.wwwRoot', $this->wwwRoot);
 
         $this->fs = new Filesystem();
         $this->fs->deleteDir($this->wwwRoot);
         $this->fs->copyDir(WWW_ROOT, $this->wwwRoot);
+
+        $this->useCommandRunner();
+        $this->setAppNamespace();
+        $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithDefaultRoutes', []);
     }
 
     /**
@@ -67,10 +74,9 @@ class AssetsTaskTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
-        unset($this->Task);
         $this->clearPlugins();
     }
 
@@ -81,9 +87,10 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlink()
     {
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
-        $this->Task->symlink();
+        $this->exec('plugin assets symlink');
+        $this->assertExitCode(Command::CODE_SUCCESS);
 
         $path = $this->wwwRoot . 'test_plugin';
         $this->assertFileExists($path . DS . 'root.js');
@@ -112,7 +119,7 @@ class AssetsTaskTest extends TestCase
 
         mkdir($this->wwwRoot . 'company');
 
-        $this->Task->symlink();
+        $this->exec('plugin assets symlink');
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         if (DS === '\\') {
             $this->assertDirectoryExits($path);
@@ -131,16 +138,25 @@ class AssetsTaskTest extends TestCase
     {
         $this->loadPlugins(['TestTheme']);
 
-        $shell = $this->getMockBuilder('Cake\Shell\Task\AssetsTask')
-            ->setMethods(['in', 'out', 'err', '_stop', '_createSymlink', '_copyDirectory'])
-            ->setConstructorArgs([$this->io])
+        $output = new ConsoleOutput();
+        $io = $this->getMockBuilder(ConsoleIo::class)
+            ->setConstructorArgs([$output, $output, null, null])
+            ->setMethods(['in'])
             ->getMock();
+        $parser = new ConsoleOptionParser('cake example');
+        $parser->addArgument('name', ['optional' => true]);
+        $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
+
+        $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
+            ->setMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
+            ->getMock();
+        $command->method('getOptionParser')->will($this->returnValue($parser));
 
         $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
 
-        $shell->expects($this->never())->method('_createSymlink');
-        $shell->expects($this->never())->method('_copyDirectory');
-        $shell->symlink();
+        $command->expects($this->never())->method('_createSymlink');
+        $command->expects($this->never())->method('_copyDirectory');
+        $command->run([], $io);
     }
 
     /**
@@ -152,7 +168,7 @@ class AssetsTaskTest extends TestCase
     {
         $this->loadPlugins(['TestPluginTwo']);
 
-        $this->Task->symlink();
+        $this->exec('plugin assets symlink');
         $this->assertFileNotExists($this->wwwRoot . 'test_plugin_two');
     }
 
@@ -163,9 +179,9 @@ class AssetsTaskTest extends TestCase
      */
     public function testSymlinkingSpecifiedPlugin()
     {
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
-        $this->Task->symlink('TestPlugin');
+        $this->exec('plugin assets symlink TestPlugin');
 
         $path = $this->wwwRoot . 'test_plugin';
         $link = new \SplFileInfo($path);
@@ -184,9 +200,9 @@ class AssetsTaskTest extends TestCase
      */
     public function testCopy()
     {
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
-        $this->Task->copy();
+        $this->exec('plugin assets copy');
 
         $path = $this->wwwRoot . 'test_plugin';
         $this->assertDirectoryExists($path);
@@ -204,9 +220,9 @@ class AssetsTaskTest extends TestCase
      */
     public function testCopyOverwrite()
     {
-        $this->loadPlugins(['TestPlugin']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false]]);
 
-        $this->Task->copy();
+        $this->exec('plugin assets copy');
 
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'webroot';
 
@@ -217,12 +233,11 @@ class AssetsTaskTest extends TestCase
 
         file_put_contents($path . DS . 'root.js', 'updated');
 
-        $this->Task->copy();
+        $this->exec('plugin assets copy');
 
         $this->assertFileNotEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
 
-        $this->Task->params['overwrite'] = true;
-        $this->Task->copy();
+        $this->exec('plugin assets copy --overwrite');
 
         $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
     }
@@ -240,18 +255,18 @@ class AssetsTaskTest extends TestCase
             );
         }
 
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         mkdir($this->wwwRoot . 'company');
 
-        $this->Task->symlink();
+        $this->exec('plugin assets symlink');
 
         $this->assertTrue(is_link($this->wwwRoot . 'test_plugin'));
 
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertTrue(is_link($path));
 
-        $this->Task->remove();
+        $this->exec('plugin assets remove');
 
         $this->assertFalse(is_link($this->wwwRoot . 'test_plugin'));
         $this->assertFalse(is_link($path));
@@ -267,15 +282,15 @@ class AssetsTaskTest extends TestCase
      */
     public function testRemoveFolder()
     {
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
-        $this->Task->copy();
+        $this->exec('plugin assets copy');
 
         $this->assertTrue(is_dir($this->wwwRoot . 'test_plugin'));
 
         $this->assertTrue(is_dir($this->wwwRoot . 'company' . DS . 'test_plugin_three'));
 
-        $this->Task->remove();
+        $this->exec('plugin assets remove');
 
         $this->assertDirectoryNotExists($this->wwwRoot . 'test_plugin');
         $this->assertDirectoryNotExists($this->wwwRoot . 'company' . DS . 'test_plugin_three');
@@ -291,7 +306,7 @@ class AssetsTaskTest extends TestCase
      */
     public function testOverwrite()
     {
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $path = $this->wwwRoot . 'test_plugin';
 
@@ -299,8 +314,7 @@ class AssetsTaskTest extends TestCase
         $filectime = filectime($path);
 
         sleep(1);
-        $this->Task->params['overwrite'] = true;
-        $this->Task->symlink('TestPlugin');
+        $this->exec('plugin assets symlink TestPlugin --overwrite');
         if (DS === '\\') {
             $this->assertDirectoryExists($path);
         } else {
@@ -321,8 +335,7 @@ class AssetsTaskTest extends TestCase
         $filectime = filectime($path);
 
         sleep(1);
-        $this->Task->params['overwrite'] = true;
-        $this->Task->copy('Company/TestPluginThree');
+        $this->exec('plugin assets copy Company/TestPluginThree --overwrite');
 
         $newfilectime = filectime($path);
         $this->assertTrue($newfilectime > $filectime);

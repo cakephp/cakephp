@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\RepositoryInterface;
 use Cake\TestSuite\TestCase;
 use TestApp\Stub\Stub;
 
@@ -30,7 +32,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testGet()
     {
-        $this->assertInternalType('callable', FactoryLocator::get('Table'));
+        $this->assertIsCallable(FactoryLocator::get('Table'));
     }
 
     /**
@@ -59,7 +61,7 @@ class FactoryLocatorTest extends TestCase
             return $mock;
         });
 
-        $this->assertInternalType('callable', FactoryLocator::get('Test'));
+        $this->assertIsCallable(FactoryLocator::get('Test'));
     }
 
     /**
@@ -110,16 +112,16 @@ class FactoryLocatorTest extends TestCase
         $stub->setProps('Articles');
 
         $stub->modelFactory('Table', function ($name) {
-            $mock = new \StdClass();
+            $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
             $mock->name = $name;
 
             return $mock;
         });
 
         $result = $stub->loadModel('Magic', 'Table');
-        $this->assertInstanceOf('stdClass', $result);
-        $this->assertInstanceOf('stdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
+        $this->assertInstanceOf(RepositoryInterface::class, $result);
+        $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
+        $this->assertSame('Magic', $stub->Magic->name);
     }
 
     /**
@@ -133,7 +135,7 @@ class FactoryLocatorTest extends TestCase
         $stub->setProps('Articles');
 
         FactoryLocator::add('Test', function ($name) {
-            $mock = new \StdClass();
+            $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
             $mock->name = $name;
 
             return $mock;
@@ -141,9 +143,9 @@ class FactoryLocatorTest extends TestCase
         $stub->setModelType('Test');
 
         $result = $stub->loadModel('Magic');
-        $this->assertInstanceOf('stdClass', $result);
-        $this->assertInstanceOf('stdClass', $stub->Magic);
-        $this->assertEquals('Magic', $stub->Magic->name);
+        $this->assertInstanceOf(RepositoryInterface::class, $result);
+        $this->assertInstanceOf(RepositoryInterface::class, $stub->Magic);
+        $this->assertSame('Magic', $stub->Magic->name);
     }
 
     /**
@@ -164,7 +166,7 @@ class FactoryLocatorTest extends TestCase
         $stub->loadModel('Magic', 'Test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         FactoryLocator::drop('Test');
 

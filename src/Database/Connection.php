@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
+use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\MissingConnectionException;
@@ -31,6 +33,9 @@ use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
 use Exception;
+use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
+use RuntimeException;
 
 /**
  * Represents a connection with a database server.
@@ -50,7 +55,7 @@ class Connection implements ConnectionInterface
      * Driver object, responsible for creating the real connection
      * and provide specific SQL dialect.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -86,9 +91,16 @@ class Connection implements ConnectionInterface
     /**
      * Logger object instance.
      *
-     * @var \Cake\Database\Log\QueryLogger|null
+     * @var \Psr\Log\LoggerInterface|null
      */
     protected $_logger;
+
+    /**
+     * Cacher object instance.
+     *
+     * @var \Psr\SimpleCache\CacheInterface|null
+     */
+    protected $cacher;
 
     /**
      * The schema collection object
@@ -161,7 +173,7 @@ class Connection implements ConnectionInterface
      * Sets the driver instance. If a string is passed it will be treated
      * as a class name and will be instantiated.
      *
-     * @param \Cake\Database\Driver|string $driver The driver instance to use.
+     * @param \Cake\Database\DriverInterface|string $driver The driver instance to use.
      * @param array $config Config for a new driver.
      * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
      * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
@@ -171,7 +183,7 @@ class Connection implements ConnectionInterface
     {
         if (is_string($driver)) {
             $className = App::className($driver, 'Database/Driver');
-            if ($className === null || !class_exists($className)) {
+            if ($className === null) {
                 throw new MissingDriverException(['driver' => $driver]);
             }
             $driver = new $className($config);
@@ -199,9 +211,9 @@ class Connection implements ConnectionInterface
     /**
      * Gets the driver instance.
      *
-     * @return \Cake\Database\Driver
+     * @return \Cake\Database\DriverInterface
      */
-    public function getDriver(): Driver
+    public function getDriver(): DriverInterface
     {
         return $this->_driver;
     }
@@ -369,7 +381,7 @@ class Connection implements ConnectionInterface
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
                 $this->configName(),
-                $this->_config['cacheMetadata']
+                $this->getCacher()
             );
         }
 
@@ -717,12 +729,9 @@ class Connection implements ConnectionInterface
 
             try {
                 $result = $callback($this);
-            } catch (Exception $e) {
+            } finally {
                 $this->enableForeignKeys();
-                throw $e;
             }
-
-            $this->enableForeignKeys();
 
             return $result;
         });
@@ -787,6 +796,43 @@ class Connection implements ConnectionInterface
     {
         $this->_schemaCollection = null;
         $this->_config['cacheMetadata'] = $cache;
+        if (is_string($cache)) {
+            $this->cacher = null;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCacher(CacheInterface $cacher)
+    {
+        $this->cacher = $cacher;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCacher(): CacheInterface
+    {
+        if ($this->cacher !== null) {
+            return $this->cacher;
+        }
+
+        $configName = $this->_config['cacheMetadata'] ?? '_cake_model_';
+        if (!is_string($configName)) {
+            $configName = '_cake_model_';
+        }
+
+        if (!class_exists(Cache::class)) {
+            throw new RuntimeException(
+                'To use caching you must either set a cacher using Connection::setCacher()' .
+                ' or require the cakephp/cache package in your composer config.'
+            );
+        }
+
+        return $this->cacher = Cache::pool($configName);
     }
 
     /**
@@ -827,10 +873,11 @@ class Connection implements ConnectionInterface
     /**
      * Sets a logger
      *
-     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
+     * @param \Psr\Log\LoggerInterface $logger Logger object
      * @return $this
+     * @psalm-suppress ImplementedReturnTypeMismatch
      */
-    public function setLogger($logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->_logger = $logger;
 
@@ -840,15 +887,22 @@ class Connection implements ConnectionInterface
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Psr\Log\LoggerInterface logger instance
      */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
-        if ($this->_logger === null) {
-            $this->_logger = new QueryLogger();
+        if ($this->_logger !== null) {
+            return $this->_logger;
         }
 
-        return $this->_logger;
+        if (!class_exists(QueryLogger::class)) {
+            throw new RuntimeException(
+                'For logging you must either set a logger using Connection::setLogger()' .
+                ' or require the cakephp/log package in your composer config.'
+            );
+        }
+
+        return $this->_logger = new QueryLogger();
     }
 
     /**
@@ -861,7 +915,7 @@ class Connection implements ConnectionInterface
     {
         $query = new LoggedQuery();
         $query->query = $sql;
-        $this->getLogger()->log($query);
+        $this->getLogger()->debug((string)$query, ['query' => $query]);
     }
 
     /**

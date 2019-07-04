@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -45,7 +46,7 @@ class TableHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -224,6 +225,7 @@ class TableHelperTest extends TestCase
         ];
         $this->assertEquals($expected, $this->stub->messages());
     }
+
     /**
      * Test output with different header style
      *

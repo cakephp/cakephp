@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -60,7 +61,7 @@ trait ExtractTrait
      * @param array $path Path to extract from.
      * @return mixed
      */
-    protected function _extract($data, $path)
+    protected function _extract($data, array $path)
     {
         $value = null;
         $collectionTransform = false;
@@ -101,7 +102,7 @@ trait ExtractTrait
      * @param array $path Path to extract from.
      * @return mixed
      */
-    protected function _simpleExtract($data, $path)
+    protected function _simpleExtract($data, array $path)
     {
         $value = null;
         foreach ($path as $column) {

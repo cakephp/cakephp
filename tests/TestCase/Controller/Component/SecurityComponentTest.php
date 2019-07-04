@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -1423,8 +1424,8 @@ class SecurityComponentTest extends TestCase
             $message = $ex->getMessage();
             $reason = $ex->getReason();
         }
-        $this->assertEquals('The request has been black-holed', $message);
-        $this->assertEquals('error description', $reason);
+        $this->assertSame('The request has been black-holed', $message);
+        $this->assertSame('error description', $reason);
     }
 
     /**

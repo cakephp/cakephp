@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Cache Session save handler. Allows saving session information into Cache.
  *
@@ -59,7 +60,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $name The session name.
      * @return bool Success
      */
-    public function open($savePath, $name)
+    public function open($savePath, $name): bool
     {
         return true;
     }
@@ -69,7 +70,7 @@ class CacheSession implements SessionHandlerInterface
      *
      * @return bool Success
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -80,7 +81,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return string Session data or empty string if it does not exist.
      */
-    public function read($id)
+    public function read($id): string
     {
         $value = Cache::read($id, $this->_options['config']);
 
@@ -98,7 +99,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
-    public function write($id, $data)
+    public function write($id, $data): bool
     {
         if (!$id) {
             return false;
@@ -113,7 +114,7 @@ class CacheSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in cache.
      * @return bool Always true.
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         Cache::delete($id, $this->_options['config']);
 
@@ -126,7 +127,7 @@ class CacheSession implements SessionHandlerInterface
      * @param int $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return bool Always true.
      */
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): bool
     {
         return true;
     }

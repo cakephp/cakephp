@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
+use Cake\Core\Configure;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\RoutingMiddleware;
@@ -30,6 +32,13 @@ class Application extends BaseApplication
     public function bootstrap(): void
     {
         parent::bootstrap();
+
+        // Load plugins defined in Configure.
+        if (Configure::check('Plugins.autoload')) {
+            foreach (Configure::read('Plugins.autoload') as $value) {
+                $this->addPlugin($value);
+            }
+        }
     }
 
     /**
@@ -72,8 +81,12 @@ class Application extends BaseApplication
     {
         $routes->scope('/app', function (RouteBuilder $routes) {
             $routes->connect('/articles', ['controller' => 'Articles']);
+            $routes->connect('/articles/:action/*', ['controller' => 'Articles']);
+
+            $routes->connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
             $routes->fallbacks();
         });
         $routes->connect('/posts', ['controller' => 'Posts', 'action' => 'index']);
+        $routes->connect('/bake/:controller/:action', ['plugin' => 'Bake']);
     }
 }

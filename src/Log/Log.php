@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -112,12 +113,12 @@ class Log
     /**
      * An array mapping url schemes to fully qualified Log engine class names
      *
-     * @var array
+     * @var string[]
      */
     protected static $_dsnClassMap = [
-        'console' => 'Cake\Log\Engine\ConsoleLog',
-        'file' => 'Cake\Log\Engine\FileLog',
-        'syslog' => 'Cake\Log\Engine\SyslogLog',
+        'console' => Engine\ConsoleLog::class,
+        'file' => Engine\FileLog::class,
+        'syslog' => Engine\SyslogLog::class,
     ];
 
     /**
@@ -130,14 +131,14 @@ class Log
     /**
      * LogEngineRegistry class
      *
-     * @var \Cake\Log\LogEngineRegistry|null
+     * @var \Cake\Log\LogEngineRegistry
      */
     protected static $_registry;
 
     /**
      * Handled log levels
      *
-     * @var array
+     * @var string[]
      */
     protected static $_levels = [
         'emergency',
@@ -213,7 +214,9 @@ class Log
      */
     public static function reset(): void
     {
-        static::$_registry = null;
+        if (!empty(static::$_registry)) {
+            static::$_registry->reset();
+        }
         static::$_config = [];
         static::$_dirtyConfig = true;
     }
@@ -224,7 +227,7 @@ class Log
      * Call this method to obtain current
      * level configuration.
      *
-     * @return array active log levels
+     * @return string[] Active log levels
      */
     public static function levels(): array
     {
@@ -283,7 +286,7 @@ class Log
      * @param string $name Key name of a configured adapter to get.
      * @return \Psr\Log\LoggerInterface|null Instance of LoggerInterface or false if not found
      */
-    public static function engine($name): ?LoggerInterface
+    public static function engine(string $name): ?LoggerInterface
     {
         static::_init();
         if (static::$_registry->{$name}) {
@@ -354,7 +357,7 @@ class Log
             $level = array_search($level, static::$_levelMap, true);
         }
 
-        if (!in_array($level, static::$_levels)) {
+        if (!in_array($level, static::$_levels, true)) {
             throw new InvalidArgumentException(sprintf('Invalid log level "%s"', $level));
         }
 
@@ -401,7 +404,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function emergency($message, $context = []): bool
+    public static function emergency(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -417,7 +420,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function alert($message, $context = []): bool
+    public static function alert(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -433,7 +436,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function critical($message, $context = []): bool
+    public static function critical(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -449,7 +452,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function error($message, $context = []): bool
+    public static function error(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -465,7 +468,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function warning($message, $context = []): bool
+    public static function warning(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -481,7 +484,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function notice($message, $context = []): bool
+    public static function notice(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -497,7 +500,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function debug($message, $context = []): bool
+    public static function debug(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }
@@ -513,7 +516,7 @@ class Log
      *  See Cake\Log\Log::setConfig() for more information on logging scopes.
      * @return bool Success
      */
-    public static function info($message, $context = []): bool
+    public static function info(string $message, $context = []): bool
     {
         return static::write(__FUNCTION__, $message, $context);
     }

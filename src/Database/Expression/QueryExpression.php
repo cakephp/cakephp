@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -117,7 +118,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @see \Cake\Database\Query::where() for examples on conditions
      * @return $this
      */
-    public function add($conditions, $types = [])
+    public function add($conditions, array $types = [])
     {
         if (is_string($conditions)) {
             $this->_conditions[] = $conditions;
@@ -424,6 +425,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return $conditions(new static([], $this->getTypeMap()->setTypes($types)));
         }
 
+        /** @var \Cake\Database\Expression\QueryExpression */
         return new static($conditions, $this->getTypeMap()->setTypes($types));
     }
 
@@ -442,6 +444,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return $conditions(new static([], $this->getTypeMap()->setTypes($types), 'OR'));
         }
 
+        /** @var \Cake\Database\Expression\QueryExpression */
         return new static($conditions, $this->getTypeMap()->setTypes($types), 'OR');
     }
 // phpcs:enable
@@ -602,7 +605,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * as they often contain user input and arrays of strings
      * are easy to sneak in.
      *
-     * @param callable|string|array $c The callable to check.
+     * @param callable|string|array|\Cake\Database\ExpressionInterface $c The callable to check.
      * @return bool Valid callable.
      */
     public function isCallable($c): bool
@@ -655,6 +658,7 @@ class QueryExpression implements ExpressionInterface, Countable
             $numericKey = is_numeric($k);
 
             if ($this->isCallable($c)) {
+                /** @var \Cake\Database\Expression\QueryExpression $expr */
                 $expr = new static([], $typeMap);
                 $c = $c($expr, $this);
             }
@@ -686,6 +690,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
 
             if ($numericKey && $isArray || $isOperator) {
+                /** @var \Cake\Database\Expression\QueryExpression $this->_conditions[] */
                 $this->_conditions[] = new static($c, $typeMap, $numericKey ? 'AND' : $k);
                 continue;
             }

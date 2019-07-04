@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -59,6 +60,7 @@ class CommandCollection implements IteratorAggregate, Countable
     {
         // Once we have a new Command class this should check
         // against that interface.
+        /** @psalm-suppress DeprecatedClass */
         if (!is_subclass_of($command, Shell::class) && !is_subclass_of($command, Command::class)) {
             $class = is_string($command) ? $command : get_class($command);
             throw new InvalidArgumentException(sprintf(
@@ -139,7 +141,7 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->commands);
     }
@@ -167,7 +169,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @param string $plugin The plugin to scan.
      * @return string[] Discovered plugin commands.
      */
-    public function discoverPlugin($plugin): array
+    public function discoverPlugin(string $plugin): array
     {
         $scanner = new CommandScanner();
         $shells = $scanner->scanPlugin($plugin);

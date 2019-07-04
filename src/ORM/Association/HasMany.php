@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
@@ -20,9 +21,9 @@ use Cake\Collection\Collection;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Association\Loader\SelectLoader;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Closure;
 use InvalidArgumentException;
@@ -47,7 +48,7 @@ class HasMany extends Association
      *
      * @var string
      */
-    protected $_joinType = QueryInterface::JOIN_TYPE_INNER;
+    protected $_joinType = Query::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
@@ -59,7 +60,7 @@ class HasMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var array
+     * @var string[]
      */
     protected $_validStrategies = [
         self::STRATEGY_SELECT,
@@ -137,7 +138,7 @@ class HasMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
      * @param array $options options to be passed to the save method in the target table
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
@@ -574,7 +575,7 @@ class HasMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the source table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getForeignKey()
     {

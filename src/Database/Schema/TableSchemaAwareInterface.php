@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -23,15 +24,15 @@ interface TableSchemaAwareInterface
     /**
      * Get and set the schema for this fixture.
      *
-     * @return \Cake\Database\Schema\TableSchemaInterface|null
+     * @return \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      */
-    public function getTableSchema(): ?TableSchemaInterface;
+    public function getTableSchema();
 
     /**
      * Get and set the schema for this fixture.
      *
-     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table to set.
+     * @param \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface $schema The table to set.
      * @return $this
      */
-    public function setTableSchema(TableSchemaInterface $schema);
+    public function setTableSchema($schema);
 }

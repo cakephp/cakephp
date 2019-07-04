@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -86,7 +87,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct class name or null.
      */
-    protected function _resolveClassName($class)
+    protected function _resolveClassName(string $class): ?string
     {
         return App::className($class, 'Controller/Component', 'Component');
     }
@@ -123,6 +124,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      */
     protected function _create($class, string $alias, array $config): Component
     {
+        /** @var \Cake\Controller\Component $instance */
         $instance = new $class($this, $config);
         $enable = $config['enabled'] ?? true;
         if ($enable) {

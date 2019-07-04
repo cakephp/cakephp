@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -89,11 +90,15 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
             return $this->_loaded[$name];
         }
 
-        $className = $this->_resolveClassName($objectName);
-        if ($className === null || (is_string($className) && !class_exists($className))) {
-            [$plugin, $objectName] = pluginSplit($objectName);
-            $this->_throwMissingClassError($objectName, $plugin);
+        $className = $objectName;
+        if (is_string($objectName)) {
+            $className = $this->_resolveClassName($objectName);
+            if ($className === null) {
+                [$plugin, $objectName] = pluginSplit($objectName);
+                $this->_throwMissingClassError($objectName, $plugin);
+            }
         }
+
         $instance = $this->_create($className, $name, $config);
         $this->_loaded[$name] = $instance;
 
@@ -154,10 +159,10 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Should resolve the classname for a given object type.
      *
-     * @param string|object $class The class to resolve or object.
-     * @return string|object|null The resolved name or false for failure.
+     * @param string $class The class to resolve.
+     * @return string|null The resolved name or null for failure.
      */
-    abstract protected function _resolveClassName($class);
+    abstract protected function _resolveClassName(string $class): ?string;
 
     /**
      * Throw an exception when the requested object name is missing.
@@ -207,26 +212,27 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Get loaded object instance.
      *
      * @param string $name Name of object.
-     * @return object|null Object instance if loaded else null.
+     * @return object Object instance.
+     * @throws \RuntimeException If not loaded or found.
      */
-    public function get(string $name)
+    public function get(string $name): object
     {
-        if (isset($this->_loaded[$name])) {
-            return $this->_loaded[$name];
+        if (!isset($this->_loaded[$name])) {
+            throw new RuntimeException(sprintf('Unknown object "%s"', $name));
         }
 
-        return null;
+        return $this->_loaded[$name];
     }
 
     /**
      * Provide public read access to the loaded objects
      *
      * @param string $name Name of property to read
-     * @return mixed
+     * @return object|null
      */
-    public function __get($name)
+    public function __get(string $name)
     {
-        return $this->get($name);
+        return $this->_loaded[$name] ?? null;
     }
 
     /**
@@ -235,9 +241,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object being checked.
      * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
-        return isset($this->_loaded[$name]);
+        return $this->has($name);
     }
 
     /**
@@ -247,7 +253,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param mixed $object Object to set.
      * @return void
      */
-    public function __set($name, $object)
+    public function __set(string $name, $object): void
     {
         $this->set($name, $object);
     }
@@ -258,7 +264,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of a property to unset.
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         $this->unload($name);
     }
@@ -316,7 +322,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param object $object instance to store in the registry
      * @return $this
      */
-    public function set(string $objectName, $object)
+    public function set(string $objectName, object $object)
     {
         [, $name] = pluginSplit($objectName);
 
@@ -381,7 +387,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $properties = get_object_vars($this);
         if (isset($properties['_loaded'])) {

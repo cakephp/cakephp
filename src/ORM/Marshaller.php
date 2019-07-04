@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -301,10 +302,11 @@ class Marshaller
         $targetTable = $assoc->getTarget();
         $marshaller = $targetTable->marshaller();
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
-        if (in_array($assoc->type(), $types)) {
+        $type = $assoc->type();
+        if (in_array($type, $types, true)) {
             return $marshaller->one($value, (array)$options);
         }
-        if ($assoc->type() === Association::ONE_TO_MANY || $assoc->type() === Association::MANY_TO_MANY) {
+        if ($type === Association::ONE_TO_MANY || $type === Association::MANY_TO_MANY) {
             $hasIds = array_key_exists('_ids', $value);
             $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
 
@@ -315,7 +317,7 @@ class Marshaller
                 return [];
             }
         }
-        if ($assoc->type() === Association::MANY_TO_MANY) {
+        if ($type === Association::MANY_TO_MANY) {
             return $marshaller->_belongsToMany($assoc, $value, (array)$options);
         }
 
@@ -620,12 +622,13 @@ class Marshaller
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
-     * @param \Cake\Datasource\EntityInterface[]|\Traversable $entities the entities that will get the
+     * @param \Cake\Datasource\EntityInterface[]|\Traversable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      * @see \Cake\ORM\Entity::$_accessible
+     * @psalm-suppress NullArrayOffset
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
@@ -719,14 +722,15 @@ class Marshaller
         $targetTable = $assoc->getTarget();
         $marshaller = $targetTable->marshaller();
         $types = [Association::ONE_TO_ONE, Association::MANY_TO_ONE];
-        if (in_array($assoc->type(), $types)) {
+        $type = $assoc->type();
+        if (in_array($type, $types, true)) {
             return $marshaller->merge($original, $value, (array)$options);
         }
-        if ($assoc->type() === Association::MANY_TO_MANY) {
+        if ($type === Association::MANY_TO_MANY) {
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$options);
         }
 
-        if ($assoc->type() === Association::ONE_TO_MANY) {
+        if ($type === Association::ONE_TO_MANY) {
             $hasIds = array_key_exists('_ids', $value);
             $onlyIds = array_key_exists('onlyIds', $options) && $options['onlyIds'];
             if ($hasIds && is_array($value['_ids'])) {
@@ -745,12 +749,12 @@ class Marshaller
      * association.
      *
      * @param \Cake\Datasource\EntityInterface[] $original The original entities list.
-     * @param \Cake\ORM\Association $assoc The association to marshall
+     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array $options List of options.
      * @return \Cake\Datasource\EntityInterface[]
      */
-    protected function _mergeBelongsToMany(array $original, Association $assoc, $value, array $options): array
+    protected function _mergeBelongsToMany(array $original, BelongsToMany $assoc, array $value, array $options): array
     {
         $associated = $options['associated'] ?? [];
 

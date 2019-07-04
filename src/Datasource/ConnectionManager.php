@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,10 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 
 /**
@@ -47,10 +52,10 @@ class ConnectionManager
      * @return array
      */
     protected static $_dsnClassMap = [
-        'mysql' => 'Cake\Database\Driver\Mysql',
-        'postgres' => 'Cake\Database\Driver\Postgres',
-        'sqlite' => 'Cake\Database\Driver\Sqlite',
-        'sqlserver' => 'Cake\Database\Driver\Sqlserver',
+        'mysql' => Mysql::class,
+        'postgres' => Postgres::class,
+        'sqlite' => Sqlite::class,
+        'sqlserver' => Sqlserver::class,
     ];
 
     /**
@@ -105,7 +110,7 @@ class ConnectionManager
      * @param string|null $config The DSN string to convert to a configuration array
      * @return array The configuration array to be stored after parsing the DSN
      */
-    public static function parseDsn($config = null): array
+    public static function parseDsn(?string $config = null): array
     {
         $config = static::_parseDsn($config);
 

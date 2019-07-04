@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Http\Exception\InternalErrorException;
+use Cake\Http\Session;
 use Cake\Utility\Inflector;
 use Exception;
 
@@ -158,7 +160,7 @@ class FlashComponent extends Component
      *
      * @return \Cake\Http\Session
      */
-    protected function getSession()
+    protected function getSession(): Session
     {
         return $this->getController()->getRequest()->getSession();
     }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * Test Suite Test App Logging stream class.
  *
@@ -24,8 +25,17 @@ use Cake\Log\Engine\BaseLog;
  */
 class TestAppLog extends BaseLog
 {
-    public $passedScope = null;
+    /**
+     * @var array|null
+     */
+    public $passedScope;
 
+    /**
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return void
+     */
     public function log($level, $message, array $context = [])
     {
         $this->passedScope = $context;

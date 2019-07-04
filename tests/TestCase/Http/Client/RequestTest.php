@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -36,11 +37,12 @@ class RequestTest extends TestCase
         $data = ['a' => 'b', 'c' => 'd'];
         $request = new Request('http://example.com', 'POST', $headers, json_encode($data));
 
-        $this->assertEquals('http://example.com', (string)$request->getUri());
-        $this->assertContains($request->getMethod(), 'POST');
-        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->getBody()->__toString());
+        $this->assertSame('http://example.com', (string)$request->getUri());
+        $this->assertStringContainsString($request->getMethod(), 'POST');
+        $this->assertSame('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
+
     /**
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
@@ -52,11 +54,12 @@ class RequestTest extends TestCase
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
 
-        $this->assertEquals($request->getMethod(), $method);
-        $this->assertEquals('http://example.com', (string)$request->getUri());
-        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals(json_encode($data), $request->getBody()->__toString());
+        $this->assertSame($request->getMethod(), $method);
+        $this->assertSame('http://example.com', (string)$request->getUri());
+        $this->assertSame('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
+
     /**
      * @dataProvider additionProvider
      */
@@ -90,10 +93,10 @@ class RequestTest extends TestCase
         $data = ['a' => 'b', 'c' => 'd'];
         $request = new Request('http://example.com', 'POST', $headers, $data);
 
-        $this->assertEquals('http://example.com', (string)$request->getUri());
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals('a=b&c=d', $request->getBody()->__toString());
+        $this->assertSame('http://example.com', (string)$request->getUri());
+        $this->assertSame('POST', $request->getMethod());
+        $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+        $this->assertSame('a=b&c=d', $request->getBody()->__toString());
     }
 
     /**
@@ -110,10 +113,10 @@ class RequestTest extends TestCase
         $data = ['a' => 'b', 'c' => ['foo', 'bar']];
         $request = new Request('http://example.com', 'POST', $headers, $data);
 
-        $this->assertEquals('http://example.com', (string)$request->getUri());
-        $this->assertEquals('POST', $request->getMethod());
-        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals('a=b&c%5B0%5D=foo&c%5B1%5D=bar', $request->getBody()->__toString());
+        $this->assertSame('http://example.com', (string)$request->getUri());
+        $this->assertSame('POST', $request->getMethod());
+        $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
+        $this->assertSame('a=b&c%5B0%5D=foo&c%5B1%5D=bar', $request->getBody()->__toString());
     }
 
     /**
@@ -126,7 +129,7 @@ class RequestTest extends TestCase
         $data = '{"json":"data"}';
         $request = new Request('', Request::METHOD_GET, [], $data);
 
-        $this->assertEquals($data, $request->getBody()->__toString());
+        $this->assertSame($data, $request->getBody()->__toString());
     }
 
     /**
@@ -142,8 +145,8 @@ class RequestTest extends TestCase
             'e' => ['f', 'g'],
         ];
         $request = new Request('', Request::METHOD_GET, [], $data);
-        $this->assertEquals('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
-        $this->assertEquals(
+        $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
+        $this->assertSame(
             'a=b&c=d&e%5B0%5D=f&e%5B1%5D=g',
             $request->getBody()->__toString(),
             'Body should be serialized'
@@ -173,7 +176,7 @@ class RequestTest extends TestCase
     public function testDefaultHeaders()
     {
         $request = new Request();
-        $this->assertEquals('CakePHP', $request->getHeaderLine('User-Agent'));
-        $this->assertEquals('close', $request->getHeaderLine('Connection'));
+        $this->assertSame('CakePHP', $request->getHeaderLine('User-Agent'));
+        $this->assertSame('close', $request->getHeaderLine('Connection'));
     }
 }

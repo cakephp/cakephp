@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -64,19 +65,19 @@ class ValueBinderTest extends TestCase
     {
         $valueBinder = new ValueBinder();
         $result = $valueBinder->placeholder('?');
-        $this->assertEquals('?', $result);
+        $this->assertSame('?', $result);
 
         $valueBinder = new ValueBinder();
         $result = $valueBinder->placeholder(':param');
-        $this->assertEquals(':param', $result);
+        $this->assertSame(':param', $result);
 
         $valueBinder = new ValueBinder();
         $result = $valueBinder->placeholder('p');
-        $this->assertEquals(':p0', $result);
+        $this->assertSame(':p0', $result);
         $result = $valueBinder->placeholder('p');
-        $this->assertEquals(':p1', $result);
+        $this->assertSame(':p1', $result);
         $result = $valueBinder->placeholder('c');
-        $this->assertEquals(':c2', $result);
+        $this->assertSame(':c2', $result);
     }
 
     public function testGenerateManyNamed()
@@ -109,7 +110,7 @@ class ValueBinderTest extends TestCase
         $this->assertCount(0, $valueBinder->bindings());
 
         $placeholder = $valueBinder->placeholder('c');
-        $this->assertEquals(':c0', $placeholder);
+        $this->assertSame(':c0', $placeholder);
     }
 
     /**
@@ -128,12 +129,12 @@ class ValueBinderTest extends TestCase
         $valueBinder->placeholder('param');
         $valueBinder->placeholder('param');
         $result = $valueBinder->placeholder('param');
-        $this->assertEquals(':param2', $result);
+        $this->assertSame(':param2', $result);
 
         $valueBinder->resetCount();
 
         $placeholder = $valueBinder->placeholder('param');
-        $this->assertEquals(':param0', $placeholder);
+        $this->assertSame(':param0', $placeholder);
         $this->assertCount(2, $valueBinder->bindings());
     }
 

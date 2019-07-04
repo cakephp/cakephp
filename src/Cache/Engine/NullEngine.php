@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,7 +36,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         return true;
     }
@@ -45,7 +46,7 @@ class NullEngine extends CacheEngine
      */
     public function setMultiple($data, $ttl = null): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -69,7 +70,7 @@ class NullEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1)
     {
-        return true;
+        return 1;
     }
 
     /**
@@ -77,13 +78,13 @@ class NullEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1)
     {
-        return true;
+        return 0;
     }
 
     /**
      * @inheritDoc
      */
-    public function delete($key)
+    public function delete($key): bool
     {
         return true;
     }
@@ -93,15 +94,15 @@ class NullEngine extends CacheEngine
      */
     public function deleteMultiple($keys): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * @inheritDoc
      */
-    public function clear()
+    public function clear(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -109,6 +110,6 @@ class NullEngine extends CacheEngine
      */
     public function clearGroup(string $group): bool
     {
-        return false;
+        return true;
     }
 }

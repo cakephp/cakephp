@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,7 @@ class SprintfFormatterTest extends TestCase
     public function testFormatSimple()
     {
         $formatter = new SprintfFormatter();
-        $this->assertEquals('Hello José', $formatter->format('en_US', 'Hello %s', ['José']));
-        $this->assertEquals('1 Orange', $formatter->format('en_US', '%d %s', [1, 'Orange']));
+        $this->assertSame('Hello José', $formatter->format('en_US', 'Hello %s', ['José']));
+        $this->assertSame('1 Orange', $formatter->format('en_US', '%d %s', [1, 'Orange']));
     }
 }

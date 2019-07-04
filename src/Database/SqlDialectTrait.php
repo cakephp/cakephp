@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -103,7 +104,7 @@ trait SqlDialectTrait
                 return $query;
             }
 
-            $query->traverseExpressions(function ($expression) use ($translators, $query) {
+            $query->traverseExpressions(function ($expression) use ($translators, $query): void {
                 foreach ($translators as $class => $method) {
                     if ($expression instanceof $class) {
                         $this->{$method}($expression, $query);

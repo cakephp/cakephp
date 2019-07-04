@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -94,7 +95,7 @@ trait RulesAwareTrait
         if ($this->_rulesChecker !== null) {
             return $this->_rulesChecker;
         }
-        $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : 'Cake\Datasource\RulesChecker';
+        $class = defined('static::RULES_CLASS') ? static::RULES_CLASS : RulesChecker::class;
         $this->_rulesChecker = $this->buildRules(new $class(['repository' => $this]));
         $this->dispatchEvent('Model.buildRules', ['rules' => $this->_rulesChecker]);
 

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -374,7 +375,7 @@ class AuthComponentTest extends TestCase
         ]);
         $objects = array_values($this->Controller->Auth->constructAuthorize());
         $result = $objects[0];
-        $this->assertEquals('controllers/', $result->getConfig('actionPath'));
+        $this->assertSame('controllers/', $result->getConfig('actionPath'));
     }
 
     /**
@@ -405,7 +406,7 @@ class AuthComponentTest extends TestCase
         ]);
         $objects = array_values($this->Controller->Auth->constructAuthenticate());
         $result = $objects[0];
-        $this->assertEquals('AuthUsers', $result->getConfig('userModel'));
+        $this->assertSame('AuthUsers', $result->getConfig('userModel'));
     }
 
     /**
@@ -1244,7 +1245,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->startup($event);
 
         $result = $this->Auth->user();
-        $this->assertEquals('mariano', $result['username']);
+        $this->assertSame('mariano', $result['username']);
 
         $this->assertInstanceOf(
             'Cake\Auth\BasicAuthenticate',
@@ -1252,7 +1253,7 @@ class AuthComponentTest extends TestCase
         );
 
         $result = $this->Auth->user('username');
-        $this->assertEquals('mariano', $result);
+        $this->assertSame('mariano', $result);
         $this->assertFalse(isset($_SESSION['Auth']), 'No user data in session');
     }
 
@@ -1293,7 +1294,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig('logoutRedirect', '/');
         $result = $this->Auth->logout();
 
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
         $this->assertNull($this->Auth->getController()->getRequest()->getSession()->read('Auth.AuthUsers'));
     }
 
@@ -1357,7 +1358,7 @@ class AuthComponentTest extends TestCase
         });
 
         $this->Auth->startup($event);
-        $this->assertEquals('mariano', $this->Auth->user('username'));
+        $this->assertSame('mariano', $this->Auth->user('username'));
         $this->assertTrue($this->Auth->user('from_callback'));
     }
 
@@ -1453,7 +1454,7 @@ class AuthComponentTest extends TestCase
     {
         $value = ['controller' => 'users', 'action' => 'home'];
         $result = $this->Auth->redirectUrl($value);
-        $this->assertEquals('/users/home', $result);
+        $this->assertSame('/users/home', $result);
     }
 
     /**
@@ -1467,7 +1468,7 @@ class AuthComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => '/users/custom']));
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/custom', $result);
+        $this->assertSame('/users/custom', $result);
     }
 
     /**
@@ -1485,7 +1486,7 @@ class AuthComponentTest extends TestCase
         Router::setRequestInfo($this->Controller->getRequest());
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/waves/add', $result);
+        $this->assertSame('/waves/add', $result);
     }
 
     /**
@@ -1503,7 +1504,7 @@ class AuthComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => '/users/login']));
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/home', $result);
+        $this->assertSame('/users/home', $result);
     }
 
     /**
@@ -1521,12 +1522,12 @@ class AuthComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => 'http://some.domain.example/users/login']));
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/home', $result);
+        $this->assertSame('/users/home', $result);
 
         $this->Controller->setRequest($this->Controller->getRequest()->withQueryParams(['redirect' => '//some.domain.example/users/login']));
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/home', $result);
+        $this->assertSame('/users/home', $result);
     }
 
     /**
@@ -1556,7 +1557,7 @@ class AuthComponentTest extends TestCase
         $this->Auth->setConfig('loginRedirect', ['controller' => 'users', 'action' => 'home']);
 
         $result = $this->Auth->redirectUrl();
-        $this->assertEquals('/users/home', $result);
+        $this->assertSame('/users/home', $result);
 
         Configure::write('App', $App);
         Router::reload();
@@ -1649,11 +1650,11 @@ class AuthComponentTest extends TestCase
      */
     public function testSessionKeyBC(): void
     {
-        $this->assertEquals('Auth.User', $this->Auth->sessionKey);
+        $this->assertSame('Auth.User', $this->Auth->sessionKey);
 
         $this->Auth->sessionKey = 'Auth.Member';
-        $this->assertEquals('Auth.Member', $this->Auth->sessionKey);
-        $this->assertEquals('Auth.Member', $this->Auth->storage()->getConfig('key'));
+        $this->assertSame('Auth.Member', $this->Auth->sessionKey);
+        $this->assertSame('Auth.Member', $this->Auth->storage()->getConfig('key'));
 
         $this->Auth->sessionKey = false;
         $this->assertInstanceOf('Cake\Auth\Storage\MemoryStorage', $this->Auth->storage());
@@ -1672,11 +1673,11 @@ class AuthComponentTest extends TestCase
 
         $this->Auth->authCheckCalledFrom = null;
         $this->Controller->startupProcess();
-        $this->assertEquals('Controller.startup', $this->Auth->authCheckCalledFrom);
+        $this->assertSame('Controller.startup', $this->Auth->authCheckCalledFrom);
 
         $this->Auth->authCheckCalledFrom = null;
         $this->Auth->setConfig('checkAuthIn', 'Controller.initialize');
         $this->Controller->startupProcess();
-        $this->assertEquals('Controller.initialize', $this->Auth->authCheckCalledFrom);
+        $this->assertSame('Controller.initialize', $this->Auth->authCheckCalledFrom);
     }
 }

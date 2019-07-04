@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -14,8 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite;
 
+use Cake\Console\Command;
 use Cake\Console\CommandRunner;
-use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
 use Cake\Console\Exception\StopException;
 use Cake\Core\Configure;
@@ -25,6 +26,7 @@ use Cake\TestSuite\Constraint\Console\ContentsEmpty;
 use Cake\TestSuite\Constraint\Console\ContentsNotContain;
 use Cake\TestSuite\Constraint\Console\ContentsRegExp;
 use Cake\TestSuite\Constraint\Console\ExitCode;
+use Cake\TestSuite\Stub\ConsoleInput;
 use Cake\TestSuite\Stub\ConsoleOutput;
 
 /**
@@ -41,6 +43,20 @@ trait ConsoleIntegrationTestTrait
     protected $_useCommandRunner = false;
 
     /**
+     * The customized application class name.
+     *
+     * @var string|null
+     */
+    protected $_appClass;
+
+    /**
+     * The customized application constructor arguments.
+     *
+     * @var array|null
+     */
+    protected $_appArgs;
+
+    /**
      * Last exit code
      *
      * @var int|null
@@ -50,21 +66,21 @@ trait ConsoleIntegrationTestTrait
     /**
      * Console output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $_out;
 
     /**
      * Console error output stub
      *
-     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\TestSuite\Stub\ConsoleOutput|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $_err;
 
     /**
      * Console input mock
      *
-     * @var \Cake\Console\ConsoleInput|\PHPUnit_Framework_MockObject_MockObject|null
+     * @var \Cake\Console\ConsoleInput|\PHPUnit\Framework\MockObject\MockObject|null
      */
     protected $_in;
 
@@ -81,18 +97,7 @@ trait ConsoleIntegrationTestTrait
 
         $this->_out = new ConsoleOutput();
         $this->_err = new ConsoleOutput();
-        $this->_in = $this->getMockBuilder(ConsoleInput::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['read'])
-            ->getMock();
-
-        $i = 0;
-        foreach ($input as $in) {
-            $this->_in
-                ->expects($this->at($i++))
-                ->method('read')
-                ->will($this->returnValue($in));
-        }
+        $this->_in = new ConsoleInput($input);
 
         $args = $this->commandStringToArgs("cake $command");
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
@@ -110,13 +115,15 @@ trait ConsoleIntegrationTestTrait
      * @after
      * @return void
      */
-    public function cleanupConsoleTrait()
+    public function cleanupConsoleTrait(): void
     {
         $this->_exitCode = null;
         $this->_out = null;
         $this->_err = null;
         $this->_in = null;
         $this->_useCommandRunner = false;
+        $this->_appClass = null;
+        $this->_appArgs = null;
     }
 
     /**
@@ -131,6 +138,19 @@ trait ConsoleIntegrationTestTrait
     }
 
     /**
+     * Configure the application class to use in console integration tests.
+     *
+     * @param string $class The application class name.
+     * @param array|null $constructorArgs The constructor arguments for your application class.
+     * @return void
+     */
+    public function configApplication(string $class, ?array $constructorArgs): void
+    {
+        $this->_appClass = $class;
+        $this->_appArgs = $constructorArgs;
+    }
+
+    /**
      * Asserts shell exited with the expected code
      *
      * @param int $expected Expected exit code
@@ -140,6 +160,28 @@ trait ConsoleIntegrationTestTrait
     public function assertExitCode(int $expected, string $message = ''): void
     {
         $this->assertThat($expected, new ExitCode($this->_exitCode), $message);
+    }
+
+    /**
+     * Asserts shell exited with the Command::CODE_SUCCESS
+     *
+     * @param string $message Failure message
+     * @return void
+     */
+    public function assertExitSuccess($message = '')
+    {
+        $this->assertThat(Command::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
+    }
+
+    /**
+     * Asserts shell exited with Command::CODE_ERROR
+     *
+     * @param string $message Failure message
+     * @return void
+     */
+    public function assertExitError($message = '')
+    {
+        $this->assertThat(Command::CODE_ERROR, new ExitCode($this->_exitCode), $message);
     }
 
     /**
@@ -164,6 +206,7 @@ trait ConsoleIntegrationTestTrait
     {
         $this->assertThat($expected, new ContentsContain($this->_out->messages(), 'output'), $message);
     }
+
     /**
      * Asserts `stdout` does not contain expected output
      *
@@ -243,9 +286,10 @@ trait ConsoleIntegrationTestTrait
     protected function makeRunner()
     {
         if ($this->_useCommandRunner) {
-            $applicationClassName = Configure::read('App.namespace') . '\Application';
+            $appClass = $this->_appClass ?: Configure::read('App.namespace') . '\Application';
+            $appArgs = $this->_appArgs ?: [CONFIG];
 
-            return new CommandRunner(new $applicationClassName(CONFIG));
+            return new CommandRunner(new $appClass(...$appArgs));
         }
 
         return new LegacyCommandRunner();

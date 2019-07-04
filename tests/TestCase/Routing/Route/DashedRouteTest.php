@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -49,28 +50,28 @@ class DashedRouteTest extends TestCase
             'action' => 'myView',
             'id' => 1,
         ]);
-        $this->assertEquals('/my-posts/my-view/1', $result);
+        $this->assertSame('/my-posts/my-view/1', $result);
 
         $route = new DashedRoute('/', ['controller' => 'Pages', 'action' => 'myDisplay', 'home']);
         $result = $route->match(['controller' => 'Pages', 'action' => 'myDisplay', 'home']);
-        $this->assertEquals('/', $result);
+        $this->assertSame('/', $result);
 
         $result = $route->match(['controller' => 'Pages', 'action' => 'display', 'about']);
         $this->assertNull($result);
 
         $route = new DashedRoute('/blog/:action', ['controller' => 'Posts']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView']);
-        $this->assertEquals('/blog/my-view', $result);
+        $this->assertSame('/blog/my-view', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView', '?' => ['id' => 2]]);
-        $this->assertEquals('/blog/my-view?id=2', $result);
+        $this->assertSame('/blog/my-view?id=2', $result);
 
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView', 1]);
         $this->assertNull($result);
 
         $route = new DashedRoute('/foo/:controller/:action', ['action' => 'index']);
         $result = $route->match(['controller' => 'Posts', 'action' => 'myView']);
-        $this->assertEquals('/foo/posts/my-view', $result);
+        $this->assertSame('/foo/posts/my-view', $result);
 
         $route = new DashedRoute('/:plugin/:id/*', ['controller' => 'Posts', 'action' => 'myView']);
         $result = $route->match([
@@ -79,7 +80,7 @@ class DashedRouteTest extends TestCase
             'action' => 'myView',
             'id' => '1',
         ]);
-        $this->assertEquals('/test-plugin/1/', $result);
+        $this->assertSame('/test-plugin/1/', $result);
 
         $result = $route->match([
             'plugin' => 'TestPlugin',
@@ -88,7 +89,7 @@ class DashedRouteTest extends TestCase
             'id' => '1',
             '0',
         ]);
-        $this->assertEquals('/test-plugin/1/0', $result);
+        $this->assertSame('/test-plugin/1/0', $result);
 
         $result = $route->match([
             'plugin' => 'TestPlugin',
@@ -124,7 +125,7 @@ class DashedRouteTest extends TestCase
             'action' => 'myView',
             'id' => 1,
         ]);
-        $this->assertEquals('/my-posts/my-view-1', $result);
+        $this->assertSame('/my-posts/my-view-1', $result);
 
         $route = new DashedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
         $result = $route->match([
@@ -133,7 +134,7 @@ class DashedRouteTest extends TestCase
             'id' => '1',
             'slug' => 'the-slug',
         ]);
-        $this->assertEquals('/my-posts/my-view/the-slug-1', $result);
+        $this->assertSame('/my-posts/my-view/the-slug-1', $result);
     }
 
     /**
@@ -146,24 +147,24 @@ class DashedRouteTest extends TestCase
         $route = new DashedRoute('/:controller/:action/:id', [], ['id' => Router::ID]);
         $route->compile();
         $result = $route->parse('/my-posts/my-view/1', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('myView', $result['action']);
-        $this->assertEquals('1', $result['id']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('myView', $result['action']);
+        $this->assertSame('1', $result['id']);
 
         $route = new DashedRoute('/:controller/:action-:id');
         $route->compile();
         $result = $route->parse('/my-posts/my-view-1', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('myView', $result['action']);
-        $this->assertEquals('1', $result['id']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('myView', $result['action']);
+        $this->assertSame('1', $result['id']);
 
         $route = new DashedRoute('/:controller/:action/:slug-:id', [], ['id' => Router::ID]);
         $route->compile();
         $result = $route->parse('/my-posts/my-view/the-slug-1', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('myView', $result['action']);
-        $this->assertEquals('1', $result['id']);
-        $this->assertEquals('the-slug', $result['slug']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('myView', $result['action']);
+        $this->assertSame('1', $result['id']);
+        $this->assertSame('the-slug', $result['slug']);
 
         $route = new DashedRoute(
             '/admin/:controller',
@@ -174,21 +175,21 @@ class DashedRouteTest extends TestCase
         $this->assertNull($result);
 
         $result = $route->parse('/admin/my-posts', 'GET');
-        $this->assertEquals('MyPosts', $result['controller']);
-        $this->assertEquals('index', $result['action']);
+        $this->assertSame('MyPosts', $result['controller']);
+        $this->assertSame('index', $result['action']);
 
         $route = new DashedRoute(
             '/media/search/*',
             ['controller' => 'Media', 'action' => 'searchIt']
         );
         $result = $route->parse('/media/search', 'GET');
-        $this->assertEquals('Media', $result['controller']);
-        $this->assertEquals('searchIt', $result['action']);
+        $this->assertSame('Media', $result['controller']);
+        $this->assertSame('searchIt', $result['action']);
         $this->assertEquals([], $result['pass']);
 
         $result = $route->parse('/media/search/tv_shows', 'GET');
-        $this->assertEquals('Media', $result['controller']);
-        $this->assertEquals('searchIt', $result['action']);
+        $this->assertSame('Media', $result['controller']);
+        $this->assertSame('searchIt', $result['action']);
         $this->assertEquals(['tv_shows'], $result['pass']);
     }
 
@@ -208,8 +209,8 @@ class DashedRouteTest extends TestCase
         $expectedUrl = '/plugin/controller-name/action-name';
         $this->assertEquals($expectedUrl, $url);
         $result = $route->parse($expectedUrl, 'GET');
-        $this->assertEquals('ControllerName', $result['controller']);
-        $this->assertEquals('actionName', $result['action']);
-        $this->assertEquals('Vendor/PluginName', $result['plugin']);
+        $this->assertSame('ControllerName', $result['controller']);
+        $this->assertSame('actionName', $result['action']);
+        $this->assertSame('Vendor/PluginName', $result['plugin']);
     }
 }

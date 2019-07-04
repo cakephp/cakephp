@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,26 +14,28 @@ declare(strict_types=1);
  * @since         3.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * CacheShell tests.
+ * Cache Commands tests.
  */
-class CacheShellTest extends ConsoleIntegrationTestCase
+class CacheCommandsTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE]);
+        $this->setAppNamespace();
+        $this->useCommandRunner();
     }
 
     /**
@@ -40,24 +43,49 @@ class CacheShellTest extends ConsoleIntegrationTestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('test');
     }
 
     /**
-     * Test that getOptionParser() returns an instance of \Cake\Console\ConsoleOptionParser
+     * Test help output
      *
      * @return void
      */
-    public function testGetOptionParser()
+    public function testClearHelp()
     {
-        $this->exec('cache -h');
+        $this->exec('cache clear -h');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertOutputContains('list_prefixes');
-        $this->assertOutputContains('clear_all');
+        $this->assertOutputContains('engine to clear');
+    }
+
+    /**
+     * Test help output
+     *
+     * @return void
+     */
+    public function testClearAllHelp()
+    {
+        $this->exec('cache clear_all -h');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('Clear all');
+    }
+
+    /**
+     * Test help output
+     *
+     * @return void
+     */
+    public function testListHelp()
+    {
+        $this->exec('cache list -h');
+
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('Show a list');
     }
 
     /**
@@ -97,7 +125,7 @@ class CacheShellTest extends ConsoleIntegrationTestCase
         $this->exec('cache clear _cake_core_');
 
         $this->assertExitCode(Shell::CODE_SUCCESS);
-        $this->assertEquals('value', Cache::read('key', 'test'));
+        $this->assertSame('value', Cache::read('key', 'test'));
     }
 
     /**

@@ -23,79 +23,105 @@
     </title>
     <?= $this->Html->meta('icon') ?>
     <style>
+    * {
+        box-sizing: border-box;
+    }
     body {
-        font: 14px helvetica, arial, sans-serif;
-        color: #222;
-        background-color: #f8f8f8;
-        padding:0;
+        font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+        color: #404041;
+        background: #F5F7FA;
+        font-size: 14px;
+        letter-spacing: .01em;
+        line-height: 1.6;
+        padding: 0 0 40px;
         margin: 0;
-        max-height: 100%;
+        height: 100%;
     }
-
-    .code-dump,
-    pre {
-        background: #fefefe;
-        border: 1px solid #ddd;
-        padding: 5px;
-        white-space: pre-wrap;
-    }
-
     header {
-        background-color: #C3232D;
+        flex: 1;
+        background-color: #D33C47;
         color: #ffffff;
-        padding: 16px 10px;
-        border-bottom: 3px solid #626262;
+        padding: 10px;
     }
     .header-title {
-        margin: 0;
-        font-weight: normal;
         font-size: 30px;
-        line-height: 64px;
+        margin: 0;
     }
     .header-type {
-        opacity: 0.75;
         display: block;
         font-size: 16px;
-        line-height: 1;
-    }
-    .header-help {
-        font-size: 12px;
-        line-height: 1;
-        position: absolute;
-        top: 30px;
-        right: 16px;
     }
     .header-help a {
         color: #fff;
     }
 
-    .error-nav {
-        float: left;
-        width: 30%;
+    .error-content {
+        display: flex;
     }
-    .error-contents {
-        padding: 10px 1%;
-        float: right;
-        width: 68%;
+    .col-left,
+    .col-right {
+        overflow-y: auto;
+        padding: 15px;
+    }
+    .col-left {
+        flex: 0 0 30%;
+    }
+    .col-right {
+        flex: 1;
+    }
+
+    .toggle-link {
+        display: block;
+        padding: 8px 14px;
+        text-decoration: none;
+        background-color: #606c76;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .toggle-link:hover {
+        background-color: #D33C47;
+    }
+
+    .code-dump,
+    pre {
+        background: #fff;
+        border-radius: 4px;
+        padding: 5px;
+        white-space: pre-wrap;
+        box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
+        margin: 0;
     }
 
     .error,
     .error-subheading {
         font-size: 18px;
         margin-top: 0;
-        padding: 10px;
-        border: 1px solid #EDBD26;
+        padding: 20px 16px;
     }
     .error-subheading {
-        background: #1798A5;
         color: #fff;
-        border: 1px solid #02808C;
+        background-color: #319795;
+    }
+    .error-subheading strong {
+        color: #fff;
+        background-color: #4fd1c5;
+        border-radius: 9999px;
+        padding: 4px 12px;
+        margin-right: 8px;
     }
     .error {
-        background: #ffd54f;
+        color: #fff;
+        background: #2779BD;
     }
-    .customize {
-        opacity: 0.6;
+    .error strong {
+        color: #fff;
+        background-color: #6CB2EB;
+        border-radius: 9999px;
+        padding: 4px 12px;
+        margin-right: 8px;
     }
 
     .stack-trace {
@@ -104,8 +130,7 @@
         padding: 0;
     }
     .stack-frame {
-        padding: 10px;
-        border-bottom: 1px solid #212121;
+        padding: 15px 10px;
     }
     .stack-frame:last-child {
         border-bottom: none;
@@ -117,14 +142,27 @@
     }
     .stack-frame.active {
         background: #e5e5e5;
+        border-radius: 4px;
     }
     .stack-frame a:hover {
         text-decoration: underline;
     }
+    .stack-frame-header {
+        display: flex;
+        align-items: center;
+    }
+    .stack-frame-args {
+        flex: 0 0 150px;
+    }
+    .stack-frame-file {
+        flex: 1;
+        word-break:break-all;
+        margin-right: 10px;
+        font-size: 16px;
+    }
     .stack-file,
     .stack-function {
         display: block;
-        margin-bottom: 5px;
     }
 
     .stack-frame-file,
@@ -141,31 +179,15 @@
 
     .stack-details {
         background: #ececec;
-        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-        border: 1px solid #ababab;
+        border-radius: 4px;
+        box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
         padding: 10px;
         margin-bottom: 18px;
-    }
-    .stack-frame-args {
-        float: right;
-    }
-
-    .toggle-link {
-        color: #1798A5;
-        text-decoration: none;
-    }
-    .toggle-link:hover {
-        text-decoration: underline;
-    }
-    .toggle-vendor-frames {
-        padding: 5px;
-        display: block;
-        text-align: center;
     }
 
     .code-excerpt {
         width: 100%;
-        margin: 5px 0;
+        margin: 10px 0;
         background: #fefefe;
     }
     .code-highlight {
@@ -202,96 +224,92 @@
     <header>
         <h1 class="header-title">
             <?= h($this->fetch('title')) ?>
-            <span class="header-type"><?= get_class($error) ?></span>
         </h1>
-        <div class="header-help">
-            <a target="_blank" href="https://book.cakephp.org/3.0/">Documentation</a>
-            <a target="_blank" href="https://api.cakephp.org/">API</a>
-        </div>
+        <span class="header-type"><?= get_class($error) ?></span>
     </header>
-
-    <div class="error-contents">
-        <?php if ($this->fetch('subheading')): ?>
-        <p class="error-subheading">
-            <?= $this->fetch('subheading') ?>
-        </p>
-        <?php endif; ?>
-
-        <?= $this->element('exception_stack_trace'); ?>
-
-        <div class="error-suggestion">
-            <?= $this->fetch('file') ?>
+    <div class="error-content">
+        <div class="col-left">
+            <?= $this->element('exception_stack_trace_nav') ?>
         </div>
+        <div class="col-right">
+            <?php if ($this->fetch('subheading')): ?>
+            <p class="error-subheading">
+                <?= $this->fetch('subheading') ?>
+            </p>
+            <?php endif; ?>
 
-        <?php if ($this->fetch('templateName')): ?>
-        <p class="customize">
-            If you want to customize this error message, create
-            <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
-        </p>
-        <?php endif; ?>
+            <?= $this->element('exception_stack_trace'); ?>
+
+            <div class="error-suggestion">
+                <?= $this->fetch('file') ?>
+            </div>
+
+            <?php if ($this->fetch('templateName')): ?>
+            <p class="customize">
+                If you want to customize this error message, create
+                <em><?= 'templates' . DIRECTORY_SEPARATOR . 'Error' . DIRECTORY_SEPARATOR . $this->fetch('templateName') ?></em>
+            </p>
+            <?php endif; ?>
+        </div>
     </div>
 
-    <div class="error-nav">
-        <?= $this->element('exception_stack_trace_nav') ?>
-    </div>
-
-<script type="text/javascript">
-function bindEvent(selector, eventName, listener) {
-    var els = document.querySelectorAll(selector);
-    for (var i = 0, len = els.length; i < len; i++) {
-        els[i].addEventListener(eventName, listener, false);
-    }
-}
-
-function toggleElement(el) {
-    if (el.style.display === 'none') {
-        el.style.display = 'block';
-    } else {
-        el.style.display = 'none';
-    }
-}
-
-function each(els, cb) {
-    var i, len;
-    for (i = 0, len = els.length; i < len; i++) {
-        cb(els[i], i);
-    }
-}
-
-window.addEventListener('load', function() {
-    bindEvent('.stack-frame-args', 'click', function(event) {
-        var target = this.dataset['target'];
-        var el = document.getElementById(target);
-        toggleElement(el);
-        event.preventDefault();
-    });
-
-    var details = document.querySelectorAll('.stack-details');
-    var frames = document.querySelectorAll('.stack-frame');
-    bindEvent('.stack-frame a', 'click', function(event) {
-        each(frames, function(el) {
-            el.classList.remove('active');
-        });
-        this.parentNode.classList.add('active');
-
-        each(details, function(el) {
-            el.style.display = 'none';
-        });
-
-        var target = document.getElementById(this.dataset['target']);
-        toggleElement(target);
-        event.preventDefault();
-    });
-
-    bindEvent('.toggle-vendor-frames', 'click', function(event) {
-        each(frames, function(el) {
-            if (el.classList.contains('vendor-frame')) {
-                toggleElement(el);
+    <script type="text/javascript">
+        function bindEvent(selector, eventName, listener) {
+            var els = document.querySelectorAll(selector);
+            for (var i = 0, len = els.length; i < len; i++) {
+                els[i].addEventListener(eventName, listener, false);
             }
+        }
+
+        function toggleElement(el) {
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
+        function each(els, cb) {
+            var i, len;
+            for (i = 0, len = els.length; i < len; i++) {
+                cb(els[i], i);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            bindEvent('.stack-frame-args', 'click', function(event) {
+                var target = this.dataset['target'];
+                var el = document.getElementById(target);
+                toggleElement(el);
+                event.preventDefault();
+            });
+
+            var details = document.querySelectorAll('.stack-details');
+            var frames = document.querySelectorAll('.stack-frame');
+            bindEvent('.stack-frame a', 'click', function(event) {
+                each(frames, function(el) {
+                    el.classList.remove('active');
+                });
+                this.parentNode.classList.add('active');
+
+                each(details, function(el) {
+                    el.style.display = 'none';
+                });
+
+                var target = document.getElementById(this.dataset['target']);
+                toggleElement(target);
+                event.preventDefault();
+            });
+
+            bindEvent('.toggle-vendor-frames', 'click', function(event) {
+                each(frames, function(el) {
+                    if (el.classList.contains('vendor-frame')) {
+                        toggleElement(el);
+                    }
+                });
+                event.preventDefault();
+            });
         });
-        event.preventDefault();
-    });
-});
-</script>
+    </script>
 </body>
 </html>

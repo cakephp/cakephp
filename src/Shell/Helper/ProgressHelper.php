@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class ProgressHelper extends Helper
     /**
      * The current progress.
      *
-     * @var int
+     * @var int|float
      */
     protected $_progress = 0;
 
@@ -112,7 +113,7 @@ class ProgressHelper extends Helper
     /**
      * Increment the progress bar.
      *
-     * @param int $num The amount of progress to advance by.
+     * @param int|float $num The amount of progress to advance by.
      * @return $this
      */
     public function increment($num = 1)

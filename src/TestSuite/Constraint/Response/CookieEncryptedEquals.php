@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -27,6 +28,11 @@ class CookieEncryptedEquals extends CookieEquals
     use CookieCryptTrait;
 
     /**
+     * @var \Cake\Http\Response
+     */
+    protected $response;
+
+    /**
      * @var string
      */
     protected $key;
@@ -39,12 +45,12 @@ class CookieEncryptedEquals extends CookieEquals
     /**
      * Constructor.
      *
-     * @param \Cake\Http\Response $response A response instance.
+     * @param \Cake\Http\Response|null $response A response instance.
      * @param string $cookieName Cookie name
      * @param string $mode Mode
      * @param string $key Key
      */
-    public function __construct(Response $response, string $cookieName, string $mode, string $key)
+    public function __construct(?Response $response, string $cookieName, string $mode, string $key)
     {
         parent::__construct($response, $cookieName);
 
@@ -62,7 +68,7 @@ class CookieEncryptedEquals extends CookieEquals
     {
         $cookie = $this->response->getCookie($this->cookieName);
 
-        return $this->_decrypt($cookie['value'], $this->mode) === $other;
+        return $cookie !== null && $this->_decrypt($cookie['value'], $this->mode) === $other;
     }
 
     /**

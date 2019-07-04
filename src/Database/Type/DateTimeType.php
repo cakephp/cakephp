@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use Cake\I18n\FrozenTime;
 use Cake\I18n\Time;
 use DateTime;
@@ -105,10 +106,10 @@ class DateTimeType extends BaseType
      * Convert DateTime instance into strings.
      *
      * @param string|int|\DateTime|\DateTimeImmutable $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return string|null
      */
-    public function toDatabase($value, Driver $driver): ?string
+    public function toDatabase($value, DriverInterface $driver): ?string
     {
         if ($value === null || is_string($value)) {
             return $value;
@@ -158,10 +159,10 @@ class DateTimeType extends BaseType
      * Convert strings into DateTime instances.
      *
      * @param string|int|null $value The value to convert.
-     * @param \Cake\Database\Driver $driver The driver instance to convert with.
+     * @param \Cake\Database\DriverInterface $driver The driver instance to convert with.
      * @return \Cake\I18n\Time|\DateTime|null
      */
-    public function toPHP($value, Driver $driver)
+    public function toPHP($value, DriverInterface $driver)
     {
         if ($value === null || strpos($value, '0000-00-00') === 0) {
             return null;
@@ -185,7 +186,7 @@ class DateTimeType extends BaseType
      *
      * @return array
      */
-    public function manyToPHP(array $values, array $fields, Driver $driver)
+    public function manyToPHP(array $values, array $fields, DriverInterface $driver)
     {
         foreach ($fields as $field) {
             if (!isset($values[$field])) {
@@ -233,10 +234,12 @@ class DateTimeType extends BaseType
             }
             $isString = is_string($value);
             if (ctype_digit($value)) {
+                /** @var \DateTimeInterface $date */
                 $date = new $class('@' . $value);
             } elseif ($isString && $this->_useLocaleParser) {
                 return $this->_parseValue($value);
             } elseif ($isString) {
+                /** @var \DateTimeInterface $date */
                 $date = new $class($value);
                 $compare = true;
             }
@@ -277,11 +280,12 @@ class DateTimeType extends BaseType
         );
         $tz = $value['timezone'] ?? null;
 
+        /** @var \DateTimeInterface */
         return new $class($format, $tz);
     }
 
     /**
-     * @param \Cake\I18n\Time|\DateTime $date DateTime object
+     * @param \DateTimeInterface $date DateTime object
      * @param mixed $value Request data
      * @return bool
      */
@@ -405,11 +409,11 @@ class DateTimeType extends BaseType
      * Casts given value to Statement equivalent
      *
      * @param mixed $value value to be converted to PDO statement
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
+     * @param \Cake\Database\DriverInterface $driver object from which database preferences and configuration will be extracted
      *
      * @return mixed
      */
-    public function toStatement($value, Driver $driver)
+    public function toStatement($value, DriverInterface $driver)
     {
         return PDO::PARAM_STR;
     }

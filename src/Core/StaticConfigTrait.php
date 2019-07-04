@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -135,6 +136,7 @@ trait StaticConfigTrait
             return false;
         }
         if (isset(static::$_registry)) {
+            /** @var \Cake\Core\ObjectRegistry $_registry */
             static::$_registry->unload($config);
         }
         unset(static::$_config[$config]);
@@ -276,7 +278,7 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array $map Additions/edits to the class map to apply.
+     * @param string[] $map Additions/edits to the class map to apply.
      * @return void
      */
     public static function setDsnClassMap(array $map): void
@@ -287,7 +289,7 @@ REGEXP;
     /**
      * Returns the DSN class map for this class.
      *
-     * @return array
+     * @return string[]
      */
     public static function getDsnClassMap(): array
     {

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -25,7 +26,7 @@ class StringTemplateTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->template = new StringTemplate();
@@ -104,13 +105,13 @@ class StringTemplateTest extends TestCase
             'url' => '/',
             'text' => 'example',
         ]);
-        $this->assertEquals('<a href="/">example</a>', $result);
+        $this->assertSame('<a href="/">example</a>', $result);
 
         $result = $this->template->format('custom', [
             'standard' => 'default',
             'templateVars' => ['var1' => 'foo'],
         ]);
-        $this->assertEquals('<custom default v1="foo" v2="" />', $result);
+        $this->assertSame('<custom default v1="foo" v2="" />', $result);
     }
 
     /**
@@ -145,13 +146,13 @@ class StringTemplateTest extends TestCase
             'url' => '/',
             'text' => ['example', 'text'],
         ]);
-        $this->assertEquals('<a href="/">exampletext</a>', $result);
+        $this->assertSame('<a href="/">exampletext</a>', $result);
 
         $result = $this->template->format('link', [
             'url' => '/',
             'text' => ['key' => 'example', 'text'],
         ]);
-        $this->assertEquals('<a href="/">exampletext</a>', $result);
+        $this->assertSame('<a href="/">exampletext</a>', $result);
     }
 
     /**
@@ -181,7 +182,7 @@ class StringTemplateTest extends TestCase
         $this->template->remove('compactAttribute');
         $this->assertEquals([], $this->template->get());
         $this->assertNull($this->template->load('test_templates'));
-        $this->assertEquals('<a href="{{url}}">{{text}}</a>', $this->template->get('link'));
+        $this->assertSame('<a href="{{url}}">{{text}}</a>', $this->template->get('link'));
     }
 
     /**
@@ -193,7 +194,7 @@ class StringTemplateTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
         $this->assertNull($this->template->load('TestPlugin.test_templates'));
-        $this->assertEquals('<em>{{text}}</em>', $this->template->get('italic'));
+        $this->assertSame('<em>{{text}}</em>', $this->template->get('italic'));
         $this->clearPlugins();
     }
 
@@ -301,10 +302,10 @@ class StringTemplateTest extends TestCase
         $this->assertNull($this->template->push());
 
         $this->template->add(['name' => 'my name']);
-        $this->assertEquals('my name', $this->template->get('name'));
+        $this->assertSame('my name', $this->template->get('name'));
 
         $this->assertNull($this->template->pop());
-        $this->assertEquals('{{name}} is my name', $this->template->get('name'));
+        $this->assertSame('{{name}} is my name', $this->template->get('name'));
 
         $this->assertNull($this->template->pop());
         $this->assertNull($this->template->pop());

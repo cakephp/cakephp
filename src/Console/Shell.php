@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -272,7 +273,7 @@ class Shell
      *
      * @return void
      */
-    protected function _welcome()
+    protected function _welcome(): void
     {
     }
 
@@ -304,7 +305,7 @@ class Shell
     {
         foreach ($this->_taskMap as $taskName => $task) {
             $class = App::className($task['class'], 'Shell/Task', 'Task');
-            if ($class === null || !class_exists($class)) {
+            if ($class === null) {
                 throw new RuntimeException(sprintf(
                     'Task `%s` not found. Maybe you made a typo or a plugin is missing or not loaded?',
                     $taskName
@@ -340,7 +341,7 @@ class Shell
                 return false;
             }
 
-            return $method->getDeclaringClass()->name !== 'Cake\Console\Shell';
+            return $method->getDeclaringClass()->name !== self::class;
         } catch (ReflectionException $e) {
             return false;
         }
@@ -542,7 +543,7 @@ class Shell
      * Display the help in the correct format
      *
      * @param string $command The command to get help for.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout.
      */
     protected function _displayHelp(string $command)
     {
@@ -649,7 +650,7 @@ class Shell
      * @see \Cake\Utility\Text::wrap()
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::wrapText
      */
-    public function wrapText(string $text, $options = [])
+    public function wrapText(string $text, $options = []): string
     {
         return Text::wrap($text, $options);
     }
@@ -659,7 +660,7 @@ class Shell
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout.
      */
     public function verbose($message, int $newlines = 1)
     {
@@ -671,7 +672,7 @@ class Shell
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout.
      */
     public function quiet($message, int $newlines = 1)
     {
@@ -692,7 +693,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout.
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function out($message = null, int $newlines = 1, int $level = Shell::NORMAL)
@@ -706,7 +707,7 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stderr.
+     * @return int|null The number of bytes returned from writing to stderr.
      */
     public function err($message = null, int $newlines = 1)
     {
@@ -719,7 +720,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function info($message = null, int $newlines = 1, int $level = Shell::NORMAL)
@@ -732,7 +733,7 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|bool The number of bytes returned from writing to stderr.
+     * @return int|null The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
     public function warn($message = null, int $newlines = 1)
@@ -746,7 +747,7 @@ class Shell
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
-     * @return int|bool The number of bytes returned from writing to stdout.
+     * @return int|null The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
     public function success($message = null, int $newlines = 1, int $level = Shell::NORMAL)
@@ -802,7 +803,7 @@ class Shell
      * @return void
      * @link https://book.cakephp.org/3.0/en/console-and-shells.html#console-output
      */
-    public function clear()
+    public function clear(): void
     {
         if (empty($this->params['noclear'])) {
             if (DIRECTORY_SEPARATOR === '/') {
@@ -880,7 +881,7 @@ class Shell
      */
     public function shortPath(string $file): string
     {
-        $shortPath = str_replace(ROOT, null, $file);
+        $shortPath = str_replace(ROOT, '', $file);
         $shortPath = str_replace('..' . DIRECTORY_SEPARATOR, '', $shortPath);
         $shortPath = str_replace(DIRECTORY_SEPARATOR, '/', $shortPath);
 
@@ -921,7 +922,7 @@ class Shell
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'name' => $this->name,

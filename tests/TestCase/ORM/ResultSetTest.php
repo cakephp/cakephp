@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,7 +35,7 @@ class ResultSetTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -388,14 +389,14 @@ class ResultSetTest extends TestCase
             'foreignKey' => 'user_id',
         ]);
         $result = $comments->find()->contain(['Authors'])->first();
-        $this->assertEquals('TestPlugin.Comments', $result->getSource());
-        $this->assertEquals('TestPlugin.Authors', $result->author->getSource());
+        $this->assertSame('TestPlugin.Comments', $result->getSource());
+        $this->assertSame('TestPlugin.Authors', $result->author->getSource());
 
         $result = $comments->find()->matching('Authors', function ($q) {
             return $q->where(['Authors.id' => 1]);
         })->first();
-        $this->assertEquals('TestPlugin.Comments', $result->getSource());
-        $this->assertEquals('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
+        $this->assertSame('TestPlugin.Comments', $result->getSource());
+        $this->assertSame('TestPlugin.Authors', $result->_matchingData['Authors']->getSource());
         $this->clearPlugins();
     }
 

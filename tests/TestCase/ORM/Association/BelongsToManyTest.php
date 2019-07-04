@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -46,7 +47,7 @@ class BelongsToManyTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->tag = $this->getMockBuilder(Table::class)
@@ -84,9 +85,9 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
         ]);
-        $this->assertEquals('article_id', $assoc->getForeignKey());
+        $this->assertSame('article_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->getForeignKey());
+        $this->assertSame('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -157,8 +158,8 @@ class BelongsToManyTest extends TestCase
         ]);
         $junction = $assoc->junction();
         $this->assertInstanceOf(Table::class, $junction);
-        $this->assertEquals('ArticlesTags', $junction->getAlias());
-        $this->assertEquals('articles_tags', $junction->getTable());
+        $this->assertSame('ArticlesTags', $junction->getAlias());
+        $this->assertSame('articles_tags', $junction->getTable());
         $this->assertSame($this->article, $junction->getAssociation('Articles')->getTarget());
         $this->assertSame($this->tag, $junction->getAssociation('Tags')->getTarget());
 
@@ -225,12 +226,12 @@ class BelongsToManyTest extends TestCase
             'targetForeignKey' => 'article',
         ]);
         $junction = $this->article->getAssociation('Tags')->junction();
-        $this->assertEquals('article', $junction->getAssociation('Articles')->getForeignKey());
-        $this->assertEquals('article', $this->article->getAssociation('ArticlesTags')->getForeignKey());
+        $this->assertSame('article', $junction->getAssociation('Articles')->getForeignKey());
+        $this->assertSame('article', $this->article->getAssociation('ArticlesTags')->getForeignKey());
 
         $junction = $this->tag->getAssociation('Articles')->junction();
-        $this->assertEquals('tag', $junction->getAssociation('Tags')->getForeignKey());
-        $this->assertEquals('tag', $this->tag->getAssociation('ArticlesTags')->getForeignKey());
+        $this->assertSame('tag', $junction->getAssociation('Tags')->getForeignKey());
+        $this->assertSame('tag', $this->tag->getAssociation('ArticlesTags')->getForeignKey());
     }
 
     /**
@@ -246,8 +247,8 @@ class BelongsToManyTest extends TestCase
             'joinTable' => 'tags_articles',
         ]);
         $junction = $assoc->junction();
-        $this->assertEquals('TagsArticles', $junction->getAlias());
-        $this->assertEquals('tags_articles', $junction->getTable());
+        $this->assertSame('TagsArticles', $junction->getAlias());
+        $this->assertSame('tags_articles', $junction->getTable());
     }
 
     /**
@@ -404,7 +405,7 @@ class BelongsToManyTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $association->cascadeDelete($entity);
 
-        $this->assertEquals(0, $articleTag->find()->where(['article_id' => 1])->count());
+        $this->assertSame(0, $articleTag->find()->where(['article_id' => 1])->count());
     }
 
     /**
@@ -913,7 +914,7 @@ class BelongsToManyTest extends TestCase
 
         $entity = $articles->get(1, ['contain' => 'Tags']);
         $this->assertCount($originalCount, $entity->tags, 'Should not have changed.');
-        $this->assertEquals('tag1', $entity->tags[0]->name);
+        $this->assertSame('tag1', $entity->tags[0]->name);
     }
 
     /**
@@ -1107,16 +1108,16 @@ class BelongsToManyTest extends TestCase
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
         ]);
-        $this->assertEquals('tag_id', $assoc->getTargetForeignKey());
+        $this->assertSame('tag_id', $assoc->getTargetForeignKey());
         $assoc->setTargetForeignKey('another_key');
-        $this->assertEquals('another_key', $assoc->getTargetForeignKey());
+        $this->assertSame('another_key', $assoc->getTargetForeignKey());
 
         $assoc = new BelongsToMany('Test', [
             'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'targetForeignKey' => 'foo',
         ]);
-        $this->assertEquals('foo', $assoc->getTargetForeignKey());
+        $this->assertSame('foo', $assoc->getTargetForeignKey());
     }
 
     /**
@@ -1134,12 +1135,12 @@ class BelongsToManyTest extends TestCase
             'targetForeignKey' => 'Tag',
         ]);
         $junction = $assoc->junction();
-        $this->assertEquals('Art', $junction->getAssociation('Articles')->getForeignKey());
-        $this->assertEquals('Tag', $junction->getAssociation('Tags')->getForeignKey());
+        $this->assertSame('Art', $junction->getAssociation('Articles')->getForeignKey());
+        $this->assertSame('Tag', $junction->getAssociation('Tags')->getForeignKey());
 
         $inverseRelation = $this->tag->getAssociation('Articles');
-        $this->assertEquals('Tag', $inverseRelation->getForeignKey());
-        $this->assertEquals('Art', $inverseRelation->getTargetForeignKey());
+        $this->assertSame('Tag', $inverseRelation->getForeignKey());
+        $this->assertSame('Art', $inverseRelation->getTargetForeignKey());
     }
 
     /**
@@ -1151,7 +1152,7 @@ class BelongsToManyTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsToMany('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->getProperty());
+        $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -1169,7 +1170,7 @@ class BelongsToManyTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new BelongsToMany('Contacts.Tags', $config);
-        $this->assertEquals('tags', $association->getProperty());
+        $this->assertSame('tags', $association->getProperty());
     }
 
     /**
@@ -1196,25 +1197,25 @@ class BelongsToManyTest extends TestCase
         $tagAssoc = $articles->getAssociation('Tags');
         $this->assertNotEmpty($tagAssoc, 'btm should exist');
         $this->assertEquals($conditions, $tagAssoc->getConditions());
-        $this->assertEquals('target_foreign_key', $tagAssoc->getTargetForeignKey());
-        $this->assertEquals('foreign_key', $tagAssoc->getForeignKey());
+        $this->assertSame('target_foreign_key', $tagAssoc->getTargetForeignKey());
+        $this->assertSame('foreign_key', $tagAssoc->getForeignKey());
 
         $jointAssoc = $articles->getAssociation('SpecialTags');
         $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
         $this->assertInstanceOf(HasMany::class, $jointAssoc);
-        $this->assertEquals('foreign_key', $jointAssoc->getForeignKey());
+        $this->assertSame('foreign_key', $jointAssoc->getForeignKey());
 
         $articleAssoc = $tags->getAssociation('Articles');
         $this->assertNotEmpty($articleAssoc, 'reverse btm should exist');
         $this->assertInstanceOf(BelongsToMany::class, $articleAssoc);
         $this->assertEquals($conditions, $articleAssoc->getConditions());
-        $this->assertEquals('foreign_key', $articleAssoc->getTargetForeignKey(), 'keys should swap');
-        $this->assertEquals('target_foreign_key', $articleAssoc->getForeignKey(), 'keys should swap');
+        $this->assertSame('foreign_key', $articleAssoc->getTargetForeignKey(), 'keys should swap');
+        $this->assertSame('target_foreign_key', $articleAssoc->getForeignKey(), 'keys should swap');
 
         $jointAssoc = $tags->getAssociation('SpecialTags');
         $this->assertNotEmpty($jointAssoc, 'has many to junction should exist');
         $this->assertInstanceOf(HasMany::class, $jointAssoc);
-        $this->assertEquals('target_foreign_key', $jointAssoc->getForeignKey());
+        $this->assertSame('target_foreign_key', $jointAssoc->getForeignKey());
     }
 
     /**
@@ -1383,6 +1384,6 @@ class BelongsToManyTest extends TestCase
             return $query->where(['Articles.id' => 1]);
         });
         // The inner join on special_tags excludes the results.
-        $this->assertEquals(0, $query->count());
+        $this->assertSame(0, $query->count());
     }
 }

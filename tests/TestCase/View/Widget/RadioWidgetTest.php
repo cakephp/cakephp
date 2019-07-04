@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -31,7 +32,7 @@ class RadioWidgetTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $templates = [
@@ -731,11 +732,11 @@ class RadioWidgetTest extends TestCase
             ],
         ];
         $result = $radio->render($data, $this->context);
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<div class="radio"><input type="radio"',
             $result
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '</label></div>',
             $result
         );
@@ -766,10 +767,10 @@ class RadioWidgetTest extends TestCase
             ],
         ];
         $result = $radio->render($data, $this->context);
-        $this->assertContains('data-var="wrap-var"><label', $result);
-        $this->assertContains('type="radio" data-i="i-var"', $result);
-        $this->assertContains('one x l-var wrap-var</label>', $result);
-        $this->assertContains('two  wrap-var</label>', $result);
+        $this->assertStringContainsString('data-var="wrap-var"><label', $result);
+        $this->assertStringContainsString('type="radio" data-i="i-var"', $result);
+        $this->assertStringContainsString('one x l-var wrap-var</label>', $result);
+        $this->assertStringContainsString('two  wrap-var</label>', $result);
     }
 
     /**
@@ -816,6 +817,64 @@ class RadioWidgetTest extends TestCase
                 ],
             ],
             'option B',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testRenderExplicitId method
+     *
+     * Test that the id passed is actually used
+     * Issue: https://github.com/cakephp/cakephp/issues/13342
+     *
+     * @return void
+     */
+    public function testRenderExplicitId()
+    {
+        $label = new NestingLabelWidget($this->templates);
+        $input = new RadioWidget($this->templates, $label);
+        $data = [
+            'name' => 'field',
+            'options' => ['value1', 'value2'],
+            'id' => 'alternative-id',
+            'idPrefix' => 'willBeIgnored',
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            [
+                'label' => ['for' => 'alternative-id-0'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'alternative-id-0'],
+            ],
+            'value1',
+            '/label',
+            [
+                'label' => ['for' => 'alternative-id-1'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'alternative-id-1'],
+            ],
+            'value2',
+            '/label',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $data = [
+            'name' => 'field',
+            'options' => ['value1', 'value2'],
+            'idPrefix' => 'formprefix',
+        ];
+        $result = $input->render($data, $this->context);
+        $expected = [
+            [
+                'label' => ['for' => 'formprefix-field-0'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '0', 'id' => 'formprefix-field-0'],
+            ],
+            'value1',
+            '/label',
+            [
+                'label' => ['for' => 'formprefix-field-1'],
+                'input' => ['type' => 'radio', 'name' => 'field', 'value' => '1', 'id' => 'formprefix-field-1'],
+            ],
+            'value2',
             '/label',
         ];
         $this->assertHtml($expected, $result);

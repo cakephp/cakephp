@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -18,6 +19,7 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Crypto\OpenSsl;
 use Cake\Utility\Security;
+use RuntimeException;
 
 /**
  * SecurityTest class
@@ -71,12 +73,13 @@ class SecurityTest extends TestCase
     /**
      * testInvalidHashTypeException
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessageRegExp /The hash type `doesnotexist` was not found. Available algorithms are: \w+/
      * @return void
      */
     public function testInvalidHashTypeException()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessageRegExp('/The hash type `doesnotexist` was not found. Available algorithms are: \w+/');
+
         Security::hash('test', 'doesnotexist', false);
     }
 
@@ -92,7 +95,7 @@ class SecurityTest extends TestCase
         $result = Security::encrypt($txt, $key);
         $this->assertNotEquals($txt, $result, 'Should be encrypted.');
         $this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
-        $this->assertEquals($txt, Security::decrypt($result, $key));
+        $this->assertSame($txt, Security::decrypt($result, $key));
     }
 
     /**
@@ -225,7 +228,7 @@ class SecurityTest extends TestCase
     public function testSalt()
     {
         Security::setSalt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::getSalt());
+        $this->assertSame('foobarbaz', Security::getSalt());
     }
 
     /**
@@ -236,7 +239,7 @@ class SecurityTest extends TestCase
     public function testGetSetSalt()
     {
         Security::setSalt('foobarbaz');
-        $this->assertEquals('foobarbaz', Security::getSalt());
+        $this->assertSame('foobarbaz', Security::getSalt());
     }
 
     /**

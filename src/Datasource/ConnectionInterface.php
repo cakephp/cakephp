@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
+
 /**
  * This interface defines the methods you can depend on in
  * a connection.
@@ -24,24 +29,30 @@ namespace Cake\Datasource;
  * @method \Cake\Database\Query newQuery()
  * @method \Cake\Database\StatementInterface prepare($sql)
  * @method \Cake\Database\StatementInterface execute($query, $params = [], array $types = [])
- * @method string quote($value, $type = null)
  */
-interface ConnectionInterface
+interface ConnectionInterface extends LoggerAwareInterface
 {
-    /**
-     * Set a logger, or clear the current logger.
-     *
-     * @param \Cake\Database\Log\QueryLogger|null $logger Logger object
-     * @return $this
-     */
-    public function setLogger($logger);
-
     /**
      * Gets the current logger object.
      *
-     * @return \Cake\Database\Log\QueryLogger logger instance
+     * @return \Psr\Log\LoggerInterface logger instance
      */
-    public function getLogger();
+    public function getLogger(): LoggerInterface;
+
+    /**
+     * Set a cacher.
+     *
+     * @param \Psr\SimpleCache\CacheInterface $cacher Cacher object
+     * @return $this
+     */
+    public function setCacher(CacheInterface $cacher);
+
+    /**
+     * Get a cacher.
+     *
+     * @return \Psr\SimpleCache\CacheInterface $cacher Cacher object
+     */
+    public function getCacher(): CacheInterface;
 
     /**
      * Get the configuration name for this connection.

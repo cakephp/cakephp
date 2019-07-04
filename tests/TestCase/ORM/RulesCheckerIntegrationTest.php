@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -42,7 +43,7 @@ class RulesCheckerIntegrationTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -764,7 +765,7 @@ class RulesCheckerIntegrationTest extends TestCase
                     ],
                     $options->getArrayCopy()
                 );
-                $this->assertEquals('create', $operation);
+                $this->assertSame('create', $operation);
                 $event->stopPropagation();
 
                 return true;
@@ -804,7 +805,7 @@ class RulesCheckerIntegrationTest extends TestCase
                     ],
                     $options->getArrayCopy()
                 );
-                $this->assertEquals('create', $operation);
+                $this->assertSame('create', $operation);
                 $this->assertFalse($result);
                 $event->stopPropagation();
 
@@ -1251,8 +1252,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(function ($entity, $options) {
-            $this->assertEquals('bar', $options['foo']);
-            $this->assertEquals('option', $options['another']);
+            $this->assertSame('bar', $options['foo']);
+            $this->assertSame('option', $options['another']);
 
             return false;
         }, ['another' => 'option']);
@@ -1271,8 +1272,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
         $rules->addDelete(function ($entity, $options) {
-            $this->assertEquals('bar', $options['foo']);
-            $this->assertEquals('option', $options['another']);
+            $this->assertSame('bar', $options['foo']);
+            $this->assertSame('option', $options['another']);
 
             return false;
         }, ['another' => 'option']);

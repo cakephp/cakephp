@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,7 @@ class AssetMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -41,7 +42,7 @@ class AssetMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->clearPlugins();
         parent::tearDown();
@@ -64,7 +65,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals('', $body);
+        $this->assertSame('', $body);
         $this->assertEquals(304, $res->getStatusCode());
         $this->assertNotEmpty($res->getHeaderLine('Last-Modified'));
     }
@@ -83,7 +84,7 @@ class AssetMiddlewareTest extends TestCase
         $res = $middleware->process($request, $handler);
 
         $body = $res->getBody()->getContents();
-        $this->assertEquals('', $body);
+        $this->assertSame('', $body);
     }
 
     /**

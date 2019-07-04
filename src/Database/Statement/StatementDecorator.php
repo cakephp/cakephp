@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
+use Cake\Database\DriverInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeConverterTrait;
 use Countable;
@@ -46,7 +48,7 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
     /**
      * Reference to the driver object associated to this statement.
      *
-     * @var \Cake\Database\Driver|null
+     * @var \Cake\Database\DriverInterface|null
      */
     protected $_driver;
 
@@ -62,9 +64,9 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      *
      * @param \Cake\Database\StatementInterface|\PDOStatement|null $statement Statement implementation
      *  such as PDOStatement.
-     * @param \Cake\Database\Driver|null $driver Driver instance
+     * @param \Cake\Database\DriverInterface|null $driver Driver instance
      */
-    public function __construct($statement = null, $driver = null)
+    public function __construct($statement = null, ?DriverInterface $driver = null)
     {
         $this->_statement = $statement;
         $this->_driver = $driver;
@@ -336,12 +338,12 @@ class StatementDecorator implements StatementInterface, Countable, IteratorAggre
      */
     public function lastInsertId(?string $table = null, ?string $column = null)
     {
-        $row = null;
         if ($column && $this->columnCount()) {
             $row = $this->fetch(static::FETCH_TYPE_ASSOC);
-        }
-        if (isset($row[$column])) {
-            return $row[$column];
+
+            if ($row && isset($row[$column])) {
+                return $row[$column];
+            }
         }
 
         return $this->_driver->lastInsertId($table, $column);

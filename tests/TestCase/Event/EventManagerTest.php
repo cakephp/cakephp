@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -273,7 +274,7 @@ class EventManagerTest extends TestCase
             ->method('listenerFunction')
             ->with($event);
         $manager->dispatch($event);
-        $this->assertEquals('something special', $event->getResult());
+        $this->assertSame('something special', $event->getResult());
     }
 
     /**
@@ -547,7 +548,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $event = new Event('my_event', $manager);
         $manager->dispatch($event);
-        $this->assertEquals('ok', $event->getData('callback'));
+        $this->assertSame('ok', $event->getData('callback'));
     }
 
     /**

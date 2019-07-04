@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright 2005-2011, Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -24,11 +25,9 @@ use Cake\Routing\Router;
 class AuthTestController extends Controller
 {
     /**
-     * testUrl property
-     *
-     * @var string|array
+     * @var string|null
      */
-    public $testUrl = null;
+    public $testUrl;
 
     /**
      * construct method
@@ -43,6 +42,9 @@ class AuthTestController extends Controller
         parent::__construct($request, $response);
     }
 
+    /**
+     * @return void
+     */
     public function initialize(): void
     {
         $this->loadComponent('Auth');

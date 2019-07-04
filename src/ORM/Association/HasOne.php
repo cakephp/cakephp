@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,7 @@ class HasOne extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var array
+     * @var string[]
      */
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -43,7 +44,7 @@ class HasOne extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getForeignKey()
     {
@@ -97,7 +98,7 @@ class HasOne extends Association
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
      * @param array $options options to be passed to the save method in the target table
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */

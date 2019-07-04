@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,8 +18,8 @@ namespace Cake\TestSuite;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Exception as DatabaseException;
+use Cake\Error\ExceptionRenderer;
 use Cake\Event\EventInterface;
-use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use Cake\Routing\Router;
 use Cake\TestSuite\Constraint\Response\BodyContains;
@@ -60,6 +61,7 @@ use Exception;
 use LogicException;
 use PHPUnit\Exception as PhpUnitException;
 use Throwable;
+use Zend\Diactoros\Uri;
 
 /**
  * A trait intended to make integration tests of your controllers easier.
@@ -202,7 +204,7 @@ trait IntegrationTestTrait
      * @before
      * @return void
      */
-    public function setupServer()
+    public function setupServer(): void
     {
         $namespace = Configure::read('App.namespace');
     }
@@ -213,7 +215,7 @@ trait IntegrationTestTrait
      * @after
      * @return void
      */
-    public function cleanup()
+    public function cleanup(): void
     {
         $this->_request = [];
         $this->_session = [];
@@ -570,7 +572,7 @@ trait IntegrationTestTrait
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (empty($class) || !class_exists($class)) {
-            $class = 'Cake\Error\ExceptionRenderer';
+            $class = ExceptionRenderer::class;
         }
         /** @var \Cake\Error\ExceptionRenderer $instance */
         $instance = new $class($exception);
@@ -580,19 +582,19 @@ trait IntegrationTestTrait
     /**
      * Creates a request object with the configured options and parameters.
      *
-     * @param string|array $url The URL
+     * @param string $url The URL
      * @param string $method The HTTP method
      * @param string|array|null $data The request data.
      * @return array The request context
      */
-    protected function _buildRequest($url, $method, $data): array
+    protected function _buildRequest(string $url, $method, $data): array
     {
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
         ];
         $session = Session::create($sessionConfig);
         $session->write($this->_session);
-        [$url, $query] = $this->_url($url);
+        [$url, $query, $hostInfo] = $this->_url($url);
         $tokenUrl = $url;
 
         if ($query) {
@@ -620,6 +622,12 @@ trait IntegrationTestTrait
             'QUERY_STRING' => $query,
             'REQUEST_URI' => $url,
         ];
+        if (!empty($hostInfo['ssl'])) {
+            $env['HTTPS'] = 'on';
+        }
+        if (isset($hostInfo['host'])) {
+            $env['HTTP_HOST'] = $hostInfo['host'];
+        }
         if (isset($this->_request['headers'])) {
             foreach ($this->_request['headers'] as $k => $v) {
                 $name = strtoupper(str_replace('-', '_', $k));
@@ -698,24 +706,24 @@ trait IntegrationTestTrait
     /**
      * Creates a valid request url and parameter array more like Request::_url()
      *
-     * @param string|array $url The URL
-     * @return array Qualified URL and the query parameters
+     * @param string $url The URL
+     * @return array Qualified URL, the query parameters, and host data
      */
-    protected function _url($url): array
+    protected function _url(string $url): array
     {
-        // re-create URL in ServerRequest's context so
-        // query strings are encoded as expected
-        $request = new ServerRequest(['url' => $url]);
-        $url = $request->getRequestTarget();
+        $uri = new Uri($url);
+        $path = $uri->getPath();
+        $query = $uri->getQuery();
 
-        $query = '';
-
-        $path = parse_url($url, PHP_URL_PATH);
-        if (strpos($url, '?') !== false) {
-            $query = parse_url($url, PHP_URL_QUERY);
+        $hostData = [];
+        if ($uri->getHost()) {
+            $hostData['host'] = $uri->getHost();
+        }
+        if ($uri->getScheme()) {
+            $hostData['ssl'] = $uri->getScheme() === 'https';
         }
 
-        return [$path, $query];
+        return [$path, $query, $hostData];
     }
 
     /**
@@ -819,7 +827,7 @@ trait IntegrationTestTrait
 
         if ($url) {
             $this->assertThat(
-                Router::url($url, ['_full' => true]),
+                Router::url($url, true),
                 new HeaderEquals($this->_response, 'Location'),
                 $verboseMessage
             );
@@ -847,7 +855,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertRedirectNotContains($url, $message = '')
+    public function assertRedirectNotContains(string $url, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
@@ -904,7 +912,7 @@ trait IntegrationTestTrait
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertHeaderNotContains($header, $content, $message = '')
+    public function assertHeaderNotContains(string $header, string $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
@@ -1253,7 +1261,7 @@ trait IntegrationTestTrait
      * @param \Exception $exception Exception to extract
      * @return string
      */
-    protected function extractExceptionMessage(Exception $exception)
+    protected function extractExceptionMessage(Exception $exception): string
     {
         return PHP_EOL .
             sprintf('Possibly related to %s: "%s" ', get_class($exception), $exception->getMessage()) .

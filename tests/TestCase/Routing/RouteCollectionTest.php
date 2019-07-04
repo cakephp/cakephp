@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,7 +35,7 @@ class RouteCollectionTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->collection = new RouteCollection();
@@ -316,7 +317,7 @@ class RouteCollectionTest extends TestCase
             $this->collection->parseRequest($request);
             $this->fail('No exception raised');
         } catch (MissingRouteException $e) {
-            $this->assertContains('/fallback', $e->getMessage());
+            $this->assertStringContainsString('/fallback', $e->getMessage());
         }
     }
 
@@ -485,13 +486,13 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view']);
 
         $result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'index'], $context);
-        $this->assertEquals('b', $result);
+        $this->assertSame('b', $result);
 
         $result = $this->collection->match(
             ['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
             $context
         );
-        $this->assertEquals('b/thing', $result);
+        $this->assertSame('b/thing', $result);
     }
 
     /**
@@ -511,10 +512,10 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/:id', ['controller' => 'Articles', 'action' => 'view'], ['_name' => 'article:view']);
 
         $result = $this->collection->match(['_name' => 'article:view', 'id' => '2'], $context);
-        $this->assertEquals('/b/2', $result);
+        $this->assertSame('/b/2', $result);
 
         $result = $this->collection->match(['plugin' => null, 'controller' => 'Articles', 'action' => 'view', 'id' => '2'], $context);
-        $this->assertEquals('b/2', $result);
+        $this->assertSame('b/2', $result);
     }
 
     /**
@@ -572,7 +573,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect('/', ['controller' => 'Contacts']);
 
         $result = $this->collection->match(['plugin' => 'Contacts', 'controller' => 'Contacts', 'action' => 'index'], $context);
-        $this->assertEquals('contacts', $result);
+        $this->assertSame('contacts', $result);
     }
 
     /**
@@ -601,7 +602,7 @@ class RouteCollectionTest extends TestCase
             'action' => 'index',
         ];
         $result = $this->collection->match($url, $context);
-        $this->assertEquals('admin/Users', $result);
+        $this->assertSame('admin/Users', $result);
 
         $url = [
             'plugin' => null,
@@ -609,7 +610,7 @@ class RouteCollectionTest extends TestCase
             'action' => 'index',
         ];
         $result = $this->collection->match($url, $context);
-        $this->assertEquals('index', $result);
+        $this->assertSame('index', $result);
     }
 
     /**
@@ -626,7 +627,7 @@ class RouteCollectionTest extends TestCase
         $all = $this->collection->named();
         $this->assertCount(1, $all);
         $this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
-        $this->assertEquals('/l/:controller', $all['cntrl']->template);
+        $this->assertSame('/l/:controller', $all['cntrl']->template);
     }
 
     /**

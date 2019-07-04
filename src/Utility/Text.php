@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -91,7 +92,7 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return array|string Array of tokens in $data or original input if empty.
+     * @return string|string[] Array of tokens in $data or original input if empty.
      */
     public static function tokenize(
         string $data,
@@ -1030,7 +1031,7 @@ class Text
         if ($i !== false) {
             $size = (float)substr($size, 0, $l);
 
-            return $size * pow(1024, $i + 1);
+            return (int)($size * pow(1024, $i + 1));
         }
 
         if (substr($size, -1) === 'B' && ctype_digit(substr($size, 0, -1))) {
@@ -1083,7 +1084,7 @@ class Text
      * @param string $transliteratorId Transliterator identifier.
      * @return void
      */
-    public static function setTransliteratorId(string $transliteratorId)
+    public static function setTransliteratorId(string $transliteratorId): void
     {
         static::setTransliterator(transliterator_create($transliteratorId));
         static::$_defaultTransliteratorId = $transliteratorId;

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -57,7 +58,7 @@ class ShellDispatcher
      * @param array $args the argv from PHP
      * @param bool $bootstrap Should the environment be bootstrapped.
      */
-    public function __construct($args = [], $bootstrap = true)
+    public function __construct(array $args = [], bool $bootstrap = true)
     {
         set_time_limit(0);
         $this->args = (array)$args;
@@ -188,12 +189,14 @@ class ShellDispatcher
             return $code === null ? $code : (int)$code;
         }
         if ($result === null || $result === true) {
+            /** @psalm-suppress DeprecatedClass */
             return Shell::CODE_SUCCESS;
         }
         if (is_int($result)) {
             return $result;
         }
 
+        /** @psalm-suppress DeprecatedClass */
         return Shell::CODE_ERROR;
     }
 
@@ -319,7 +322,7 @@ class ShellDispatcher
      * @return \Cake\Console\Shell A shell instance.
      * @throws \Cake\Console\Exception\MissingShellException when errors are encountered.
      */
-    public function findShell(string $shell)
+    public function findShell(string $shell): Shell
     {
         $className = $this->_shellExists($shell);
         if (!$className) {
@@ -363,7 +366,7 @@ class ShellDispatcher
     protected function _shellExists(string $shell): ?string
     {
         $class = App::className($shell, 'Shell', 'Shell');
-        if ($class && class_exists($class)) {
+        if ($class) {
             return $class;
         }
 
@@ -380,6 +383,7 @@ class ShellDispatcher
     protected function _createShell(string $className, string $shortName): Shell
     {
         [$plugin] = pluginSplit($shortName);
+        /** @var \Cake\Console\Shell $instance */
         $instance = new $className();
         $instance->plugin = trim((string)$plugin, '.');
 

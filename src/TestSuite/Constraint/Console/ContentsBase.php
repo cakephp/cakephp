@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -41,8 +42,6 @@ abstract class ContentsBase extends Constraint
      */
     public function __construct(array $contents, string $output)
     {
-        parent::__construct();
-
         $this->contents = implode(PHP_EOL, $contents);
         $this->output = $output;
     }

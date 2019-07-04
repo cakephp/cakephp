@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -126,6 +127,7 @@ abstract class BaseApplication implements
      * @param string $name The plugin classname
      * @param array $config Configuration options for the plugin
      * @return \Cake\Core\PluginInterface
+     * @throws \InvalidArgumentException
      */
     protected function makePlugin(string $name, array $config): PluginInterface
     {
@@ -232,7 +234,7 @@ abstract class BaseApplication implements
      * - Create the controller that will handle this request.
      * - Invoke the controller.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request The request
+     * @param \Cake\Http\ServerRequest $request The request
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(

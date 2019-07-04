@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Cache\Cache;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * Decorates a schema collection and adds caching
@@ -23,12 +24,11 @@ use Cake\Cache\Cache;
 class CachedCollection implements CollectionInterface
 {
     /**
-     * The name of the cache config key to use for caching table metadata,
-     * of false if disabled.
+     * Cacher instance.
      *
-     * @var string|bool
+     * @var \Psr\SimpleCache\CacheInterface
      */
-    protected $_cache = false;
+    protected $cacher;
 
     /**
      * The decorated schema collection
@@ -49,13 +49,13 @@ class CachedCollection implements CollectionInterface
      *
      * @param \Cake\Database\Schema\CollectionInterface $collection The collection to wrap.
      * @param string $prefix The cache key prefix to use. Typically the connection name.
-     * @param string|bool $cacheKey The cache key or boolean false to disable caching.
+     * @param \Psr\SimpleCache\CacheInterface $cacher Cacher instance.
      */
-    public function __construct(CollectionInterface $collection, string $prefix = '', $cacheKey = true)
+    public function __construct(CollectionInterface $collection, string $prefix, CacheInterface $cacher)
     {
         $this->collection = $collection;
         $this->prefix = $prefix;
-        $this->setCacheMetadata($cacheKey);
+        $this->cacher = $cacher;
     }
 
     /**
@@ -72,21 +72,17 @@ class CachedCollection implements CollectionInterface
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
         $options += ['forceRefresh' => false];
-        $cacheConfig = $this->getCacheMetadata();
         $cacheKey = $this->cacheKey($name);
 
-        if (!empty($cacheConfig) && !$options['forceRefresh']) {
-            $cached = Cache::read($cacheKey, $cacheConfig);
-            if ($cached) {
+        if (!$options['forceRefresh']) {
+            $cached = $this->cacher->get($cacheKey);
+            if ($cached !== null) {
                 return $cached;
             }
         }
 
         $table = $this->collection->describe($name, $options);
-
-        if (!empty($cacheConfig)) {
-            Cache::write($cacheKey, $table, $cacheConfig);
-        }
+        $this->cacher->set($cacheKey, $table);
 
         return $table;
     }
@@ -103,30 +99,25 @@ class CachedCollection implements CollectionInterface
     }
 
     /**
-     * Sets the cache config name to use for caching table metadata, or
-     * disables it if false is passed.
+     * Set a cacher.
      *
-     * @param string|bool $enable Whether or not to enable caching
+     * @param \Psr\SimpleCache\CacheInterface $cacher Cacher object
      * @return $this
      */
-    public function setCacheMetadata($enable)
+    public function setCacher(CacheInterface $cacher)
     {
-        if ($enable === true) {
-            $enable = '_cake_model_';
-        }
-
-        $this->_cache = $enable;
+        $this->cacher = $cacher;
 
         return $this;
     }
 
     /**
-     * Gets the cache config name to use for caching table metadata, false means disabled.
+     * Get a cacher.
      *
-     * @return string|bool
+     * @return \Psr\SimpleCache\CacheInterface $cacher Cacher object
      */
-    public function getCacheMetadata()
+    public function getCacher(): CacheInterface
     {
-        return $this->_cache;
+        return $this->cacher;
     }
 }

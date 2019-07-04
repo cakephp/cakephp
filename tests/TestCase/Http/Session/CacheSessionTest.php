@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CacheSessionTest
  *
@@ -33,7 +34,7 @@ class CacheSessionTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Cache::setConfig(['session_test' => ['engine' => 'File']]);
@@ -45,7 +46,7 @@ class CacheSessionTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Cache::clear('session_test');
@@ -71,7 +72,7 @@ class CacheSessionTest extends TestCase
     public function testWrite()
     {
         $this->storage->write('abc', 'Some value');
-        $this->assertEquals('Some value', Cache::read('abc', 'session_test'), 'Value was not written.');
+        $this->assertSame('Some value', Cache::read('abc', 'session_test'), 'Value was not written.');
     }
 
     /**
@@ -82,7 +83,7 @@ class CacheSessionTest extends TestCase
     public function testRead()
     {
         $this->storage->write('test_one', 'Some other value');
-        $this->assertEquals('Some other value', $this->storage->read('test_one'), 'Incorrect value.');
+        $this->assertSame('Some other value', $this->storage->read('test_one'), 'Incorrect value.');
     }
 
     /**

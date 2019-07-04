@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -56,7 +57,7 @@ class ViewBlock
     /**
      * The active blocks being captured.
      *
-     * @var array
+     * @var string[]
      */
     protected $_active = [];
 
@@ -217,9 +218,9 @@ class ViewBlock
     }
 
     /**
-     * Get the names of the unclosed/active blocks.
+     * Get the unclosed/active blocks. Key is name, value is mode.
      *
-     * @return array An array of unclosed blocks.
+     * @return string[] An array of unclosed blocks.
      */
     public function unclosed(): array
     {

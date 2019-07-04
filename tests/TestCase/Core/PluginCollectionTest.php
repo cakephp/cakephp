@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -131,6 +132,36 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($pluginThree, $out[0]);
     }
 
+    /**
+     * Test that looping over the plugin collection during
+     * a with loop doesn't lose iteration state.
+     *
+     * This situation can happen when a plugin like bake
+     * needs to discover things inside other plugins.
+     *
+     * @return
+     */
+    public function testWithInnerIteration()
+    {
+        $plugins = new PluginCollection();
+        $plugin = new TestPlugin();
+        $pluginThree = new TestPluginThree();
+
+        $plugins->add($plugin);
+        $plugins->add($pluginThree);
+
+        $out = [];
+        foreach ($plugins->with('routes') as $p) {
+            foreach ($plugins as $i) {
+                // Do nothing, we just need to enumerate the collection
+            }
+            $out[] = $p;
+        }
+        $this->assertCount(2, $out);
+        $this->assertSame($plugin, $out[0]);
+        $this->assertSame($pluginThree, $out[1]);
+    }
+
     public function testWithInvalidHook()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -169,7 +200,7 @@ PHP;
         $path = $plugins->findPath('TestPlugin');
         unlink($configPath);
 
-        $this->assertEquals('/config/path', $path);
+        $this->assertSame('/config/path', $path);
     }
 
     public function testFindPathConfigureData()
@@ -178,7 +209,7 @@ PHP;
         $plugins = new PluginCollection();
         $path = $plugins->findPath('TestPlugin');
 
-        $this->assertEquals('/some/path', $path);
+        $this->assertSame('/some/path', $path);
     }
 
     public function testFindPathMissingPlugin()

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -2064,7 +2065,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
         $date = $collection->first();
         $this->assertInstanceOf('DateTime', $date);
-        $this->assertEquals('2017-01-01', $date->format('Y-m-d'));
+        $this->assertSame('2017-01-01', $date->format('Y-m-d'));
     }
 
     /**
@@ -2138,7 +2139,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($this->datePeriod('2017-01-01', '2017-01-07'));
         $date = $collection->last();
         $this->assertInstanceOf('DateTime', $date);
-        $this->assertEquals('2017-01-06', $date->format('Y-m-d'));
+        $this->assertSame('2017-01-06', $date->format('Y-m-d'));
     }
 
     /**

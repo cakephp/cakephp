@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -335,7 +336,7 @@ class StringTemplate
      * @param array|string $input The array or string to add the class to
      * @param array|string $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array|string
+     * @return string|string[]
      */
     public function addClass($input, $newClass, string $useIndex = 'class')
     {

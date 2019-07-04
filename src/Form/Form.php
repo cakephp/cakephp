@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -185,7 +186,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array Last set validation errors.
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->_errors;
     }

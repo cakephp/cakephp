@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -127,12 +128,15 @@ class CommandScanner
             }
 
             $class = $namespace . $fileInfo->getBasename('.php');
+            /** @psalm-suppress DeprecatedClass */
             if (!is_subclass_of($class, Shell::class)
                 && !is_subclass_of($class, Command::class)
             ) {
                 continue;
             }
-
+            if (is_subclass_of($class, Command::class)) {
+                $name = $class::defaultName();
+            }
             $shells[$path . $file] = [
                 'file' => $path . $file,
                 'fullName' => $prefix . $name,

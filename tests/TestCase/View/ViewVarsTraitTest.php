@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ class ViewVarsTraitTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -52,7 +53,7 @@ class ViewVarsTraitTest extends TestCase
 
         $update = ['test' => 'updated'];
         $this->subject->set($update);
-        $this->assertEquals('updated', $this->subject->viewBuilder()->getVar('test'));
+        $this->assertSame('updated', $this->subject->viewBuilder()->getVar('test'));
     }
 
     /**
@@ -93,6 +94,7 @@ class ViewVarsTraitTest extends TestCase
         $expected = ['one' => 'two', 'key' => 'val'];
         $this->assertEquals($expected, $this->subject->viewBuilder()->getVars());
     }
+
     /**
      * test that createView() updates viewVars of View instance on each call.
      *
@@ -102,11 +104,11 @@ class ViewVarsTraitTest extends TestCase
     {
         $expected = ['one' => 'one'];
         $this->subject->set($expected);
-        $this->assertEquals('one', $this->subject->createView()->get('one'));
+        $this->assertSame('one', $this->subject->createView()->get('one'));
 
         $expected = ['one' => 'one', 'two' => 'two'];
         $this->subject->set($expected);
-        $this->assertEquals('two', $this->subject->createView()->get('two'));
+        $this->assertSame('two', $this->subject->createView()->get('two'));
     }
 
     /**

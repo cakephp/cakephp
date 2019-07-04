@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -44,9 +45,9 @@ class ConsoleOutput extends ConsoleOutputBase
      *
      * @param string|array $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return false
+     * @return int
      */
-    public function write($message, int $newlines = 1)
+    public function write($message, int $newlines = 1): int
     {
         foreach ((array)$message as $line) {
             $this->_out[] = $line;
@@ -58,7 +59,7 @@ class ConsoleOutput extends ConsoleOutputBase
             $newlines--;
         }
 
-        return false;
+        return 0;
     }
 
     /**

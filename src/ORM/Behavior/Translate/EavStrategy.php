@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,7 +21,6 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -129,7 +129,7 @@ class EavStrategy implements TranslateStrategyInterface
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? QueryInterface::JOIN_TYPE_INNER : QueryInterface::JOIN_TYPE_LEFT,
+                'joinType' => $filter ? Query::JOIN_TYPE_INNER : Query::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation',
             ]);
@@ -203,8 +203,8 @@ class EavStrategy implements TranslateStrategyInterface
 
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale']
-                    ? QueryInterface::JOIN_TYPE_INNER
-                    : QueryInterface::JOIN_TYPE_LEFT;
+                    ? Query::JOIN_TYPE_INNER
+                    : Query::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }

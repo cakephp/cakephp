@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,6 +20,7 @@ use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use InvalidArgumentException;
+use Traversable;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -38,7 +40,7 @@ trait QueryTrait
      *
      * When set, query execution will be bypassed.
      *
-     * @var \Cake\Datasource\ResultSetInterface|null
+     * @var iterable|null
      * @see \Cake\Datasource\QueryTrait::setResult()
      */
     protected $_results;
@@ -101,7 +103,7 @@ trait QueryTrait
      *
      * @return \Cake\Datasource\RepositoryInterface
      */
-    public function getRepository()
+    public function getRepository(): RepositoryInterface
     {
         return $this->_repository;
     }
@@ -115,10 +117,10 @@ trait QueryTrait
      *
      * This method is most useful when combined with results stored in a persistent cache.
      *
-     * @param \Cake\Datasource\ResultSetInterface $results The results this query should return.
+     * @param iterable $results The results this query should return.
      * @return $this
      */
-    public function setResult($results)
+    public function setResult(iterable $results)
     {
         $this->_results = $results;
 
@@ -203,7 +205,7 @@ trait QueryTrait
      * @param bool $value Whether or not to eager load.
      * @return $this
      */
-    public function eagerLoaded($value)
+    public function eagerLoaded(bool $value)
     {
         $this->_eagerLoaded = $value;
 
@@ -251,7 +253,7 @@ trait QueryTrait
      * @param string|null $defaultAlias The default alias
      * @return array
      */
-    public function aliasFields(array $fields, $defaultAlias = null): array
+    public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {
         $aliased = [];
         foreach ($fields as $alias => $field) {
@@ -276,7 +278,7 @@ trait QueryTrait
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function all()
+    public function all(): ResultSetInterface
     {
         if ($this->_results !== null) {
             return $this->_results;
@@ -381,8 +383,9 @@ trait QueryTrait
      * ```
      *
      * @param callable|null $formatter The formatting callable.
-     * @param bool|int $mode Whether or not to overwrite, append or prepend the formatter.
+     * @param int|true $mode Whether or not to overwrite, append or prepend the formatter.
      * @return $this
+     * @throws \InvalidArgumentException
      */
     public function formatResults(?callable $formatter = null, $mode = 0)
     {
@@ -413,7 +416,7 @@ trait QueryTrait
      *
      * @return array
      */
-    public function getResultFormatters()
+    public function getResultFormatters(): array
     {
         return $this->_formatters;
     }
@@ -488,7 +491,7 @@ trait QueryTrait
      * @return mixed
      * @throws \BadMethodCallException if no such method exists in result set
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         $resultSetClass = $this->_decoratorClass();
         if (in_array($method, get_class_methods($resultSetClass), true)) {
@@ -513,9 +516,9 @@ trait QueryTrait
     /**
      * Executes this query and returns a traversable object containing the results
      *
-     * @return \Traversable
+     * @return \Cake\Datasource\ResultSetInterface
      */
-    abstract protected function _execute();
+    abstract protected function _execute(): ResultSetInterface;
 
     /**
      * Decorates the results iterator with MapReduce routines and formatters
@@ -523,7 +526,7 @@ trait QueryTrait
      * @param \Traversable $result Original results
      * @return \Cake\Datasource\ResultSetInterface
      */
-    protected function _decorateResults($result)
+    protected function _decorateResults(Traversable $result): ResultSetInterface
     {
         $decorator = $this->_decoratorClass();
         foreach ($this->_mapReduce as $functions) {
@@ -550,7 +553,7 @@ trait QueryTrait
      *
      * @return string
      */
-    protected function _decoratorClass()
+    protected function _decoratorClass(): string
     {
         return ResultSetDecorator::class;
     }

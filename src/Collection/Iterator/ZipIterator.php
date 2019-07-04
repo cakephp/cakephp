@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -104,7 +105,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      *
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize($this->_iterators);
     }
@@ -115,7 +116,7 @@ class ZipIterator extends MultipleIterator implements CollectionInterface, Seria
      * @param string $iterators The serialized iterators
      * @return void
      */
-    public function unserialize($iterators)
+    public function unserialize($iterators): void
     {
         parent::__construct(MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC);
         $this->_iterators = unserialize($iterators);

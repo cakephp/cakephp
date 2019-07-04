@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,40 +14,47 @@ declare(strict_types=1);
  * @since         3.1.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
-use Cake\Shell\ServerShell;
+use Cake\Console\Command;
+use Cake\Core\Plugin;
+use Cake\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * ServerShell test.
+ * PluginLoadedCommand test.
  */
-class ServerShellTest extends TestCase
+class PluginLoadedCommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
-     * setup method
+     * setUp method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new ServerShell($this->io);
+
+        $this->useCommandRunner();
+        $this->setAppNamespace();
     }
 
     /**
-     * Test that the option parser is shaped right.
+     * Tests that list of loaded plugins is shown with loaded command.
      *
      * @return void
      */
-    public function testGetOptionParser()
+    public function testLoaded()
     {
-        $parser = $this->shell->getOptionParser();
-        $options = $parser->options();
-        $this->assertArrayHasKey('host', $options);
-        $this->assertArrayHasKey('port', $options);
-        $this->assertArrayHasKey('ini_path', $options);
-        $this->assertArrayHasKey('document_root', $options);
+        $expected = Plugin::loaded();
+
+        $this->exec('plugin loaded');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+
+        foreach ($expected as $value) {
+            $this->assertOutputContains($value);
+        }
     }
 }

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,12 +34,11 @@ use RuntimeException;
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @method string text($fieldName, array $options = [])
- * @method string number($fieldName, array $options = [])
- * @method string email($fieldName, array $options = [])
- * @method string password($fieldName, array $options = [])
- * @method string search($fieldName, array $options = [])
- *
+ * @method string text(string $fieldName, array $options = [])
+ * @method string number(string $fieldName, array $options = [])
+ * @method string email(string $fieldName, array $options = [])
+ * @method string password(string $fieldName, array $options = [])
+ * @method string search(string $fieldName, array $options = [])
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/3.0/en/views/helpers/form.html
@@ -1043,6 +1043,8 @@ class FormHelper extends Helper
      * @param array $options Each type of input takes different options.
      * @return string Completed form widget.
      * @link https://book.cakephp.org/3.0/en/views/helpers/form.html#creating-form-inputs
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
      */
     public function control(string $fieldName, array $options = []): string
     {
@@ -1179,7 +1181,8 @@ class FormHelper extends Helper
      *
      * @param string $fieldName the field name
      * @param array $options The options for the input element
-     * @return string The generated input element
+     * @return string|array The generated input element string
+     *  or array if checkbox() is called with option 'hiddenField' set to '_split'.
      */
     protected function _getInput(string $fieldName, array $options)
     {
@@ -1405,7 +1408,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName The name of the field to generate label for.
      * @param array $options Options list.
-     * @return bool|string false or Generated label element
+     * @return string|false Generated label element or false.
      */
     protected function _getLabel(string $fieldName, array $options)
     {
@@ -1608,7 +1611,7 @@ class FormHelper extends Helper
      * @return string Formatted input method.
      * @throws \Cake\Core\Exception\Exception When there are no params for the method call.
      */
-    public function __call($method, $params)
+    public function __call(string $method, array $params)
     {
         $options = [];
         if (empty($params)) {
@@ -2526,7 +2529,7 @@ class FormHelper extends Helper
      * Valid values are `'context'`, `'data'` and `'query'`.
      * You need to supply one valid context or multiple, as a list of strings. Order sets priority.
      *
-     * @param string|array $sources A string or a list of strings identifying a source.
+     * @param string|string[] $sources A string or a list of strings identifying a source.
      * @return $this
      */
     public function setValueSources($sources)

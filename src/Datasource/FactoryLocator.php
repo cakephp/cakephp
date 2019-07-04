@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -60,7 +61,7 @@ class FactoryLocator
      * @throws \InvalidArgumentException If the specified repository type has no factory.
      * @return callable The factory for the repository type.
      */
-    public static function get(string $type)
+    public static function get(string $type): callable
     {
         if (!isset(static::$_modelFactories['Table'])) {
             static::$_modelFactories['Table'] = [TableRegistry::getTableLocator(), 'get'];

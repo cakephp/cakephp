@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -36,7 +37,6 @@ abstract class MailConstraintBase extends Constraint
     public function __construct(?int $at = null)
     {
         $this->at = $at;
-        parent::__construct();
     }
 
     /**

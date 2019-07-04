@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -38,7 +39,7 @@ class QueryExpressionTest extends TestCase
         $this->assertSame('+', $expr->getConjunction());
 
         $result = $expr->sql($binder);
-        $this->assertEquals('(1 + 2)', $result);
+        $this->assertSame('(1 + 2)', $result);
     }
 
     /**
@@ -66,7 +67,7 @@ class QueryExpressionTest extends TestCase
         $expr->add(['Users.username' => 'sally'], ['Users.username' => 'string']);
 
         $result = $expr->sql($binder);
-        $this->assertEquals('Users.username = :c0', $result);
+        $this->assertSame('Users.username = :c0', $result);
     }
 
     /**
@@ -90,7 +91,7 @@ class QueryExpressionTest extends TestCase
         );
 
         $result = $expr->sql($binder);
-        $this->assertEquals('(Users.username = :c0 AND Users.active = :c1)', $result);
+        $this->assertSame('(Users.username = :c0 AND Users.active = :c1)', $result);
     }
 
     /**
@@ -103,7 +104,7 @@ class QueryExpressionTest extends TestCase
         $expr = new QueryExpression();
         $binder = new ValueBinder();
         $result = $expr->sql($binder);
-        $this->assertEquals('', $result);
+        $this->assertSame('', $result);
     }
 
     /**
@@ -181,7 +182,7 @@ class QueryExpressionTest extends TestCase
         $bindings = $binder->bindings();
         $type = current($bindings)['type'];
 
-        $this->assertEquals('date', $type);
+        $this->assertSame('date', $type);
     }
 
     /**

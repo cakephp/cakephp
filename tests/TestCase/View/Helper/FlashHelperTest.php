@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,7 @@ class FlashHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $session = new Session();
@@ -101,7 +102,7 @@ class FlashHelperTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unset($this->View, $this->Flash);
@@ -117,7 +118,7 @@ class FlashHelperTest extends TestCase
     {
         $result = $this->Flash->render();
         $expected = '<div class="message">This is a calling</div>';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
 
         $expected = '<div id="classy-message">Recorded</div>';
         $result = $this->Flash->render('classy');
@@ -194,7 +195,7 @@ class FlashHelperTest extends TestCase
         $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');
         $expected = 'flash element from TestTheme';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 
     /**
@@ -230,6 +231,6 @@ class FlashHelperTest extends TestCase
         $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $result = $this->Flash->render('flash');
         $expected = 'flash element from Admin prefix folder';
-        $this->assertContains($expected, $result);
+        $this->assertStringContainsString($expected, $result);
     }
 }

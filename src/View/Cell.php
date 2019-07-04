@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -179,12 +180,6 @@ abstract class Cell implements EventDispatcherInterface
 
             $builder = $this->viewBuilder();
 
-            if ($template !== null &&
-                strpos($template, '/') === false &&
-                strpos($template, '.') === false
-            ) {
-                $template = Inflector::underscore($template);
-            }
             if ($template !== null) {
                 $builder->setTemplate($template);
             }
@@ -204,7 +199,14 @@ abstract class Cell implements EventDispatcherInterface
             try {
                 return $view->render($template, false);
             } catch (MissingTemplateException $e) {
-                throw new MissingCellTemplateException($name, $template, $e->getAttributes()['paths'], null, $e);
+                $attributes = $e->getAttributes();
+                throw new MissingCellTemplateException(
+                    $name,
+                    basename($attributes['file']),
+                    $attributes['paths'],
+                    null,
+                    $e
+                );
             }
         };
 
@@ -254,7 +256,7 @@ abstract class Cell implements EventDispatcherInterface
      * @return string Rendered cell
      * @throws \Error Include error details for PHP 7 fatal errors.
      */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return $this->render();
@@ -282,7 +284,7 @@ abstract class Cell implements EventDispatcherInterface
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         return [
             'action' => $this->action,

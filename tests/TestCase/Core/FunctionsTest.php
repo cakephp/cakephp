@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,8 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Error\Deprecated;
+use PHPUnit\Framework\Error\Warning;
 
 /**
  * Test cases for functions in Core\functions.php
@@ -30,19 +33,19 @@ class FunctionsTest extends TestCase
     {
         $_ENV['DOES_NOT_EXIST'] = null;
         $this->assertNull(env('DOES_NOT_EXIST'));
-        $this->assertEquals('default', env('DOES_NOT_EXIST', 'default'));
+        $this->assertSame('default', env('DOES_NOT_EXIST', 'default'));
 
         $_ENV['DOES_EXIST'] = 'some value';
-        $this->assertEquals('some value', env('DOES_EXIST'));
-        $this->assertEquals('some value', env('DOES_EXIST', 'default'));
+        $this->assertSame('some value', env('DOES_EXIST'));
+        $this->assertSame('some value', env('DOES_EXIST', 'default'));
 
         $_ENV['EMPTY_VALUE'] = '';
-        $this->assertEquals('', env('EMPTY_VALUE'));
-        $this->assertEquals('', env('EMPTY_VALUE', 'default'));
+        $this->assertSame('', env('EMPTY_VALUE'));
+        $this->assertSame('', env('EMPTY_VALUE', 'default'));
 
         $_ENV['ZERO'] = '0';
-        $this->assertEquals('0', env('ZERO'));
-        $this->assertEquals('0', env('ZERO', '1'));
+        $this->assertSame('0', env('ZERO'));
+        $this->assertSame('0', env('ZERO', '1'));
     }
 
     /**
@@ -73,12 +76,12 @@ class FunctionsTest extends TestCase
 
     /**
      * Test error messages coming out when deprecated level is on, manually setting the stack frame
-     *
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]FunctionsTest.php, line\: \d+/
      */
     public function testDeprecationWarningEnabled()
     {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]FunctionsTest.php, line\: \d+/');
+
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away', 2);
         });
@@ -87,11 +90,12 @@ class FunctionsTest extends TestCase
     /**
      * Test error messages coming out when deprecated level is on, not setting the stack frame manually
      *
-     * @expectedException PHPUnit\Framework\Error\Deprecated
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testDeprecationWarningEnabledDefaultFrame()
     {
+        $this->expectException(Deprecated::class);
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+
         $this->withErrorReporting(E_ALL, function () {
             deprecationWarning('This is going away');
         });
@@ -112,11 +116,12 @@ class FunctionsTest extends TestCase
     /**
      * Test error messages coming out when warning level is on.
      *
-     * @expectedException PHPUnit\Framework\Error\Warning
-     * @expectedExceptionMessageRegExp /This is going away - (.*?)[\/\\]TestCase.php, line\: \d+/
      */
     public function testTriggerWarningEnabled()
     {
+        $this->expectException(Warning::class);
+        $this->expectExceptionMessageRegExp('/This is going away - (.*?)[\/\\\]TestCase.php, line\: \d+/');
+
         $this->withErrorReporting(E_ALL, function () {
             triggerWarning('This is going away');
         });
@@ -141,8 +146,8 @@ class FunctionsTest extends TestCase
      */
     public function testgetTypeName()
     {
-        $this->assertEquals('stdClass', getTypeName(new \stdClass()));
-        $this->assertEquals('array', getTypeName([]));
-        $this->assertEquals('string', getTypeName(''));
+        $this->assertSame('stdClass', getTypeName(new \stdClass()));
+        $this->assertSame('array', getTypeName([]));
+        $this->assertSame('string', getTypeName(''));
     }
 }

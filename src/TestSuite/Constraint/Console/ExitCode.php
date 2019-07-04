@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -24,7 +25,7 @@ use PHPUnit\Framework\Constraint\Constraint;
 class ExitCode extends Constraint
 {
     /**
-     * @var int
+     * @var int|null
      */
     private $exitCode;
 
@@ -33,10 +34,8 @@ class ExitCode extends Constraint
      *
      * @param int $exitCode Exit code
      */
-    public function __construct(int $exitCode)
+    public function __construct(?int $exitCode)
     {
-        parent::__construct();
-
         $this->exitCode = $exitCode;
     }
 
@@ -58,6 +57,6 @@ class ExitCode extends Constraint
      */
     public function toString(): string
     {
-        return sprintf('matches exit code %d', $this->exitCode);
+        return sprintf('matches exit code %s', $this->exitCode ?? 'null');
     }
 }

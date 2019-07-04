@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -115,9 +116,10 @@ class CookieCollection implements IteratorAggregate, Countable
      * Get the first cookie by name.
      *
      * @param string $name The name of the cookie.
-     * @return \Cake\Http\Cookie\CookieInterface|null
+     * @return \Cake\Http\Cookie\CookieInterface
+     * @throws \InvalidArgumentException If cookie not found.
      */
-    public function get(string $name): ?CookieInterface
+    public function get(string $name): CookieInterface
     {
         $key = mb_strtolower($name);
         foreach ($this->cookies as $cookie) {
@@ -126,7 +128,12 @@ class CookieCollection implements IteratorAggregate, Countable
             }
         }
 
-        return null;
+        throw new InvalidArgumentException(
+            sprintf(
+                'Cookie %s not found. Use has() to check first for existence.',
+                $name
+            )
+        );
     }
 
     /**
@@ -155,7 +162,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param string $name The name of the cookie to remove.
      * @return static
      */
-    public function remove(string $name): self
+    public function remove(string $name)
     {
         $new = clone $this;
         $key = mb_strtolower($name);
@@ -289,7 +296,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * @param \Psr\Http\Message\RequestInterface $request Request to get cookie context from.
      * @return static
      */
-    public function addFromResponse(ResponseInterface $response, RequestInterface $request): self
+    public function addFromResponse(ResponseInterface $response, RequestInterface $request)
     {
         $uri = $request->getUri();
         $host = $uri->getHost();
@@ -334,7 +341,7 @@ class CookieCollection implements IteratorAggregate, Countable
      * Parse Set-Cookie headers into array
      *
      * @param array $values List of Set-Cookie Header values.
-     * @return \Cake\Http\Cookie\Cookie[] An array of cookie objects
+     * @return \Cake\Http\Cookie\CookieInterface[] An array of cookie objects
      */
     protected static function parseSetCookieHeader(array $values): array
     {

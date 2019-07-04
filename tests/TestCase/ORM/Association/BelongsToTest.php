@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -39,7 +40,7 @@ class BelongsToTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->company = $this->getTableLocator()->get('Companies', [
@@ -76,7 +77,7 @@ class BelongsToTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -93,9 +94,9 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->getForeignKey());
+        $this->assertSame('company_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
-        $this->assertEquals('another_key', $assoc->getForeignKey());
+        $this->assertSame('another_key', $assoc->getForeignKey());
     }
 
     /**
@@ -111,7 +112,7 @@ class BelongsToTest extends TestCase
             'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ]);
-        $this->assertEquals('company_id', $assoc->getForeignKey());
+        $this->assertSame('company_id', $assoc->getForeignKey());
     }
 
     /**
@@ -335,7 +336,7 @@ class BelongsToTest extends TestCase
     {
         $config = ['propertyName' => 'thing_placeholder'];
         $association = new BelongsTo('Thing', $config);
-        $this->assertEquals('thing_placeholder', $association->getProperty());
+        $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
     /**
@@ -353,7 +354,7 @@ class BelongsToTest extends TestCase
             'targetTable' => $mock,
         ];
         $association = new BelongsTo('Contacts.Companies', $config);
-        $this->assertEquals('company', $association->getProperty());
+        $this->assertSame('company', $association->getProperty());
     }
 
     /**

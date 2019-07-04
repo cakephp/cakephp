@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,14 +38,14 @@ class BaseApplicationTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
         $this->path = dirname(dirname(__DIR__));
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -68,7 +69,7 @@ class BaseApplicationTest extends TestCase
         $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
         $result = $app->handle($request);
         $this->assertInstanceOf(ResponseInterface::class, $result);
-        $this->assertEquals('Hello Jane', '' . $result->getBody());
+        $this->assertSame('Hello Jane', '' . $result->getBody());
     }
 
     /**

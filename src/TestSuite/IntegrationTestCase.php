@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -36,7 +37,7 @@ abstract class IntegrationTestCase extends TestCase
      * @param bool $enable Unused.
      * @return void
      */
-    public function useHttpServer($enable)
+    public function useHttpServer(bool $enable): void
     {
     }
 }

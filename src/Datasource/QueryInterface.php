@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -19,14 +20,24 @@ namespace Cake\Datasource;
 /**
  * The basis for every query object
  *
- * @method $this andWhere($conditions, $types = [])
- * @method $this select($fields = [], $overwrite = false)
+ * @method $this andWhere($conditions, array $types = [])
  */
 interface QueryInterface
 {
-    public const JOIN_TYPE_INNER = 'INNER';
-    public const JOIN_TYPE_LEFT = 'LEFT';
-    public const JOIN_TYPE_RIGHT = 'RIGHT';
+    /**
+     * Adds fields to be selected from datasource.
+     *
+     * Calling this function multiple times will append more fields to the list
+     * of fields to be selected.
+     *
+     * If `true` is passed in the second argument, any previous selections will
+     * be overwritten with the list passed in the first argument.
+     *
+     * @param mixed $fields Fields to be added to the list.
+     * @param bool $overwrite whether to reset fields with passed list or not
+     * @return $this
+     */
+    public function select($fields, bool $overwrite = false);
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -50,7 +61,7 @@ interface QueryInterface
      * @param string|null $defaultAlias The default alias
      * @return string[]
      */
-    public function aliasFields(array $fields, $defaultAlias = null): array;
+    public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 
     /**
      * Fetch the results for this query.
@@ -63,7 +74,7 @@ interface QueryInterface
      *
      * @return \Cake\Datasource\ResultSetInterface
      */
-    public function all();
+    public function all(): ResultSetInterface;
 
     /**
      * Populates or adds parts to current query clauses using an array.
@@ -102,7 +113,7 @@ interface QueryInterface
      * ```
      *
      * @param array $options list of query clauses to apply new parts to.
-     * @return \Cake\Datasource\QueryInterface
+     * @return $this
      */
     public function applyOptions(array $options);
 
@@ -120,10 +131,10 @@ interface QueryInterface
      *
      * @param string $finder The finder method to use.
      * @param mixed ...$args Finder arguments. If none are passed an empty array will be passed to finder method.
-     * @return \Cake\Datasource\QueryInterface Returns a modified query.
+     * @return static Returns a modified query.
      */
-    public function find($finder, ...$args);
-
+    public function find(string $finder, ...$args);
+  
     /**
      * Returns the first result out of executing this query, if the query has not been
      * executed before, it will set the limit clause to 1 for performance reasons.
@@ -271,7 +282,7 @@ interface QueryInterface
      *
      * @return \Cake\Datasource\RepositoryInterface|null $repository The default repository object to use
      */
-    public function getRepository();
+    public function getRepository(): ?RepositoryInterface;
 
     /**
      * Adds a condition or set of conditions to be used in the WHERE clause for this

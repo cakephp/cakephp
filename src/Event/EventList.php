@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -35,7 +36,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         $this->_events = [];
     }
@@ -121,7 +122,7 @@ class EventList implements ArrayAccess, Countable
      * @param string $name Event name.
      * @return bool
      */
-    public function hasEvent($name): bool
+    public function hasEvent(string $name): bool
     {
         foreach ($this->_events as $event) {
             if ($event->getName() === $name) {

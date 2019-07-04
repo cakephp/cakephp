@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,7 +35,7 @@ class BehaviorRegistryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
@@ -48,7 +49,7 @@ class BehaviorRegistryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
@@ -106,7 +107,7 @@ class BehaviorRegistryTest extends TestCase
         $result = $this->EventManager->listeners('Model.beforeFind');
         $this->assertCount(1, $result);
         $this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result[0]['callable'][0]);
-        $this->assertEquals('beforeFind', $result[0]['callable'][1], 'Method name should match.');
+        $this->assertSame('beforeFind', $result[0]['callable'][1], 'Method name should match.');
     }
 
     /**

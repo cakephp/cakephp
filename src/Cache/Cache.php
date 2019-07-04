@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -32,7 +33,7 @@ use RuntimeException;
  *
  * ```
  * Cache::config('shared', [
- *    'className' => 'Cake\Cache\Engine\ApcuEngine',
+ *    'className' => Cake\Cache\Engine\ApcuEngine::class,
  *    'prefix' => 'my_app_'
  * ]);
  * ```
@@ -73,14 +74,13 @@ class Cache
      * @var array
      */
     protected static $_dsnClassMap = [
-        'array' => 'Cake\Cache\Engine\ArrayEngine',
-        'apcu' => 'Cake\Cache\Engine\ApcuEngine',
-        'file' => 'Cake\Cache\Engine\FileEngine',
-        'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
-        'null' => 'Cake\Cache\Engine\NullEngine',
-        'redis' => 'Cake\Cache\Engine\RedisEngine',
-        'wincache' => 'Cake\Cache\Engine\WincacheEngine',
-        'xcache' => 'Cake\Cache\Engine\XcacheEngine',
+        'array' => Engine\ArrayEngine::class,
+        'apcu' => Engine\ApcuEngine::class,
+        'file' => Engine\FileEngine::class,
+        'memcached' => Engine\MemcachedEngine::class,
+        'null' => Engine\NullEngine::class,
+        'redis' => Engine\RedisEngine::class,
+        'wincache' => Engine\WincacheEngine::class,
     ];
 
     /**
@@ -100,7 +100,7 @@ class Cache
     /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry
+     * @var \Cake\Cache\CacheRegistry|null
      */
     protected static $_registry;
 
@@ -171,6 +171,7 @@ class Cache
                 ), 0, $e);
             }
 
+            /** @var \Cake\Cache\CacheEngine $fallbackEngine */
             $fallbackEngine = clone static::pool($config['fallback']);
             $newConfig = $config + ['groups' => [], 'prefix' => null];
             $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
@@ -197,7 +198,7 @@ class Cache
      * Get a cache engine object for the named cache config.
      *
      * @param string $config The name of the configured cache backend.
-     * @return \Cake\Cache\CacheEngine
+     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      * @deprecated 3.7.0 Use Cache::pool() instead. This method will be removed in 5.0.
      */
     public static function engine(string $config)
@@ -209,7 +210,7 @@ class Cache
      * Get a SimpleCacheEngine object for the named cache pool.
      *
      * @param string $config The name of the configured cache backend.
-     * @return \Cake\Cache\CacheEngine
+     * @return \Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface
      */
     public static function pool(string $config)
     {
@@ -250,7 +251,7 @@ class Cache
      * @param string $config Optional string configuration name to write to. Defaults to 'default'
      * @return bool True if the data was successfully cached, false on failure
      */
-    public static function write(string $key, $value, $config = 'default'): bool
+    public static function write(string $key, $value, string $config = 'default'): bool
     {
         if (is_resource($value)) {
             return false;
@@ -295,7 +296,7 @@ class Cache
      * @return bool True on success, false on failure
      * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function writeMany($data, string $config = 'default'): bool
+    public static function writeMany(iterable $data, string $config = 'default'): bool
     {
         return static::pool($config)->setMultiple($data);
     }
@@ -346,11 +347,11 @@ class Cache
      *
      * @param iterable $keys An array or Traversable of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
-     * @return array An array containing, for each of the given $keys,
+     * @return iterable An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
      * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function readMany($keys, string $config = 'default'): array
+    public static function readMany(iterable $keys, string $config = 'default'): iterable
     {
         return static::pool($config)->getMultiple($keys);
     }
@@ -441,7 +442,7 @@ class Cache
      * @return bool True on success, false on failure.
      * @throws \Cake\Cache\InvalidArgumentException
      */
-    public static function deleteMany($keys, string $config = 'default'): bool
+    public static function deleteMany(iterable $keys, string $config = 'default'): bool
     {
         return static::pool($config)->deleteMultiple($keys);
     }
@@ -612,7 +613,7 @@ class Cache
      * @return bool True if the data was successfully cached, false on failure.
      *   Or if the key existed already.
      */
-    public static function add(string $key, $value, $config = 'default'): bool
+    public static function add(string $key, $value, string $config = 'default'): bool
     {
         if (is_resource($value)) {
             return false;

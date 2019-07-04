@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -307,8 +308,10 @@ class Stream implements AdapterInterface
             throw new ClientException('The PHP directive `allow_url_fopen` must be enabled.');
         }
 
-        set_error_handler(function ($code, $message) {
+        set_error_handler(function ($code, $message): bool {
             $this->_connectionErrors[] = $message;
+
+            return true;
         });
         try {
             $this->_stream = fopen($url, 'rb', false, $this->_context);

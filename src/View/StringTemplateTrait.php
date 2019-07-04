@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -76,7 +77,7 @@ trait StringTemplateTrait
     public function templater(): StringTemplate
     {
         if ($this->_templater === null) {
-            $class = $this->getConfig('templateClass') ?: 'Cake\View\StringTemplate';
+            $class = $this->getConfig('templateClass') ?: StringTemplate::class;
             $this->_templater = new $class();
 
             $templates = $this->getConfig('templates');

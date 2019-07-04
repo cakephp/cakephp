@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -166,7 +167,14 @@ class RadioWidget implements WidgetInterface
         }
 
         if (empty($radio['id'])) {
-            $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
+            if (isset($data['id'])) {
+                $radio['id'] = $data['id'] . '-' . trim(
+                    $this->_idSuffix((string)$radio['value']),
+                    '-'
+                );
+            } else {
+                $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
+            }
         }
         if (isset($data['val']) && is_bool($data['val'])) {
             $data['val'] = $data['val'] ? 1 : 0;
@@ -212,6 +220,7 @@ class RadioWidget implements WidgetInterface
             $label = $input;
         }
 
+        /** @psalm-suppress PossiblyUndefinedArrayOffset */
         return $this->_templates->format('radioWrapper', [
             'input' => $input,
             'label' => $label,

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,9 +18,11 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\StopException;
 use Cake\Console\Shell;
 use Cake\Filesystem\Folder;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
 use TestApp\Shell\MergeShell;
 use TestApp\Shell\ShellTestShell;
 use TestApp\Shell\Task\TestAppleTask;
@@ -65,7 +68,7 @@ class ShellTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -87,7 +90,7 @@ class ShellTest extends TestCase
      */
     public function testConstruct()
     {
-        $this->assertEquals('ShellTestShell', $this->Shell->name);
+        $this->assertSame('ShellTestShell', $this->Shell->name);
         $this->assertInstanceOf(ConsoleIo::class, $this->Shell->getIo());
     }
 
@@ -101,10 +104,10 @@ class ShellTest extends TestCase
         static::setAppNamespace();
 
         $this->loadPlugins(['TestPlugin']);
-        $this->Shell->tasks = ['Extract' => ['one', 'two']];
+        $this->Shell->tasks = ['Sample' => ['one', 'two']];
         $this->Shell->plugin = 'TestPlugin';
-        $this->Shell->modelClass = 'TestPlugin.TestPluginComments';
         $this->Shell->initialize();
+        // TestApp\Shell\ShellTestShell has $modelClass property set to 'TestPlugin.TestPluginComments'
         $this->Shell->loadModel();
 
         $this->assertTrue(isset($this->Shell->TestPluginComments));
@@ -129,7 +132,7 @@ class ShellTest extends TestCase
             'TestApp\Model\Table\ArticlesTable',
             $Shell->Articles
         );
-        $this->assertEquals('Articles', $Shell->modelClass);
+        $this->assertSame('Articles', $Shell->modelClass);
 
         $this->loadPlugins(['TestPlugin']);
         $result = $this->Shell->loadModel('TestPlugin.TestPluginComments');
@@ -162,10 +165,10 @@ class ShellTest extends TestCase
             ->will($this->returnValue('n'));
 
         $result = $this->Shell->in('Just a test?', ['y', 'n'], 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
 
         $result = $this->Shell->in('Just a test?', null, 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
     }
 
     /**
@@ -183,7 +186,7 @@ class ShellTest extends TestCase
         $this->Shell->interactive = false;
 
         $result = $this->Shell->in('Just a test?', 'y/n', 'n');
-        $this->assertEquals('n', $result);
+        $this->assertSame('n', $result);
     }
 
     /**
@@ -371,13 +374,14 @@ class ShellTest extends TestCase
     /**
      * testAbort
      *
-     * @expectedException \Cake\Console\Exception\StopException
-     * @expectedExceptionMessage Foo Not Found
-     * @expectedExceptionCode 1
      * @return void
      */
     public function testAbort()
     {
+        $this->expectException(StopException::class);
+        $this->expectExceptionMessage('Foo Not Found');
+        $this->expectExceptionCode(1);
+
         $this->io->expects($this->at(0))
             ->method('err')
             ->with('<error>Foo Not Found</error>');
@@ -472,7 +476,7 @@ class ShellTest extends TestCase
 
         $path = APP;
         $result = $this->Shell->shortPath($path);
-        $this->assertNotContains(ROOT, $result, 'Short paths should not contain ROOT');
+        $this->assertStringNotContainsString(ROOT, $result, 'Short paths should not contain ROOT');
     }
 
     /**
@@ -660,26 +664,28 @@ class ShellTest extends TestCase
      */
     public function testHasTask()
     {
-        $this->Shell->tasks = ['Extract', 'Assets'];
+        $this->setAppNamespace();
+        $this->Shell->tasks = ['Sample', 'TestApple'];
         $this->Shell->loadTasks();
 
-        $this->assertTrue($this->Shell->hasTask('extract'));
-        $this->assertTrue($this->Shell->hasTask('Extract'));
+        $this->assertTrue($this->Shell->hasTask('sample'));
+        $this->assertTrue($this->Shell->hasTask('Sample'));
         $this->assertFalse($this->Shell->hasTask('random'));
 
-        $this->assertTrue($this->Shell->hasTask('assets'));
-        $this->assertTrue($this->Shell->hasTask('Assets'));
+        $this->assertTrue($this->Shell->hasTask('testApple'));
+        $this->assertTrue($this->Shell->hasTask('TestApple'));
     }
 
     /**
      * test task loading exception
      *
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Task `DoesNotExist` not found. Maybe you made a typo or a plugin is missing or not loaded?
      * @return void
      */
     public function testMissingTaskException()
     {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Task `DoesNotExist` not found. Maybe you made a typo or a plugin is missing or not loaded?');
+
         $this->Shell->tasks = ['DoesNotExist'];
         $this->Shell->loadTasks();
     }
@@ -717,7 +723,7 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['cakes', '--verbose']);
         $this->assertTrue($result);
-        $this->assertEquals('main', $shell->command);
+        $this->assertSame('main', $shell->command);
     }
 
     /**
@@ -740,7 +746,7 @@ class ShellTest extends TestCase
             ->will($this->returnValue(true));
         $result = $shell->runCommand(['hit_me', 'cakes', '--verbose'], true);
         $this->assertTrue($result);
-        $this->assertEquals('hit_me', $shell->command);
+        $this->assertSame('hit_me', $shell->command);
     }
 
     /**
@@ -1341,7 +1347,7 @@ TEXT;
         $this->Shell->plugin = 'plugin';
         $parser = $this->Shell->getOptionParser();
 
-        $this->assertEquals('plugin.test', $parser->getCommand());
+        $this->assertSame('plugin.test', $parser->getCommand());
     }
 
     /**
@@ -1390,7 +1396,7 @@ TEXT;
     public function testSetRootNamePropagatesToHelpText()
     {
         $this->assertSame($this->Shell, $this->Shell->setRootName('tool'), 'is chainable');
-        $this->assertContains('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
+        $this->assertStringContainsString('tool shell_test_shell [-h]', $this->Shell->getOptionParser()->help());
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,7 @@ class SelectBoxWidgetTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $templates = [
@@ -102,11 +103,11 @@ class SelectBoxWidgetTest extends TestCase
             'val' => false,
         ];
         $result = $select->render($data, $this->context);
-        $this->assertContains('<option value="0" selected="selected">No</option>', $result);
+        $this->assertStringContainsString('<option value="0" selected="selected">No</option>', $result);
 
         $data['value'] = [false, 2];
         $result = $select->render($data, $this->context);
-        $this->assertContains('<option value="0" selected="selected">No</option>', $result);
+        $this->assertStringContainsString('<option value="0" selected="selected">No</option>', $result);
     }
 
     /**

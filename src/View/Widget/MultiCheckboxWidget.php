@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -165,7 +166,14 @@ class MultiCheckboxWidget implements WidgetInterface
             $checkbox['checked'] = $this->_isSelected((string)$checkbox['value'], $data['val']);
             $checkbox['disabled'] = $this->_isDisabled((string)$checkbox['value'], $data['disabled']);
             if (empty($checkbox['id'])) {
-                $checkbox['id'] = $this->_id($checkbox['name'], (string)$checkbox['value']);
+                if (isset($data['id'])) {
+                    $checkbox['id'] = $data['id'] . '-' . trim(
+                        $this->_idSuffix((string)$checkbox['value']),
+                        '-'
+                    );
+                } else {
+                    $checkbox['id'] = $this->_id($checkbox['name'], (string)$checkbox['value']);
+                }
             }
             $out[] = $this->_renderInput($checkbox + $data, $context);
         }
@@ -205,7 +213,7 @@ class MultiCheckboxWidget implements WidgetInterface
             ];
 
             if ($checkbox['checked']) {
-                $labelAttrs = $this->_templates->addClass($labelAttrs, 'selected');
+                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, 'selected');
             }
 
             $label = $this->_label->render($labelAttrs, $context);

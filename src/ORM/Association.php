@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -20,7 +21,6 @@ use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
@@ -106,14 +106,14 @@ abstract class Association
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
-     * @var string|array
+     * @var string|string[]
      */
     protected $_bindingKey;
 
     /**
      * The name of the field representing the foreign key to the table to load
      *
-     * @var string|array
+     * @var string|string[]
      */
     protected $_foreignKey;
 
@@ -160,7 +160,7 @@ abstract class Association
      *
      * @var string
      */
-    protected $_joinType = QueryInterface::JOIN_TYPE_LEFT;
+    protected $_joinType = Query::JOIN_TYPE_LEFT;
 
     /**
      * The property name that should be filled with data from the target table
@@ -189,7 +189,7 @@ abstract class Association
     /**
      * Valid strategies for this association. Subclasses can narrow this down.
      *
-     * @var array
+     * @var string[]
      */
     protected $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -448,7 +448,7 @@ abstract class Association
      * Sets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @param string|array $key the table field or fields to be used to link both tables together
+     * @param string|string[] $key the table field or fields to be used to link both tables together
      * @return $this
      */
     public function setBindingKey($key)
@@ -462,7 +462,7 @@ abstract class Association
      * Gets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getBindingKey()
     {
@@ -478,7 +478,7 @@ abstract class Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getForeignKey()
     {
@@ -488,7 +488,7 @@ abstract class Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param string|array $key the key or keys to be used to link both tables together
+     * @param string|string[] $key the key or keys to be used to link both tables together
      * @return $this
      */
     public function setForeignKey($key)
@@ -1138,7 +1138,7 @@ abstract class Association
             $options['className'] = Inflector::camelize($alias);
         }
 
-        $className = App::className($options['className'], 'Model/Table', 'Table') ?: 'Cake\ORM\Table';
+        $className = App::className($options['className'], 'Model/Table', 'Table') ?: Table::class;
 
         return ltrim($className, '\\');
     }
@@ -1248,7 +1248,7 @@ abstract class Association
      *
      * @param \Cake\Datasource\EntityInterface $entity the data to be saved
      * @param array $options The options for saving associated data.
-     * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
+     * @return \Cake\Datasource\EntityInterface|false false if $entity could not be saved, otherwise it returns
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -17,6 +18,7 @@ namespace Cake\Database\Log;
 
 use Cake\Database\Statement\StatementDecorator;
 use Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * Statement decorator used to
@@ -28,7 +30,7 @@ class LoggingStatement extends StatementDecorator
     /**
      * Logger instance responsible for actually doing the logging task
      *
-     * @var \Cake\Database\Log\QueryLogger|null
+     * @var \Psr\Log\LoggerInterface
      */
     protected $_logger;
 
@@ -81,7 +83,7 @@ class LoggingStatement extends StatementDecorator
         $query->took = (int)round((microtime(true) - $startTime) * 1000, 0);
         $query->params = $params ?: $this->_compiledParams;
         $query->query = $this->queryString;
-        $this->getLogger()->log($query);
+        $this->getLogger()->debug((string)$query, ['query' => $query]);
     }
 
     /**
@@ -108,10 +110,10 @@ class LoggingStatement extends StatementDecorator
     /**
      * Sets a logger
      *
-     * @param \Cake\Database\Log\QueryLogger $logger Logger object
+     * @param \Psr\Log\LoggerInterface $logger Logger object
      * @return void
      */
-    public function setLogger(QueryLogger $logger): void
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->_logger = $logger;
     }
@@ -119,9 +121,9 @@ class LoggingStatement extends StatementDecorator
     /**
      * Gets the logger object
      *
-     * @return \Cake\Database\Log\QueryLogger|null logger instance
+     * @return \Psr\Log\LoggerInterface logger instance
      */
-    public function getLogger(): ?QueryLogger
+    public function getLogger(): LoggerInterface
     {
         return $this->_logger;
     }

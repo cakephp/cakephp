@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -51,6 +52,7 @@ class LegacyShellDispatcher extends ShellDispatcher
     protected function _createShell(string $className, string $shortName): Shell
     {
         [$plugin] = pluginSplit($shortName);
+        /** @var \Cake\Console\Shell $instance */
         $instance = new $className($this->_io);
         if ($plugin) {
             $instance->plugin = trim($plugin, '.');

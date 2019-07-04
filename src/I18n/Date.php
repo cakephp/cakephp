@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,7 +31,7 @@ class Date extends MutableDate implements I18nDateTimeInterface
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::i18nFormat()`
-     * and `__toString`
+     * and `__toString`. This format is also used by `parseDateTime()`.
      *
      * The format should be either the formatting constants from IntlDateFormatter as
      * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
@@ -44,6 +45,22 @@ class Date extends MutableDate implements I18nDateTimeInterface
      * @see \Cake\I18n\DateFormatTrait::i18nFormat()
      */
     protected static $_toStringFormat = [IntlDateFormatter::SHORT, -1];
+
+    /**
+     * The format to use when converting this object to JSON.
+     *
+     * The format should be either the formatting constants from IntlDateFormatter as
+     * described in (https://secure.php.net/manual/en/class.intldateformatter.php) or a pattern
+     * as specified in (http://www.icu-project.org/apiref/icu4c/classSimpleDateFormat.html#details)
+     *
+     * It is possible to provide an array of 2 constants. In this case, the first position
+     * will be used for formatting the date part of the object and the second position
+     * will be used to format the time part.
+     *
+     * @var string|array|int
+     * @see \Cake\I18n\Time::i18nFormat()
+     */
+    protected static $_jsonEncodeFormat = "yyyy-MM-dd";
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`

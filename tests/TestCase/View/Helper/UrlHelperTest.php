@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class UrlHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -57,7 +58,7 @@ class UrlHelperTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -75,34 +76,34 @@ class UrlHelperTest extends TestCase
         Router::connect('/:controller/:action/*');
 
         $result = $this->Helper->build('/controller/action/1');
-        $this->assertEquals('/controller/action/1', $result);
+        $this->assertSame('/controller/action/1', $result);
 
         $result = $this->Helper->build('/controller/action/1?one=1&two=2');
-        $this->assertEquals('/controller/action/1?one=1&amp;two=2', $result);
+        $this->assertSame('/controller/action/1?one=1&amp;two=2', $result);
 
         $result = $this->Helper->build(['controller' => 'posts', 'action' => 'index', '?' => ['page' => '1" onclick="alert(\'XSS\');"']]);
-        $this->assertEquals('/posts?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
+        $this->assertSame('/posts?page=1%22+onclick%3D%22alert%28%27XSS%27%29%3B%22', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this+one+more');
-        $this->assertEquals('/controller/action/1/param:this+one+more', $result);
+        $this->assertSame('/controller/action/1/param:this+one+more', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:this%20one%20more');
-        $this->assertEquals('/controller/action/1/param:this%20one%20more', $result);
+        $this->assertSame('/controller/action/1/param:this%20one%20more', $result);
 
         $result = $this->Helper->build('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24');
-        $this->assertEquals('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
+        $this->assertSame('/controller/action/1/param:%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index',
             '?' => ['param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24'],
         ]);
-        $this->assertEquals('/posts?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
+        $this->assertSame('/posts?param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts', 'action' => 'index',
             '?' => ['one' => 'value', 'two' => 'value', 'three' => 'purple', 'page' => '1'],
         ]);
-        $this->assertEquals('/posts?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
+        $this->assertSame('/posts?one=value&amp;two=value&amp;three=purple&amp;page=1', $result);
     }
 
     /**
@@ -125,7 +126,7 @@ class UrlHelperTest extends TestCase
         ]);
         Router::pushRequest($request);
 
-        $this->assertEquals('/magazine/subscribe', $this->Helper->build());
+        $this->assertSame('/magazine/subscribe', $this->Helper->build());
         $this->assertEquals(
             '/magazine/articles/add',
             $this->Helper->build(['controller' => 'articles', 'action' => 'add'])
@@ -138,7 +139,7 @@ class UrlHelperTest extends TestCase
     public function testBuildUrlConversionUnescaped()
     {
         $result = $this->Helper->build('/controller/action/1?one=1&two=2', ['escape' => false]);
-        $this->assertEquals('/controller/action/1?one=1&two=2', $result);
+        $this->assertSame('/controller/action/1?one=1&two=2', $result);
 
         $result = $this->Helper->build([
             'controller' => 'posts',
@@ -149,7 +150,7 @@ class UrlHelperTest extends TestCase
                 'param' => '%7Baround%20here%7D%5Bthings%5D%5Bare%5D%24%24',
             ],
         ], ['escape' => false]);
-        $this->assertEquals('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
+        $this->assertSame('/posts/view?k=v&1=2&param=%257Baround%2520here%257D%255Bthings%255D%255Bare%255D%2524%2524', $result);
     }
 
     /**
@@ -168,7 +169,7 @@ class UrlHelperTest extends TestCase
         Configure::write('debug', false);
 
         $result = $this->Helper->assetTimestamp('/%3Cb%3E/cake.generic.css');
-        $this->assertEquals('/%3Cb%3E/cake.generic.css', $result);
+        $this->assertSame('/%3Cb%3E/cake.generic.css', $result);
 
         $result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
         $this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
@@ -212,25 +213,25 @@ class UrlHelperTest extends TestCase
         $this->assertEquals(Router::fullBaseUrl() . '/js/post.js', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg', ['pathPrefix' => 'img/']);
-        $this->assertEquals('img/foo.jpg', $result);
+        $this->assertSame('img/foo.jpg', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/foo.jpg', $result);
 
         $result = $this->Helper->assetUrl('style', ['ext' => '.css']);
-        $this->assertEquals('style.css', $result);
+        $this->assertSame('style.css', $result);
 
         $result = $this->Helper->assetUrl('dir/sub dir/my image', ['ext' => '.jpg']);
-        $this->assertEquals('dir/sub%20dir/my%20image.jpg', $result);
+        $this->assertSame('dir/sub%20dir/my%20image.jpg', $result);
 
         $result = $this->Helper->assetUrl('foo.jpg?one=two&three=four');
-        $this->assertEquals('foo.jpg?one=two&amp;three=four', $result);
+        $this->assertSame('foo.jpg?one=two&amp;three=four', $result);
 
         $result = $this->Helper->assetUrl('x:"><script>alert(1)</script>');
-        $this->assertEquals('x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', $result);
+        $this->assertSame('x:&quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;', $result);
 
         $result = $this->Helper->assetUrl('dir/big+tall/image', ['ext' => '.jpg']);
-        $this->assertEquals('dir/big%2Btall/image.jpg', $result);
+        $this->assertSame('dir/big%2Btall/image.jpg', $result);
     }
 
     /**
@@ -284,10 +285,10 @@ class UrlHelperTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css']);
-        $this->assertEquals('test_plugin/style.css', $result);
+        $this->assertSame('test_plugin/style.css', $result);
 
         $result = $this->Helper->assetUrl('TestPlugin.style', ['ext' => '.css', 'plugin' => false]);
-        $this->assertEquals('TestPlugin.style.css', $result);
+        $this->assertSame('TestPlugin.style.css', $result);
 
         $this->removePlugins(['TestPlugin']);
     }
@@ -303,7 +304,7 @@ class UrlHelperTest extends TestCase
         $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
         $result = $this->Helper->assetUrl('img/foo.jpg', ['fullBase' => 'https://xyz/']);
-        $this->assertEquals('https://xyz/img/foo.jpg', $result);
+        $this->assertSame('https://xyz/img/foo.jpg', $result);
     }
 
     /**
@@ -415,25 +416,25 @@ class UrlHelperTest extends TestCase
     public function testImage()
     {
         $result = $this->Helper->image('foo.jpg');
-        $this->assertEquals('img/foo.jpg', $result);
+        $this->assertSame('img/foo.jpg', $result);
 
         $result = $this->Helper->image('foo.jpg', ['fullBase' => true]);
         $this->assertEquals(Router::fullBaseUrl() . '/img/foo.jpg', $result);
 
         $result = $this->Helper->image('dir/sub dir/my image.jpg');
-        $this->assertEquals('img/dir/sub%20dir/my%20image.jpg', $result);
+        $this->assertSame('img/dir/sub%20dir/my%20image.jpg', $result);
 
         $result = $this->Helper->image('foo.jpg?one=two&three=four');
-        $this->assertEquals('img/foo.jpg?one=two&amp;three=four', $result);
+        $this->assertSame('img/foo.jpg?one=two&amp;three=four', $result);
 
         $result = $this->Helper->image('dir/big+tall/image.jpg');
-        $this->assertEquals('img/dir/big%2Btall/image.jpg', $result);
+        $this->assertSame('img/dir/big%2Btall/image.jpg', $result);
 
         $result = $this->Helper->image('cid:foo.jpg');
-        $this->assertEquals('cid:foo.jpg', $result);
+        $this->assertSame('cid:foo.jpg', $result);
 
         $result = $this->Helper->image('CID:foo.jpg');
-        $this->assertEquals('CID:foo.jpg', $result);
+        $this->assertSame('CID:foo.jpg', $result);
     }
 
     /**
@@ -460,7 +461,7 @@ class UrlHelperTest extends TestCase
         $timestamp = false;
 
         $result = $this->Helper->image('cake.icon.png', ['timestamp' => $timestamp]);
-        $this->assertEquals('img/cake.icon.png', $result);
+        $this->assertSame('img/cake.icon.png', $result);
     }
 
     /**
@@ -471,7 +472,7 @@ class UrlHelperTest extends TestCase
     public function testCss()
     {
         $result = $this->Helper->css('style');
-        $this->assertEquals('css/style.css', $result);
+        $this->assertSame('css/style.css', $result);
     }
 
     /**
@@ -498,7 +499,7 @@ class UrlHelperTest extends TestCase
         $timestamp = false;
 
         $result = $this->Helper->css('cake.generic', ['timestamp' => $timestamp]);
-        $this->assertEquals('css/cake.generic.css', $result);
+        $this->assertSame('css/cake.generic.css', $result);
     }
 
     /**

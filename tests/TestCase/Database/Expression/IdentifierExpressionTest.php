@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  *
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
@@ -33,9 +34,9 @@ class IdentifierExpressionTest extends TestCase
     public function testGetAndSet()
     {
         $expression = new IdentifierExpression('foo');
-        $this->assertEquals('foo', $expression->getIdentifier());
+        $this->assertSame('foo', $expression->getIdentifier());
         $expression->setIdentifier('bar');
-        $this->assertEquals('bar', $expression->getIdentifier());
+        $this->assertSame('bar', $expression->getIdentifier());
     }
 
     /**
@@ -46,6 +47,6 @@ class IdentifierExpressionTest extends TestCase
     public function testSQL()
     {
         $expression = new IdentifierExpression('foo');
-        $this->assertEquals('foo', $expression->sql(new ValueBinder()));
+        $this->assertSame('foo', $expression->sql(new ValueBinder()));
     }
 }

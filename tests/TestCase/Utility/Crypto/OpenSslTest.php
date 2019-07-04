@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -33,7 +34,7 @@ class OpenSslTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('openssl_encrypt'), 'No openssl skipping tests');
@@ -52,7 +53,7 @@ class OpenSslTest extends TestCase
         $result = $this->crypt->encrypt($txt, $key);
         $this->assertNotEquals($txt, $result, 'Should be encrypted.');
         $this->assertNotEquals($result, $this->crypt->encrypt($txt, $key), 'Each result is unique.');
-        $this->assertEquals($txt, $this->crypt->decrypt($result, $key));
+        $this->assertSame($txt, $this->crypt->decrypt($result, $key));
     }
 
     /**

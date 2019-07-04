@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -57,7 +58,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Default table instance
      *
-     * @var \Cake\ORM\Table|\Cake\Datasource\RepositoryInterface
+     * @var \Cake\ORM\Table
      */
     protected $_defaultTable;
 
@@ -142,20 +143,11 @@ class ResultSet implements ResultSetInterface
     protected $_count;
 
     /**
-     * Type cache for type converters.
-     *
-     * Converters are indexed by alias and column name.
-     *
-     * @var array
-     */
-    protected $_types = [];
-
-    /**
      * The Database driver object.
      *
      * Cached in a property to avoid multiple calls to the same function.
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -171,7 +163,7 @@ class ResultSet implements ResultSetInterface
         $repository = $query->getRepository();
         $this->_statement = $statement;
         $this->_driver = $query->getConnection()->getDriver();
-        $this->_defaultTable = $query->getRepository();
+        $this->_defaultTable = $repository;
         $this->_calculateAssociationMap($query);
         $this->_hydrate = $query->isHydrationEnabled();
         $this->_entityClass = $repository->getEntityClass();

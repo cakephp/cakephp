@@ -16,11 +16,11 @@
 $this->layout = 'dev_error';
 
 $this->assign('title', 'Missing Layout');
-$this->assign('templateName', 'missing_layout.ctp');
+$this->assign('templateName', 'missing_layout.php');
 
 $this->start('subheading');
 ?>
-    <strong>Error: </strong>
+    <strong>Error</strong>
     The layout file <em><?= h($file) ?></em> can not be found or does not exist.
 <?php $this->end() ?>
 

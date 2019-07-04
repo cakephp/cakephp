@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -34,7 +35,7 @@ class EmailTraitTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -59,7 +60,7 @@ class EmailTraitTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -86,6 +87,9 @@ class EmailTraitTest extends TestCase
 
         $this->assertMailContains('text');
         $this->assertMailContains('html');
+
+        $this->assertMailContainsAttachment('custom_name.php');
+        $this->assertMailContainsAttachment('custom_name.php', ['file' => CAKE . 'basics.php']);
 
         $this->assertMailSentWith('Hello world', 'subject');
         $this->assertMailSentWith('cc@example.com', 'cc');
@@ -161,6 +165,21 @@ class EmailTraitTest extends TestCase
     }
 
     /**
+     * Tests asserting using RegExp characters doesn't break the assertion
+     *
+     * @return void
+     */
+    public function testAssertUsingRegExpCharacters()
+    {
+        (new Email())
+            ->setTo('to3@example.com')
+            ->setCc('cc3@example.com')
+            ->send('email with regexp chars $/[]');
+
+        $this->assertMailContains('$/[]');
+    }
+
+    /**
      * tests constraint failure messages
      *
      * @param string $assertion Assertion method
@@ -192,6 +211,7 @@ class EmailTraitTest extends TestCase
             'assertMailSentWith' => ['assertMailSentWith', 'Failed asserting that \'Missing\' is in an email `subject`.', ['Missing', 'subject']],
             'assertMailSentWithAt' => ['assertMailSentWithAt', 'Failed asserting that \'Missing\' is in email #1 `subject`.', [1, 'Missing', 'subject']],
             'assertMailContains' => ['assertMailContains', 'Failed asserting that \'Missing\' is in an email.', ['Missing']],
+            'assertMailContainsAttachment' => ['assertMailContainsAttachment', 'Failed asserting that \'no_existing_file.php\' is an attachment of an email.', ['no_existing_file.php']],
             'assertMailContainsHtml' => ['assertMailContainsHtml', 'Failed asserting that \'Missing\' is in the html message of an email.', ['Missing']],
             'assertMailContainsText' => ['assertMailContainsText', 'Failed asserting that \'Missing\' is in the text message of an email.', ['Missing']],
             'assertMailContainsAt' => ['assertMailContainsAt', 'Failed asserting that \'Missing\' is in email #1.', [1, 'Missing']],
@@ -213,6 +233,7 @@ class EmailTraitTest extends TestCase
             ->setCc('cc@example.com')
             ->setBcc(['bcc@example.com' => 'Baz Qux'])
             ->setSubject('Hello world')
+            ->setAttachments(['custom_name.php' => CAKE . 'basics.php'])
             ->setEmailFormat(Email::MESSAGE_TEXT)
             ->send('text');
 

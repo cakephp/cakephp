@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -29,7 +30,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Sets hidden fields.
      *
-     * @param array $fields An array of fields to hide from array exports.
+     * @param string[] $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -38,14 +39,14 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the hidden fields.
      *
-     * @return array
+     * @return string[]
      */
     public function getHidden(): array;
 
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param array $fields An array of fields to treat as virtual.
+     * @param string[] $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -54,7 +55,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array
+     * @return string[]
      */
     public function getVirtual(): array;
 
@@ -79,7 +80,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
     /**
      * Gets the dirty fields.
      *
-     * @return array
+     * @return string[]
      */
     public function getDirty(): array;
 
@@ -123,7 +124,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param bool $overwrite Whether or not to overwrite pre-existing errors for $field
      * @return $this
      */
-    public function setError($field, $errors, bool $overwrite = false);
+    public function setError(string $field, $errors, bool $overwrite = false);
 
     /**
      * Stores whether or not a field value can be changed or set in this entity.
@@ -165,7 +166,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginal(array $fields);
+    public function extractOriginal(array $fields): array;
 
     /**
      * Returns an array with only the original fields
@@ -174,7 +175,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param array $fields List of fields to be returned
      * @return array
      */
-    public function extractOriginalChanged(array $fields);
+    public function extractOriginalChanged(array $fields): array;
 
     /**
      * Sets one or multiple fields to the specified value
@@ -185,7 +186,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * first argument is also an array, in which case will be treated as $options
      * @param array $options options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
-     * @return \Cake\Datasource\EntityInterface
+     * @return $this
      */
     public function set($field, $value = null, array $options = []);
 
@@ -195,7 +196,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string $field the name of the field to retrieve
      * @return mixed
      */
-    public function &get($field);
+    public function &get(string $field);
 
     /**
      * Returns whether this entity contains a field named $field
@@ -204,20 +205,20 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      * @param string|array $field The field to check.
      * @return bool
      */
-    public function has($field);
+    public function has($field): bool;
 
     /**
      * Removes a field or list of fields from this entity
      *
      * @param string|array $field The field to unset.
-     * @return \Cake\Datasource\EntityInterface
+     * @return $this
      */
     public function unset($field);
 
     /**
      * Get the list of visible fields.
      *
-     * @return array A list of fields that are 'visible' in all representations.
+     * @return string[] A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 
@@ -229,17 +230,17 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @return array
      */
-    public function toArray();
+    public function toArray(): array;
 
     /**
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param array $fields list of fields to be returned
+     * @param string[] $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array
      */
-    public function extract(array $fields, $onlyDirty = false);
+    public function extract(array $fields, bool $onlyDirty = false): array;
 
     /**
      * Sets the entire entity as clean, which means that it will appear as
@@ -248,7 +249,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable
      *
      * @return void
      */
-    public function clean();
+    public function clean(): void;
 
     /**
      * Returns whether or not this entity has already been persisted.

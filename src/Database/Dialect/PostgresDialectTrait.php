@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -16,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Query;
 use Cake\Database\Schema\BaseSchema;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\SqlDialectTrait;
@@ -57,7 +59,7 @@ trait PostgresDialectTrait
      * @param \Cake\Database\Query $query The query to be transformed
      * @return \Cake\Database\Query
      */
-    protected function _transformDistinct($query)
+    protected function _transformDistinct(Query $query): Query
     {
         return $query;
     }
@@ -69,7 +71,7 @@ trait PostgresDialectTrait
      * @param \Cake\Database\Query $query The query to translate.
      * @return \Cake\Database\Query
      */
-    protected function _insertQueryTranslator($query)
+    protected function _insertQueryTranslator(Query $query): Query
     {
         if (!$query->clause('epilog')) {
             $query->epilog('RETURNING *');
@@ -84,7 +86,7 @@ trait PostgresDialectTrait
      *
      * @return array
      */
-    protected function _expressionTranslators()
+    protected function _expressionTranslators(): array
     {
         $namespace = 'Cake\Database\Expression';
 
@@ -101,7 +103,7 @@ trait PostgresDialectTrait
      *   to postgres SQL.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression)
+    protected function _transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
             case 'CONCAT':

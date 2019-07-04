@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -42,7 +43,7 @@ class SubjectFilterDecoratorTest extends TestCase
         ]);
 
         $this->assertTrue($decorator->canTrigger($event));
-        $this->assertEquals('success', $decorator($event));
+        $this->assertSame('success', $decorator($event));
 
         $decorator = new SubjectFilterDecorator($callable, [
             'allowedSubject' => '\Some\Other\Class',

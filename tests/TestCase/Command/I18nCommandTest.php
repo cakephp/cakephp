@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,28 +14,27 @@ declare(strict_types=1);
  * @since         3.0.8
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
-use Cake\Shell\I18nShell;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * I18nShell test.
+ * I18nCommand test.
  */
-class I18nShellTest extends TestCase
+class I18nCommandTest extends ConsoleIntegrationTestCase
 {
     /**
      * setup method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new I18nShell($this->io);
 
         $this->localeDir = TMP . 'Locale' . DS;
+        $this->useCommandRunner();
+        $this->setAppNamespace();
     }
 
     /**
@@ -42,7 +42,7 @@ class I18nShellTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
@@ -78,16 +78,13 @@ class I18nShellTest extends TestCase
             unlink($deDir . 'cake.po');
         }
 
-        $this->shell->getIo()->expects($this->at(0))
-            ->method('ask')
-            ->will($this->returnValue('de_DE'));
-        $this->shell->getIo()->expects($this->at(1))
-            ->method('ask')
-            ->will($this->returnValue($this->localeDir));
+        $this->exec('i18n init --verbose', [
+            'de_DE',
+            $this->localeDir,
+        ]);
 
-        $this->shell->params['verbose'] = true;
-        $this->shell->init();
-
+        $this->assertExitSuccess();
+        $this->assertOutputContains('Generated 2 PO files');
         $this->assertFileExists($deDir . 'default.po');
         $this->assertFileExists($deDir . 'cake.po');
     }
@@ -99,9 +96,47 @@ class I18nShellTest extends TestCase
      */
     public function testGetOptionParser()
     {
-        $this->shell->loadTasks();
-        $parser = $this->shell->getOptionParser();
-        $this->assertArrayHasKey('init', $parser->subcommands());
-        $this->assertArrayHasKey('extract', $parser->subcommands());
+        $this->exec('i18n -h');
+
+        $this->assertExitSuccess();
+        $this->assertOutputContains('cake i18n');
+    }
+
+    /**
+     * Tests main interactive mode
+     *
+     * @return void
+     */
+    public function testInteractiveQuit()
+    {
+        $this->exec('i18n', ['q']);
+        $this->assertExitSuccess();
+    }
+
+    /**
+     * Tests main interactive mode
+     *
+     * @return void
+     */
+    public function testInteractiveHelp()
+    {
+        $this->exec('i18n', ['h', 'q']);
+        $this->assertExitSuccess();
+        $this->assertOutputContains('cake i18n');
+    }
+
+    /**
+     * Tests main interactive mode
+     *
+     * @return void
+     */
+    public function testInteractiveInit()
+    {
+        $this->exec('i18n', [
+            'i',
+            'x',
+        ]);
+        $this->assertExitError();
+        $this->assertErrorContains('Invalid language code');
     }
 }

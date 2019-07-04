@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -45,13 +46,13 @@ class Router
      *
      * @var string
      */
-    protected static $_defaultRouteClass = 'Cake\Routing\Route\Route';
+    protected static $_defaultRouteClass = Route\Route::class;
 
     /**
      * Contains the base string that will be applied to all generated URLs
      * For example `https://example.com`
      *
-     * @var string
+     * @var string|null
      */
     protected static $_fullBaseUrl;
 
@@ -153,7 +154,7 @@ class Router
     /**
      * Default extensions defined with Router::extensions()
      *
-     * @var array
+     * @var string[]
      */
     protected static $_defaultExtensions = [];
 
@@ -244,10 +245,10 @@ class Router
      * Push a request onto the request stack. Pushing a request
      * sets the request context used when generating URLs.
      *
-     * @param \Cake\Http\ServerRequest $request Request instance.
+     * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
      * @return void
      */
-    public static function pushRequest(ServerRequest $request): void
+    public static function pushRequest(ServerRequestInterface $request): void
     {
         static::$_requests[] = $request;
         static::setRequestContext($request);
@@ -345,7 +346,7 @@ class Router
      * @internal
      * @return void
      */
-    public static function resetRoutes()
+    public static function resetRoutes(): void
     {
         static::$_collection = new RouteCollection();
         static::$_urlFilters = [];
@@ -462,7 +463,7 @@ class Router
      * @return string Full translated URL with base path.
      * @throws \Cake\Core\Exception\Exception When the route name is not found
      */
-    public static function url($url = null, $full = false): string
+    public static function url($url = null, bool $full = false): string
     {
         $params = [
             'plugin' => null,
@@ -612,11 +613,11 @@ class Router
             static::$_fullBaseUrl = $base;
             Configure::write('App.fullBaseUrl', $base);
         }
-        if (empty(static::$_fullBaseUrl)) {
+        if (!static::$_fullBaseUrl) {
             static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
         }
 
-        return static::$_fullBaseUrl;
+        return (string)static::$_fullBaseUrl;
     }
 
     /**
@@ -725,10 +726,10 @@ class Router
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param array|string|null $extensions List of extensions to be added.
+     * @param string[]|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
-     * @return array Array of extensions Router is configured to parse.
+     * @return string[] Array of extensions Router is configured to parse.
      */
     public static function extensions($extensions = null, $merge = true): array
     {
@@ -840,6 +841,7 @@ class Router
      *   If you have no parameters, this argument can be a callable.
      * @param callable|null $callback The callback to invoke that builds the prefixed routes.
      * @return void
+     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public static function prefix(string $name, $params = [], ?callable $callback = null): void
     {
@@ -873,6 +875,7 @@ class Router
      * @param callable|null $callback The callback to invoke that builds the plugin routes.
      *   Only required when $options is defined
      * @return void
+     * @psalm-suppress PossiblyInvalidArrayAccess
      */
     public static function plugin(string $name, $options = [], ?callable $callback = null): void
     {

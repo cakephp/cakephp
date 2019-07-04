@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -13,27 +14,26 @@ declare(strict_types=1);
  * @since         3.1.9
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Shell;
+namespace Cake\Test\TestCase\Command;
 
-use Cake\Core\Plugin;
-use Cake\Shell\PluginShell;
+use Cake\Command\ServerCommand;
 use Cake\TestSuite\TestCase;
 
 /**
- * PluginShell test.
+ * ServerShell test.
  */
-class PluginShellTest extends TestCase
+class ServerCommandTest extends TestCase
 {
     /**
      * setup method
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')->getMock();
-        $this->shell = new PluginShell($this->io);
+        $this->command = new ServerCommand($this->io);
     }
 
     /**
@@ -43,27 +43,11 @@ class PluginShellTest extends TestCase
      */
     public function testGetOptionParser()
     {
-        $this->shell->loadTasks();
-        $parser = $this->shell->getOptionParser();
-        $commands = $parser->subcommands();
-        $this->assertArrayHasKey('unload', $commands);
-        $this->assertArrayHasKey('load', $commands);
-        $this->assertArrayHasKey('assets', $commands);
-    }
-
-    /**
-     * Tests that list of loaded plugins is shown with loaded command.
-     *
-     * @return void
-     */
-    public function testLoaded()
-    {
-        $array = Plugin::loaded();
-
-        $this->io->expects($this->at(0))
-            ->method('out')
-            ->with($array);
-
-        $this->shell->loaded();
+        $parser = $this->command->getOptionParser();
+        $options = $parser->options();
+        $this->assertArrayHasKey('host', $options);
+        $this->assertArrayHasKey('port', $options);
+        $this->assertArrayHasKey('ini_path', $options);
+        $this->assertArrayHasKey('document_root', $options);
     }
 }

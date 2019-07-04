@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP :  Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -45,7 +46,7 @@ class ProgressHelperTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -148,7 +149,7 @@ class ProgressHelperTest extends TestCase
         $this->helper->increment(20);
         $this->helper->draw();
 
-        $this->helper->increment(40);
+        $this->helper->increment(40.0);
         $this->helper->draw();
 
         $this->helper->increment(40);

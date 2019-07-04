@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -37,7 +38,7 @@ class AssociationProxyTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -68,7 +69,7 @@ class AssociationProxyTest extends TestCase
     public function testGetBadAssociation()
     {
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Table "Cake\ORM\Table" is not associated with "posts"');
+        $this->expectExceptionMessage('You have not defined');
         $articles = $this->getTableLocator()->get('articles');
         $articles->posts;
     }
@@ -200,6 +201,6 @@ class AssociationProxyTest extends TestCase
         $mock->expects($this->once())->method('crazy')
             ->with('a', 'b')
             ->will($this->returnValue('thing'));
-        $this->assertEquals('thing', $articles->authors->crazy('a', 'b'));
+        $this->assertSame('thing', $articles->authors->crazy('a', 'b'));
     }
 }

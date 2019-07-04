@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -28,7 +29,7 @@ class FieldTypeConverter
      * An array containing the name of the fields and the Type objects
      * each should use when converting them.
      *
-     * @var array
+     * @var \Cake\Database\TypeInterface[]
      */
     protected $_typeMap;
 
@@ -45,14 +46,14 @@ class FieldTypeConverter
      * at the moment this object is created. Used so that the types list
      * is not fetched on each single row of the results.
      *
-     * @var array
+     * @var \Cake\Database\TypeInterface[]|\Cake\Database\Type\BatchCastingInterface[]
      */
     protected $types;
 
     /**
      * The driver object to be used in the type conversion
      *
-     * @var \Cake\Database\Driver
+     * @var \Cake\Database\DriverInterface
      */
     protected $_driver;
 
@@ -60,9 +61,9 @@ class FieldTypeConverter
      * Builds the type map
      *
      * @param \Cake\Database\TypeMap $typeMap Contains the types to use for converting results
-     * @param \Cake\Database\Driver $driver The driver to use for the type conversion
+     * @param \Cake\Database\DriverInterface $driver The driver to use for the type conversion
      */
-    public function __construct(TypeMap $typeMap, Driver $driver)
+    public function __construct(TypeMap $typeMap, DriverInterface $driver)
     {
         $this->_driver = $driver;
         $map = $typeMap->toArray();
@@ -129,6 +130,7 @@ class FieldTypeConverter
 
         if (!empty($this->batchingTypeMap)) {
             foreach ($this->batchingTypeMap as $t => $fields) {
+                /** @psalm-suppress PossiblyUndefinedMethod */
                 $row = $this->types[$t]->manyToPHP($row, $fields, $this->_driver);
             }
         }

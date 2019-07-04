@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -39,7 +40,6 @@ class EventFired extends Constraint
      */
     public function __construct(EventManager $eventManager)
     {
-        parent::__construct();
         $this->_eventManager = $eventManager;
 
         if ($this->_eventManager->getEventList() === null) {

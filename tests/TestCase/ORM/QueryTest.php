@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -30,6 +31,7 @@ use Cake\I18n\Time;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use ReflectionProperty;
 
 /**
  * Tests Query class
@@ -56,7 +58,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -106,7 +108,7 @@ class QueryTest extends TestCase
      *
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -735,7 +737,7 @@ class QueryTest extends TestCase
             ->first();
         $this->assertInstanceOf('Cake\ORM\Entity', $result);
         $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
-        $this->assertInternalType('integer', $result->_matchingData['Comments']->id);
+        $this->assertIsInt($result->_matchingData['Comments']->id);
         $this->assertInstanceOf(FrozenTime::class, $result->_matchingData['Comments']->created);
     }
 
@@ -1219,9 +1221,9 @@ class QueryTest extends TestCase
         $first = $results[0];
         $this->assertEquals(1, $first->id);
         $this->assertEquals(1, $first->author_id);
-        $this->assertEquals('First Article', $first->title);
-        $this->assertEquals('First Article Body', $first->body);
-        $this->assertEquals('Y', $first->published);
+        $this->assertSame('First Article', $first->title);
+        $this->assertSame('First Article Body', $first->body);
+        $this->assertSame('Y', $first->published);
     }
 
     /**
@@ -1458,9 +1460,9 @@ class QueryTest extends TestCase
         $first = $results[0];
         $this->assertEquals(1, $first->id);
         $this->assertEquals(1, $first->author_id);
-        $this->assertEquals('First Article', $first->title);
-        $this->assertEquals('First Article Body', $first->body);
-        $this->assertEquals('Y', $first->published);
+        $this->assertSame('First Article', $first->title);
+        $this->assertSame('First Article Body', $first->body);
+        $this->assertSame('Y', $first->published);
     }
 
     /**
@@ -1861,14 +1863,14 @@ class QueryTest extends TestCase
         ]);
 
         $result = $query->getContain();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertNotEmpty($result);
 
         $result = $query->clearContain();
         $this->assertInstanceOf(Query::class, $result);
 
         $result = $query->getContain();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEmpty($result);
     }
 
@@ -2527,7 +2529,7 @@ class QueryTest extends TestCase
 
         $results = $query->toArray();
         $this->assertCount(1, $results);
-        $this->assertEquals('tag3', $results[0]->_matchingData['tags']->name);
+        $this->assertSame('tag3', $results[0]->_matchingData['tags']->name);
     }
 
     /**
@@ -2857,9 +2859,12 @@ class QueryTest extends TestCase
         $loader = $query->getEagerLoader();
         $this->assertEquals($copyLoader, $loader, 'should be equal');
         $this->assertNotSame($copyLoader, $loader, 'should be clones');
+
+        $reflect = new ReflectionProperty($loader, '_matching');
+        $reflect->setAccessible(true);
         $this->assertNotSame(
-            $this->readAttribute($copyLoader, '_matching'),
-            $this->readAttribute($loader, '_matching'),
+            $reflect->getValue($copyLoader),
+            $reflect->getValue($loader),
             'should be clones'
         );
         $this->assertNull($copy->clause('offset'));

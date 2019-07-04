@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -100,6 +101,7 @@ class ExtractIterator extends Collection
         $callback = $this->_extractor;
         $res = [];
 
+        /** @var \ArrayObject $iterator */
         foreach ($iterator->getArrayCopy() as $k => $v) {
             $res[$k] = $callback($v);
         }

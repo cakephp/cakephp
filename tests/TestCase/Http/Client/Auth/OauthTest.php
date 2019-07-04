@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -96,14 +97,14 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $request = $auth->authentication($request, $creds);
 
         $result = $request->getHeaderLine('Authorization');
-        $this->assertContains('OAuth', $result);
-        $this->assertContains('oauth_version="1.0"', $result);
-        $this->assertContains('oauth_token="a%20token%20value"', $result);
-        $this->assertContains('oauth_consumer_key="a%20key"', $result);
-        $this->assertContains('oauth_signature_method="PLAINTEXT"', $result);
-        $this->assertContains('oauth_signature="it%20is%20secret%26also%20secret"', $result);
-        $this->assertContains('oauth_timestamp=', $result);
-        $this->assertContains('oauth_nonce=', $result);
+        $this->assertStringContainsString('OAuth', $result);
+        $this->assertStringContainsString('oauth_version="1.0"', $result);
+        $this->assertStringContainsString('oauth_token="a%20token%20value"', $result);
+        $this->assertStringContainsString('oauth_consumer_key="a%20key"', $result);
+        $this->assertStringContainsString('oauth_signature_method="PLAINTEXT"', $result);
+        $this->assertStringContainsString('oauth_signature="it%20is%20secret%26also%20secret"', $result);
+        $this->assertStringContainsString('oauth_timestamp=', $result);
+        $this->assertStringContainsString('oauth_nonce=', $result);
     }
 
     /**
@@ -118,8 +119,8 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         $auth = new Oauth();
         $creds = [];
         $result = $auth->baseString($request, $creds);
-        $this->assertContains('GET&', $result, 'method was missing.');
-        $this->assertContains('http%3A%2F%2Fexample.com%2Fparts%2Ffoo', $result);
+        $this->assertStringContainsString('GET&', $result, 'method was missing.');
+        $this->assertStringContainsString('http%3A%2F%2Fexample.com%2Fparts%2Ffoo', $result);
     }
 
     /**
@@ -141,12 +142,12 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
             'oauth_consumer_key' => 'consumer-key',
         ];
         $result = $auth->baseString($request, $values);
-        $this->assertContains('GET&', $result, 'method was missing.');
-        $this->assertContains(
+        $this->assertStringContainsString('GET&', $result, 'method was missing.');
+        $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
             $result
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             'cat%3D2%26oauth_consumer_key%3Dconsumer-key' .
             '%26oauth_nonce%3D' . $values['oauth_nonce'] .
             '%26oauth_signature_method%3DHMAC-SHA1' .
@@ -196,12 +197,12 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         ];
         $result = $auth->baseString($request, $values);
 
-        $this->assertContains('POST&', $result, 'method was missing.');
-        $this->assertContains(
+        $this->assertStringContainsString('POST&', $result, 'method was missing.');
+        $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
             $result
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '&oauth_consumer_key%3Dconsumer-key' .
             '%26oauth_nonce%3D' . $values['oauth_nonce'] .
             '%26oauth_signature_method%3DHMAC-SHA1' .
@@ -251,12 +252,12 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
         ];
         $result = $auth->baseString($request, $values);
 
-        $this->assertContains('POST&', $result, 'method was missing.');
-        $this->assertContains(
+        $this->assertStringContainsString('POST&', $result, 'method was missing.');
+        $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
             $result
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '&address%3Dpost' .
             '%26oauth_consumer_key%3Dconsumer-key' .
             '%26oauth_nonce%3D' . $values['oauth_nonce'] .
@@ -302,7 +303,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'tR3+Ty81lMeYAr/Fid0kMTYa/WM=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
@@ -338,7 +339,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
@@ -374,7 +375,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
@@ -412,7 +413,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
@@ -450,7 +451,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
@@ -490,7 +491,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );
@@ -532,7 +533,7 @@ shqoyFXJvizZzje7HaTQv/eJTuA6rUOzu/sAv/eBx2YAPkA8oa3qUw==
 
         $result = $request->getHeaderLine('Authorization');
         $expected = 'jvTp/wX1TYtByB1m+Pbyo0lnCOLIsyGCH7wke8AUs3BpnwZJtAuEJkvQL2/9n4s5wUmUl4aCI4BwpraNx4RtEXMe5qg5T1LVTGliMRpKasKsW//e+RinhejgCuzoH26dyF8iY2ZZ/5D1ilgeijhV/vBka5twt399mXwaYdCwFYE=';
-        $this->assertContains(
+        $this->assertStringContainsString(
             'oauth_signature="' . $expected . '"',
             urldecode($result)
         );

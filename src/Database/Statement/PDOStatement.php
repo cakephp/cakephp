@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -15,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Statement;
 
-use Cake\Database\Driver;
+use Cake\Database\DriverInterface;
 use PDO;
 use PDOStatement as Statement;
 
@@ -29,9 +30,9 @@ class PDOStatement extends StatementDecorator
      * Constructor
      *
      * @param \PDOStatement|null $statement Original statement to be decorated.
-     * @param \Cake\Database\Driver|null $driver Driver instance.
+     * @param \Cake\Database\DriverInterface|null $driver Driver instance.
      */
-    public function __construct(?Statement $statement = null, ?Driver $driver = null)
+    public function __construct(?Statement $statement = null, ?DriverInterface $driver = null)
     {
         parent::__construct($statement, $driver);
     }

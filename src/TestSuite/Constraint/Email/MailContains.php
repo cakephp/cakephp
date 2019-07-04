@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -41,6 +42,7 @@ class MailContains extends MailConstraintBase
         foreach ($messages as $message) {
             $message = implode("\r\n", (array)$message->getBody($this->type));
 
+            $other = preg_quote($other, '/');
             if (preg_match("/$other/", $message) > 0) {
                 return true;
             }

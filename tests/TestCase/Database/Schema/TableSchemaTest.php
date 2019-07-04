@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
@@ -36,13 +37,13 @@ class TableSchemaTest extends TestCase
 
     protected $_map;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->_map = TypeFactory::getMap();
         parent::setUp();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->getTableLocator()->clear();
         TypeFactory::clear();
@@ -163,7 +164,7 @@ class TableSchemaTest extends TestCase
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertEquals('string', $table->getColumnType('title'));
+        $this->assertSame('string', $table->getColumnType('title'));
         $this->assertNull($table->getColumnType('not there'));
     }
 
@@ -180,9 +181,9 @@ class TableSchemaTest extends TestCase
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertEquals('string', $table->getColumnType('title'));
+        $this->assertSame('string', $table->getColumnType('title'));
         $table->setColumnType('title', 'json');
-        $this->assertEquals('json', $table->getColumnType('title'));
+        $this->assertSame('json', $table->getColumnType('title'));
     }
 
     /**
@@ -199,8 +200,8 @@ class TableSchemaTest extends TestCase
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertEquals('json', $table->getColumnType('title'));
-        $this->assertEquals('text', $table->baseColumnType('title'));
+        $this->assertSame('json', $table->getColumnType('title'));
+        $this->assertSame('text', $table->baseColumnType('title'));
     }
 
     /**
@@ -216,8 +217,8 @@ class TableSchemaTest extends TestCase
             'type' => 'int',
             'null' => false,
         ]);
-        $this->assertEquals('int', $table->getColumnType('thing'));
-        $this->assertEquals('integer', $table->baseColumnType('thing'));
+        $this->assertSame('int', $table->getColumnType('thing'));
+        $this->assertSame('integer', $table->baseColumnType('thing'));
     }
 
     /**
@@ -554,7 +555,6 @@ class TableSchemaTest extends TestCase
             'delete' => 'cascade',
             'length' => [],
         ];
-
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = 'CONSTRAINT <tag_id_fk> FOREIGN KEY \(<tag_id>\) REFERENCES <tags> \(<id>\)';
