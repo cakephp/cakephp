@@ -989,7 +989,7 @@ class Hash
             $dir = strtolower($dir);
         }
         if (!in_array($dir, [\SORT_ASC, \SORT_DESC], true)) {
-            $dir = (strtolower($dir) === 'asc') ? \SORT_ASC : \SORT_DESC;
+            $dir = ($dir === 'asc') ? \SORT_ASC : \SORT_DESC;
         }
 
         $ignoreCase = false;
