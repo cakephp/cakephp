@@ -20,6 +20,7 @@ use Cake\Console\ConsoleInputArgument;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\ConsoleInputSubcommand;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Exception\MissingOptionException;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -363,15 +364,22 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testOptionThatDoesNotExist()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
-        $this->expectExceptionMessageRegExp(
-            '/Unknown option `fail`.\n\nDid you mean `help` \?\n\nAvailable options are :\n\n - help\n - no-commit/'
-        );
-
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true]);
 
-        $parser->parse(['--fail', 'other']);
+        try {
+            $parser->parse(['--he', 'other']);
+        } catch (MissingOptionException $e) {
+            $this->assertStringContainsString(
+                "Unknown option `he`.\n" .
+                "Did you mean: `help`?\n" .
+                "\n" .
+                "Other valid choices:\n" .
+                "\n" .
+                "- help",
+                $e->getFullMessage()
+            );
+        }
     }
 
     /**
@@ -381,17 +389,16 @@ class ConsoleOptionParserTest extends TestCase
      */
     public function testShortOptionThatDoesNotExist()
     {
-        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
-        $this->expectExceptionMessageRegExp(
-            '/Unknown short option `f`\n\nAvailable short options are :\n\n - `c` \(short for `--clear`\)\n - `h` \(short for `--help`\)\n - `n` \(short for `--no-commit`\)/'
-        );
-
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('no-commit', ['boolean' => true, 'short' => 'n']);
         $parser->addOption('construct', ['boolean' => true]);
         $parser->addOption('clear', ['boolean' => true, 'short' => 'c']);
 
-        $parser->parse(['-f']);
+        try {
+            $parser->parse(['-f']);
+        } catch (MissingOptionException $e) {
+            $this->assertStringContainsString("Unknown short option `f`.", $e->getFullMessage());
+        }
     }
 
     /**
@@ -932,18 +939,19 @@ TEXT;
             ->addOption('test', ['help' => 'A test option.'])
             ->addSubcommand('unstash');
 
-        $result = $parser->help('unknown');
-        $expected = <<<TEXT
-Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.
-
-Did you mean : `mycommand unstash` ?
-
-Available subcommands for the `mycommand` command are : 
-
- - method
- - unstash
-TEXT;
-        $this->assertTextEquals($expected, $result, 'Help is not correct.');
+        try {
+            $result = $parser->help('unknown');
+        } catch (MissingOptionException $e) {
+            $result = $e->getFullMessage();
+            $this->assertStringContainsString(
+                "Unable to find the `mycommand unknown` subcommand. See `bin/cake mycommand --help`.\n" .
+                "\n" .
+                "Other valid choices:\n" .
+                "\n" .
+                "- method",
+                $result
+            );
+        }
     }
 
     /**

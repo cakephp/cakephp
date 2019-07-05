@@ -335,4 +335,20 @@ class CommandCollectionTest extends TestCase
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
         $this->clearPlugins();
     }
+
+    /**
+     * Test keys
+     *
+     * @return void
+     */
+    public function testKeys()
+    {
+        $collection = new CommandCollection();
+        $collection->add('demo', DemoCommand::class);
+        $collection->add('demo sample', DemoCommand::class);
+        $collection->add('dang', DemoCommand::class);
+
+        $result = $collection->keys();
+        $this->assertSame(['demo', 'demo sample', 'dang'], $result);
+    }
 }
