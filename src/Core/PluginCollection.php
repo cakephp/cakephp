@@ -210,20 +210,38 @@ class PluginCollection implements Iterator, Countable
             return $this->plugins[$name];
         }
 
-        $config = ['name' => $name];
-        $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
-        if (class_exists($className)) {
-            $plugin = new $className($config);
-            $this->add($plugin);
-
-            return $plugin;
-        }
-
-        $config['path'] = $this->findPath($name);
-        $plugin = new $className($config);
+        $plugin = $this->create($name);
         $this->add($plugin);
 
         return $plugin;
+    }
+
+    /**
+     * Create a plugin instance from a name/classname and configuration.
+     *
+     * @param string $name The plugin name or classname
+     * @param array $config Configuration options for the plugin.
+     * @return \Cake\Core\PluginInterface
+     * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
+     */
+    public function create(string $name, array $config = []): PluginInterface
+    {
+        if (strpos($name, '\\') !== false) {
+            /** @var \Cake\Core\PluginInterface */
+            return new $name($config);
+        }
+
+        $config += ['name' => $name];
+        $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        if (!class_exists($className)) {
+            $className = BasePlugin::class;
+            if (empty($config['path'])) {
+                $config['path'] = $this->findPath($name);
+            }
+        }
+
+        /** @var \Cake\Core\PluginInterface */
+        return new $className($config);
     }
 
     /**
