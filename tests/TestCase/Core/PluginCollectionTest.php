@@ -90,6 +90,13 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($plugin, $plugins->get('TestPlugin'));
     }
 
+    public function testGetAutoload()
+    {
+        $plugins = new PluginCollection();
+        $plugin = $plugins->get('ParentPlugin');
+        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+    }
+
     public function testGetInvalid()
     {
         $this->expectException(MissingPluginException::class);

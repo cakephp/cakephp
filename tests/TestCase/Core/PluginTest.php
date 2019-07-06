@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\BasePlugin;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use TestPlugin\Plugin as TestPlugin;
@@ -96,8 +97,8 @@ class PluginTest extends TestCase
      */
     public function testPathNotFound()
     {
-        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
-        Plugin::path('TestPlugin');
+        $this->expectException(MissingPluginException::class);
+        Plugin::path('NonExistentPlugin');
     }
 
     /**
@@ -143,7 +144,7 @@ class PluginTest extends TestCase
      */
     public function testClassPathNotFound()
     {
-        $this->expectException(\Cake\Core\Exception\MissingPluginException::class);
-        Plugin::classPath('TestPlugin');
+        $this->expectException(MissingPluginException::class);
+        Plugin::classPath('NonExistentPlugin');
     }
 }

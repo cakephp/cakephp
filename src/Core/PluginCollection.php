@@ -206,11 +206,24 @@ class PluginCollection implements Iterator, Countable
      */
     public function get(string $name): PluginInterface
     {
-        if (!$this->has($name)) {
-            throw new MissingPluginException(['plugin' => $name]);
+        if ($this->has($name)) {
+            return $this->plugins[$name];
         }
 
-        return $this->plugins[$name];
+        $config = ['name' => $name];
+        $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        if (class_exists($className)) {
+            $plugin = new $className($config);
+            $this->add($plugin);
+
+            return $plugin;
+        }
+
+        $config['path'] = $this->findPath($name);
+        $plugin = new $className($config);
+        $this->add($plugin);
+
+        return $plugin;
     }
 
     /**
