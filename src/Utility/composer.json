@@ -26,12 +26,12 @@
     },
     "require": {
         "php": ">=5.6.0",
-        "ext-simplexml": "*",
         "cakephp/core": "^3.6.0"
     },
     "suggest": {
         "ext-intl": "To use Text::transliterate() or Text::slug()",
-        "lib-ICU": "To use Text::transliterate() or Text::slug()"
+        "lib-ICU": "To use Text::transliterate() or Text::slug()",
+        "ext-simplexml": "To use Xml::build(), Xml::loadHtml(), Xml::fromArray(), or Xml::toArray() with default options",
     },
     "autoload": {
         "psr-4": {
