@@ -26,6 +26,7 @@
     },
     "require": {
         "php": ">=5.6.0",
+        "ext-simplexml": "*",
         "cakephp/core": "^3.6.0"
     },
     "suggest": {
