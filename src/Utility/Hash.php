@@ -928,8 +928,8 @@ class Hash
      *
      * ### Sort directions
      *
-     * - `asc` Sort ascending.
-     * - `desc` Sort descending.
+     * - `asc` or `\SORT_ASC` Sort ascending.
+     * - `desc` or `\SORT_DESC` Sort descending.
      *
      * ### Sort types
      *
@@ -951,7 +951,7 @@ class Hash
      *
      * @param array $data An array of data to sort
      * @param string $path A Set-compatible path to the array value
-     * @param string $dir See directions above. Defaults to 'asc'.
+     * @param string|int $dir See directions above. Defaults to 'asc'.
      * @param array|string $type See direction types above. Defaults to 'regular'.
      * @return array Sorted array of data
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::sort
@@ -985,7 +985,13 @@ class Hash
         $keys = static::extract($result, '{n}.id');
         $values = static::extract($result, '{n}.value');
 
-        $dir = strtolower($dir);
+        if (is_string($dir)) {
+            $dir = strtolower($dir);
+        }
+        if (!in_array($dir, [\SORT_ASC, \SORT_DESC], true)) {
+            $dir = ($dir === 'asc') ? \SORT_ASC : \SORT_DESC;
+        }
+
         $ignoreCase = false;
 
         // $type can be overloaded for case insensitive sort
@@ -995,12 +1001,6 @@ class Hash
             $type = $type['type'];
         }
         $type = strtolower($type);
-
-        if ($dir === 'asc') {
-            $dir = \SORT_ASC;
-        } else {
-            $dir = \SORT_DESC;
-        }
         if ($type === 'numeric') {
             $type = \SORT_NUMERIC;
         } elseif ($type === 'string') {
