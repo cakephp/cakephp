@@ -99,7 +99,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -131,7 +131,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -163,7 +163,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -196,7 +196,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -230,7 +230,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -263,7 +263,7 @@ class CurlTest extends TestCase
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
@@ -291,10 +291,12 @@ class CurlTest extends TestCase
             ]
         ];
         $request = new Request('http://localhost/things', 'GET');
+        $request = $request->withProtocolVersion('1.0');
+
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
             CURLOPT_URL => 'http://localhost/things',
-            CURLOPT_HTTP_VERSION => '1.1',
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HEADER => true,
             CURLOPT_HTTPHEADER => [
