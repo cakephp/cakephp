@@ -229,7 +229,7 @@ class RedisEngine extends CacheEngine
             return true;
         }
 
-        $result = true;
+        $isAllDeleted = true;
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
         do {
@@ -238,12 +238,13 @@ class RedisEngine extends CacheEngine
             // Redis may return empty results, so protect against that
             if ($keys !== false) {
                 foreach($keys as $key) {
-                    $result = $result && ($this->_Redis->del($key) > 0);
+                    $isDeleted = ($this->_Redis->del($key) > 0);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
                 }
             }
         } while ($iterator > 0);
 
-        return $result;
+        return $isAllDeleted;
     }
 
     /**
