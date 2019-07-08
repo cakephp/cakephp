@@ -198,7 +198,10 @@ class PluginCollection implements Iterator, Countable
     }
 
     /**
-     * Get the a plugin by name
+     * Get the a plugin by name.
+     *
+     * If a plugin isn't already loaded it will be autoloaded on first access
+     * and that plugins loaded this way may miss some hook methods.
      *
      * @param string $name The plugin to get.
      * @return \Cake\Core\PluginInterface The plugin.
