@@ -228,14 +228,21 @@ class RedisEngine extends CacheEngine
         if ($check) {
             return true;
         }
-        $keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
 
-        $result = [];
-        foreach ($keys as $key) {
-            $result[] = $this->_Redis->del($key) > 0;
-        }
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+        do {
+            $keys = $this->_Redis->scan($iterator, $pattern);
 
-        return !in_array(false, $result);
+            // Redis may return empty results, so protect against that
+            if ($keys !== false) {
+                foreach($keys as $key) {
+                    $this->_Redis->delete($key);
+                }
+            }
+        } while ($iterator > 0);
+
+        return true;
     }
 
     /**
