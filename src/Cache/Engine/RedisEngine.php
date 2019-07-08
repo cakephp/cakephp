@@ -237,7 +237,7 @@ class RedisEngine extends CacheEngine
 
             // Redis may return empty results, so protect against that
             if ($keys !== false) {
-                foreach($keys as $key) {
+                foreach ($keys as $key) {
                     $isDeleted = ($this->_Redis->del($key) > 0);
                     $isAllDeleted = $isAllDeleted && $isDeleted;
                 }
