@@ -30,7 +30,8 @@
     },
     "suggest": {
         "ext-intl": "To use Text::transliterate() or Text::slug()",
-        "lib-ICU": "To use Text::transliterate() or Text::slug()"
+        "lib-ICU": "To use Text::transliterate() or Text::slug()",
+        "ext-simplexml": "To use Xml::build(), Xml::loadHtml(), Xml::fromArray(), or Xml::toArray() with default options",
     },
     "autoload": {
         "psr-4": {
