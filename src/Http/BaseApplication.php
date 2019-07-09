@@ -17,19 +17,16 @@ declare(strict_types=1);
 namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
-use Cake\Core\BasePlugin;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Core\PluginCollection;
-use Cake\Core\PluginInterface;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -96,15 +93,9 @@ abstract class BaseApplication implements
     public function addPlugin($name, array $config = [])
     {
         if (is_string($name)) {
-            $plugin = $this->makePlugin($name, $config);
+            $plugin = $this->plugins->create($name, $config);
         } else {
             $plugin = $name;
-        }
-        if (!$plugin instanceof PluginInterface) {
-            throw new InvalidArgumentException(sprintf(
-                "The `%s` plugin does not implement Cake\Core\PluginInterface.",
-                get_class($plugin)
-            ));
         }
         $this->plugins->add($plugin);
 
@@ -119,40 +110,6 @@ abstract class BaseApplication implements
     public function getPlugins(): PluginCollection
     {
         return $this->plugins;
-    }
-
-    /**
-     * Create a plugin instance from a classname and configuration
-     *
-     * @param string $name The plugin classname
-     * @param array $config Configuration options for the plugin
-     * @return \Cake\Core\PluginInterface
-     * @throws \InvalidArgumentException
-     */
-    protected function makePlugin(string $name, array $config): PluginInterface
-    {
-        $className = $name;
-        if (strpos($className, '\\') === false) {
-            $className = str_replace('/', '\\', $className) . '\\' . 'Plugin';
-        }
-        if (class_exists($className)) {
-            $plugin = new $className($config);
-            if (!$plugin instanceof PluginInterface) {
-                throw new InvalidArgumentException(sprintf(
-                    'The `%s` plugin does not implement Cake\Core\PluginInterface.',
-                    get_class($plugin)
-                ));
-            }
-
-            return $plugin;
-        }
-
-        if (!isset($config['path'])) {
-            $config['path'] = $this->plugins->findPath($name);
-        }
-        $config['name'] = $name;
-
-        return new BasePlugin($config);
     }
 
     /**

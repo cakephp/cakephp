@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
@@ -90,12 +91,38 @@ class PluginCollectionTest extends TestCase
         $this->assertSame($plugin, $plugins->get('TestPlugin'));
     }
 
+    public function testGetAutoload()
+    {
+        $plugins = new PluginCollection();
+        $plugin = $plugins->get('ParentPlugin');
+        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+    }
+
     public function testGetInvalid()
     {
         $this->expectException(MissingPluginException::class);
 
         $plugins = new PluginCollection();
         $plugins->get('Invalid');
+    }
+
+    public function testCreate()
+    {
+        $plugins = new PluginCollection();
+
+        $plugin = $plugins->create('ParentPlugin');
+        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+
+        $plugin = $plugins->create('ParentPlugin', ['name' => 'Granpa']);
+        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+        $this->assertSame('Granpa', $plugin->getName());
+
+        $plugin = $plugins->create(\ParentPlugin\Plugin::class);
+        $this->assertInstanceOf(\ParentPlugin\Plugin::class, $plugin);
+
+        $plugin = $plugins->create('TestTheme');
+        $this->assertInstanceOf(BasePlugin::class, $plugin);
+        $this->assertSame('TestTheme', $plugin->getName());
     }
 
     public function testIterator()

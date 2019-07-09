@@ -198,7 +198,10 @@ class PluginCollection implements Iterator, Countable
     }
 
     /**
-     * Get the a plugin by name
+     * Get the a plugin by name.
+     *
+     * If a plugin isn't already loaded it will be autoloaded on first access
+     * and that plugins loaded this way may miss some hook methods.
      *
      * @param string $name The plugin to get.
      * @return \Cake\Core\PluginInterface The plugin.
@@ -206,11 +209,42 @@ class PluginCollection implements Iterator, Countable
      */
     public function get(string $name): PluginInterface
     {
-        if (!$this->has($name)) {
-            throw new MissingPluginException(['plugin' => $name]);
+        if ($this->has($name)) {
+            return $this->plugins[$name];
         }
 
-        return $this->plugins[$name];
+        $plugin = $this->create($name);
+        $this->add($plugin);
+
+        return $plugin;
+    }
+
+    /**
+     * Create a plugin instance from a name/classname and configuration.
+     *
+     * @param string $name The plugin name or classname
+     * @param array $config Configuration options for the plugin.
+     * @return \Cake\Core\PluginInterface
+     * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
+     */
+    public function create(string $name, array $config = []): PluginInterface
+    {
+        if (strpos($name, '\\') !== false) {
+            /** @var \Cake\Core\PluginInterface */
+            return new $name($config);
+        }
+
+        $config += ['name' => $name];
+        $className = str_replace('/', '\\', $name) . '\\' . 'Plugin';
+        if (!class_exists($className)) {
+            $className = BasePlugin::class;
+            if (empty($config['path'])) {
+                $config['path'] = $this->findPath($name);
+            }
+        }
+
+        /** @var \Cake\Core\PluginInterface */
+        return new $className($config);
     }
 
     /**
