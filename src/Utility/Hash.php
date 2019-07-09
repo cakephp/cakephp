@@ -963,7 +963,7 @@ class Hash
      * @return array Sorted array of data
      * @link https://book.cakephp.org/3.0/en/core-libraries/hash.html#Cake\Utility\Hash::sort
      */
-    public static function sort(array $data, string $path, string $dir = 'asc', $type = 'regular'): array
+    public static function sort(array $data, string $path, $dir = 'asc', $type = 'regular'): array
     {
         if (empty($data)) {
             return [];
