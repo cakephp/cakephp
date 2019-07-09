@@ -1367,7 +1367,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
-     * @param int|\Cake\Database\ExpressionInterface $num number of records to be returned
+     * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be returned
      * @return $this
      */
     public function limit($num)
@@ -1396,7 +1396,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      * $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
-     * @param int|\Cake\Database\ExpressionInterface $num number of records to be skipped
+     * @param int|\Cake\Database\ExpressionInterface|null $num number of records to be skipped
      * @return $this
      */
     public function offset($num)

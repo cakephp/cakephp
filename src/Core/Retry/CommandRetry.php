@@ -75,6 +75,7 @@ class CommandRetry
             }
         } while ($this->retries > $retryCount++);
 
+        /** @psalm-suppress RedundantCondition */
         if ($lastException !== null) {
             throw $lastException;
         }

@@ -46,7 +46,8 @@ class ResponseEmitter implements EmitterInterface
      */
     public function emit(ResponseInterface $response, $maxBufferLength = 8192): bool
     {
-        $file = $line = null;
+        $file = null;
+        $line = 0;
         if (headers_sent($file, $line)) {
             $message = "Unable to emit headers. Headers sent in file=$file line=$line";
             if (Configure::read('debug')) {
