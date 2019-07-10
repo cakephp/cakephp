@@ -229,20 +229,18 @@ class RedisEngine extends CacheEngine
             return true;
         }
 
+        $this->_Redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
+
         $isAllDeleted = true;
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
-        do {
-            $keys = $this->_Redis->scan($iterator, $pattern);
 
-            // Redis may return empty results, so protect against that
-            if ($keys !== false) {
-                foreach ($keys as $key) {
-                    $isDeleted = ($this->_Redis->del($key) > 0);
-                    $isAllDeleted = $isAllDeleted && $isDeleted;
-                }
+        while ($keys = $this->_Redis->scan($iterator, $pattern)) {
+            foreach ($keys as $key) {
+                $isDeleted = ($this->_Redis->del($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
             }
-        } while ($iterator > 0);
+        }
 
         return $isAllDeleted;
     }
