@@ -40,6 +40,7 @@ use JsonSerializable;
  * @method string getSource()
  * @method array extractOriginal(array $properties)
  * @method array extractOriginalChanged(array $properties)
+ * @method array getVisible()
  *
  * @property mixed $id Alias for commonly used primary key.
  */
