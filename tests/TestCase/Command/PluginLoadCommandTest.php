@@ -69,6 +69,18 @@ class PluginLoadCommandTest extends TestCase
     }
 
     /**
+     * Test generating help succeeds
+     *
+     * @return void
+     */
+    public function testHelp()
+    {
+        $this->exec('plugin load --help');
+        $this->assertExitCode(Command::CODE_SUCCESS);
+        $this->assertOutputContains('plugin load');
+    }
+
+    /**
      * Test loading the app
      *
      * @return void
@@ -80,33 +92,5 @@ class PluginLoadCommandTest extends TestCase
 
         $contents = file_get_contents($this->app);
         $this->assertStringContainsString("\$this->addPlugin('TestPlugin');", $contents);
-    }
-
-    /**
-     * Test loading the app
-     *
-     * @return void
-     */
-    public function testLoadAppBootstrap()
-    {
-        $this->exec('plugin load --bootstrap TestPlugin');
-        $this->assertExitCode(Command::CODE_SUCCESS);
-
-        $contents = file_get_contents($this->app);
-        $this->assertStringContainsString("\$this->addPlugin('TestPlugin', ['bootstrap' => true]);", $contents);
-    }
-
-    /**
-     * Test loading the app
-     *
-     * @return void
-     */
-    public function testLoadAppRoutes()
-    {
-        $this->exec('plugin load --routes TestPlugin');
-        $this->assertExitCode(Command::CODE_SUCCESS);
-
-        $contents = file_get_contents($this->app);
-        $this->assertStringContainsString("\$this->addPlugin('TestPlugin', ['routes' => true]);", $contents);
     }
 }

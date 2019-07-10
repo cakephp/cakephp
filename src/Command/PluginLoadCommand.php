@@ -70,11 +70,9 @@ class PluginLoadCommand extends Command
             return static::CODE_ERROR;
         }
 
-        $options = $this->makeOptions($args);
-
         $app = APP . 'Application.php';
         if (file_exists($app)) {
-            $this->modifyApplication($app, $plugin, $options);
+            $this->modifyApplication($app, $plugin);
 
             return static::CODE_SUCCESS;
         }
@@ -83,33 +81,18 @@ class PluginLoadCommand extends Command
     }
 
     /**
-     * Create options string for the load call.
-     *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @return string
-     */
-    protected function makeOptions(Arguments $args): string
-    {
-        $bootstrapString = $args->getOption('bootstrap') ? "'bootstrap' => true" : '';
-        $routesString = $args->getOption('routes') ? "'routes' => true" : '';
-
-        return implode(', ', array_filter([$bootstrapString, $routesString]));
-    }
-
-    /**
      * Modify the application class
      *
      * @param string $app The Application file to modify.
      * @param string $plugin The plugin name to add.
-     * @param string $options The plugin options to add
      * @return void
      */
-    protected function modifyApplication(string $app, string $plugin, string $options): void
+    protected function modifyApplication(string $app, string $plugin): void
     {
         $contents = file_get_contents($app);
 
-        $append = "\n        \$this->addPlugin('%s', [%s]);\n";
-        $insert = str_replace(', []', '', sprintf($append, $plugin, $options));
+        $append = "\n        \$this->addPlugin('%s');\n";
+        $insert = str_replace(', []', '', sprintf($append, $plugin));
 
         if (!preg_match('/function bootstrap\(\)(?:\s*)\:(?:\s*)void/m', $contents)) {
             $this->io->err('Your Application class does not have a bootstrap() method. Please add one.');
@@ -137,18 +120,6 @@ class PluginLoadCommand extends Command
     {
         $parser->setDescription([
             'Command for loading plugins.',
-        ])
-        ->addOption('bootstrap', [
-            'short' => 'b',
-            'help' => 'Will load bootstrap.php from plugin.',
-            'boolean' => true,
-            'default' => false,
-        ])
-        ->addOption('routes', [
-            'short' => 'r',
-            'help' => 'Will load routes.php from plugin.',
-            'boolean' => true,
-            'default' => false,
         ])
         ->addArgument('plugin', [
             'help' => 'Name of the plugin to load.',
