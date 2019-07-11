@@ -94,6 +94,7 @@ class LazyEagerLoader
 
                 return new TupleComparison($primaryKey, $keys->toList(), $types, 'IN');
             })
+            ->enableAutoFields()
             ->contain($contain);
 
         foreach ($query->getEagerLoader()->attachableAssociations($source) as $loadable) {
