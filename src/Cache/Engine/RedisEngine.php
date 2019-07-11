@@ -236,7 +236,7 @@ class RedisEngine extends CacheEngine
         $pattern = $this->_config['prefix'] . '*';
 
         while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern));
+            $keys = $this->_Redis->scan($iterator, $pattern);
 
             if ($keys === false) {
                 break;
