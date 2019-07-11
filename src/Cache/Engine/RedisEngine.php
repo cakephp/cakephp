@@ -235,7 +235,13 @@ class RedisEngine extends CacheEngine
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while ($keys = $this->_Redis->scan($iterator, $pattern)) {
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern));
+
+            if ($keys === false) {
+                break;
+            }
+
             foreach ($keys as $key) {
                 $isDeleted = ($this->_Redis->del($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
