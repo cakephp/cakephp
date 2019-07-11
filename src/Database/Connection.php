@@ -144,7 +144,7 @@ class Connection implements ConnectionInterface
      */
     public function __destruct()
     {
-        if ($this->_transactionStarted && class_exists('Cake\Log\Log')) {
+        if ($this->_transactionStarted && class_exists(Log::class)) {
             Log::warning('The connection is going to be closed but there is an active transaction.');
         }
     }

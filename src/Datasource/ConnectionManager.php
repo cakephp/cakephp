@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
@@ -120,7 +121,7 @@ class ConnectionManager
 
         if (empty($config['driver'])) {
             $config['driver'] = $config['className'];
-            $config['className'] = 'Cake\Database\Connection';
+            $config['className'] = Connection::class;
         }
 
         unset($config['path']);
