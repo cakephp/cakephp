@@ -32,10 +32,10 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\CollectionInterface as SchemaCollectionInterface;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Log\Log;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
+use Throwable;
 
 /**
  * Represents a connection with a database server.
@@ -144,7 +144,7 @@ class Connection implements ConnectionInterface
      */
     public function __destruct()
     {
-        if ($this->_transactionStarted && class_exists('Cake\Log\Log')) {
+        if ($this->_transactionStarted && class_exists(Log::class)) {
             Log::warning('The connection is going to be closed but there is an active transaction.');
         }
     }
@@ -228,7 +228,7 @@ class Connection implements ConnectionInterface
     {
         try {
             return $this->_driver->connect();
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             throw new MissingConnectionException(['reason' => $e->getMessage()], null, $e);
         }
     }
@@ -680,7 +680,7 @@ class Connection implements ConnectionInterface
 
         try {
             $result = $callback($this);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->rollback(false);
             throw $e;
         }

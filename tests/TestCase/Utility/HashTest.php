@@ -1850,6 +1850,30 @@ class HashTest extends TestCase
     }
 
     /**
+     * test sorting direction by constants value.
+     *
+     * @return void
+     */
+    public function testSortWithDirectionConst()
+    {
+        $data = [
+            ['class' => 510, 'test' => 2],
+            ['class' => 500, 'test' => 1],
+            ['class' => 600, 'test' => 2],
+            ['class' => 625, 'test' => 4],
+            ['class' => 605, 'test' => 3],
+        ];
+
+        $expected = Hash::sort($data, '{n}.test', 'asc');
+        $result = Hash::sort($data, '{n}.test', \SORT_ASC);
+        $this->assertSame($expected, $result);
+
+        $expected = Hash::sort($data, '{n}.test', 'desc');
+        $result = Hash::sort($data, '{n}.test', \SORT_DESC);
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * test sorting with string keys.
      *
      * @return void

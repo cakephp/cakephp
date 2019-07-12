@@ -24,7 +24,6 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use TestPlugin\Plugin as TestPlugin;
 
@@ -95,17 +94,6 @@ class BaseApplicationTest extends TestCase
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src' . DS,
             $plugin->getClassPath()
         );
-    }
-
-    /**
-     * Ensure that plugin interfaces are implemented.
-     */
-    public function testAddPluginBadClass()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('does not implement');
-        $app = $this->getMockForAbstractClass(BaseApplication::class, [$this->path]);
-        $app->addPlugin(new \stdClass());
     }
 
     public function testAddPluginValidShortName()

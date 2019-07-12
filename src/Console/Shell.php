@@ -513,7 +513,11 @@ class Shell
         }
 
         $this->err('No subcommand provided. Choose one of the available subcommands.', 2);
-        $this->_io->err($this->OptionParser->help($command));
+        try {
+            $this->_io->err($this->OptionParser->help($command));
+        } catch (ConsoleException $e) {
+            $this->err('Error: ' . $e->getMessage());
+        }
 
         return false;
     }

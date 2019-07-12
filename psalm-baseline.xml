@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="3.4.6@6b32565a9bf199049d070a5197c77f266170844d">
+<files
+  psalm-version="3.4.8@173a40e76939a20b935b23148b4e248dc708adcd"
+>
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
       <code>$hidden[$key]</code>
@@ -156,14 +158,9 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Console/ConsoleOptionParser.php">
-    <PossiblyNullArgument occurrences="3">
+    <PossiblyNullArgument occurrences="1">
       <code>$command</code>
-      <code>$subcommand</code>
-      <code>$subcommand</code>
     </PossiblyNullArgument>
-    <PossiblyNullOperand occurrences="1">
-      <code>$subcommand</code>
-    </PossiblyNullOperand>
     <PossiblyNullReference occurrences="1">
       <code>parse</code>
     </PossiblyNullReference>
@@ -361,10 +358,6 @@
       <code>$params[2]</code>
       <code>$params[0]</code>
     </EmptyArrayAccess>
-    <NullArgument occurrences="2">
-      <code>null</code>
-      <code>null</code>
-    </NullArgument>
     <PossiblyNullReference occurrences="1">
       <code>getAttribute</code>
     </PossiblyNullReference>
@@ -563,7 +556,6 @@
     <ImplementedReturnTypeMismatch occurrences="1">
       <code>\Cake\Database\StatementInterface|null</code>
     </ImplementedReturnTypeMismatch>
-    <InvalidArgument occurrences="1"/>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$num</code>
       <code>$num</code>
@@ -1319,9 +1311,6 @@
     </PropertyNotSetInConstructor>
   </file>
   <file src="src/ORM/Association/Loader/SelectLoader.php">
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyInvalidOperand occurrences="1">
       <code>$key</code>
     </PossiblyInvalidOperand>
@@ -1412,9 +1401,6 @@
       <code>$method</code>
       <code>$arguments</code>
     </MissingParamType>
-    <NullArgument occurrences="1">
-      <code>null</code>
-    </NullArgument>
     <PossiblyInvalidArrayAccess occurrences="1">
       <code>$statement-&gt;fetch('assoc')['count']</code>
     </PossiblyInvalidArrayAccess>

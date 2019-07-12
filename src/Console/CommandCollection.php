@@ -229,4 +229,14 @@ class CommandCollection implements IteratorAggregate, Countable
 
         return array_merge($core, $app);
     }
+
+    /**
+     * Get the list of available command names.
+     *
+     * @return string[] Command names
+     */
+    public function keys(): array
+    {
+        return array_keys($this->commands);
+    }
 }

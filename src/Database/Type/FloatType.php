@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Type;
 
 use Cake\Database\DriverInterface;
+use Cake\I18n\Number;
 use PDO;
 use RuntimeException;
 
@@ -32,7 +33,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      *
      * @var string
      */
-    public static $numberClass = 'Cake\I18n\Number';
+    public static $numberClass = Number::class;
 
     /**
      * Whether numbers should be parsed using a locale aware parser
@@ -143,8 +144,8 @@ class FloatType extends BaseType implements BatchCastingInterface
 
             return $this;
         }
-        if (static::$numberClass === 'Cake\I18n\Number' ||
-            is_subclass_of(static::$numberClass, 'Cake\I18n\Number')
+        if (static::$numberClass === Number::class ||
+            is_subclass_of(static::$numberClass, Number::class)
         ) {
             $this->_useLocaleParser = $enable;
 
