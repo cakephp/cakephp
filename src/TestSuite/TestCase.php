@@ -149,7 +149,7 @@ abstract class TestCase extends BaseTestCase
         if (!$this->_configure) {
             $this->_configure = Configure::read();
         }
-        if (class_exists('Cake\Routing\Router', false)) {
+        if (class_exists(Router::class, false)) {
             Router::reload();
         }
 
