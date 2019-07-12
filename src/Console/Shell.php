@@ -280,7 +280,7 @@ class Shell
     /**
      * Loads tasks defined in public $tasks
      *
-     * @return bool
+     * @return true
      */
     public function loadTasks(): bool
     {
@@ -711,9 +711,9 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|null The number of bytes returned from writing to stderr.
+     * @return int The number of bytes returned from writing to stderr.
      */
-    public function err($message = null, int $newlines = 1)
+    public function err($message = null, int $newlines = 1): int
     {
         return $this->_io->error($message, $newlines);
     }
@@ -727,7 +727,7 @@ class Shell
      * @return int|null The number of bytes returned from writing to stdout.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::out
      */
-    public function info($message = null, int $newlines = 1, int $level = Shell::NORMAL)
+    public function info($message = null, int $newlines = 1, int $level = Shell::NORMAL): ?int
     {
         return $this->_io->info($message, $newlines, $level);
     }
@@ -737,10 +737,10 @@ class Shell
      *
      * @param string|array|null $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
-     * @return int|null The number of bytes returned from writing to stderr.
+     * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/3.0/en/console-and-shells.html#Shell::err
      */
-    public function warn($message = null, int $newlines = 1)
+    public function warn($message = null, int $newlines = 1): int
     {
         return $this->_io->warning($message, $newlines);
     }

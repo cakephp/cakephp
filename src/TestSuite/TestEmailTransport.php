@@ -39,6 +39,7 @@ class TestEmailTransport extends AbstractTransport
      *
      * @param \Cake\Mailer\Message $message Message
      * @return array
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function send(Message $message): array
     {

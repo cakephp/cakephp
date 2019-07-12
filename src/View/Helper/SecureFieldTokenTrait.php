@@ -32,7 +32,7 @@ trait SecureFieldTokenTrait
      *    generating the hash.
      * @param array $unlockedFields The list of fields that are excluded from
      *    field validation.
-     * @return array The token data.
+     * @return array{fields: string, unlocked: string} The token data.
      */
     protected function _buildFieldToken(string $url, array $fields, array $unlockedFields = []): array
     {

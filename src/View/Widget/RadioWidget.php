@@ -239,7 +239,7 @@ class RadioWidget implements WidgetInterface
      * @param string $input The input widget.
      * @param \Cake\View\Form\ContextInterface $context The form context.
      * @param bool $escape Whether or not to HTML escape the label.
-     * @return string|bool Generated label.
+     * @return string|false Generated label.
      */
     protected function _renderLabel(array $radio, $label, $input, $context, $escape)
     {

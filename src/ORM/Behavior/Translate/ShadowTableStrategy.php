@@ -213,7 +213,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * @param array $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
-    protected function iterateClause($query, $name = '', $config = [])
+    protected function iterateClause($query, $name = '', $config = []): bool
     {
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {
@@ -258,7 +258,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * @param array $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
-    protected function traverseClause($query, $name = '', $config = [])
+    protected function traverseClause($query, $name = '', $config = []): bool
     {
         $clause = $query->clause($name);
         if (!$clause || !$clause->count()) {

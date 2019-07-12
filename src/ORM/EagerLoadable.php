@@ -59,7 +59,7 @@ class EagerLoadable
      * A dotted separated string representing the path of associations
      * that should be followed to fetch this level.
      *
-     * @var string
+     * @var string|null
      */
     protected $_aliasPath;
 
@@ -75,7 +75,7 @@ class EagerLoadable
      *
      * The property path of `country` will be `author.company`
      *
-     * @var string
+     * @var string|null
      */
     protected $_propertyPath;
 
@@ -90,7 +90,7 @@ class EagerLoadable
      * Whether or not this level was meant for a "matching" fetch
      * operation
      *
-     * @var bool
+     * @var bool|null
      */
     protected $_forMatching;
 
@@ -106,7 +106,7 @@ class EagerLoadable
      *
      * The target property of `country` will be just `country`
      *
-     * @var string
+     * @var string|null
      */
     protected $_targetProperty;
 

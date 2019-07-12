@@ -20,7 +20,6 @@ use Cake\Console\Exception\MissingShellException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Core\Exception\Exception;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Shell\Task\CommandTask;
@@ -139,10 +138,7 @@ class ShellDispatcher
      */
     protected function _initEnvironment(): void
     {
-        if (!$this->_bootstrap()) {
-            $message = "Unable to load CakePHP core.\nMake sure Cake exists in " . CAKE_CORE_INCLUDE_PATH;
-            throw new Exception($message);
-        }
+        $this->_bootstrap();
 
         if (function_exists('ini_set')) {
             ini_set('html_errors', '0');
@@ -156,15 +152,13 @@ class ShellDispatcher
     /**
      * Initializes the environment and loads the CakePHP core.
      *
-     * @return bool Success.
+     * @return void
      */
-    protected function _bootstrap(): bool
+    protected function _bootstrap()
     {
         if (!Configure::read('App.fullBaseUrl')) {
             Configure::write('App.fullBaseUrl', 'http://localhost');
         }
-
-        return true;
     }
 
     /**

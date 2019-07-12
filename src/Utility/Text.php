@@ -92,14 +92,14 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return string|string[] Array of tokens in $data or original input if empty.
+     * @return string[] Array of tokens in $data.
      */
     public static function tokenize(
         string $data,
         string $separator = ',',
         string $leftBound = '(',
         string $rightBound = ')'
-    ) {
+    ): array {
         if (empty($data)) {
             return [];
         }
@@ -1073,7 +1073,7 @@ class Text
      *
      * @return string Transliterator identifier.
      */
-    public static function getTransliteratorId(): ?string
+    public static function getTransliteratorId(): string
     {
         return static::$_defaultTransliteratorId;
     }

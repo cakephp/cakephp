@@ -335,7 +335,7 @@ class PostgresSchema extends BaseSchema
     /**
      * @inheritDoc
      */
-    protected function _convertOnClause(string $clause): ?string
+    protected function _convertOnClause(string $clause): string
     {
         if ($clause === 'r') {
             return TableSchema::ACTION_RESTRICT;

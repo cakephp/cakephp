@@ -36,7 +36,7 @@ abstract class AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Email mesage.
-     * @return array
+     * @return array{headers: string, message: string}
      */
     abstract public function send(Message $message): array;
 

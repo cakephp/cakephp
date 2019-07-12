@@ -51,7 +51,7 @@ class ResultSet implements ResultSetInterface
     /**
      * Last record fetched from the statement
      *
-     * @var array
+     * @var array|object
      */
     protected $_current;
 

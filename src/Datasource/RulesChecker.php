@@ -65,28 +65,28 @@ class RulesChecker
     /**
      * The list of rules to be checked on both create and update operations
      *
-     * @var callable[]
+     * @var \Cake\Datasource\RuleInvoker[]
      */
     protected $_rules = [];
 
     /**
      * The list of rules to check during create operations
      *
-     * @var callable[]
+     * @var \Cake\Datasource\RuleInvoker[]
      */
     protected $_createRules = [];
 
     /**
      * The list of rules to check during update operations
      *
-     * @var callable[]
+     * @var \Cake\Datasource\RuleInvoker[]
      */
     protected $_updateRules = [];
 
     /**
      * The list of rules to check during delete operations
      *
-     * @var callable[]
+     * @var \Cake\Datasource\RuleInvoker[]
      */
     protected $_deleteRules = [];
 
@@ -289,7 +289,7 @@ class RulesChecker
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to check for validity.
      * @param array $options Extra options to pass to checker functions.
-     * @param callable[] $rules The list of rules that must be checked.
+     * @param \Cake\Datasource\RuleInvoker[] $rules The list of rules that must be checked.
      * @return bool
      */
     protected function _checkRules(EntityInterface $entity, array $options = [], array $rules = []): bool
@@ -310,9 +310,9 @@ class RulesChecker
      * @param callable $rule The rule to decorate
      * @param string|array $name The alias for a rule or an array of options
      * @param array $options The options containing the error message and field.
-     * @return callable
+     * @return \Cake\Datasource\RuleInvoker
      */
-    protected function _addError(callable $rule, $name, array $options): callable
+    protected function _addError(callable $rule, $name, array $options): RuleInvoker
     {
         if (is_array($name)) {
             $options = $name;

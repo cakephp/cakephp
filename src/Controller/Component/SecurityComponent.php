@@ -213,9 +213,10 @@ class SecurityComponent extends Component
      * Check if access requires secure connection
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
-     * @return bool true if secure connection required
+     * @return void
+     * @throws \Cake\Controller\Exception\SecurityException
      */
-    protected function _secureRequired(Controller $controller): bool
+    protected function _secureRequired(Controller $controller): void
     {
         if (is_array($this->_config['requireSecure']) &&
             !empty($this->_config['requireSecure'])
@@ -230,25 +231,23 @@ class SecurityComponent extends Component
                 }
             }
         }
-
-        return true;
     }
 
     /**
      * Validate submitted form
      *
      * @param \Cake\Controller\Controller $controller Instantiating controller
+     * @return void
      * @throws \Cake\Controller\Exception\AuthSecurityException
-     * @return bool true if submitted form is valid
      */
-    protected function _validatePost(Controller $controller): bool
+    protected function _validatePost(Controller $controller): void
     {
         $token = $this->_validToken($controller);
         $hashParts = $this->_hashParts($controller);
         $check = hash_hmac('sha1', implode('', $hashParts), Security::getSalt());
 
         if (hash_equals($check, $token)) {
-            return true;
+            return;
         }
 
         $msg = self::DEFAULT_EXCEPTION_MESSAGE;
@@ -550,7 +549,7 @@ class SecurityComponent extends Component
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
      * @param string|null $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
-     * @return array Error messages
+     * @return string[] Error messages
      */
     protected function _matchExistingFields(
         array $dataFields,

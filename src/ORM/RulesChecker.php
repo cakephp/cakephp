@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\Datasource\RuleInvoker;
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
 use Cake\ORM\Rule\IsUnique;
@@ -43,9 +44,9 @@ class RulesChecker extends BaseRulesChecker
      * @param array $fields The list of fields to check for uniqueness.
      * @param string|array|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
-     * @return callable
+     * @return \Cake\Datasource\RuleInvoker
      */
-    public function isUnique(array $fields, $message = null): callable
+    public function isUnique(array $fields, $message = null): RuleInvoker
     {
         $options = [];
         if (is_array($message)) {
@@ -89,9 +90,9 @@ class RulesChecker extends BaseRulesChecker
      * @param object|string $table The table name where the fields existence will be checked.
      * @param string|array|null $message The error message to show in case the rule does not pass. Can
      *   also be an array of options. When an array, the 'message' key can be used to provide a message.
-     * @return callable
+     * @return \Cake\Datasource\RuleInvoker
      */
-    public function existsIn($field, $table, $message = null): callable
+    public function existsIn($field, $table, $message = null): RuleInvoker
     {
         $options = [];
         if (is_array($message)) {
@@ -120,10 +121,14 @@ class RulesChecker extends BaseRulesChecker
      * @param int $count The expected count.
      * @param string $operator The operator for the count comparison.
      * @param string|null $message The error message to show in case the rule does not pass.
-     * @return callable
+     * @return \Cake\Datasource\RuleInvoker
      */
-    public function validCount(string $field, int $count = 0, string $operator = '>', ?string $message = null): callable
-    {
+    public function validCount(
+        string $field,
+        int $count = 0,
+        string $operator = '>',
+        ?string $message = null
+    ): RuleInvoker {
         if (!$message) {
             if ($this->_useI18n) {
                 $message = __d('cake', 'The count does not match {0}{1}', [$operator, $count]);

@@ -79,9 +79,9 @@ abstract class BaseSchema
      * Convert string on clauses to the abstract ones.
      *
      * @param string $clause The on clause to convert.
-     * @return string|null
+     * @return string
      */
-    protected function _convertOnClause(string $clause): ?string
+    protected function _convertOnClause(string $clause): string
     {
         if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
             return strtolower($clause);

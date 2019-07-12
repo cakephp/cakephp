@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files
-  psalm-version="3.4.8@173a40e76939a20b935b23148b4e248dc708adcd"
+  psalm-version="3.4.9@aa0efcf026e353ce2a4b66c4d3d81caebbf0966a"
 >
   <file src="src/Auth/BaseAuthenticate.php">
     <PossiblyInvalidArrayOffset occurrences="1">
@@ -553,9 +553,6 @@
     </UndefinedPropertyAssignment>
   </file>
   <file src="src/Database/Query.php">
-    <ImplementedReturnTypeMismatch occurrences="1">
-      <code>\Cake\Database\StatementInterface|null</code>
-    </ImplementedReturnTypeMismatch>
     <MoreSpecificImplementedParamType occurrences="2">
       <code>$num</code>
       <code>$num</code>
@@ -927,14 +924,6 @@
       <code>$name</code>
       <code>$name</code>
     </PossiblyInvalidArgument>
-  </file>
-  <file src="src/Http/Client/FormDataPart.php">
-    <PropertyNotSetInConstructor occurrences="4">
-      <code>$_type</code>
-      <code>$_filename</code>
-      <code>$_transferEncoding</code>
-      <code>$_contentId</code>
-    </PropertyNotSetInConstructor>
   </file>
   <file src="src/Http/Client/Response.php">
     <PropertyNotSetInConstructor occurrences="5">
@@ -1355,14 +1344,6 @@
       <code>BehaviorRegistry</code>
     </PropertyNotSetInConstructor>
   </file>
-  <file src="src/ORM/EagerLoadable.php">
-    <PropertyNotSetInConstructor occurrences="4">
-      <code>$_aliasPath</code>
-      <code>$_propertyPath</code>
-      <code>$_forMatching</code>
-      <code>$_targetProperty</code>
-    </PropertyNotSetInConstructor>
-  </file>
   <file src="src/ORM/EagerLoader.php">
     <InvalidArgument occurrences="1">
       <code>$collectKeys</code>
@@ -1710,14 +1691,8 @@
     </PossiblyNullArgument>
   </file>
   <file src="src/Utility/Hash.php">
-    <PossiblyInvalidArgument occurrences="22">
+    <PossiblyInvalidArgument occurrences="16">
       <code>$data</code>
-      <code>$tokens</code>
-      <code>$tokens</code>
-      <code>$tokens</code>
-      <code>$tokens</code>
-      <code>$tokens</code>
-      <code>$tokens</code>
       <code>$keys</code>
       <code>$keys</code>
       <code>$vals</code>
@@ -1734,9 +1709,6 @@
       <code>$keys</code>
       <code>$ids</code>
     </PossiblyInvalidArgument>
-    <PossiblyInvalidIterator occurrences="1">
-      <code>$tokens</code>
-    </PossiblyInvalidIterator>
     <PossiblyNullArrayOffset occurrences="2">
       <code>$out</code>
       <code>$out</code>
@@ -1959,9 +1931,8 @@
       <code>$request ?: Router::getRequest(true)</code>
       <code>$defaultLayout</code>
     </PossiblyNullPropertyAssignmentValue>
-    <PropertyNotSetInConstructor occurrences="6">
+    <PropertyNotSetInConstructor occurrences="5">
       <code>$_helpers</code>
-      <code>$name</code>
       <code>$templatePath</code>
       <code>$template</code>
       <code>$_current</code>

@@ -176,7 +176,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @return array Array of invalid fields
+     * @return array[] Array of invalid fields
      */
     public function errors(array $data, bool $newRecord = true): array
     {
@@ -1038,7 +1038,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param int|string $fieldName name of field
      * @param array $defaults default settings
      * @param string|array $settings settings from data
-     * @return array
+     * @return array[]
      * @throws \InvalidArgumentException
      */
     protected function _convertValidatorToArray($fieldName, array $defaults = [], $settings = []): array

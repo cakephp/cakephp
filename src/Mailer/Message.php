@@ -1320,7 +1320,7 @@ class Message implements JsonSerializable, Serializable
      * Attach non-embedded files by adding file contents inside boundaries.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return array An array of lines to add to the message
+     * @return string[] An array of lines to add to the message
      */
     protected function attachFiles(?string $boundary = null): array
     {
@@ -1360,7 +1360,7 @@ class Message implements JsonSerializable, Serializable
      * Attach inline/embedded files to the message.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return array An array of lines to add to the message
+     * @return string[] An array of lines to add to the message
      */
     protected function attachInlineFiles(?string $boundary = null): array
     {

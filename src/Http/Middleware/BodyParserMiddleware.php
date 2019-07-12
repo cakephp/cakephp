@@ -136,7 +136,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Get the current parsers
      *
-     * @return array
+     * @return callable[]
      */
     public function getParsers(): array
     {

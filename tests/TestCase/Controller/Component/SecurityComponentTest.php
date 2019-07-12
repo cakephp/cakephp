@@ -310,7 +310,7 @@ class SecurityComponentTest extends TestCase
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
-        $this->assertTrue($this->validatePost());
+        $this->assertNull($this->validatePost());
     }
 
     /**
@@ -492,7 +492,7 @@ class SecurityComponentTest extends TestCase
             'Model' => ['multi_field' => ['1', '3']],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
-        $this->assertTrue($this->validatePost());
+        $this->assertNull($this->validatePost());
     }
 
     /**
@@ -520,13 +520,13 @@ class SecurityComponentTest extends TestCase
             'Model' => ['multi_field' => ['1', '3']],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
-        $this->assertTrue($this->validatePost());
+        $this->assertNull($this->validatePost());
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['multi_field' => [12 => '1', 20 => '3']],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
-        $this->assertTrue($this->validatePost());
+        $this->assertNull($this->validatePost());
     }
 
     /**
@@ -553,7 +553,7 @@ class SecurityComponentTest extends TestCase
             1 => 'value,',
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
-        $this->assertTrue($this->validatePost());
+        $this->assertNull($this->validatePost());
     }
 
     /**
@@ -577,7 +577,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -601,7 +601,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -632,7 +632,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -666,7 +666,7 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -691,21 +691,21 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Tag' => ['Tag' => [1, 2, 3]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Tag' => ['Tag' => [1, 2, 3, 4]],
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $fields = '1e4c9269b64756e9b141d364497c5f037b428a37%3A';
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
@@ -714,7 +714,7 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -740,7 +740,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $fields = '3f368401f9a8610bcace7746039651066cdcdc38%3A';
 
@@ -750,7 +750,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([]));
         $this->Security->startup($event);
@@ -761,7 +761,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -786,7 +786,7 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -812,7 +812,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -844,7 +844,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -990,7 +990,7 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1023,7 +1023,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1068,7 +1068,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1098,7 +1098,7 @@ class SecurityComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1203,7 +1203,7 @@ class SecurityComponentTest extends TestCase
         ]));
 
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1237,21 +1237,21 @@ class SecurityComponentTest extends TestCase
             'Test' => ['test' => ''],
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_Token' => compact('fields', 'unlocked', 'debug'),
             'Test' => ['test' => '1'],
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             '_Token' => compact('fields', 'unlocked', 'debug'),
             'Test' => ['test' => '2'],
         ]));
         $result = $this->validatePost();
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 
     /**
@@ -1278,7 +1278,7 @@ class SecurityComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()
             ->withData('Model', ['username' => '', 'password' => ''])
             ->withData('_Token', compact('fields', 'unlocked', 'debug')));
-        $this->assertTrue($this->validatePost());
+        $this->assertNull($this->validatePost());
 
         $this->Controller->setRequest($this->Controller->getRequest()
             ->withRequestTarget('/posts/index?page=1'));

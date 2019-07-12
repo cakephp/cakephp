@@ -1187,7 +1187,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
      *   While `example.co.uk` contains 2.
-     * @return array An array of subdomains.
+     * @return string[] An array of subdomains.
      */
     public function subdomains(int $tldLength = 1): array
     {
@@ -1620,7 +1620,7 @@ class ServerRequest implements ServerRequestInterface
      * and a 405 error will be returned.
      *
      * @param string|array $methods Allowed HTTP request methods.
-     * @return bool true
+     * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
     public function allowMethod($methods): bool

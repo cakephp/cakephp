@@ -367,7 +367,7 @@ class Session
     /**
      * Write data and close the session
      *
-     * @return bool True if session was started
+     * @return true
      */
     public function close(): bool
     {

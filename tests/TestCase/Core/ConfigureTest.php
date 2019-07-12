@@ -135,11 +135,11 @@ class ConfigureTest extends TestCase
      */
     public function testWrite()
     {
-        $this->assertTrue(Configure::write('SomeName.someKey', 'myvalue'));
+        $this->assertNull(Configure::write('SomeName.someKey', 'myvalue'));
         $result = Configure::read('SomeName.someKey');
         $this->assertSame('myvalue', $result);
 
-        $this->assertTrue(Configure::write('SomeName.someKey', null));
+        $this->assertNull(Configure::write('SomeName.someKey', null));
         $result = Configure::read('SomeName.someKey');
         $this->assertNull($result);
 

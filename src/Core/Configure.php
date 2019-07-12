@@ -79,10 +79,10 @@ class Configure
      * @param string|array $config The key to write, can be a dot notation value.
      * Alternatively can be an array containing key(s) and value(s).
      * @param mixed $value Value to set for var
-     * @return bool
+     * @return void
      * @link https://book.cakephp.org/3.0/en/development/configuration.html#writing-configuration-data
      */
-    public static function write($config, $value = null): bool
+    public static function write($config, $value = null): void
     {
         if (!is_array($config)) {
             $config = [$config => $value];
@@ -100,8 +100,6 @@ class Configure
                 ini_set('display_errors', $config['debug'] ? '1' : '0');
             }
         }
-
-        return true;
     }
 
     /**
