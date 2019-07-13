@@ -884,9 +884,8 @@
     </ImplementedReturnTypeMismatch>
   </file>
   <file src="src/Form/Form.php">
-    <PropertyNotSetInConstructor occurrences="3">
+    <PropertyNotSetInConstructor occurrences="2">
       <code>$_schema</code>
-      <code>$_validator</code>
       <code>Form</code>
     </PropertyNotSetInConstructor>
   </file>
@@ -1625,11 +1624,6 @@
       <code>$this-&gt;_viewName</code>
       <code>$this-&gt;_layoutName</code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/TestSuite/LegacyCommandRunner.php">
-    <MissingConstructor occurrences="1">
-      <code>$_io</code>
-    </MissingConstructor>
   </file>
   <file src="src/TestSuite/LegacyShellDispatcher.php">
     <DeprecatedClass occurrences="2">

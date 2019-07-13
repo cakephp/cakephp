@@ -348,13 +348,6 @@ class Response implements ResponseInterface
     ];
 
     /**
-     * Protocol header to send to the client
-     *
-     * @var string
-     */
-    protected $_protocol = 'HTTP/1.1';
-
-    /**
      * Status code to send to the client
      *
      * @var int

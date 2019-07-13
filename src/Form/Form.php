@@ -79,13 +79,6 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     protected $_errors = [];
 
     /**
-     * The validator used by this form.
-     *
-     * @var \Cake\Validation\Validator
-     */
-    protected $_validator;
-
-    /**
      * Form's data.
      *
      * @var array
