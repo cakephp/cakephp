@@ -797,9 +797,13 @@ class TranslateBehaviorTest extends TestCase
         $entity = $table->get(1);
         $result = $table->loadInto($entity, ['Authors']);
         $this->assertSame($entity, $result);
+        $this->assertNotEmpty($entity->author);
+        $this->assertNotEmpty($entity->author->name);
 
         $expected = $table->get(1, ['contain' => ['Authors']]);
         $this->assertEquals($expected, $result);
+        $this->assertNotEmpty($entity->author);
+        $this->assertNotEmpty($entity->author->name);
     }
 
     /**
