@@ -2266,7 +2266,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
      * @param array|\ArrayAccess $options The options for the delete.
-     * @return bool success
+     * @return true
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete()
      */

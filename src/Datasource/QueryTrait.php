@@ -414,7 +414,7 @@ trait QueryTrait
     /**
      * Returns the list of previously registered format routines.
      *
-     * @return array
+     * @return callable[]
      */
     public function getResultFormatters(): array
     {

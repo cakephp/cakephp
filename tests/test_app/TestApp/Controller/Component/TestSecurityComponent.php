@@ -12,10 +12,10 @@ class TestSecurityComponent extends SecurityComponent
      * validatePost method
      *
      * @param Controller $controller
-     * @return bool
+     * @return void
      */
-    public function validatePost(Controller $controller): bool
+    public function validatePost(Controller $controller): void
     {
-        return $this->_validatePost($controller);
+        $this->_validatePost($controller);
     }
 }

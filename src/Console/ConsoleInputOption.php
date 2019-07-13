@@ -211,7 +211,7 @@ class ConsoleInputOption
      * Check that a value is a valid choice for this option.
      *
      * @param string|bool $value The choice to validate.
-     * @return bool
+     * @return true
      * @throws \Cake\Console\Exception\ConsoleException
      */
     public function validChoice($value): bool

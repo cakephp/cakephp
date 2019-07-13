@@ -113,7 +113,7 @@ class LazyEagerLoader
      *
      * @param \Cake\ORM\Table $source The table having the top level associations
      * @param string[] $associations The name of the top level associations
-     * @return array
+     * @return string[]
      */
     protected function _getPropertyMap(Table $source, array $associations): array
     {

@@ -322,7 +322,7 @@ class SqlserverSchema extends BaseSchema
     /**
      * @inheritDoc
      */
-    protected function _convertOnClause(string $clause): ?string
+    protected function _convertOnClause(string $clause): string
     {
         switch ($clause) {
             case 'NO_ACTION':

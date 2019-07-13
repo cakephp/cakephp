@@ -43,7 +43,7 @@ class FormDataPart
     /**
      * Content type to use
      *
-     * @var string
+     * @var string|null
      */
     protected $_type;
 
@@ -57,21 +57,21 @@ class FormDataPart
     /**
      * Filename to send if using files.
      *
-     * @var string
+     * @var string|null
      */
     protected $_filename;
 
     /**
      * The encoding used in this part.
      *
-     * @var string
+     * @var string|null
      */
     protected $_transferEncoding;
 
     /**
      * The contentId for the part
      *
-     * @var string
+     * @var string|null
      */
     protected $_contentId;
 
@@ -95,10 +95,10 @@ class FormDataPart
      * By passing in `false` you can disable the disposition
      * header from being added.
      *
-     * @param null|string $disposition Use null to get/string to set.
-     * @return string|null
+     * @param string $disposition Use null to get/string to set.
+     * @return string
      */
-    public function disposition(?string $disposition = null): ?string
+    public function disposition(?string $disposition = null): string
     {
         if ($disposition === null) {
             return $this->_disposition;

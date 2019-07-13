@@ -39,7 +39,7 @@ class Renderer
      *
      * @param string $content The content.
      * @param array $types Content types to render.
-     * @return array The rendered content with "html" and/or "text" keys.
+     * @return array{html?: string, text?: string} The rendered content with "html" and/or "text" keys.
      */
     public function getContent(string $content, array $types = []): array
     {

@@ -825,7 +825,7 @@ class PaginatorHelper extends Helper
      *
      * @param array $params Params from the numbers() method.
      * @param array $options Options from the numbers() method.
-     * @return array An array with the start and end numbers.
+     * @return array{0: int, 1: int} An array with the start and end numbers.
      */
     protected function _getNumbersStartAndEnd(array $params, array $options): array
     {
@@ -849,8 +849,8 @@ class PaginatorHelper extends Helper
             }
         }
 
-        $end = min($params['pageCount'], $end);
-        $start = max(1, $start);
+        $end = (int)min($params['pageCount'], $end);
+        $start = (int)max(1, $start);
 
         return [$start, $end];
     }
@@ -1240,7 +1240,7 @@ class PaginatorHelper extends Helper
      * @param array $options Options for Select tag attributes like class, id or event
      * @return string html output.
      */
-    public function limitControl(array $limits = [], ?int $default = null, array $options = []): ?string
+    public function limitControl(array $limits = [], ?int $default = null, array $options = []): string
     {
         $out = $this->Form->create(null, ['type' => 'get']);
 

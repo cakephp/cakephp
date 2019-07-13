@@ -397,9 +397,9 @@ class Socket
      * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
      *
      * @param array|null $state Array with key and values to reset
-     * @return bool True on success
+     * @return void
      */
-    public function reset(?array $state = null): bool
+    public function reset(?array $state = null): void
     {
         if (empty($state)) {
             static $initalState = [];
@@ -412,8 +412,6 @@ class Socket
         foreach ($state as $property => $value) {
             $this->{$property} = $value;
         }
-
-        return true;
     }
 
     /**
@@ -422,12 +420,12 @@ class Socket
      * @param string $type can be one of 'ssl2', 'ssl3', 'ssl23' or 'tls'
      * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
      * @param bool $enable enable or disable encryption. Default is true (enable)
-     * @return bool True on success
+     * @return void
      * @throws \InvalidArgumentException When an invalid encryption scheme is chosen.
      * @throws \Cake\Network\Exception\SocketException When attempting to enable SSL/TLS fails
      * @see stream_socket_enable_crypto
      */
-    public function enableCrypto(string $type, string $clientOrServer = 'client', bool $enable = true): bool
+    public function enableCrypto(string $type, string $clientOrServer = 'client', bool $enable = true): void
     {
         if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
             throw new InvalidArgumentException('Invalid encryption scheme chosen');
@@ -457,11 +455,13 @@ class Socket
             $this->setLastError(null, $e->getMessage());
             throw new SocketException($e->getMessage(), null, $e);
         }
+
         if ($enableCryptoResult === true) {
             $this->encrypted = $enable;
 
-            return true;
+            return;
         }
+
         $errorMessage = 'Unable to perform enableCrypto operation on the current socket';
         $this->setLastError(null, $errorMessage);
         throw new SocketException($errorMessage);

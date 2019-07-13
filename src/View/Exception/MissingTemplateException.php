@@ -75,6 +75,7 @@ class MissingTemplateException extends Exception
      * Get the passed in attributes
      *
      * @return array
+     * @psalm-return array{file: string, paths: array}
      */
     public function getAttributes(): array
     {

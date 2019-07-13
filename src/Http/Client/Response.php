@@ -479,7 +479,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Provides magic __get() support.
      *
-     * @return array
+     * @return string[]
      */
     protected function _getHeaders(): array
     {

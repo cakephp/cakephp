@@ -886,17 +886,15 @@ class ConsoleOptionParser
         } else {
             $value = $option->defaultValue();
         }
-        if ($option->validChoice($value)) {
-            if ($option->acceptsMultiple()) {
-                $params[$name][] = $value;
-            } else {
-                $params[$name] = $value;
-            }
 
-            return $params;
+        $option->validChoice($value);
+        if ($option->acceptsMultiple()) {
+            $params[$name][] = $value;
+        } else {
+            $params[$name] = $value;
         }
 
-        return [];
+        return $params;
     }
 
     /**
@@ -938,13 +936,10 @@ class ConsoleOptionParser
             throw new ConsoleException('Too many arguments.');
         }
 
-        if ($this->_args[$next]->validChoice($argument)) {
-            $args[] = $argument;
+        $this->_args[$next]->validChoice($argument);
+        $args[] = $argument;
 
-            return $args;
-        }
-
-        throw new ConsoleException('Invalid choice for argument: ' . $argument);
+        return $args;
     }
 
     /**

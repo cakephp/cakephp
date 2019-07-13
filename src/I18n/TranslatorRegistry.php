@@ -22,6 +22,7 @@ use Aura\Intl\PackageLocator;
 use Aura\Intl\TranslatorInterface;
 use Aura\Intl\TranslatorLocator;
 use Cake\Cache\CacheEngine;
+use Closure;
 
 /**
  * Constructs and stores instances of translators that can be
@@ -241,9 +242,9 @@ class TranslatorRegistry extends TranslatorLocator
     /**
      * Returns a function that can be used as a loader for the registerLoaderMethod
      *
-     * @return callable
+     * @return \Closure
      */
-    protected function _partialLoader(): callable
+    protected function _partialLoader(): Closure
     {
         return function ($name, $locale) {
             return $this->_fallbackLoader($name, $locale);

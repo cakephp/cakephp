@@ -65,7 +65,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return \Psr\Http\Server\MiddlewareInterface
      * @throws \RuntimeException If Middleware not found.
      */
-    protected function resolve($middleware): ?MiddlewareInterface
+    protected function resolve($middleware): MiddlewareInterface
     {
         if (is_string($middleware)) {
             $className = App::className($middleware, 'Middleware', 'Middleware');

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection;
 
+use Closure;
 use Traversable;
 
 /**
@@ -123,9 +124,9 @@ trait ExtractTrait
      * @param array $conditions A key-value list of conditions to match where the
      * key is the property path to get from the current item and the value is the
      * value to be compared the item with.
-     * @return callable
+     * @return \Closure
      */
-    protected function _createMatcherFilter(array $conditions): callable
+    protected function _createMatcherFilter(array $conditions): Closure
     {
         $matchers = [];
         foreach ($conditions as $property => $value) {

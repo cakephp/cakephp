@@ -110,7 +110,7 @@ class FixtureManager
     /**
      * Get the loaded fixtures.
      *
-     * @return array
+     * @return \Cake\Datasource\FixtureInterface[]
      */
     public function loaded(): array
     {
