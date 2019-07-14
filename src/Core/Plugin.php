@@ -33,13 +33,6 @@ class Plugin
     protected static $plugins;
 
     /**
-     * Class loader instance
-     *
-     * @var \Cake\Core\ClassLoader
-     */
-    protected static $_loader;
-
-    /**
      * Returns the filesystem path for a plugin
      *
      * @param string $name name of the plugin in CamelCase format

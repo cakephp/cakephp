@@ -78,13 +78,6 @@ abstract class TestCase extends BaseTestCase
     protected $_configure = [];
 
     /**
-     * Path settings to restore at the end of the test.
-     *
-     * @var array
-     */
-    protected $_pathRestore = [];
-
-    /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
      *
      * @param bool $shouldSkip Whether or not the test should be skipped.
