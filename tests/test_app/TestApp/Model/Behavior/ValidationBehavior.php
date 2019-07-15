@@ -23,11 +23,6 @@ namespace TestApp\Model\Behavior;
 use Cake\ORM\Behavior;
 use Cake\Validation\Validator;
 
-/**
- * Description of ValidationBehavior
- *
- * @author Robert Pustułka <r.pustulka@robotusers.com>
- */
 class ValidationBehavior extends Behavior
 {
     public function validationBehavior(Validator $validator)
