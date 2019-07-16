@@ -65,10 +65,8 @@ class App
         if (static::_classExistsInBase($fullname, $base)) {
             return $base . $fullname;
         }
-        if ($plugin) {
-            return null;
-        }
-        if (!static::_classExistsInBase($fullname, 'Cake')) {
+
+        if ($plugin || !static::_classExistsInBase($fullname, 'Cake')) {
             return null;
         }
 

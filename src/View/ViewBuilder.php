@@ -527,8 +527,7 @@ class ViewBuilder implements JsonSerializable, Serializable
         $className = $this->_className;
         if ($className === null) {
             $className = App::className('App', 'View', 'View') ?: View::class;
-        }
-        if ($className === 'View') {
+        } elseif ($className === 'View') {
             $className = App::className($className, 'View');
         } else {
             $className = App::className($className, 'View', 'View');
