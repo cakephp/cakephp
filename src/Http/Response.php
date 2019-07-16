@@ -1342,7 +1342,7 @@ class Response implements ResponseInterface
         if (!is_int($time)) {
             $time = strtotime($time);
             if ($time === false) {
-                throw new InvalidArgumentException('Time parameter invalid.');
+                throw new InvalidArgumentException('Invalid time parameter. Ensure your time value can be parsed by strtotime');
             }
         }
 
@@ -1367,7 +1367,7 @@ class Response implements ResponseInterface
         if (!is_int($time)) {
             $time = strtotime($time);
             if ($time === false) {
-                throw new InvalidArgumentException('Time parameter invalid.');
+                throw new InvalidArgumentException('Invalid time parameter. Ensure your time value can be parsed by strtotime');
             }
         }
 
