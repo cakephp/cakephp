@@ -431,6 +431,7 @@ class Response implements ResponseInterface
      *  - status: the HTTP status code to respond with
      *  - type: a complete mime-type string or an extension mapped in this class
      *  - charset: the charset for the response body
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $options = [])
     {
@@ -1325,9 +1326,10 @@ class Response implements ResponseInterface
     /**
      * Sets the correct headers to instruct the client to cache the response.
      *
-     * @param string $since a valid time since the response text has not been modified
-     * @param string $time a valid time for cache expiry
+     * @param string|int|\DateTimeInterface|null $since a valid time since the response text has not been modified
+     * @param string|int $time a valid time for cache expiry
      * @return void
+     * @throws \InvalidArgumentException
      * @deprecated 3.4.0 Use withCache() instead.
      */
     public function cache($since, $time = '+1 day')
@@ -1339,6 +1341,9 @@ class Response implements ResponseInterface
 
         if (!is_int($time)) {
             $time = strtotime($time);
+            if ($time === false) {
+                throw new InvalidArgumentException('Time parameter invalid.');
+            }
         }
 
         $this->_setHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT');
@@ -1352,14 +1357,18 @@ class Response implements ResponseInterface
     /**
      * Create a new instance with the headers to enable client caching.
      *
-     * @param string $since a valid time since the response text has not been modified
-     * @param string $time a valid time for cache expiry
+     * @param string|int|\DateTimeInterface|null $since A valid time since the response text has not been modified
+     * @param string|int $time A valid time for cache expiry
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withCache($since, $time = '+1 day')
     {
         if (!is_int($time)) {
             $time = strtotime($time);
+            if ($time === false) {
+                throw new InvalidArgumentException('Time parameter invalid.');
+            }
         }
 
         return $this->withHeader('Date', gmdate('D, j M Y G:i:s ', time()) . 'GMT')
@@ -1609,7 +1618,7 @@ class Response implements ResponseInterface
      * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
      * `$response->expires()` Will return the current expiration header value
      *
-     * @param string|\DateTimeInterface|null $time Valid time string or \DateTime instance.
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return string|null
      * @deprecated 3.4.0 Use withExpires() instead.
      */
@@ -1645,7 +1654,7 @@ class Response implements ResponseInterface
      * $response->withExpires(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTimeInterface $time Valid time string or \DateTime instance.
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return static
      */
     public function withExpires($time)
@@ -1665,7 +1674,7 @@ class Response implements ResponseInterface
      * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
      * `$response->modified()` Will return the current Last-Modified header value
      *
-     * @param string|\DateTimeInterface|null $time Valid time string or \DateTime instance.
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTime instance.
      * @return string|null
      * @deprecated 3.4.0 Use withModified() instead.
      */
@@ -1701,7 +1710,7 @@ class Response implements ResponseInterface
      * $response->withModified(new DateTime('+1 day'))
      * ```
      *
-     * @param string|\DateTimeInterface $time Valid time string or \DateTimeInterface instance.
+     * @param string|int|\DateTimeInterface|null $time Valid time string or \DateTimeInterface instance.
      * @return static
      */
     public function withModified($time)
