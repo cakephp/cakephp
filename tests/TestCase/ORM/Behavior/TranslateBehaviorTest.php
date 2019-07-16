@@ -45,6 +45,7 @@ class TranslateBehaviorTest extends TestCase
      */
     public $fixtures = [
         'core.Articles',
+        'core.ArticlesTags',
         'core.Authors',
         'core.Groups',
         'core.SpecialTags',
@@ -1855,5 +1856,183 @@ class TranslateBehaviorTest extends TestCase
         $this->assertSame($locator, $behaviorLocator);
         $this->assertNotSame($table->associations()->getTableLocator(), $behaviorLocator);
         $this->assertNotSame($this->getTableLocator(), $behaviorLocator);
+    }
+
+    /**
+     * Tests that using matching doesn't cause an association property to be created.
+     *
+     * @return void
+     */
+    public function testMatchingDoesNotCreateAssociationProperty()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+
+        $table->Comments->addBehavior('Translate');
+        $table->Comments->setLocale('abc');
+
+        $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
+
+        $result = $table
+            ->find()
+            ->matching('Comments')
+            ->first();
+
+        $this->assertArrayNotHasKey('comments', $result->toArray());
+    }
+
+    /**
+     * Tests that using deep matching doesn't cause an association property to be created.
+     *
+     * @return void
+     */
+    public function testDeepMatchingDoesNotCreateAssociationProperty()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->Comments->belongsTo('Authors')->setForeignKey('user_id');
+
+        $table->Comments->addBehavior('Translate');
+        $table->Comments->setLocale('abc');
+
+        $table->Comments->Authors->addBehavior('Translate');
+        $table->Comments->Authors->setLocale('xyz');
+
+        $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
+        $this->assertNotEquals($table->Comments->Authors->getLocale(), I18n::getLocale());
+
+        $result = $table
+            ->find()
+            ->contain('Comments')
+            ->matching('Comments.Authors')
+            ->first();
+
+        $this->assertArrayNotHasKey('author', $result->comments);
+    }
+
+    /**
+     * Tests that using contained matching doesn't cause an association property to be created.
+     *
+     * @return void
+     */
+    public function testContainedMatchingDoesNotCreateAssociationProperty()
+    {
+        $table = $this->getTableLocator()->get('Authors');
+        $table->hasMany('Comments')->setForeignKey('user_id');
+        $table->Comments->belongsTo('Articles');
+
+        $table->Comments->Articles->addBehavior('Translate');
+        $table->Comments->Articles->setLocale('xyz');
+
+        $this->assertNotEquals($table->Comments->Articles->getLocale(), I18n::getLocale());
+
+        $result = $table
+            ->find()
+            ->contain([
+                'Comments' => function ($query) {
+                    return $query->matching('Articles');
+                }
+            ])
+            ->first();
+
+        $this->assertArrayNotHasKey('article', $result->comments[0]->toArray());
+    }
+
+    /**
+     * Tests that the _locale property is set on the entity in the _matchingData property.
+     *
+     * @return void
+     */
+    public function testLocalePropertyIsSetInMatchingData()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+
+        $table->Comments->addBehavior('Translate');
+        $table->Comments->setLocale('abc');
+
+        $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
+
+        $result = $table
+            ->find()
+            ->contain('Comments')
+            ->matching('Comments')
+            ->first();
+
+        $this->assertArrayNotHasKey('_locale', $result->comments);
+        $this->assertArrayHasKey('_locale', $result->_matchingData['Comments']);
+        $this->assertEquals('abc', $result->_matchingData['Comments']->_locale);
+    }
+
+    /**
+     * Tests that the _locale property is set on the entity in the _matchingData property
+     * when using deep matching.
+     *
+     * @return void
+     */
+    public function testLocalePropertyIsSetInMatchingDataWhenUsingDeepMatching()
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->hasMany('Comments');
+        $table->Comments->belongsTo('Authors')->setForeignKey('user_id');
+
+        $table->Comments->addBehavior('Translate');
+        $table->Comments->setLocale('abc');
+
+        $table->Comments->Authors->addBehavior('Translate');
+        $table->Comments->Authors->setLocale('xyz');
+
+        $this->assertNotEquals($table->Comments->getLocale(), I18n::getLocale());
+        $this->assertNotEquals($table->Comments->Authors->getLocale(), I18n::getLocale());
+
+        $result = $table
+            ->find()
+            ->contain('Comments.Authors')
+            ->matching('Comments.Authors')
+            ->first();
+
+        $this->assertArrayNotHasKey('_locale', $result->comments);
+        $this->assertArrayHasKey('_locale', $result->_matchingData['Comments']);
+        $this->assertArrayHasKey('_locale', $result->_matchingData['Authors']);
+        $this->assertEquals('abc', $result->_matchingData['Comments']->_locale);
+        $this->assertEquals('xyz', $result->_matchingData['Authors']->_locale);
+    }
+
+    /**
+     * Tests that the _locale property is set on the entity in the _matchingData property
+     * when using contained matching.
+     *
+     * @return void
+     */
+    public function testLocalePropertyIsSetInMatchingDataWhenUsingContainedMatching()
+    {
+        $table = $this->getTableLocator()->get('Authors');
+        $table->hasMany('Articles');
+        $table->Articles->belongsToMany('Tags');
+
+        $table->Articles->addBehavior('Translate');
+        $table->Articles->setLocale('abc');
+
+        $table->Articles->Tags->addBehavior('Translate');
+        $table->Articles->Tags->setLocale('xyz');
+
+        $this->assertNotEquals($table->Articles->getLocale(), I18n::getLocale());
+        $this->assertNotEquals($table->Articles->Tags->getLocale(), I18n::getLocale());
+
+        $result = $table
+            ->find()
+            ->contain([
+                'Articles' => function ($query) {
+                    return $query->matching('Tags');
+                },
+                'Articles.Tags'
+            ])
+            ->first();
+
+        $this->assertArrayNotHasKey('_locale', $result->articles);
+        $this->assertArrayNotHasKey('_locale', $result->articles[0]->tags);
+        $this->assertArrayHasKey('_locale', $result->articles[0]->_matchingData['Tags']);
+        $this->assertEquals('abc', $result->articles[0]->_locale);
+        $this->assertEquals('xyz', $result->articles[0]->_matchingData['Tags']->_locale);
     }
 }
