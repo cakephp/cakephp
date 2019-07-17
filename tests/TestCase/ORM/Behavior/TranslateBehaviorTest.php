@@ -1960,7 +1960,6 @@ class TranslateBehaviorTest extends TestCase
             ->first();
 
         $this->assertArrayNotHasKey('_locale', $result->comments);
-        $this->assertArrayHasKey('_locale', $result->_matchingData['Comments']);
         $this->assertEquals('abc', $result->_matchingData['Comments']->_locale);
     }
 
@@ -1992,8 +1991,6 @@ class TranslateBehaviorTest extends TestCase
             ->first();
 
         $this->assertArrayNotHasKey('_locale', $result->comments);
-        $this->assertArrayHasKey('_locale', $result->_matchingData['Comments']);
-        $this->assertArrayHasKey('_locale', $result->_matchingData['Authors']);
         $this->assertEquals('abc', $result->_matchingData['Comments']->_locale);
         $this->assertEquals('xyz', $result->_matchingData['Authors']->_locale);
     }
@@ -2031,7 +2028,6 @@ class TranslateBehaviorTest extends TestCase
 
         $this->assertArrayNotHasKey('_locale', $result->articles);
         $this->assertArrayNotHasKey('_locale', $result->articles[0]->tags);
-        $this->assertArrayHasKey('_locale', $result->articles[0]->_matchingData['Tags']);
         $this->assertEquals('abc', $result->articles[0]->_locale);
         $this->assertEquals('xyz', $result->articles[0]->_matchingData['Tags']->_locale);
     }
