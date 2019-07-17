@@ -1097,7 +1097,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @since 3.8.0
      * @see \Cake\Validation\Validator::allowEmptyDateTime()
      */
-    public function notEmptyDateTime($field, $message = null, $when = true)
+    public function notEmptyDateTime($field, $message = null, $when = false)
     {
         $when = $this->invertWhenClause($when);
 
