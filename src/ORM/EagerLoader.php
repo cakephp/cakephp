@@ -557,7 +557,14 @@ class EagerLoader
 
         $paths += ['aliasPath' => '', 'propertyPath' => '', 'root' => $alias];
         $paths['aliasPath'] .= '.' . $alias;
-        $paths['propertyPath'] .= '.' . $instance->getProperty();
+
+        if (isset($options['matching']) &&
+           $options['matching'] === true
+        ) {
+            $paths['propertyPath'] = '_matchingData.' . $alias;
+        } else {
+            $paths['propertyPath'] .= '.' . $instance->getProperty();
+        }
 
         $table = $instance->getTarget();
 
