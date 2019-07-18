@@ -683,7 +683,7 @@ class ServerRequest implements ArrayAccess, ServerRequestInterface
 
             return $this->is(...$params);
         }
-        throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
+        throw new BadMethodCallException(sprintf('Method "%s()" does not exist', $name));
     }
 
     /**
