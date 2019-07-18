@@ -178,7 +178,7 @@ class RedisEngine extends CacheEngine
 
         $value = (int)$this->_Redis->incrBy($key, $offset);
         if ($duration > 0) {
-            $this->_Redis->setTimeout($key, $duration);
+            $this->_Redis->expire($key, $duration);
         }
 
         return $value;
@@ -198,7 +198,7 @@ class RedisEngine extends CacheEngine
 
         $value = (int)$this->_Redis->decrBy($key, $offset);
         if ($duration > 0) {
-            $this->_Redis->setTimeout($key, $duration);
+            $this->_Redis->expire($key, $duration);
         }
 
         return $value;
@@ -271,7 +271,7 @@ class RedisEngine extends CacheEngine
 
         // setNx() doesn't have an expiry option, so follow up with an expiry
         if ($this->_Redis->setNx($key, $value)) {
-            return $this->_Redis->setTimeout($key, $duration);
+            return $this->_Redis->expire($key, $duration);
         }
 
         return false;
