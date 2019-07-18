@@ -1,21 +1,21 @@
 <?php
 /**
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleIo;
-use Cake\Core\Configure;
+use Cake\Filesystem\Folder;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 
@@ -33,12 +33,32 @@ class ConsoleIoTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
 
-        $this->out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-        $this->err = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-        $this->in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
+        $this->out = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->err = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->in = $this->getMockBuilder('Cake\Console\ConsoleInput')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
+    }
+
+    /**
+     * teardown method
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        parent::tearDown();
+        if (is_dir(TMP . 'shell_test')) {
+            $folder = new Folder(TMP . 'shell_test');
+            $folder->delete();
+        }
     }
 
     /**
@@ -135,7 +155,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->out->expects($this->at(0))
             ->method('write')
-            ->with("Just a test", 1);
+            ->with('Just a test', 1);
 
         $this->out->expects($this->at(1))
             ->method('write')
@@ -232,7 +252,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->err->expects($this->at(0))
             ->method('write')
-            ->with("Just a test", 1);
+            ->with('Just a test', 1);
 
         $this->err->expects($this->at(1))
             ->method('write')
@@ -265,7 +285,7 @@ class ConsoleIoTest extends TestCase
         }
         $this->assertEquals($this->io->nl(), $newLine);
         $this->assertEquals($this->io->nl(true), $newLine);
-        $this->assertEquals("", $this->io->nl(false));
+        $this->assertEquals('', $this->io->nl(false));
         $this->assertEquals($this->io->nl(2), $newLine . $newLine);
         $this->assertEquals($this->io->nl(1), $newLine);
     }
@@ -283,13 +303,13 @@ class ConsoleIoTest extends TestCase
         $this->out->expects($this->at(1))->method('write')->with($bar, 1);
         $this->out->expects($this->at(2))->method('write')->with('', 0);
 
-        $this->out->expects($this->at(3))->method('write')->with("", true);
+        $this->out->expects($this->at(3))->method('write')->with('', true);
         $this->out->expects($this->at(4))->method('write')->with($bar, 1);
-        $this->out->expects($this->at(5))->method('write')->with("", true);
+        $this->out->expects($this->at(5))->method('write')->with('', true);
 
-        $this->out->expects($this->at(6))->method('write')->with("", 2);
+        $this->out->expects($this->at(6))->method('write')->with('', 2);
         $this->out->expects($this->at(7))->method('write')->with($bar, 1);
-        $this->out->expects($this->at(8))->method('write')->with("", 2);
+        $this->out->expects($this->at(8))->method('write')->with('', 2);
 
         $this->io->hr();
         $this->io->hr(true);
@@ -325,6 +345,96 @@ class ConsoleIoTest extends TestCase
 
         $this->io->out('Some <info>text</info> I want to overwrite', 0);
         $this->io->overwrite('Less text');
+    }
+
+    /**
+     * Test overwriting content with shorter content
+     *
+     * @return void
+     */
+    public function testOverwriteWithShorterContent()
+    {
+        $length = strlen('12345');
+
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with('12345')
+            ->will($this->returnValue($length));
+
+        // Backspaces
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(str_repeat("\x08", $length), 0)
+            ->will($this->returnValue($length));
+
+        $this->out->expects($this->at(2))
+            ->method('write')
+            ->with('123', 0)
+            ->will($this->returnValue(3));
+
+        // 2 spaces output to pad up to 5 bytes
+        $this->out->expects($this->at(3))
+            ->method('write')
+            ->with(str_repeat(' ', $length - 3), 0)
+            ->will($this->returnValue($length - 3));
+
+        // Backspaces
+        $this->out->expects($this->at(4))
+            ->method('write')
+            ->with(str_repeat("\x08", $length), 0)
+            ->will($this->returnValue($length));
+
+        $this->out->expects($this->at(5))
+            ->method('write')
+            ->with('12', 0)
+            ->will($this->returnValue(2));
+
+        $this->out->expects($this->at(6))
+            ->method('write')
+            ->with(str_repeat(' ', $length - 2), 0);
+
+        $this->io->out('12345');
+        $this->io->overwrite('123', 0);
+        $this->io->overwrite('12', 0);
+    }
+
+    /**
+     * Test overwriting content with longer content
+     *
+     * @return void
+     */
+    public function testOverwriteWithLongerContent()
+    {
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with('1')
+            ->will($this->returnValue(1));
+
+        // Backspaces
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(str_repeat("\x08", 1), 0)
+            ->will($this->returnValue(1));
+
+        $this->out->expects($this->at(2))
+            ->method('write')
+            ->with('123', 0)
+            ->will($this->returnValue(3));
+
+        // Backspaces
+        $this->out->expects($this->at(3))
+            ->method('write')
+            ->with(str_repeat("\x08", 3), 0)
+            ->will($this->returnValue(3));
+
+        $this->out->expects($this->at(4))
+            ->method('write')
+            ->with('12345', 0)
+            ->will($this->returnValue(5));
+
+        $this->io->out('1');
+        $this->io->overwrite('123', 0);
+        $this->io->overwrite('12345', 0);
     }
 
     /**
@@ -372,7 +482,7 @@ class ConsoleIoTest extends TestCase
 
         $this->assertNotEmpty(Log::engine('stderr'));
         $engine = Log::engine('stdout');
-        $this->assertEquals(['notice', 'info', 'debug'], $engine->config('levels'));
+        $this->assertEquals(['notice', 'info', 'debug'], $engine->getConfig('levels'));
     }
 
     /**
@@ -401,5 +511,228 @@ class ConsoleIoTest extends TestCase
         $helper = $this->io->helper('simple');
         $this->assertInstanceOf('Cake\Console\Helper', $helper);
         $helper->output(['well', 'ish']);
+    }
+
+    /**
+     * Provider for output helpers
+     *
+     * @return array
+     */
+    public function outHelperProvider()
+    {
+        return [['info'], ['success']];
+    }
+
+    /**
+     * Provider for err helpers
+     *
+     * @return array
+     */
+    public function errHelperProvider()
+    {
+        return [['warning'], ['error']];
+    }
+
+    /**
+     * test out helper methods
+     *
+     * @dataProvider outHelperProvider
+     * @return void
+     */
+    public function testOutHelpers($method)
+    {
+        $this->out->expects($this->at(0))
+            ->method('write')
+            ->with("<{$method}>Just a test</{$method}>", 1);
+
+        $this->out->expects($this->at(1))
+            ->method('write')
+            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+
+        $this->io->{$method}('Just a test');
+        $this->io->{$method}(['Just', 'a test']);
+    }
+
+    /**
+     * test err helper methods
+     *
+     * @dataProvider errHelperProvider
+     * @return void
+     */
+    public function testErrHelpers($method)
+    {
+        $this->err->expects($this->at(0))
+            ->method('write')
+            ->with("<{$method}>Just a test</{$method}>", 1);
+
+        $this->err->expects($this->at(1))
+            ->method('write')
+            ->with(["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1);
+
+        $this->io->{$method}('Just a test');
+        $this->io->{$method}(['Just', 'a test']);
+    }
+
+    /**
+     * Test that createFile
+     *
+     * @return void
+     */
+    public function testCreateFileSuccess()
+    {
+        $this->err->expects($this->never())
+            ->method('write');
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        $contents = 'some content';
+        $result = $this->io->createFile($file, $contents);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, $contents);
+    }
+
+    public function testCreateFileDirectoryCreation()
+    {
+        $this->err->expects($this->never())
+            ->method('write');
+
+        $directory = TMP . 'shell_test';
+        $this->assertFileNotExists($directory, 'Directory should not exist before createFile');
+
+        $path = $directory . DS . 'create.txt';
+        $contents = 'some content';
+        $result = $this->io->createFile($path, $contents);
+
+        $this->assertTrue($result, 'File should create');
+        $this->assertFileExists($path);
+        $this->assertStringEqualsFile($path, $contents);
+    }
+
+    /**
+     * Test that createFile with permissions error.
+     *
+     * @return void
+     */
+    public function testCreateFilePermissionsError()
+    {
+        $this->skipIf(DS === '\\', 'Cant perform operations using permissions on windows.');
+
+        $path = TMP . 'shell_test';
+        $file = $path . DS . 'no_perms';
+
+        if (!is_dir($path)) {
+            mkdir($path);
+        }
+        chmod($path, 0444);
+
+        $this->io->createFile($file, 'testing');
+        $this->assertFileNotExists($file);
+
+        chmod($path, 0744);
+        rmdir($path);
+    }
+
+    /**
+     * Test that `q` raises an error.
+     *
+     * @expectedException \Cake\Console\Exception\StopException
+     * @return void
+     */
+    public function testCreateFileOverwriteQuit()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        touch($file);
+
+        $this->in->expects($this->once())
+            ->method('read')
+            ->will($this->returnValue('q'));
+
+        $this->io->createFile($file, 'some content');
+    }
+
+    /**
+     * Test that `n` raises an error.
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteNo()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        file_put_contents($file, 'original');
+        touch($file);
+
+        $this->in->expects($this->once())
+            ->method('read')
+            ->will($this->returnValue('n'));
+
+        $contents = 'new content';
+        $result = $this->io->createFile($file, $contents);
+
+        $this->assertFalse($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, 'original');
+    }
+
+    /**
+     * Test the forceOverwrite parameter
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteParam()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        file_put_contents($file, 'original');
+        touch($file);
+
+        $contents = 'new content';
+        $result = $this->io->createFile($file, $contents, true);
+
+        $this->assertTrue($result);
+        $this->assertFileExists($file);
+        $this->assertStringEqualsFile($file, $contents);
+    }
+
+    /**
+     * Test the `a` response
+     *
+     * @return void
+     */
+    public function testCreateFileOverwriteAll()
+    {
+        $path = TMP . 'shell_test';
+        mkdir($path);
+
+        $file = $path . DS . 'file1.php';
+        file_put_contents($file, 'original');
+        touch($file);
+
+        $this->in->expects($this->once())
+            ->method('read')
+            ->will($this->returnValue('a'));
+
+        $this->io->createFile($file, 'new content');
+        $this->assertStringEqualsFile($file, 'new content');
+
+        $this->io->createFile($file, 'newer content');
+        $this->assertStringEqualsFile($file, 'newer content');
+
+        $this->io->createFile($file, 'newest content', false);
+        $this->assertStringEqualsFile(
+            $file,
+            'newest content',
+            'overwrite state replaces parameter'
+        );
     }
 }

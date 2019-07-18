@@ -1,27 +1,25 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\TaskRegistry;
-use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TaskRegistryTest
- *
+ * TaskRegistryTest
  */
 class TaskRegistryTest extends TestCase
 {
@@ -34,7 +32,9 @@ class TaskRegistryTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $shell = $this->getMock('Cake\Console\Shell', [], [], '', false);
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->Tasks = new TaskRegistry($shell);
     }
 
@@ -67,11 +67,11 @@ class TaskRegistryTest extends TestCase
     /**
      * test missingtask exception
      *
-     * @expectedException \Cake\Console\Exception\MissingTaskException
      * @return void
      */
     public function testLoadMissingTask()
     {
+        $this->expectException(\Cake\Console\Exception\MissingTaskException::class);
         $this->Tasks->load('ThisTaskShouldAlwaysBeMissing');
     }
 
@@ -82,15 +82,19 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadPluginTask()
     {
-        $dispatcher = $this->getMock('Cake\Console\ShellDispatcher', [], [], '', false);
-        $shell = $this->getMock('Cake\Console\Shell', [], [], '', false);
-        Plugin::load('TestPlugin');
+        $dispatcher = $this->getMockBuilder('Cake\Console\ShellDispatcher')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $shell = $this->getMockBuilder('Cake\Console\Shell')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->loadPlugins(['TestPlugin']);
         $this->Tasks = new TaskRegistry($shell, $dispatcher);
 
         $result = $this->Tasks->load('TestPlugin.OtherTask');
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $result, 'Task class is wrong.');
         $this->assertInstanceOf('TestPlugin\Shell\Task\OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -100,7 +104,7 @@ class TaskRegistryTest extends TestCase
      */
     public function testLoadWithAlias()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Tasks->load('CommandAliased', ['className' => 'Command']);
         $this->assertInstanceOf('Cake\Shell\Task\CommandTask', $result);
@@ -115,5 +119,6 @@ class TaskRegistryTest extends TestCase
 
         $result = $this->Tasks->loaded();
         $this->assertEquals(['CommandAliased', 'SomeTask'], $result, 'loaded() results are wrong.');
+        $this->clearPlugins();
     }
 }

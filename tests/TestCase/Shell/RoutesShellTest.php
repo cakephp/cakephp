@@ -1,30 +1,27 @@
 <?php
 /**
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Shell;
 
-use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOutput;
+use Cake\Console\Shell;
 use Cake\Routing\Router;
-use Cake\Shell\RoutesShell;
-use Cake\TestSuite\TestCase;
+use Cake\TestSuite\ConsoleIntegrationTestCase;
 
 /**
- * Class RoutesShellTest
- *
+ * RoutesShellTest
  */
-class RoutesShellTest extends TestCase
+class RoutesShellTest extends ConsoleIntegrationTestCase
 {
 
     /**
@@ -35,14 +32,6 @@ class RoutesShellTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', ['helper', 'out', 'err']);
-        $this->table = $this->getMock('Cake\Shell\Helper\TableHelper', [], [$this->io]);
-        $this->io->expects($this->any())
-            ->method('helper')
-            ->with('table')
-            ->will($this->returnValue($this->table));
-
-        $this->shell = new RoutesShell($this->io);
         Router::connect('/articles/:action/*', ['controller' => 'Articles']);
         Router::connect('/bake/:controller/:action', ['plugin' => 'Bake']);
         Router::connect('/tests/:action/*', ['controller' => 'Tests'], ['_name' => 'testName']);
@@ -57,7 +46,6 @@ class RoutesShellTest extends TestCase
     {
         parent::tearDown();
         Router::reload();
-        unset($this->io, $this->shell);
     }
 
     /**
@@ -67,29 +55,28 @@ class RoutesShellTest extends TestCase
      */
     public function testMain()
     {
-        $this->table->expects($this->once())
-            ->method('output')
-            ->with(
-                $this->logicalAnd(
-                    $this->contains(['Route name', 'URI template', 'Defaults']),
-                    $this->contains([
-                        'articles:_action',
-                        '/articles/:action/*',
-                        '{"controller":"Articles","action":"index","plugin":null}'
-                    ]),
-                    $this->contains([
-                        'bake._controller:_action',
-                        '/bake/:controller/:action',
-                        '{"plugin":"Bake","action":"index"}',
-                    ]),
-                    $this->contains([
-                        'testName',
-                        '/tests/:action/*',
-                        '{"controller":"Tests","action":"index","plugin":null}'
-                    ])
-                )
-            );
-        $this->shell->main();
+        $this->exec('routes');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>Route name</info>',
+            '<info>URI template</info>',
+            '<info>Defaults</info>'
+        ]);
+        $this->assertOutputContainsRow([
+            'articles:_action',
+            '/articles/:action/*',
+            '{"action":"index","controller":"Articles","plugin":null}'
+        ]);
+        $this->assertOutputContainsRow([
+            'bake._controller:_action',
+            '/bake/:controller/:action',
+            '{"action":"index","plugin":"Bake"}'
+        ]);
+        $this->assertOutputContainsRow([
+            'testName',
+            '/tests/:action/*',
+            '{"action":"index","controller":"Tests","plugin":null}'
+        ]);
     }
 
     /**
@@ -99,19 +86,18 @@ class RoutesShellTest extends TestCase
      */
     public function testCheck()
     {
-        $this->table->expects($this->once())
-            ->method('output')
-            ->with(
-                $this->logicalAnd(
-                    $this->contains(['Route name', 'URI template', 'Defaults']),
-                    $this->contains([
-                        'articles:_action',
-                        '/articles/index',
-                        '{"action":"index","pass":[],"controller":"Articles","plugin":null}'
-                    ])
-                )
-            );
-        $this->shell->check('/articles/index');
+        $this->exec('routes check /articles/check');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>Route name</info>',
+            '<info>URI template</info>',
+            '<info>Defaults</info>'
+        ]);
+        $this->assertOutputContainsRow([
+            'articles:_action',
+            '/articles/check',
+            '{"action":"check","controller":"Articles","pass":[],"plugin":null}'
+        ]);
     }
 
     /**
@@ -121,19 +107,18 @@ class RoutesShellTest extends TestCase
      */
     public function testCheckWithNamedRoute()
     {
-        $this->table->expects($this->once())
-            ->method('output')
-            ->with(
-                $this->logicalAnd(
-                    $this->contains(['Route name', 'URI template', 'Defaults']),
-                    $this->contains([
-                        'testName',
-                        '/tests/index',
-                        '{"action":"index","pass":[],"controller":"Tests","plugin":null}'
-                    ])
-                )
-            );
-        $this->shell->check('/tests/index');
+        $this->exec('routes check /tests/index');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            '<info>Route name</info>',
+            '<info>URI template</info>',
+            '<info>Defaults</info>'
+        ]);
+        $this->assertOutputContainsRow([
+            'testName',
+            '/tests/index',
+            '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}'
+        ]);
     }
 
     /**
@@ -143,10 +128,9 @@ class RoutesShellTest extends TestCase
      */
     public function testCheckNotFound()
     {
-        $this->io->expects($this->at(0))
-            ->method('err')
-            ->with($this->stringContains('did not match'));
-        $this->shell->check('/nope');
+        $this->exec('routes check /nope');
+        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('did not match');
     }
 
     /**
@@ -154,22 +138,37 @@ class RoutesShellTest extends TestCase
      *
      * @return void
      */
-    public function testGenerate()
+    public function testGenerateNoPassArgs()
     {
-        $this->io->expects($this->never())
-            ->method('err');
-        $this->io->expects($this->at(0))
-            ->method('out')
-            ->with($this->stringContains('> /articles/index'));
-        $this->io->expects($this->at(2))
-            ->method('out')
-            ->with($this->stringContains('> /articles/view/2/3'));
+        $this->exec('routes generate controller:Articles action:index');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('> /articles/index');
+        $this->assertErrorEmpty();
+    }
 
-        $this->shell->args = ['controller:Articles', 'action:index'];
-        $this->shell->generate();
+    /**
+     * Test generating URLs with passed arguments
+     *
+     * @return void
+     */
+    public function testGeneratePassedArguments()
+    {
+        $this->exec('routes generate controller:Articles action:view 2 3');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('> /articles/view/2/3');
+        $this->assertErrorEmpty();
+    }
 
-        $this->shell->args = ['controller:Articles', 'action:view', '2', '3'];
-        $this->shell->generate();
+    /**
+     * Test generating URLs with bool params
+     *
+     * @return void
+     */
+    public function testGenerateBoolParams()
+    {
+        $this->exec('routes generate controller:Articles action:index _ssl:true _host:example.com');
+        $this->assertExitCode(Shell::CODE_SUCCESS);
+        $this->assertOutputContains('> https://example.com/articles/index');
     }
 
     /**
@@ -179,10 +178,8 @@ class RoutesShellTest extends TestCase
      */
     public function testGenerateMissing()
     {
-        $this->io->expects($this->at(0))
-            ->method('err')
-            ->with($this->stringContains('do not match'));
-        $this->shell->args = ['controller:Derp'];
-        $this->shell->generate();
+        $this->exec('routes generate controller:Derp');
+        $this->assertExitCode(Shell::CODE_ERROR);
+        $this->assertErrorContains('do not match');
     }
 }

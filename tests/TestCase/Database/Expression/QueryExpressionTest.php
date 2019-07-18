@@ -1,20 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.6
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\CaseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
@@ -24,6 +23,63 @@ use Cake\TestSuite\TestCase;
  */
 class QueryExpressionTest extends TestCase
 {
+    /**
+     * Test setConjunction()/getConjunction() works.
+     *
+     * @return
+     */
+    public function testConjunction()
+    {
+        $expr = new QueryExpression(['1', '2']);
+        $binder = new ValueBinder();
+
+        $this->assertSame($expr, $expr->setConjunction('+'));
+        $this->assertSame('+', $expr->getConjunction());
+
+        $result = $expr->sql($binder);
+        $this->assertEquals('(1 + 2)', $result);
+    }
+
+    /**
+     * Test tieWith() works.
+     *
+     * @group deprecated
+     * @return
+     */
+    public function testTieWith()
+    {
+        $this->deprecated(function () {
+            $expr = new QueryExpression(['1', '2']);
+            $binder = new ValueBinder();
+
+            $this->assertSame($expr, $expr->tieWith('+'));
+            $this->assertSame('+', $expr->tieWith());
+
+            $result = $expr->sql($binder);
+            $this->assertEquals('(1 + 2)', $result);
+        });
+    }
+
+    /**
+     * Test type() works.
+     *
+     * @group deprecated
+     * @return
+     */
+    public function testType()
+    {
+        $this->deprecated(function () {
+            $expr = new QueryExpression(['1', '2']);
+            $binder = new ValueBinder();
+
+            $this->assertSame($expr, $expr->type('+'));
+            $this->assertSame('+', $expr->type());
+
+            $result = $expr->sql($binder);
+            $this->assertEquals('(1 + 2)', $result);
+        });
+    }
+
     /**
      * Test and() and or() calls work transparently
      *
@@ -132,5 +188,57 @@ class QueryExpressionTest extends TestCase
 
         $expr->add(new QueryExpression('1 = 1'));
         $this->assertTrue($expr->hasNestedExpression());
+    }
+
+    /**
+     * Returns the list of specific comparison methods
+     *
+     * @return void
+     */
+    public function methodsProvider()
+    {
+        return [
+            ['eq'], ['notEq'], ['gt'], ['lt'], ['gte'], ['lte'], ['like'],
+            ['notLike'], ['in'], ['notIn']
+        ];
+    }
+
+    /**
+     * Tests that the query expression uses the type map when the
+     * specific comparison functions are used.
+     *
+     * @dataProvider methodsProvider
+     * @return void
+     */
+    public function testTypeMapUsage($method)
+    {
+        $expr = new QueryExpression([], ['created' => 'date']);
+        $expr->{$method}('created', 'foo');
+
+        $binder = new ValueBinder();
+        $expr->sql($binder);
+        $bindings = $binder->bindings();
+        $type = current($bindings)['type'];
+
+        $this->assertEquals('date', $type);
+    }
+
+    /**
+     * Tests that creating query expressions with either the
+     * array notation or using the combinators will produce a
+     * zero-count expression object.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/12081
+     * @return void
+     */
+    public function testEmptyOr()
+    {
+        $expr = new QueryExpression();
+        $expr = $expr->or_([]);
+        $expr = $expr->or_([]);
+        $this->assertCount(0, $expr);
+
+        $expr = new QueryExpression(['OR' => []]);
+        $this->assertCount(0, $expr);
     }
 }

@@ -1,27 +1,31 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource\Exception;
 
-use RuntimeException;
+use Cake\Core\Exception\Exception;
 
 /**
- * Exception raised when a particular record was not found
- *
+ * Exception raised when the provided primary key does not match the table primary key
  */
-class InvalidPrimaryKeyException extends RuntimeException
+class InvalidPrimaryKeyException extends Exception
 {
+
+    /**
+     * {@inheritDoc}
+     */
+    protected $_defaultCode = 404;
 
     /**
      * Constructor.
@@ -30,7 +34,7 @@ class InvalidPrimaryKeyException extends RuntimeException
      * @param int $code The code of the error, is also the HTTP status code for the error.
      * @param \Exception|null $previous the previous exception.
      */
-    public function __construct($message, $code = 404, $previous = null)
+    public function __construct($message, $code = null, $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

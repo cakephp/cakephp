@@ -1,23 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
 
 use Cake\Core\Configure;
-use Cake\Event\EventManager;
-use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Xml;
 
@@ -66,14 +63,14 @@ class XmlView extends SerializedView
      *
      * @var string
      */
-    public $layoutPath = 'xml';
+    protected $layoutPath = 'xml';
 
     /**
      * XML views are located in the 'xml' sub directory for controllers' views.
      *
      * @var string
      */
-    public $subDir = 'xml';
+    protected $subDir = 'xml';
 
     /**
      * Response type.
@@ -144,6 +141,7 @@ class XmlView extends SerializedView
         if (isset($options['return']) && strtolower($options['return']) === 'domdocument') {
             return Xml::fromArray($data, $options)->saveXML();
         }
+
         return Xml::fromArray($data, $options)->asXML();
     }
 }

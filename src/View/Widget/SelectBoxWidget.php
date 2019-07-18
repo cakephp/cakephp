@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Widget;
 
@@ -126,6 +126,7 @@ class SelectBoxWidget extends BasicWidget
             unset($data['multiple']);
         }
         $attrs = $this->_templates->formatAttributes($data);
+
         return $this->_templates->format($template, [
             'name' => $name,
             'templateVars' => $data['templateVars'],
@@ -161,6 +162,7 @@ class SelectBoxWidget extends BasicWidget
             $disabled = $data['disabled'];
         }
         $templateVars = $data['templateVars'];
+
         return $this->_renderOptions($options, $disabled, $selected, $templateVars, $data['escape']);
     }
 
@@ -181,6 +183,7 @@ class SelectBoxWidget extends BasicWidget
         if (is_array($value)) {
             return $value;
         }
+
         return [];
     }
 
@@ -270,6 +273,7 @@ class SelectBoxWidget extends BasicWidget
                 'attrs' => $this->_templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }
+
         return $out;
     }
 
@@ -287,9 +291,12 @@ class SelectBoxWidget extends BasicWidget
         }
         $isArray = is_array($selected);
         if (!$isArray) {
+            $selected = $selected === false ? '0' : $selected;
+
             return (string)$key === (string)$selected;
         }
         $strict = !is_numeric($key);
+
         return in_array((string)$key, $selected, $strict);
     }
 
@@ -306,6 +313,7 @@ class SelectBoxWidget extends BasicWidget
             return false;
         }
         $strict = !is_numeric($key);
+
         return in_array((string)$key, $disabled, $strict);
     }
 }

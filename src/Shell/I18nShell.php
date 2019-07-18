@@ -1,20 +1,21 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Shell;
 
 use Cake\Console\Shell;
+use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\Utility\Inflector;
 use DirectoryIterator;
@@ -22,6 +23,7 @@ use DirectoryIterator;
 /**
  * Shell for I18N management.
  *
+ * @property \Cake\Shell\Task\ExtractTask $Extract
  */
 class I18nShell extends Shell
 {
@@ -34,9 +36,17 @@ class I18nShell extends Shell
     public $tasks = ['Extract'];
 
     /**
+     * @var string[]
+     */
+    protected $_paths;
+
+    /**
      * Override main() for help message hook
      *
      * @return void
+     * @throws \InvalidArgumentException
+     * @throws \Cake\Core\Exception\MissingPluginException
+     * @throws \Cake\Console\Exception\StopException
      */
     public function main()
     {
@@ -60,6 +70,7 @@ class I18nShell extends Shell
                 break;
             case 'q':
                 $this->_stop();
+
                 return;
             default:
                 $this->out('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.');
@@ -72,7 +83,8 @@ class I18nShell extends Shell
      * Inits PO file from POT file.
      *
      * @param string|null $language Language code to use.
-     * @return int|null
+     * @return void
+     * @throws \Cake\Console\Exception\StopException
      */
     public function init($language = null)
     {
@@ -80,18 +92,18 @@ class I18nShell extends Shell
             $language = $this->in('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
-            return $this->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
+            $this->abort('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
         }
 
-        $this->_paths = [APP];
+        $this->_paths = App::path('Locale');
         if ($this->param('plugin')) {
             $plugin = Inflector::camelize($this->param('plugin'));
-            $this->_paths = [Plugin::classPath($plugin)];
+            $this->_paths = App::path('Locale', $plugin);
         }
 
-        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DS) . DS . 'Locale');
-        $sourceFolder = rtrim($response, DS) . DS;
-        $targetFolder = $sourceFolder . $language . DS;
+        $response = $this->in('What folder?', null, rtrim($this->_paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
+        $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {
             mkdir($targetFolder, 0775, true);
         }
@@ -104,7 +116,7 @@ class I18nShell extends Shell
             }
             $filename = $fileinfo->getFilename();
             $newFilename = $fileinfo->getBasename('.pot');
-            $newFilename = $newFilename . '.po';
+            $newFilename .= '.po';
 
             $this->createFile($targetFolder . $newFilename, file_get_contents($sourceFolder . $filename));
             $count++;
@@ -117,6 +129,7 @@ class I18nShell extends Shell
      * Gets the option parser instance and configures it.
      *
      * @return \Cake\Console\ConsoleOptionParser
+     * @throws \Cake\Console\Exception\ConsoleException
      */
     public function getOptionParser()
     {
@@ -140,7 +153,7 @@ class I18nShell extends Shell
             ]
         ];
 
-        $parser->description(
+        $parser->setDescription(
             'I18n Shell generates .pot files(s) with translations.'
         )->addSubcommand('extract', [
             'help' => 'Extract the po translations from your application',

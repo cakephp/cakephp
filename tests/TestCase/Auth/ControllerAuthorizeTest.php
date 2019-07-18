@@ -2,28 +2,28 @@
 /**
  * ControllerAuthorizeTest file
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\ControllerAuthorize;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
-use Cake\Network\Request;
+use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class ControllerAuthorizeTest
- *
+ * ControllerAuthorizeTest
  */
 class ControllerAuthorizeTest extends TestCase
 {
@@ -36,8 +36,11 @@ class ControllerAuthorizeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->controller = $this->getMock('Cake\Controller\Controller', ['isAuthorized'], [], '', false);
-        $this->components = $this->getMock('Cake\Controller\ComponentRegistry');
+        $this->controller = $this->getMockBuilder(Controller::class)
+            ->setMethods(['isAuthorized'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->components = $this->getMockBuilder(ComponentRegistry::class)->getMock();
         $this->components->expects($this->any())
             ->method('getController')
             ->will($this->returnValue($this->controller));
@@ -46,11 +49,11 @@ class ControllerAuthorizeTest extends TestCase
     }
 
     /**
-     * @expectedException \Cake\Core\Exception\Exception
      * @return void
      */
     public function testControllerErrorOnMissingMethod()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
         $this->auth->controller(new Controller());
     }
 
@@ -62,7 +65,7 @@ class ControllerAuthorizeTest extends TestCase
     public function testAuthorizeFailure()
     {
         $user = [];
-        $request = new Request('/posts/index');
+        $request = new ServerRequest('/posts/index');
         $this->assertFalse($this->auth->authorize($user, $request));
     }
 
@@ -74,7 +77,7 @@ class ControllerAuthorizeTest extends TestCase
     public function testAuthorizeSuccess()
     {
         $user = ['User' => ['username' => 'mark']];
-        $request = new Request('/posts/index');
+        $request = new ServerRequest('/posts/index');
 
         $this->controller->expects($this->once())
             ->method('isAuthorized')

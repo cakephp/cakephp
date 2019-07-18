@@ -1,23 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Collection;
 
 use ArrayIterator;
 use InvalidArgumentException;
 use IteratorIterator;
-use LogicException;
 use Serializable;
 use Traversable;
 
@@ -34,7 +33,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
      * Constructor. You can provide an array or any traversable object
      *
      * @param array|\Traversable $items Items.
-     * @throws InvalidArgumentException If passed incorrect type for items.
+     * @throws \InvalidArgumentException If passed incorrect type for items.
      */
     public function __construct($items)
     {
@@ -73,17 +72,29 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     }
 
     /**
-     * Throws an exception.
+     * {@inheritDoc}
      *
-     * Issuing a count on a Collection can have many side effects, some making the
-     * Collection unusable after the count operation.
-     *
-     * @return void
-     * @throws \LogicException
+     * @return int
      */
     public function count()
     {
-        throw new LogicException('You cannot issue a count on a Collection.');
+        $traversable = $this->optimizeUnwrap();
+
+        if (is_array($traversable)) {
+            return count($traversable);
+        }
+
+        return iterator_count($traversable);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return int
+     */
+    public function countKeys()
+    {
+        return count($this->toArray());
     }
 
     /**
@@ -95,7 +106,7 @@ class Collection extends IteratorIterator implements CollectionInterface, Serial
     public function __debugInfo()
     {
         return [
-            'count' => iterator_count($this),
+            'count' => $this->count(),
         ];
     }
 }

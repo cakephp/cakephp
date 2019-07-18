@@ -1,20 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Dialect;
 
-use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Schema\SqliteSchema;
 use Cake\Database\SqlDialectTrait;
@@ -32,7 +31,7 @@ trait SqliteDialectTrait
     use TupleComparisonTranslatorTrait;
 
     /**
-     *  String used to start a database identifier quoting to make it safe
+     * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
@@ -76,6 +75,7 @@ trait SqliteDialectTrait
     protected function _expressionTranslators()
     {
         $namespace = 'Cake\Database\Expression';
+
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression',
             $namespace . '\TupleComparison' => '_transformTupleComparison'
@@ -92,32 +92,37 @@ trait SqliteDialectTrait
      */
     protected function _transformFunctionExpression(FunctionExpression $expression)
     {
-        switch ($expression->name()) {
+        switch ($expression->getName()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 || exp2
-                $expression->name('')->type(' ||');
+                $expression->setName('')->setConjunction(' ||');
                 break;
             case 'DATEDIFF':
                 $expression
-                    ->name('ROUND')
-                    ->type('-')
+                    ->setName('ROUND')
+                    ->setConjunction('-')
                     ->iterateParts(function ($p) {
                         return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
                     });
                 break;
             case 'NOW':
-                $expression->name('DATETIME')->add(["'now'" => 'literal']);
+                $expression->setName('DATETIME')->add(["'now'" => 'literal']);
+                break;
+            case 'RAND':
+                $expression
+                    ->setName('ABS')
+                    ->add(["RANDOM() % 1" => 'literal'], [], true);
                 break;
             case 'CURRENT_DATE':
-                $expression->name('DATE')->add(["'now'" => 'literal']);
+                $expression->setName('DATE')->add(["'now'" => 'literal']);
                 break;
             case 'CURRENT_TIME':
-                $expression->name('TIME')->add(["'now'" => 'literal']);
+                $expression->setName('TIME')->add(["'now'" => 'literal']);
                 break;
             case 'EXTRACT':
                 $expression
-                    ->name('STRFTIME')
-                    ->type(' ,')
+                    ->setName('STRFTIME')
+                    ->setConjunction(' ,')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 0) {
                             $value = rtrim(strtolower($p), 's');
@@ -125,81 +130,30 @@ trait SqliteDialectTrait
                                 $p = ['value' => '%' . $this->_dateParts[$value], 'type' => null];
                             }
                         }
+
                         return $p;
                     });
                 break;
             case 'DATE_ADD':
                 $expression
-                    ->name('DATE')
-                    ->type(',')
+                    ->setName('DATE')
+                    ->setConjunction(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
                             $p = ['value' => $p, 'type' => null];
                         }
+
                         return $p;
                     });
                 break;
             case 'DAYOFWEEK':
                 $expression
-                    ->name('STRFTIME')
-                    ->type(' ')
+                    ->setName('STRFTIME')
+                    ->setConjunction(' ')
                     ->add(["'%w', " => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
                 break;
         }
-    }
-
-    /**
-     * Transforms an insert query that is meant to insert multiple rows at a time,
-     * otherwise it leaves the query untouched.
-     *
-     * The way SQLite works with multi insert is by having multiple select statements
-     * joined with UNION.
-     *
-     * @param \Cake\Database\Query $query The query to translate
-     * @return \Cake\Database\Query
-     */
-    protected function _insertQueryTranslator($query)
-    {
-        $v = $query->clause('values');
-        if (count($v->values()) === 1 || $v->query()) {
-            return $query;
-        }
-
-        $newQuery = $query->connection()->newQuery();
-        $cols = $v->columns();
-        $placeholder = 0;
-        $replaceQuery = false;
-
-        foreach ($v->values() as $k => $val) {
-            $fillLength = count($cols) - count($val);
-            if ($fillLength > 0) {
-                $val = array_merge($val, array_fill(0, $fillLength, null));
-            }
-
-            foreach ($val as $col => $attr) {
-                if (!($attr instanceof ExpressionInterface)) {
-                    $val[$col] = sprintf(':c%d', $placeholder);
-                    $placeholder++;
-                }
-            }
-
-            $select = array_combine($cols, $val);
-            if ($k === 0) {
-                $replaceQuery = true;
-                $newQuery->select($select);
-                continue;
-            }
-
-            $q = $newQuery->connection()->newQuery();
-            $newQuery->unionAll($q->select($select));
-        }
-
-        if ($replaceQuery) {
-            $v->query($newQuery);
-        }
-
-        return $query;
     }
 
     /**
@@ -215,6 +169,7 @@ trait SqliteDialectTrait
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new SqliteSchema($this);
         }
+
         return $this->_schemaDialect;
     }
 

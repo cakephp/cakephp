@@ -1,32 +1,28 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Error;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Error;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Error\ErrorHandler;
-use Cake\Error\ExceptionRenderer;
 use Cake\Error\PHP7ErrorException;
+use Cake\Http\Exception\ForbiddenException;
+use Cake\Http\Exception\NotFoundException;
+use Cake\Http\ServerRequest;
 use Cake\Log\Log;
-use Cake\Network\Exception\ForbiddenException;
-use Cake\Network\Exception\NotFoundException;
-use Cake\Network\Request;
-use Cake\Network\Response;
 use Cake\Routing\Exception\MissingControllerException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -41,7 +37,7 @@ class TestErrorHandler extends ErrorHandler
     /**
      * Access the response used.
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
      */
     public $response;
 
@@ -75,6 +71,12 @@ class ErrorHandlerTest extends TestCase
     protected $_restoreError = false;
 
     /**
+     * error level property
+     *
+     */
+    private static $errorLevel;
+
+    /**
      * setup create a request object to get out of router later.
      *
      * @return void
@@ -84,17 +86,20 @@ class ErrorHandlerTest extends TestCase
         parent::setUp();
         Router::reload();
 
-        $request = new Request();
-        $request->base = '';
-        $request->env('HTTP_REFERER', '/referer');
+        $request = new ServerRequest([
+            'base' => '',
+            'environment' => [
+                'HTTP_REFERER' => '/referer'
+            ]
+        ]);
 
         Router::setRequestInfo($request);
         Configure::write('debug', true);
 
-        $this->_logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->_logger = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
 
         Log::reset();
-        Log::config('error_test', [
+        Log::setConfig('error_test', [
             'engine' => $this->_logger
         ]);
     }
@@ -108,10 +113,23 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        $this->clearPlugins();
         if ($this->_restoreError) {
             restore_error_handler();
             restore_exception_handler();
         }
+        error_reporting(self::$errorLevel);
+    }
+
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        self::$errorLevel = error_reporting();
     }
 
     /**
@@ -137,7 +155,7 @@ class ErrorHandlerTest extends TestCase
     /**
      * provides errors for mapping tests.
      *
-     * @return void
+     * @return array
      */
     public static function errorProvider()
     {
@@ -182,7 +200,7 @@ class ErrorHandlerTest extends TestCase
         @include 'invalid.file';
         //@codingStandardsIgnoreEnd
         $result = ob_get_clean();
-        $this->assertTrue(empty($result));
+        $this->assertEmpty($result);
     }
 
     /**
@@ -226,7 +244,9 @@ class ErrorHandlerTest extends TestCase
                 $this->logicalAnd(
                     $this->stringContains('Notice (8): Undefined variable: out in '),
                     $this->stringContains('Trace:'),
-                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
+                    $this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()'),
+                    $this->stringContains('Request URL:'),
+                    $this->stringContains('Referer URL:')
                 )
             );
 
@@ -244,7 +264,7 @@ class ErrorHandlerTest extends TestCase
         $errorHandler = new TestErrorHandler();
 
         $errorHandler->handleException($error);
-        $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**
@@ -264,19 +284,19 @@ class ErrorHandlerTest extends TestCase
         $this->_logger->expects($this->at(0))
             ->method('log')
             ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
             ));
 
         $this->_logger->expects($this->at(1))
             ->method('log')
             ->with('error', $this->logicalAnd(
-                $this->stringContains('[Cake\Network\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
                 $this->logicalNot($this->stringContains('ErrorHandlerTest->testHandleExceptionLog'))
             ));
 
         $errorHandler->handleException($error);
-        $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $errorHandler = new TestErrorHandler([
             'log' => true,
@@ -327,6 +347,32 @@ class ErrorHandlerTest extends TestCase
     }
 
     /**
+     * test logging attributes with previous exception
+     *
+     * @return void
+     */
+    public function testHandleExceptionLogPrevious()
+    {
+        $errorHandler = new TestErrorHandler([
+            'log' => true,
+            'trace' => true,
+        ]);
+
+        $previous = new RecordNotFoundException('Previous logged');
+        $error = new NotFoundException('Kaboom!', null, $previous);
+
+        $this->_logger->expects($this->at(0))
+            ->method('log')
+            ->with('error', $this->logicalAnd(
+                $this->stringContains('[Cake\Http\Exception\NotFoundException] Kaboom!'),
+                $this->stringContains('Caused by: [Cake\Datasource\Exception\RecordNotFoundException] Previous logged'),
+                $this->stringContains('ErrorHandlerTest->testHandleExceptionLogPrevious')
+            ));
+
+        $errorHandler->handleException($error);
+    }
+
+    /**
      * test handleException generating log.
      *
      * @return void
@@ -340,19 +386,19 @@ class ErrorHandlerTest extends TestCase
             ->method('log')
             ->with(
                 'error',
-                $this->stringContains('[Cake\Network\Exception\ForbiddenException] Fooled you!')
+                $this->stringContains('[Cake\Http\Exception\ForbiddenException] Fooled you!')
             );
 
         $errorHandler = new TestErrorHandler([
             'log' => true,
-            'skipLog' => ['Cake\Network\Exception\NotFoundException'],
+            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
         ]);
 
         $errorHandler->handleException($notFound);
-        $this->assertContains('Kaboom!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Kaboom!', (string)$errorHandler->response->getBody(), 'message missing.');
 
         $errorHandler->handleException($forbidden);
-        $this->assertContains('Fooled you!', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Fooled you!', (string)$errorHandler->response->getBody(), 'message missing.');
     }
 
     /**
@@ -362,7 +408,7 @@ class ErrorHandlerTest extends TestCase
      */
     public function testLoadPluginHandler()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $errorHandler = new TestErrorHandler([
             'exceptionRenderer' => 'TestPlugin.TestPluginExceptionRenderer',
         ]);
@@ -388,14 +434,14 @@ class ErrorHandlerTest extends TestCase
         Configure::write('debug', true);
 
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
-        $result = $errorHandler->response->body();
+        $result = (string)$errorHandler->response->getBody();
         $this->assertContains('Something wrong', $result, 'message missing.');
         $this->assertContains(__FILE__, $result, 'filename missing.');
         $this->assertContains((string)$line, $result, 'line missing.');
 
         Configure::write('debug', false);
         $errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
-        $result = $errorHandler->response->body();
+        $result = (string)$errorHandler->response->getBody();
         $this->assertNotContains('Something wrong', $result, 'message must not appear.');
         $this->assertNotContains(__FILE__, $result, 'filename must not appear.');
         $this->assertContains('An Internal Error Has Occurred.', $result);
@@ -435,6 +481,43 @@ class ErrorHandlerTest extends TestCase
         $errorHandler = new TestErrorHandler();
 
         $errorHandler->handleException($error);
-        $this->assertContains('Unexpected variable foo', $errorHandler->response->body(), 'message missing.');
+        $this->assertContains('Unexpected variable foo', (string)$errorHandler->response->getBody(), 'message missing.');
+    }
+
+    /**
+     * Data provider for memory limit changing.
+     *
+     * @return array
+     */
+    public function memoryLimitProvider()
+    {
+        return [
+            // start, adjust, expected
+            ['256M', 4, '262148K'],
+            ['262144K', 4, '262148K'],
+            ['1G', 128, '1048704K'],
+        ];
+    }
+
+    /**
+     * Test increasing the memory limit.
+     *
+     * @dataProvider memoryLimitProvider
+     * @return void
+     */
+    public function testIncreaseMemoryLimit($start, $adjust, $expected)
+    {
+        $initial = ini_get('memory_limit');
+        $this->skipIf(strlen($initial) === 0, 'Cannot read memory limit, and cannot test increasing it.');
+
+        // phpunit.xml often has -1 as memory limit
+        ini_set('memory_limit', $start);
+
+        $errorHandler = new TestErrorHandler();
+        $this->assertNull($errorHandler->increaseMemoryLimit($adjust));
+        $new = ini_get('memory_limit');
+        $this->assertEquals($expected, $new, 'memory limit did not get increased.');
+
+        ini_set('memory_limit', $initial);
     }
 }

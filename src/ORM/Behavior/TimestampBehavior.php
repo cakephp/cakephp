@@ -1,27 +1,30 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Behavior;
 
+use Cake\Database\Type;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\I18n\Time;
 use Cake\ORM\Behavior;
-use Cake\ORM\Entity;
 use DateTime;
 use UnexpectedValueException;
 
+/**
+ * Class TimestampBehavior
+ */
 class TimestampBehavior extends Behavior
 {
 
@@ -58,7 +61,7 @@ class TimestampBehavior extends Behavior
     /**
      * Current timestamp
      *
-     * @var \DateTime
+     * @var \Cake\I18n\Time
      */
     protected $_ts;
 
@@ -74,7 +77,7 @@ class TimestampBehavior extends Behavior
     public function initialize(array $config)
     {
         if (isset($config['events'])) {
-            $this->config('events', $config['events'], false);
+            $this->setConfig('events', $config['events'], false);
         }
     }
 
@@ -84,12 +87,12 @@ class TimestampBehavior extends Behavior
      * @param \Cake\Event\Event $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
      * @throws \UnexpectedValueException if a field's when value is misdefined
-     * @return true (irrespective of the behavior logic, the save will not be prevented)
+     * @return bool Returns true irrespective of the behavior logic, the save will not be prevented.
      * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
     public function handleEvent(Event $event, EntityInterface $entity)
     {
-        $eventName = $event->name();
+        $eventName = $event->getName();
         $events = $this->_config['events'];
 
         $new = $entity->isNew() !== false;
@@ -131,7 +134,7 @@ class TimestampBehavior extends Behavior
      * If an explicit date time is passed, the config option `refreshTimestamp` is
      * automatically set to false.
      *
-     * @param \DateTime $ts Timestamp
+     * @param \DateTime|null $ts Timestamp
      * @param bool $refreshTimestamp If true timestamp is refreshed.
      * @return \Cake\I18n\Time
      */
@@ -173,7 +176,7 @@ class TimestampBehavior extends Behavior
         foreach ($events[$eventName] as $field => $when) {
             if (in_array($when, ['always', 'existing'])) {
                 $return = true;
-                $entity->dirty($field, false);
+                $entity->setDirty($field, false);
                 $this->_updateField($entity, $field, $refresh);
             }
         }
@@ -191,9 +194,29 @@ class TimestampBehavior extends Behavior
      */
     protected function _updateField($entity, $field, $refreshTimestamp)
     {
-        if ($entity->dirty($field)) {
+        if ($entity->isDirty($field)) {
             return;
         }
-        $entity->set($field, $this->timestamp(null, $refreshTimestamp));
+
+        $ts = $this->timestamp(null, $refreshTimestamp);
+
+        $columnType = $this->getTable()->getSchema()->getColumnType($field);
+        if (!$columnType) {
+            return;
+        }
+
+        /** @var \Cake\Database\Type\DateTimeType $type */
+        $type = Type::build($columnType);
+
+        if (!$type instanceof Type\DateTimeType) {
+            deprecationWarning('TimestampBehavior support for column types other than DateTimeType will be removed in 4.0.');
+            $entity->set($field, (string)$ts);
+
+            return;
+        }
+
+        $class = $type->getDateTimeClassName();
+
+        $entity->set($field, new $class($ts));
     }
 }

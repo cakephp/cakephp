@@ -1,29 +1,29 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM;
 
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\EntityTrait;
+use Cake\Datasource\InvalidPropertyInterface;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
  * methods for retrieving and storing properties associated in this row.
  */
-class Entity implements EntityInterface
+class Entity implements EntityInterface, InvalidPropertyInterface
 {
-
     use EntityTrait;
 
     /**
@@ -54,10 +54,9 @@ class Entity implements EntityInterface
             'guard' => false,
             'source' => null
         ];
-        $this->_className = get_class($this);
 
         if (!empty($options['source'])) {
-            $this->source($options['source']);
+            $this->setSource($options['source']);
         }
 
         if ($options['markNew'] !== null) {
@@ -66,6 +65,7 @@ class Entity implements EntityInterface
 
         if (!empty($properties) && $options['markClean'] && !$options['useSetters']) {
             $this->_properties = $properties;
+
             return;
         }
 

@@ -32,7 +32,7 @@ msgstr  "This is a multiline translation\n"
 "This is the third line.\n"
 "This is the forth line. (translated)"
 
-msgid "No Translation needed"
+msgid "No translation needed"
 msgstr ""
 
 msgid "test"

@@ -1,14 +1,14 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Core\Exception;
 
@@ -16,7 +16,6 @@ use RuntimeException;
 
 /**
  * Base class that all CakePHP Exceptions extend.
- *
  */
 class Exception extends RuntimeException
 {
@@ -37,11 +36,18 @@ class Exception extends RuntimeException
     protected $_messageTemplate = '';
 
     /**
-     * Array of headers to be passed to Cake\Network\Response::header()
+     * Array of headers to be passed to Cake\Http\Response::header()
      *
-     * @var array
+     * @var array|null
      */
-    protected $_responseHeaders = null;
+    protected $_responseHeaders;
+
+    /**
+     * Default exception code
+     *
+     * @var int
+     */
+    protected $_defaultCode = 500;
 
     /**
      * Constructor.
@@ -51,11 +57,15 @@ class Exception extends RuntimeException
      *
      * @param string|array $message Either the string of the error message, or an array of attributes
      *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
-     * @param int $code The code of the error, is also the HTTP status code for the error.
-     * @param \Exception $previous the previous exception.
+     * @param int|null $code The code of the error, is also the HTTP status code for the error.
+     * @param \Exception|null $previous the previous exception.
      */
-    public function __construct($message, $code = 500, $previous = null)
+    public function __construct($message = '', $code = null, $previous = null)
     {
+        if ($code === null) {
+            $code = $this->_defaultCode;
+        }
+
         if (is_array($message)) {
             $this->_attributes = $message;
             $message = vsprintf($this->_messageTemplate, $message);
@@ -76,12 +86,12 @@ class Exception extends RuntimeException
     /**
      * Get/set the response header to be used
      *
-     * See also Cake\Network\Response::header()
+     * See also Cake\Http\Response::withHeader()
      *
      * @param string|array|null $header An array of header strings or a single header string
      *  - an associative array of "header name" => "header value"
-     *  - an array of string headers is also accepted
-     * @param string $value The header value.
+     *  - an array of string headers is also accepted (deprecated)
+     * @param string|null $value The header value.
      * @return array
      */
     public function responseHeader($header = null, $value = null)
@@ -90,6 +100,13 @@ class Exception extends RuntimeException
             return $this->_responseHeaders;
         }
         if (is_array($header)) {
+            if (isset($header[0])) {
+                deprecationWarning(
+                    'Passing a list string headers to Exception::responseHeader() is deprecated. ' .
+                    'Use an associative array instead.'
+                );
+            }
+
             return $this->_responseHeaders = $header;
         }
         $this->_responseHeaders = [$header => $value];

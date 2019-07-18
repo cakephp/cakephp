@@ -2,17 +2,17 @@
 /**
  * Send mail using mail() function
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Mailer\Transport;
 
@@ -22,7 +22,6 @@ use Cake\Network\Exception\SocketException;
 
 /**
  * Send mail using mail() function
- *
  */
 class MailTransport extends AbstractTransport
 {
@@ -46,13 +45,17 @@ class MailTransport extends AbstractTransport
             $headers[$key] = str_replace(["\r", "\n"], '', $header);
         }
         $headers = $this->_headersToString($headers, $eol);
-        $subject = str_replace(["\r", "\n"], '', $email->subject());
+        $subject = str_replace(["\r", "\n"], '', $email->getSubject());
         $to = str_replace(["\r", "\n"], '', $to);
 
         $message = implode($eol, $email->message());
 
         $params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
         $this->_mail($to, $subject, $message, $headers, $params);
+
+        $headers .= $eol . 'To: ' . $to;
+        $headers .= $eol . 'Subject: ' . $subject;
+
         return ['headers' => $headers, 'message' => $message];
     }
 

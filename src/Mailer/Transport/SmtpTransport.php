@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Mailer\Transport;
 
@@ -52,9 +52,9 @@ class SmtpTransport extends AbstractTransport
     /**
      * Content of email to return
      *
-     * @var string
+     * @var array
      */
-    protected $_content;
+    protected $_content = [];
 
     /**
      * The response of the last sent SMTP command.
@@ -76,6 +76,18 @@ class SmtpTransport extends AbstractTransport
         } catch (Exception $e) {
             // avoid fatal error on script termination
         }
+    }
+
+    /**
+     * Unserialize handler.
+     *
+     * Ensure that the socket property isn't reinitialized in a broken state.
+     *
+     * @return void
+     */
+    public function __wakeup()
+    {
+        $this->_socket = null;
     }
 
     /**
@@ -222,18 +234,18 @@ class SmtpTransport extends AbstractTransport
         try {
             $this->_smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
-                $this->_smtpSend("STARTTLS", '220');
+                $this->_smtpSend('STARTTLS', '220');
                 $this->_socket->enableCrypto('tls');
                 $this->_smtpSend("EHLO {$host}", '250');
             }
         } catch (SocketException $e) {
             if ($config['tls']) {
-                throw new SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.');
+                throw new SocketException('SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.', null, $e);
             }
             try {
                 $this->_smtpSend("HELO {$host}", '250');
             } catch (SocketException $e2) {
-                throw new SocketException('SMTP server did not accept the connection.');
+                throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }
         }
     }
@@ -252,12 +264,12 @@ class SmtpTransport extends AbstractTransport
                 try {
                     $this->_smtpSend(base64_encode($this->_config['username']), '334');
                 } catch (SocketException $e) {
-                    throw new SocketException('SMTP server did not accept the username.');
+                    throw new SocketException('SMTP server did not accept the username.', null, $e);
                 }
                 try {
                     $this->_smtpSend(base64_encode($this->_config['password']), '235');
                 } catch (SocketException $e) {
-                    throw new SocketException('SMTP server did not accept the password.');
+                    throw new SocketException('SMTP server did not accept the password.', null, $e);
                 }
             } elseif ($replyCode === '504') {
                 throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
@@ -297,10 +309,11 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareFromAddress($email)
     {
-        $from = $email->returnPath();
+        $from = $email->getReturnPath();
         if (empty($from)) {
-            $from = $email->from();
+            $from = $email->getFrom();
         }
+
         return $from;
     }
 
@@ -312,9 +325,10 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _prepareRecipientAddresses($email)
     {
-        $to = $email->to();
-        $cc = $email->cc();
-        $bcc = $email->bcc();
+        $to = $email->getTo();
+        $cc = $email->getCc();
+        $bcc = $email->getBcc();
+
         return array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
     }
 
@@ -340,12 +354,13 @@ class SmtpTransport extends AbstractTransport
         $lines = $email->message();
         $messages = [];
         foreach ($lines as $line) {
-            if ((!empty($line)) && ($line[0] === '.')) {
+            if (!empty($line) && ($line[0] === '.')) {
                 $messages[] = '.' . $line;
             } else {
                 $messages[] = $line;
             }
         }
+
         return implode("\r\n", $messages);
     }
 
@@ -430,7 +445,11 @@ class SmtpTransport extends AbstractTransport
             $response = '';
             $startTime = time();
             while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $timeout)) {
-                $response .= $this->_socket->read();
+                $bytes = $this->_socket->read();
+                if ($bytes === false || $bytes === null) {
+                    break;
+                }
+                $response .= $bytes;
             }
             if (substr($response, -2) !== "\r\n") {
                 throw new SocketException('SMTP timeout.');
@@ -444,6 +463,7 @@ class SmtpTransport extends AbstractTransport
                 if ($code[2] === '-') {
                     continue;
                 }
+
                 return $code[1];
             }
             throw new SocketException(sprintf('SMTP Error: %s', $response));

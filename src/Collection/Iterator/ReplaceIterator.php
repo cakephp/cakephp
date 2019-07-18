@@ -1,20 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Collection\Iterator;
 
+use ArrayIterator;
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 
 /**
  * Creates an iterator from another iterator that will modify each of the values
@@ -24,7 +26,7 @@ class ReplaceIterator extends Collection
 {
 
     /**
-     * The callback function to be used to modify each of the values
+     * The callback function to be used to transform values
      *
      * @var callable
      */
@@ -64,6 +66,40 @@ class ReplaceIterator extends Collection
     public function current()
     {
         $callback = $this->_callback;
+
         return $callback(parent::current(), $this->key(), $this->_innerIterator);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * We perform here some strictness analysis so that the
+     * iterator logic is bypassed entirely.
+     *
+     * @return \Iterator
+     */
+    public function unwrap()
+    {
+        $iterator = $this->_innerIterator;
+
+        if ($iterator instanceof CollectionInterface) {
+            $iterator = $iterator->unwrap();
+        }
+
+        if (get_class($iterator) !== ArrayIterator::class) {
+            return $this;
+        }
+
+        // ArrayIterator can be traversed strictly.
+        // Let's do that for performance gains
+
+        $callback = $this->_callback;
+        $res = [];
+
+        foreach ($iterator as $k => $v) {
+            $res[$k] = $callback($v, $k, $iterator);
+        }
+
+        return new ArrayIterator($res);
     }
 }

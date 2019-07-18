@@ -1,3 +1,6 @@
+[![Total Downloads](https://img.shields.io/packagist/dt/cakephp/datasource.svg?style=flat-square)](https://packagist.org/packages/cakephp/datasource)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE.txt)
+
 # CakePHP Datasource Library
 
 This library contains interfaces for implementing Repositories and Entities using any data source,
@@ -41,13 +44,13 @@ easy:
 ```php
 use Cake\Datasource\ConnectionManager;
 
-ConnectionManager::config('master', [
+ConnectionManager::config('connection-one', [
     'className' => 'MyApp\Connections\CustomConnection',
     'param1' => 'value',
     'param2' => 'another value'
 ]);
 
-ConnectionManager::config('slave', [
+ConnectionManager::config('connection-two', [
     'className' => 'MyApp\Connections\CustomConnection',
     'param1' => 'different value',
     'param2' => 'another value'
@@ -76,4 +79,4 @@ $conn = ConnectionManager::config('other', $connectionInstance);
 
 ## Documentation
 
-Please make sure you check the [official API documentation](http://api.cakephp.org/3.0/namespace-Cake.Datasource.html)
+Please make sure you check the [official API documentation](https://api.cakephp.org/3.x/namespace-Cake.Datasource.html)

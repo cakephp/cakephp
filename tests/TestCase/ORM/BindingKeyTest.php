@@ -1,24 +1,23 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * Integration tests for usinge the bindingKey in associations
+ * Integration tests for using the bindingKey in associations
  */
 class BindingKeyTest extends TestCase
 {
@@ -29,15 +28,15 @@ class BindingKeyTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.auth_users',
-        'core.site_authors',
-        'core.users'
+        'core.AuthUsers',
+        'core.SiteAuthors',
+        'core.Users'
     ];
 
     /**
      * Data provider for the two types of strategies BelongsTo and HasOne implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderJoinable()
     {
@@ -47,7 +46,7 @@ class BindingKeyTest extends TestCase
     /**
      * Data provider for the two types of strategies HasMany and BelongsToMany implements
      *
-     * @return void
+     * @return array
      */
     public function strategiesProviderExternal()
     {
@@ -62,7 +61,7 @@ class BindingKeyTest extends TestCase
      */
     public function testBelongsto($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->belongsTo('AuthUsers', [
             'bindingKey' => 'username',
             'foreignKey' => 'username',
@@ -94,7 +93,7 @@ class BindingKeyTest extends TestCase
      */
     public function testHasOne($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $users->hasOne('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',
@@ -118,7 +117,7 @@ class BindingKeyTest extends TestCase
      */
     public function testHasMany($strategy)
     {
-        $users = TableRegistry::get('Users');
+        $users = $this->getTableLocator()->get('Users');
         $authors = $users->hasMany('SiteAuthors', [
             'bindingKey' => 'username',
             'foreignKey' => 'name',

@@ -1,26 +1,30 @@
 <?php
 /**
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Association;
 
 use Cake\Collection\Collection;
+use Cake\Database\Expression\FieldInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\QueryInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\DependentDeleteHelper;
+use Cake\ORM\Association\Loader\SelectLoader;
 use Cake\ORM\Table;
 use InvalidArgumentException;
-use RuntimeException;
 use Traversable;
 
 /**
@@ -32,17 +36,19 @@ use Traversable;
 class HasMany extends Association
 {
 
-    use DependentDeleteTrait;
-    use ExternalAssociationTrait {
-        _options as _externalOptions;
-    }
+    /**
+     * Order in which target records should be returned
+     *
+     * @var mixed
+     */
+    protected $_sort;
 
     /**
      * The type of join to be used when adding the association to a query
      *
      * @var string
      */
-    protected $_joinType = 'INNER';
+    protected $_joinType = QueryInterface::JOIN_TYPE_INNER;
 
     /**
      * The strategy name to be used to fetch associated records.
@@ -56,7 +62,10 @@ class HasMany extends Association
      *
      * @var array
      */
-    protected $_validStrategies = [self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
+    protected $_validStrategies = [
+        self::STRATEGY_SELECT,
+        self::STRATEGY_SUBQUERY
+    ];
 
     /**
      * Saving strategy that will only append to the links set
@@ -89,27 +98,58 @@ class HasMany extends Association
      */
     public function isOwningSide(Table $side)
     {
-        return $side === $this->source();
+        return $side === $this->getSource();
+    }
+
+    /**
+     * Sets the strategy that should be used for saving.
+     *
+     * @param string $strategy the strategy name to be used
+     * @throws \InvalidArgumentException if an invalid strategy name is passed
+     * @return $this
+     */
+    public function setSaveStrategy($strategy)
+    {
+        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+            $msg = sprintf('Invalid save strategy "%s"', $strategy);
+            throw new InvalidArgumentException($msg);
+        }
+
+        $this->_saveStrategy = $strategy;
+
+        return $this;
+    }
+
+    /**
+     * Gets the strategy that should be used for saving.
+     *
+     * @return string the strategy to be used for saving
+     */
+    public function getSaveStrategy()
+    {
+        return $this->_saveStrategy;
     }
 
     /**
      * Sets the strategy that should be used for saving. If called with no
      * arguments, it will return the currently configured strategy
      *
+     * @deprecated 3.4.0 Use setSaveStrategy()/getSaveStrategy() instead.
      * @param string|null $strategy the strategy name to be used
      * @throws \InvalidArgumentException if an invalid strategy name is passed
      * @return string the strategy to be used for saving
      */
     public function saveStrategy($strategy = null)
     {
-        if ($strategy === null) {
-            return $this->_saveStrategy;
+        deprecationWarning(
+            'HasMany::saveStrategy() is deprecated. ' .
+            'Use setSaveStrategy()/getSaveStrategy() instead.'
+        );
+        if ($strategy !== null) {
+            $this->setSaveStrategy($strategy);
         }
-        if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
-            $msg = sprintf('Invalid save strategy "%s"', $strategy);
-            throw new InvalidArgumentException($msg);
-        }
-        return $this->_saveStrategy = $strategy;
+
+        return $this->getSaveStrategy();
     }
 
     /**
@@ -119,71 +159,103 @@ class HasMany extends Association
      * `$options`
      *
      * @param \Cake\Datasource\EntityInterface $entity an entity from the source table
-     * @param array|\ArrayObject $options options to be passed to the save method in
-     * the target table
+     * @param array $options options to be passed to the save method in the target table
      * @return bool|\Cake\Datasource\EntityInterface false if $entity could not be saved, otherwise it returns
      * the saved entity
-     * @see Table::save()
+     * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
      */
     public function saveAssociated(EntityInterface $entity, array $options = [])
     {
-        $targetEntities = $entity->get($this->property());
-        if (empty($targetEntities) && $this->_saveStrategy !== self::SAVE_REPLACE) {
-            return $entity;
+        $targetEntities = $entity->get($this->getProperty());
+
+        $isEmpty = in_array($targetEntities, [null, [], '', false], true);
+        if ($isEmpty) {
+            if ($entity->isNew() ||
+                $this->getSaveStrategy() !== self::SAVE_REPLACE
+            ) {
+                return $entity;
+            }
+
+            $targetEntities = [];
         }
 
-        if (!is_array($targetEntities) && !($targetEntities instanceof Traversable)) {
-            $name = $this->property();
+        if (!is_array($targetEntities) &&
+            !($targetEntities instanceof Traversable)
+        ) {
+            $name = $this->getProperty();
             $message = sprintf('Could not save %s, it cannot be traversed', $name);
             throw new InvalidArgumentException($message);
         }
 
-        $foreignKey = (array)$this->foreignKey();
-        $properties = array_combine(
-            $foreignKey,
-            $entity->extract((array)$this->bindingKey())
+        $foreignKeyReference = array_combine(
+            (array)$this->getForeignKey(),
+            $entity->extract((array)$this->getBindingKey())
         );
-        $target = $this->target();
-        $original = $targetEntities;
-        $options['_sourceTable'] = $this->source();
 
-        $unlinkSuccessful = null;
-        if ($this->_saveStrategy === self::SAVE_REPLACE) {
-            $unlinkSuccessful = $this->_unlinkAssociated($properties, $entity, $target, $targetEntities, $options);
-        }
+        $options['_sourceTable'] = $this->getSource();
 
-        if ($unlinkSuccessful === false) {
+        if ($this->_saveStrategy === self::SAVE_REPLACE &&
+            !$this->_unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
+        ) {
             return false;
         }
 
-        foreach ($targetEntities as $k => $targetEntity) {
-            if (!($targetEntity instanceof EntityInterface)) {
+        if (!$this->_saveTarget($foreignKeyReference, $entity, $targetEntities, $options)) {
+            return false;
+        }
+
+        return $entity;
+    }
+
+    /**
+     * Persists each of the entities into the target table and creates links between
+     * the parent entity and each one of the saved target entities.
+     *
+     * @param array $foreignKeyReference The foreign key reference defining the link between the
+     * target entity, and the parent entity.
+     * @param \Cake\Datasource\EntityInterface $parentEntity The source entity containing the target
+     * entities to be saved.
+     * @param array|\Traversable $entities list of entities to persist in target table and to
+     * link to the parent entity
+     * @param array $options list of options accepted by `Table::save()`.
+     * @return bool `true` on success, `false` otherwise.
+     */
+    protected function _saveTarget(array $foreignKeyReference, EntityInterface $parentEntity, $entities, array $options)
+    {
+        $foreignKey = array_keys($foreignKeyReference);
+        $table = $this->getTarget();
+        $original = $entities;
+
+        foreach ($entities as $k => $entity) {
+            if (!($entity instanceof EntityInterface)) {
                 break;
             }
 
             if (!empty($options['atomic'])) {
-                $targetEntity = clone $targetEntity;
+                $entity = clone $entity;
             }
 
-            if ($properties !== $targetEntity->extract($foreignKey)) {
-                $targetEntity->set($properties, ['guard' => false]);
+            if ($foreignKeyReference !== $entity->extract($foreignKey)) {
+                $entity->set($foreignKeyReference, ['guard' => false]);
             }
 
-            if ($target->save($targetEntity, $options)) {
-                $targetEntities[$k] = $targetEntity;
+            if ($table->save($entity, $options)) {
+                $entities[$k] = $entity;
                 continue;
             }
 
             if (!empty($options['atomic'])) {
-                $original[$k]->errors($targetEntity->errors());
-                $entity->set($this->property(), $original);
+                $original[$k]->setErrors($entity->getErrors());
+                $entity->set($this->getProperty(), $original);
+
                 return false;
             }
         }
 
-        $entity->set($this->property(), $targetEntities);
-        return $entity;
+        $parentEntity->set($this->getProperty(), $entities);
+
+        return true;
     }
 
     /**
@@ -198,7 +270,7 @@ class HasMany extends Association
      *
      * ```
      * $user = $users->get(1);
-     * $allArticles = $articles->find('all')->execute();
+     * $allArticles = $articles->find('all')->toArray();
      * $users->Articles->link($user, $allArticles);
      * ```
      *
@@ -213,9 +285,9 @@ class HasMany extends Association
      */
     public function link(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
-        $saveStrategy = $this->saveStrategy();
-        $this->saveStrategy(self::SAVE_APPEND);
-        $property = $this->property();
+        $saveStrategy = $this->getSaveStrategy();
+        $this->setSaveStrategy(self::SAVE_APPEND);
+        $property = $this->getProperty();
 
         $currentEntities = array_unique(
             array_merge(
@@ -226,15 +298,17 @@ class HasMany extends Association
 
         $sourceEntity->set($property, $currentEntities);
 
-        $savedEntity = $this->saveAssociated($sourceEntity, $options);
+        $savedEntity = $this->getConnection()->transactional(function () use ($sourceEntity, $options) {
+            return $this->saveAssociated($sourceEntity, $options);
+        });
 
         $ok = ($savedEntity instanceof EntityInterface);
 
-        $this->saveStrategy($saveStrategy);
+        $this->setSaveStrategy($saveStrategy);
 
         if ($ok) {
             $sourceEntity->set($property, $savedEntity->get($property));
-            $sourceEntity->dirty($property, false);
+            $sourceEntity->setDirty($property, false);
         }
 
         return $ok;
@@ -288,11 +362,14 @@ class HasMany extends Association
         } else {
             $options += ['cleanProperty' => true];
         }
+        if (count($targetEntities) === 0) {
+            return;
+        }
 
-        $foreignKey = (array)$this->foreignKey();
-        $target = $this->target();
-        $targetPrimaryKey = array_merge((array)$target->primaryKey(), $foreignKey);
-        $property = $this->property();
+        $foreignKey = (array)$this->getForeignKey();
+        $target = $this->getTarget();
+        $targetPrimaryKey = array_merge((array)$target->getPrimaryKey(), $foreignKey);
+        $property = $this->getProperty();
 
         $conditions = [
             'OR' => (new Collection($targetEntities))
@@ -304,7 +381,8 @@ class HasMany extends Association
 
         $this->_unlink($foreignKey, $target, $conditions, $options);
 
-        if ($options['cleanProperty']) {
+        $result = $sourceEntity->get($property);
+        if ($options['cleanProperty'] && $result !== null) {
             $sourceEntity->set(
                 $property,
                 (new Collection($sourceEntity->get($property)))
@@ -317,7 +395,7 @@ class HasMany extends Association
             );
         }
 
-        $sourceEntity->dirty($property, false);
+        $sourceEntity->setDirty($property, false);
     }
 
     /**
@@ -337,7 +415,7 @@ class HasMany extends Association
      *
      * This method does not check link uniqueness.
      *
-     * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+     * On success, the passed `$sourceEntity` will contain `$targetEntities` as value
      * in the corresponding property for this association.
      *
      * Additional options for new links to be saved can be passed in the third argument,
@@ -349,7 +427,7 @@ class HasMany extends Association
      * $author->articles = [$article1, $article2, $article3, $article4];
      * $authors->save($author);
      * $articles = [$article1, $article3];
-     * $authors->association('articles')->replaceLinks($author, $articles);
+     * $authors->getAssociation('articles')->replace($author, $articles);
      * ```
      *
      * `$author->get('articles')` will contain only `[$article1, $article3]` at the end
@@ -365,17 +443,18 @@ class HasMany extends Association
      */
     public function replace(EntityInterface $sourceEntity, array $targetEntities, array $options = [])
     {
-        $property = $this->property();
+        $property = $this->getProperty();
         $sourceEntity->set($property, $targetEntities);
-        $saveStrategy = $this->saveStrategy();
-        $this->saveStrategy(self::SAVE_REPLACE);
+        $saveStrategy = $this->getSaveStrategy();
+        $this->setSaveStrategy(self::SAVE_REPLACE);
         $result = $this->saveAssociated($sourceEntity, $options);
         $ok = ($result instanceof EntityInterface);
 
         if ($ok) {
             $sourceEntity = $result;
         }
-        $this->saveStrategy($saveStrategy);
+        $this->setSaveStrategy($saveStrategy);
+
         return $ok;
     }
 
@@ -383,16 +462,17 @@ class HasMany extends Association
      * Deletes/sets null the related objects according to the dependency between source and targets and foreign key nullability
      * Skips deleting records present in $remainingEntities
      *
-     * @param array $properties array of foreignKey properties
+     * @param array $foreignKeyReference The foreign key reference defining the link between the
+     * target entity, and the parent entity.
      * @param \Cake\Datasource\EntityInterface $entity the entity which should have its associated entities unassigned
      * @param \Cake\ORM\Table $target The associated table
      * @param array $remainingEntities Entities that should not be deleted
      * @param array $options list of options accepted by `Table::delete()`
      * @return bool success
      */
-    protected function _unlinkAssociated(array $properties, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
+    protected function _unlinkAssociated(array $foreignKeyReference, EntityInterface $entity, Table $target, array $remainingEntities = [], array $options = [])
     {
-        $primaryKey = (array)$target->primaryKey();
+        $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
             function ($ent) use ($primaryKey) {
@@ -401,23 +481,23 @@ class HasMany extends Association
         )
         ->filter(
             function ($v) {
-                return !in_array(null, array_values($v), true);
+                return !in_array(null, $v, true);
             }
         )
-        ->toArray();
+        ->toList();
 
-        $conditions = $properties;
+        $conditions = $foreignKeyReference;
 
         if (count($exclusions) > 0) {
             $conditions = [
                 'NOT' => [
                     'OR' => $exclusions
                 ],
-                $properties
+                $foreignKeyReference
             ];
         }
 
-        return $this->_unlink(array_keys($properties), $target, $conditions, $options);
+        return $this->_unlink(array_keys($foreignKeyReference), $target, $conditions, $options);
     }
 
     /**
@@ -432,26 +512,36 @@ class HasMany extends Association
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = [])
     {
-        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->dependent());
+        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent());
 
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
+                $conditions = new QueryExpression($conditions);
+                $conditions->traverse(function ($entry) use ($target) {
+                    if ($entry instanceof FieldInterface) {
+                        $entry->setField($target->aliasField($entry->getField()));
+                    }
+                });
                 $query = $this->find('all')->where($conditions);
                 $ok = true;
                 foreach ($query as $assoc) {
                     $ok = $ok && $target->delete($assoc, $options);
                 }
-                return $ok;
-            } else {
-                $target->deleteAll($conditions);
-                return true;
-            }
-        } else {
-            $updateFields = array_fill_keys($foreignKey, null);
-            $target->updateAll($updateFields, $conditions);
-            return true;
 
+                return $ok;
+            }
+
+            $conditions = array_merge($conditions, $this->getConditions());
+            $target->deleteAll($conditions);
+
+            return true;
         }
+
+        $updateFields = array_fill_keys($foreignKey, null);
+        $conditions = array_merge($conditions, $this->getConditions());
+        $target->updateAll($updateFields, $conditions);
+
+        return true;
     }
 
     /**
@@ -467,35 +557,11 @@ class HasMany extends Association
             false,
             array_map(
                 function ($prop) use ($table) {
-                    return $table->schema()->isNullable($prop);
+                    return $table->getSchema()->isNullable($prop);
                 },
                 $properties
             )
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function _linkField($options)
-    {
-        $links = [];
-        $name = $this->alias();
-        if ($options['foreignKey'] === false) {
-            $msg = 'Cannot have foreignKey = false for hasMany associations. ' .
-                   'You must provide a foreignKey column.';
-            throw new RuntimeException($msg);
-        }
-
-        foreach ((array)$options['foreignKey'] as $key) {
-            $links[] = sprintf('%s.%s', $name, $key);
-        }
-
-        if (count($links) === 1) {
-            return $links[0];
-        }
-
-        return $links;
     }
 
     /**
@@ -509,6 +575,89 @@ class HasMany extends Association
     }
 
     /**
+     * Whether this association can be expressed directly in a query join
+     *
+     * @param array $options custom options key that could alter the return value
+     * @return bool if the 'matching' key in $option is true then this function
+     * will return true, false otherwise
+     */
+    public function canBeJoined(array $options = [])
+    {
+        return !empty($options['matching']);
+    }
+
+    /**
+     * Gets the name of the field representing the foreign key to the source table.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        if ($this->_foreignKey === null) {
+            $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
+        }
+
+        return $this->_foreignKey;
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
+     *
+     * @param mixed $sort A find() compatible order clause
+     * @return $this
+     */
+    public function setSort($sort)
+    {
+        $this->_sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * Gets the sort order in which target records should be returned.
+     *
+     * @return mixed
+     */
+    public function getSort()
+    {
+        return $this->_sort;
+    }
+
+    /**
+     * Sets the sort order in which target records should be returned.
+     * If no arguments are passed the currently configured value is returned
+     *
+     * @deprecated 3.4.0 Use setSort()/getSort() instead.
+     * @param mixed $sort A find() compatible order clause
+     * @return mixed
+     */
+    public function sort($sort = null)
+    {
+        deprecationWarning(
+            'HasMany::sort() is deprecated. ' .
+            'Use setSort()/getSort() instead.'
+        );
+        if ($sort !== null) {
+            $this->setSort($sort);
+        }
+
+        return $this->getSort();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function defaultRowValue($row, $joined)
+    {
+        $sourceAlias = $this->getSource()->getAlias();
+        if (isset($row[$sourceAlias])) {
+            $row[$sourceAlias][$this->getProperty()] = $joined ? null : [];
+        }
+
+        return $row;
+    }
+
+    /**
      * Parse extra options passed in the constructor.
      *
      * @param array $opts original list of options passed in constructor
@@ -516,9 +665,43 @@ class HasMany extends Association
      */
     protected function _options(array $opts)
     {
-        $this->_externalOptions($opts);
         if (!empty($opts['saveStrategy'])) {
-            $this->saveStrategy($opts['saveStrategy']);
+            $this->setSaveStrategy($opts['saveStrategy']);
         }
+        if (isset($opts['sort'])) {
+            $this->setSort($opts['sort']);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return \Closure
+     */
+    public function eagerLoader(array $options)
+    {
+        $loader = new SelectLoader([
+            'alias' => $this->getAlias(),
+            'sourceAlias' => $this->getSource()->getAlias(),
+            'targetAlias' => $this->getTarget()->getAlias(),
+            'foreignKey' => $this->getForeignKey(),
+            'bindingKey' => $this->getBindingKey(),
+            'strategy' => $this->getStrategy(),
+            'associationType' => $this->type(),
+            'sort' => $this->getSort(),
+            'finder' => [$this, 'find']
+        ]);
+
+        return $loader->buildEagerLoader($options);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function cascadeDelete(EntityInterface $entity, array $options = [])
+    {
+        $helper = new DependentDeleteHelper();
+
+        return $helper->cascadeDelete($this, $entity, $options);
     }
 }

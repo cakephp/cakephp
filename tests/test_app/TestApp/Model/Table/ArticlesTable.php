@@ -1,14 +1,14 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp\Model\Table;
 
@@ -16,15 +16,14 @@ use Cake\ORM\Table;
 
 /**
  * Article table class
- *
  */
 class ArticlesTable extends Table
 {
 
     public function initialize(array $config)
     {
-        $this->belongsTo('authors');
-        $this->belongsToMany('tags');
+        $this->belongsTo('Authors');
+        $this->belongsToMany('Tags');
         $this->hasMany('ArticlesTags');
     }
 
@@ -34,9 +33,15 @@ class ArticlesTable extends Table
      * @param \Cake\ORM\Query $query The query
      * @return \Cake\ORM\Query
      */
-    public function findPublished($query)
+    public function findPublished($query, array $options = [])
     {
-        return $query->where(['published' => 'Y']);
+        $query = $query->where(['published' => 'Y']);
+
+        if (isset($options['title'])) {
+            $query->andWhere(['title' => $options['title']]);
+        }
+
+        return $query;
     }
 
     /**

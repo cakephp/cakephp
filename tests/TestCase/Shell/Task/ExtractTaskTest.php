@@ -1,29 +1,30 @@
 <?php
 /**
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Shell\Task;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Filesystem\Folder;
-use Cake\Shell\Task\ExtractTask;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * ExtractTaskTest class
  *
+ * @property \Cake\Shell\Task\ExtractTask|MockObject $Task
+ * @property \Cake\Console\ConsoleIo|MockObject $io
+ * @property string $path
  */
 class ExtractTaskTest extends TestCase
 {
@@ -36,16 +37,19 @@ class ExtractTaskTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->io = $this->getMock('Cake\Console\ConsoleIo', [], [], '', false);
-        $progress = $this->getMock('Cake\Shell\Helper\ProgressHelper', [], [$this->io]);
+        $this->io = $this->getMockBuilder('Cake\Console\ConsoleIo')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $progress = $this->getMockBuilder('Cake\Shell\Helper\ProgressHelper')
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->io->method('helper')
             ->will($this->returnValue($progress));
 
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['in', 'out', 'err', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['in', 'out', 'err', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->path = TMP . 'tests/extract_task_test';
         new Folder($this->path . DS . 'locale', true);
     }
@@ -62,7 +66,7 @@ class ExtractTaskTest extends TestCase
 
         $Folder = new Folder($this->path);
         $Folder->delete();
-        Plugin::unload();
+        $this->clearPlugins();
     }
 
     /**
@@ -83,24 +87,25 @@ class ExtractTaskTest extends TestCase
         $this->Task->expects($this->never())->method('_stop');
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
-        $this->assertFalse(file_exists($this->path . DS . 'cake.pot'));
+        $this->assertFileNotExists($this->path . DS . 'cake.pot');
 
         // extract.ctp
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+;\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
+        $pattern .= '\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
         $this->assertRegExp($pattern, $result);
 
         $pattern = '/msgid "You have %d new message."\nmsgstr ""/';
         $this->assertNotRegExp($pattern, $result, 'No duplicate msgid');
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
         $this->assertRegExp($pattern, $result);
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\nmsgid "';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\nmsgid "';
         $pattern .= 'Hot features!';
         $pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
         $pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
@@ -111,12 +116,12 @@ class ExtractTaskTest extends TestCase
         $this->assertContains('msgid "double \\"quoted\\""', $result, 'Strings with quotes not handled correctly');
         $this->assertContains("msgid \"single 'quoted'\"", $result, 'Strings with quotes not handled correctly');
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgctxt "mail"\n';
         $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);
 
-        $pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+        $pattern = '/\#: Template[\/\\\\]Pages[\/\\\\]extract\.ctp:\d+\n';
         $pattern .= 'msgctxt "alphabet"\n';
         $pattern .= 'msgid "letter"/';
         $this->assertRegExp($pattern, $result);
@@ -176,7 +181,7 @@ class ExtractTaskTest extends TestCase
             ->will($this->returnValue('y'));
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
         $result = file_get_contents($this->path . DS . 'default.pot');
 
         $pattern = '/\#: .*extract\.ctp:\d+\n/';
@@ -185,6 +190,7 @@ class ExtractTaskTest extends TestCase
         $pattern = '/\#: .*default\.ctp:\d+\n/';
         $this->assertNotRegExp($pattern, $result);
     }
+
     /**
      * testExtractWithoutLocations method
      *
@@ -203,7 +209,7 @@ class ExtractTaskTest extends TestCase
             ->will($this->returnValue('y'));
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
 
         $result = file_get_contents($this->path . DS . 'default.pot');
 
@@ -243,12 +249,11 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractExcludePlugins()
     {
-        Configure::write('App.namespace', 'TestApp');
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
-            [$this->io]
-        );
+        static::setAppNamespace();
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
         $this->Task->expects($this->exactly(1))
             ->method('_isExtractingApp')
             ->will($this->returnValue(true));
@@ -263,19 +268,19 @@ class ExtractTaskTest extends TestCase
     }
 
     /**
-     * Test that is possible to extract messages form a single plugin
+     * Test that is possible to extract messages from a single plugin
      *
      * @return void
      */
     public function testExtractPlugin()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
+        $this->loadPlugins(['TestPlugin']);
 
-        $this->Task = $this->getMock(
-            'Cake\Shell\Task\ExtractTask',
-            ['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'],
-            [$this->io]
-        );
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
 
         $this->Task->params['output'] = $this->path . DS;
         $this->Task->params['plugin'] = 'TestPlugin';
@@ -288,13 +293,38 @@ class ExtractTaskTest extends TestCase
     }
 
     /**
+     * Test that is possible to extract messages from a vendored plugin.
+     *
+     * @return void
+     */
+    public function testExtractVendoredPlugin()
+    {
+        static::setAppNamespace();
+        $this->loadPlugins(['Company/TestPluginThree']);
+
+        $this->Task = $this->getMockBuilder('Cake\Shell\Task\ExtractTask')
+            ->setMethods(['_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'])
+            ->setConstructorArgs([$this->io])
+            ->getMock();
+
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['plugin'] = 'Company/TestPluginThree';
+
+        $this->Task->main();
+        $result = file_get_contents($this->path . DS . 'test_plugin_three.pot');
+        $this->assertNotRegExp('#Pages#', $result);
+        $this->assertRegExp('/default\.ctp:\d+/', $result);
+        $this->assertContains('A vendor message', $result);
+    }
+
+    /**
      *  Test that the extract shell overwrites existing files with the overwrite parameter
      *
      * @return void
      */
     public function testExtractOverwrite()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->Task->interactive = false;
 
         $this->Task->params['paths'] = TEST_APP . 'TestApp/';
@@ -303,7 +333,7 @@ class ExtractTaskTest extends TestCase
         $this->Task->params['overwrite'] = true;
 
         file_put_contents($this->path . DS . 'default.pot', 'will be overwritten');
-        $this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+        $this->assertFileExists($this->path . DS . 'default.pot');
         $original = file_get_contents($this->path . DS . 'default.pot');
 
         $this->Task->main();
@@ -318,7 +348,7 @@ class ExtractTaskTest extends TestCase
      */
     public function testExtractCore()
     {
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $this->Task->interactive = false;
 
         $this->Task->params['paths'] = TEST_APP . 'TestApp/';
@@ -326,7 +356,7 @@ class ExtractTaskTest extends TestCase
         $this->Task->params['extract-core'] = 'yes';
 
         $this->Task->main();
-        $this->assertTrue(file_exists($this->path . DS . 'cake.pot'));
+        $this->assertFileExists($this->path . DS . 'cake.pot');
         $result = file_get_contents($this->path . DS . 'cake.pot');
 
         $pattern = '/#: Console\/Templates\//';
@@ -334,5 +364,60 @@ class ExtractTaskTest extends TestCase
 
         $pattern = '/#: Test\//';
         $this->assertNotRegExp($pattern, $result);
+    }
+
+    /**
+     * Test when marker-error option is set
+     * When marker-error is unset, it's already test
+     * with other functions like testExecute that not detects error because err never called
+     */
+    public function testMarkerErrorSets()
+    {
+        $this->Task->method('err')
+            ->will($this->returnCallback([$this, 'echoTest']));
+
+        $this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['merge'] = 'no';
+        $this->Task->params['marker-error'] = true;
+
+        $this->expectOutputRegex('/.*Invalid marker content in .*extract\.ctp.*/');
+        $this->Task->main();
+    }
+
+    /**
+     * A useful function to mock/replace err or out function that allows to use expectOutput
+     * @param string $val
+     * @param int $nbLines
+     */
+    public function echoTest($val = '', $nbLines = 1)
+    {
+        echo $val . str_repeat(PHP_EOL, $nbLines);
+    }
+
+    /**
+     * test relative-paths option
+     *
+     * @return void
+     */
+    public function testExtractWithRelativePaths()
+    {
+        $this->Task->interactive = false;
+
+        $this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
+        $this->Task->params['output'] = $this->path . DS;
+        $this->Task->params['extract-core'] = 'no';
+        $this->Task->params['relative-paths'] = true;
+
+        $this->Task->method('in')
+            ->will($this->returnValue('y'));
+
+        $this->Task->main();
+        $this->assertFileExists($this->path . DS . 'default.pot');
+        $result = file_get_contents($this->path . DS . 'default.pot');
+
+        $expected = '#: ./tests/test_app/TestApp/Template/Pages/extract.ctp:';
+        $this->assertContains($expected, $result);
     }
 }

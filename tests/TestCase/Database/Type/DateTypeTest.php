@@ -1,20 +1,20 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Type;
 
-use Cake\Database\Type;
+use Cake\Chronos\Date;
 use Cake\Database\Type\DateType;
 use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
@@ -24,6 +24,15 @@ use Cake\TestSuite\TestCase;
  */
 class DateTypeTest extends TestCase
 {
+    /**
+     * @var \Cake\Database\Type\DateType
+     */
+    public $type;
+
+    /**
+     * @var \Cake\Database\Driver
+     */
+    public $driver;
 
     /**
      * Setup
@@ -33,8 +42,8 @@ class DateTypeTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->type = Type::build('date');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->type = new DateType();
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**
@@ -52,6 +61,29 @@ class DateTypeTest extends TestCase
         $this->assertEquals('2001', $result->format('Y'));
         $this->assertEquals('01', $result->format('m'));
         $this->assertEquals('04', $result->format('d'));
+    }
+
+    /**
+     * Test converting string dates to PHP values.
+     *
+     * @return void
+     */
+    public function testManyToPHP()
+    {
+        $values = [
+            'a' => null,
+            'b' => '2001-01-04',
+            'c' => '2001-01-04 12:13:14.12345',
+        ];
+        $expected = [
+            'a' => null,
+            'b' => new Date('2001-01-04'),
+            'c' => new Date('2001-01-04'),
+        ];
+        $this->assertEquals(
+            $expected,
+            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+        );
     }
 
     /**
@@ -81,8 +113,7 @@ class DateTypeTest extends TestCase
      */
     public function marshalProvider()
     {
-        $date = new Time('@1392387900');
-        $date->setTime(0, 0, 0);
+        $date = new Date('@1392387900');
 
         return [
             // invalid types.
@@ -98,7 +129,7 @@ class DateTypeTest extends TestCase
             // valid string types
             ['1392387900', $date],
             [1392387900, $date],
-            ['2014-02-14', new Time('2014-02-14')],
+            ['2014-02-14', new Date('2014-02-14')],
 
             // valid array types
             [
@@ -107,7 +138,7 @@ class DateTypeTest extends TestCase
             ],
             [
                 ['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
             [
                 [
@@ -115,7 +146,7 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'am'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
             [
                 [
@@ -123,30 +154,30 @@ class DateTypeTest extends TestCase
                     'hour' => 1, 'minute' => 14, 'second' => 15,
                     'meridian' => 'pm'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
             [
                 [
                     'year' => 2014, 'month' => 2, 'day' => 14,
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
 
             // Invalid array types
             [
                 ['year' => 'farts', 'month' => 'derp'],
-                new Time(date('Y-m-d 00:00:00'))
+                new Date(date('Y-m-d'))
             ],
             [
                 ['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
-                new Time(date('Y-m-d 00:00:00'))
+                new Date(date('Y-m-d'))
             ],
             [
                 [
                     'year' => '2014', 'month' => '02', 'day' => '14',
                     'hour' => 'farts', 'minute' => 'farts'
                 ],
-                new Time('2014-02-14 00:00:00')
+                new Date('2014-02-14')
             ],
         ];
     }
@@ -175,7 +206,7 @@ class DateTypeTest extends TestCase
     public function testMarshalWithLocaleParsing()
     {
         $this->type->useLocaleParser();
-        $expected = new Time('13-10-2013');
+        $expected = new Date('13-10-2013');
         $result = $this->type->marshal('10/13/2013');
         $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
 
@@ -190,8 +221,24 @@ class DateTypeTest extends TestCase
     public function testMarshalWithLocaleParsingWithFormat()
     {
         $this->type->useLocaleParser()->setLocaleFormat('dd MMM, y');
-        $expected = new Time('13-10-2013');
+        $expected = new Date('13-10-2013');
         $result = $this->type->marshal('13 Oct, 2013');
         $this->assertEquals($expected->format('Y-m-d'), $result->format('Y-m-d'));
+    }
+
+    /**
+     * Test that toImmutable changes all the methods to create frozen time instances.
+     *
+     * @return void
+     */
+    public function testToImmutableAndToMutable()
+    {
+        $this->type->useImmutable();
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->marshal('2015-11-01'));
+        $this->assertInstanceOf('DateTimeImmutable', $this->type->toPHP('2015-11-01', $this->driver));
+
+        $this->type->useMutable();
+        $this->assertInstanceOf('DateTime', $this->type->marshal('2015-11-01'));
+        $this->assertInstanceOf('DateTime', $this->type->toPHP('2015-11-01', $this->driver));
     }
 }

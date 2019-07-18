@@ -1,25 +1,47 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
 
 /**
  * Represents a database statement. Concrete implementations
  * can either use PDOStatement or a native driver
+ *
+ * @property-read string $queryString
  */
 interface StatementInterface
 {
+    /**
+     * Used to designate that numeric indexes be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_NUM = 'num';
+
+    /**
+     * Used to designate that an associated array be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_ASSOC = 'assoc';
+
+    /**
+     * Used to designate that a stdClass object be returned in a result when calling fetch methods
+     *
+     * @var string
+     */
+    const FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Assign a value to a positional or named variable in prepared query. If using
@@ -88,7 +110,7 @@ interface StatementInterface
      * that binding parameters from this method will not perform any custom type conversion
      * as it would normally happen when calling `bindValue`
      *
-     * @param array $params list of values to be bound to query
+     * @param array|null $params list of values to be bound to query
      * @return bool true on success, false otherwise
      */
     public function execute($params = null);

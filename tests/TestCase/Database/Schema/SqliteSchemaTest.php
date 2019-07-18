@@ -1,25 +1,26 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Core\Configure;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * Test case for Sqlite Schema Dialect.
@@ -34,7 +35,7 @@ class SqliteSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlite') === false, 'Not using Sqlite for test config');
     }
 
@@ -83,6 +84,14 @@ class SqliteSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null]
             ],
             [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null]
+            ],
+            [
+                'BINARY(1)',
+                ['type' => 'binary', 'length' => 1]
+            ],
+            [
                 'BLOB',
                 ['type' => 'binary', 'length' => null]
             ],
@@ -95,8 +104,20 @@ class SqliteSchemaTest extends TestCase
                 ['type' => 'integer', 'length' => 11, 'unsigned' => true]
             ],
             [
-                'TINYINT(5)',
-                ['type' => 'integer', 'length' => 5, 'unsigned' => false]
+                'TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false]
+            ],
+            [
+                'UNSIGNED TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true]
+            ],
+            [
+                'SMALLINT(5)',
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => false]
+            ],
+            [
+                'UNSIGNED SMALLINT(5)',
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => true]
             ],
             [
                 'MEDIUMINT(10)',
@@ -149,10 +170,12 @@ class SqliteSchemaTest extends TestCase
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchema($driver);
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+        $table = $this->getMockBuilder(TableSchema::class)
+            ->setConstructorArgs(['table'])
+            ->getMock();
         $table->expects($this->at(1))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
@@ -166,7 +189,7 @@ class SqliteSchemaTest extends TestCase
      */
     public function testConvertCompositePrimaryKey()
     {
-        $driver = $this->getMock('Cake\Database\Driver\Sqlite');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
         $dialect = new SqliteSchema($driver);
 
         $field1 = [
@@ -184,7 +207,7 @@ class SqliteSchemaTest extends TestCase
             'dflt_value' => 1,
         ];
 
-        $table = new \Cake\Database\Schema\Table('table');
+        $table = new TableSchema('table');
         $dialect->convertColumnDescription($table, $field1);
         $dialect->convertColumnDescription($table, $field2);
         $this->assertEquals(['field1', 'field2'], $table->primaryKey());
@@ -193,7 +216,7 @@ class SqliteSchemaTest extends TestCase
     /**
      * Creates tables for testing listTables/describe()
      *
-     * @param Connection $connection
+     * @param \Cake\Database\Connection $connection
      * @return void
      */
     protected function _createTables($connection)
@@ -221,11 +244,13 @@ SQL;
         $table = <<<SQL
 CREATE TABLE schema_articles (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20) DEFAULT 'testing',
+title VARCHAR(20) DEFAULT 'Let ''em eat cake',
 body TEXT,
 author_id INT(11) NOT NULL,
 published BOOLEAN DEFAULT 0,
 created DATETIME,
+field1 VARCHAR(10) DEFAULT NULL,
+field2 VARCHAR(10) DEFAULT 'NULL',
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -288,11 +313,12 @@ SQL;
             'title' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => 'testing',
+                'default' => 'Let \'em eat cake',
                 'length' => 20,
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'body' => [
                 'type' => 'text',
@@ -301,6 +327,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'collate' => null,
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -328,11 +355,31 @@ SQL;
                 'precision' => null,
                 'comment' => null,
             ],
+            'field1' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
+            'field2' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'NULL',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
         ];
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field));
+            $this->assertEquals($definition, $result->getColumn($field));
         }
     }
 
@@ -352,8 +399,8 @@ SQL;
         $result = $schema->describe('schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertNull($result->column('id')['autoIncrement'], 'id should not be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertNull($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
     }
 
     /**
@@ -368,7 +415,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -390,14 +437,14 @@ SQL;
             ]
         ];
         $this->assertCount(3, $result->constraints());
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals(
             $expected['sqlite_autoindex_schema_articles_1'],
-            $result->constraint('sqlite_autoindex_schema_articles_1')
+            $result->getConstraint('sqlite_autoindex_schema_articles_1')
         );
         $this->assertEquals(
             $expected['author_id_fk'],
-            $result->constraint('author_id_fk')
+            $result->getConstraint('author_id_fk')
         );
 
         $this->assertCount(1, $result->indexes());
@@ -406,7 +453,7 @@ SQL;
             'columns' => ['created'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('created_idx'));
+        $this->assertEquals($expected, $result->getIndex('created_idx'));
     }
 
     /**
@@ -426,7 +473,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '"title" VARCHAR(25) DEFAULT NULL'
+                '"title" VARCHAR(25) DEFAULT "ignored"',
             ],
             [
                 'id',
@@ -448,13 +495,53 @@ SQL;
                 ['type' => 'uuid'],
                 '"id" CHAR(36)'
             ],
+            [
+                'id',
+                ['type' => 'binaryuuid'],
+                '"id" BINARY(16)'
+            ],
             // Text
             [
                 'body',
                 ['type' => 'text', 'null' => false],
                 '"body" TEXT NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                '"body" VARCHAR(' . TableSchema::LENGTH_TINY . ') NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
+                '"body" TEXT NOT NULL'
+            ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => false],
+                '"post_id" SMALLINT(5)'
+            ],
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => true],
+                '"post_id" UNSIGNED SMALLINT(5)'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false],
+                '"post_id" TINYINT(3)'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true],
+                '"post_id" UNSIGNED TINYINT(3)'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11, 'unsigned' => false],
@@ -510,7 +597,7 @@ SQL;
             // Boolean
             [
                 'checked',
-                ['type' => 'boolean', 'default' => false],
+                ['type' => 'boolean', 'null' => true, 'default' => false],
                 '"checked" BOOLEAN DEFAULT FALSE'
             ],
             [
@@ -523,6 +610,11 @@ SQL;
                 'created',
                 ['type' => 'datetime'],
                 '"created" DATETIME'
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '"open_date" DATETIME NOT NULL DEFAULT "2016-12-07 23:04:00"'
             ],
             // Date & Time
             [
@@ -552,11 +644,13 @@ SQL;
     public function testAddConstraintSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('posts');
+        $table = new TableSchema('posts');
 
         $result = $table->addConstraintSql($connection);
         $this->assertEmpty($result);
@@ -570,11 +664,13 @@ SQL;
     public function testDropConstraintSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('posts');
+        $table = new TableSchema('posts');
         $result = $table->dropConstraintSql($connection);
         $this->assertEmpty($result);
     }
@@ -590,7 +686,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = (new Table('articles'))->addColumn($name, $data);
+        $table = (new TableSchema('articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -604,7 +700,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -632,7 +728,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $table->addColumn('id', [
                 'type' => 'biginteger',
                 'null' => false
@@ -709,7 +805,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -745,7 +841,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqliteSchema($driver);
 
-        $table = (new Table('articles'))->addColumn('title', [
+        $table = (new TableSchema('articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -763,11 +859,13 @@ SQL;
     public function testCreateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('articles'))->addColumn('id', [
+        $table = (new TableSchema('articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -776,6 +874,7 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('data', ['type' => 'json'])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -791,6 +890,7 @@ CREATE TABLE "articles" (
 "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
+"data" TEXT,
 "created" DATETIME
 )
 SQL;
@@ -811,14 +911,16 @@ SQL;
     public function testCreateTemporary()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false
         ]);
-        $table->temporary(true);
+        $table->setTemporary(true);
         $sql = $table->createSql($connection);
         $this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
     }
@@ -831,11 +933,13 @@ SQL;
     public function testCreateSqlCompositeIntegerKey()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('articles_tags'))
+        $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false
@@ -862,7 +966,7 @@ SQL;
 
         // Sqlite only supports AUTO_INCREMENT on single column primary
         // keys. Ensure that schema data follows the limitations of Sqlite.
-        $table = (new Table('composite_key'))
+        $table = (new TableSchema('composite_key'))
             ->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
@@ -897,11 +1001,13 @@ SQL;
     public function testDropSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE "articles"', $result[0]);
@@ -915,23 +1021,24 @@ SQL;
     public function testTruncateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $statement = $this->getMock(
-            '\PDOStatement',
-            ['execute', 'rowCount', 'closeCursor', 'fetch']
-        );
-        $driver->connection()->expects($this->once())->method('prepare')
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
+            ->getMock();
+        $driver->getConnection()->expects($this->once())
+            ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
-        $statement->expects($this->at(0))->method('fetch')
+        $statement->expects($this->once())
+            ->method('fetchAll')
             ->will($this->returnValue(['1']));
-        $statement->expects($this->at(2))->method('fetch')
-            ->will($this->returnValue(false));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals('DELETE FROM sqlite_sequence WHERE name="articles"', $result[0]);
@@ -946,21 +1053,25 @@ SQL;
     public function testTruncateSqlNoSequences()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $statement = $this->getMock(
-            '\PDOStatement',
-            ['execute', 'rowCount', 'closeCursor', 'fetch']
-        );
-        $driver->connection()->expects($this->once())->method('prepare')
+        $statement = $this->getMockBuilder('\PDOStatement')
+            ->setMethods(['execute', 'rowCount', 'closeCursor', 'fetchAll'])
+            ->getMock();
+        $driver->getConnection()
+            ->expects($this->once())
+            ->method('prepare')
             ->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
             ->will($this->returnValue($statement));
-        $statement->expects($this->once())->method('fetch')
+        $statement->expects($this->once())
+            ->method('fetchAll')
             ->will($this->returnValue(false));
 
-        $table = new Table('articles');
+        $table = new TableSchema('articles');
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DELETE FROM "articles"', $result[0]);
@@ -969,23 +1080,22 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      *
-     * @return Driver
+     * @return \Cake\Database\Driver
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Sqlite();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier', 'prepare']);
+        $driver = new Sqlite();
+        $mock = $this->getMockBuilder(PDO::class)
+            ->setMethods(['quote', 'prepare'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
                 return '"' . $value . '"';
             }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '"' . $value . '"';
-            }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
+
         return $driver;
     }
 }

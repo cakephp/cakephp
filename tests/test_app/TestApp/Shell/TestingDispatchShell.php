@@ -2,25 +2,25 @@
 /**
  * Testing Dispatch Shell Shell file
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace TestApp\Shell;
 
 use Cake\Console\Shell;
-use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
- * Class for testing dispatchShell functionality
+ * for testing dispatchShell functionality
  */
 class TestingDispatchShell extends Shell
 {
@@ -38,35 +38,35 @@ class TestingDispatchShell extends Shell
     public function testTask()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell('testing_dispatch dispatch_test_task');
     }
 
     public function testTaskDispatchArray()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell('testing_dispatch', 'dispatch_test_task');
     }
 
     public function testTaskDispatchCommandString()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell(['command' => 'testing_dispatch dispatch_test_task']);
     }
 
     public function testTaskDispatchCommandArray()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell(['command' => ['testing_dispatch', 'dispatch_test_task']]);
     }
 
     public function testTaskDispatchWithParam()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell([
             'command' => ['testing_dispatch', 'dispatch_test_task_param'],
             'extra' => [
@@ -78,7 +78,7 @@ class TestingDispatchShell extends Shell
     public function testTaskDispatchWithMultipleParams()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell([
             'command' => 'testing_dispatch dispatch_test_task_params',
             'extra' => [
@@ -91,7 +91,7 @@ class TestingDispatchShell extends Shell
     public function testTaskDispatchWithRequestedOff()
     {
         $this->out('I am a test task, I dispatch another Shell');
-        Configure::write('App.namespace', 'TestApp');
+        TestCase::setAppNamespace();
         $this->dispatchShell([
             'command' => ['testing_dispatch', 'dispatch_test_task'],
             'extra' => [

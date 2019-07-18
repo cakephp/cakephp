@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller;
 
@@ -51,28 +51,31 @@ use Cake\Log\LogTrait;
  *   propagation.
  *
  * While the controller is not an explicit argument for the callback methods it
- * is the subject of each event and can be fetched using Event::subject().
+ * is the subject of each event and can be fetched using Event::getSubject().
  *
- * @link http://book.cakephp.org/3.0/en/controllers/components.html
- * @see Controller::$components
+ * @link https://book.cakephp.org/3.0/en/controllers/components.html
+ * @see \Cake\Controller\Controller::$components
  */
 class Component implements EventListenerInterface
 {
-
     use InstanceConfigTrait;
     use LogTrait;
 
     /**
      * Request object
      *
-     * @var \Cake\Network\Request
+     * @var \Cake\Http\ServerRequest
+     * @deprecated 3.4.0 Storing references to the request is deprecated. Use Component::getController()
+     *   or callback $event->getSubject() to access the controller & request instead.
      */
     public $request;
 
     /**
      * Response object
      *
-     * @var \Cake\Network\Response
+     * @var \Cake\Http\Response
+     * @deprecated 3.4.0 Storing references to the response is deprecated. Use Component::getController()
+     *   or callback $event->getSubject() to access the controller & response instead.
      */
     public $response;
 
@@ -121,12 +124,22 @@ class Component implements EventListenerInterface
             $this->response =& $controller->response;
         }
 
-        $this->config($config);
+        $this->setConfig($config);
 
-        if (!empty($this->components)) {
+        if ($this->components) {
             $this->_componentMap = $registry->normalizeArray($this->components);
         }
         $this->initialize($config);
+    }
+
+    /**
+     * Get the controller this component is bound to.
+     *
+     * @return \Cake\Controller\Controller The bound controller.
+     */
+    public function getController()
+    {
+        return $this->_registry->getController();
     }
 
     /**
@@ -151,12 +164,14 @@ class Component implements EventListenerInterface
     public function __get($name)
     {
         if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
-            $config = ['enabled' => false] + (array)$this->_componentMap[$name]['config'];
+            $config = (array)$this->_componentMap[$name]['config'] + ['enabled' => false];
             $this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $config);
         }
-        if (isset($this->{$name})) {
-            return $this->{$name};
+        if (!isset($this->{$name})) {
+            return null;
         }
+
+        return $this->{$name};
     }
 
     /**
@@ -186,6 +201,7 @@ class Component implements EventListenerInterface
                 $events[$event] = $method;
             }
         }
+
         return $events;
     }
 
@@ -200,7 +216,7 @@ class Component implements EventListenerInterface
         return [
             'components' => $this->components,
             'implementedEvents' => $this->implementedEvents(),
-            '_config' => $this->config(),
+            '_config' => $this->getConfig(),
         ];
     }
 }

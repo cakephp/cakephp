@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache;
 
@@ -33,36 +33,35 @@ use RuntimeException;
  *
  * ```
  * Cache::config('shared', [
- *    'className' => 'Cake\Cache\Engine\ApcEngine',
+ *    'className' => 'Cake\Cache\Engine\ApcuEngine',
  *    'prefix' => 'my_app_'
  * ]);
  * ```
  *
- * This would configure an APC cache engine to the 'shared' alias. You could then read and write
+ * This would configure an APCu cache engine to the 'shared' alias. You could then read and write
  * to that cache alias by using it for the `$config` parameter in the various Cache methods.
  *
  * In general all Cache operations are supported by all cache engines.
  * However, Cache::increment() and Cache::decrement() are not supported by File caching.
  *
- * There are 5 built-in caching engines:
+ * There are 7 built-in caching engines:
  *
+ * - `ApcuEngine` - Uses the APCu object cache, one of the fastest caching engines.
+ * - `ArrayEngine` - Uses only memory to store all data, not actually a persistent engine.
+ *    Can be useful in test or CLI environment.
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
- *    storing large objects, or things that are not IO sensitive.  Well suited to development
+ *    storing large objects, or things that are not IO sensitive. Well suited to development
  *    as it is an easy cache to inspect and manually flush.
- * - `ApcEngine` - Uses the APC object cache, one of the fastest caching engines.
  * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
- *   Fast reads/writes, and benefits from memcache being distributed.
- * - `XcacheEngine` - Uses the Xcache extension, an alternative to APC.
- * - `WincacheEngine` - Uses Windows Cache Extension for PHP. Supports wincache 1.1.0 and higher.
- *   This engine is recommended to people deploying on windows with IIS.
+ *    Fast reads/writes, and benefits from memcache being distributed.
  * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
+ * - `WincacheEngine` - Uses Windows Cache Extension for PHP. Supports wincache 1.1.0 and higher.
+ *    This engine is recommended to people deploying on windows with IIS.
+ * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
  *
  * See Cache engine documentation for expected configuration keys.
  *
  * @see config/app.php for configuration settings
- * @param string $name Name of the configuration
- * @param array $config Optional associative array of settings passed to the engine
- * @return array [engine, settings] on success, false on failure
  */
 class Cache
 {
@@ -76,7 +75,9 @@ class Cache
      * @var array
      */
     protected static $_dsnClassMap = [
-        'apc' => 'Cake\Cache\Engine\ApcEngine',
+        'array' => 'Cake\Cache\Engine\ArrayEngine',
+        'apc' => 'Cake\Cache\Engine\ApcuEngine', // @deprecated Since 3.6. Use apcu instead.
+        'apcu' => 'Cake\Cache\Engine\ApcuEngine',
         'file' => 'Cake\Cache\Engine\FileEngine',
         'memcached' => 'Cake\Cache\Engine\MemcachedEngine',
         'null' => 'Cake\Cache\Engine\NullEngine',
@@ -100,37 +101,55 @@ class Cache
     protected static $_groups = [];
 
     /**
-     * Whether to reset the settings with the next call to Cache::set();
-     *
-     * @var array
-     */
-    protected static $_reset = false;
-
-    /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry
+     * @var \Cake\Core\ObjectRegistry
      */
     protected static $_registry;
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
-     * Also allows for injecting of a new registry instance.
      *
-     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
      * @return \Cake\Core\ObjectRegistry
      */
-    public static function registry(ObjectRegistry $registry = null)
+    public static function getRegistry()
     {
-        if ($registry) {
-            static::$_registry = $registry;
-        }
-        
-        if (empty(static::$_registry)) {
+        if (!static::$_registry) {
             static::$_registry = new CacheRegistry();
         }
 
         return static::$_registry;
+    }
+
+    /**
+     * Sets the Cache Registry instance used for creating and using cache adapters.
+     *
+     * Also allows for injecting of a new registry instance.
+     *
+     * @param \Cake\Core\ObjectRegistry $registry Injectable registry object.
+     * @return void
+     */
+    public static function setRegistry(ObjectRegistry $registry)
+    {
+        static::$_registry = $registry;
+    }
+
+    /**
+     * Returns the Cache Registry instance used for creating and using cache adapters.
+     * Also allows for injecting of a new registry instance.
+     *
+     * @param \Cake\Core\ObjectRegistry|null $registry Injectable registry object.
+     * @return \Cake\Core\ObjectRegistry
+     * @deprecated Deprecated since 3.5. Use getRegistry() and setRegistry() instead.
+     */
+    public static function registry(ObjectRegistry $registry = null)
+    {
+        deprecationWarning('Use Cache::getRegistry() and Cache::setRegistry() instead.');
+        if ($registry) {
+            static::setRegistry($registry);
+        }
+
+        return static::getRegistry();
     }
 
     /**
@@ -142,7 +161,7 @@ class Cache
      */
     protected static function _buildEngine($name)
     {
-        $registry = static::registry();
+        $registry = static::getRegistry();
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
@@ -151,7 +170,37 @@ class Cache
         }
 
         $config = static::$_config[$name];
-        $registry->load($name, $config);
+
+        try {
+            $registry->load($name, $config);
+        } catch (RuntimeException $e) {
+            if (!array_key_exists('fallback', $config)) {
+                $registry->set($name, new NullEngine());
+                trigger_error($e->getMessage(), E_USER_WARNING);
+
+                return;
+            }
+
+            if ($config['fallback'] === false) {
+                throw $e;
+            }
+
+            if ($config['fallback'] === $name) {
+                throw new InvalidArgumentException(sprintf('"%s" cache configuration cannot fallback to itself.', $name), null, $e);
+            }
+
+            $fallbackEngine = clone static::engine($config['fallback']);
+            $newConfig = $config + ['groups' => [], 'prefix' => null];
+            $fallbackEngine->setConfig('groups', $newConfig['groups'], false);
+            if ($newConfig['prefix']) {
+                $fallbackEngine->setConfig('prefix', $newConfig['prefix'], false);
+            }
+            $registry->set($name, $fallbackEngine);
+        }
+
+        if ($config['className'] instanceof CacheEngine) {
+            $config = $config['className']->getConfig();
+        }
 
         if (!empty($config['groups'])) {
             foreach ($config['groups'] as $group) {
@@ -170,6 +219,8 @@ class Cache
      *
      * @param string $config The configuration name you want an engine for.
      * @return \Cake\Cache\CacheEngine When caching is disabled a null engine will be returned.
+     * @deprecated 3.7.0 Use Cache::pool() instead. In 4.0 all cache engines will implement the
+     *   PSR16 interface and this method does not return objects implementing that interface.
      */
     public static function engine($config)
     {
@@ -177,14 +228,26 @@ class Cache
             return new NullEngine();
         }
 
-        $registry = static::registry();
+        $registry = static::getRegistry();
 
         if (isset($registry->{$config})) {
             return $registry->{$config};
         }
 
         static::_buildEngine($config);
+
         return $registry->{$config};
+    }
+
+    /**
+     * Get a SimpleCacheEngine object for the named cache pool.
+     *
+     * @param string $config The name of the configured cache backend.
+     * @return \Cake\Cache\SimpleCacheEngine
+     */
+    public static function pool($config)
+    {
+        return new SimpleCacheEngine(static::engine($config));
     }
 
     /**
@@ -195,6 +258,7 @@ class Cache
      * @param string $config [optional] The config name you wish to have garbage collected. Defaults to 'default'
      * @param int|null $expires [optional] An expires timestamp. Defaults to NULL
      * @return void
+     * @deprecated 3.7.0 Will be removed in 4.0
      */
     public static function gc($config = 'default', $expires = null)
     {
@@ -226,23 +290,24 @@ class Cache
      */
     public static function write($key, $value, $config = 'default')
     {
-        $engine = static::engine($config);
         if (is_resource($value)) {
             return false;
         }
 
-        $success = $engine->write($key, $value);
+        $backend = static::pool($config);
+        $success = $backend->set($key, $value);
         if ($success === false && $value !== '') {
             trigger_error(
                 sprintf(
                     "%s cache was unable to write '%s' to %s cache",
                     $config,
                     $key,
-                    get_class($engine)
+                    get_class($backend)
                 ),
                 E_USER_WARNING
             );
         }
+
         return $success;
     }
 
@@ -271,6 +336,7 @@ class Cache
     public static function writeMany($data, $config = 'default')
     {
         $engine = static::engine($config);
+
         $return = $engine->writeMany($data);
         foreach ($return as $key => $success) {
             if ($success === false && $data[$key] !== '') {
@@ -282,6 +348,7 @@ class Cache
                 ));
             }
         }
+
         return $return;
     }
 
@@ -308,7 +375,9 @@ class Cache
      */
     public static function read($key, $config = 'default')
     {
+        // TODO In 4.x this needs to change to use pool()
         $engine = static::engine($config);
+
         return $engine->read($key);
     }
 
@@ -336,7 +405,9 @@ class Cache
      */
     public static function readMany($keys, $config = 'default')
     {
+        // In 4.x this needs to change to use pool()
         $engine = static::engine($config);
+
         return $engine->readMany($keys);
     }
 
@@ -351,7 +422,7 @@ class Cache
      */
     public static function increment($key, $offset = 1, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -370,7 +441,7 @@ class Cache
      */
     public static function decrement($key, $offset = 1, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
         if (!is_int($offset) || $offset < 0) {
             return false;
         }
@@ -401,8 +472,9 @@ class Cache
      */
     public static function delete($key, $config = 'default')
     {
-        $engine = static::engine($config);
-        return $engine->delete($key);
+        $backend = static::pool($config);
+
+        return $backend->delete($key);
     }
 
     /**
@@ -424,26 +496,52 @@ class Cache
      *
      * @param array $keys Array of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
-     * @return array of boolean values that are true if the value was successfully deleted, false if it didn't exist or
-     * couldn't be removed
+     * @return array of boolean values that are true if the value was successfully deleted,
+     * false if it didn't exist or couldn't be removed.
      */
     public static function deleteMany($keys, $config = 'default')
     {
-        $engine = static::engine($config);
-        return $engine->deleteMany($keys);
+        $backend = static::pool($config);
+
+        $return = [];
+        foreach ($keys as $key) {
+            $return[$key] = $backend->delete($key);
+        }
+
+        return $return;
     }
 
     /**
      * Delete all keys from the cache.
      *
-     * @param bool $check if true will check expiration, otherwise delete all
+     * @param bool $check if true will check expiration, otherwise delete all. This parameter
+     *   will become a no-op value in 4.0 as it is deprecated.
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True if the cache was successfully cleared, false otherwise
      */
     public static function clear($check = false, $config = 'default')
     {
         $engine = static::engine($config);
+
         return $engine->clear($check);
+    }
+
+    /**
+     * Delete all keys from the cache from all configurations.
+     *
+     * @param bool $check if true will check expiration, otherwise delete all. This parameter
+     *   will become a no-op value in 4.0 as it is deprecated.
+     * @return array Status code. For each configuration, it reports the status of the operation
+     */
+    public static function clearAll($check = false)
+    {
+        $status = [];
+
+        foreach (self::configured() as $config) {
+            $status[$config] = self::clear($check, $config);
+        }
+
+        return $status;
     }
 
     /**
@@ -455,7 +553,8 @@ class Cache
      */
     public static function clearGroup($group, $config = 'default')
     {
-        $engine = static::engine($config);
+        $engine = static::pool($config);
+
         return $engine->clearGroup($group);
     }
 
@@ -559,6 +658,7 @@ class Cache
         }
         $results = call_user_func($callable);
         self::write($key, $results, $config);
+
         return $results;
     }
 
@@ -587,10 +687,11 @@ class Cache
      */
     public static function add($key, $value, $config = 'default')
     {
-        $engine = static::engine($config);
+        $pool = static::pool($config);
         if (is_resource($value)) {
             return false;
         }
-        return $engine->add($key, $value);
+
+        return $pool->add($key, $value);
     }
 }

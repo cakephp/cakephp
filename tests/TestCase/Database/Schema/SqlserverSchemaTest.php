@@ -1,25 +1,26 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Core\Configure;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchema;
-use Cake\Database\Schema\Table;
+use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PDO;
 
 /**
  * SQL Server schema test case.
@@ -33,7 +34,7 @@ class SqlserverSchemaTest extends TestCase
      */
     protected function _needsConnection()
     {
-        $config = ConnectionManager::config('test');
+        $config = ConnectionManager::getConfig('test');
         $this->skipIf(strpos($config['driver'], 'Sqlserver') === false, 'Not using Sqlserver for test config');
     }
 
@@ -62,12 +63,15 @@ SQL;
         $table = <<<SQL
 CREATE TABLE schema_articles (
 id BIGINT PRIMARY KEY,
-title VARCHAR(20),
-body VARCHAR(1000),
+title NVARCHAR(20) COLLATE Japanese_Unicode_CI_AI DEFAULT N'無題' COLLATE Japanese_Unicode_CI_AI,
+body NVARCHAR(1000) DEFAULT N'本文なし',
 author_id INTEGER NOT NULL,
 published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
 created DATETIME,
+field1 VARCHAR(10) DEFAULT NULL,
+field2 VARCHAR(10) DEFAULT 'NULL',
+field3 VARCHAR(10) DEFAULT 'O''hare',
 CONSTRAINT [content_idx] UNIQUE ([title], [body]),
 CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 )
@@ -106,11 +110,32 @@ SQL;
                 ['type' => 'time', 'length' => null]
             ],
             [
+                'TINYINT',
+                null,
+                2,
+                null,
+                ['type' => 'tinyinteger', 'length' => 2]
+            ],
+            [
+                'TINYINT',
+                null,
+                null,
+                null,
+                ['type' => 'tinyinteger', 'length' => 3]
+            ],
+            [
                 'SMALLINT',
                 null,
-                4,
+                3,
                 null,
-                ['type' => 'integer', 'length' => 4]
+                ['type' => 'smallinteger', 'length' => 3]
+            ],
+            [
+                'SMALLINT',
+                null,
+                null,
+                null,
+                ['type' => 'smallinteger', 'length' => 5]
             ],
             [
                 'INTEGER',
@@ -173,7 +198,8 @@ SQL;
                 50,
                 null,
                 null,
-                ['type' => 'string', 'length' => 50]
+                // Sqlserver returns double lengths for unicode columns
+                ['type' => 'string', 'length' => 25]
             ],
             [
                 'CHAR',
@@ -187,7 +213,8 @@ SQL;
                 10,
                 null,
                 null,
-                ['type' => 'string', 'fixed' => true, 'length' => 10]
+                // SQLServer returns double length for unicode columns.
+                ['type' => 'string', 'fixed' => true, 'length' => 5]
             ],
             [
                 'UNIQUEIDENTIFIER',
@@ -217,6 +244,27 @@ SQL;
                 null,
                 ['type' => 'text', 'length' => null]
             ],
+            [
+                'IMAGE',
+                10,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 10]
+            ],
+            [
+                'BINARY',
+                20,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 20]
+            ],
+            [
+                'VARBINARY',
+                30,
+                null,
+                null,
+                ['type' => 'binary', 'length' => 30]
+            ],
         ];
     }
 
@@ -235,17 +283,21 @@ SQL;
             'default' => 'Default value',
             'char_length' => $length,
             'precision' => $precision,
-            'scale' => $scale
+            'scale' => $scale,
+            'collation_name' => 'Japanese_Unicode_CI_AI',
         ];
         $expected += [
             'null' => true,
             'default' => 'Default value',
+            'collate' => 'Japanese_Unicode_CI_AI',
         ];
 
-        $driver = $this->getMock('Cake\Database\Driver\Sqlserver');
+        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
         $dialect = new SqlserverSchema($driver);
 
-        $table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+        $table = $this->getMockBuilder('Cake\Database\Schema\TableSchema')
+            ->setConstructorArgs(['table'])
+            ->getMock();
         $table->expects($this->at(0))->method('addColumn')->with('field', $expected);
 
         $dialect->convertColumnDescription($table, $field);
@@ -294,20 +346,22 @@ SQL;
             'title' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => null,
+                'default' => '無題',
                 'length' => 20,
                 'precision' => null,
                 'comment' => null,
                 'fixed' => null,
+                'collate' => 'Japanese_Unicode_CI_AI',
             ],
             'body' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => null,
+                'default' => '本文なし',
                 'length' => 1000,
                 'precision' => null,
                 'fixed' => null,
                 'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
             ],
             'author_id' => [
                 'type' => 'integer',
@@ -328,13 +382,12 @@ SQL;
                 'comment' => null,
             ],
             'views' => [
-                'type' => 'integer',
+                'type' => 'smallinteger',
                 'null' => true,
                 'default' => 0,
                 'length' => 5,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
             ],
             'created' => [
@@ -345,10 +398,43 @@ SQL;
                 'precision' => null,
                 'comment' => null,
             ],
+            'field1' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
+            ],
+            'field2' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'NULL',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
+            ],
+            'field3' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => 'O\'hare',
+                'length' => 10,
+                'precision' => null,
+                'fixed' => null,
+                'comment' => null,
+                'collate' => 'SQL_Latin1_General_CP1_CI_AS',
+            ],
         ];
         $this->assertEquals(['id'], $result->primaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->column($field), 'Failed to match field ' . $field);
+            $column = $result->getColumn($field);
+            $this->assertEquals($definition, $column, 'Failed to match field ' . $field);
+            $this->assertSame($definition['length'], $column['length']);
+            $this->assertSame($definition['precision'], $column['precision']);
         }
     }
 
@@ -375,8 +461,8 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->primaryKey());
-        $this->assertNull($result->column('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertTrue($result->column('id')['autoIncrement'], 'id should be autoincrement');
+        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
 
     /**
@@ -407,7 +493,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\Table', $result);
+        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
         $this->assertCount(3, $result->constraints());
         $expected = [
             'primary' => [
@@ -429,9 +515,9 @@ SQL;
                 'delete' => 'cascade',
             ]
         ];
-        $this->assertEquals($expected['primary'], $result->constraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->constraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->constraint('author_idx'));
+        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -439,7 +525,7 @@ SQL;
             'columns' => ['author_id'],
             'length' => []
         ];
-        $this->assertEquals($expected, $result->index('author_idx'));
+        $this->assertEquals($expected, $result->getIndex('author_idx'));
     }
 
     /**
@@ -459,7 +545,7 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '[title] NVARCHAR(25) DEFAULT NULL'
+                "[title] NVARCHAR(25) DEFAULT 'ignored'"
             ],
             [
                 'id',
@@ -472,14 +558,24 @@ SQL;
                 '[id] UNIQUEIDENTIFIER NOT NULL'
             ],
             [
+                'id',
+                ['type' => 'binaryuuid', 'null' => false],
+                '[id] UNIQUEIDENTIFIER NOT NULL'
+            ],
+            [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                "[role] NVARCHAR(10) NOT NULL DEFAULT [admin]"
+                "[role] NVARCHAR(10) NOT NULL DEFAULT 'admin'"
             ],
             [
                 'title',
                 ['type' => 'string'],
                 '[title] NVARCHAR(255)'
+            ],
+            [
+                'title',
+                ['type' => 'string', 'length' => 25, 'null' => false, 'collate' => 'Japanese_Unicode_CI_AI'],
+                '[title] NVARCHAR(25) COLLATE Japanese_Unicode_CI_AI NOT NULL'
             ],
             // Text
             [
@@ -487,7 +583,37 @@ SQL;
                 ['type' => 'text', 'null' => false],
                 '[body] NVARCHAR(MAX) NOT NULL'
             ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
+                sprintf('[body] NVARCHAR(%s) NOT NULL', TableSchema::LENGTH_TINY)
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'null' => false],
+                '[body] NVARCHAR(MAX) NOT NULL'
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'collate' => 'Japanese_Unicode_CI_AI'],
+                '[body] NVARCHAR(MAX) COLLATE Japanese_Unicode_CI_AI NOT NULL'
+            ],
             // Integers
+            [
+                'post_id',
+                ['type' => 'smallinteger', 'length' => 11],
+                '[post_id] SMALLINT'
+            ],
+            [
+                'post_id',
+                ['type' => 'tinyinteger', 'length' => 11],
+                '[post_id] TINYINT'
+            ],
             [
                 'post_id',
                 ['type' => 'integer', 'length' => 11],
@@ -528,8 +654,33 @@ SQL;
             // Binary
             [
                 'img',
-                ['type' => 'binary'],
+                ['type' => 'binary', 'length' => null],
                 '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
+                sprintf('[img] VARBINARY(%s)', TableSchema::LENGTH_TINY)
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'img',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
+                '[img] VARBINARY(MAX)'
+            ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 5],
+                '[bytes] VARBINARY(5)'
+            ],
+            [
+                'bytes',
+                ['type' => 'binary', 'length' => 1],
+                '[bytes] BINARY(1)'
             ],
             // Boolean
             [
@@ -542,11 +693,31 @@ SQL;
                 ['type' => 'boolean', 'default' => true, 'null' => false],
                 '[checked] BIT NOT NULL DEFAULT 1'
             ],
-            // datetimes
+            // Datetime
             [
                 'created',
                 ['type' => 'datetime'],
                 '[created] DATETIME'
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
+                '[open_date] DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\''
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '[open_date] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'null_date',
+                ['type' => 'datetime', 'null' => true, 'default' => 'current_timestamp'],
+                '[null_date] DATETIME DEFAULT CURRENT_TIMESTAMP'
+            ],
+            [
+                'null_date',
+                ['type' => 'datetime', 'null' => true],
+                '[null_date] DATETIME DEFAULT NULL'
             ],
             // Date & Time
             [
@@ -559,7 +730,7 @@ SQL;
                 ['type' => 'time'],
                 '[start_time] TIME'
             ],
-            // timestamps
+            // Timestamp
             [
                 'created',
                 ['type' => 'timestamp', 'null' => true],
@@ -579,7 +750,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new Table('schema_articles'))->addColumn($name, $data);
+        $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
     }
 
@@ -644,7 +815,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new SqlserverSchema($driver);
 
-        $table = (new Table('schema_articles'))->addColumn('title', [
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255
         ])->addColumn('author_id', [
@@ -662,11 +833,13 @@ SQL;
     public function testAddConstraintSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -711,11 +884,13 @@ SQL;
     public function testDropConstraintSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('posts'))
+        $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false
@@ -760,11 +935,13 @@ SQL;
     public function testCreateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = (new Table('schema_articles'))->addColumn('id', [
+        $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false
             ])
@@ -773,6 +950,14 @@ SQL;
                 'null' => false,
             ])
             ->addColumn('body', ['type' => 'text'])
+            ->addColumn('data', ['type' => 'json'])
+            ->addColumn('hash', [
+                'type' => 'string',
+                'fixed' => true,
+                'length' => 40,
+                'collate' => 'Latin1_General_BIN',
+                'null' => false,
+            ])
             ->addColumn('created', 'datetime')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -788,6 +973,8 @@ CREATE TABLE [schema_articles] (
 [id] INTEGER IDENTITY(1, 1),
 [title] NVARCHAR(255) NOT NULL,
 [body] NVARCHAR(MAX),
+[data] NVARCHAR(MAX),
+[hash] NCHAR(40) COLLATE Latin1_General_BIN NOT NULL,
 [created] DATETIME,
 PRIMARY KEY ([id])
 )
@@ -810,11 +997,13 @@ SQL;
     public function testDropSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('schema_articles');
+        $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
         $this->assertCount(1, $result);
         $this->assertEquals('DROP TABLE [schema_articles]', $result[0]);
@@ -828,11 +1017,13 @@ SQL;
     public function testTruncateSql()
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
-        $connection->expects($this->any())->method('driver')
+        $connection = $this->getMockBuilder('Cake\Database\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getDriver')
             ->will($this->returnValue($driver));
 
-        $table = new Table('schema_articles');
+        $table = new TableSchema('schema_articles');
         $table->addColumn('id', 'integer')
             ->addConstraint('primary', [
                 'type' => 'primary',
@@ -841,29 +1032,28 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals('DELETE FROM [schema_articles]', $result[0]);
-        $this->assertEquals('DBCC CHECKIDENT([schema_articles], RESEED, 0)', $result[1]);
+        $this->assertEquals("DBCC CHECKIDENT('schema_articles', RESEED, 0)", $result[1]);
     }
 
     /**
      * Get a schema instance with a mocked driver/pdo instances
      *
-     * @return Driver
+     * @return \Cake\Database\Driver
      */
     protected function _getMockedDriver()
     {
-        $driver = new \Cake\Database\Driver\Sqlserver();
-        $mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+        $driver = new Sqlserver();
+        $mock = $this->getMockBuilder(PDO::class)
+            ->setMethods(['quote'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $mock->expects($this->any())
             ->method('quote')
             ->will($this->returnCallback(function ($value) {
-                return '[' . $value . ']';
+                return "'$value'";
             }));
-        $mock->expects($this->any())
-            ->method('quoteIdentifier')
-            ->will($this->returnCallback(function ($value) {
-                return '[' . $value . ']';
-            }));
-        $driver->connection($mock);
+        $driver->setConnection($mock);
+
         return $driver;
     }
 }

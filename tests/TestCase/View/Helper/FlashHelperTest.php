@@ -1,24 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View\Helper;
 
-use Cake\Controller\Controller;
-use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Network\Request;
-use Cake\Network\Session;
+use Cake\Http\ServerRequest;
+use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\FlashHelper;
 use Cake\View\View;
@@ -26,6 +24,7 @@ use Cake\View\View;
 /**
  * FlashHelperTest class
  *
+ * @property \Cake\View\Helper\FlashHelper $Flash
  */
 class FlashHelperTest extends TestCase
 {
@@ -38,9 +37,8 @@ class FlashHelperTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->View = new View();
         $session = new Session();
-        $this->View->request = new Request(['session' => $session]);
+        $this->View = new View(new ServerRequest(['session' => $session]));
         $this->Flash = new FlashHelper($this->View);
 
         $session->write([
@@ -108,6 +106,7 @@ class FlashHelperTest extends TestCase
     {
         parent::tearDown();
         unset($this->View, $this->Flash);
+        $this->clearPlugins();
     }
 
     /**
@@ -140,11 +139,11 @@ class FlashHelperTest extends TestCase
     /**
      * testFlashThrowsException
      *
-     * @expectedException \UnexpectedValueException
      */
     public function testFlashThrowsException()
     {
-        $this->View->request->session()->write('Flash.foo', 'bar');
+        $this->expectException(\UnexpectedValueException::class);
+        $this->View->getRequest()->getSession()->write('Flash.foo', 'bar');
         $this->Flash->render('foo');
     }
 
@@ -177,7 +176,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPluginElement()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
 
         $result = $this->Flash->render('flash', ['element' => 'TestPlugin.Flash/plugin_element']);
         $expected = 'this is the plugin element';
@@ -191,9 +190,9 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithTheme()
     {
-        Plugin::load('TestTheme');
+        $this->loadPlugins(['TestTheme']);
 
-        $this->View->theme = 'TestTheme';
+        $this->View->setTheme('TestTheme');
         $result = $this->Flash->render('flash');
         $expected = 'flash element from TestTheme';
         $this->assertContains($expected, $result);
@@ -218,7 +217,7 @@ class FlashHelperTest extends TestCase
             ['div' => ['id' => 'classy-message']], 'Recorded', '/div'
         ];
         $this->assertHtml($expected, $result);
-        $this->assertNull($this->View->request->session()->read('Flash.stack'));
+        $this->assertNull($this->View->getRequest()->getSession()->read('Flash.stack'));
     }
 
     /**
@@ -229,7 +228,7 @@ class FlashHelperTest extends TestCase
      */
     public function testFlashWithPrefix()
     {
-        $this->View->request->params['prefix'] = 'Admin';
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
         $result = $this->Flash->render('flash');
         $expected = 'flash element from Admin prefix folder';
         $this->assertContains($expected, $result);

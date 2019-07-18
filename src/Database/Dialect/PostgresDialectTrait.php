@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database\Dialect;
 
@@ -30,7 +30,7 @@ trait PostgresDialectTrait
     use SqlDialectTrait;
 
     /**
-     *  String used to start a database identifier quoting to make it safe
+     * String used to start a database identifier quoting to make it safe
      *
      * @var string
      */
@@ -73,6 +73,7 @@ trait PostgresDialectTrait
         if (!$query->clause('epilog')) {
             $query->epilog('RETURNING *');
         }
+
         return $query;
     }
 
@@ -85,6 +86,7 @@ trait PostgresDialectTrait
     protected function _expressionTranslators()
     {
         $namespace = 'Cake\Database\Expression';
+
         return [
             $namespace . '\FunctionExpression' => '_transformFunctionExpression'
         ];
@@ -100,15 +102,15 @@ trait PostgresDialectTrait
      */
     protected function _transformFunctionExpression(FunctionExpression $expression)
     {
-        switch ($expression->name()) {
+        switch ($expression->getName()) {
             case 'CONCAT':
                 // CONCAT function is expressed as exp1 || exp2
-                $expression->name('')->type(' ||');
+                $expression->setName('')->setConjunction(' ||');
                 break;
             case 'DATEDIFF':
                 $expression
-                    ->name('')
-                    ->type('-')
+                    ->setName('')
+                    ->setConjunction('-')
                     ->iterateParts(function ($p) {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
@@ -121,30 +123,34 @@ trait PostgresDialectTrait
                 break;
             case 'CURRENT_DATE':
                 $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
-                $expression->name('CAST')->type(' AS ')->add([$time, 'date' => 'literal']);
+                $expression->setName('CAST')->setConjunction(' AS ')->add([$time, 'date' => 'literal']);
                 break;
             case 'CURRENT_TIME':
                 $time = new FunctionExpression('LOCALTIMESTAMP', [' 0 ' => 'literal']);
-                $expression->name('CAST')->type(' AS ')->add([$time, 'time' => 'literal']);
+                $expression->setName('CAST')->setConjunction(' AS ')->add([$time, 'time' => 'literal']);
                 break;
             case 'NOW':
-                $expression->name('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
+                $expression->setName('LOCALTIMESTAMP')->add([' 0 ' => 'literal']);
+                break;
+            case 'RAND':
+                $expression->setName('RANDOM');
                 break;
             case 'DATE_ADD':
                 $expression
-                    ->name('')
-                    ->type(' + INTERVAL')
+                    ->setName('')
+                    ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
                             $p = sprintf("'%s'", $p);
                         }
+
                         return $p;
                     });
                 break;
             case 'DAYOFWEEK':
                 $expression
-                    ->name('EXTRACT')
-                    ->type(' ')
+                    ->setName('EXTRACT')
+                    ->setConjunction(' ')
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
@@ -164,6 +170,7 @@ trait PostgresDialectTrait
         if (!$this->_schemaDialect) {
             $this->_schemaDialect = new PostgresSchema($this);
         }
+
         return $this->_schemaDialect;
     }
 

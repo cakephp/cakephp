@@ -1,19 +1,19 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\ORM\TableRegistry;
-$autoTables = TableRegistry::genericInstances();
+$autoTables = TableRegistry::getTableLocator()->genericInstances();
 if (!$autoTables) {
     return;
 }
@@ -26,7 +26,7 @@ instead of any other specific subclass.
 <p>This could be the cause for this exception. Auto-Tables are created for you under the following circumstances:</p>
 <ul>
     <li>The class for the specified table does not exist.</li>
-    <li>The Table was created with a typo: <strong><em>TableRegistry::get('Atricles');</em></strong></li>
+    <li>The Table was created with a typo: <strong><em>$this->getTableLocator()->get('Atricles');</em></strong></li>
     <li>The class file has a typo in the name or incorrect namespace: <strong><em>class Atricles extends Table</em></strong></li>
     <li>The file containing the class has a typo or incorrect casing: <strong><em>Atricles.php</em></strong></li>
     <li>The Table was used using associations but the association has a typo: <strong><em>$this->belongsTo('Atricles')</em></strong></li>

@@ -1,27 +1,25 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Auth;
 
 use Cake\Auth\WeakPasswordHasher;
-use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 
 /**
  * Test case for WeakPasswordHasher
- *
  */
 class WeakPasswordHasherTest extends TestCase
 {
@@ -35,7 +33,7 @@ class WeakPasswordHasherTest extends TestCase
     {
         parent::setUp();
 
-        Security::salt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+        Security::setSalt('YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
     }
 
     /**
@@ -60,12 +58,12 @@ class WeakPasswordHasherTest extends TestCase
     public function testHashAndCheck()
     {
         $hasher = new WeakPasswordHasher();
-        $hasher->config('hashType', 'md5');
+        $hasher->setConfig('hashType', 'md5');
         $password = $hasher->hash('foo');
         $this->assertTrue($hasher->check('foo', $password));
         $this->assertFalse($hasher->check('bar', $password));
 
-        $hasher->config('hashType', 'sha1');
+        $hasher->setConfig('hashType', 'sha1');
         $this->assertFalse($hasher->check('foo', $password));
     }
 }

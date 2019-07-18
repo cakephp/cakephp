@@ -1,22 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.1.7
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Database\Type;
 use Cake\TestSuite\TestCase;
-use \PDO;
+use PDO;
 
 /**
  * Test for the String type.
@@ -33,7 +33,7 @@ class StringTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = Type::build('string');
-        $this->driver = $this->getMock('Cake\Database\Driver');
+        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
     }
 
     /**
@@ -55,7 +55,9 @@ class StringTypeTest extends TestCase
      */
     public function testToDatabase()
     {
-        $obj = $this->getMock('StdClass', ['__toString']);
+        $obj = $this->getMockBuilder('StdClass')
+            ->setMethods(['__toString'])
+            ->getMock();
         $obj->method('__toString')->will($this->returnValue('toString called'));
 
         $this->assertNull($this->type->toDatabase(null, $this->driver));
@@ -67,11 +69,11 @@ class StringTypeTest extends TestCase
     /**
      * Tests that passing an invalid value will throw an exception
      *
-     * @expectedException InvalidArgumentException
      * @return void
      */
     public function testToDatabaseInvalidArray()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->type->toDatabase([1, 2, 3], $this->driver);
     }
 

@@ -4,26 +4,26 @@
  *
  * Test Case for Event class
  *
- * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         2.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Event;
 
+use ArrayObject;
 use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
 
 /**
  * Tests the Cake\Event\Event class functionality
- *
  */
 class EventTest extends TestCase
 {
@@ -37,7 +37,7 @@ class EventTest extends TestCase
     public function testName()
     {
         $event = new Event('fake.event');
-        $this->assertEquals('fake.event', $event->name());
+        $this->assertEquals('fake.event', $event->getName());
     }
 
     /**
@@ -50,10 +50,10 @@ class EventTest extends TestCase
     public function testSubject()
     {
         $event = new Event('fake.event', $this);
-        $this->assertSame($this, $event->subject());
+        $this->assertSame($this, $event->getSubject());
 
         $event = new Event('fake.event');
-        $this->assertNull($event->subject());
+        $this->assertNull($event->getSubject());
     }
 
     /**
@@ -79,7 +79,26 @@ class EventTest extends TestCase
     public function testEventData()
     {
         $event = new Event('fake.event', $this, ['some' => 'data']);
-        $this->assertEquals(['some' => 'data'], $event->data);
+        $this->assertEquals(['some' => 'data'], $event->getData());
+
+        $this->assertEquals('data', $event->getData('some'));
+        $this->assertNull($event->getData('undef'));
+    }
+
+    /**
+     * Tests that it is possible to get/set custom data in a event
+     *
+     * @return void
+     * @triggers fake.event $this, array('some' => 'data')
+     */
+    public function testEventDataObject()
+    {
+        $data = new ArrayObject(['some' => 'data']);
+        $event = new Event('fake.event', $this, $data);
+        $this->assertEquals(['some' => 'data'], $event->getData());
+
+        $this->assertEquals('data', $event->getData('some'));
+        $this->assertNull($event->getData('undef'));
     }
 
     /**
@@ -91,7 +110,7 @@ class EventTest extends TestCase
     public function testEventDirectPropertyAccess()
     {
         $event = new Event('fake.event', $this);
-        $this->assertEquals($this, $event->subject);
-        $this->assertEquals('fake.event', $event->name);
+        $this->assertEquals($this, $event->getSubject());
+        $this->assertEquals('fake.event', $event->getName());
     }
 }

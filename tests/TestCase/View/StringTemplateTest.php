@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\View;
 
@@ -95,9 +95,6 @@ class StringTemplateTest extends TestCase
         ];
         $this->template->add($templates);
 
-        $result = $this->template->format('not there', []);
-        $this->assertNull($result);
-
         $result = $this->template->format('text', ['text' => '']);
         $this->assertSame('', $result);
 
@@ -115,6 +112,22 @@ class StringTemplateTest extends TestCase
             'templateVars' => ['var1' => 'foo']
         ]);
         $this->assertEquals('<custom default v1="foo" v2="" />', $result);
+    }
+
+    /**
+     * Test formatting strings with URL encoding
+     *
+     * @return void
+     */
+    public function testFormatUrlEncoding()
+    {
+        $templates = [
+            'test' => '<img src="/img/foo%20bar.jpg">{{text}}',
+        ];
+        $this->template->add($templates);
+
+        $result = $this->template->format('test', ['text' => 'stuff!']);
+        $this->assertSame('<img src="/img/foo%20bar.jpg">stuff!', $result);
     }
 
     /**
@@ -143,6 +156,22 @@ class StringTemplateTest extends TestCase
     }
 
     /**
+     * Test formatting a missing template.
+     *
+     * @return void
+     */
+    public function testFormatMissingTemplate()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot find template named \'missing\'');
+        $templates = [
+            'text' => '{{text}}',
+        ];
+        $this->template->add($templates);
+        $this->template->format('missing', ['text' => 'missing']);
+    }
+
+    /**
      * Test loading templates files in the app.
      *
      * @return void
@@ -163,19 +192,20 @@ class StringTemplateTest extends TestCase
      */
     public function testLoadPlugin()
     {
-        Plugin::load('TestPlugin');
+        $this->loadPlugins(['TestPlugin']);
         $this->assertNull($this->template->load('TestPlugin.test_templates'));
         $this->assertEquals('<em>{{text}}</em>', $this->template->get('italic'));
+        $this->clearPlugins();
     }
 
     /**
      * Test that loading non-existing templates causes errors.
      *
-     * @expectedException \Cake\Core\Exception\Exception
-     * @expectedExceptionMessage Could not load configuration file
      */
     public function testLoadErrorNoFile()
     {
+        $this->expectException(\Cake\Core\Exception\Exception::class);
+        $this->expectExceptionMessage('Could not load configuration file');
         $this->template->load('no_such_file');
     }
 
@@ -235,6 +265,15 @@ class StringTemplateTest extends TestCase
             ' data-hero="&lt;batman&gt;"',
             $result
         );
+
+        $evilKey = "><script>alert(1)</script>";
+        $attrs = [$evilKey => 'some value'];
+
+        $result = $this->template->formatAttributes($attrs);
+        $this->assertEquals(
+            ' &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value"',
+            $result
+        );
     }
 
     /**
@@ -270,5 +309,135 @@ class StringTemplateTest extends TestCase
 
         $this->assertNull($this->template->pop());
         $this->assertNull($this->template->pop());
+    }
+
+    /**
+     * Test addClass method newClass parameter
+     *
+     * Tests null, string, array and false for `input`
+     *
+     * @return void
+     */
+    public function testAddClassMethodNewClass()
+    {
+        $result = $this->template->addClass([], 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass([], ['new_class']);
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass([], false);
+        $this->assertEquals($result, []);
+
+        $result = $this->template->addClass([], null);
+        $this->assertEquals($result, []);
+
+        $result = $this->template->addClass(null, null);
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test addClass method input (currentClass) parameter
+     *
+     * Tests null, string, array, false and object
+     *
+     * @return void
+     */
+    public function testAddClassMethodCurrentClass()
+    {
+        $result = $this->template->addClass(['class' => ['current']], 'new_class');
+        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+
+        $result = $this->template->addClass('', 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass(null, 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass(false, 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+
+        $result = $this->template->addClass(new \StdClass(), 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+    }
+
+    /**
+     * Test addClass method string parameter, it should fallback to string
+     *
+     * @return void
+     */
+    public function testAddClassMethodFallbackToString()
+    {
+        $result = $this->template->addClass('current', 'new_class');
+        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+    }
+
+    /**
+     * Test addClass method to make sure the returned array is unique
+     *
+     * @return void
+     */
+    public function testAddClassMethodUnique()
+    {
+        $result = $this->template->addClass(['class' => ['new_class']], 'new_class');
+        $this->assertEquals($result, ['class' => ['new_class']]);
+    }
+
+    /**
+     * Test addClass method useIndex param
+     *
+     * Tests for useIndex being the default, 'my_class' and false
+     *
+     * @return void
+     */
+    public function testAddClassMethodUseIndex()
+    {
+        $result = $this->template->addClass(
+            [
+                'class' => 'current_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'new_class',
+            'class'
+        );
+        $this->assertEquals($result, [
+            'class' => ['current_class', 'new_class'],
+            'other_index1' => false,
+            'type' => 'text'
+        ]);
+
+        $result = $this->template->addClass(
+            [
+                'my_class' => 'current_class',
+                'other_index1' => false,
+                'type' => 'text'
+            ],
+            'new_class',
+            'my_class'
+        );
+        $this->assertEquals($result, [
+            'other_index1' => false,
+            'type' => 'text',
+            'my_class' => ['current_class', 'new_class']
+        ]);
+
+        $result = $this->template->addClass(
+            [
+                'class' => [
+                    'current_class',
+                    'text'
+                ]
+            ],
+            'new_class',
+            'non-existent'
+        );
+        $this->assertEquals($result, [
+            'class' => [
+                'current_class',
+                'text'
+            ],
+            'non-existent' => ['new_class']
+        ]);
     }
 }

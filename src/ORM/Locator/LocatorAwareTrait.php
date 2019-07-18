@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM\Locator;
 
@@ -35,15 +35,45 @@ trait LocatorAwareTrait
      *
      * @param \Cake\ORM\Locator\LocatorInterface|null $tableLocator LocatorInterface instance.
      * @return \Cake\ORM\Locator\LocatorInterface
+     * @deprecated 3.5.0 Use getTableLocator()/setTableLocator() instead.
      */
     public function tableLocator(LocatorInterface $tableLocator = null)
     {
+        deprecationWarning(
+            get_called_class() . '::tableLocator() is deprecated. ' .
+            'Use getTableLocator()/setTableLocator() instead.'
+        );
         if ($tableLocator !== null) {
-            $this->_tableLocator = $tableLocator;
+            $this->setTableLocator($tableLocator);
         }
+
+        return $this->getTableLocator();
+    }
+
+    /**
+     * Sets the table locator.
+     *
+     * @param \Cake\ORM\Locator\LocatorInterface $tableLocator LocatorInterface instance.
+     * @return $this
+     */
+    public function setTableLocator(LocatorInterface $tableLocator)
+    {
+        $this->_tableLocator = $tableLocator;
+
+        return $this;
+    }
+
+    /**
+     * Gets the table locator.
+     *
+     * @return \Cake\ORM\Locator\LocatorInterface
+     */
+    public function getTableLocator()
+    {
         if (!$this->_tableLocator) {
-            $this->_tableLocator = TableRegistry::locator();
+            $this->_tableLocator = TableRegistry::getTableLocator();
         }
+
         return $this->_tableLocator;
     }
 }

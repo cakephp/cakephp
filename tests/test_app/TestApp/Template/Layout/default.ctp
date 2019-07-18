@@ -22,7 +22,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <body>
     <div id="container">
         <div id="header">
-            <h1><?= $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
+            <h1><?= $this->Html->link($cakeDescription, 'https://cakephp.org'); ?></h1>
         </div>
         <div id="content">
 

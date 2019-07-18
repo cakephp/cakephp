@@ -1,15 +1,15 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Mailer;
 
@@ -23,7 +23,9 @@ use Cake\TestSuite\TestCase;
 class Stub
 {
 
-    use MailerAwareTrait;
+    use MailerAwareTrait {
+        getMailer as public;
+    }
 }
 
 /**
@@ -40,20 +42,20 @@ class MailerAwareTraitTest extends TestCase
     public function testGetMailer()
     {
         $originalAppNamespace = Configure::read('App.namespace');
-        Configure::write('App.namespace', 'TestApp');
+        static::setAppNamespace();
         $stub = new Stub();
         $this->assertInstanceOf('TestApp\Mailer\TestMailer', $stub->getMailer('Test'));
-        Configure::write('App.namespace', $originalAppNamespace);
+        static::setAppNamespace($originalAppNamespace);
     }
 
     /**
      * Test exception thrown by getMailer.
      *
-     * @expectedException Cake\Mailer\Exception\MissingMailerException
-     * @expectedExceptionMessage Mailer class "Test" could not be found.
      */
     public function testGetMailerThrowsException()
     {
+        $this->expectException(\Cake\Mailer\Exception\MissingMailerException::class);
+        $this->expectExceptionMessage('Mailer class "Test" could not be found.');
         $stub = new Stub();
         $stub->getMailer('Test');
     }

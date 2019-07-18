@@ -2,28 +2,26 @@
 /**
  * HelpFormatterTest file
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         2.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\HelpFormatter;
 use Cake\TestSuite\TestCase;
-use \DOMDocument as DomDocument;
 
 /**
- * Class HelpFormatterTest
- *
+ * HelpFormatterTest
  */
 class HelpFormatterTest extends TestCase
 {
@@ -36,7 +34,7 @@ class HelpFormatterTest extends TestCase
     public function testWidthFormatting()
     {
         $parser = new ConsoleOptionParser('test', false);
-        $parser->description('This is fifteen This is fifteen This is fifteen')
+        $parser->setDescription('This is fifteen This is fifteen This is fifteen')
             ->addOption('four', ['help' => 'this is help text this is help text'])
             ->addArgument('four', ['help' => 'this is help text this is help text'])
             ->addSubcommand('four', ['help' => 'this is help text this is help text']);
@@ -48,7 +46,7 @@ This is fifteen This is
 fifteen This is fifteen
 
 <info>Usage:</info>
-cake test [subcommand] [-h] [--four] [<four>]
+cake test [subcommand] [--four] [-h] [<four>]
 
 <info>Subcommands:</info>
 
@@ -59,9 +57,9 @@ To see help on a subcommand use <info>`cake test [subcommand] --help`</info>
 
 <info>Options:</info>
 
---help, -h  Display this help.
 --four      this is help text
             this is help text
+--help, -h  Display this help.
 
 <info>Arguments:</info>
 
@@ -117,8 +115,8 @@ txt;
     public function testHelpDescriptionAndEpilog()
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->description('Description text')
-            ->epilog('epilog text')
+        $parser->setDescription('Description text')
+            ->setEpilog('epilog text')
             ->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 
@@ -200,14 +198,14 @@ txt;
         $result = $formatter->text();
         $expected = <<<txt
 <info>Usage:</info>
-cake mycommand [-h] [--test] [-c default]
+cake mycommand [-c default] [-h] [--test]
 
 <info>Options:</info>
 
---help, -h        Display this help.
---test            A test option.
 --connection, -c  The connection to use. <comment>(default:
                   default)</comment>
+--help, -h        Display this help.
+--test            A test option.
 
 txt;
         $this->assertTextEquals($expected, $result, 'Help does not match');
@@ -279,20 +277,49 @@ xml;
     {
         $parser = new ConsoleOptionParser('mycommand', false);
         $parser
-            ->addArgument('test', ['help' => 'A test option.'])
-            ->addArgument('test2', ['help' => 'A test option.'])
+            ->addArgument('test', ['help' => 'A test option.', 'required' => true])
+            ->addArgument('test2', ['help' => 'A test option.', 'required' => true])
             ->addArgument('test3', ['help' => 'A test option.'])
             ->addArgument('test4', ['help' => 'A test option.'])
             ->addArgument('test5', ['help' => 'A test option.'])
             ->addArgument('test6', ['help' => 'A test option.'])
             ->addArgument('test7', ['help' => 'A test option.'])
-            ->addArgument('model', ['help' => 'The model to make.', 'required' => true])
+            ->addArgument('model', ['help' => 'The model to make.'])
             ->addArgument('other_longer', ['help' => 'Another argument.']);
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->text();
         $expected = 'cake mycommand [-h] [arguments]';
         $this->assertContains($expected, $result);
+    }
+
+    /**
+     * Test setting a help alias
+     *
+     * @return void
+     */
+    public function testWithHelpAlias()
+    {
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $formatter = new HelpFormatter($parser);
+        $formatter->setAlias('foo');
+        $result = $formatter->text();
+        $expected = 'foo mycommand [-h]';
+        $this->assertContains($expected, $result);
+    }
+
+    /**
+     * Tests that setting a none string help alias triggers an exception
+     *
+     * @return void
+     */
+    public function testWithNoneStringHelpAlias()
+    {
+        $this->expectException(\Cake\Console\Exception\ConsoleException::class);
+        $this->expectExceptionMessage('Alias must be of type string.');
+        $parser = new ConsoleOptionParser('mycommand', false);
+        $formatter = new HelpFormatter($parser);
+        $formatter->setAlias(['foo']);
     }
 
     /**
@@ -316,8 +343,8 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
-<description>Description text</description>
+<command>mycommand</command>
+<description />
 <subcommands />
 <options>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
@@ -339,11 +366,14 @@ xml;
 			<choice>aro</choice>
 		</choices>
 	</argument>
+	<argument name="other_longer" help="Another argument." required="0">
+		<choices></choices>
+	</argument>
 </arguments>
-<epilog>epilog text</epilog>
+<epilog />
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -354,8 +384,8 @@ xml;
     public function testXmlHelpDescriptionAndEpilog()
     {
         $parser = new ConsoleOptionParser('mycommand', false);
-        $parser->description('Description text')
-            ->epilog('epilog text')
+        $parser->setDescription('Description text')
+            ->setEpilog('epilog text')
             ->addOption('test', ['help' => 'A test option.'])
             ->addArgument('model', ['help' => 'The model to make.', 'required' => true]);
 
@@ -364,7 +394,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description>Description text</description>
 <subcommands />
 <options>
@@ -385,7 +415,7 @@ xml;
 <epilog>epilog text</epilog>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -404,7 +434,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands>
 	<command name="method" help="This is another command" />
@@ -423,7 +453,7 @@ xml;
 <epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -444,10 +474,14 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-<name>mycommand</name>
+<command>mycommand</command>
 <description/>
 <subcommands/>
 <options>
+	<option name="--connection" short="-c" help="The connection to use." boolean="0">
+		<default>default</default>
+		<choices></choices>
+	</option>
 	<option name="--help" short="-h" help="Display this help." boolean="1">
 		<default></default>
 		<choices></choices>
@@ -456,16 +490,12 @@ xml;
 		<default></default>
 		<choices></choices>
 	</option>
-	<option name="--connection" short="-c" help="The connection to use." boolean="0">
-		<default>default</default>
-		<choices></choices>
-	</option>
 </options>
 <arguments/>
 <epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**
@@ -485,7 +515,7 @@ xml;
         $expected = <<<xml
 <?xml version="1.0"?>
 <shell>
-	<name>mycommand</name>
+	<command>mycommand</command>
 	<description/>
 	<subcommands/>
 	<options>
@@ -509,7 +539,7 @@ xml;
 	<epilog/>
 </shell>
 xml;
-        $this->assertXmlStringNotEqualsXmlString($expected, $result, 'Help does not match');
+        $this->assertXmlStringEqualsXmlString($expected, $result, 'Help does not match');
     }
 
     /**

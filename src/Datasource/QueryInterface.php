@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.1
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 namespace Cake\Datasource;
@@ -18,10 +18,16 @@ namespace Cake\Datasource;
 /**
  * The basis for every query object
  *
- * @package Cake\Datasource
+ * @method $this andWhere($conditions, $types = [])
+ * @method $this select($fields = [], $overwrite = false)
+ * @method \Cake\Datasource\RepositoryInterface getRepository()
  */
 interface QueryInterface
 {
+
+    const JOIN_TYPE_INNER = 'INNER';
+    const JOIN_TYPE_LEFT = 'LEFT';
+    const JOIN_TYPE_RIGHT = 'RIGHT';
 
     /**
      * Returns a key => value array representing a single aliased field
@@ -32,8 +38,8 @@ interface QueryInterface
      * If no $alias is passed, the default table for this query will be used.
      *
      * @param string $field The field to alias
-     * @param string $alias the alias used to prefix the field
-     * @return array
+     * @param string|null $alias the alias used to prefix the field
+     * @return string
      */
     public function aliasField($field, $alias = null);
 
@@ -43,7 +49,7 @@ interface QueryInterface
      *
      * @param array $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array
+     * @return string[]
      */
     public function aliasFields($fields, $defaultAlias = null);
 
@@ -234,12 +240,13 @@ interface QueryInterface
      * in the record set you want as results. If empty the limit will default to
      * the existing limit clause, and if that too is empty, then `25` will be used.
      *
-     * Pages should start at 1.
+     * Pages must start at 1.
      *
      * @param int $num The page number you want.
-     * @param int $limit The number of rows you want in the page. If null
+     * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
+     * @throws \InvalidArgumentException If page number < 1.
      */
     public function page($num, $limit = null);
 
@@ -319,7 +326,7 @@ interface QueryInterface
      * ### Using expressions objects:
      *
      * ```
-     *  $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->type('OR');
+     *  $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
      *  $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
@@ -366,7 +373,7 @@ interface QueryInterface
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
-     * @param string|array|callback|null $conditions The conditions to filter on.
+     * @param string|array|callable|null $conditions The conditions to filter on.
      * @param array $types associative array of type names used to bind values to query
      * @param bool $overwrite whether to reset conditions with passed list or not
      * @return $this

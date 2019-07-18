@@ -1,26 +1,23 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Log;
 
 use Cake\Log\Log;
-use Cake\Log\LogInterface;
-use Cake\Log\LogTrait;
 use Cake\TestSuite\TestCase;
 
 /**
  * Test case for LogTrait
- *
  */
 class LogTraitTest extends TestCase
 {
@@ -38,7 +35,7 @@ class LogTraitTest extends TestCase
      */
     public function testLog()
     {
-        $mock = $this->getMock('Psr\Log\LoggerInterface');
+        $mock = $this->getMockBuilder('Psr\Log\LoggerInterface')->getMock();
         $mock->expects($this->at(0))
             ->method('log')
             ->with('error', 'Testing');
@@ -47,7 +44,7 @@ class LogTraitTest extends TestCase
             ->method('log')
             ->with('debug', [1, 2]);
 
-        Log::config('trait_test', ['engine' => $mock]);
+        Log::setConfig('trait_test', ['engine' => $mock]);
         $subject = $this->getObjectForTrait('Cake\Log\LogTrait');
 
         $subject->log('Testing');

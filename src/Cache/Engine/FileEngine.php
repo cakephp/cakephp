@@ -1,21 +1,22 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
 use Cake\Utility\Inflector;
+use CallbackFilterIterator;
 use Exception;
 use LogicException;
 use RecursiveDirectoryIterator;
@@ -29,7 +30,6 @@ use SplFileObject;
  * engine available, or have content which is not performance sensitive.
  *
  * You can configure a FileEngine cache, using Cache::config()
- *
  */
 class FileEngine extends CacheEngine
 {
@@ -37,9 +37,9 @@ class FileEngine extends CacheEngine
     /**
      * Instance of SplFileObject class
      *
-     * @var \SplFileObject
+     * @var \SplFileObject|null
      */
-    protected $_File = null;
+    protected $_File;
 
     /**
      * The default config used unless overridden by runtime configuration
@@ -91,17 +91,18 @@ class FileEngine extends CacheEngine
         parent::init($config);
 
         if ($this->_config['path'] === null) {
-            $this->_config['path'] = sys_get_temp_dir() . DS . 'cake_cache' . DS;
+            $this->_config['path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'cake_cache' . DIRECTORY_SEPARATOR;
         }
-        if (DS === '\\') {
+        if (DIRECTORY_SEPARATOR === '\\') {
             $this->_config['isWindows'] = true;
         }
-        if (substr($this->_config['path'], -1) !== DS) {
-            $this->_config['path'] .= DS;
+        if (substr($this->_config['path'], -1) !== DIRECTORY_SEPARATOR) {
+            $this->_config['path'] .= DIRECTORY_SEPARATOR;
         }
-        if (!empty($this->_groupPrefix)) {
-            $this->_groupPrefix = str_replace('_', DS, $this->_groupPrefix);
+        if ($this->_groupPrefix) {
+            $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
+
         return $this->_active();
     }
 
@@ -151,7 +152,7 @@ class FileEngine extends CacheEngine
 
         $duration = $this->_config['duration'];
         $expires = time() + $duration;
-        $contents = $expires . $lineBreak . $data . $lineBreak;
+        $contents = implode([$expires, $lineBreak, $data, $lineBreak]);
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
@@ -193,12 +194,11 @@ class FileEngine extends CacheEngine
         $time = time();
         $cachetime = (int)$this->_File->current();
 
-        if ($cachetime !== false &&
-            ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)
-        ) {
+        if ($cachetime < $time) {
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
+
             return false;
         }
 
@@ -221,6 +221,7 @@ class FileEngine extends CacheEngine
             }
             $data = unserialize((string)$data);
         }
+
         return $data;
     }
 
@@ -268,7 +269,10 @@ class FileEngine extends CacheEngine
 
         $this->_clearDirectory($this->_config['path'], $now, $threshold);
 
-        $directory = new RecursiveDirectoryIterator($this->_config['path']);
+        $directory = new RecursiveDirectoryIterator(
+            $this->_config['path'],
+            \FilesystemIterator::SKIP_DOTS
+        );
         $contents = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST
@@ -279,12 +283,13 @@ class FileEngine extends CacheEngine
                 continue;
             }
 
-            $path = $path->getRealPath() . DS;
+            $path = $path->getRealPath() . DIRECTORY_SEPARATOR;
             if (!in_array($path, $cleared)) {
                 $this->_clearDirectory($path, $now, $threshold);
                 $cleared[] = $path;
             }
         }
+
         return true;
     }
 
@@ -335,6 +340,8 @@ class FileEngine extends CacheEngine
                 //@codingStandardsIgnoreEnd
             }
         }
+
+        $dir->close();
     }
 
     /**
@@ -374,7 +381,7 @@ class FileEngine extends CacheEngine
     protected function _setKey($key, $createKey = false)
     {
         $groups = null;
-        if (!empty($this->_groupPrefix)) {
+        if ($this->_groupPrefix) {
             $groups = vsprintf($this->_groupPrefix, $this->groups());
         }
         $dir = $this->_config['path'] . $groups;
@@ -382,17 +389,22 @@ class FileEngine extends CacheEngine
         if (!is_dir($dir)) {
             mkdir($dir, 0775, true);
         }
+
         $path = new SplFileInfo($dir . $key);
 
         if (!$createKey && !$path->isFile()) {
             return false;
         }
-        if (empty($this->_File) || $this->_File->getBasename() !== $key) {
+        if (empty($this->_File) ||
+            $this->_File->getBasename() !== $key ||
+            $this->_File->valid() === false
+        ) {
             $exists = file_exists($path->getPathname());
             try {
                 $this->_File = $path->openFile('c+');
             } catch (Exception $e) {
                 trigger_error($e->getMessage(), E_USER_WARNING);
+
                 return false;
             }
             unset($path);
@@ -405,11 +417,12 @@ class FileEngine extends CacheEngine
                 ), E_USER_WARNING);
             }
         }
+
         return true;
     }
 
     /**
-     * Determine is cache directory is writable
+     * Determine if cache directory is writable
      *
      * @return bool
      */
@@ -417,19 +430,23 @@ class FileEngine extends CacheEngine
     {
         $dir = new SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
+        $success = true;
         if (!is_dir($path)) {
-            mkdir($path, 0775, true);
+            //@codingStandardsIgnoreStart
+            $success = @mkdir($path, 0775, true);
+            //@codingStandardsIgnoreEnd
         }
 
-        if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
+        $isWritableDir = ($dir->isDir() && $dir->isWritable());
+        if (!$success || ($this->_init && !$isWritableDir)) {
             $this->_init = false;
             trigger_error(sprintf(
                 '%s is not writable',
                 $this->_config['path']
             ), E_USER_WARNING);
-            return false;
         }
-        return true;
+
+        return $success;
     }
 
     /**
@@ -445,10 +462,11 @@ class FileEngine extends CacheEngine
         }
 
         $key = Inflector::underscore(str_replace(
-            [DS, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
+            [DIRECTORY_SEPARATOR, '/', '.', '<', '>', '?', ':', '|', '*', '"'],
             '_',
-            strval($key)
+            (string)$key
         ));
+
         return $key;
     }
 
@@ -461,25 +479,42 @@ class FileEngine extends CacheEngine
     public function clearGroup($group)
     {
         $this->_File = null;
+
+        $prefix = (string)$this->_config['prefix'];
+
         $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
         $contents = new RecursiveIteratorIterator(
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST
         );
-        foreach ($contents as $object) {
-            $containsGroup = strpos($object->getPathname(), DS . $group . DS) !== false;
-            $hasPrefix = true;
-            if (strlen($this->_config['prefix']) !== 0) {
-                $hasPrefix = strpos($object->getBasename(), $this->_config['prefix']) === 0;
+        $filtered = new CallbackFilterIterator(
+            $contents,
+            function (SplFileInfo $current) use ($group, $prefix) {
+                if (!$current->isFile()) {
+                    return false;
+                }
+
+                $hasPrefix = $prefix === ''
+                    || strpos($current->getBasename(), $prefix) === 0;
+                if ($hasPrefix === false) {
+                    return false;
+                }
+
+                $pos = strpos(
+                    $current->getPathname(),
+                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
+                );
+
+                return $pos !== false;
             }
-            if ($object->isFile() && $containsGroup && $hasPrefix) {
-                $path = $object->getPathname();
-                $object = null;
-                //@codingStandardsIgnoreStart
-                @unlink($path);
-                //@codingStandardsIgnoreEnd
-            }
+        );
+        foreach ($filtered as $object) {
+            $path = $object->getPathname();
+            $object = null;
+            // @codingStandardsIgnoreLine
+            @unlink($path);
         }
+
         return true;
     }
 }

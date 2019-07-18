@@ -1,28 +1,26 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Database\Statement;
 
 use Cake\Database\Statement\StatementDecorator;
 use Cake\TestSuite\TestCase;
-use \PDO;
 
 /**
  * Tests StatementDecorator class
- *
  */
-class StatemetDecoratorTest extends TestCase
+class StatementDecoratorTest extends TestCase
 {
 
     /**
@@ -33,8 +31,8 @@ class StatemetDecoratorTest extends TestCase
      */
     public function testLastInsertId()
     {
-        $statement = $this->getMock('\PDOStatement');
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $statement = $this->getMockBuilder('\PDOStatement')->getMock();
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($statement, $driver);
 
         $driver->expects($this->once())->method('lastInsertId')
@@ -51,8 +49,8 @@ class StatemetDecoratorTest extends TestCase
      */
     public function testLastInsertIdWithReturning()
     {
-        $internal = $this->getMock('\PDOStatement');
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $internal = $this->getMockBuilder('\PDOStatement')->getMock();
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($internal, $driver);
 
         $internal->expects($this->once())->method('columnCount')
@@ -72,8 +70,8 @@ class StatemetDecoratorTest extends TestCase
      */
     public function testNoDoubleExecution()
     {
-        $inner = $this->getMock('\PDOStatement');
-        $driver = $this->getMock('\Cake\Database\Driver');
+        $inner = $this->getMockBuilder('\PDOStatement')->getMock();
+        $driver = $this->getMockBuilder('\Cake\Database\Driver')->getMock();
         $statement = new StatementDecorator($inner, $driver);
 
         $inner->expects($this->once())->method('execute');

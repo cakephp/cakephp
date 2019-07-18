@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP :  Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP Project
  * @since         3.1.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Shell\Helper;
 
@@ -24,6 +24,20 @@ use Cake\TestSuite\TestCase;
  */
 class TableHelperTest extends TestCase
 {
+    /**
+     * @var \Cake\Console\ConsoleOutput
+     */
+    public $stub;
+
+    /**
+     * @var \Cake\Console\ConsoleIo
+     */
+    public $io;
+
+    /**
+     * @var \Cake\Shell\Helper\TableHelper
+     */
+    public $helper;
 
     /**
      * setUp method
@@ -44,7 +58,7 @@ class TableHelperTest extends TestCase
      *
      * @return void
      */
-    public function testDefaultOutput()
+    public function testOutputDefaultOutput()
     {
         $data = [
             ['Header 1', 'Header', 'Long Header'],
@@ -64,7 +78,81 @@ class TableHelperTest extends TestCase
     }
 
     /**
-     * Test output with multibyte characters
+     * Test output with inconsistent keys.
+     *
+     * When outputting entities or other structured data,
+     * headers shouldn't need to have the same keys as it is
+     * annoying to use.
+     *
+     * @return void
+     */
+    public function testOutputInconsistentKeys()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Long Header'],
+            ['a' => 'short', 'b' => 'Longish thing', 'c' => 'short'],
+            ['c' => 'Longer thing', 'a' => 'short', 'b' => 'Longest Value'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+---------------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Long Header</info>   |',
+            '+--------------+---------------+---------------+',
+            '| short        | Longish thing | short         |',
+            '| Longer thing | short         | Longest Value |',
+            '+--------------+---------------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test that output works when data contains just empty strings.
+     *
+     * @return void
+     */
+    public function testOutputEmptyStrings()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Empty'],
+            ['short', 'Longish thing', ''],
+            ['Longer thing', 'short', ''],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+-------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Empty</info> |',
+            '+--------------+---------------+-------+',
+            '| short        | Longish thing |       |',
+            '| Longer thing | short         |       |',
+            '+--------------+---------------+-------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test that output works when data contains nulls.
+     */
+    public function testNullValues()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Empty'],
+            ['short', 'Longish thing', null],
+            ['Longer thing', 'short', null],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+-------+',
+            '| <info>Header 1</info>     | <info>Header</info>        | <info>Empty</info> |',
+            '+--------------+---------------+-------+',
+            '| short        | Longish thing |       |',
+            '| Longer thing | short         |       |',
+            '+--------------+---------------+-------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test output with multi-byte characters
      *
      * @return void
      */
@@ -88,6 +176,30 @@ class TableHelperTest extends TestCase
     }
 
     /**
+     * Test output with multi-byte characters
+     *
+     * @return void
+     */
+    public function testOutputFullwidth()
+    {
+        $data = [
+            ['Header 1', 'Head', 'Long Header'],
+            ['short', '竜頭蛇尾', 'short'],
+            ['Longer thing', 'longerish', 'Longest Value'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+-----------+---------------+',
+            '| <info>Header 1</info>     | <info>Head</info>      | <info>Long Header</info>   |',
+            '+--------------+-----------+---------------+',
+            '| short        | 竜頭蛇尾  | short         |',
+            '| Longer thing | longerish | Longest Value |',
+            '+--------------+-----------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
      * Test output without headers
      *
      * @return void
@@ -99,7 +211,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['headerStyle' => false]);
+        $this->helper->setConfig(['headerStyle' => false]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -123,7 +235,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['headerStyle' => 'error']);
+        $this->helper->setConfig(['headerStyle' => 'error']);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -147,12 +259,34 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['headers' => false]);
+        $this->helper->setConfig(['headers' => false]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
             '| short        | Longish thing | short         |',
             '| Longer thing | short         | Longest Value |',
+            '+--------------+---------------+---------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test output with formatted cells
+     *
+     * @return void
+     */
+    public function testOutputWithFormattedCells()
+    {
+        $data = [
+            ['short', 'Longish thing', '<info>short</info>'],
+            ['Longer thing', 'short', '<warning>Longest</warning> <error>Value</error>'],
+        ];
+        $this->helper->setConfig(['headers' => false]);
+        $this->helper->output($data);
+        $expected = [
+            '+--------------+---------------+---------------+',
+            '| short        | Longish thing | <info>short</info>         |',
+            '| Longer thing | short         | <warning>Longest</warning> <error>Value</error> |',
             '+--------------+---------------+---------------+',
         ];
         $this->assertEquals($expected, $this->stub->messages());
@@ -168,9 +302,9 @@ class TableHelperTest extends TestCase
         $data = [
             ['Header 1', 'Header', 'Long Header'],
             ['short', 'Longish thing', 'short'],
-            ['Longer thing', 'short', 'Longest Value']
+            ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['rowSeparator' => true]);
+        $this->helper->setConfig(['rowSeparator' => true]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -196,7 +330,7 @@ class TableHelperTest extends TestCase
             ['short', 'Longish thing', 'short'],
             ['Longer thing', 'short', 'Longest Value'],
         ];
-        $this->helper->config(['rowSeparator' => true]);
+        $this->helper->setConfig(['rowSeparator' => true]);
         $this->helper->output($data);
         $expected = [
             '+--------------+---------------+---------------+',
@@ -208,5 +342,41 @@ class TableHelperTest extends TestCase
             '+--------------+---------------+---------------+',
         ];
         $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test output when there is no data.
+     */
+    public function testOutputWithNoData()
+    {
+        $this->helper->output([]);
+        $this->assertEquals([], $this->stub->messages());
+    }
+
+    /**
+     * Test output with a header but no data.
+     */
+    public function testOutputWithHeaderAndNoData()
+    {
+        $data = [
+            ['Header 1', 'Header', 'Long Header'],
+        ];
+        $this->helper->output($data);
+        $expected = [
+            '+----------+--------+-------------+',
+            '| <info>Header 1</info> | <info>Header</info> | <info>Long Header</info> |',
+            '+----------+--------+-------------+',
+        ];
+        $this->assertEquals($expected, $this->stub->messages());
+    }
+
+    /**
+     * Test no data when headers are disabled.
+     */
+    public function testOutputHeaderDisabledNoData()
+    {
+        $this->helper->setConfig(['header' => false]);
+        $this->helper->output([]);
+        $this->assertEquals([], $this->stub->messages());
     }
 }

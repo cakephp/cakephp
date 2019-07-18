@@ -1,0 +1,39 @@
+#: Bare message first
+msgid "Pending"
+msgstr "En cours"
+
+msgctxt "Pay status"
+msgid "Pending"
+msgstr "En cours - context"
+
+#: Context message first
+msgctxt "Pay status"
+msgid "Resolved"
+msgstr "En resolved - context"
+
+msgid "Resolved"
+msgstr "En resolved"
+
+#: No context
+msgid "title"
+msgstr "Titel ohne Kontext"
+
+#: Has context
+msgctxt "context"
+msgid "title"
+msgstr "Titel mit Kontext"
+
+#: Another context
+msgctxt "another_context"
+msgid "title"
+msgstr "Titel mit anderem Kontext"
+
+#, fuzzy
+msgctxt "being"
+msgid "{0,plural,=0{Je suis}=1{Je suis}=2{Nous sommes} other{Nous sommes}}"
+msgstr "{0,plural,=0{I'm}=1{I'm}=2{We are} other{We are}}"
+
+#, fuzzy
+msgctxt "origin"
+msgid "{0,plural,=0{Je suis}=1{Je suis}=2{Nous sommes} other{Nous sommes}}"
+msgstr "{0,plural,=0{I've}=1{I've}=2{We are} other{We are}}"

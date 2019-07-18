@@ -13,14 +13,14 @@ endif;
 ?>
 <h2><?= sprintf('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <p>
-    <a href="http://cakephp.org/changelogs/<?= Configure::version(); ?>">Read the changelog</a>
+    <a href="https://cakephp.org/changelogs/<?= Configure::version(); ?>">Read the changelog</a>
 </p>
 
 <?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
 <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
     URL rewriting is not properly configured on your server.
-    1) <a target="_blank" href="http://book.cakephp.org/3.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-    2) <a target="_blank" href="http://book.cakephp.org/3.0/en/development/configuration.html#core-configuration-baseurl" style="color:#fff;">I don't / can't use URL rewriting</a>
+    1) <a target="_blank" href="https://book.cakephp.org/3.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
+    2) <a target="_blank" href="https://book.cakephp.org/3.0/en/development/configuration.html#core-configuration-baseurl" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
 <?php endif; ?>
 
@@ -104,7 +104,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
     <?php
         echo $this->Html->link(
             '<strong>New</strong> CakePHP 3.0 Docs',
-            'http://book.cakephp.org/3.0/en/',
+            'https://book.cakephp.org/3.0/en/',
             ['target' => '_blank', 'escape' => false]
         );
     ?>
@@ -113,7 +113,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
     <?php
         echo $this->Html->link(
             'The 15 min Blog Tutorial',
-            'http://book.cakephp.org/3.0/en/getting-started.html#blog-tutorial',
+            'https://book.cakephp.org/3.0/en/getting-started.html#blog-tutorial',
             ['target' => '_blank', 'escape' => false]
         );
     ?>
@@ -142,17 +142,17 @@ Our primary goal is to provide a structured framework that enables PHP users at 
 </p>
 
 <ul
-    <li><a href="http://cakephp.org">CakePHP</a>
+    <li><a href="https://cakephp.org">CakePHP</a>
     <ul><li>The Rapid Development Framework</li></ul></li>
-    <li><a href="http://book.cakephp.org">CakePHP Documentation </a>
+    <li><a href="https://book.cakephp.org">CakePHP Documentation </a>
     <ul><li>Your Rapid Development Cookbook</li></ul></li>
-    <li><a href="http://api.cakephp.org">CakePHP API </a>
+    <li><a href="https://api.cakephp.org">CakePHP API </a>
     <ul><li>Quick API Reference</li></ul></li>
-    <li><a href="http://bakery.cakephp.org">The Bakery </a>
+    <li><a href="https://bakery.cakephp.org">The Bakery </a>
     <ul><li>Everything CakePHP</li></ul></li>
-    <li><a href="http://plugins.cakephp.org">CakePHP Plugins </a>
+    <li><a href="https://plugins.cakephp.org">CakePHP Plugins </a>
     <ul><li>A comprehensive list of all CakePHP plugins created by the community</li></ul></li>
-    <li><a href="http://community.cakephp.org">CakePHP Community Center </a>
+    <li><a href="https://community.cakephp.org">CakePHP Community Center </a>
     <ul><li>Everything related to the CakePHP community in one place</li></ul></li>
     <li><a href="https://groups.google.com/group/cake-php">CakePHP Google Group </a>
     <ul><li>Community mailing list</li></ul></li>
@@ -164,10 +164,10 @@ Our primary goal is to provide a structured framework that enables PHP users at 
     <ul><li>CakePHP Issues</li></ul></li>
     <li><a href="https://github.com/cakephp/cakephp/wiki#roadmaps">CakePHP Roadmaps </a>
     <ul><li>CakePHP Roadmaps</li></ul></li>
-    <li><a href="http://training.cakephp.org">Training </a>
+    <li><a href="https://training.cakephp.org">Training </a>
     <ul><li>Join a live session and get skilled with the framework</li></ul></li>
-    <li><a href="http://cakefest.org">CakeFest </a>
+    <li><a href="https://cakefest.org">CakeFest </a>
     <ul><li>Don\'t miss our annual CakePHP conference</li></ul></li>
-    <li><a href="http://cakefoundation.org">Cake Software Foundation </a>
+    <li><a href="https://cakefoundation.org">Cake Software Foundation </a>
     <ul><li>Promoting development related to CakePHP</li></ul></li>
 </ul>

@@ -29,7 +29,7 @@ Cache::config('default', [
 
 // Using a fully namespaced name.
 Cache::config('long', [
-    'className' => 'Cake\Cache\Engine\ApcEngine',
+    'className' => 'Cake\Cache\Engine\ApcuEngine',
     'duration' => '+1 week',
     'prefix' => 'my_app_'
 ]);
@@ -52,6 +52,6 @@ the callback will be executed and the returned data will be cached for future ca
 
 ## Documentation
 
-Please make sure you check the [official documentation](http://book.cakephp.org/3.0/en/core-libraries/caching.html)
+Please make sure you check the [official documentation](https://book.cakephp.org/3.0/en/core-libraries/caching.html)
 
 

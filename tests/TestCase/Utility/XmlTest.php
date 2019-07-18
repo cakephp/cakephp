@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -23,7 +23,6 @@ use Cake\Utility\Xml;
 
 /**
  * XmlTest class
- *
  */
 class XmlTest extends TestCase
 {
@@ -40,7 +39,7 @@ class XmlTest extends TestCase
      * @var array
      */
     public $fixtures = [
-        'core.articles', 'core.users'
+        'core.Articles', 'core.Users'
     ];
 
     /**
@@ -66,6 +65,19 @@ class XmlTest extends TestCase
         Configure::write('App.encoding', $this->_appEncoding);
     }
 
+    public function testExceptionChainingForInvalidInput()
+    {
+        try {
+            $value = "invalid-xml-input<<";
+            Xml::build($value);
+            $this->fail('This line should not be executed because of exception above.');
+        } catch (XmlException $exception) {
+            $cause = $exception->getPrevious();
+            $this->assertNotNull($cause);
+            $this->assertInstanceOf(\Exception::class, $cause);
+        }
+    }
+
     /**
      * testBuild method
      *
@@ -75,7 +87,7 @@ class XmlTest extends TestCase
     {
         $xml = '<tag>value</tag>';
         $obj = Xml::build($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tag', (string)$obj->getName());
         $this->assertEquals('value', (string)$obj);
 
@@ -83,7 +95,7 @@ class XmlTest extends TestCase
         $this->assertEquals($obj, Xml::build($xml));
 
         $obj = Xml::build($xml, ['return' => 'domdocument']);
-        $this->assertTrue($obj instanceof \DOMDocument);
+        $this->assertInstanceOf(\DOMDocument::class, $obj);
         $this->assertEquals('tag', $obj->firstChild->nodeName);
         $this->assertEquals('value', $obj->firstChild->nodeValue);
 
@@ -116,13 +128,26 @@ class XmlTest extends TestCase
     }
 
     /**
+     * test build() method with huge option
+     *
+     * @return void
+     */
+    public function testBuildHuge()
+    {
+        $xml = '<tag>value</tag>';
+        $obj = Xml::build($xml, ['parseHuge' => true]);
+        $this->assertEquals('tag', $obj->getName());
+        $this->assertEquals('value', (string)$obj);
+    }
+
+    /**
      * Test that the readFile option disables local file parsing.
      *
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testBuildFromFileWhenDisabled()
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         $xml = CORE_TESTS . 'Fixture/sample.xml';
         $obj = Xml::build($xml, ['readFile' => false]);
     }
@@ -187,22 +212,22 @@ class XmlTest extends TestCase
      * testBuildInvalidData
      *
      * @dataProvider invalidDataProvider
-     * @expectedException \RuntimeException
      * @return void
      */
     public function testBuildInvalidData($value)
     {
+        $this->expectException(\RuntimeException::class);
         Xml::build($value);
     }
 
     /**
      * Test that building SimpleXmlElement with invalid XML causes the right exception.
      *
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testBuildInvalidDataSimpleXml()
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         $input = '<derp';
         Xml::build($input, ['return' => 'simplexml']);
     }
@@ -220,6 +245,54 @@ class XmlTest extends TestCase
         } catch (\Exception $e) {
             $this->assertTrue(true, 'An exception was raised');
         }
+    }
+
+    /**
+     * testLoadHtml method
+     *
+     * @return void
+     */
+    public function testLoadHtml()
+    {
+        $htmlFile = CORE_TESTS . 'Fixture/sample.html';
+        $html = file_get_contents($htmlFile);
+        $paragraph = 'Browsers usually indent blockquote elements.';
+        $blockquote = "
+For 50 years, WWF has been protecting the future of nature.
+The world's leading conservation organization,
+WWF works in 100 countries and is supported by
+1.2 million members in the United States and
+close to 5 million globally.
+";
+
+        $xml = Xml::loadHtml($html);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html, ['parseHuge' => true]);
+        $this->assertTrue(isset($xml->body->p), 'Paragraph present');
+        $this->assertEquals($paragraph, (string)$xml->body->p);
+        $this->assertTrue(isset($xml->body->blockquote), 'Blockquote present');
+        $this->assertEquals($blockquote, (string)$xml->body->blockquote);
+
+        $xml = Xml::loadHtml($html);
+        $this->assertEquals($html, "<!DOCTYPE html>\n" . $xml->asXML() . "\n");
+
+        $xml = Xml::loadHtml($html, ['return' => 'dom']);
+        $this->assertEquals($html, $xml->saveHTML());
+    }
+
+    /**
+     * test loadHtml with a empty html string
+     *
+     * @return void
+     */
+    public function testLoadHtmlEmptyHtml()
+    {
+        $this->expectException(XmlException::class);
+        Xml::loadHtml(null);
     }
 
     /**
@@ -259,7 +332,7 @@ class XmlTest extends TestCase
             ]
         ];
         $obj = Xml::fromArray($xml, 'attributes');
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
@@ -272,7 +345,7 @@ XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
 
         $obj = Xml::fromArray($xml);
-        $this->assertTrue($obj instanceof \SimpleXMLElement);
+        $this->assertInstanceOf(\SimpleXMLElement::class, $obj);
         $this->assertEquals('tags', $obj->getName());
         $this->assertEquals(2, count($obj));
         $xmlText = <<<XML
@@ -379,7 +452,15 @@ XML;
         $obj = Xml::fromArray($xml, 'attributes');
         $xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+    }
 
+    /**
+     * Test fromArray() with zero values.
+     *
+     * @return void
+     */
+    public function testFromArrayZeroValue()
+    {
         $xml = [
             'tag' => [
                 '@' => 0,
@@ -390,6 +471,16 @@ XML;
         $xmlText = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <tag test="A test">0</tag>
+XML;
+        $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
+
+        $xml = [
+            'tag' => ['0']
+        ];
+        $obj = Xml::fromArray($xml);
+        $xmlText = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tag>0</tag>
 XML;
         $this->assertXmlStringEqualsXmlString($xmlText, $obj->asXML());
     }
@@ -562,11 +653,11 @@ XML;
      * testFromArrayFail method
      *
      * @dataProvider invalidArrayDataProvider
-     * @expectedException \Exception
      * @return void
      */
     public function testFromArrayFail($value)
     {
+        $this->expectException(\Exception::class);
         Xml::fromArray($value);
     }
 
@@ -779,7 +870,7 @@ XML;
         $rss = file_get_contents(CORE_TESTS . 'Fixture/rss.xml');
         $rssAsArray = Xml::toArray(Xml::build($rss));
         $this->assertEquals('2.0', $rssAsArray['rss']['@version']);
-        $this->assertEquals(2, count($rssAsArray['rss']['channel']['item']));
+        $this->assertCount(2, $rssAsArray['rss']['channel']['item']);
 
         $atomLink = ['@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml'];
         $this->assertEquals($rssAsArray['rss']['channel']['atom:link'], $atomLink);
@@ -1139,11 +1230,11 @@ XML;
      * testToArrayFail method
      *
      * @dataProvider invalidToArrayDataProvider
-     * @expectedException \Cake\Utility\Exception\XmlException
      * @return void
      */
     public function testToArrayFail($value)
     {
+        $this->expectException(\Cake\Utility\Exception\XmlException::class);
         Xml::toArray($value);
     }
 
@@ -1180,5 +1271,36 @@ XML;
 </request>
 XML;
         $result = Xml::build($xml);
+        $this->assertEquals('', (string)$result->xxe);
+    }
+
+    /**
+     * Test building Xml with valid class-name in value.
+     *
+     * @see https://github.com/cakephp/cakephp/pull/9754
+     * @return void
+     */
+    public function testClassnameInValueRegressionTest()
+    {
+        $classname = self::class; // Will always be a valid class name
+        $data = [
+            'outer' => [
+                'inner' => $classname
+            ]
+        ];
+        $obj = Xml::build($data);
+        $result = $obj->asXml();
+        $this->assertContains('<inner>' . $classname . '</inner>', $result);
+    }
+
+    /**
+     * Needed function for testClassnameInValueRegressionTest.
+     *
+     * @ignore
+     * @return array
+     */
+    public function toArray()
+    {
+        return [];
     }
 }
