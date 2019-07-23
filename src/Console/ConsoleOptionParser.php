@@ -1073,8 +1073,8 @@ class ConsoleOptionParser
         if (substr($name, 0, 2) === '--') {
             return isset($this->_options[substr($name, 2)]);
         }
-        if ($name{0} === '-' && $name{1} !== '-') {
-            return isset($this->_shortOptions[$name{1}]);
+        if ($name[0] === '-' && $name[1] !== '-') {
+            return isset($this->_shortOptions[$name[1]]);
         }
 
         return false;
