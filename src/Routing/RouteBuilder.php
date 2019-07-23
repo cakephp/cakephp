@@ -364,7 +364,6 @@ class RouteBuilder
             'path' => null,
         ];
 
-        /** @psalm-suppress PossiblyNullIterator */
         foreach ($options['map'] as $k => $mapped) {
             $options['map'][$k] += ['method' => 'GET', 'path' => $k, 'action' => ''];
         }
@@ -895,7 +894,9 @@ class RouteBuilder
     public function plugin(string $name, $options = [], ?callable $callback = null): void
     {
         if ($callback === null) {
-            /** @var callable $callback */
+            if (!is_callable($options)) {
+                throw new InvalidArgumentException('A valid callback is expected');
+            }
             $callback = $options;
             $options = [];
         }
