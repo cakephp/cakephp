@@ -73,7 +73,7 @@ before_install:
   - echo 'extension = apcu.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo 'apc.enable_cli = 1' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
-  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install channel://pecl.php.net/apcu-5.1.5 || true; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:1} == "7" ]] ; then echo "yes" | pecl install channel://pecl.php.net/apcu-5.1.17 || true; fi
   - if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" ]] ; then echo "yes" | pecl install apcu-4.0.11 || true; fi
   - |
       if [[ ${TRAVIS_PHP_VERSION:0:1} == "5" && $DB = 'mysql' ]]; then
