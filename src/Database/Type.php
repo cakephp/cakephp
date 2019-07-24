@@ -49,6 +49,7 @@ class Type implements TypeInterface
         'time' => 'Cake\Database\Type\TimeType',
         'timestamp' => 'Cake\Database\Type\DateTimeType',
         'uuid' => 'Cake\Database\Type\UuidType',
+        'char' => 'Cake\Database\Type\CharType',
     ];
 
     /**
