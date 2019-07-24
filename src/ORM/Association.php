@@ -226,7 +226,7 @@ abstract class Association
             }
         }
 
-        if (empty($this->_className) && strpos($alias, '.')) {
+        if (empty($this->_className)) {
             $this->_className = $alias;
         }
 
@@ -378,7 +378,7 @@ abstract class Association
     public function getTarget(): Table
     {
         if ($this->_targetTable === null) {
-            if (strpos((string)$this->_className, '.')) {
+            if (strpos($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
                 $registryAlias = $plugin . $this->_name;
             } else {
@@ -395,7 +395,7 @@ abstract class Association
             $this->_targetTable = $tableLocator->get($registryAlias, $config);
 
             if ($exists) {
-                $className = $this->_getClassName($registryAlias, ['className' => $this->_className]);
+                $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
 
                 if (!$this->_targetTable instanceof $className) {
                     $errorMessage = '%s association "%s" of type "%s" to "%s" doesn\'t match the expected class "%s". ';
@@ -1123,24 +1123,6 @@ abstract class Association
         }
 
         return [key($finderData), current($finderData)];
-    }
-
-    /**
-     * Gets the table class name.
-     *
-     * @param string $alias The alias name you want to get.
-     * @param array $options Table options array.
-     * @return string
-     */
-    protected function _getClassName(string $alias, array $options = []): string
-    {
-        if (empty($options['className'])) {
-            $options['className'] = Inflector::camelize($alias);
-        }
-
-        $className = App::className($options['className'], 'Model/Table', 'Table') ?: Table::class;
-
-        return ltrim($className, '\\');
     }
 
     /**
