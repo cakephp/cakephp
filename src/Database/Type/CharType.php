@@ -111,4 +111,3 @@ class CharType extends Type implements OptionalConvertInterface, TypeInterface
         return false;
     }
 }
-
