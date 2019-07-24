@@ -110,7 +110,7 @@ trait StaticConfigTrait
      * Reads existing configuration.
      *
      * @param string $key The name of the configuration.
-     * @return mixed Configuration data.
+     * @return array|null Array of configuration data.
      */
     public static function getConfig($key)
     {
