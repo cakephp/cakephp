@@ -8529,8 +8529,8 @@ class FormHelperTest extends TestCase
                 'type' => 'password',
                 'value' => '',
                 'required' => 'required',
-                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
-                'oninvalid' => 'this.setCustomValidity(&#039;This field is required&#039;)',
+                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field is required&#039;)',
             ]
         ];
         $this->assertHtml($expected, $result);
@@ -8547,8 +8547,8 @@ class FormHelperTest extends TestCase
                 'value' => '',
                 'maxlength' => 255,
                 'required' => 'required',
-                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
-                'oninvalid' => 'this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
+                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;This field cannot be left empty&#039;)',
             ]
         ];
         $this->assertHtml($expected, $result);
@@ -8565,8 +8565,8 @@ class FormHelperTest extends TestCase
                 'value' => '',
                 'maxlength' => 255,
                 'required' => 'required',
-                'onvalid' => 'this.setCustomValidity(&#039;&#039;)',
-                'oninvalid' => 'this.setCustomValidity(&#039;Custom error message&#039;)',
+                'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.validity.valid) this.setCustomValidity(&#039;Custom error message&#039;)',
             ]
         ];
         $this->assertHtml($expected, $result);
