@@ -61,28 +61,27 @@
     .col-left,
     .col-right {
         overflow-y: auto;
-        padding: 15px;
+        padding: 10px;
     }
     .col-left {
+        background: #ececec;
         flex: 0 0 30%;
     }
     .col-right {
         flex: 1;
     }
 
-    .toggle-link {
+    .toggle-vendor-frames {
+        color: #404041;
         display: block;
-        padding: 8px 14px;
-        text-decoration: none;
-        background-color: #606c76;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #fff;
-        text-align: center;
+        padding: 5px;
         margin-bottom: 10px;
+        text-align: center;
+        text-decoration: none;
     }
-    .toggle-link:hover {
-        background-color: #D33C47;
+    .toggle-vendor-frames:hover,
+    .toggle-vendor-frames:active {
+        background: #e5e5e5;
     }
 
     .code-dump,
@@ -91,7 +90,6 @@
         border-radius: 4px;
         padding: 5px;
         white-space: pre-wrap;
-        box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
         margin: 0;
     }
 
@@ -130,7 +128,9 @@
         padding: 0;
     }
     .stack-frame {
-        padding: 15px 10px;
+        background: #e5e5e5;
+        padding: 10px;
+        margin-bottom: 5px;
     }
     .stack-frame:last-child {
         border-bottom: none;
@@ -141,8 +141,7 @@
         text-decoration: none;
     }
     .stack-frame.active {
-        background: #e5e5e5;
-        border-radius: 4px;
+        background: #F5F7FA;
     }
     .stack-frame a:hover {
         text-decoration: underline;
@@ -151,9 +150,23 @@
         display: flex;
         align-items: center;
     }
+
     .stack-frame-args {
         flex: 0 0 150px;
+        display: block;
+        padding: 8px 14px;
+        text-decoration: none;
+        background-color: #606c76;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 10px;
     }
+    .stack-frame-args:hover {
+        background-color: #D33C47;
+    }
+
     .stack-frame-file {
         flex: 1;
         word-break:break-all;
@@ -174,13 +187,15 @@
     }
     .stack-file {
         font-size: 0.9em;
-        word-wrap: break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        direction: rtl;
     }
 
     .stack-details {
         background: #ececec;
         border-radius: 4px;
-        box-shadow: 0 7px 14px 0 rgba(60,66,87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
         padding: 10px;
         margin-bottom: 18px;
     }
@@ -195,7 +210,7 @@
         background: #fff59d;
     }
     .excerpt-line {
-        padding-left: 2px;
+        padding: 0;
     }
     .excerpt-number {
         background: #f6f6f6;
