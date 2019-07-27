@@ -616,7 +616,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return string|string[]
+     * @return string|string[]|null
      */
     public function getDisplayField()
     {
