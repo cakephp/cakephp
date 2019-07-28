@@ -1467,8 +1467,8 @@ class FormHelper extends Helper
                 $options['templateVars']['customValidityMessage'] = $message;
 
                 if ($this->getConfig('autoSetCustomValidity')) {
-                    $options['oninvalid'] = "this.setCustomValidity('$message')";
-                    $options['onvalid'] = "this.setCustomValidity('')";
+                    $options['oninvalid'] = "this.setCustomValidity(''); if (!this.validity.valid) this.setCustomValidity('$message')";
+                    $options['oninput'] = "this.setCustomValidity('')";
                 }
             }
         }
