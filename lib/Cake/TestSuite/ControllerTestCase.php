@@ -265,7 +265,7 @@ abstract class ControllerTestCase extends CakeTestCase {
 				->will($this->returnValue($options['data']));
 		}
 
-		$Dispatch = new ControllerTestDispatcher();
+		$Dispatch = $this->_createDispatcher();
 		foreach (Router::$routes as $route) {
 			if ($route instanceof RedirectRoute) {
 				$route->response = $this->getMock('CakeResponse', array('send'));
@@ -313,6 +313,15 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$_POST = $restore['post'];
 
 		return $this->{$options['return']};
+	}
+
+/**
+ * Creates the test dispatcher class
+ *
+ * @return Dispatcher
+ */
+	protected function _createDispatcher() {
+		return new ControllerTestDispatcher();
 	}
 
 /**
